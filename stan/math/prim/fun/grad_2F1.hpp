@@ -13,39 +13,36 @@
 
 namespace stan {
 namespace math {
-  namespace internal {
-    template <typename T_p, typename T_log_z, 
-              typename T_input,
-              typename T_log,
-              typename T_array, typename T_array_int,
-    typename T_sign>
-    void calc_lambda(const T_p& p, const T_log_z& log_z, 
-                     T_array& log_g_old, T_array_int& log_g_old_sign,
-                     T_log& log_t_old, T_sign& log_t_old_sign,
-                     T_log& log_t_new, T_sign& log_t_new_sign,
-                     int k, 
-                     T_input&a1, T_input&a2, T_input&b1) {
-    using T_plain = return_type_t<T_log, T_sign, T_array, T_array_int>;
-    
-    log_t_new += log(fabs(p)) + log_z;
-    log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+namespace internal {
+template <typename T_p, typename T_log_z, typename T_input, typename T_log,
+          typename T_array, typename T_array_int, typename T_sign>
+void calc_lambda(const T_p& p, const T_log_z& log_z, T_array& log_g_old,
+                 T_array_int& log_g_old_sign, T_log& log_t_old,
+                 T_sign& log_t_old_sign, T_log& log_t_new,
+                 T_sign& log_t_new_sign, int k, T_input& a1, T_input& a2,
+                 T_input& b1) {
+  using T_plain = return_type_t<T_log, T_sign, T_array, T_array_int>;
 
-    T_plain term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-              + inv(a1 + k);
-    log_g_old[0] = log_t_new + log(fabs(term));
-    log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  log_t_new += log(fabs(p)) + log_z;
+  log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-           + inv(a2 + k);
-    log_g_old[1] = log_t_new + log(fabs(term));
-    log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  T_plain term
+      = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+        + inv(a1 + k);
+  log_g_old[0] = log_t_new + log(fabs(term));
+  log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
-           - inv(b1 + k);
-    log_g_old[2] = log_t_new + log(fabs(term));
-    log_g_old_sign[2] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
-  }
-  } // namespace internal
+  term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
+         + inv(a2 + k);
+  log_g_old[1] = log_t_new + log(fabs(term));
+  log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+
+  term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+         - inv(b1 + k);
+  log_g_old[2] = log_t_new + log(fabs(term));
+  log_g_old_sign[2] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+}
+}  // namespace internal
 
 /**
  * Gradients of the hypergeometric function, 2F1.
@@ -97,7 +94,6 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   int sign_z = sign(z);
   TP log_z = log(fabs(z));
 
-
   TP log_precision = log(precision);
   TP log_t_new_sign = 1.0;
   TP log_t_old_sign = 1.0;
@@ -106,82 +102,73 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     x = 1.0;
   }
 
- if (sign_z > 0) {
-  for (int k = 0; k <= max_steps; ++k) {
-    TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k))) ;
-    if (p == 0) {
-      return;
-    }
+  if (sign_z > 0) {
+    for (int k = 0; k <= max_steps; ++k) {
+      TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
+      if (p == 0) {
+        return;
+      }
 
-    internal::calc_lambda(p, log_z, 
-                log_g_old, log_g_old_sign,
-                log_t_old, log_t_old_sign,
-                log_t_new,
-                log_t_new_sign,
-                k, 
-                a1, a2, b1);
+      internal::calc_lambda(p, log_z, log_g_old, log_g_old_sign, log_t_old,
+                            log_t_old_sign, log_t_new, log_t_new_sign, k, a1,
+                            a2, b1);
 
-    g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
-    g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
-    g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
-
-    if (log_g_old[0]
-            <= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision,
-                        log_precision)
-        && log_g_old[1] <= std::max(
-               std::log(std::abs(value_of_rec(g_a2))) + log_precision,
-               log_precision)
-        && log_g_old[2] <= std::max(
-               std::log(std::abs(value_of_rec(g_b1))) + log_precision,
-               log_precision)) {
-      return;
-    }
-
-    log_t_old = log_t_new;
-    log_t_old_sign = log_t_new_sign;
-
-  }
- } else {
-  for (int k = 0; k <= max_steps; ++k) {
-    TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k))) ;
-    if (p == 0) {
-      return;
-    }
-    internal::calc_lambda(p, log_z, 
-                log_g_old, log_g_old_sign,
-                log_t_old, log_t_old_sign,
-                log_t_new,
-                log_t_new_sign,
-                k, 
-                a1, a2, b1);
-
-    if (pow(sign_z, k) > 0) {
-         log_t_new += log(fabs(p)) + log_z;
-      log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
-
-      g_a1 += log_g_old_sign[0] > 0 ? -exp(log_g_old[0]) : exp(log_g_old[0]);
-      g_a2 += log_g_old_sign[1] > 0 ? -exp(log_g_old[1]) : exp(log_g_old[1]);
-      g_b1 += log_g_old_sign[2] > 0 ? -exp(log_g_old[2]) : exp(log_g_old[2]);
-    }  else {
       g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
       g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
       g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
+
+      if (log_g_old[0] <= std::max(
+              std::log(std::abs(value_of_rec(g_a1))) + log_precision,
+              log_precision)
+          && log_g_old[1] <= std::max(
+                 std::log(std::abs(value_of_rec(g_a2))) + log_precision,
+                 log_precision)
+          && log_g_old[2] <= std::max(
+                 std::log(std::abs(value_of_rec(g_b1))) + log_precision,
+                 log_precision)) {
+        return;
+      }
+
+      log_t_old = log_t_new;
+      log_t_old_sign = log_t_new_sign;
     }
-    if (log_g_old[0]
-            <= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision,
-                        log_precision)
-        && log_g_old[1] <= std::max(
-               std::log(std::abs(value_of_rec(g_a2))) + log_precision,
-               log_precision)
-        && log_g_old[2] <= std::max(
-               std::log(std::abs(value_of_rec(g_b1))) + log_precision,
-               log_precision)) {
-      return;
+  } else {
+    for (int k = 0; k <= max_steps; ++k) {
+      TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
+      if (p == 0) {
+        return;
+      }
+      internal::calc_lambda(p, log_z, log_g_old, log_g_old_sign, log_t_old,
+                            log_t_old_sign, log_t_new, log_t_new_sign, k, a1,
+                            a2, b1);
+
+      if (pow(sign_z, k) > 0) {
+        log_t_new += log(fabs(p)) + log_z;
+        log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+
+        g_a1 += log_g_old_sign[0] > 0 ? -exp(log_g_old[0]) : exp(log_g_old[0]);
+        g_a2 += log_g_old_sign[1] > 0 ? -exp(log_g_old[1]) : exp(log_g_old[1]);
+        g_b1 += log_g_old_sign[2] > 0 ? -exp(log_g_old[2]) : exp(log_g_old[2]);
+      } else {
+        g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
+        g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
+        g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
+      }
+      if (log_g_old[0] <= std::max(
+              std::log(std::abs(value_of_rec(g_a1))) + log_precision,
+              log_precision)
+          && log_g_old[1] <= std::max(
+                 std::log(std::abs(value_of_rec(g_a2))) + log_precision,
+                 log_precision)
+          && log_g_old[2] <= std::max(
+                 std::log(std::abs(value_of_rec(g_b1))) + log_precision,
+                 log_precision)) {
+        return;
+      }
+      log_t_old = log_t_new;
+      log_t_old_sign = log_t_new_sign;
     }
-    log_t_old = log_t_new;
-    log_t_old_sign = log_t_new_sign;
   }
- }
   throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
                      " iterations, hypergeometric function gradient "
                      "did not converge.");
