@@ -26,6 +26,7 @@ namespace math {
  *
  * @tparam T type of arguments and result
  * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result.
+ * @param[out] g_a2 g_a1 reference to gradient of 2F1 w.r.t. a1, result.
  * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result.
  * @param[in] a1 a1 see generalized hypergeometric function definition.
  * @param[in] a2 a2 see generalized hypergeometric function definition.
