@@ -29,7 +29,7 @@ inline var log_determinant_spd(const T& M) {
 
   arena_t<T> arena_M = M;
   matrix_d M_d = arena_M.val();
-  auto M_ldlt = M_d.ldlt().eval();
+  auto M_ldlt = M_d.ldlt();
   if (M_ldlt.info() != Eigen::Success) {
     constexpr double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
