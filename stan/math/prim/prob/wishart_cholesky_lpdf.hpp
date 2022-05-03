@@ -64,7 +64,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
- if (include_summand<propto, T_dof, T_scale, T_y>::value) {
+  if (include_summand<propto, T_dof, T_scale, T_y>::value) {
     auto L_SinvL_Y = mdivide_left_tri<Eigen::Lower>(L_S_ref, L_Y_ref);
     return_type_t<T_y, T_dof, T_scale> dot_LSinvLY(0.0);
 
