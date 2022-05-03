@@ -62,6 +62,7 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
     ret = boost::math::tools::halley_iterate(
         f_plus_div, ret_t(guess), ret_t(min), ret_t(max), digits, max_iter);
   } catch (const std::exception& e) {
+    std::cout << "err: \n" << e.what() << "\n";
     throw e;
   }
   return ret;

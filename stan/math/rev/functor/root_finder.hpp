@@ -2,9 +2,10 @@
 #define STAN_MATH_REV_FUNCTOR_ROOT_FINDER_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_bounded.hpp>
 #include <stan/math/prim/functor/root_finder.hpp>
+#include <stan/math/rev/core/nested_rev_autodiff.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <boost/math/tools/roots.hpp>
 #include <tuple>
 #include <utility>
@@ -51,9 +52,9 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
       *arena_args_tuple);
   // Solve the system
   double theta_dbl = apply(
-      [&f_tuple, guess_val = value_of(guess), min_val = value_of(min),
+      [&f_tuple, &max_iter, digits, guess_val = value_of(guess), min_val = value_of(min),
        max_val = value_of(max)](auto&&... vals) {
-        return root_finder(f_tuple, guess_val, min_val, max_val, vals...);
+        return root_finder_tol(f_tuple, guess_val, min_val, max_val, digits, max_iter, vals...);
       },
       args_vals_tuple);
   double Jf_x;
