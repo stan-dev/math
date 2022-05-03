@@ -35,20 +35,11 @@ namespace internal {
  * @param[in] a2 a2 see hypergeometric function 2F1 definition
  * @param[in] b1 b1 see hypergeometric function 2F1 definition
  */
-template <typename T, 
-          typename T_array, typename T_array_int, typename T_int>
-void calc_lambda(T_array& log_g_old,
-                 T_array_int& log_g_old_sign,
-                 T& log_t_new,
-                 T_int& log_t_new_sign, 
-                 const T& p, 
-                 const T& log_z,
-                 const T& log_t_old,
-                 const T_int& log_t_old_sign, 
-                 const int k, 
-                 const T& a1, 
-                 const T& a2,
-                 const T& b1) {
+template <typename T, typename T_array, typename T_array_int, typename T_int>
+void calc_lambda(T_array& log_g_old, T_array_int& log_g_old_sign, T& log_t_new,
+                 T_int& log_t_new_sign, const T& p, const T& log_z,
+                 const T& log_t_old, const T_int& log_t_old_sign, const int k,
+                 const T& a1, const T& a2, const T& b1) {
   using T_plain = return_type_t<T, T_int, T_array, T_array_int>;
 
   log_t_new += log(fabs(p)) + log_z;
@@ -83,9 +74,9 @@ void calc_lambda(T_array& log_g_old,
  * This power-series representation converges for all gradients
  * under the same conditions as the 2F1 function itself.
  *
- * @tparam T1 scalar or `var_value` 
- * @tparam T2 scalar or `var_value` 
- * @tparam T3 scalar or `var_value` 
+ * @tparam T1 scalar or `var_value`
+ * @tparam T2 scalar or `var_value`
+ * @tparam T3 scalar or `var_value`
  * @tparam T_z scalar type
  * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result
  * @param[out] g_a2 g_a2 reference to gradient of 2F1 w.r.t. a2, result
@@ -142,10 +133,9 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
         return;
       }
 
-      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new, log_t_new_sign,
-                            p, log_z, log_t_old,
-                            log_t_old_sign, k, a1,
-                            a2, b1);
+      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new,
+                            log_t_new_sign, p, log_z, log_t_old, log_t_old_sign,
+                            k, a1, a2, b1);
 
       g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
       g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
@@ -172,10 +162,9 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
       if (p == 0) {
         return;
       }
-      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new, log_t_new_sign,
-                            p, log_z, log_t_old,
-                            log_t_old_sign, k, a1,
-                            a2, b1);
+      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new,
+                            log_t_new_sign, p, log_z, log_t_old, log_t_old_sign,
+                            k, a1, a2, b1);
 
       if (sign_zk > 0) {
         g_a1 += log_g_old_sign[0] > 0 ? -exp(log_g_old[0]) : exp(log_g_old[0]);
