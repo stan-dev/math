@@ -18,9 +18,9 @@ TEST(MathPrimScalFun, grad2F1_negative_z) {
 }
 
 TEST(MathPrimScalFun, grad2F1_1) {
-  double a1 = 1.0;
-  double a2 = 1.0;
-  double b1 = 1.0;
+  double a1 = 1;
+  double a2 = 1;
+  double b1 = 1;
   double z = 0.6;
 
   double grad_a1;
@@ -33,10 +33,10 @@ TEST(MathPrimScalFun, grad2F1_1) {
 }
 
 TEST(MathPrimScalFun, grad2F1_2) {
-  double a1 = 1.0;
-  double a2 = 31.0;
-  double b1 = 41.0;
-  double z = 1.0;
+  double a1 = 1;
+  double a2 = 31;
+  double b1 = 41;
+  double z = 1;
 
   double grad_a1;
   double grad_a2;
@@ -48,10 +48,10 @@ TEST(MathPrimScalFun, grad2F1_2) {
 }
 
 TEST(MathPrimScalFun, grad2F1_3) {
-  double a1 = 1.0;
+  double a1 = 1;
   double a2 = -2.1;
-  double b1 = 41.0;
-  double z = 1.0;
+  double b1 = 41;
+  double z = 1;
 
   double grad_a1;
   double grad_a2;
@@ -63,10 +63,10 @@ TEST(MathPrimScalFun, grad2F1_3) {
 }
 
 TEST(MathPrimScalFun, grad2F1_4) {
-  double a1 = 1.0;
-  double a2 = 12.0;
-  double b1 = 10.0;
-  double z = 1.0;
+  double a1 = 1;
+  double a2 = 12;
+  double b1 = 10;
+  double z = 1;
 
   double grad_a1;
   double grad_a2;
@@ -76,9 +76,9 @@ TEST(MathPrimScalFun, grad2F1_4) {
 }
 
 TEST(MathPrimScalFun, grad2F1_5) {
-  double a1 = 1.0;
-  double a2 = 12.0;
-  double b1 = 20.0;
+  double a1 = 1;
+  double a2 = 12;
+  double b1 = 20;
   double z = 1.2;
 
   double grad_a1;
@@ -89,7 +89,7 @@ TEST(MathPrimScalFun, grad2F1_5) {
 }
 
 TEST(MathPrimScalFun, grad2F1_6) {
-  double a1 = 1.0;
+  double a1 = 1;
   double a2 = -0.5;
   double b1 = 10.6;
   double z = 0.3;
@@ -104,9 +104,9 @@ TEST(MathPrimScalFun, grad2F1_6) {
 }
 
 TEST(MathPrimScalFun, grad2F1_7) {
-  double a1 = 1.0;
+  double a1 = 1;
   double a2 = -0.5;
-  double b1 = 10.0;
+  double b1 = 10;
   double z = 0.3;
 
   double grad_a1;
@@ -121,7 +121,7 @@ TEST(MathPrimScalFun, grad2F1_7) {
 TEST(MathPrimScalFun, grad2F1_8) {
   double a1 = -.5;
   double a2 = -4.5;
-  double b1 = 11.0;
+  double b1 = 11;
   double z = 0.3;
 
   double grad_a1;
@@ -150,7 +150,7 @@ TEST(MathPrimScalFun, grad2F1_9) {
 
 TEST(MathPrimScalFun, grad2F1_10) {
   double a1 = 2;
-  double a2 = 1.0;
+  double a2 = 1;
   double b1 = 2;
   double z = 0.4;
 
@@ -165,7 +165,7 @@ TEST(MathPrimScalFun, grad2F1_10) {
 
 TEST(MathPrimScalFun, grad2F1_11) {
   double a1 = 3.70975;
-  double a2 = 1.0;
+  double a2 = 1;
   double b1 = 2.70975;
   double z = 0.999696;
 

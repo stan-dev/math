@@ -95,10 +95,10 @@ TEST(ProbInternalMath, grad2F1_ffd1) {
 TEST(ProbInternalMath, grad2F1_ffd2) {
   using stan::math::fvar;
 
-  fvar<fvar<double> > a = 2.0;
-  fvar<fvar<double> > b = 1.0;
-  fvar<fvar<double> > c = 2.0;
-  b.d_ = 1.0;
+  fvar<fvar<double> > a = 2;
+  fvar<fvar<double> > b = 1;
+  fvar<fvar<double> > c = 2;
+  b.d_ = 1;
   fvar<fvar<double> > z = 0.4;
   fvar<fvar<double> > gradA;
   fvar<fvar<double> > gradB;
@@ -114,10 +114,10 @@ TEST(ProbInternalMath, grad2F1_ffd2) {
 TEST(ProbInternalMath, grad2F1_ffd3) {
   using stan::math::fvar;
 
-  fvar<fvar<double> > a = 2.0;
-  fvar<fvar<double> > b = 1.0;
-  fvar<fvar<double> > c = 2.0;
-  c.d_ = 1.0;
+  fvar<fvar<double> > a = 2;
+  fvar<fvar<double> > b = 1;
+  fvar<fvar<double> > c = 2;
+  c.d_ = 1;
   fvar<fvar<double> > z = 0.4;
   fvar<fvar<double> > gradA;
   fvar<fvar<double> > gradB;
@@ -134,10 +134,10 @@ TEST(ProbInternalMath, grad2F1_fv1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  a.d_ = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  a.d_ = 1;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -153,10 +153,10 @@ TEST(ProbInternalMath, grad2F1_fv2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  b.d_ = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  b.d_ = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -172,10 +172,10 @@ TEST(ProbInternalMath, grad2F1_fv3) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
-  c.d_ = 1.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
+  c.d_ = 1;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -192,10 +192,10 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  a.d_ = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  a.d_ = 1;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -212,10 +212,10 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  b.d_ = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  b.d_ = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -232,10 +232,10 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
-  c.d_ = 1.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
+  c.d_ = 1;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -253,10 +253,10 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  a.d_ = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  a.d_ = 1;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -274,10 +274,10 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  b.d_ = 1.0;
-  fvar<var> c = 2.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  b.d_ = 1;
+  fvar<var> c = 2;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
@@ -295,10 +295,10 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a = 2.0;
-  fvar<var> b = 1.0;
-  fvar<var> c = 2.0;
-  c.d_ = 1.0;
+  fvar<var> a = 2;
+  fvar<var> b = 1;
+  fvar<var> c = 2;
+  c.d_ = 1;
   fvar<var> z = 0.4;
   fvar<var> gradA;
   fvar<var> gradB;
