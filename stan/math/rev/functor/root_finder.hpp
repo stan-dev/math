@@ -52,9 +52,10 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
       *arena_args_tuple);
   // Solve the system
   double theta_dbl = apply(
-      [&f_tuple, &max_iter, digits, guess_val = value_of(guess), min_val = value_of(min),
-       max_val = value_of(max)](auto&&... vals) {
-        return root_finder_tol(f_tuple, guess_val, min_val, max_val, digits, max_iter, vals...);
+      [&f_tuple, &max_iter, digits, guess_val = value_of(guess),
+       min_val = value_of(min), max_val = value_of(max)](auto&&... vals) {
+        return root_finder_tol(f_tuple, guess_val, min_val, max_val, digits,
+                               max_iter, vals...);
       },
       args_vals_tuple);
   double Jf_x;

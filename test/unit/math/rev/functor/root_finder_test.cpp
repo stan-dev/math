@@ -47,22 +47,30 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   stan::math::finite_diff_gradient(func, vals, fx, finit_grad_fx, 1e-14);
   std::cout << "--- Finit Diff----\n";
   std::cout << "fx: " << fx;
-  std::cout << "\ngrads: \n" <<
-   "p: " << finit_grad_fx(0) << "\n"
-   "alpha: " << finit_grad_fx(1) << "\n"
-   "beta: " << finit_grad_fx(2) << "\n";
+  std::cout << "\ngrads: \n"
+            << "p: " << finit_grad_fx(0)
+            << "\n"
+               "alpha: "
+            << finit_grad_fx(1)
+            << "\n"
+               "beta: "
+            << finit_grad_fx(2) << "\n";
 
   auto beta_pdf_deriv = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
     using stan::math::lgamma;
     using stan::math::pow;
-    auto val = -(pow((1 - x), beta) * pow(x, (-2 + alpha)) * (1. - 2. * x - alpha + x * alpha + x * beta) * lgamma(alpha + beta)) /
-     (pow((-1 + x), 2) * lgamma(alpha) * lgamma(beta));
-     return val;
+    auto val = -(pow((1 - x), beta) * pow(x, (-2 + alpha))
+                 * (1. - 2. * x - alpha + x * alpha + x * beta)
+                 * lgamma(alpha + beta))
+               / (pow((-1 + x), 2) * lgamma(alpha) * lgamma(beta));
+    return val;
   };
   auto beta_pdf = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
     using stan::math::lgamma;
     using stan::math::pow;
-    auto val = (pow(x, alpha - 1) * pow((1 - x), beta - 1) * lgamma(alpha + beta))/ ((lgamma(alpha) * lgamma(beta)));
+    auto val
+        = (pow(x, alpha - 1) * pow((1 - x), beta - 1) * lgamma(alpha + beta))
+          / ((lgamma(alpha) * lgamma(beta)));
     return val;
   };
 
@@ -72,9 +80,12 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   double guess = .3;
   double min = 0;
   double max = 1;
-  auto full_f = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](auto&& alpha, auto&& beta, auto&& p) {
-    std::uintmax_t max_its=1000;
-    return stan::math::root_finder_tol(std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, 16, max_its, alpha, beta, p);
+  auto full_f = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](
+                    auto&& alpha, auto&& beta, auto&& p) {
+    std::uintmax_t max_its = 1000;
+    return stan::math::root_finder_tol(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, 16,
+        max_its, alpha, beta, p);
   };
   auto func2 = [&full_f](auto&& vals) {
     auto p = vals(0);
@@ -86,14 +97,22 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   stan::math::gradient(func2, vals, fx, grad_fx);
   std::cout << "--- Auto Diff----\n";
   std::cout << "fx: " << fx;
-  std::cout << "\ngrads: \n" <<
-   "p: " << grad_fx(0) << "\n"
-   "alpha: " << grad_fx(1) << "\n"
-   "beta: " << grad_fx(2) << "\n";
+  std::cout << "\ngrads: \n"
+            << "p: " << grad_fx(0)
+            << "\n"
+               "alpha: "
+            << grad_fx(1)
+            << "\n"
+               "beta: "
+            << grad_fx(2) << "\n";
 
-   Eigen::VectorXd diff_grad_fx = finit_grad_fx - grad_fx;
-   std::cout << "\ngrad diffs: \n" <<
-    "p: " << diff_grad_fx(0) << "\n"
-    "alpha: " << diff_grad_fx(1) << "\n"
-    "beta: " << diff_grad_fx(2) << "\n";
+  Eigen::VectorXd diff_grad_fx = finit_grad_fx - grad_fx;
+  std::cout << "\ngrad diffs: \n"
+            << "p: " << diff_grad_fx(0)
+            << "\n"
+               "alpha: "
+            << diff_grad_fx(1)
+            << "\n"
+               "beta: "
+            << diff_grad_fx(2) << "\n";
 }

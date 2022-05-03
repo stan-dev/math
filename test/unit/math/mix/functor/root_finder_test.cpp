@@ -60,19 +60,30 @@ TEST(MixFun, root_finder_beta_log) {
     using stan::math::log;
     using stan::math::lgamma;
     using stan::math::log1m;
-    auto val = -((beta * log1m(x) + (-2 + alpha) * log(x) + log(1 - 2*x - alpha + x * alpha + x * beta) + lgamma(alpha + beta))
-      - (2 * log1m(x) + lgamma(alpha) + lgamma(beta)));
+    auto val = -((beta * log1m(x) + (-2 + alpha) * log(x)
+                  + log(1 - 2 * x - alpha + x * alpha + x * beta)
+                  + lgamma(alpha + beta))
+                 - (2 * log1m(x) + lgamma(alpha) + lgamma(beta)));
     return val;
   };
-  auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {return stan::math::beta_lcdf(x, alpha, beta) - p;};
-  auto f_g = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {return stan::math::beta_lpdf(x, alpha, beta);};
-  auto f_gg = [&beta_lpdf_deriv](auto&& x, auto&& alpha, auto&& beta, auto&& p) {return beta_lpdf_deriv(x, alpha, beta, p);};
+  auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::beta_lcdf(x, alpha, beta) - p;
+  };
+  auto f_g = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::beta_lpdf(x, alpha, beta);
+  };
+  auto f_gg
+      = [&beta_lpdf_deriv](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
+          return beta_lpdf_deriv(x, alpha, beta, p);
+        };
   double guess = .3;
   double min = 0.0000000001;
   double max = 1;
-  auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& alpha, auto&& beta, auto&& p) {
-    std::uintmax_t max_its=1000;
-    return stan::math::root_finder_tol(std::make_tuple(f, f_g, f_gg), guess, min, max, 16, max_its, alpha, beta, p);
+  auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& alpha, auto&& beta,
+                                                   auto&& p) {
+    std::uintmax_t max_its = 1000;
+    return stan::math::root_finder_tol(std::make_tuple(f, f_g, f_gg), guess,
+                                       min, max, 16, max_its, alpha, beta, p);
   };
   double p = 0.45;
   double alpha = .5;
@@ -84,24 +95,33 @@ TEST(MixFun, root_finder_beta) {
   auto beta_pdf_deriv = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
     using stan::math::lgamma;
     using stan::math::pow;
-    auto val = -(pow((1 - x), beta) * pow(x, (-2 + alpha)) * (1. - 2. * x - alpha + x * alpha + x * beta) * lgamma(alpha + beta)) /
-     (pow((-1 + x), 2) * lgamma(alpha) * lgamma(beta));
-     return val;
+    auto val = -(pow((1 - x), beta) * pow(x, (-2 + alpha))
+                 * (1. - 2. * x - alpha + x * alpha + x * beta)
+                 * lgamma(alpha + beta))
+               / (pow((-1 + x), 2) * lgamma(alpha) * lgamma(beta));
+    return val;
   };
   auto beta_pdf = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
     using stan::math::lgamma;
     using stan::math::pow;
-    auto val = (pow(x, alpha - 1) * pow((1 - x), beta - 1) * lgamma(alpha + beta))/ ((lgamma(alpha) * lgamma(beta)));
+    auto val
+        = (pow(x, alpha - 1) * pow((1 - x), beta - 1) * lgamma(alpha + beta))
+          / ((lgamma(alpha) * lgamma(beta)));
     return val;
   };
 
-  auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {return stan::math::beta_cdf(x, alpha, beta) - p;};
+  auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::beta_cdf(x, alpha, beta) - p;
+  };
   double guess = .7;
   double min = 0.0000000001;
   double max = 1;
-  auto full_f = [&f, &beta_pdf, &beta_pdf_deriv, guess, min, max](auto&& alpha, auto&& beta, auto&& p) {
-    std::uintmax_t max_its=1000;
-    return stan::math::root_finder_tol(std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, 16, max_its, alpha, beta, p);
+  auto full_f = [&f, &beta_pdf, &beta_pdf_deriv, guess, min, max](
+                    auto&& alpha, auto&& beta, auto&& p) {
+    std::uintmax_t max_its = 1000;
+    return stan::math::root_finder_tol(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, 16,
+        max_its, alpha, beta, p);
   };
   double p = 0.8;
   double alpha = .4;
