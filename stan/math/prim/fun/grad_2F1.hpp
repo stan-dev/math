@@ -102,6 +102,8 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     x = 1.0;
   }
 
+  int sign_zk = 1;
+
   if (sign_z > 0) {
     for (int k = 0; k <= max_steps; ++k) {
       TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
@@ -134,6 +136,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     }
   } else {
     for (int k = 0; k <= max_steps; ++k) {
+      
       TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
       if (p == 0) {
         return;
@@ -142,7 +145,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
                             log_t_old_sign, log_t_new, log_t_new_sign, k, a1,
                             a2, b1);
 
-      if (pow(sign_z, k) > 0) {
+      if (sign_zk > 0) {
         log_t_new += log(fabs(p)) + log_z;
         log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
@@ -167,6 +170,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
       }
       log_t_old = log_t_new;
       log_t_old_sign = log_t_new_sign;
+      sign_zk *= sign_z;
     }
   }
   throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
