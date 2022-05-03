@@ -136,7 +136,6 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     }
   } else {
     for (int k = 0; k <= max_steps; ++k) {
-      
       TP p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
       if (p == 0) {
         return;
