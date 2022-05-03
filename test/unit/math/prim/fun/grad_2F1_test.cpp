@@ -2,6 +2,21 @@
 #include <stan/math/prim.hpp>
 #include <vector>
 
+TEST(MathPrimScalFun, grad2F1_negative_z) {
+  double a1 = 3.70975;
+  double a2 = 1;
+  double b1 = 2.70975;
+  double z = -0.2;
+
+  double grad_a1;
+  double grad_a2;
+  double grad_b1;
+  stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, a1, a2, b1, z);
+  EXPECT_NEAR(-0.0488658806159776, grad_a1, 1e-9);
+  EXPECT_NEAR(-0.193844936204681, grad_a2, 1e-9);
+  EXPECT_NEAR(0.0677809985598383, grad_b1, 1e-9);
+}
+
 TEST(MathPrimScalFun, grad2F1_1) {
   double a1 = 1.0;
   double a2 = 1.0;

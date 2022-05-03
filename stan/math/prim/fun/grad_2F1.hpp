@@ -14,14 +14,42 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename T_p, typename T_log_z, typename T_input, typename T_log,
-          typename T_array, typename T_array_int, typename T_sign>
-void calc_lambda(const T_p& p, const T_log_z& log_z, T_array& log_g_old,
-                 T_array_int& log_g_old_sign, T_log& log_t_old,
-                 T_sign& log_t_old_sign, T_log& log_t_new,
-                 T_sign& log_t_new_sign, int k, T_input& a1, T_input& a2,
-                 T_input& b1) {
-  using T_plain = return_type_t<T_log, T_sign, T_array, T_array_int>;
+/**
+ * Returns the intermediate calculations for the gradient of the
+ * hypergeometric function (2F1).
+ *
+ * @tparam T scalar type or `var_value`
+ * @tparam T_array array of doubles or `var_values`
+ * @tparam T_array_int array of int
+ * @tparam T_int integer
+ * @param[out] log_g_old log of previous gradient values
+ * @param[out] log_g_old_sign sign of previous gradient values
+ * @param[out] log_t_new log of power series calculation
+ * @param[out] log_t_new_sign sign of power series calcuation
+ * @param[in] p intermediate power series value
+ * @param[in] log_z log_z see hypergeometric function 2F1 definition
+ * @param[in] log_t_old log of previous power series calculation
+ * @param[in] log_t_old_sign log of previous power series calculation
+ * @param[in] k loop iteration
+ * @param[in] a1 a1 see hypergeometric function 2F1 definition
+ * @param[in] a2 a2 see hypergeometric function 2F1 definition
+ * @param[in] b1 b1 see hypergeometric function 2F1 definition
+ */
+template <typename T, 
+          typename T_array, typename T_array_int, typename T_int>
+void calc_lambda(T_array& log_g_old,
+                 T_array_int& log_g_old_sign,
+                 T& log_t_new,
+                 T_int& log_t_new_sign, 
+                 const T& p, 
+                 const T& log_z,
+                 const T& log_t_old,
+                 const T_int& log_t_old_sign, 
+                 const int k, 
+                 const T& a1, 
+                 const T& a2,
+                 const T& b1) {
+  using T_plain = return_type_t<T, T_int, T_array, T_array_int>;
 
   log_t_new += log(fabs(p)) + log_z;
   log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -55,17 +83,20 @@ void calc_lambda(const T_p& p, const T_log_z& log_z, T_array& log_g_old,
  * This power-series representation converges for all gradients
  * under the same conditions as the 2F1 function itself.
  *
- * @tparam T type of arguments and result
- * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result.
- * @param[out] g_a2 g_a2 reference to gradient of 2F1 w.r.t. a2, result.
- * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result.
- * @param[in] a1 a1 see generalized hypergeometric function definition.
- * @param[in] a2 a2 see generalized hypergeometric function definition.
- * @param[in] b1 b1 see generalized hypergeometric function definition.
- * @param[in] z z see generalized hypergeometric function definition.
+ * @tparam T1 scalar or `var_value` 
+ * @tparam T2 scalar or `var_value` 
+ * @tparam T3 scalar or `var_value` 
+ * @tparam T_z scalar type
+ * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result
+ * @param[out] g_a2 g_a2 reference to gradient of 2F1 w.r.t. a2, result
+ * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result
+ * @param[in] a1 a1 see generalized hypergeometric function definition
+ * @param[in] a2 a2 see generalized hypergeometric function definition
+ * @param[in] b1 b1 see generalized hypergeometric function definition
+ * @param[in] z z see generalized hypergeometric function definition
  * @param[in] precision magnitude of the increment of the infinite sum
- *   to truncate the sum at.
- * @param[in] max_steps number of steps to take.
+ *   to truncate the sum
+ * @param[in] max_steps number of steps to take
  */
 template <typename T1, typename T2, typename T3, typename T_z>
 void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
@@ -111,8 +142,9 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
         return;
       }
 
-      internal::calc_lambda(p, log_z, log_g_old, log_g_old_sign, log_t_old,
-                            log_t_old_sign, log_t_new, log_t_new_sign, k, a1,
+      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new, log_t_new_sign,
+                            p, log_z, log_t_old,
+                            log_t_old_sign, k, a1,
                             a2, b1);
 
       g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
@@ -140,14 +172,12 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
       if (p == 0) {
         return;
       }
-      internal::calc_lambda(p, log_z, log_g_old, log_g_old_sign, log_t_old,
-                            log_t_old_sign, log_t_new, log_t_new_sign, k, a1,
+      internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new, log_t_new_sign,
+                            p, log_z, log_t_old,
+                            log_t_old_sign, k, a1,
                             a2, b1);
 
       if (sign_zk > 0) {
-        log_t_new += log(fabs(p)) + log_z;
-        log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
-
         g_a1 += log_g_old_sign[0] > 0 ? -exp(log_g_old[0]) : exp(log_g_old[0]);
         g_a2 += log_g_old_sign[1] > 0 ? -exp(log_g_old[1]) : exp(log_g_old[1]);
         g_b1 += log_g_old_sign[2] > 0 ? -exp(log_g_old[2]) : exp(log_g_old[2]);
