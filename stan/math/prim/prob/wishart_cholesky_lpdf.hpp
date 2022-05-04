@@ -80,9 +80,9 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
       dot_LSinvLY += dot_self(L_SinvL_Y.row(i).head(i + 1));
       linspaced_rv(i) = nu_minus_1 - i;
     }
-    lp += -0.5 * dot_LSinvLY 
-          + dot_product(linspaced_rv, log(L_Y_ref.diagonal())) 
-           - nu_ref * sum(log(L_S_ref.diagonal()));
+    lp += -0.5 * dot_LSinvLY
+          + dot_product(linspaced_rv, log(L_Y_ref.diagonal()))
+          - nu_ref * sum(log(L_S_ref.diagonal()));
   }
   return lp;
 }
