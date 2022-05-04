@@ -39,7 +39,7 @@ TEST(ProbInternalMath, grad2F1_fnegative_z) {
   fvar<double> gradA;
   fvar<double> gradB;
   fvar<double> gradC;
-  
+
   a.d_ = 1;
   b.d_ = 1;
   c.d_ = 1;
@@ -49,8 +49,6 @@ TEST(ProbInternalMath, grad2F1_fnegative_z) {
   EXPECT_NEAR(-0.193844936204681, gradB.val_, 1e-9);
   EXPECT_NEAR(0.0677809985598383, gradC.val_, 1e-9);
 }
-
-
 
 TEST(ProbInternalMath, grad2F1_fd1) {
   using stan::math::fvar;
