@@ -84,6 +84,18 @@ inline auto acosh(const VarMat& x) {
       });
 }
 
+template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
+inline auto acosh(const MatVar& x) {
+  arena_t<MatVar> arena_x = x;
+  arena_t<MatVar> ret = arena_x.val().unaryExpr([](const auto x) { return acosh(x); });
+  reverse_pass_callback([arena_x, ret]() mutable {
+    arena_x.adj().array()
+        += ret.adj().array() / (arena_x.val().array().square() - 1.0).sqrt();
+  });
+  return plain_type_t<MatVar>(ret);
+}
+
+
 /**
  * Return the hyperbolic arc cosine of the complex argument.
  *

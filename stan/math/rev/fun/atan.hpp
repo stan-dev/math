@@ -74,6 +74,18 @@ inline auto atan(const VarMat& x) {
             += vi.adj().array() / (1.0 + (x.val().array().square()));
       });
 }
+
+template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
+inline auto atan(const MatVar& x) {
+  arena_t<MatVar> arena_x = x;
+  arena_t<MatVar> ret = arena_x.val().array().atan().matrix();
+  reverse_pass_callback([arena_x, ret]() mutable {
+    arena_x.adj().array()
+        += ret.adj().array() / (1.0 + (arena_x.val().array().square()));
+  });
+  return plain_type_t<MatVar>(ret);
+}
+
 /**
  * Return the arc tangent of the complex argument.
  *

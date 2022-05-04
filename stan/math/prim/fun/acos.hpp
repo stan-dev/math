@@ -43,7 +43,7 @@ struct acos_fun {
  */
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
+          require_not_rev_matrix_t<Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto acos(const Container& x) {
@@ -54,7 +54,7 @@ inline auto acos(const Container& x) {
  * Version of `acos()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
- * @tparam Container Type of x
+ * @tparam Container A std vector or Eigen type with arithmetic scalar type.
  * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */

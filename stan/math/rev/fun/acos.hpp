@@ -74,6 +74,17 @@ inline auto acos(const VarMat& x) {
       });
 }
 
+template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
+inline auto acos(const MatVar& x) {
+  arena_t<MatVar> x_arena = x;
+  arena_t<MatVar> ret = x_arena.val().array().acos().matrix();
+  reverse_pass_callback([x_arena, ret]() mutable {
+    x_arena.adj().array()
+        -= ret.adj().array() / (1.0 - (x_arena.val().array().square())).sqrt();
+  });
+  return plain_type_t<MatVar>(ret);
+}
+
 /**
  * Return the arc cosine of the complex argument.
  *

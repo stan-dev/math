@@ -73,6 +73,18 @@ inline auto asin(const VarMat& x) {
       });
 }
 
+template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
+inline auto asin(const MatVar& x) {
+  arena_t<MatVar> arena_x = x;
+  arena_t<MatVar> ret = arena_x.val().array().asin().matrix();
+  reverse_pass_callback([arena_x, ret]() mutable {
+    arena_x.adj().array()
+        += ret.adj().array() / (1.0 - (arena_x.val().array().square())).sqrt();
+  });
+  return plain_type_t<MatVar>(ret);
+}
+
+
 /**
  * Return the arc sine of the complex argument.
  *
