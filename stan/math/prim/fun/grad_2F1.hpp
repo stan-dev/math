@@ -143,11 +143,11 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
       g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
 
       if (log_g_old[0] <= max(log(fabs(value_of_rec(g_a1))) + log_precision,
-                               log_precision)
+                              log_precision)
           && log_g_old[1] <= max(log(fabs(value_of_rec(g_a2))) + log_precision,
-                                  log_precision)
+                                 log_precision)
           && log_g_old[2] <= max(log(fabs(value_of_rec(g_b1))) + log_precision,
-                                  log_precision)) {
+                                 log_precision)) {
         return;
       }
 
@@ -174,12 +174,12 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
         g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
       }
       if (log_g_old[0] <= max(log(fabs(value_of_rec(g_a1))) + log_precision,
-                               log_precision)
+                              log_precision)
           && log_g_old[1]
                  <= max(log(std::abs(value_of_rec(g_a2))) + log_precision,
-                         log_precision)
+                        log_precision)
           && log_g_old[2] <= max(log(fabs(value_of_rec(g_b1))) + log_precision,
-                                  log_precision)) {
+                                 log_precision)) {
         return;
       }
       log_t_old = log_t_new;
