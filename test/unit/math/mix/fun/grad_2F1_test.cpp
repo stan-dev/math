@@ -2,6 +2,32 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
+TEST(ProbInternalMath, grad2F1_zero_z) {
+  using stan::math::fvar;
+  using stan::math::var;
+  fvar<double> a1 = 3.70975;
+  fvar<double> a2 = 1;
+  fvar<double> b1 = 2.70975;
+  fvar<double> z = 0;
+
+  fvar<double> grad_a1;
+  fvar<double> grad_a2;
+  fvar<double> grad_b1;
+
+  a1.d_ = 1;
+  a2.d_ = 1;
+  b1.d_ = 1;
+
+  stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, a1, a2, b1, z);
+  EXPECT_FLOAT_EQ(0, grad_a1.val_);
+  EXPECT_FLOAT_EQ(0, grad_a2.val_);
+  EXPECT_FLOAT_EQ(0, grad_b1.val_);
+
+  EXPECT_FLOAT_EQ(0, grad_a1.d_);
+  EXPECT_FLOAT_EQ(0, grad_a2.d_);
+  EXPECT_FLOAT_EQ(0, grad_b1.d_);
+}
+
 TEST(ProbInternalMath, grad2F1_fnegative_z) {
   using stan::math::fvar;
 
@@ -13,11 +39,18 @@ TEST(ProbInternalMath, grad2F1_fnegative_z) {
   fvar<double> gradA;
   fvar<double> gradB;
   fvar<double> gradC;
+  
+  a.d_ = 1;
+  b.d_ = 1;
+  c.d_ = 1;
+
   stan::math::grad_2F1(gradA, gradB, gradC, a, b, c, z);
   EXPECT_NEAR(-0.0488658806159776, gradA.val_, 1e-9);
   EXPECT_NEAR(-0.193844936204681, gradB.val_, 1e-9);
   EXPECT_NEAR(0.0677809985598383, gradC.val_, 1e-9);
 }
+
+
 
 TEST(ProbInternalMath, grad2F1_fd1) {
   using stan::math::fvar;

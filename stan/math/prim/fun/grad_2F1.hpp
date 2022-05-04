@@ -106,6 +106,10 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   g_a2 = 0.0;
   g_b1 = 0.0;
 
+  if (z == 0) {
+    return;
+  }
+
   TP log_g_old[3];
   for (auto& i : log_g_old) {
     i = NEGATIVE_INFTY;
