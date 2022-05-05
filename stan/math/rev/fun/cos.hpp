@@ -54,14 +54,15 @@ inline var cos(var a) {
  *
  *
  * @tparam Varmat a `var_value` with inner Eigen type
- * @param a Variable for radians of angle.
+ * @param x Variable for radians of angle.
  * @return Cosine of variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto cos(const VarMat& a) {
-  return make_callback_var(
-      a.val().array().cos().matrix(), [a](const auto& vi) mutable {
-        a.adj() -= vi.adj().cwiseProduct(a.val().array().sin().matrix());
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
+inline auto cos(const VarMat& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().array().cos().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj() -= vi.adj().cwiseProduct(x_arena.val().array().sin().matrix());
       });
 }
 /**

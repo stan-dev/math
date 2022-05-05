@@ -30,18 +30,19 @@ inline var digamma(const var& a) {
  * @param[in] a vector
  * @return elementwise derivative of log gamma function
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto digamma(const T& a) {
-  return make_callback_var(
-      a.val()
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto digamma(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(
+      x_arena.val()
           .array()
           .unaryExpr([](auto& x) { return digamma(x); })
           .matrix()
           .eval(),
-      [a](auto& vi) mutable {
-        a.adj().array()
+      [x_arena](auto&& vi) mutable {
+        x_arena.adj().array()
             += vi.adj().array()
-               * a.val().array().unaryExpr([](auto& x) { return trigamma(x); });
+               * x_arena.val().array().unaryExpr([](auto&& x) { return trigamma(x); });
       });
 }
 

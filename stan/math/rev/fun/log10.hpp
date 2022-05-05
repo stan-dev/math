@@ -45,11 +45,17 @@ namespace math {
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log10(const var_value<T>& a) {
+inline auto log10(const var a) {
   return make_callback_var(log10(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
-                                   / (LOG_TEN * as_array_or_scalar(a.val()));
+    a.adj() += vi.adj() / (LOG_TEN * a.val());
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto log10(const T& a) {
+  auto a_arena = to_arena(a);
+  return make_callback_rev_matrix<T>(log10(a_arena.val()), [a_arena](auto&& vi) mutable {
+    a_arena.adj().array() += vi.adj().array() / (LOG_TEN * a_arena.val().array());
   });
 }
 

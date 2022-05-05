@@ -74,25 +74,15 @@ inline var acosh(const var& x) {
  * @param x The variable
  * @return Inverse hyperbolic cosine of the variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto acosh(const VarMat& x) {
-  return make_callback_var(
-      x.val().unaryExpr([](const auto x) { return acosh(x); }),
-      [x](const auto& vi) mutable {
-        x.adj().array()
-            += vi.adj().array() / (x.val().array().square() - 1.0).sqrt();
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().unaryExpr([](const auto x) { return acosh(x); }),
+      [x_arena](auto&& vi) mutable {
+        x_arena.adj().array()
+            += vi.adj().array() / (x_arena.val().array().square() - 1.0).sqrt();
       });
-}
-
-template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
-inline auto acosh(const MatVar& x) {
-  arena_t<MatVar> arena_x = x;
-  arena_t<MatVar> ret = arena_x.val().unaryExpr([](const auto x) { return acosh(x); });
-  reverse_pass_callback([arena_x, ret]() mutable {
-    arena_x.adj().array()
-        += ret.adj().array() / (arena_x.val().array().square() - 1.0).sqrt();
-  });
-  return plain_type_t<MatVar>(ret);
 }
 
 

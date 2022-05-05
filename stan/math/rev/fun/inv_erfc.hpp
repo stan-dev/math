@@ -34,12 +34,13 @@ inline var inv_erfc(const var& a) {
       });
 }
 
-template <typename T, require_matrix_t<T>* = nullptr>
-inline auto inv_erfc(const var_value<T>& a) {
-  auto precomp_inv_erfc = to_arena(inv_erfc(a.val()));
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto inv_erfc(const T& x) {
+  auto x_arena = to_arena(x);
+  auto precomp_inv_erfc = to_arena(inv_erfc(x_arena.val()));
   return make_callback_var(
-      precomp_inv_erfc, [a, precomp_inv_erfc](auto& vi) mutable {
-        a.adj().array()
+      precomp_inv_erfc, [x_arena, precomp_inv_erfc](auto& vi) mutable {
+        x_arena.adj().array()
             -= vi.adj().array()
                * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_inv_erfc).array());
       });

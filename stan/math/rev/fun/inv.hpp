@@ -27,14 +27,21 @@ namespace math {
    \f]
  *
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto inv(const var_value<T>& a) {
-  auto denom = to_arena(as_array_or_scalar(square(a.val())));
+inline auto inv(const var a) {
+  auto denom = to_arena(square(a.val()));
   return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
+    a.adj() -= vi.adj() / denom;
   });
 }
 
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto inv(const T& x) {
+  auto x_arena = to_arena(x);
+  auto denom = to_arena(square(x_arena.val()).array());
+  return make_callback_rev_matrix<T>(inv(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
+    x_arena.adj().array() -= vi.adj().array() / denom;
+  });
+}
 }  // namespace math
 }  // namespace stan
 #endif

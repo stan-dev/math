@@ -21,11 +21,18 @@ namespace math {
  * @return Natural logarithm of one minus the exponential of the
  * argument.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log1m_exp(const var_value<T>& x) {
+inline auto log1m_exp(const var& x) {
   return make_callback_var(log1m_exp(x.val()), [x](auto& vi) mutable {
-    as_array_or_scalar(x.adj())
-        -= as_array_or_scalar(vi.adj()) / as_array_or_scalar(expm1(-x.val()));
+    x.adj() -= vi.adj() / expm1(-x.val());
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto log1m_exp(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(log1m_exp(x_arena.val()), [x_arena](auto&& vi) mutable {
+    x_arena.adj().array()
+        -= vi.adj().array() / expm1(-x_arena.val()).array();
   });
 }
 

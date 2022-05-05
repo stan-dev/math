@@ -52,12 +52,13 @@ inline var erfc(const var& a) {
   });
 }
 
-template <typename T, require_matrix_t<T>* = nullptr>
-inline auto erfc(const var_value<T>& a) {
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto erfc(const T& x) {
+  auto x_arena = to_arena(x);
   auto precomp_erf
-      = to_arena(TWO_OVER_SQRT_PI * (-a.val().array().square()).exp());
-  return make_callback_var(erfc(a.val()), [a, precomp_erf](auto& vi) mutable {
-    a.adj().array() -= vi.adj().array() * precomp_erf;
+      = to_arena(TWO_OVER_SQRT_PI * (-x_arena.val().array().square()).exp());
+  return make_callback_rev_matrix<T>(erfc(x_arena.val()), [x_arena, precomp_erf](auto&& vi) mutable {
+    x_arena.adj().array() -= vi.adj().array() * precomp_erf;
   });
 }
 

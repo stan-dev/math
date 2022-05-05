@@ -51,6 +51,11 @@ inline auto floor(const var_value<T>& a) {
   return var_value<T>(a.val().array().floor().matrix());
 }
 
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto floor(const T& a) {
+  return plain_type_t<T>(a.val().array().floor().matrix());
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

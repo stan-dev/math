@@ -69,23 +69,14 @@ inline var atanh(const var& x) {
  * @return Inverse hyperbolic tangent of the variable.
  * @throw std::domain_error if a < -1 or a > 1
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto atanh(const VarMat& x) {
-  return make_callback_var(
-      x.val().unaryExpr([](const auto x) { return atanh(x); }),
-      [x](const auto& vi) mutable {
-        x.adj().array() += vi.adj().array() / (1.0 - x.val().array().square());
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().unaryExpr([](auto&& x) { return atanh(x); }),
+      [x_arena](auto&& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() / (1.0 - x_arena.val().array().square());
       });
-}
-
-template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
-inline auto atanh(const MatVar& x) {
-  arena_t<MatVar> arena_x = x;
-  arena_t<MatVar> ret = arena_x.val().unaryExpr([](const auto x) { return atanh(x); });
-  reverse_pass_callback([arena_x, ret]() mutable {
-    arena_x.adj().array() += ret.adj().array() / (1.0 - arena_x.val().array().square());
-  });
-  return plain_type_t<MatVar>(ret);
 }
 
 

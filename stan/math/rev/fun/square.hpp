@@ -45,11 +45,12 @@ inline var square(const var& x) {
  * @param x argument
  * @return elementwise square of x
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto square(const T& x) {
-  return make_callback_var(
-      (x.val().array().square()).matrix(), [x](const auto& vi) mutable {
-        x.adj() += (2.0 * x.val().array() * vi.adj().array()).matrix();
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(
+      (x_arena.val().array().square()).matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj() += (2.0 * x_arena.val().array() * vi.adj().array()).matrix();
       });
 }
 

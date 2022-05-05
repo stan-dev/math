@@ -30,12 +30,19 @@ namespace math {
    \f]
  *
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto inv_sqrt(const var_value<T>& a) {
-  auto denom = to_arena(as_array_or_scalar(a.val())
-                        * as_array_or_scalar(sqrt(a.val())));
+inline auto inv_sqrt(const var a) {
+  auto denom = to_arena(a.val() * sqrt(a.val()));
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) -= 0.5 * as_array_or_scalar(vi.adj()) / denom;
+    a.adj() -= 0.5 * vi.adj() / denom;
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto inv_sqrt(const T& x) {
+  auto x_arena = to_arena(x);
+  auto denom = to_arena(x_arena.val().array() * sqrt(x_arena.val()).array());
+  return make_callback_rev_matrix<T>(inv_sqrt(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
+    x_arena.adj().array() -= 0.5 * vi.adj().array() / denom;
   });
 }
 

@@ -55,11 +55,12 @@ inline var sinh(const var& a) {
  * @param a Variable for radians of angle.
  * @return Hyperbolid Sine of variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto sinh(const VarMat& a) {
-  return make_callback_var(
-      a.val().array().sinh().matrix(), [a](const auto& vi) mutable {
-        a.adj() += vi.adj().cwiseProduct(a.val().array().cosh().matrix());
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
+inline auto sinh(const VarMat& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().array().sinh().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj() += vi.adj().cwiseProduct(x_arena.val().array().cosh().matrix());
       });
 }
 

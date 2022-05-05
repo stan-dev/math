@@ -16,11 +16,19 @@ namespace math {
  * @param u The variable.
  * @return log odds of argument
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto logit(const var_value<T>& u) {
-  auto denom = to_arena(1.0 / as_array_or_scalar(u.val() - square(u.val())));
+inline auto logit(const var u) {
+  auto denom = to_arena(1.0 / (u.val() - square(u.val())));
   return make_callback_var(logit(u.val()), [u, denom](auto& vi) mutable {
-    as_array_or_scalar(u.adj()) += as_array_or_scalar(vi.adj()) * denom;
+    u.adj() += vi.adj() * denom;
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto logit(const T& u) {
+  auto u_arena = to_arena(u);
+  auto denom = to_arena((u_arena.val() - square(u_arena.val())).array().inverse());
+  return make_callback_rev_matrix<T>(logit(u_arena.val()), [u_arena, denom](auto&& vi) mutable {
+    u_arena.adj().array() += vi.adj().array() * denom;
   });
 }
 

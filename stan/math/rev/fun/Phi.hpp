@@ -63,11 +63,12 @@ inline var Phi(const var& a) {
  * @param a input
  * @return The vectorized unit normal cdf
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto Phi(const T& a) {
-  return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() * INV_SQRT_TWO_PI
-                       * (-0.5 * a.val().array().square()).exp();
+  auto a_arena = to_arena(a);
+  return make_callback_rev_matrix<T>(Phi(a_arena.val()), [a_arena](auto&& vi) mutable {
+    a_arena.adj().array() += vi.adj().array() * INV_SQRT_TWO_PI
+                       * (-0.5 * a_arena.val().array().square()).exp();
   });
 }
 

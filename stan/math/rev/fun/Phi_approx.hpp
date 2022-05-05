@@ -51,22 +51,23 @@ inline var Phi_approx(const var& a) {
       f, [a, da](auto& vi) mutable { a.adj() += vi.adj() * da; });
 }
 
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto Phi_approx(const T& a) {
-  arena_t<value_type_t<T>> f(a.rows(), a.cols());
-  arena_t<value_type_t<T>> da(a.rows(), a.cols());
-  for (Eigen::Index j = 0; j < a.cols(); ++j) {
-    for (Eigen::Index i = 0; i < a.rows(); ++i) {
-      const auto a_val = a.val().coeff(i, j);
+  auto a_arena = to_arena(a);
+  arena_t<promote_scalar_t<double, T>> f(a_arena.rows(), a_arena.cols());
+  arena_t<promote_scalar_t<double, T>> da(a_arena.rows(), a_arena.cols());
+  for (Eigen::Index j = 0; j < a_arena.cols(); ++j) {
+    for (Eigen::Index i = 0; i < a_arena.rows(); ++i) {
+      const auto a_val = a_arena.val().coeff(i, j);
       const auto av_squared = a_val * a_val;
       f.coeffRef(i, j) = inv_logit(0.07056 * a_val * av_squared
-                                   + 1.5976 * a.val().coeff(i, j));
+                                   + 1.5976 * a_arena.val().coeff(i, j));
       da.coeffRef(i, j) = f.coeff(i, j) * (1 - f.coeff(i, j))
                           * (3.0 * 0.07056 * av_squared + 1.5976);
     }
   }
-  return make_callback_var(f, [a, da](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() * da.array();
+  return make_callback_rev_matrix<T>(std::move(f), [a_arena, da](auto&& vi) mutable {
+    a_arena.adj().array() += vi.adj().array() * da.array();
   });
 }
 

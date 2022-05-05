@@ -18,12 +18,17 @@ namespace math {
  * @param a Variable argument.
  * @return the Lambert W function (W0 branch) applied to the specified argument.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto lambert_w0(const var_value<T>& a) {
+inline auto lambert_w0(const var a) {
   return make_callback_var(lambert_w0(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += (as_array_or_scalar(vi.adj())
-            / as_array_or_scalar(a.val() + exp(vi.val())));
+    a.adj() += vi.adj() / (a.val() + exp(vi.val()));
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto lambert_w0(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(lambert_w0(x_arena.val()), [x_arena](auto& vi) mutable {
+    x_arena.adj().array() += vi.adj().array() / (x_arena.val() + exp(vi.val())).array();
   });
 }
 
@@ -36,12 +41,17 @@ inline auto lambert_w0(const var_value<T>& a) {
  * @return the Lambert W function (W-1 branch) applied to the specified
  * argument.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto lambert_wm1(const var_value<T>& a) {
+inline auto lambert_wm1(const var a) {
   return make_callback_var(lambert_wm1(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += (as_array_or_scalar(vi.adj())
-            / as_array_or_scalar(a.val() + exp(vi.val())));
+    a.adj() += vi.adj() / (a.val() + exp(vi.val()));
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto lambert_wm1(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(lambert_wm1(x_arena.val()), [x_arena](auto&& vi) mutable {
+    x_arena.adj().array() += vi.adj().array() / (x_arena.val() + exp(vi.val())).array();
   });
 }
 

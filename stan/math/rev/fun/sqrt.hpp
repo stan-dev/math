@@ -54,11 +54,12 @@ inline var sqrt(const var& a) {
  * @param a input
  * @return elementwise square root of vector
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto sqrt(const T& a) {
-  return make_callback_var(
-      a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
-        a.adj().array() += vi.adj().array() / (2.0 * vi.val_op().array());
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto sqrt(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(
+      x_arena.val().array().sqrt().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() / (2.0 * vi.val().array());
       });
 }
 

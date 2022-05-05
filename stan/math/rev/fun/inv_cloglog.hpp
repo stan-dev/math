@@ -24,14 +24,21 @@ namespace math {
  * @return The inverse complementary log-log of the specified
  * argument.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto inv_cloglog(const var_value<T>& a) {
-  auto precomp_exp = to_arena(as_array_or_scalar(exp(a.val() - exp(a.val()))));
+inline auto inv_cloglog(const var a) {
+  auto precomp_exp = exp(a.val() - exp(a.val()));
   return make_callback_var(inv_cloglog(a.val()),
                            [a, precomp_exp](auto& vi) mutable {
-                             as_array_or_scalar(a.adj())
-                                 += as_array_or_scalar(vi.adj()) * precomp_exp;
+                             a.adj() += vi.adj() * precomp_exp;
                            });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto inv_cloglog(const T& x) {
+  auto x_arena = to_arena(x);
+  auto precomp_exp = to_arena((exp(x_arena.val() - exp(x_arena.val()))).array());
+  return make_callback_rev_matrix<T>(inv_cloglog(x_arena.val()), [x_arena, precomp_exp](auto& vi) mutable {
+     x_arena.adj().array() += vi.adj().array() * precomp_exp;
+   });
 }
 
 }  // namespace math

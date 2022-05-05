@@ -53,11 +53,12 @@ inline var tanh(const var& a) {
  * @param a argument
  * @return elementwise hyperbolic tangent of a
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto tanh(const VarMat& a) {
-  return make_callback_var(
-      a.val().array().tanh().matrix(), [a](const auto& vi) mutable {
-        a.adj().array() += vi.adj_.array() / (a.val().array().cosh().square());
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
+inline auto tanh(const VarMat& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().array().tanh().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() / (x_arena.val().array().cosh().square());
       });
 }
 

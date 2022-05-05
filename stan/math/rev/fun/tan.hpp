@@ -58,11 +58,12 @@ inline var tan(const var& a) {
  * @param a Variable for radians of angle.
  * @return Tangent of variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto tan(const VarMat& a) {
-  return make_callback_var(a.val().array().tan().matrix(),
-                           [a](const auto& vi) mutable {
-                             a.adj() += vi.adj().cwiseProduct(
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
+inline auto tan(const VarMat& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(x_arena.val().array().tan().matrix(),
+                           [x_arena](auto&& vi) mutable {
+                             x_arena.adj() += vi.adj().cwiseProduct(
                                  (1.0 + vi.val().array().square()).matrix());
                            });
 }

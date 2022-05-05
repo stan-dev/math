@@ -56,11 +56,12 @@ inline var sin(const var& a) {
  * @param a Variable for radians of angle.
  * @return Sine of variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto sin(const VarMat& a) {
-  return make_callback_var(
-      a.val().array().sin().matrix(), [a](const auto& vi) mutable {
-        a.adj() += vi.adj().cwiseProduct(a.val().array().cos().matrix());
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
+inline auto sin(const VarMat& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().array().sin().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj() += vi.adj().cwiseProduct(x_arena.val().array().cos().matrix());
       });
 }
 

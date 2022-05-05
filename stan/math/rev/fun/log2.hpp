@@ -40,11 +40,17 @@ namespace math {
  * @param a The variable.
  * @return Base 2 logarithm of the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log2(const var_value<T>& a) {
+inline auto log2(const var& a) {
   return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
-                                   / (LOG_TWO * as_array_or_scalar(a.val()));
+    a.adj() += vi.adj() / (LOG_TWO * a.val());
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto log2(const T& a) {
+  auto a_arena = to_arena(a);
+  return make_callback_rev_matrix<T>(log2(a_arena.val()), [a_arena](auto&& vi) mutable {
+    a_arena.adj().array() += vi.adj().array() / (LOG_TWO * a_arena.val().array());
   });
 }
 

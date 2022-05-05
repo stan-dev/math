@@ -65,24 +65,14 @@ inline var acos(const var& x) {
  * @param x a `var_value` with inner Eigen type
  * @return Arc cosine of variable, in radians.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto acos(const VarMat& x) {
-  return make_callback_var(
-      x.val().array().acos().matrix(), [x](const auto& vi) mutable {
-        x.adj().array()
-            -= vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+      x_arena.val().array().acos().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array()
+            -= vi.adj().array() / (1.0 - (x_arena.val().array().square())).sqrt();
       });
-}
-
-template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
-inline auto acos(const MatVar& x) {
-  arena_t<MatVar> x_arena = x;
-  arena_t<MatVar> ret = x_arena.val().array().acos().matrix();
-  reverse_pass_callback([x_arena, ret]() mutable {
-    x_arena.adj().array()
-        -= ret.adj().array() / (1.0 - (x_arena.val().array().square())).sqrt();
-  });
-  return plain_type_t<MatVar>(ret);
 }
 
 /**

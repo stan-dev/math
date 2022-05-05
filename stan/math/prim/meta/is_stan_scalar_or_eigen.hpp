@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_rev_matrix.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
@@ -25,6 +26,16 @@ STAN_ADD_REQUIRE_UNARY(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
                              require_stan_scalar_real);
+
+template <typename T>
+using is_var_or_rev_matrix
+   = bool_constant<is_var<std::decay_t<T>>::value
+                   || is_rev_matrix<std::decay_t<T>>::value>;
+
+STAN_ADD_REQUIRE_UNARY(var_or_rev_matrix, is_var_or_rev_matrix,
+                      require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(var_or_rev_matrix, is_var_or_rev_matrix,
+                            require_stan_scalar_real);
 
 }  // namespace stan
 #endif

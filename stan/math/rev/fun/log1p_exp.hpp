@@ -15,13 +15,21 @@ namespace math {
  * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log1p_exp(const var_value<T>& a) {
-  auto precomp_inv_logit = to_arena(as_array_or_scalar(inv_logit(a.val())));
+inline auto log1p_exp(const var a) {
+  auto precomp_inv_logit = inv_logit(a.val());
   return make_callback_var(
       log1p_exp(a.val()), [a, precomp_inv_logit](auto& vi) mutable {
-        as_array_or_scalar(a.adj())
-            += as_array_or_scalar(vi.adj()) * precomp_inv_logit;
+        a.adj() += vi.adj() * precomp_inv_logit;
+      });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto log1p_exp(const T& a) {
+  auto a_arena = to_arena(a);
+  auto precomp_inv_logit = to_arena(inv_logit(a_arena.val()).array());
+  return make_callback_rev_matrix<T>(
+      log1p_exp(a_arena.val()), [a_arena, precomp_inv_logit](auto&& vi) mutable {
+        a_arena.adj().array() += vi.adj().array() * precomp_inv_logit;
       });
 }
 

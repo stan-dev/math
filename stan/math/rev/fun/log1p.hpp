@@ -19,11 +19,17 @@ namespace math {
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log1p(const var_value<T>& a) {
+inline auto log1p(const var a) {
   return make_callback_var(log1p(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += as_array_or_scalar(vi.adj()) / (1.0 + as_array_or_scalar(a.val()));
+    a.adj() += vi.adj() / (1.0 + a.val());
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto log1p(const T& a) {
+  auto a_arena = to_arena(a);
+  return make_callback_rev_matrix<T>(log1p(a_arena.val()), [a_arena](auto&& vi) mutable {
+    a_arena.adj().array() += vi.adj().array() / (1.0 + a_arena.val().array());
   });
 }
 

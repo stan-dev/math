@@ -61,11 +61,12 @@ inline std::complex<var> exp(const std::complex<var>& z) {
  * @param x argument
  * @return elementwise exponentiation of x
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto exp(const T& x) {
-  return make_callback_var(
-      x.val().array().exp().matrix(), [x](const auto& vi) mutable {
-        x.adj() += (vi.val().array() * vi.adj().array()).matrix();
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(
+      x_arena.val().array().exp().matrix(), [x_arena](const auto& vi) mutable {
+        x_arena.adj() += (vi.val().array() * vi.adj().array()).matrix();
       });
 }
 

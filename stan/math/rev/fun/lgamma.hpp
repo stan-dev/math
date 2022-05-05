@@ -20,11 +20,17 @@ namespace math {
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto lgamma(const var_value<T>& a) {
+inline auto lgamma(const var a) {
   return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += as_array_or_scalar(vi.adj()) * as_array_or_scalar(digamma(a.val()));
+    a.adj() += vi.adj() * digamma(a.val());
+  });
+}
+
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto lgamma(const T& x) {
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<T>(lgamma(x_arena.val()), [x_arena](auto& vi) mutable {
+    x_arena.adj().array() += vi.adj().array() * digamma(x_arena.val()).array();
   });
 }
 

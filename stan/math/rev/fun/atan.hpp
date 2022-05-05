@@ -66,25 +66,16 @@ inline var atan(const var& x) {
  * @param x Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto atan(const VarMat& x) {
-  return make_callback_var(
-      x.val().array().atan().matrix(), [x](const auto& vi) mutable {
-        x.adj().array()
-            += vi.adj().array() / (1.0 + (x.val().array().square()));
+  auto x_arena = to_arena(x);
+  return make_callback_rev_matrix<VarMat>(
+    x_arena.val().array().atan().matrix(), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array()
+            += vi.adj().array() / (1.0 + (x_arena.val().array().square()));
       });
 }
 
-template <typename MatVar, require_eigen_vt<is_var, MatVar>* = nullptr>
-inline auto atan(const MatVar& x) {
-  arena_t<MatVar> arena_x = x;
-  arena_t<MatVar> ret = arena_x.val().array().atan().matrix();
-  reverse_pass_callback([arena_x, ret]() mutable {
-    arena_x.adj().array()
-        += ret.adj().array() / (1.0 + (arena_x.val().array().square()));
-  });
-  return plain_type_t<MatVar>(ret);
-}
 
 /**
  * Return the arc tangent of the complex argument.
