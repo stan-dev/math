@@ -4,13 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {
-
 /** \ingroup multivar_dists
  * Return the natural logarithm of the unnormalized Wishart density of the
  specified
@@ -18,7 +18,7 @@ namespace math {
  lower-triangular
  * Cholesky factor of the scale matrix.
  *
- * The scale matrix, L_S, must be a lower Cholesky factor
+ * The scale matrix, `L_S`, must be a lower Cholesky factor
  * dimension, k, is implicit
  * nu must be greater than k-1
  *
@@ -43,12 +43,11 @@ template <bool propto, typename T_y, typename T_dof, typename T_scale,
 return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
                                                          const T_dof& nu,
                                                          const T_scale& L_S) {
-  using Eigen::Dynamic;
   using Eigen::Lower;
-  using Eigen::Matrix;
   using T_L_Y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   using T_L_S_ref = ref_type_t<T_scale>;
+  using T_return = return_type_t<T_y, T_dof, T_scale>;
   static const char* function = "wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
   check_size_match(function, "Rows of random variable", L_Y.rows(),
@@ -59,31 +58,32 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   T_L_S_ref L_S_ref = L_S;
 
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
-  check_positive(function, "Cholesky Random variable", L_Y_ref.diagonal());
+  check_positive(function, "Cholesky random variable", L_Y_ref.diagonal());
   check_positive(function, "columns of Cholesky Random variable",
                  L_Y_ref.cols());
-  check_positive(function, "Cholesky Scale matrix", L_S_ref.diagonal());
-  check_positive(function, "columns of Cholesky Scale matrix", L_S_ref.cols());
+  check_positive(function, "Cholesky scale matrix", L_S_ref.diagonal());
+  check_positive(function, "columns of Cholesky scale matrix", L_S_ref.cols());
 
-  return_type_t<T_y, T_dof, T_scale> lp(0.0);
+  T_return lp(0.0);
 
   if (include_summand<propto, T_dof>::value) {
     lp += k * LOG_TWO * (1 - 0.5 * nu_ref);
+    lp += -lmgamma(k, 0.5 * nu_ref);
   }
-
-  if (include_summand<propto, T_dof>::value) {
-    lp -= lmgamma(k, 0.5 * nu_ref);
-  }
-
   if (include_summand<propto, T_dof, T_scale, T_y>::value) {
     auto L_SinvL_Y = mdivide_left_tri<Eigen::Lower>(L_S_ref, L_Y_ref);
-    for (int i = 0; i < k; i++) {
-      lp -= 0.5 * dot_self(L_SinvL_Y.row(i).head(i + 1))
-            + nu_ref * log(L_S_ref.coeff(i, i))
-            - (nu_ref - i - 1) * log(L_Y_ref.coeff(i, i));
-    }
-  }
+    T_return dot_LSinvLY(0.0);
+    Eigen::Matrix<T_return, 1, Eigen::Dynamic> linspaced_rv(k);
+    T_return nu_minus_1 = nu_ref - 1;
 
+    for (int i = 0; i < k; i++) {
+      dot_LSinvLY += dot_self(L_SinvL_Y.row(i).head(i + 1));
+      linspaced_rv(i) = nu_minus_1 - i;
+    }
+    lp += -0.5 * dot_LSinvLY
+          + dot_product(linspaced_rv, log(L_Y_ref.diagonal()))
+          - nu_ref * sum(log(L_S_ref.diagonal()));
+  }
   return lp;
 }
 
