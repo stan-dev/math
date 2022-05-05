@@ -38,8 +38,8 @@ struct callback_vari : public vari_value<T> {
  * @param functor functor or other callable to call in the reverse pass
  */
 template <typename T, typename F>
-inline internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(T&& value,
-                                                                F&& functor) {
+inline internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(
+    T&& value, F&& functor) {
   return new internal::callback_vari<plain_type_t<T>, F>(
       std::move(value), std::forward<F>(functor));
 }
@@ -71,14 +71,15 @@ inline var_value<plain_type_t<T>> make_callback_var(T&& value, F&& functor) {
  * All captured values must be trivially destructible or they will leak memory.
  * `to_arena()` function can be used to ensure that.
  *
- * @tparam Ret A `var_value<Matrix>`. This must be passed as part of the function call
- *  to deduce which of the overloads should be called.
+ * @tparam Ret A `var_value<Matrix>`. This must be passed as part of the
+ * function call to deduce which of the overloads should be called.
  * @tparam T type of value
  * @tparam F type of callable
  * @param value value of the vari
  * @param functor functor or other callable to call in the reverse pass
  */
-template <typename Ret, typename T, typename F, require_var_matrix_t<Ret>* = nullptr>
+template <typename Ret, typename T, typename F,
+          require_var_matrix_t<Ret>* = nullptr>
 inline auto make_callback_rev_matrix(T&& value, F&& functor) {
   return make_callback_var(std::forward<T>(value), std::forward<F>(functor));
 }
@@ -92,22 +93,23 @@ inline auto make_callback_rev_matrix(T&& value, F&& functor) {
  * `to_arena()` function can be used to ensure that.
  *
  * @tparam Ret An Eigen type with a `var` scalar type. This must be passed as
- *  part of the function call to decide which overload of this function to choose.
+ *  part of the function call to decide which overload of this function to
+ * choose.
  * @tparam T type of value
  * @tparam F type of callable
  * @param value value of the vari
  * @param functor functor or other callable to call in the reverse pass
- * @return A Eigen type that is a hard copy of the inner arena matrix allocated matrix.
- *  The hard copy is performed so later functions do not modify the `vari` needed
- *  for the reverse pass call constructed here.
+ * @return A Eigen type that is a hard copy of the inner arena matrix allocated
+ * matrix. The hard copy is performed so later functions do not modify the
+ * `vari` needed for the reverse pass call constructed here.
  */
 
 template <typename Ret, typename T, typename F, require_eigen_t<Ret>* = nullptr>
-inline promote_scalar_t<var, T> make_callback_rev_matrix(T&& value, F&& functor) {
+inline promote_scalar_t<var, T> make_callback_rev_matrix(T&& value,
+                                                         F&& functor) {
   arena_t<promote_scalar_t<var, T>> ret = std::forward<T>(value);
-  reverse_pass_callback([ret, func = std::forward<F>(functor)]() mutable {
-    return func(ret);
-  });
+  reverse_pass_callback(
+      [ret, func = std::forward<F>(functor)]() mutable { return func(ret); });
   return promote_scalar_t<var, T>(ret);
 }
 
