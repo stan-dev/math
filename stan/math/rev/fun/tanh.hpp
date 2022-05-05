@@ -58,7 +58,8 @@ inline auto tanh(const VarMat& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<VarMat>(
       x_arena.val().array().tanh().matrix(), [x_arena](auto&& vi) mutable {
-        x_arena.adj().array() += vi.adj().array() / (x_arena.val().array().cosh().square());
+        x_arena.adj().array()
+            += vi.adj().array() / (x_arena.val().array().cosh().square());
       });
 }
 

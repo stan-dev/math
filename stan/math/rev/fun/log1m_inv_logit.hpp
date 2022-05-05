@@ -19,20 +19,21 @@ namespace math {
  */
 inline auto log1m_inv_logit(const var u) {
   auto precomp_inv_logit = -inv_logit(u.val());
-  return make_callback_var(
-      log1m_inv_logit(u.val()), [u, precomp_inv_logit](auto& vi) mutable {
-        u.adj() += vi.adj() * precomp_inv_logit;
-      });
+  return make_callback_var(log1m_inv_logit(u.val()),
+                           [u, precomp_inv_logit](auto& vi) mutable {
+                             u.adj() += vi.adj() * precomp_inv_logit;
+                           });
 }
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log1m_inv_logit(const T& u) {
   auto u_arena = to_arena(u);
   auto precomp_inv_logit = to_arena(-inv_logit(u_arena.val()).array());
-  return make_callback_var(
-      log1m_inv_logit(u_arena.val()), [u_arena, precomp_inv_logit](auto&& vi) mutable {
-        u_arena.adj().array() += vi.adj().array() * precomp_inv_logit;
-      });
+  return make_callback_var(log1m_inv_logit(u_arena.val()),
+                           [u_arena, precomp_inv_logit](auto&& vi) mutable {
+                             u_arena.adj().array()
+                                 += vi.adj().array() * precomp_inv_logit;
+                           });
 }
 
 }  // namespace math

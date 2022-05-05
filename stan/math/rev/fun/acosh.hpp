@@ -85,7 +85,6 @@ inline auto acosh(const VarMat& x) {
       });
 }
 
-
 /**
  * Return the hyperbolic arc cosine of the complex argument.
  *

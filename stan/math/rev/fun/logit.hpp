@@ -26,10 +26,12 @@ inline auto logit(const var u) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto logit(const T& u) {
   auto u_arena = to_arena(u);
-  auto denom = to_arena((u_arena.val() - square(u_arena.val())).array().inverse());
-  return make_callback_rev_matrix<T>(logit(u_arena.val()), [u_arena, denom](auto&& vi) mutable {
-    u_arena.adj().array() += vi.adj().array() * denom;
-  });
+  auto denom
+      = to_arena((u_arena.val() - square(u_arena.val())).array().inverse());
+  return make_callback_rev_matrix<T>(
+      logit(u_arena.val()), [u_arena, denom](auto&& vi) mutable {
+        u_arena.adj().array() += vi.adj().array() * denom;
+      });
 }
 
 }  // namespace math

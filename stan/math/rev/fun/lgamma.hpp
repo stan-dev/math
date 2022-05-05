@@ -29,9 +29,11 @@ inline auto lgamma(const var a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto lgamma(const T& x) {
   auto x_arena = to_arena(x);
-  return make_callback_rev_matrix<T>(lgamma(x_arena.val()), [x_arena](auto& vi) mutable {
-    x_arena.adj().array() += vi.adj().array() * digamma(x_arena.val()).array();
-  });
+  return make_callback_rev_matrix<T>(
+      lgamma(x_arena.val()), [x_arena](auto& vi) mutable {
+        x_arena.adj().array()
+            += vi.adj().array() * digamma(x_arena.val()).array();
+      });
 }
 
 }  // namespace math

@@ -70,12 +70,11 @@ template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto atan(const VarMat& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<VarMat>(
-    x_arena.val().array().atan().matrix(), [x_arena](auto&& vi) mutable {
+      x_arena.val().array().atan().matrix(), [x_arena](auto&& vi) mutable {
         x_arena.adj().array()
             += vi.adj().array() / (1.0 + (x_arena.val().array().square()));
       });
 }
-
 
 /**
  * Return the arc tangent of the complex argument.

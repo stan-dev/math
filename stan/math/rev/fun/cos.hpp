@@ -62,7 +62,8 @@ inline auto cos(const VarMat& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<VarMat>(
       x_arena.val().array().cos().matrix(), [x_arena](auto&& vi) mutable {
-        x_arena.adj() -= vi.adj().cwiseProduct(x_arena.val().array().sin().matrix());
+        x_arena.adj()
+            -= vi.adj().cwiseProduct(x_arena.val().array().sin().matrix());
       });
 }
 /**

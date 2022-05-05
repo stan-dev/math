@@ -80,7 +80,6 @@ inline auto asinh(const VarMat& x) {
       });
 }
 
-
 /**
  * Return the hyperbolic arcsine of the complex argument.
  *

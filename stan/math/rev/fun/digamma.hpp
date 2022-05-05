@@ -41,8 +41,9 @@ inline auto digamma(const T& x) {
           .eval(),
       [x_arena](auto&& vi) mutable {
         x_arena.adj().array()
-            += vi.adj().array()
-               * x_arena.val().array().unaryExpr([](auto&& x) { return trigamma(x); });
+            += vi.adj().array() * x_arena.val().array().unaryExpr([](auto&& x) {
+                 return trigamma(x);
+               });
       });
 }
 

@@ -52,7 +52,8 @@ inline auto cbrt(const VarMat& x) {
   return make_callback_rev_matrix<VarMat>(
       x_arena.val().unaryExpr([](const auto x) { return cbrt(x); }),
       [x_arena](auto&& vi) mutable {
-        x_arena.adj().array() += vi.adj().array() / (3.0 * vi.val().array().square());
+        x_arena.adj().array()
+            += vi.adj().array() / (3.0 * vi.val().array().square());
       });
 }
 

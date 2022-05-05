@@ -50,7 +50,8 @@ inline auto square(const T& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<T>(
       (x_arena.val().array().square()).matrix(), [x_arena](auto&& vi) mutable {
-        x_arena.adj() += (2.0 * x_arena.val().array() * vi.adj().array()).matrix();
+        x_arena.adj()
+            += (2.0 * x_arena.val().array() * vi.adj().array()).matrix();
       });
 }
 

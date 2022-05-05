@@ -54,9 +54,11 @@ inline auto log10(const var a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log10(const T& a) {
   auto a_arena = to_arena(a);
-  return make_callback_rev_matrix<T>(log10(a_arena.val()), [a_arena](auto&& vi) mutable {
-    a_arena.adj().array() += vi.adj().array() / (LOG_TEN * a_arena.val().array());
-  });
+  return make_callback_rev_matrix<T>(
+      log10(a_arena.val()), [a_arena](auto&& vi) mutable {
+        a_arena.adj().array()
+            += vi.adj().array() / (LOG_TEN * a_arena.val().array());
+      });
 }
 
 /**

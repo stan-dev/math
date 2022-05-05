@@ -41,9 +41,10 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_sqrt(const T& x) {
   auto x_arena = to_arena(x);
   auto denom = to_arena(x_arena.val().array() * sqrt(x_arena.val()).array());
-  return make_callback_rev_matrix<T>(inv_sqrt(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
-    x_arena.adj().array() -= 0.5 * vi.adj().array() / denom;
-  });
+  return make_callback_rev_matrix<T>(
+      inv_sqrt(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
+        x_arena.adj().array() -= 0.5 * vi.adj().array() / denom;
+      });
 }
 
 }  // namespace math

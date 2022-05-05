@@ -48,18 +48,17 @@ namespace math {
  * @return Natural log of variable.
  */
 inline auto log(const var a) {
-  return make_callback_var(log(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / a.val();
-  });
+  return make_callback_var(
+      log(a.val()), [a](auto& vi) mutable { a.adj() += vi.adj() / a.val(); });
 }
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log(const T& a) {
   auto a_arena = to_arena(a);
-  return make_callback_rev_matrix<T>(log(a_arena.val()), [a_arena](auto&& vi) mutable {
-    a_arena.adj().array()
-        += vi.adj().array() / a_arena.val().array();
-  });
+  return make_callback_rev_matrix<T>(
+      log(a_arena.val()), [a_arena](auto&& vi) mutable {
+        a_arena.adj().array() += vi.adj().array() / a_arena.val().array();
+      });
 }
 
 /**

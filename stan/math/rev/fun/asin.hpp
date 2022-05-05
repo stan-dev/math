@@ -70,10 +70,10 @@ inline auto asin(const VarMat& x) {
   return make_callback_rev_matrix<VarMat>(
       x_arena.val().array().asin().matrix(), [x_arena](auto&& vi) mutable {
         x_arena.adj().array()
-            += vi.adj().array() / (1.0 - (x_arena.val().array().square())).sqrt();
+            += vi.adj().array()
+               / (1.0 - (x_arena.val().array().square())).sqrt();
       });
 }
-
 
 /**
  * Return the arc sine of the complex argument.

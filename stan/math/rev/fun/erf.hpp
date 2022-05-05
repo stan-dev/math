@@ -57,9 +57,10 @@ inline auto erf(const T& x) {
   auto x_arena = to_arena(x);
   auto precomp_erf
       = to_arena(TWO_OVER_SQRT_PI * (-x_arena.val().array().square()).exp());
-  return make_callback_rev_matrix<T>(erf(x_arena.val()), [x_arena, precomp_erf](auto&& vi) mutable {
-    x_arena.adj().array() += vi.adj().array() * precomp_erf;
-  });
+  return make_callback_rev_matrix<T>(
+      erf(x_arena.val()), [x_arena, precomp_erf](auto&& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() * precomp_erf;
+      });
 }
 
 }  // namespace math

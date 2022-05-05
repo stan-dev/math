@@ -36,7 +36,7 @@ inline auto inv_Phi(const T& x) {
   auto x_arena = to_arena(x);
   return make_callback_var(inv_Phi(x_arena.val()), [x_arena](auto& vi) mutable {
     x_arena.adj().array() += vi.adj().array() * SQRT_TWO_PI
-                       / (-0.5 * vi.val().array().square()).exp();
+                             / (-0.5 * vi.val().array().square()).exp();
   });
 }
 

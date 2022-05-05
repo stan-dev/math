@@ -35,10 +35,12 @@ inline auto inv_cloglog(const var a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_cloglog(const T& x) {
   auto x_arena = to_arena(x);
-  auto precomp_exp = to_arena((exp(x_arena.val() - exp(x_arena.val()))).array());
-  return make_callback_rev_matrix<T>(inv_cloglog(x_arena.val()), [x_arena, precomp_exp](auto& vi) mutable {
-     x_arena.adj().array() += vi.adj().array() * precomp_exp;
-   });
+  auto precomp_exp
+      = to_arena((exp(x_arena.val() - exp(x_arena.val()))).array());
+  return make_callback_rev_matrix<T>(
+      inv_cloglog(x_arena.val()), [x_arena, precomp_exp](auto& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() * precomp_exp;
+      });
 }
 
 }  // namespace math

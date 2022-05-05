@@ -28,9 +28,11 @@ inline auto log1p(const var a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log1p(const T& a) {
   auto a_arena = to_arena(a);
-  return make_callback_rev_matrix<T>(log1p(a_arena.val()), [a_arena](auto&& vi) mutable {
-    a_arena.adj().array() += vi.adj().array() / (1.0 + a_arena.val().array());
-  });
+  return make_callback_rev_matrix<T>(
+      log1p(a_arena.val()), [a_arena](auto&& vi) mutable {
+        a_arena.adj().array()
+            += vi.adj().array() / (1.0 + a_arena.val().array());
+      });
 }
 
 }  // namespace math

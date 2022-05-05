@@ -66,9 +66,10 @@ inline auto Phi_approx(const T& a) {
                           * (3.0 * 0.07056 * av_squared + 1.5976);
     }
   }
-  return make_callback_rev_matrix<T>(std::move(f), [a_arena, da](auto&& vi) mutable {
-    a_arena.adj().array() += vi.adj().array() * da.array();
-  });
+  return make_callback_rev_matrix<T>(
+      std::move(f), [a_arena, da](auto&& vi) mutable {
+        a_arena.adj().array() += vi.adj().array() * da.array();
+      });
 }
 
 }  // namespace math

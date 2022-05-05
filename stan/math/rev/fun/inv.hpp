@@ -38,9 +38,10 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv(const T& x) {
   auto x_arena = to_arena(x);
   auto denom = to_arena(square(x_arena.val()).array());
-  return make_callback_rev_matrix<T>(inv(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
-    x_arena.adj().array() -= vi.adj().array() / denom;
-  });
+  return make_callback_rev_matrix<T>(
+      inv(x_arena.val()), [x_arena, denom](auto&& vi) mutable {
+        x_arena.adj().array() -= vi.adj().array() / denom;
+      });
 }
 }  // namespace math
 }  // namespace stan

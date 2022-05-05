@@ -44,9 +44,10 @@ inline var expm1(const var& a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto expm1(const T& x) {
   auto x_arena = to_arena(x);
-  return make_callback_rev_matrix<T>(expm1(x_arena.val()), [x_arena](auto&& vi) mutable {
-    x_arena.adj().array() += vi.adj().array() * (vi.val().array() + 1.0);
-  });
+  return make_callback_rev_matrix<T>(
+      expm1(x_arena.val()), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array() += vi.adj().array() * (vi.val().array() + 1.0);
+      });
 }
 
 }  // namespace math

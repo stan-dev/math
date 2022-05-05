@@ -31,9 +31,11 @@ inline auto inv_logit(const var a) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_logit(const T& x) {
   auto x_arena = to_arena(x);
-  return make_callback_rev_matrix<T>(inv_logit(x_arena.val()), [x_arena](auto& vi) mutable {
-    x_arena.adj().array() += vi.adj().array() * vi.val().array() * (1.0 - vi.val().array());
-  });
+  return make_callback_rev_matrix<T>(
+      inv_logit(x_arena.val()), [x_arena](auto& vi) mutable {
+        x_arena.adj().array()
+            += vi.adj().array() * vi.val().array() * (1.0 - vi.val().array());
+      });
 }
 
 }  // namespace math

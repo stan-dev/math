@@ -30,10 +30,11 @@ inline auto log1m_exp(const var& x) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log1m_exp(const T& x) {
   auto x_arena = to_arena(x);
-  return make_callback_rev_matrix<T>(log1m_exp(x_arena.val()), [x_arena](auto&& vi) mutable {
-    x_arena.adj().array()
-        -= vi.adj().array() / expm1(-x_arena.val()).array();
-  });
+  return make_callback_rev_matrix<T>(
+      log1m_exp(x_arena.val()), [x_arena](auto&& vi) mutable {
+        x_arena.adj().array()
+            -= vi.adj().array() / expm1(-x_arena.val()).array();
+      });
 }
 
 }  // namespace math

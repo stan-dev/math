@@ -71,7 +71,8 @@ inline auto acos(const VarMat& x) {
   return make_callback_rev_matrix<VarMat>(
       x_arena.val().array().acos().matrix(), [x_arena](auto&& vi) mutable {
         x_arena.adj().array()
-            -= vi.adj().array() / (1.0 - (x_arena.val().array().square())).sqrt();
+            -= vi.adj().array()
+               / (1.0 - (x_arena.val().array().square())).sqrt();
       });
 }
 
