@@ -9,10 +9,12 @@ namespace math {
 
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline auto eigenvalues(const EigMat& m) {
-  check_nonzero_size("eigenvalues", "m", m);
-  check_square("eigenvalues", "m", m);
+  using PlainMat = plain_type_t<EigMat>;
+  const PlainMat& m_eval = m;
+  check_nonzero_size("eigenvalues", "m", m_eval);
+  check_square("eigenvalues", "m", m_eval);
 
-  Eigen::EigenSolver<plain_type_t<EigMat>> solver(m);
+  Eigen::EigenSolver<PlainMat> solver(m_eval);
   return solver.eigenvalues();
 }
 
