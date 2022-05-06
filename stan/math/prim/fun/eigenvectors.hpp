@@ -7,13 +7,12 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-Eigen::Matrix<std::complex<T>, -1, -1> eigenvectors(
-    const Eigen::Matrix<T, -1, -1>& m) {
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+inline auto eigenvectors(const EigMat& m) {
   check_nonzero_size("eigenvectors", "m", m);
   check_square("eigenvectors", "m", m);
 
-  Eigen::EigenSolver<Eigen::Matrix<T, -1, -1>> solver(m);
+  Eigen::EigenSolver<plain_type_t<EigMat>> solver(m);
   return solver.eigenvectors();
 }
 
