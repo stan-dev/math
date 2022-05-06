@@ -95,5 +95,18 @@ STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map,
 STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
                            require_eigens_types);
 
+namespace internal {
+  template <typename T>
+  using map_base_t = Eigen::MapBase<T>;
+}
+template <typename T>
+struct is_eigen_map_base
+   : bool_constant<is_base_pointer_convertible<internal::map_base_t, T>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(eigen_map_base, is_eigen_map_base,
+                      require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_map_base, is_eigen_map_base,
+                          require_eigens_types);
+
 }  // namespace stan
 #endif

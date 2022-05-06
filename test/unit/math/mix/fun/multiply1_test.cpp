@@ -16,6 +16,7 @@ TEST(mathMixMatFun, multiply) {
   rv1 << -2;
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.5;
+
   stan::test::expect_ad(tols, f, a, v1);
   stan::test::expect_ad(tols, f, v1, a);
   stan::test::expect_ad(tols, f, a, rv1);

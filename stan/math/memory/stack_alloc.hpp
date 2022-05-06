@@ -31,7 +31,7 @@ bool is_aligned(T* ptr, unsigned int bytes_aligned) {
 }
 
 namespace internal {
-const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+static constexpr size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice

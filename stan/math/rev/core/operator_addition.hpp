@@ -108,12 +108,12 @@ inline var operator+(Arith a, const var& b) {
  */
 template <typename VarMat1, typename VarMat2,
           require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
-inline auto add(const VarMat1& a, const VarMat2& b) {
+inline auto add(VarMat1&& a, VarMat2&& b) {
   check_matching_dims("add", "a", a, "b", b);
   using op_ret_type = decltype(a.val() + b.val());
   using ret_type = return_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
-  arena_t<VarMat1> arena_a(a);
-  arena_t<VarMat2> arena_b(b);
+  arena_t<VarMat1> arena_a(std::forward<VarMat1>(a));
+  arena_t<VarMat2> arena_b(std::forward<VarMat2>(b));
   arena_t<ret_type> ret(arena_a.val() + arena_b.val());
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
     for (Eigen::Index j = 0; j < ret.cols(); ++j) {
@@ -139,15 +139,15 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
 template <typename Arith, typename VarMat,
           require_st_arithmetic<Arith>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
-inline auto add(const VarMat& a, const Arith& b) {
+inline auto add(VarMat&& a, Arith&& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("add", "a", a, "b", b);
   }
   using op_ret_type
       = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
   using ret_type = return_var_matrix_t<op_ret_type, VarMat>;
-  arena_t<VarMat> arena_a(a);
-  arena_t<ret_type> ret(arena_a.val().array() + as_array_or_scalar(b));
+  arena_t<VarMat> arena_a(std::forward<VarMat>(a));
+  arena_t<ret_type> ret(arena_a.val().array() + as_array_or_scalar(std::forward<Arith>(b)));
   reverse_pass_callback(
       [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
   return ret_type(ret);
@@ -165,8 +165,8 @@ inline auto add(const VarMat& a, const Arith& b) {
 template <typename Arith, typename VarMat,
           require_st_arithmetic<Arith>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
-inline auto add(const Arith& a, const VarMat& b) {
-  return add(b, a);
+inline auto add(Arith&& a, VarMat&& b) {
+  return add(std::forward<VarMat>(b), std::forward<Arith>(a));
 }
 
 /**
@@ -200,8 +200,8 @@ inline auto add(const Var& a, const EigMat& b) {
 template <typename EigMat, typename Var,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
           require_var_vt<std::is_arithmetic, Var>* = nullptr>
-inline auto add(const EigMat& a, const Var& b) {
-  return add(b, a);
+inline auto add(EigMat&& a, const Var& b) {
+  return add(b, std::forward<EigMat>(a));
 }
 
 /**
@@ -217,9 +217,9 @@ inline auto add(const EigMat& a, const Var& b) {
 template <typename Var, typename VarMat,
           require_var_vt<std::is_arithmetic, Var>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
-inline auto add(const Var& a, const VarMat& b) {
+inline auto add(const Var& a, VarMat&& b) {
   using ret_type = return_var_matrix_t<VarMat>;
-  arena_t<VarMat> arena_b(b);
+  arena_t<VarMat> arena_b(std::forward<VarMat>(b));
   arena_t<ret_type> ret(a.val() + arena_b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
     for (Eigen::Index j = 0; j < ret.cols(); ++j) {
@@ -246,15 +246,15 @@ inline auto add(const Var& a, const VarMat& b) {
 template <typename Var, typename VarMat,
           require_var_vt<std::is_arithmetic, Var>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
-inline auto add(const VarMat& a, const Var& b) {
-  return add(b, a);
+inline auto add(VarMat&& a, const Var& b) {
+  return add(b, std::forward<VarMat>(a));
 }
 
 template <typename T1, typename T2,
           require_any_var_vt<std::is_arithmetic, T1, T2>* = nullptr,
           require_any_arithmetic_t<T1, T2>* = nullptr>
-inline auto add(const T1& a, const T2& b) {
-  return a + b;
+inline auto add(T1&& a, T2&& b) {
+  return std::forward<T1>(a) + std::forward<T2>(b);
 }
 
 template <typename T1, typename T2,
@@ -274,8 +274,8 @@ inline auto add(const T1& a, const T2& b) {
  */
 template <typename VarMat1, typename VarMat2,
           require_any_var_matrix_t<VarMat1, VarMat2>* = nullptr>
-inline auto operator+(const VarMat1& a, const VarMat2& b) {
-  return add(a, b);
+inline auto operator+(VarMat1&& a, VarMat2&& b) {
+  return add(std::forward<VarMat1>(a), std::forward<VarMat2>(b));
 }
 
 }  // namespace math

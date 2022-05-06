@@ -26,11 +26,11 @@ namespace math {
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
+inline auto multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
     auto arena_A_val = to_arena(arena_A.val());
     auto arena_B_val = to_arena(arena_B.val());
     using return_t
@@ -51,7 +51,7 @@ inline auto multiply(const T1& A, const T2& B) {
     return return_t(res);
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
     using return_t
         = return_var_matrix_t<decltype(arena_A * value_of(B).eval()), T1, T2>;
     arena_t<return_t> res = arena_A * arena_B.val_op();
@@ -60,7 +60,7 @@ inline auto multiply(const T1& A, const T2& B) {
     });
     return return_t(res);
   } else {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     using return_t
         = return_var_matrix_t<decltype(value_of(arena_A).eval() * arena_B), T1,
@@ -69,7 +69,6 @@ inline auto multiply(const T1& A, const T2& B) {
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       arena_A.adj() += res.adj_op() * arena_B.transpose();
     });
-
     return return_t(res);
   }
 }
@@ -87,15 +86,14 @@ inline auto multiply(const T1& A, const T2& B) {
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_row_and_col_vector_t<T1, T2>* = nullptr>
-inline var multiply(const T1& A, const T2& B) {
+inline var multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
     arena_t<promote_scalar_t<double, T1>> arena_A_val = value_of(arena_A);
     arena_t<promote_scalar_t<double, T2>> arena_B_val = value_of(arena_B);
     var res = arena_A_val.dot(arena_B_val);
-
     reverse_pass_callback(
         [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
           auto res_adj = res.adj();
@@ -104,7 +102,7 @@ inline var multiply(const T1& A, const T2& B) {
         });
     return res;
   } else if (!is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
     arena_t<promote_scalar_t<double, T1>> arena_A_val = value_of(A);
     var res = arena_A_val.dot(value_of(arena_B));
     reverse_pass_callback([arena_B, arena_A_val, res]() mutable {
@@ -112,7 +110,7 @@ inline var multiply(const T1& A, const T2& B) {
     });
     return res;
   } else {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
     arena_t<promote_scalar_t<double, T2>> arena_B_val = value_of(B);
     var res = value_of(arena_A).dot(arena_B_val);
     reverse_pass_callback([arena_A, arena_B_val, res]() mutable {
@@ -137,10 +135,10 @@ template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
+inline auto multiply(T1&& A, T2&& B) {
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = arena_A.val() * arena_B.val().array();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
@@ -156,7 +154,8 @@ inline auto multiply(const T1& A, const T2& B) {
     return return_t(res);
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
+
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = arena_A * arena_B.val().array();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
@@ -164,7 +163,7 @@ inline auto multiply(const T1& A, const T2& B) {
     });
     return return_t(res);
   } else {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<T1>(A);
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = arena_A.val() * arena_B.array();
@@ -192,8 +191,8 @@ template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_not_complex_t<value_type_t<T1>>* = nullptr,
           require_not_complex_t<value_type_t<T2>>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-  return multiply(B, A);
+inline auto multiply(T1&& A, T2&& B) {
+  return multiply(std::forward<T2>(B), std::forward<T1>(A));
 }
 
 /**
@@ -207,8 +206,8 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param b The right hand side of the multiplication
  */
 template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto operator*(const T1& a, const T2& b) {
-  return multiply(a, b);
+inline auto operator*(T1&& a, T2&& b) {
+  return multiply(std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math
