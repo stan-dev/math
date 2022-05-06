@@ -11,13 +11,20 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the absolute value of the forward-mode autodiff argument.
+ *
+ * @tparam T value type for autodiff variable
+ * @param[in] x argument
+ * @return absolute value of argument
+ */
 template <typename T>
 inline fvar<T> abs(const fvar<T>& x) {
-  if (x.val_ > 0.0) {
+  if (x.val_ > 0) {
     return x;
-  } else if (x.val_ < 0.0) {
+  } else if (x.val_ < 0) {
     return fvar<T>(-x.val_, -x.d_);
-  } else if (x.val_ == 0.0) {
+  } else if (x.val_ == 0) {
     return fvar<T>(0, 0);
   } else {
     return fvar<T>(abs(x.val_), NOT_A_NUMBER);

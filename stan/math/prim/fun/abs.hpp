@@ -13,108 +13,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the absolute value of the specified arithmetic argument.
- * The return type is the same as the argument type.
- *
- * @tparam T type of argument (must be arithmetic)
- * @param x argument
- * @return absolute value of argument
- */
-template <typename T, require_arithmetic_t<T>* = nullptr>
-T abs(T x) {
-  return std::abs(x);
-}
-
-/*
- * Return the elementwise absolute value of the specified container.
- *
- * @tparam T type of elements in the vector
- * @param x vector argument
- * @return elementwise absolute value of argument
- */
-template <typename T>
-std::vector<T> abs(const std::vector<T>& x) {
-  std::vector<T> y(x.size());
-  for (size_t n = 0; n < x.size(); ++n)
-    y[n] = abs(x[n]);
-  return y;
-}
-
-/**
- * Return the elementwise absolute value of the specified matrix,
- * vector, or row vector.
- *
- * @tparam T type of scalar for matrix argument (real or complex)
- * @tparam R row specification (1 or -1)
- * @tparam C column specification (1 or -1)
- * @param x argument
- * @return elementwise absolute value of argument
- */
-template <typename T, int R, int C>
-Eigen::Matrix<T, R, C> abs(const Eigen::Matrix<T, R, C>& x) {
-  return fabs(x);
-}
-
-/**
- * Return the absolute value (also known as the norm, modulus, or
- * magnitude) of the specified complex argument.
- *
- * @tparam T type of argument (must be complex)
- * @param x argument
- * @return absolute value of argument (a real number)
- */
-template <typename T, require_complex_t<T>* = nullptr>
-auto abs(T x) {
-  return hypot(x.real(), x.imag());
-}
-
-/**
- * Return elementwise absolute value of the specified real-valued
- * container.
- *
- * @tparam T type of argument
- * @param x argument
- * @return absolute value of argument
- */
-struct abs_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return fabs(x);
-  }
-};
-
-/**
- * Returns the elementwise `abs()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x argument
- * @return Absolute value of each variable in the container.
- */
-// template <typename Container,
-//           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-//           require_not_var_matrix_t<Container>* = nullptr,
-//           require_not_stan_scalar_t<Container>* = nullptr>
-// inline auto abs(const Container& x) {
-//   return apply_scalar_unary<abs_fun, Container>::apply(x);
-// }
-
-// /**
-//  * Version of `abs()` that accepts std::vectors, Eigen Matrix/Array objects
-//  * or expressions, and containers of these.
-//  *
-//  * @tparam Container Type of x
-//  * @param x argument
-//  * @return Absolute value of each variable in the container.
-//  */
-// template <typename Container,
-//           require_container_st<std::is_arithmetic, Container>* = nullptr>
-// inline auto abs(const Container& x) {
-//   return apply_vector_unary<Container>::apply(
-//       x, [&](const auto& v) { return v.array().abs(); });
-// }
-
 namespace internal {
 /**
  * Return the absolute value of the complex argument.
@@ -128,7 +26,90 @@ inline V complex_abs(const std::complex<V>& z) {
   return hypot(z.real(), z.imag());
 }
 }  // namespace internal
+  
+/**
+ * Metaprogram calculating return type for applying `abs` to an
+ * argument of the specified template type.  This struct defines the
+ * default case, which will be used for arithmetic types, with
+ * specializations dealing with other cases.
+ *
+ * @tparam T argument type
+ */
+template <typename T>
+struct abs_return {  
+  /**
+   * Return type of `abs(T)`.
+   */
+  using type = T;
+};
 
+/**
+ * Helper typedef for abs_return.  With this definition,
+ * `typename abs_return<T>::type` can be abbreviated to `abs_return_t<T>`.
+ *
+ * @tparam T type of argument
+ */ 
+template <typename T>
+using abs_return_t = typename abs_return<T>::type;
+
+template <typename T>
+struct abs_return<std::complex<T>> {
+  using type = T;
+};
+
+template <typename T, int R, int C>
+struct abs_return<Eigen::Matrix<T, R, C>> {
+  using type = Eigen::Matrix<abs_return_t<T>, R, C>;
+};
+
+template <typename T>
+struct abs_return<std::vector<T>> {
+  using type = std::vector<abs_return_t<T>>;
+};
+
+/**
+ * Return the absolute value of the specified arithmetic argument.
+ *
+ * @tparam T type of argument (must be arithmetic)
+ * @param x argument
+ * @return absolute value of argument
+ */
+template <typename T>
+inline auto abs(T x) {
+  return std::abs(x);
+}
+
+/**
+ * Return the elementwise absolute value of the specified matrix or vector argument.
+ *
+ * @tparam T type of matrix elements
+ * @param x argument
+ * @return elementwise absolute value of argument
+ */
+template <typename T, int R, int C>
+inline auto abs(const Eigen::Matrix<T, R, C>& x) {
+  Eigen::Matrix<abs_return_t<T>, R, C> y(x.rows(), x.cols());
+  for (int i = 0; i < x.size(); ++i)
+    y(i) = abs(x(i));
+  return y;
+}
+
+/**
+ * Return the elementwise absolute value of the specified standard vector argument.
+ *
+ * @tparam T type of vector elements
+ * @param x argument
+ * @return elementwise absolute value of argument
+ */
+template <typename T>
+inline auto abs(const std::vector<T>& x) {
+  std::vector<abs_return_t<T>> y;
+  y.reserve(x.size());
+  for (const auto& xi : x)
+    y.push_back(abs(xi));
+  return y;
+}
+  
 }  // namespace math
 }  // namespace stan
 
