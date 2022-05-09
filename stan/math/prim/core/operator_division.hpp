@@ -35,8 +35,7 @@ inline complex_return_t<U, V> complex_divide(const U& lhs, const V& rhs) {
  * @param y second argument
  * @return quotient of the arguments
  */
-template <typename U, typename V,
-          require_all_var_or_arithmetic_t<U, V>* = nullptr>
+template <typename U, typename V, require_all_not_eigen_t<U, V>* = nullptr>
 inline complex_return_t<U, V> operator/(const std::complex<U>& x,
                                         const std::complex<V>& y) {
   return internal::complex_divide(x, y);

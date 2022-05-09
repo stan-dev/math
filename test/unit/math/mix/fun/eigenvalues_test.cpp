@@ -2,13 +2,14 @@
 #include <stdexcept>
 
 TEST(mathMixFun, eigenvalues) {
+  stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
   auto f = [](const auto& x) {
     using stan::math::eigenvalues;
     return eigenvalues(x);
   };
   for (const auto& x : stan::test::square_test_matrices(0, 2)) {
-    stan::test::expect_ad(f, x);
-    stan::test::expect_ad(f, Eigen::MatrixXcd(x));
+    stan::test::expect_ad(tols,f, x);
+    stan::test::expect_ad(tols,f, Eigen::MatrixXcd(x));
   }
 
   Eigen::MatrixXd a32(3, 2);
