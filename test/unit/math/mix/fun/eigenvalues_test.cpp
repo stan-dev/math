@@ -8,11 +8,14 @@ TEST(mathMixFun, eigenvalues) {
   };
   for (const auto& x : stan::test::square_test_matrices(0, 2)) {
     stan::test::expect_ad(f, x);
+    stan::test::expect_ad(f, Eigen::MatrixXcd(x));
+
   }
 
   Eigen::MatrixXd a32(3, 2);
   a32 << 3, -5, 7, -7.2, 9.1, -6.3;
   EXPECT_THROW(f(a32), std::invalid_argument);
+  EXPECT_THROW(f(Eigen::MatrixXcd(a32)), std::invalid_argument);
 }
 
 // see eigenvectors_test.cpp for test of eigenvectors() and eigenvalues()
