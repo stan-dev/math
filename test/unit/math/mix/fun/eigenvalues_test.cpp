@@ -9,7 +9,6 @@ TEST(mathMixFun, eigenvalues) {
   for (const auto& x : stan::test::square_test_matrices(0, 2)) {
     stan::test::expect_ad(f, x);
     stan::test::expect_ad(f, Eigen::MatrixXcd(x));
-
   }
 
   Eigen::MatrixXd a32(3, 2);
