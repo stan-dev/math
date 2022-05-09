@@ -59,7 +59,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   /**
    * Move an rvalue value type'd Eigen matrix onto the `var_alloc_stack_`
    * @tparam T An rvalue Eigen matrix or vector
-   * @param object whose underlying memory will be moved to an object sitting
+   * @param other whose underlying memory will be moved to an object sitting
    *  on Stan's `var_alloc_stack`.
    */
   template <typename T,
@@ -82,9 +82,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Copy an lvalue type Eigen matrix onto the `var_alloc_stack_`
+   * Copy an lvalue type Eigen matrix into the arena memory
    * @tparam T An lvalue Eigen matrix or vector
-   * @param object whose underlying memory is copied to Stan's arena allocator.
+   * @param other Eigen matrix or vector whose underlying memory is copied to Stan's arena allocator.
    */
   template <typename T,
             std::enable_if_t<!std::is_rvalue_reference<T&&>::value || !is_plain_type<T>::value>* = nullptr>
