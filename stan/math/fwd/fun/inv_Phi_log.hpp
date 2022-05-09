@@ -19,7 +19,5 @@ inline fvar<T> inv_Phi_log(const fvar<T>& p) {
          + xv / exp(p.val_);
 }
 }  // namespace math
-
-}  // namespace stan
 }  // namespace stan
 #endif
