@@ -15,13 +15,13 @@ namespace math {
  *
  * The derivative is the reciprocal of unit normal density function,
  *
- * @param p Probability
- * @return The unit normal inverse cdf evaluated at p
+ * @param log_p log probability
+ * @return the unit normal inverse cdf evaluated at log_p
  */
 inline var inv_Phi_log(const var& log_p) {
   return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
     log_p.adj()
-        += vi.adj() * SQRT_TWO_PI / std::exp(-0.5 * vi.val() * vi.val());
+        += exp(vi.val()) * vi.adj() * SQRT_TWO_PI / std::exp(-0.5 * vi.val() * vi.val());
   });
 }
 
@@ -35,8 +35,8 @@ inline var inv_Phi_log(const var& log_p) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi_log(const T& log_p) {
   return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
-    log_p.adj().array() += vi.adj().array() * SQRT_TWO_PI
-                           / (-0.5 * vi.val().array().square()).exp();
+    log_p.adj().array() += vi.val().array().exp() * vi.adj().array() * SQRT_TWO_PI
+                       / (-0.5 * vi.val().array().square()).exp();
   });
 }
 
