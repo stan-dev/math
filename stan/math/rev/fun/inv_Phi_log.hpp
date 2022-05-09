@@ -42,7 +42,7 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi_log(const T& log_p) {
   auto log_p_val = value_of(log_p);
   auto z = inv_Phi_log(log_p_val);
-  return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
+  return make_callback_var(inv_Phi_log(log_p.val()), [log_p, log_p_val](auto& vi) mutable {
     as_array_or_scalar(log_p.adj())
         += log_p_val.array() * vi.val().array().exp() * vi.adj().array()
                * SQRT_TWO_PI / (-0.5 * vi.val().array().square()).exp()
