@@ -22,7 +22,7 @@ TEST(ProbDistributionsMultiStudentT, NotVectorized) {
   double lp = multi_student_t_log(y, nu, mu, Sigma);
   EXPECT_NO_THROW(multi_student_t_rng(nu, mu, Sigma, rng));
   // calc using R's mnormt package's dmt function
-  EXPECT_NEAR(-10.1246, lp, 0.0001);
+  EXPECT_NEAR(-10.1245958182, lp, 1e-9);
 }
 TEST(ProbDistributionsMultiStudentT, Vectorized) {
   using Eigen::Dynamic;
@@ -61,37 +61,39 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_log(
-                                          vec_y_t, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t, Sigma));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_log(y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(nu, vec_mu, Sigma, rng));
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(nu, vec_mu_t, Sigma, rng));
 }
+
 TEST(ProbDistributionsMultiStudentT, Sigma) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -203,10 +205,10 @@ TEST(ProbDistributionsMultiStudentT, Nu) {
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::domain_error);
   EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::domain_error);
 
-  // nu = infinity OK
+  // nu = infinity NOT OK
   nu = std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
-  EXPECT_NO_THROW(multi_student_t_rng(nu, mu, Sigma, rng));
+  EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::domain_error);
+  EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::domain_error);
 }
 
 TEST(ProbDistributionsMultiStudentT, ErrorSize1) {
@@ -322,12 +324,8 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin[K];
-  double expect[K];
-  for (int i = 0; i < K; i++) {
-    bin[i] = 0;
-    expect[i] = N / K;
-  }
+  std::vector<int> bin(K);
+  std::vector<double> expect(K, N / K);
 
   Eigen::VectorXd a(mu.rows());
   while (count < N) {
@@ -337,14 +335,14 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     while (i < K - 1 && a(0) > loc[i])
       ++i;
     ++bin[i];
-    count++;
+    ++count;
   }
 
-  double chi = 0;
+  double X = 0;
   for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    X += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  EXPECT_TRUE(X < quantile(complement(mydist, 1e-6)));
 }
 
 TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
@@ -369,12 +367,8 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin[K];
-  double expect[K];
-  for (int i = 0; i < K; i++) {
-    bin[i] = 0;
-    expect[i] = N / K;
-  }
+  std::vector<int> bin(K);
+  std::vector<double> expect(K, N / K);
 
   Eigen::VectorXd a(mu.rows());
   while (count < N) {
@@ -384,14 +378,14 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     while (i < K - 1 && a(1) > loc[i])
       ++i;
     ++bin[i];
-    count++;
+    ++count;
   }
 
-  double chi = 0;
+  double X = 0;
   for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    X += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  EXPECT_TRUE(X < quantile(complement(mydist, 1e-6)));
 }
 
 TEST(ProbDistributionsMultiStudentT, WrongSize) {
