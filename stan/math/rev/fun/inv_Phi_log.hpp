@@ -19,8 +19,9 @@ namespace math {
  * @return the unit normal inverse cdf evaluated at log_p
  */
 inline var inv_Phi_log(const var& log_p) {
-  return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
-    log_p.adj() += std::exp(vi.val()) * vi.adj() * SQRT_TWO_PI
+  auto precomp_exp = to_arena(as_array_or_scalar(exp(log_p.val())));
+  return make_callback_var(inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
+    log_p.adj() += precomp_exp * vi.adj() * SQRT_TWO_PI
                    / std::exp(-0.5 * vi.val() * vi.val());
   });
 }
@@ -34,8 +35,9 @@ inline var inv_Phi_log(const var& log_p) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi_log(const T& log_p) {
-  return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
-    log_p.adj().array() += vi.val().array().exp() * vi.adj().array()
+  auto precomp_exp = to_arena(as_array_or_scalar(exp(log_p.val())));
+  return make_callback_var(inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
+    log_p.adj().array() += precomp_exp * vi.adj().array()
                            * SQRT_TWO_PI
                            / (-0.5 * vi.val().array().square()).exp();
   });
