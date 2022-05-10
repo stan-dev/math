@@ -8,7 +8,7 @@ endef
 # Library locations
 
 MATH ?=
-BOOST ?= $(MATH)lib/boost_1.75.0
+BOOST ?= $(MATH)lib/boost_1.78.0
 EIGEN ?= $(MATH)lib/eigen_3.3.9
 OPENCL ?= $(MATH)lib/opencl_3.0.0
 TBB ?= $(MATH)lib/tbb_2020.3
