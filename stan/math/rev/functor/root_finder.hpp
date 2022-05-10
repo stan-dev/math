@@ -33,18 +33,20 @@ namespace math {
  * this is updated to the actual number of iterations performed
  * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
  */
-template <typename SolverFun,
-    typename FTuple, typename GuessScalar, typename MinScalar,
-    typename MaxScalar, typename... Types,
+template <
+    typename SolverFun, typename FTuple, typename GuessScalar,
+    typename MinScalar, typename MaxScalar, typename... Types,
     require_any_st_var<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr,
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr>
-auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple, const GuessScalar guess,
-                     const MinScalar min, const MaxScalar max, const int digits,
+auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
+                     const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits,
                      std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
-  auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(std::forward<Types>(args))...));
+  auto arena_args_tuple
+      = make_chainable_ptr(std::make_tuple(eval(std::forward<Types>(args))...));
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
@@ -54,8 +56,8 @@ auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple, const GuessScalar g
   double theta_dbl = apply(
       [&f_solver, &f_tuple, &max_iter, digits, guess_val = value_of(guess),
        min_val = value_of(min), max_val = value_of(max)](auto&&... vals) {
-        return root_finder_tol(f_solver, f_tuple, guess_val, min_val, max_val, digits,
-                               max_iter, vals...);
+        return root_finder_tol(f_solver, f_tuple, guess_val, min_val, max_val,
+                               digits, max_iter, vals...);
       },
       args_vals_tuple);
   double Jf_x;

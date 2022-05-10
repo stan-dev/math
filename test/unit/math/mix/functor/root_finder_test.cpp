@@ -83,7 +83,7 @@ TEST(MixFun, root_finder_beta_log) {
                                                    auto&& p) {
     std::uintmax_t max_its = 1000;
     return stan::math::root_finder_hailey(std::make_tuple(f, f_g, f_gg), guess,
-                                       min, max, alpha, beta, p);
+                                          min, max, alpha, beta, p);
   };
   double p = 0.45;
   double alpha = .5;
@@ -120,7 +120,8 @@ TEST(MixFun, root_finder_beta) {
                     auto&& alpha, auto&& beta, auto&& p) {
     std::uintmax_t max_its = 1000;
     return stan::math::root_finder_hailey(
-        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha, beta, p);
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha,
+        beta, p);
   };
   double p = 0.8;
   double alpha = .4;
