@@ -97,7 +97,7 @@ TEST(MathFunctions, absDoubleVec) {
 
 TEST(MathFunctions, abs_complex) {
   using c_t = std::complex<double>;
-  EXPECT_FLOAT_EQ(5.0, abs(c_t(3.0, -4.0)));;
+  EXPECT_FLOAT_EQ(5.0, abs(c_t(3.0, -4.0)));
 }
 
 
