@@ -28,7 +28,9 @@ inline auto abs(const var_value<T>& x) {
  * @param[in] z argument
  * @return absolute value of the argument
  */
-inline auto abs(const std::complex<var>& z) { return internal::complex_abs(z); }
+inline auto abs(const std::complex<var>& z) {
+  return internal::complex_abs(z);
+}
 
 }  // namespace math
 }  // namespace stan

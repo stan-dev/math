@@ -3,12 +3,22 @@
 #include <cmath>
 #include <limits>
 #include <type_traits>
+#include <vector>
 
 
 template <typename V, typename T>
 bool is_type(const T& x) {
   using stan::math::abs;
   return std::is_same<V, T>::value;
+}
+
+
+TEST(mixFun, absTypes) {
+  using stan::math::abs;
+  EXPECT_TRUE(is_type<int>(abs(1)));
+  EXPECT_TRUE(is_type<double>(abs(-2.3)));
+  EXPECT_TRUE(is_type<std::vector<int>>(abs(std::vector<int>{1, 2, -3})));
+  EXPECT_TRUE(is_type<std::vector<double>>(abs(std::vector<double>{2.0, 3.9})));
 }
 
 TEST(MathFunctions, absInt) {
