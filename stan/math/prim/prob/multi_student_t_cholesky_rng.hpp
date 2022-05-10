@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_MULTI_STUDENT_T_RNG_HPP
-#define STAN_MATH_PRIM_PROB_MULTI_STUDENT_T_RNG_HPP
+#ifndef STAN_MATH_PRIM_PROB_MULTI_STUDENT_T_CHOLESKY_RNG_HPP
+#define STAN_MATH_PRIM_PROB_MULTI_STUDENT_T_CHOLESKY_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -28,30 +28,28 @@ namespace math {
  * @param nu a scalar indicating the degrees of freedom parameter
  * @param mu An Eigen::VectorXd, Eigen::RowVectorXd, or std::vector
  *    of location values for the multivariate student t
- * @param S scale matrix
+ * @param L cholesky factor of the scale matrix
  * @param rng random number generator
  * @return eigen vector of multivariate student t random variates
- *    with the given nu, mu, S
- * @throw std::domain_error if S is not positive definite, any value in mu is
+ *    with the given nu, mu, L
+ * @throw std::domain_error if L is not a Cholesky factor, any value in mu is
  *    not finite, nu is not positive, or nu is NaN
  * @throw std::invalid_argument if the length of (each) mu is not equal to the
- *    number of rows and columns in S
+ *    number of rows and columns in L
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_student_t_rng(
-    double nu, const T_loc& mu,
-    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+multi_student_t_cholesky_rng(double nu, const T_loc& mu,
+                             const Eigen::MatrixXd& L, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
   using boost::random::gamma_distribution;
 
-  static const char* function = "multi_student_t_rng";
+  static const char* function = "multi_student_t_cholesky_rng";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
-  check_positive(function, "Covariance matrix rows", S.rows());
+  check_positive(function, "Scale matrix rows", L.rows());
   vector_seq_view<T_loc> mu_vec(mu);
-  size_t size_mu = mu_vec[0].size();
 
   size_t N = size_mvt(mu);
   for (size_t i = 1; i < N; i++) {
@@ -61,20 +59,17 @@ multi_student_t_rng(
                      mu_vec[i].size(),
                      "Size of the first vector of the "
                      "location variable",
-                     size_mu);
+                     mu_vec[i - 1].size());
   }
 
-  check_size_match(function, "Size of random variable", size_mu,
-                   "rows of scale parameter", S.rows());
+  check_size_match(function, "Size of random variable", mu_vec[0].size(),
+                   "rows of scale parameter", L.rows());
 
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
-  const auto& S_ref = to_ref(S);
-  check_not_nan(function, "Covariance matrix", S_ref);
-  check_symmetric(function, "Covariance matrix", S_ref);
-  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S_ref.llt();
-  check_pos_definite(function, "covariance matrix argument", llt_of_S);
+  const auto& L_ref = to_ref(L);
+  check_cholesky_factor(function, "L matrix", L_ref);
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
@@ -83,12 +78,12 @@ multi_student_t_rng(
 
   double w = inv_gamma_rng(nu / 2, nu / 2, rng);
   for (size_t n = 0; n < N; ++n) {
-    Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++) {
+    Eigen::VectorXd z(L.cols());
+    for (int i = 0; i < L.cols(); i++) {
       z(i) = std_normal_rng();
     }
     z *= std::sqrt(w);
-    output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixL() * z;
+    output[n] = as_column_vector_or_scalar(mu_vec[n]) + L * z;
   }
 
   return output.data();
