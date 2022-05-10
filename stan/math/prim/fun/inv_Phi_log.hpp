@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
-#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/inv_Phi_log.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
@@ -23,10 +23,7 @@ namespace math {
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
-struct inv_Phi_log_fun {
-  template <typename T>
-  static inline T fun(const T& log_p) {
-    using ret_t = return_type_t<T>;
+inline double inv_Phi_log(const double log_p) {
     check_less_or_equal("inv_Phi_log", "Probability variable", log_p, 0.);
 
     if (log_p == NEGATIVE_INFTY) {
@@ -73,16 +70,16 @@ struct inv_Phi_log_fun {
                                     -15.76637472711685,
                                     -33.82373901099482};
 
-    ret_t val;
-    ret_t log_q = log_p <= LOG_HALF
+    double val;
+    double log_q = log_p <= LOG_HALF
                       ? log_diff_exp(0, log_sum_exp(log_p, LOG_HALF))
                       : log_diff_exp(log_p, LOG_HALF);
     int log_q_sign = log_p <= LOG_HALF ? -1 : 1;
 
     if (log_q <= -0.85566611005772) {
-      ret_t log_r = log_diff_exp(-1.71133222011544, 2 * log_q);
-      ret_t log_agg_a = log_sum_exp(log_a[7] + log_r, log_a[6]);
-      ret_t log_agg_b = log_sum_exp(log_b[7] + log_r, log_b[6]);
+      double log_r = log_diff_exp(-1.71133222011544, 2 * log_q);
+      double log_agg_a = log_sum_exp(log_a[7] + log_r, log_a[6]);
+      double log_agg_b = log_sum_exp(log_b[7] + log_r, log_b[6]);
 
       for (int i = 0; i < 6; i++) {
         log_agg_a = log_sum_exp(log_agg_a + log_r, log_a[5 - i]);
@@ -91,7 +88,7 @@ struct inv_Phi_log_fun {
 
       return log_q_sign * exp(log_q + log_agg_a - log_agg_b);
     } else {
-      ret_t log_r = log_q_sign == -1 ? log_p : log_diff_exp(0., log_p);
+      double log_r = log_q_sign == -1 ? log_p : log_diff_exp(0., log_p);
 
       if (stan::math::is_inf(log_r)) {
         return 0;
@@ -101,8 +98,8 @@ struct inv_Phi_log_fun {
 
       if (log_r <= 1.60943791243410) {
         log_r = log_diff_exp(log_r, 0.47000362924573);
-        ret_t log_agg_c = log_sum_exp(log_c[7] + log_r, log_c[6]);
-        ret_t log_agg_d = log_sum_exp(log_d[7] + log_r, log_d[6]);
+        double log_agg_c = log_sum_exp(log_c[7] + log_r, log_c[6]);
+        double log_agg_d = log_sum_exp(log_d[7] + log_r, log_d[6]);
 
         for (int i = 0; i < 6; i++) {
           log_agg_c = log_sum_exp(log_agg_c + log_r, log_c[5 - i]);
@@ -111,8 +108,8 @@ struct inv_Phi_log_fun {
         val = exp(log_agg_c - log_agg_d);
       } else {
         log_r = log_diff_exp(log_r, 1.60943791243410);
-        ret_t log_agg_e = log_sum_exp(log_e[7] + log_r, log_e[6]);
-        ret_t log_agg_f = log_sum_exp(log_f[7] + log_r, log_f[6]);
+        double log_agg_e = log_sum_exp(log_e[7] + log_r, log_e[6]);
+        double log_agg_f = log_sum_exp(log_f[7] + log_r, log_f[6]);
 
         for (int i = 0; i < 6; i++) {
           log_agg_e = log_sum_exp(log_agg_e + log_r, log_e[5 - i]);
@@ -125,7 +122,23 @@ struct inv_Phi_log_fun {
     }
     return val;
   }
+
+/**
+ * Structure to wrap inv_Phi() so it can be vectorized.
+ *
+ * @tparam T type of variable
+ * @param x variable in range [0, 1]
+ * @return Inverse unit normal CDF of x.
+ * @throw std::domain_error if x is not between 0 and 1.
+ */
+struct inv_Phi_log_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    return inv_Phi_log(x);
+  }
 };
+
+
 
 /**
  * Vectorized version of inv_Phi_log().

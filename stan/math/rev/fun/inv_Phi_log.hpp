@@ -21,13 +21,8 @@ namespace math {
 template <typename T, require_all_stan_scalar_t<T>* = nullptr,
           require_any_var_t<T>* = nullptr>
 inline var inv_Phi_log(const T& log_p) {
-  double log_p_val = value_of(log_p);
-  double z = inv_Phi_log(log_p_val);
-
-  return make_callback_var(z, [log_p, log_p_val](auto& vi) mutable {
-    log_p.adj() += log_p_val * vi.adj() * SQRT_TWO_PI
-                       / std::exp(-0.5 * vi.val() * vi.val())
-                   + vi.val() / exp(log_p_val);
+  return make_callback_var(inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
+     log_p.adj() +=  std::exp(vi.val()) * vi.adj() * SQRT_TWO_PI / std::exp(-0.5 * vi.val() * vi.val());
   });
 }
 
@@ -40,14 +35,10 @@ inline var inv_Phi_log(const T& log_p) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi_log(const T& log_p) {
-  auto log_p_val = value_of(log_p);
-  auto z = inv_Phi_log(log_p_val);
   return make_callback_var(
-      inv_Phi_log(log_p.val()), [log_p, log_p_val](auto& vi) mutable {
-        as_array_or_scalar(log_p.adj())
-            += log_p_val.array() * vi.val().array().exp() * vi.adj().array()
-                   * SQRT_TWO_PI / (-0.5 * vi.val().array().square()).exp()
-               + vi.val().array() / log_p_val.array().exp();
+      inv_Phi_log(log_p.val()), [log_p](auto& vi) mutable {
+            log_p.adj().array() += vi.val().array().exp() * vi.adj().array() * SQRT_TWO_PI
+                       / (-0.5 * vi.val().array().square()).exp();
       });
 }
 

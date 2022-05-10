@@ -84,6 +84,7 @@
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
+#include <stan/math/rev/fun/inv_Phi_log.hpp>
 #include <stan/math/rev/fun/inv_cloglog.hpp>
 #include <stan/math/rev/fun/inv_erfc.hpp>
 #include <stan/math/rev/fun/inv_logit.hpp>
