@@ -15,7 +15,7 @@ namespace math {
 
 template <typename T>
 inline fvar<T> inv_Phi_log(const fvar<T>& p) {
- // using std::exp;
+  // using std::exp;
   const T xv = inv_Phi_log(p.val_);
   return fvar<T>(xv, exp(p.val_) * p.d_ / exp(-0.5 * square(xv)) * SQRT_TWO_PI);
 }
