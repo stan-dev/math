@@ -7,8 +7,8 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
+#include <stan/math/prim/prob/inv_gamma_rng.hpp>
 #include <boost/random/normal_distribution.hpp>
-#include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
@@ -17,17 +17,21 @@ namespace math {
 
 /** \ingroup multivar_dists
  * Return a multivariate student-t random variate with the given degrees of
- * freedom location and covariance using the specified random number generator.
+ * freedom location and Cholesky factor the scale matrix
+ * using the specified random number generator.
  *
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a std::vector
  * of either of those types.
  *
- * @tparam T_loc Type of location parameter
- * @tparam RNG Type of pseudo-random number generator
- * @param nu degrees of freedom parameter
- * @param mu (Sequence of) location parameter(s)
- * @param S Covariance matrix
+ * @tparam t_loc Type of location parameter
+ * @tparam rng type of pseudo-random number generator
+ * @param nu a scalar indicating the degrees of freedom parameter
+ * @param mu An Eigen::VectorXd, Eigen::RowVectorXd, or std::vector
+ *    of location values for the multivariate student t
+ * @param S scale matrix
  * @param rng random number generator
+ * @return eigen vector of multivariate student t random variates
+ *    with the given nu, mu, S
  * @throw std::domain_error if S is not positive definite, any value in mu is
  *    not finite, nu is not positive, or nu is NaN
  * @throw std::invalid_argument if the length of (each) mu is not equal to the
@@ -76,16 +80,14 @@ multi_student_t_rng(
 
   variate_generator<RNG&, normal_distribution<> > std_normal_rng(
       rng, normal_distribution<>(0, 1));
-  variate_generator<RNG&, gamma_distribution<> > gamma_rng(
-      rng, gamma_distribution<>(nu / 2.0, 2.0 / nu));
 
-  double w = 1.0 / gamma_rng();
+  double w = inv_gamma_rng(nu / 2, nu / 2, rng);
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
     for (int i = 0; i < S.cols(); i++) {
-      z(i) = std::sqrt(w) * std_normal_rng();
+      z(i) = std_normal_rng();
     }
-
+    z *= std::sqrt(w);
     output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixL() * z;
   }
 
