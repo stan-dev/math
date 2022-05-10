@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
-#include <stan/math/prim/fun/inv_Phi_log.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
@@ -23,7 +22,7 @@ namespace math {
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
-inline double inv_Phi_log(const double log_p) {
+inline double inv_Phi_log(double log_p) {
     check_less_or_equal("inv_Phi_log", "Probability variable", log_p, 0.);
 
     if (log_p == NEGATIVE_INFTY) {
