@@ -26,7 +26,7 @@ inline V complex_abs(const std::complex<V>& z) {
   return hypot(z.real(), z.imag());
 }
 }  // namespace internal
-  
+
 /**
  * Metaprogram calculating return type for applying `abs` to an
  * argument of the specified template type.  This struct defines the
@@ -36,7 +36,7 @@ inline V complex_abs(const std::complex<V>& z) {
  * @tparam T argument type
  */
 template <typename T>
-struct abs_return {  
+struct abs_return {
   /**
    * Return type of `abs(T)`.
    */
@@ -48,7 +48,7 @@ struct abs_return {
  * `typename abs_return<T>::type` can be abbreviated to `abs_return_t<T>`.
  *
  * @tparam T type of argument
- */ 
+ */
 template <typename T>
 using abs_return_t = typename abs_return<T>::type;
 
@@ -80,7 +80,8 @@ inline auto abs(T x) {
 }
 
 /**
- * Return the elementwise absolute value of the specified matrix or vector argument.
+ * Return the elementwise absolute value of the specified matrix or vector
+ * argument.
  *
  * @tparam T type of matrix elements
  * @param x argument
@@ -95,7 +96,8 @@ inline auto abs(const Eigen::Matrix<T, R, C>& x) {
 }
 
 /**
- * Return the elementwise absolute value of the specified standard vector argument.
+ * Return the elementwise absolute value of the specified standard vector
+ * argument.
  *
  * @tparam T type of vector elements
  * @param x argument
@@ -109,7 +111,7 @@ inline auto abs(const std::vector<T>& x) {
     y.push_back(abs(xi));
   return y;
 }
-  
+
 }  // namespace math
 }  // namespace stan
 

@@ -5,13 +5,11 @@
 #include <type_traits>
 #include <vector>
 
-
 template <typename V, typename T>
 bool is_type(const T& x) {
   using stan::math::abs;
   return std::is_same<V, T>::value;
 }
-
 
 TEST(mixFun, absTypes) {
   using stan::math::abs;
@@ -35,7 +33,7 @@ TEST(MathFunctions, absIntVec) {
   sv_t a;
   EXPECT_EQ(0, abs(a).size());
 
-  sv_t b = { -1, 2 };
+  sv_t b = {-1, 2};
   EXPECT_EQ(2, abs(b).size());
   EXPECT_EQ(1, abs(b)[0]);
   EXPECT_EQ(2, abs(b)[1]);
@@ -77,7 +75,7 @@ TEST(MathFunctions, absDoubleVec) {
   sv_t a;
   EXPECT_EQ(0, abs(a).size());
 
-  sv_t b = { -1.7, 2.9 };
+  sv_t b = {-1.7, 2.9};
   EXPECT_EQ(2, abs(b).size());
   EXPECT_FLOAT_EQ(1.7, abs(b)[0]);
   EXPECT_FLOAT_EQ(2.9, abs(b)[1]);
@@ -97,9 +95,9 @@ TEST(MathFunctions, absDoubleVec) {
 
 TEST(MathFunctions, abs_complex) {
   using c_t = std::complex<double>;
-  EXPECT_FLOAT_EQ(5.0, abs(c_t(3.0, -4.0)));;
+  EXPECT_FLOAT_EQ(5.0, abs(c_t(3.0, -4.0)));
+  ;
 }
-
 
 TEST(MathFunctions, absComplexVec) {
   using stan::math::abs;
@@ -108,7 +106,7 @@ TEST(MathFunctions, absComplexVec) {
   sv_t a;
   EXPECT_EQ(0, abs(a).size());
 
-  sv_t b = { c_t(3, 4), c_t(-3, 4) };
+  sv_t b = {c_t(3, 4), c_t(-3, 4)};
   EXPECT_EQ(2, abs(b).size());
   EXPECT_FLOAT_EQ(5, abs(b)[0]);
   EXPECT_FLOAT_EQ(5, abs(b)[1]);

@@ -39,10 +39,10 @@ TEST(mixFun, absTests) {
   using svvd_t = std::vector<svd_t>;
   stan::test::expect_ad(f, svvd_t{});
   stan::test::expect_ad(f, svvd_t{svd_t{}});
-  stan::test::expect_ad(f, svvd_t{ svd_t{1.9, 4.8} });
-  stan::test::expect_ad(f, svvd_t{ svd_t{1.9}, svd_t{-13.987} });
-  stan::test::expect_ad(f, svvd_t{ svd_t{1.9, -2.7}, svd_t{-13.987, 8.8} });
-  
+  stan::test::expect_ad(f, svvd_t{svd_t{1.9, 4.8}});
+  stan::test::expect_ad(f, svvd_t{svd_t{1.9}, svd_t{-13.987}});
+  stan::test::expect_ad(f, svvd_t{svd_t{1.9, -2.7}, svd_t{-13.987, 8.8}});
+
   // vector<complex<double>>
   using c_t = std::complex<double>;
   using svc_t = std::vector<c_t>;
@@ -54,9 +54,9 @@ TEST(mixFun, absTests) {
   using svvc_t = std::vector<svc_t>;
   stan::test::expect_ad(f, svvc_t{});
   stan::test::expect_ad(f, svvc_t{{}});
-  stan::test::expect_ad(f, svvc_t{ svc_t{c_t{1.2, -2.3}, c_t{-32.8, 1}} });
-  stan::test::expect_ad(f, svvc_t{ svc_t{c_t{1.2, -2.3}, c_t{-32.8, 1}},
-	svc_t{c_t{9.3, 9.4}, c_t{182, -95}}});
+  stan::test::expect_ad(f, svvc_t{svc_t{c_t{1.2, -2.3}, c_t{-32.8, 1}}});
+  stan::test::expect_ad(f, svvc_t{svc_t{c_t{1.2, -2.3}, c_t{-32.8, 1}},
+                                  svc_t{c_t{9.3, 9.4}, c_t{182, -95}}});
 
   // VectorXd
   using v_t = Eigen::VectorXd;
@@ -152,18 +152,17 @@ TEST(mixFun, absTests) {
   k2 << c_t{1.9, -1.8}, c_t{128.735, 128.734};
   stan::test::expect_ad(f, k2);
   mc_t k6(3, 2);
-  k6 << c_t{1.9, -1.8}, c_t{-128.7, 1.3},
-	c_t{1, 2}, c_t{0.3, -0.5},
-	c_t{-13, 125.7}, c_t{-12.5, -10.5};
+  k6 << c_t{1.9, -1.8}, c_t{-128.7, 1.3}, c_t{1, 2}, c_t{0.3, -0.5},
+      c_t{-13, 125.7}, c_t{-12.5, -10.5};
   stan::test::expect_ad(f, k6);
 
   // vector<VectorXcd>
   using avc_t = std::vector<vc_t>;
   avc_t m0;
   stan::test::expect_ad(f, m0);
-  avc_t m1{ h1 };
+  avc_t m1{h1};
   stan::test::expect_ad(f, m1);
-  avc_t m2{ h1, h2 };
+  avc_t m2{h1, h2};
   stan::test::expect_ad(f, m2);
 
   // vector<RowVectorXcd>
