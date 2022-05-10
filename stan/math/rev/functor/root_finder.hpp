@@ -33,18 +33,18 @@ namespace math {
  * this is updated to the actual number of iterations performed
  * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
  */
-template <
+template <typename SolverFun,
     typename FTuple, typename GuessScalar, typename MinScalar,
     typename MaxScalar, typename... Types,
     require_any_st_var<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr,
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr>
-auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
+auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple, const GuessScalar guess,
                      const MinScalar min, const MaxScalar max, const int digits,
                      std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
-  auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
+  auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(std::forward<Types>(args))...));
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
@@ -52,14 +52,13 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
       *arena_args_tuple);
   // Solve the system
   double theta_dbl = apply(
-      [&f_tuple, &max_iter, digits, guess_val = value_of(guess),
+      [&f_solver, &f_tuple, &max_iter, digits, guess_val = value_of(guess),
        min_val = value_of(min), max_val = value_of(max)](auto&&... vals) {
-        return root_finder_tol(f_tuple, guess_val, min_val, max_val, digits,
+        return root_finder_tol(f_solver, f_tuple, guess_val, min_val, max_val, digits,
                                max_iter, vals...);
       },
       args_vals_tuple);
   double Jf_x;
-  double f_x;
   auto&& f = std::get<0>(f_tuple);
   {
     nested_rev_autodiff nested;
@@ -67,7 +66,6 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
     stan::math::var fx_var = apply(
         [&x_var, &f](auto&&... args) { return f(x_var, std::move(args)...); },
         std::move(args_vals_tuple));
-    f_x = fx_var.val();
     fx_var.grad();
     Jf_x = x_var.adj();
   }
@@ -80,7 +78,6 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
                            [f, arena_args_tuple, Jf_x](auto& ret) mutable {
                              // Eigen::VectorXd eta =
                              // -Jf_x_T_lu_ptr->solve(ret.adj().eval());
-                             double eta = -(ret.adj() / Jf_x);
                              // Contract with Jacobian of f with respect to y
                              // using a nested reverse autodiff pass.
                              {
@@ -91,7 +88,7 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
                                      return eval(f(ret_val, args...));
                                    },
                                    *arena_args_tuple);
-                               x_nrad_.adj() = eta;
+                               x_nrad_.adj() = -(ret.adj() / Jf_x);
                                grad();
                              }
                            });

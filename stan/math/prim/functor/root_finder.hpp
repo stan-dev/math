@@ -45,12 +45,13 @@ inline auto func_with_derivs(Tuple&& f_tuple, Args&&... args) {
  * this is updated to the actual number of iterations performed
  * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
  */
-template <typename FTuple, typename GuessScalar, typename MinScalar,
-          typename MaxScalar, typename... Types,
+template <typename SolverFun, typename FTuple, typename GuessScalar,
+          typename MinScalar, typename MaxScalar, typename... Types,
           require_all_not_st_var<GuessScalar, MinScalar, MaxScalar,
                                  Types...>* = nullptr>
-auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
-                     const MinScalar min, const MaxScalar max, const int digits,
+auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
+                     const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits,
                      std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
@@ -59,13 +60,52 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
   ret_t ret = 0;
   auto f_plus_div = internal::func_with_derivs(f_tuple, args...);
   try {
-    ret = boost::math::tools::halley_iterate(
-        f_plus_div, ret_t(guess), ret_t(min), ret_t(max), digits, max_iter);
+    ret = f_solver(f_plus_div, ret_t(guess), ret_t(min), ret_t(max), digits,
+                   max_iter);
   } catch (const std::exception& e) {
     std::cout << "err: \n" << e.what() << "\n";
     throw e;
   }
   return ret;
+}
+
+template <typename FTuple, typename GuessScalar,
+          typename MinScalar, typename MaxScalar, typename... Types>
+auto root_finder_halley_tol(FTuple&& f_tuple,
+                     const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits,
+                     std::uintmax_t& max_iter, Types&&... args) {
+   return root_finder_tol(
+       [](auto&&... args) {
+         return boost::math::tools::halley_iterate(args...);
+       }, std::forward<FTuple>(f_tuple), guess,
+       min, max, digits, max_iter, std::forward<Types>(args)...);
+}
+
+template <typename FTuple, typename GuessScalar,
+          typename MinScalar, typename MaxScalar, typename... Types>
+auto root_finder_newton_raphson_tol(FTuple&& f_tuple,
+                     const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits,
+                     std::uintmax_t& max_iter, Types&&... args) {
+   return root_finder_tol(
+       [](auto&&... args) {
+         return boost::math::tools::newton_raphson_iterate(args...);
+       }, std::forward<FTuple>(f_tuple), guess,
+       min, max, digits, max_iter, std::forward<Types>(args)...);
+}
+
+template <typename FTuple, typename GuessScalar,
+          typename MinScalar, typename MaxScalar, typename... Types>
+auto root_finder_schroder_tol(FTuple&& f_tuple,
+                     const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits,
+                     std::uintmax_t& max_iter, Types&&... args) {
+   return root_finder_tol(
+       [](auto&&... args) {
+         return boost::math::tools::schroder_iterate(args...);
+       }, std::forward<FTuple>(f_tuple), guess,
+       min, max, digits, max_iter, std::forward<Types>(args)...);
 }
 
 /**
@@ -86,15 +126,51 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
  * initial upper bracket
  * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
  */
-template <typename FTuple, typename GuessScalar, typename MinScalar,
-          typename MaxScalar, typename... Types>
-auto root_finder(FTuple&& f_tuple, const GuessScalar guess, const MinScalar min,
+template <typename SolverFun, typename FTuple, typename GuessScalar,
+          typename MinScalar, typename MaxScalar, typename... Types>
+auto root_finder(SolverFun&& f_solver, FTuple&& f_tuple,
+                 const GuessScalar guess, const MinScalar min,
                  const MaxScalar max, Types&&... args) {
   constexpr int digits = 16;
   std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
-  return root_finder_tol(std::forward<FTuple>(f_tuple), guess, min, max, digits,
+  return root_finder_tol(std::forward<SolverFun>(f_solver),
+                         std::forward<FTuple>(f_tuple), guess, min, max, digits,
                          max_iter, std::forward<Types>(args)...);
 }
+
+template <typename FTuple, typename GuessScalar, typename MinScalar,
+          typename MaxScalar, typename... Types>
+auto root_finder_hailey(FTuple&& f_tuple, const GuessScalar guess,
+                        const MinScalar min, const MaxScalar max,
+                        Types&&... args) {
+  constexpr int digits = 16;
+  std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
+  return root_finder_halley_tol(std::forward<FTuple>(f_tuple), guess,
+      min, max, digits, max_iter, std::forward<Types>(args)...);
+}
+
+template <typename FTuple, typename GuessScalar, typename MinScalar,
+          typename MaxScalar, typename... Types>
+auto root_finder_newton_raphson(FTuple&& f_tuple, const GuessScalar guess,
+                        const MinScalar min, const MaxScalar max,
+                        Types&&... args) {
+  constexpr int digits = 16;
+  std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
+  return root_finder_newton_raphson_tol(std::forward<FTuple>(f_tuple), guess,
+      min, max, digits, max_iter, std::forward<Types>(args)...);
+}
+
+template <typename FTuple, typename GuessScalar, typename MinScalar,
+          typename MaxScalar, typename... Types>
+auto root_finder_schroder(FTuple&& f_tuple, const GuessScalar guess,
+                        const MinScalar min, const MaxScalar max,
+                        Types&&... args) {
+  constexpr int digits = 16;
+  std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
+  return root_finder_schroder_tol(std::forward<FTuple>(f_tuple), guess,
+      min, max, digits, max_iter, std::forward<Types>(args)...);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

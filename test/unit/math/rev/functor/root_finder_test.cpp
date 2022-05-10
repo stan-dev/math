@@ -41,7 +41,7 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   };
   Eigen::VectorXd vals(3);
   // p, alpha, beta
-  vals << 0.4, 1.2, 1.9;
+  vals << 0.4, .5, .5;
   double fx = 0;
   Eigen::VectorXd finit_grad_fx(3);
   stan::math::finite_diff_gradient(func, vals, fx, finit_grad_fx, 1e-14);
@@ -83,9 +83,9 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   auto full_f = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](
                     auto&& alpha, auto&& beta, auto&& p) {
     std::uintmax_t max_its = 1000;
-    return stan::math::root_finder_tol(
-        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, 16,
-        max_its, alpha, beta, p);
+    return stan::math::root_finder_hailey(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max,
+        alpha, beta, p);
   };
   auto func2 = [&full_f](auto&& vals) {
     auto p = vals(0);
@@ -94,7 +94,13 @@ TEST(RevFunctor, root_finder_beta_cdf) {
     return full_f(alpha, beta, p);
   };
   Eigen::VectorXd grad_fx(3);
-  stan::math::gradient(func2, vals, fx, grad_fx);
+  Eigen::Matrix<stan::math::var, -1, 1> var_vec(vals);
+  stan::math::var fxvar = func2(var_vec);
+  fxvar.grad();
+  grad_fx = var_vec.adj();
+  fx = fxvar.val();
+  std::cout << "fxvar adj:" << fxvar.adj() << "\n";
+  //stan::math::gradient(func2, vals, fx, grad_fx);
   std::cout << "--- Auto Diff----\n";
   std::cout << "fx: " << fx;
   std::cout << "\ngrads: \n"
@@ -105,14 +111,21 @@ TEST(RevFunctor, root_finder_beta_cdf) {
             << "\n"
                "beta: "
             << grad_fx(2) << "\n";
-
   Eigen::VectorXd diff_grad_fx = finit_grad_fx - grad_fx;
-  std::cout << "\ngrad diffs: \n"
-            << "p: " << diff_grad_fx(0)
+  std::cout << "--- grad diffs----\n";
+  std::cout << "p: " << diff_grad_fx(0)
             << "\n"
                "alpha: "
             << diff_grad_fx(1)
             << "\n"
                "beta: "
             << diff_grad_fx(2) << "\n";
+
+  double known_p_grad = 1.493914820513846;
+  double known_alpha_grad = 0.948540678312004;
+  double known_beta_grad = -0.7464041618483364;
+  std::cout << "--- Auto Diff----\n";
+  std::cout << "p: " << grad_fx(0) - known_p_grad << "\n" <<
+   "alpha: " << grad_fx(1) - known_alpha_grad << "\n" <<
+   "beta: " << grad_fx(2) - known_beta_grad << "\n";
 }
