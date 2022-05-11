@@ -17,8 +17,7 @@ licensed under the Apache 2.0 license. This dependency implies an
 additional restriction as compared to the new BSD license alone. The
 Apache 2.0 license is incompatible with GPL-2 licensed code if
 distributed as a unitary binary. You may refer to the Apache 2.0
-evaluation page on the [Stan Math
-wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
+evaluation page on the [Stan wiki](https://github.com/stan-dev/stan/wiki/Stan-Licensing).
 
 Required Libraries
 ------------------
