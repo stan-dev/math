@@ -84,8 +84,8 @@ TEST(RevFunctor, root_finder_beta_cdf) {
                     auto&& alpha, auto&& beta, auto&& p) {
     std::uintmax_t max_its = 1000;
     return stan::math::root_finder_hailey(
-        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max,
-        alpha, beta, p);
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha,
+        beta, p);
   };
   auto func2 = [&full_f](auto&& vals) {
     auto p = vals(0);
@@ -100,7 +100,7 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   grad_fx = var_vec.adj();
   fx = fxvar.val();
   std::cout << "fxvar adj:" << fxvar.adj() << "\n";
-  //stan::math::gradient(func2, vals, fx, grad_fx);
+  // stan::math::gradient(func2, vals, fx, grad_fx);
   std::cout << "--- Auto Diff----\n";
   std::cout << "fx: " << fx;
   std::cout << "\ngrads: \n"
@@ -125,7 +125,7 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   double known_alpha_grad = 0.948540678312004;
   double known_beta_grad = -0.7464041618483361;
   std::cout << "--- Auto Diff----\n";
-  std::cout << "p: " << grad_fx(0) - known_p_grad << "\n" <<
-   "alpha: " << grad_fx(1) - known_alpha_grad << "\n" <<
-   "beta: " << grad_fx(2) - known_beta_grad << "\n";
+  std::cout << "p: " << grad_fx(0) - known_p_grad << "\n"
+            << "alpha: " << grad_fx(1) - known_alpha_grad << "\n"
+            << "beta: " << grad_fx(2) - known_beta_grad << "\n";
 }

@@ -21,10 +21,23 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * Return the log of the multivariate Student t distribution
- * at the specified arguments.
+ * The log of the multivariate student t density for the given y, mu,
+ * nu, and scale matrix.
  *
- * @tparam propto Carry out calculations up to a proportion
+ * This version of the function is vectorized on y and mu.
+ *
+ * @param y scalar vector of random variates
+ * @param nu scalar degrees of freedom
+ * @param mu location vector
+ * @param Sigma scale matrix
+ * @return The log of the multivariate student t density.
+ * @throw std::domain_error if LL' is not square, not symmetric,
+ * or not semi-positive definite.
+ * @tparam T_y Type of scalar.
+ * @tparam T_dof Type of scalar.
+ * @tparam T_loc Type of location.
+ * @tparam T_scale Type of scale.
+ * @return log probability of the multivariate student t distribution.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
@@ -38,59 +51,46 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   static const char* function = "multi_student_t";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
+  check_finite(function, "Degrees of freedom parameter", nu);
 
-  if (is_inf(nu)) {
-    return multi_normal_log(y, mu, Sigma);
-  }
-
-  size_t number_of_y = size_mvt(y);
-  size_t number_of_mu = size_mvt(mu);
-  if (number_of_y == 0 || number_of_mu == 0) {
-    return 0;
-  }
+  size_t num_y = size_mvt(y);
+  size_t num_mu = size_mvt(mu);
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);
-
-  int size_y = y_vec[0].size();
-  int size_mu = mu_vec[0].size();
-  if (size_vec > 1) {
-    int size_y_old = size_y;
-    int size_y_new;
-    for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      int size_y_new = y_vec[i].size();
-      check_size_match(
-          function, "Size of one of the vectors of the random variable",
-          size_y_new, "Size of another vector of the random variable",
-          size_y_old);
-      size_y_old = size_y_new;
-    }
-    int size_mu_old = size_mu;
-    int size_mu_new;
-    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      int size_mu_new = mu_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the location variable",
-                       size_mu_new,
-                       "Size of another vector of "
-                       "the location variable",
-                       size_mu_old);
-      size_mu_old = size_mu_new;
-    }
-    (void)size_y_old;
-    (void)size_y_new;
-    (void)size_mu_old;
-    (void)size_mu_new;
+  if (size_vec == 0) {
+    return 0;
   }
 
-  check_size_match(function, "Size of random variable", size_y,
-                   "size of location parameter", size_mu);
-  check_size_match(function, "Size of random variable", size_y,
+  int num_dims = y_vec[0].size();
+  if (num_dims == 0) {
+    return 0;
+  }
+
+  for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
+    check_size_match(
+        function, "Size of one of the vectors of the random variable",
+        y_vec[i].size(), "Size of another vector of the random variable",
+        y_vec[i - 1].size());
+  }
+
+  for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+    check_size_match(function,
+                     "Size of one of the vectors "
+                     "of the location variable",
+                     mu_vec[i].size(),
+                     "Size of another vector of "
+                     "the location variable",
+                     mu_vec[i - 1].size());
+  }
+
+  check_size_match(function, "Size of random variable", num_dims,
+                   "size of location parameter", mu_vec[0].size());
+  check_size_match(function, "Size of random variable", num_dims,
                    "rows of scale parameter", Sigma.rows());
-  check_size_match(function, "Size of random variable", size_y,
+  check_size_match(function, "Size of random variable", num_dims,
                    "columns of scale parameter", Sigma.cols());
 
   for (size_t i = 0; i < size_vec; i++) {
@@ -103,20 +103,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
-  if (size_y == 0) {
-    return 0;
-  }
-
   lp_type lp(0);
 
   if (include_summand<propto, T_dof>::value) {
-    lp += lgamma(0.5 * (nu + size_y)) * size_vec;
+    lp += lgamma(0.5 * (nu + num_dims)) * size_vec;
     lp -= lgamma(0.5 * nu) * size_vec;
-    lp -= (0.5 * size_y) * log(nu) * size_vec;
+    lp -= (0.5 * num_dims) * log(nu) * size_vec;
   }
 
   if (include_summand<propto>::value) {
-    lp -= (0.5 * size_y) * LOG_PI * size_vec;
+    lp -= (0.5 * num_dims) * LOG_PI * size_vec;
   }
 
   using Eigen::Array;
@@ -133,7 +129,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
       sum_lp_vec
           += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col) / nu);
     }
-    lp -= 0.5 * (nu + size_y) * sum_lp_vec;
+    lp -= 0.5 * (nu + num_dims) * sum_lp_vec;
   }
   return lp;
 }

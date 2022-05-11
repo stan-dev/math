@@ -339,14 +339,17 @@ TEST(StanMath_integrate_1d_impl_prim, TestThrows) {
 TEST(StanMath_integrate_1d_impl_prim, test_integer_arguments) {
   double v;
   EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_impl(integrate_1d_impl_test::f2{}, 0, 1, 0.0,
+      v = stan::math::integrate_1d_impl(integrate_1d_impl_test::f2{}, 0, 1,
+                                        std::sqrt(stan::math::EPSILON),
                                         integrate_1d_impl_test::msgs));
   EXPECT_NO_THROW(
       v = stan::math::integrate_1d_impl(integrate_1d_impl_test::f2{}, 0.0, 1,
-                                        0.0, integrate_1d_impl_test::msgs));
+                                        std::sqrt(stan::math::EPSILON),
+                                        integrate_1d_impl_test::msgs));
   EXPECT_NO_THROW(
       v = stan::math::integrate_1d_impl(integrate_1d_impl_test::f2{}, 0, 1.0,
-                                        0.0, integrate_1d_impl_test::msgs));
+                                        std::sqrt(stan::math::EPSILON),
+                                        integrate_1d_impl_test::msgs));
 }
 
 TEST(StanMath_integrate_1d_impl_prim, test1) {
