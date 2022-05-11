@@ -20,10 +20,11 @@ namespace math {
  */
 inline var inv_Phi_log(const var& log_p) {
   auto precomp_exp = to_arena(as_array_or_scalar(exp(log_p.val())));
-  return make_callback_var(inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
-    log_p.adj() += precomp_exp * vi.adj() * SQRT_TWO_PI
-                   / std::exp(-0.5 * vi.val() * vi.val());
-  });
+  return make_callback_var(
+      inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
+        log_p.adj() += precomp_exp * vi.adj() * SQRT_TWO_PI
+                       / std::exp(-0.5 * vi.val() * vi.val());
+      });
 }
 
 /**
@@ -36,11 +37,11 @@ inline var inv_Phi_log(const var& log_p) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi_log(const T& log_p) {
   auto precomp_exp = to_arena(as_array_or_scalar(exp(log_p.val())));
-  return make_callback_var(inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
-    log_p.adj().array() += precomp_exp * vi.adj().array()
-                           * SQRT_TWO_PI
-                           / (-0.5 * vi.val().array().square()).exp();
-  });
+  return make_callback_var(
+      inv_Phi_log(log_p.val()), [log_p, precomp_exp](auto& vi) mutable {
+        log_p.adj().array() += precomp_exp * vi.adj().array() * SQRT_TWO_PI
+                               / (-0.5 * vi.val().array().square()).exp();
+      });
 }
 
 }  // namespace math
