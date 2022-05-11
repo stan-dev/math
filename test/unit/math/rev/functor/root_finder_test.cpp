@@ -44,7 +44,7 @@ TEST(RevFunctor, root_finder_beta_cdf) {
   vals << 0.4, .5, .5;
   double fx = 0;
   Eigen::VectorXd finit_grad_fx(3);
-  stan::math::finite_diff_gradient(func, vals, fx, finit_grad_fx, 1e-14);
+  stan::math::finite_diff_gradient(func, vals, fx, finit_grad_fx, 1e-3);
   std::cout << "--- Finit Diff----\n";
   std::cout << "fx: " << fx;
   std::cout << "\ngrads: \n"
@@ -121,9 +121,9 @@ TEST(RevFunctor, root_finder_beta_cdf) {
                "beta: "
             << diff_grad_fx(2) << "\n";
 
-  double known_p_grad = 1.493914820513846;
+  double known_p_grad = 1.493916082370778;
   double known_alpha_grad = 0.948540678312004;
-  double known_beta_grad = -0.7464041618483364;
+  double known_beta_grad = -0.7464041618483361;
   std::cout << "--- Auto Diff----\n";
   std::cout << "p: " << grad_fx(0) - known_p_grad << "\n" <<
    "alpha: " << grad_fx(1) - known_alpha_grad << "\n" <<
