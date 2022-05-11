@@ -23,8 +23,8 @@ namespace math {
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi_log(double log_p) {
-   check_not_nan("inv_Phi_log", "Log probability variable", log_p);
-   check_less_or_equal("inv_Phi_log", "Probability variable", log_p, 0);
+  check_not_nan("inv_Phi_log", "Log probability variable", log_p);
+  check_less_or_equal("inv_Phi_log", "Probability variable", log_p, 0);
 
   if (log_p == NEGATIVE_INFTY) {
     return NEGATIVE_INFTY;
@@ -32,7 +32,6 @@ inline double inv_Phi_log(double log_p) {
   if (log_p == 0) {
     return INFTY;
   }
-
 
   static const double log_a[8]
       = {1.2199838032983212, 4.8914137334471356, 7.5865960847956080,
