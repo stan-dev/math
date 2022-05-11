@@ -17,8 +17,8 @@ namespace stan {
 namespace math {
 
 /**
- * The inverse of the unit normal cumulative distribution function evaluated at the 
- * log probability.
+ * The inverse of the unit normal cumulative distribution function evaluated at
+ * the log probability.
  *
  * @param p argument between -Inf and 0 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
@@ -140,8 +140,8 @@ struct inv_Phi_log_fun {
 };
 
 /**
- * A vectorized version of inv_Phi_log() that accepts std::vectors, Eigen Matrix/Array objects,
- * or expressions, and containers of these.
+ * A vectorized version of inv_Phi_log() that accepts std::vectors, Eigen
+ * Matrix/Array objects, or expressions, and containers of these.
  *
  * @tparam T type of container
  * @param x container
