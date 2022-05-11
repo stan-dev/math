@@ -11,9 +11,11 @@ namespace stan {
 namespace math {
 
 /**
- * The inverse of unit normal cumulative density function.
+ * The inverse of unit normal cumulative density function evaluated
+ * at the log probability
  *
- * The derivative is the reciprocal of unit normal density function,
+ * The derivative is the reciprocal of unit normal density function
+ * adjusted by the derivative of the exponentiated log input
  *
  * @param log_p log probability
  * @return the unit normal inverse cdf evaluated at log_p
@@ -31,7 +33,7 @@ inline var inv_Phi_log(const var& log_p) {
  * Return the elementwise inverse of unit normal cumulative density function.
  *
  * @tparam T a `var_value` with inner Eigen type
- * @param p Probability vector
+ * @param p log probability vector
  * @return Elementwise unit normal inverse cdf
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>

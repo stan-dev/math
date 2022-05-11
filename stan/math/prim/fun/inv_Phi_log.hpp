@@ -17,9 +17,10 @@ namespace stan {
 namespace math {
 
 /**
- * The inverse of the unit normal cumulative distribution function.
+ * The inverse of the unit normal cumulative distribution function evaluated at the 
+ * log probability.
  *
- * @param p argument between 0 and 1 inclusive
+ * @param p argument between -Inf and 0 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi_log(double log_p) {
@@ -124,12 +125,12 @@ inline double inv_Phi_log(double log_p) {
 }
 
 /**
- * Structure to wrap inv_Phi() so it can be vectorized.
+ * Structure to wrap inv_Phi_log() so it can be vectorized.
  *
  * @tparam T type of variable
- * @param x variable in range [0, 1]
- * @return Inverse unit normal CDF of x.
- * @throw std::domain_error if x is not between 0 and 1.
+ * @param x variable in range [-Inf, 0]
+ * @return inverse of the unit normal CDF of x
+ * @throw std::domain_error if x is not less than or equal to 0
  */
 struct inv_Phi_log_fun {
   template <typename T>
@@ -139,12 +140,13 @@ struct inv_Phi_log_fun {
 };
 
 /**
- * Vectorized version of inv_Phi_log().
+ * A vectorized version of inv_Phi_log() that accepts std::vectors, Eigen Matrix/Array objects,
+ * or expressions, and containers of these.
  *
  * @tparam T type of container
- * @param x variables in range [0, 1]
- * @return Inverse unit normal CDF of each value in x.
- * @throw std::domain_error if any value is not between 0 and 1.
+ * @param x container
+ * @return inverse unit normal CDF of each value in x
+ * @throw std::domain_error if x is not less than or equal to 0
  */
 template <
     typename T,
