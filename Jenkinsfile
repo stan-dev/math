@@ -80,7 +80,6 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
@@ -255,6 +254,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
+                            args '--cap-add SYS_PTRACE'
                         }
                     }
                     when {
@@ -264,7 +264,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             runTests("test/unit/math/rev", false)
                             runTests("test/unit/math/fwd", false)
@@ -277,6 +277,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
+                            args '--cap-add SYS_PTRACE'
                         }
                     }
                     when {
@@ -286,9 +287,9 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", true)
+                            runTests("test/unit/math/mix", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -298,6 +299,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
+                            args '--cap-add SYS_PTRACE'
                         }
                     }
                     when {
@@ -307,7 +309,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
@@ -464,26 +466,6 @@ pipeline {
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    when {
-                        allOf {
-                            anyOf {
-                                branch 'develop'
-                                branch 'master'
-                                expression { params.run_win_tests }
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit", true, false)
-                    }
                 }
             }
         }
