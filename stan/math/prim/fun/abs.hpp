@@ -62,28 +62,28 @@ struct abs_fun {
  * @param x argument
  * @return Absolute value of each variable in the container.
  */
- template <typename Container,
-           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-           require_not_var_matrix_t<Container>* = nullptr,
-           require_not_stan_scalar_t<Container>* = nullptr>
- inline auto abs(const Container& x) {
-   return apply_scalar_unary<abs_fun, Container>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_not_stan_scalar_t<Container>* = nullptr>
+inline auto abs(const Container& x) {
+  return apply_scalar_unary<abs_fun, Container>::apply(x);
 }
 
- /**
-  * Version of `abs()` that accepts std::vectors, Eigen Matrix/Array objects
-  * or expressions, and containers of these.
-  *
-  * @tparam Container Type of x
-  * @param x argument
-  * @return Absolute value of each variable in the container.
-  */
- template <typename Container,
-           require_container_st<std::is_arithmetic, Container>* = nullptr>
- inline auto abs(const Container& x) {
-   return apply_vector_unary<Container>::apply(
-       x, [&](const auto& v) { return v.array().abs(); });
- }
+/**
+ * Version of `abs()` that accepts std::vectors, Eigen Matrix/Array objects
+ * or expressions, and containers of these.
+ *
+ * @tparam Container Type of x
+ * @param x argument
+ * @return Absolute value of each variable in the container.
+ */
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto abs(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [&](const auto& v) { return v.array().abs(); });
+}
 
 namespace internal {
 /**

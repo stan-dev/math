@@ -19,9 +19,7 @@ TEST(mixFun, absBasics) {
 }
 
 TEST(mixFun, abs) {
-  auto f = [](const auto& x) {
-    return stan::math::abs(x);
-  };
+  auto f = [](const auto& x) { return stan::math::abs(x); };
   stan::test::expect_common_nonzero_unary(f);
   // 0 (no derivative at 0)
   stan::test::expect_value(f, 0);
@@ -43,7 +41,6 @@ TEST(mixFun, abs) {
       stan::test::expect_ad(f, std::complex<double>(re, im));
     }
   }
-
 
   // vector<double>
   using svd_t = std::vector<double>;
