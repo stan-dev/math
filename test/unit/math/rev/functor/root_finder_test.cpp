@@ -1,6 +1,10 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/distributions/beta.hpp>
+#include <boost/math/special_functions/beta.hpp>
+#include <boost/math/special_functions/hypergeometric_pFq.hpp>
+#include <boost/math/special_functions/polygamma.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 /*
 TEST(RevFunctor, root_finder) {
   using stan::math::root_finder;
@@ -39,9 +43,12 @@ TEST(RevFunctor, root_finder_beta_cdf) {
     boost::math::beta_distribution<decltype(beta)> my_beta(alpha, beta);
     return boost::math::quantile(my_beta, p);
   };
+  double p = 0.4;
+  double a = 0.5;
+  double b = 0.5;
   Eigen::VectorXd vals(3);
   // p, alpha, beta
-  vals << 0.4, .5, .5;
+  vals << p, a, b;
   double fx = 0;
   Eigen::VectorXd finit_grad_fx(3);
   stan::math::finite_diff_gradient(func, vals, fx, finit_grad_fx, 1e-3);
@@ -120,12 +127,186 @@ TEST(RevFunctor, root_finder_beta_cdf) {
             << "\n"
                "beta: "
             << diff_grad_fx(2) << "\n";
+  auto deriv_p = [](auto& p, auto& a, auto& b) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::beta;
+    return beta(a, b) * pow(1 - ibeta_inv(a, b, p), (1 - b))
+           * pow(ibeta_inv(a, b, p), (1 - a));
+  };
+  auto deriv_a = [](auto& p, auto& a, auto& b) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::ibeta;
+    using boost::math::beta;
+    using boost::math::tgamma;
+    using boost::math::hypergeometric_pFq;
+    using boost::math::beta;
+    using boost::math::polygamma;
+    using std::log;
+    double w = ibeta_inv(a, b, p);
+    return pow(1 - w, (1 - b)) * pow(w, (1 - a)) * (pow(w, a) *
+     pow(tgamma(a), 2) *
+     (hypergeometric_pFq({a, a, 1 - b}, {1 + a, 1 + a}, w) / (tgamma(1 + a) * tgamma(1 + a))) - beta(a, b) * ibeta(a, b, w) * (log(w) - polygamma(0, a) + polygamma(0, a + b)));
+  };
 
-  double known_p_grad = 1.493916082370778;
-  double known_alpha_grad = 0.948540678312004;
-  double known_beta_grad = -0.7464041618483361;
-  std::cout << "--- Auto Diff----\n";
+  auto deriv_b = [](auto& p, auto& a, auto& b) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::ibeta;
+    using boost::math::beta;
+    using boost::math::tgamma;
+    using boost::math::hypergeometric_pFq;
+    using boost::math::beta;
+    using boost::math::polygamma;
+    using std::log;
+    return pow(1 - ibeta_inv(a, b, p), -b) * (-1 + ibeta_inv(a, b, p))
+           * pow(ibeta_inv(a, b, p), (1 - a))
+           * (pow(tgamma(b), 2)
+                  * (hypergeometric_pFq({b, b, 1 - a}, {1 + b, 1 + b},
+                                       1 - ibeta_inv(a, b, p))/ (tgamma(1 + b) * tgamma(1 + b)))
+                  * pow(1 - ibeta_inv(a, b, p), b)
+              - beta(b, a, 1 - ibeta_inv(a, b, p))
+                    * (log(1 - ibeta_inv(a, b, p)) - polygamma(0, b)
+                       + polygamma(0, a + b)));
+  };
+  double known_p_grad = deriv_p(p, a, b);
+  double known_alpha_grad = deriv_a(p, a, b);
+  double known_beta_grad = deriv_b(p, a, b);
+  std::cout << "--- Mathematica Calculate Grad----\n";
+  std::cout << "p: " << known_p_grad << "\n"
+            << "alpha: " << known_alpha_grad << "\n"
+            << "beta: " << known_beta_grad << "\n";
+  std::cout << "--- Mathematica Calculate Grad Diff----\n";
   std::cout << "p: " << grad_fx(0) - known_p_grad << "\n"
             << "alpha: " << grad_fx(1) - known_alpha_grad << "\n"
             << "beta: " << grad_fx(2) - known_beta_grad << "\n";
+}
+
+template <size_t... I>
+inline constexpr auto make_index_tuple(const std::index_sequence<I...>&) {
+  return std::make_tuple(I...);
+}
+template <typename FTuple, typename FGrad, typename... Args>
+void check_vs_known_grads(FTuple&& grad_tuple, FGrad&& f, double tolerance, Args&&... args) {
+  try{
+    const stan::math::nested_rev_autodiff nested;
+    auto var_tuple = std::make_tuple(stan::math::var(args)...);
+    auto arg_num_tuple = stan::math::apply([&args...](auto&&... nums) {
+      return std::make_tuple(std::make_tuple(args, nums)...);
+    }, make_index_tuple(std::make_index_sequence<sizeof...(args)>()));
+    auto ret = stan::math::apply([&f](auto&&... var_args) {
+      return f(var_args...);
+    }, var_tuple);
+    ret.grad();
+    auto grad_val_tuple = stan::math::apply([&args...](auto&&... grad_funcs) {
+      return std::make_tuple(grad_funcs(args...)...);
+    }, grad_tuple);
+    auto adj_tuple = stan::math::apply([](auto&&... var_arg) {
+      return std::make_tuple(var_arg.adj()...);
+    }, var_tuple);
+    stan::math::for_each([tolerance](auto&& grad, auto&& adj, auto&& num_helper) {
+      EXPECT_NEAR(grad, adj, tolerance) <<
+      "Diff: (" << grad - adj << ")\nWith arg #" << std::get<1>(num_helper) << " (" << std::get<0>(num_helper) << ")";
+    }, grad_val_tuple, adj_tuple, arg_num_tuple);
+  } catch (const std::exception& e) {
+    stan::math::recover_memory();
+  }
+  stan::math::recover_memory();
+}
+TEST(RevFunctor, root_finder_beta_cdf2) {
+  auto beta_pdf_deriv = [](auto&& x, auto&& a, auto&& b, auto&& p) {
+    using stan::math::lgamma;
+    using stan::math::pow;
+    double beta_ab = boost::math::beta(a, b);
+    auto val = ((-1 + a) * pow(1 - x, -1 + b) * pow(x, -2 + a)) / beta_ab
+     - ((-1 + b) * pow(1 - x, -2 + b) * pow(x, -1 + a)) / beta_ab;
+    return val;
+  };
+  auto beta_pdf = [](auto&& x, auto&& a, auto&& b, auto&& p) {
+    using stan::math::lgamma;
+    using stan::math::pow;
+    auto val = (pow(1 - x, -1 + b) * pow(x, -1 + a)) / boost::math::beta(a, b);
+    return val;
+  };
+
+  auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::beta_cdf(x, alpha, beta) - p;
+  };
+  constexpr double guess = .5;
+  constexpr double min = 0;
+  constexpr double max = 1;
+  auto f_hailey = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](
+                    auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::root_finder_hailey(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha,
+        beta, p);
+  };
+  auto f_newton = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](
+                    auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::root_finder_newton_raphson(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha,
+        beta, p);
+  };
+  auto f_schroder = [&f, &beta_pdf_deriv, &beta_pdf, guess, min, max](
+                    auto&& alpha, auto&& beta, auto&& p) {
+    return stan::math::root_finder_schroder(
+        std::make_tuple(f, beta_pdf, beta_pdf_deriv), guess, min, max, alpha,
+        beta, p);
+  };
+
+  auto deriv_a = [](auto&& a, auto&& b, auto&& p) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::ibeta;
+    using boost::math::beta;
+    using boost::math::tgamma;
+    using boost::math::hypergeometric_pFq;
+    using boost::math::beta;
+    using boost::math::polygamma;
+    using std::log;
+    double w = ibeta_inv(a, b, p);
+    return pow(1 - w, (1 - b)) * pow(w, (1 - a)) * (pow(w, a) *
+     pow(tgamma(a), 2) *
+     (hypergeometric_pFq({a, a, 1 - b}, {1 + a, 1 + a}, w) / (tgamma(1 + a) * tgamma(1 + a))) - beta(a, b) * ibeta(a, b, w) * (log(w) - polygamma(0, a) + polygamma(0, a + b)));
+  };
+  auto deriv_b = [](auto&& a, auto&& b, auto&& p) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::ibeta;
+    using boost::math::beta;
+    using boost::math::tgamma;
+    using boost::math::hypergeometric_pFq;
+    using boost::math::beta;
+    using boost::math::polygamma;
+    using std::log;
+    return pow(1 - ibeta_inv(a, b, p), -b) * (-1 + ibeta_inv(a, b, p))
+           * pow(ibeta_inv(a, b, p), (1 - a))
+           * (pow(tgamma(b), 2)
+                  * (hypergeometric_pFq({b, b, 1 - a}, {1 + b, 1 + b},
+                                       1 - ibeta_inv(a, b, p))/ (tgamma(1 + b) * tgamma(1 + b)))
+                  * pow(1 - ibeta_inv(a, b, p), b)
+              - beta(b, a, 1 - ibeta_inv(a, b, p))
+                    * (log(1 - ibeta_inv(a, b, p)) - polygamma(0, b)
+                       + polygamma(0, a + b)));
+  };
+  auto deriv_p = [](auto&& a, auto&& b, auto&& p) {
+    using std::pow;
+    using boost::math::ibeta_inv;
+    using boost::math::beta;
+    return beta(a, b) * pow(1 - ibeta_inv(a, b, p), (1 - b))
+           * pow(ibeta_inv(a, b, p), (1 - a));
+  };
+  for (double a = .1; a < .9; a += .1) {
+    for (double b = .1; b < .9; b += .1) {
+      for (double p = .1; p < .9; p += .1) {
+        check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder, 5e-4, a, b, p);
+        if (::testing::Test::HasFailure()) {
+          std::cout << "--\na: " << a << "\nb: " << b << "\np: " << p << "\n";
+        }
+      }
+    }
+  }
+
+
 }
