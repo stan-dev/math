@@ -78,65 +78,85 @@ TEST(mixFun, abs) {
   using v_t = Eigen::VectorXd;
   v_t a0(0);
   stan::test::expect_ad(f, a0);
+  stan::test::expect_ad_matvar(f, a0);
   v_t a1(1);
   a1 << 1.9;
   stan::test::expect_ad(f, a1);
+  stan::test::expect_ad_matvar(f, a1);
   v_t a2(2);
   a2 << 1.9, -2.3;
   stan::test::expect_ad(f, a2);
+  stan::test::expect_ad_matvar(f, a2);
 
   // RowVectorXd
   using rv_t = Eigen::RowVectorXd;
   rv_t b0(0);
   stan::test::expect_ad(f, b0);
+  stan::test::expect_ad_matvar(f, b0);
   rv_t b1(1);
   b1 << 1.9;
   stan::test::expect_ad(f, b1);
+  stan::test::expect_ad_matvar(f, b1);
   rv_t b2(2);
   b2 << 1.9, -2.3;
   stan::test::expect_ad(f, b2);
+  stan::test::expect_ad_matvar(f, b2);
 
   // MatrixXd
   using m_t = Eigen::MatrixXd;
   m_t c0(0, 0);
   stan::test::expect_ad(f, c0);
+  stan::test::expect_ad_matvar(f, c0);
   m_t c0i(0, 2);
   stan::test::expect_ad(f, c0i);
+  stan::test::expect_ad_matvar(f, c0i);
   m_t c0ii(2, 0);
   stan::test::expect_ad(f, c0ii);
+  stan::test::expect_ad_matvar(f, c0ii);
   m_t c2(2, 1);
   c2 << 1.3, -2.9;
   stan::test::expect_ad(f, c2);
+  stan::test::expect_ad_matvar(f, c2);
   m_t c6(3, 2);
   c6 << 1.3, 2.9, -13.456, 1.898, -0.01, 1.87e21;
   stan::test::expect_ad(f, c6);
+  stan::test::expect_ad_matvar(f, c6);
 
   // vector<VectorXd>
   using av_t = std::vector<Eigen::VectorXd>;
   av_t d0;
   stan::test::expect_ad(f, d0);
+  stan::test::expect_ad_matvar(f, d0);
   av_t d1{a0};
   stan::test::expect_ad(f, d1);
+  stan::test::expect_ad_matvar(f, d1);
   av_t d2{a1, a2};
   stan::test::expect_ad(f, d2);
+  stan::test::expect_ad_matvar(f, d2);
 
   // vector<RowVectorXd>
   using arv_t = std::vector<Eigen::RowVectorXd>;
   arv_t e0;
   stan::test::expect_ad(f, e0);
+  stan::test::expect_ad_matvar(f, e0);
   arv_t e1{b0};
   stan::test::expect_ad(f, e1);
+  stan::test::expect_ad_matvar(f, e1);
   arv_t e2{b1, b2};
   stan::test::expect_ad(f, e2);
+  stan::test::expect_ad_matvar(f, e2);
 
   // vector<MatrixXd>
   using am_t = std::vector<Eigen::MatrixXd>;
   am_t g0;
   stan::test::expect_ad(f, g0);
+  stan::test::expect_ad_matvar(f, g0);
   am_t g1{c0};
   stan::test::expect_ad(f, g1);
+  stan::test::expect_ad_matvar(f, g1);
   am_t g2{c2, c6};
   stan::test::expect_ad(f, g2);
+  stan::test::expect_ad_matvar(f, g2);
 
   // VectorXcd
   using vc_t = Eigen::VectorXcd;
