@@ -281,27 +281,27 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
  *
  * This overload handles var parameters.
  *
- * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
- * \(y\)) is calculated given the solution as follows. Since
- * \[
+ * The Jacobian \f$J_{xy}\f$ (i.e., Jacobian of unknown \f$x\f$ w.r.t. the parameter
+ * \f$y\f$ is calculated given the solution as follows. Since
+ * \f[
  *   f(x, y) = 0,
- * \]
- * we have (\(J_{pq}\) being the Jacobian matrix \(\tfrac {dq} {dq}\))
- * \[
+ * \f]
+ * we have \f$J_{pq}\f$ being the Jacobian matrix \f$\tfrac {dq} {dq}\f$
+ * \f[
  *   - J_{fx} J_{xy} = J_{fy},
- * \]
- * and therefore \(J_{xy}\) can be solved from system
- * \[
+ * \f]
+ * and therefore \f$J_{xy}\f$ can be solved from system
+ * \f[
  *  - J_{fx} J_{xy} = J_{fy}.
- * \]
- * Let \(eta\) be the adjoint with respect to \(x\); then to calculate
- * \[
+ * \f]
+ * Let \f$eta\f$ be the adjoint with respect to \f$x\f$; then to calculate
+ * \f[
  *   \eta J_{xy},
- * \]
+ * \f]
  * we solve
- * \[
+ * \f[
  *   - (\eta J_{fx}^{-1}) J_{fy}.
- * \]
+ * \f]
  *
  * @tparam F type of equation system function
  * @tparam T type of elements in the x vector

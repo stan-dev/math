@@ -17,13 +17,13 @@ namespace math {
  * The cumulative sum is of the same type as the input and
  * has values defined by
  *
- * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
+ * `x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) `
  *
  * @tparam EigVec type derived from `Eigen::EigenBase` or a `var_value<T>` with
  *  `T` deriving from `Eigen::EigenBase` with one compile time dimension
  *   equal to 1
  *
- * @param m Vector of values.
+ * @param x Vector of values.
  * @return Cumulative sum of values.
  */
 template <typename EigVec, require_rev_vector_t<EigVec>* = nullptr>

@@ -26,7 +26,7 @@ static const std::string indexing_rev_global_atomic_kernel_code = STRINGIFY(
      * @param[in,out] adj adjoint to increment
      * @param index
      * @param res adjoint of the result of indexing
-     * @param batch_size Number of matrices in the batch.
+     * @param size Number of matrices in the batch.
      * @note Code is a <code>const char*</code> held in
      * <code>add_batch_kernel_code.</code>
      */
@@ -64,7 +64,9 @@ static const std::string indexing_rev_local_atomic_kernel_code = STRINGIFY(
      * @param[in,out] adj adjoint to increment
      * @param index
      * @param res adjoint of the result of indexing
-     * @param batch_size Number of matrices in the batch.
+     * @param adj_loc
+     * @param index_size
+     * @param adj_size Number of matrices in the batch.
      * @note Code is a <code>const char*</code> held in
      * <code>add_batch_kernel_code.</code>
      */
@@ -116,7 +118,9 @@ static const std::string indexing_rev_local_independent_kernel_code = STRINGIFY(
      * @param[in,out] adj adjoint to increment
      * @param index
      * @param res adjoint of the result of indexing
-     * @param batch_size Number of matrices in the batch.
+     * @param adj_loc
+     * @param index_size
+     * @param adj_size Number of matrices in the batch.
      * @note Code is a <code>const char*</code> held in
      * <code>add_batch_kernel_code.</code>
      */

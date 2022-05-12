@@ -16,12 +16,12 @@ namespace math {
  *
  * @tparam T type of the vector (must have one compile-time dimension equal to
  * 1)
- * @param[in] v Vector.
- * @return L1 norm of v.
+ * @param[in] x Vector.
+ * @return L1 norm of x.
  */
 template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
-inline var norm1(const T& v) {
-  arena_t<T> arena_v = v;
+inline var norm1(const T& x) {
+  arena_t<T> arena_v = x;
   var res = norm1(arena_v.val());
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() += res.adj() * sign(arena_v.val().array());
@@ -32,15 +32,15 @@ inline var norm1(const T& v) {
 /**
  * Returns the L1 norm of a `var_value<Vector>`.
  *
- * @tparam A `var_value<>` whose inner type has one compile-time row or column.
- * @param[in] v Vector.
- * @return L1 norm of v.
+ * @tparam T `var_value<>` whose inner type has one compile-time row or column.
+ * @param[in] x Vector.
+ * @return L1 norm of x.
  */
 //
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline var norm1(const T& v) {
-  return make_callback_vari(norm1(v.val()), [v](const auto& res) mutable {
-    v.adj().array() += res.adj() * sign(v.val().array());
+inline var norm1(const T& x) {
+  return make_callback_vari(norm1(x.val()), [x](const auto& res) mutable {
+    x.adj().array() += res.adj() * sign(x.val().array());
   });
 }
 

@@ -25,12 +25,6 @@ namespace math {
  *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
- * @param[in] y Parameter vector for the equation system. The function
- *            is overloaded to treat y as a vector of doubles or of a
- *            a template type T.
- * @param[in] dat Continuous data vector for the equation system.
- * @param[in] dat_int Integer data vector for the equation system.
- * @param[in, out] msgs The print stream for warning messages.
  * @param[in] scaling_step_tol Scaled-step stopping tolerance. If
  *            a Newton step is smaller than the scaling step
  *            tolerance, the code breaks, assuming the solver is no
@@ -41,13 +35,13 @@ namespace math {
  *            jacobian for the Newton step, namely Quotient Difference
  *            (finite difference). If 1, use reverse-mode AD, unless
  *            the user specifies their own method.
- * @param[in] J_f A functor that computes the Jacobian for the Newton step.
- *            Defaults to reverse-mode AD.
  * @param[in] steps_eval_jacobian Maximum number of steps before the
  *            Jacobian gets recomputed. Note that Kinsol's default is 10.
  *            If equal to 1, the algorithm computes exact Newton steps.
  * @param[in] global_line_search does the solver use a global line search?
  *            If equal to KIN_NONE, no, if KIN_LINESEARCH, yes.
+ * @param[out] msgs A stream to send strings of error messsages
+ * @param[in] args function arguments passed to `f`.
  * @return x_solution Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if Kinsol returns a negative
  *        flag when setting up the solver.

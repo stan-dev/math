@@ -285,13 +285,14 @@ struct mrrr_task {
  * using multiple relatively robust representations (MRRR) algorithm. Use
  * `tridiagonal_eigensolver` if any subdiagonal element might be (very close to)
  * zero.
+ * @tparam need_eigenvectors
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
  * @param[out] eigenvalues Eigenvlues.
  * @param[out] eigenvectors Eigenvectors.
  * @param min_rel_sep Minimal relative separation of eigenvalues before
  * computing eigenvectors.
- * @param max_ele_growth Maximal desired element growth of LDL decompositions.
+ * @param maximum_ele_growth Maximal desired element growth of LDL decompositions.
  */
 template <bool need_eigenvectors = true>
 inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
@@ -443,10 +444,10 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR
  * algorithm. If a subdiagonal element is close to zero compared to neighbors on
  * diagonal, the problem can be split into smaller ones.
- * @param diagonal Diagonal of of T.
- * @param subdiagonal Subdiagonal of T.
- * @param[out] eigenvalues Eigenvlues.
- * @param[out] eigenvectors Eigenvectors.
+ * @param diagonal_cl Diagonal of of T.
+ * @param subdiagonal_cl Subdiagonal of T.
+ * @param[out] eigenvalues_cl Eigenvlues.
+ * @param[out] eigenvectors_cl Eigenvectors.
  * @param split_threshold Threshold for splitting the problem
  */
 template <bool need_eigenvectors = true>

@@ -70,10 +70,10 @@ class dae_system {
    * Construct IDAS DAE system from initial condition and parameters
    *
    * @param[in] f DAE residual functor
-   * @param[in] eq_id array for DAE's variable ID(1 for *
-   *                  derivative variables, 0 for algebraic variables).
    * @param[in] yy0 initial condition
    * @param[in] yp0 initial condition for derivatives
+   * @param msgs pointer to stream for writing error messages
+   * @param args Arguments to pass to functor `f`
    */
   dae_system(const F& f, const Tyy& yy0, const Typ& yp0, std::ostream* msgs,
              const T_par&... args)

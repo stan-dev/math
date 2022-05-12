@@ -38,8 +38,8 @@ static const char* eigenvals_bisect_kernel_code = STRINGIFY(
     /**
      * Calculates i-th largest eigenvalue of tridiagonal matrix represented by a
      * LDL decomposition using bisection.
-     * @param l Subdiagonal of L.
-     * @param d Diagonal of D.
+     * @param diagonal diagonal of T
+     * @param subdiagonal_squared element-wise squared subdiagonal of T
      * @param[out] low_res Resulting low bounds on eigenvalues.
      * @param[out] high_res Resulting high bounds on eigenvalues.
      * @param min_eigval Lower bound on all eigenvalues.
@@ -154,6 +154,7 @@ static const char* eigenvals_bisect_kernel_code = STRINGIFY(
      * @param min_eigval initial lower bound on eigenvalues
      * @param max_eigval initial upper bound on eigenvalues
      * @param shift shift of the LDL decomposition
+     * @param do_refine
      */
     __kernel void eigenvals(
         const __global double* diagonal,

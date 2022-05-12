@@ -13,8 +13,8 @@ namespace math {
  * sum of squares of the elements.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
- * @param v Vector.
- * @return L2 norm of v.
+ * @param x Vector.
+ * @return L2 norm of x.
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
           require_container_t<Container>* = nullptr>

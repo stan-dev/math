@@ -17,7 +17,6 @@ namespace math {
  * @tparam T2 Type of sigma
  * @param x input matrix
  * @param sigma standard deviation
- * @param length_scale length scale
  *
  * @return dot product covariance matrix that is positive semi-definite
  */
@@ -40,7 +39,7 @@ inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
  * @tparam T2 Type of sigma
  * @param x input matrix
  * @param sigma standard deviation
- * @param length_scale length scale
+ * @param y length scale
  *
  * @return dot product covariance matrix
  */

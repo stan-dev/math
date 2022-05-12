@@ -28,13 +28,13 @@ inline EigMat to_matrix(EigMat&& x) {
  * Eigen row or column vector.
  * The runtime dimensions will be the same as the input.
  *
- * @tparam EigMat type of the vector/row vector
+ * @tparam EigVec type of the vector/row vector
  *
  * @param x input vector/row vector
  * @return the matrix representation of the input
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-inline auto to_matrix(EigVec&& matrix) {
+inline auto to_matrix(EigVec&& x) {
   return Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>(
       std::forward<EigVec>(matrix));
 }

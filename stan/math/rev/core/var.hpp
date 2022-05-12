@@ -672,7 +672,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
 
   /**
    * View diagonal of eigen matrices
-   * @param i Column index to slice
    */
   inline auto diagonal() const {
     using vari_sub = decltype(vi_->diagonal());

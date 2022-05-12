@@ -23,9 +23,7 @@ namespace math {
  * idas. This service manages the
  * allocation/deallocation, so ODE systems only request
  * service by injection.
- * @tparam ode ode type
- * @tparam lmm_type IDAS solver type (BDF & ADAMS)
- * @tparam butcher_tab AKRODE Butcher table
+ * @tparam dae_type dae type
  */
 template <typename dae_type>
 struct idas_service {
@@ -42,9 +40,8 @@ struct idas_service {
   /**
    * Construct IDAS ODE mem & workspace
    *
-   * @param[in] n ODE system size
-   * @param[in] m length of parameter theta
-   * @param[in] f ODE RHS function
+   * @param[in] t0
+   * @param[in] dae DAE system
    */
   idas_service(double t0, dae_type& dae)
       : sundials_context_(),

@@ -18,10 +18,8 @@ inline void zero_adjoints() noexcept {}
  * on the rest of the arguments.
  *
  * @tparam T type of current argument
- * @tparam Pargs type of rest of arguments
  *
  * @param x current argument
- * @param args rest of arguments to zero
  */
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline void zero_adjoints(T& x) noexcept {}
@@ -30,11 +28,7 @@ inline void zero_adjoints(T& x) noexcept {}
  * Zero the adjoint of the vari in the first argument. Recursively call
  * zero_adjoints on the rest of the arguments.
  *
- * @tparam T type of current argument
- * @tparam Pargs type of rest of arguments
- *
  * @param x current argument
- * @param args rest of arguments to zero
  */
 inline void zero_adjoints(var& x) { x.adj() = 0; }
 
@@ -42,11 +36,8 @@ inline void zero_adjoints(var& x) { x.adj() = 0; }
  * Zero the adjoints of the varis of every var in an Eigen::Matrix
  * container. Recursively call zero_adjoints on the rest of the arguments.
  *
- * @tparam T type of current argument
- * @tparam Pargs type of rest of arguments
- *
+ * @tparam EigMat type of current argument
  * @param x current argument
- * @param args rest of arguments to zero
  */
 template <typename EigMat, require_eigen_vt<is_autodiff, EigMat>* = nullptr>
 inline void zero_adjoints(EigMat& x) {
@@ -58,11 +49,8 @@ inline void zero_adjoints(EigMat& x) {
  * Zero the adjoints of every element in a vector. Recursively call
  * zero_adjoints on the rest of the arguments.
  *
- * @tparam T type of current argument
- * @tparam Pargs type of rest of arguments
- *
+ * @tparam StdVec type of current argument
  * @param x current argument
- * @param args rest of arguments to zero
  */
 template <typename StdVec,
           require_std_vector_st<is_autodiff, StdVec>* = nullptr>

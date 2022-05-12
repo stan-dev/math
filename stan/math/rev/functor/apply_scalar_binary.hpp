@@ -43,7 +43,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param x Matrix input to which operation is applied.
  * @param y Integer std::vector input to which operation is applied.
  * @param f functor to apply to inputs.
- * @return var_value<Eigen> object with result of applying functor to inputs.
+ * @return `var_value<Eigen>` object with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
           require_any_var_matrix_t<T1, T2>* = nullptr,
@@ -76,7 +76,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the one input is an `var_value<Eigen> type and
+ * Specialisation for use when the one input is an `var_value<Eigen>` type and
  * the other is a scalar.
  *
  * @tparam T1 Type of either `var_value<Matrix>` or scalar object to which
@@ -87,7 +87,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param x Matrix or Scalar input to which operation is applied.
  * @param x Matrix or Scalar input to which operation is applied.
  * @param f functor to apply to var matrix and scalar inputs.
- * @return `var_value<Matrix> object with result of applying functor to inputs.
+ * @return `var_value<Matrix>` object with result of applying functor to inputs.
  *
  */
 template <typename T1, typename T2, typename F,

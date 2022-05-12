@@ -12,12 +12,12 @@ namespace math {
 /**
  * Return the cumulative sum of the specified vector.
  *
- * The cumulative sum of a vector of values \code{x} is the
+ * The cumulative sum of a vector of values `x` is the
  *
- * \code x[0], x[1] + x[2], ..., x[1] + , ..., + x[x.size()-1] @endcode
+ * ` x[0], x[1] + x[2], ..., x[1] + , ..., + x[x.size()-1] `
  *
  * @tparam T type of the vector
- * @param x Vector of values.
+ * @param v Vector of values.
  * @return Cumulative sum of values.
  */
 template <typename T_vec,

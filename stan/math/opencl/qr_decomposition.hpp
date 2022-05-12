@@ -22,8 +22,11 @@ namespace math {
  * Calculates QR decomposition of A using the block Householder algorithm.
  *
  * The implementation is based on the article:
- * \link
- * https://cpb-us-w2.wpmucdn.com/sites.gatech.edu/dist/5/462/files/2016/08/Kerr_Campbell_Richards_QRD_on_GPUs.pdf
+ *  Kerr, Andrew, et al. “QR Decomposition on Gpus.”
+ * Proceedings of 2nd Workshop on General Purpose Processing on Graphics
+ * Processing Units - GPGPU-2, 2009,
+ * https://doi.org/10.1145/1513895.1513904.
+ *
  * @tparam need_Q whether Q needs to be calculated (default true)
  * @param A matrix to factorize
  * @param Q out the orthonormal matrix

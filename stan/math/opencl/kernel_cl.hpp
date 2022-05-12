@@ -74,19 +74,8 @@ inline void assign_event(const cl::Event& e, K& m) {
 }
 
 /** \ingroup kernel_executor_opencl
- * Adds the event to any \c matrix_cls in the arguments depending on whether
- * they are \c in_buffer, \c out_buffer, or \c in_out_buffers.
- * @tparam Arg Arguments given during kernel creation that specify the kernel
- * signature.
- * @tparam Args Arguments given during kernel creation that specify the kernel
- * signature.
- * @tparam CallArg First argument type used to call the kernel
- * @tparam CallArgs Other argument types used to call the kernel.
- * @param new_event The cl::Event generated involving the arguments.
- * @param m Arguments to the kernel that may be \c matrix_cls or not.
- * Non-matrices are ignored.
- * @param args Arguments to the kernel that may be matrices or not.
- * Non-matrices are ignored.
+ * Overload for passing a `cl::Event` which is a no-op
+ * @tparam T A `cl::Event` type.
  */
 template <typename T, require_same_t<T, cl::Event>* = nullptr>
 inline void assign_events(const T&) {}

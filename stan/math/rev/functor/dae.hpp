@@ -11,35 +11,38 @@ namespace stan {
 namespace math {
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
- * a set of times, { t1, t2, t3, ... } using IDAS.
+ * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
+ * a set of times, `{ t1, t2, t3, ... }` using IDAS.
  *
- * \p f must define an operator() with the signature as:
+ * \p `f` must define an `operator()` with the signature as:
+ *
+ * ```
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
+ * ```
  *
- * t is the time, yy the vector-valued state, yp the vector-valued
- * state derivative, msgs a stream for error
+ * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
+ * state derivative, `msgs` a stream for error
  * messages, and args the optional arguments passed to the DAE solve function
- * (which are passed through to \p f without modification).
+ * (which are passed through to \p `f` without modification).
  *
  * @tparam F Type of DAE residual functor
  * @tparam T_yy0 Type of initial state
  * @tparam T_yp0 Type of initial state derivatives
  * @tparam T_Args Types of pass-through parameters
  *
- * @param function_name Calling function name (for printing debugging messages)
+ * @param func Calling function name (for printing debugging messages)
  * @param f DAE residual functor
  * @param yy0 Initial state
  * @param yp0 Initial state derivatives
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
@@ -84,20 +87,23 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
 }
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
- * a set of times, { t1, t2, t3, ... } using IDAS.
+ * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
+ * a set of times, `{ t1, t2, t3, ... }` using IDAS.
  *
- * \p f must define an operator() with the signature as:
+ * \p `f` must define an `operator()` with the signature as:
+ *
+ * ```
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
- *
- * t is the time, yy the vector-valued state, yp the vector-valued
- * state derivative, msgs a stream for error
- * messages, and args the optional arguments passed to the DAE solve function
- * (which are passed through to \p f without modification).
+ * ```
+
+ * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
+ * state derivative, `msgs` a stream for error
+ * messages, and `args` the optional arguments passed to the DAE solve function
+ * (which are passed through to `f` without modification).
  *
  * @tparam F Type of DAE residual functor
  * @tparam T_yy0 Type of initial state
@@ -110,8 +116,8 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
@@ -129,21 +135,23 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
 }
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
- * a set of times, { t1, t2, t3, ... } using IDAS, assuming default controls
+ * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
+ * a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming default controls
  * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
  *
- * \p f must define an operator() with the signature as:
+ * \p `f` must define an `operator()` with the signature as:
+ * ```
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
+ * ```
  *
- * t is the time, yy the vector-valued state, yp the vector-valued
- * state derivative, msgs a stream for error
- * messages, and args the optional arguments passed to the DAE solve function
- * (which are passed through to \p f without modification).
+ * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
+ * state derivative, `msgs` a stream for error
+ * messages, and `args` the optional arguments passed to the DAE solve function
+ * (which are passed through to `f` without modification).
  *
  * @tparam F Type of DAE residual functor
  * @tparam T_yy0 Type of initial state

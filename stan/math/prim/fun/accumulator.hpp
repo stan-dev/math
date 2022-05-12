@@ -46,10 +46,10 @@ class accumulator {
    * of values to the buffer.
    *
    * @tparam S type of the matrix
-   * @param m Matrix of values to add
+   * @param x Matrix of values to add
    */
   template <typename S, require_matrix_t<S>* = nullptr>
-  inline void add(const S& m) {
+  inline void add(const S& x) {
     buf_.push_back(stan::math::sum(m));
   }
 
@@ -74,7 +74,7 @@ class accumulator {
   /**
    * Sum each entry and then push to the buffer.
    * @tparam S A Type inheriting from `matrix_cl_base`
-   * @param x An OpenCL matrix
+   * @param xs An OpenCL matrix
    */
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>

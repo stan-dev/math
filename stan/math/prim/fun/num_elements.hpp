@@ -16,7 +16,7 @@ namespace math {
  * @return 1
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline int num_elements(const T& x) {
+inline constexpr int num_elements(const T& x) {
   return 1;
 }
 
@@ -24,12 +24,11 @@ inline int num_elements(const T& x) {
  * Returns the size of the specified matrix.
  *
  * @tparam T type of the matrix
- *
- * @param m argument matrix
+ * @param x argument matrix
  * @return size of matrix
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int num_elements(const T& m) {
+inline int num_elements(const T& x) {
   return m.size();
 }
 
@@ -39,11 +38,11 @@ inline int num_elements(const T& m) {
  * elements has the same number of elements.
  *
  * @tparam T type of elements in the vector
- * @param v argument vector
+ * @param x argument vector
  * @return number of contained arguments
  */
 template <typename T>
-inline int num_elements(const std::vector<T>& v) {
+inline int num_elements(const std::vector<T>& x) {
   if (v.size() == 0) {
     return 0;
   }

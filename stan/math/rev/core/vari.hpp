@@ -346,7 +346,6 @@ class vari_view_eigen {
 
   /**
    * View diagonal of eigen matrices
-   * @param i Column index to slice
    */
   inline auto diagonal() const {
     using inner_type = decltype(derived().val_.diagonal());

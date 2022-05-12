@@ -37,7 +37,8 @@ class cast_ : public operation_cl<cast_<Scal, T>, Scal, T> {
 
   /**
    * Constructor
-   * @param args argument expression(s)
+   * @tparam A set of opencl expressions
+   * @param arg argument expression(s)
    */
   explicit cast_(T&& arg) : base(std::forward<T>(arg)) {}
 
@@ -46,7 +47,7 @@ class cast_ : public operation_cl<cast_<Scal, T>, Scal, T> {
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
-   * @param var_names_arg variable names of the nested expressions
+   * @param var_name_arg variable names of the nested expressions
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& row_index_name,
@@ -70,6 +71,7 @@ class cast_ : public operation_cl<cast_<Scal, T>, Scal, T> {
 /**
  * Typecast a kernel generator expression scalar.
  *
+ * @tparam Scalar a user invoked type to cast to.
  * @tparam T type of argument
  * @param a input argument
  * @return Typecast of given expression
