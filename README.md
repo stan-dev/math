@@ -16,9 +16,7 @@ The Stan Math Library depends on the Intel TBB library which is
 licensed under the Apache 2.0 license. This dependency implies an
 additional restriction as compared to the new BSD license alone. The
 Apache 2.0 license is incompatible with GPL-2 licensed code if
-distributed as a unitary binary. You may refer to the Apache 2.0
-evaluation page on the [Stan Math
-wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
+distributed as a unitary binary. You may refer to the Licensing page on the [Stan wiki](https://github.com/stan-dev/stan/wiki/Stan-Licensing).
 
 Required Libraries
 ------------------
@@ -26,7 +24,7 @@ Stan Math depends on four libraries:
 
 - Boost (version 1.78.0): [Boost Home Page](https://www.boost.org)
 - Eigen (version 3.3.9: [Eigen Home Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-- SUNDIALS (version 6.1.1): [Sundials Home Page](https://computation.llnl.gov/projects/sundials/sundials-software)
+- SUNDIALS (version 6.1.1): [Sundials Home Page](https://computing.llnl.gov/projects/sundials)
 - Intel TBB (version 2020.3): [Intel TBB Home Page](https://www.threadingbuildingblocks.org)
 
 These are distributed under the `lib/` subdirectory. Only these
@@ -41,7 +39,7 @@ Contributing
 ------------
 
 We love contributions from everyone in the form of good discussion, issues, and pull requests.
-If you are interested in contributing to Stan math please check the [Contributing Guide](http://mc-stan.org/math/contributing.html).
+If you are interested in contributing to Stan math please check the Contributor Guide at [mc-stan.org/math](https://mc-stan.org/math/).
 
 Installation
 ------------
