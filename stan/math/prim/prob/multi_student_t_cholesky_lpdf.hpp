@@ -68,11 +68,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_L_ref L_ref = L;
- 
+
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
   size_t size_vec = max_size_mvt(y_ref, mu_ref);
-  
+
   if (size_vec == 0) {
     return lp_type(0);
   }
@@ -133,7 +133,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
 
   if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
-    
+
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
       const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
