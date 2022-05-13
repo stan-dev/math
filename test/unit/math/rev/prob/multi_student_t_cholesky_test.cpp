@@ -158,7 +158,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTGradientUnivariate) {
                - multi_student_t_cholesky_lpdf(y, nu, mu_m, L))
               / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
-
+  
   Matrix<double, Dynamic, Dynamic> L_m(1, 1);
   Matrix<double, Dynamic, Dynamic> L_p(1, 1);
   L_p(0) = L(0) + epsilon;
