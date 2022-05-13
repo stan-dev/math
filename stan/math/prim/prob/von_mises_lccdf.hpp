@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Calculates the log of the complement of the cumulative distribution
  * function of the von Mises distribution:
  *

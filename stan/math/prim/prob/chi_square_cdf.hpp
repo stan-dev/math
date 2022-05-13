@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the chi square cumulative distribution function for the given
  * variate and degrees of freedom. If given containers of matching sizes,
  * returns the product of probabilities.

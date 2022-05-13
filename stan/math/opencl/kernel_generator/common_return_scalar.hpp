@@ -5,7 +5,7 @@
 namespace stan {
 namespace math {
 /**
- * @ingroup type_traits
+ * @ingroup type_trait
  * Wrapper for `std::common_type_t`
  */
 template <typename... Types>

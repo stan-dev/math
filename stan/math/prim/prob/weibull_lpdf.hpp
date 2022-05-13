@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the Weibull log probability density for the given
  * location and scale. Given containers of matching sizes, returns the
  * log sum of probability densities.

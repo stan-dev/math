@@ -9,8 +9,7 @@
  */
 
 /**
- * \ingroup type_traits
- * \defgroup require_meta Pseudo-Concepts with requires<>
+ * \defgroup require_meta Using requires<> for general overloads.
  * The requires type traits are wrappers for turning on and off definitions
  *  during compile time. You can think of these as "legacy concepts" aka I think
  *  the closest thing you can get to C++20 concepts without having the requires

@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the Gumbel distribution cumulative distribution for the given
  * location and scale. Given containers of matching sizes, returns the
  * product of probabilities.

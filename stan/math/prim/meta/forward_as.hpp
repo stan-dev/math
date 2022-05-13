@@ -15,7 +15,7 @@ constexpr bool eigen_static_size_match(T1 desired, T2 actual) {
 }
 }  // namespace internal
 
-/** \ingroup type_trait
+/**
  * Assume which type we get. If actual type is convertible to assumed type or in
  * case of eigen types compile time rows and columns also match or desired sizes
  * are dynamic this is a no-op. Otherwise it throws std::runtime_error, which
@@ -38,7 +38,7 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
 
-/** \ingroup type_trait
+/**
  * Assume which type we get. If actual type is not convertible to assumed type
  * or in case of eigen types compile time rows and columns are not the same and
  * desired sizes are not dynamic this has return type of \c T_desired, but it
@@ -62,7 +62,7 @@ inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
 
-/** \ingroup type_trait
+/** 
  * Assume which type we get. If actual type is convertible to assumed type or in
  * case of eigen types compile time rows and columns also match or desired sizes
  * are dynamic this is a no-op. Otherwise it throws std::runtime_error,

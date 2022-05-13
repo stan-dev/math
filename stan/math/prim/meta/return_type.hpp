@@ -146,7 +146,7 @@ struct scalar_lub<std::complex<T1>, std::complex<T2>> {
 template <typename T1, typename T2>
 using scalar_lub_t = typename scalar_lub<T1, T2>::type;
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate the base scalar return type
  * resulting from promoting all the scalar types of the template
  * parameters to the least type to which all the base types of the
@@ -188,15 +188,18 @@ struct return_type {
   using type = double;
 };
 
+/** \ingroup type_trait
+ * See the docs for `return_type`
+ */
 template <typename T, typename... Ts>
 struct return_type<T, Ts...> {
   using type
       = scalar_lub_t<scalar_type_t<T>, typename return_type<Ts...>::type>;
 };
 
-/**
+/** \ingroup type_trait
  * Convenience type for the return type of the specified template
- * parameters.
+ * parameters. See the docs for `return_type`.
  *
  * @tparam Ts sequence of types
  * @see return_type

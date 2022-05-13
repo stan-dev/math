@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate a type for converting a
  * convertible type.  This is the base case.
  *
@@ -24,7 +24,7 @@ struct promote_scalar_type {
   using type = T;
 };
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate a type for a container whose
  * underlying scalar is converted from the second template
  * parameter type to the first.
@@ -40,7 +40,7 @@ struct promote_scalar_type<T, std::vector<S>> {
   using type = std::vector<typename promote_scalar_type<T, S>::type>;
 };
 
-/**
+/** \ingroup type_trait
  * Specialization for `var_value` when the type to convert to is a `var_value`.
  * @tparam T a `var_value`.
  * @tparam S A `var_value` whose template type is derived from `EigenBase`.
@@ -55,7 +55,7 @@ struct promote_scalar_type<
   using type = std::decay_t<S>;
 };
 
-/**
+/** \ingroup type_trait
  * Specialization for `var_value` when the type to convert to is arithmetic.
  * @tparam T an arithmetic type.
  * @tparam S A `var_value` whose template type is derived from `EigenBase`.
@@ -71,7 +71,7 @@ struct promote_scalar_type<T, S,
   using type = typename promote_scalar_type<T, value_type_t<S>>::type;
 };
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate a type for a matrix, vector, row vector or
  * Eigen::Array whose underlying scalar is converted from the second template
  * parameter type to the first.
@@ -93,6 +93,9 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
 };
 
+/**
+ * See the docs for `promote_scalar_type`.
+ */
 template <typename T, typename S>
 using promote_scalar_t =
     typename promote_scalar_type<std::decay_t<T>, std::decay_t<S>>::type;

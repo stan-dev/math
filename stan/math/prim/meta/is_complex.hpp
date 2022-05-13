@@ -11,7 +11,7 @@
 namespace stan {
 namespace internal {
 
-/**
+/** \ingroup type_trait
  * Provides a member constant `value` which is equal to `true` if
  * `T` is an instance of `std::complex` and `false` otherwise.
  *
@@ -26,7 +26,7 @@ struct is_complex_impl<std::complex<Ts...>> : std::true_type {};
 
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * If `T` is an arithmetic type (that is, an instance of
  * `std::complex`) or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
@@ -58,7 +58,7 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
 STAN_ADD_REQUIRE_UNARY(complex, is_complex, require_stan_scalar_complex);
 STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex, require_stan_scalar_complex);
 
-/**
+/** \ingroup type_trait
  * If the `value_type` of the type `T` is of type
  *  `std::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
@@ -70,7 +70,7 @@ STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex, require_stan_scalar_complex);
 template <typename T>
 struct is_vt_complex : is_complex<value_type_t<std::decay_t<T>>> {};
 
-/**
+/** \ingroup type_trait
  * If the `value_type` of the type `T` is not of type
  * `std::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is

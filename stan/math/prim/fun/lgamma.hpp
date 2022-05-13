@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_LGAMMA_HPP
 
 /**
+ * @file stan/math/prim/fun/lgamma.hpp
  * The lgamma implementation in stan-math is based on either the
  * reentrant safe lgamma_r implementation from C or the
  * boost::math::lgamma implementation. The reentrant safe lgamma_r

@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>discrete_range_lpmf</code>
  */
 template <bool propto, typename T_y, typename T_lower, typename T_upper>
@@ -15,7 +15,7 @@ double discrete_range_log(const T_y& y, const T_lower& lower,
   return discrete_range_lpmf<propto, T_y, T_lower, T_upper>(y, lower, upper);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>discrete_range_lpmf</code>
  */
 template <typename T_y, typename T_lower, typename T_upper>

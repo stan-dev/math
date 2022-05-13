@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Checks if a type's pointer is convertible to a templated base type's pointer.
  * If the arbitrary function
  * ```

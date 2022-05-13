@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>skew_double_exponential_lcdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>

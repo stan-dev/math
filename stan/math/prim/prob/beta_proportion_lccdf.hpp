@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the beta log complementary cumulative distribution function
  * for specified probability, location, and precision parameters:
  * beta_proportion_lccdf(y | mu, kappa) = beta_lccdf(y | mu * kappa, (1 -

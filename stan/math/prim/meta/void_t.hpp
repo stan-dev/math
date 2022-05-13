@@ -12,7 +12,7 @@ struct make_void {
   typedef void type;
 };
 
-/**
+/** \ingroup type_trait
  * Utility metafunction that maps a sequence of any types to the type void
  * This metafunction is used in template metaprogramming to detect ill-formed
  * types or the validity of an expression in an SFINAE context:

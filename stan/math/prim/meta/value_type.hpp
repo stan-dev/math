@@ -8,11 +8,14 @@
 
 namespace stan {
 
-/** \ingroup type_trait
+/**
+ * \ingroup type_trait
  * Primary template class for metaprogram to compute the type of
- * values stored in a container.
+ * values stored in a container. For scalar types this will return the scalar,
+ * for `std::vector<T>` types this will return `T`,
+ * and for Eigen types this will return the Eigen types `Scalar` member.
  *
- * tparam T type of container.
+ * @tparam T type of container.
  */
 template <typename T, typename = void>
 struct value_type {
@@ -29,7 +32,8 @@ struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
 };
 
 /** \ingroup type_trait
- * Helper function for accessing underlying type.
+ * Helper function for accessing underlying type. See the docs for
+ * `value_type`
  */
 template <typename T>
 using value_type_t = typename value_type<T>::type;

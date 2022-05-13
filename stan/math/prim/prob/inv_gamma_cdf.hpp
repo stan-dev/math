@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The CDF of an inverse gamma density for y with the specified
  * shape and scale parameters. y, shape, and scale parameters must
  * be greater than 0.

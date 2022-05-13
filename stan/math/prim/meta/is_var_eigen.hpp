@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`
  * @tparam T type to check.

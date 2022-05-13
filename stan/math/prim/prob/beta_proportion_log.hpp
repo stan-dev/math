@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>beta_proportion_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
@@ -17,7 +17,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_log(const T_y& y,
   return beta_proportion_lpdf<propto, T_y, T_loc, T_prec>(y, mu, kappa);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>beta_proportion_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_prec>

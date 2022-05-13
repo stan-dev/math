@@ -11,7 +11,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Checks whether type T is derived from Eigen::DenseBase and has dynamic rows
  * and columns. If true this will have a static member function named value with
  * a type of true, else value is false.

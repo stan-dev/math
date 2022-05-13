@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of the loglogistic density for the specified scalar(s)
  * given the specified scales(s) and shape(s). y, alpha, or beta
  * can each be either a scalar or a vector. Any vector inputs

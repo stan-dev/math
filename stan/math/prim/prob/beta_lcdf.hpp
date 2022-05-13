@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the beta log cumulative distribution function for the given
  * probability, success, and failure parameters.  Any arguments other
  * than scalars must be containers of the same size.  With non-scalar

@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta/is_rev_matrix.hpp>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Check if a type is derived from `Eigen::EigenBase` or is a `var_value`
  *  whose `value_type` is derived from `Eigen::EigenBase`
  * @tparam T type to check.

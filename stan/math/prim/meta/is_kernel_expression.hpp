@@ -26,7 +26,7 @@ class operation_cl_base {};
  */
 class operation_cl_lhs_base {};
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is non-scalar type that is a valid kernel generator
  * expression.
  */
@@ -38,7 +38,7 @@ template <typename T>
 struct is_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
     : std::true_type {};
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is is a valid kernel generator expression. Valid
  * expressions are kernel generator operations, scalars and \c matrix_cl and
  * references of these types.
@@ -49,7 +49,7 @@ struct is_kernel_expression
                     || std::is_arithmetic<std::remove_reference_t<T>>::value> {
 };
 
-/**
+/** \ingroup type_trait
  * Enables a template if all given types are non-scalar types that are a
  * valid kernel generator expressions.
  */
@@ -57,7 +57,7 @@ template <typename... Types>
 using require_all_kernel_expressions_and_none_scalar_t
     = require_all_t<is_kernel_expression_and_not_scalar<Types>...>;
 
-/**
+/** \ingroup type_trait
  * Enables a template if all given types are are a valid kernel generator
  * expressions.
  */
@@ -65,7 +65,7 @@ template <typename... Types>
 using require_all_kernel_expressions_t
     = require_all_t<is_kernel_expression<Types>...>;
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is an assignable kernel generator
  * expression.
  */
@@ -76,14 +76,14 @@ struct is_kernel_expression_lhs
 template <typename T>
 struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is a var containing a kernel generator expression.
  */
 template <typename T>
 struct is_rev_kernel_expression
     : math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>> {};
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is either a kernel generator
  * expression or a var containing a kernel generator expression.
  */
@@ -92,7 +92,7 @@ struct is_prim_or_rev_kernel_expression
     : math::disjunction<is_kernel_expression<T>, is_rev_kernel_expression<T>> {
 };
 
-/**
+/** \ingroup type_trait
  * Determines whether a type is either a non-scalar kernel generator
  * expression or a var containing a non-scalar kernel generator expression.
  */

@@ -10,7 +10,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Check if type derives from `EigenBase`
  * @tparam T Type to check if it is derived from `EigenBase`
  * @tparam Enable used for SFINAE deduction.
@@ -20,7 +20,7 @@ template <typename T>
 struct is_eigen
     : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
 
-/**
+/** \ingroup type_trait
  * Template metaprogram defining the base scalar type of
  * values stored in an Eigen matrix.
  *
@@ -32,7 +32,7 @@ struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
 };
 
-/**
+/** \ingroup type_trait
  * Template metaprogram defining the type of values stored in an
  * Eigen matrix, vector, or row vector.
  *
@@ -47,7 +47,7 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if a type is derived from `Eigen::ArrayBase`
  * @tparam T type to check
  * @ingroup type_trait
@@ -59,7 +59,7 @@ struct is_eigen_array
 STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if a type is derived from `Eigen::MatrixBase` or `Eigen::ArrayBase`
  * @tparam T type to check.
  * @ingroup type_trait
@@ -82,7 +82,7 @@ struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
 
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * Check if a type is an `Eigen::Map` with contiguous stride
  * @ingroup type_trait
  */

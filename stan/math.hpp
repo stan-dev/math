@@ -2,6 +2,9 @@
 #define STAN_MATH_HPP
 
 /**
+ * Test Stan math doc
+ */
+/**
  * \defgroup prob_dists Probability Distributions
  */
 

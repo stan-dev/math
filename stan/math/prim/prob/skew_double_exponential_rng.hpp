@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a skew double exponential random variate with the given location
  * scale and skewness using the specified random number generator.
  *

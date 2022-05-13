@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a Pareto random variate for the given shape and scale
  * parameters using the specified random number generator.
  *

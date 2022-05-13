@@ -17,7 +17,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the log CCDF of the Bernoulli distribution. If containers are
  * supplied, returns the log sum of the probabilities.
  *

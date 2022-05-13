@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the log PMF for the Poisson-binomial distribution evaluated at an
  * specified array of numbers of successes and probabilities of successes.
  *

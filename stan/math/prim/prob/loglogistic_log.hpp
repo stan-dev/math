@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>loglogistic_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_scale, typename T_shape,
@@ -19,7 +19,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_log(const T_y& y,
   return loglogistic_lpdf<propto, T_y, T_scale, T_shape>(y, alpha, beta);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>loglogistic_lpdf</code>
  */
 template <typename T_y, typename T_scale, typename T_shape>

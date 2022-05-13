@@ -95,7 +95,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
 
 }  // namespace internal
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Calculates the cumulative distribution function of the von Mises
  * distribution:
  *

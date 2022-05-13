@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *

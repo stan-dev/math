@@ -12,11 +12,10 @@ namespace math {
  * Returns 1, the number of elements in a primitive type.
  *
  * @tparam T scalar type
- * @param x Argument of primitive type.
  * @return 1
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline constexpr int num_elements(const T& x) {
+inline constexpr int num_elements(const T& /* x*/) {
   return 1;
 }
 
@@ -29,7 +28,7 @@ inline constexpr int num_elements(const T& x) {
  */
 template <typename T, require_matrix_t<T>* = nullptr>
 inline int num_elements(const T& x) {
-  return m.size();
+  return x.size();
 }
 
 /**
@@ -43,10 +42,10 @@ inline int num_elements(const T& x) {
  */
 template <typename T>
 inline int num_elements(const std::vector<T>& x) {
-  if (v.size() == 0) {
+  if (x.size() == 0) {
     return 0;
   }
-  return v.size() * num_elements(v[0]);
+  return x.size() * num_elements(x[0]);
 }
 
 }  // namespace math

@@ -8,7 +8,7 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`
  * @tparam T type to check.
@@ -22,7 +22,7 @@ struct is_var_matrix
 STAN_ADD_REQUIRE_UNARY(var_matrix, is_var_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(var_matrix, is_var_matrix, require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
  *  of columns equal to 1.
@@ -38,7 +38,7 @@ STAN_ADD_REQUIRE_UNARY(var_col_vector, is_var_col_vector, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(var_col_vector, is_var_col_vector,
                              require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
  *  of rows equal to 1.
@@ -54,7 +54,7 @@ STAN_ADD_REQUIRE_UNARY(var_row_vector, is_var_row_vector, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(var_row_vector, is_var_row_vector,
                              require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
  *  of columns or rows equal to 1.
@@ -69,7 +69,7 @@ struct is_var_vector
 STAN_ADD_REQUIRE_UNARY(var_vector, is_var_vector, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(var_vector, is_var_vector, require_eigens_types);
 
-/**
+/** \ingroup type_trait
  * Check if any types in a parameter pack are a `var_value` whose `value_type`
  *  is derived from `Eigen::EigenBase`
  * @tparam Types parameter pack of types to check.

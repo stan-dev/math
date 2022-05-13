@@ -13,7 +13,7 @@ namespace stan {
 
 namespace internal {
 
-/**
+/** \ingroup type_trait
  * Underlying implimenation to check if an Eigen matrix has rows or cols not
  *  equal to 1.
  */
@@ -30,7 +30,7 @@ struct is_eigen_matrix_dynamic_impl<T, true>
 
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * Checks whether type T is derived from Eigen::MatrixBase and has columns and
  * rows not equal to 1. If true this will have a
  * static member function named value with a type of true, else value is false.

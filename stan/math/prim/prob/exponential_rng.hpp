@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a exponential random variate with inverse scale beta
  * using the specified random number generator.
  *

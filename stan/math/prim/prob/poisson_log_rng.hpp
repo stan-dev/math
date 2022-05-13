@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a Poisson random variate with specified log rate parameter
  * using the given random number generator.
  *

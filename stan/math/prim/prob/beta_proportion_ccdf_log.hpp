@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>beta_proportion_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_prec>

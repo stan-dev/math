@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s). y, mu, or sigma can
  * each be either a scalar or a vector. Any vector inputs

@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return the log PMF of a discrete range for the given y, lower and upper
  * bound (all integers).
  *

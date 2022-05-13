@@ -12,7 +12,7 @@
 namespace stan {
 
 namespace internal {
-/**
+/** \ingroup type_trait
  * @brief Used to detect if object has operator[](int) defined
  */
 template <typename T>

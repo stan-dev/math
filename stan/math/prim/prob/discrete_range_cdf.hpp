@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return the CDF of a discrete range distribution for the given y,
  * lower and upper bounds (all integers).
  *

@@ -9,7 +9,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Checks if decayed type is a var or fvar
  * @tparam The type to check
  * @ingroup type_trait

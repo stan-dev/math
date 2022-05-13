@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the log CCDF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *

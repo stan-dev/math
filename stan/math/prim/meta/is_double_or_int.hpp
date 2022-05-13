@@ -7,7 +7,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Checks if decayed type is a double or integer
  * @tparam The type to check
  * @ingroup type_trait

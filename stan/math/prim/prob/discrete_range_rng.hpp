@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return an integer random variate between the given lower and upper bounds
  * (inclusive) using the specified random number generator.
  *

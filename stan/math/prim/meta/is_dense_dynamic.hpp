@@ -27,7 +27,7 @@ struct is_dense_dynamic_impl<T, require_t<is_var<T>>>
     : bool_constant<is_eigen_dense_dynamic<value_type_t<T>>::value> {};
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * Checks whether type T is derived from Eigen::DenseBase and has dynamic rows
  * and columns or is a `var_value<>` whose inner type satisfies the conditions
  * above. If true this will have a static member function named value with

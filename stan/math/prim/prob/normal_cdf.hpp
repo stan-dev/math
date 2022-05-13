@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Calculates the normal cumulative distribution function for the given
  * variate, location, and scale.
  *

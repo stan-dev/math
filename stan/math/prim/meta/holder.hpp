@@ -15,6 +15,11 @@
  * \ingroup eigen_expressions
  * \defgroup returning_expressions Returning expressions
  */
+
+
+namespace stan {
+namespace math {
+
 /**
  * \ingroup returning_expressions
  *
@@ -59,14 +64,11 @@
  * be created either by directly supplying pointers to such objects to `holder`
  * function or by forwarding function arguments and moving local variables to
  * `make_holder`, which will move any rvalues to heap first.
+ *
+ * This was implenmented following the tutorial on edding new expressions to
+ * Eigen: https://eigen.tuxfamily.org/dox/TopicNewExpressionType.html
+ *
  */
-
-// This was implenmented following the tutorial on edding new expressions to
-// Eigen: https://eigen.tuxfamily.org/dox/TopicNewExpressionType.html
-
-namespace stan {
-namespace math {
-
 template <class ArgType, typename... Ptrs>
 class Holder;
 

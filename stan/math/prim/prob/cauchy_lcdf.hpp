@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Returns the cauchy log cumulative distribution function for the given
  * location, and scale. If given containers of matching sizes
  * returns the log sum of probabilities.

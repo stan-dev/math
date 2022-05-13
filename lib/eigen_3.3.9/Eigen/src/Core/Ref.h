@@ -10,7 +10,7 @@
 #ifndef EIGEN_REF_H
 #define EIGEN_REF_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -48,7 +48,7 @@ struct traits<Ref<_PlainObjectType, _Options, _StrideType> >
     };
     typedef typename internal::conditional<MatchAtCompileTime,internal::true_type,internal::false_type>::type type;
   };
-  
+
 };
 
 template<typename Derived>
@@ -86,7 +86,7 @@ public:
       m_stride(StrideType::OuterStrideAtCompileTime==Dynamic?0:StrideType::OuterStrideAtCompileTime,
                StrideType::InnerStrideAtCompileTime==Dynamic?0:StrideType::InnerStrideAtCompileTime)
   {}
-  
+
   EIGEN_INHERIT_ASSIGNMENT_OPERATORS(RefBase)
 
 protected:
@@ -110,12 +110,12 @@ protected:
     }
     else
       ::new (static_cast<Base*>(this)) Base(expr.data(), expr.rows(), expr.cols());
-    
+
     if(Expression::IsVectorAtCompileTime && (!PlainObjectType::IsVectorAtCompileTime) && ((Expression::Flags&RowMajorBit)!=(PlainObjectType::Flags&RowMajorBit)))
       ::new (&m_stride) StrideBase(expr.innerStride(), StrideType::InnerStrideAtCompileTime==0?0:1);
     else
       ::new (&m_stride) StrideBase(StrideType::OuterStrideAtCompileTime==0?0:expr.outerStride(),
-                                   StrideType::InnerStrideAtCompileTime==0?0:expr.innerStride());    
+                                   StrideType::InnerStrideAtCompileTime==0?0:expr.innerStride());
   }
 
   StrideBase m_stride;

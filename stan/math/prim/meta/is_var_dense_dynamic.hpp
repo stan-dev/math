@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase` and has dynamic rows and columns
  * @tparam T type to check.

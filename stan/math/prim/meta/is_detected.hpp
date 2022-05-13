@@ -9,7 +9,7 @@ namespace stan {
 template <typename, template <typename...> class, typename = void>
 struct is_detected : std::false_type {};
 
-/**
+/** \ingroup type_trait
  * Checks whether a valid type is detected. Most commonly used to detect
  *  attributes of objects.
  * @tparam T The type to be checked.

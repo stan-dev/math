@@ -11,52 +11,52 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * If condition is true, template is enabled
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <class Check>
 using require_t = std::enable_if_t<Check::value>;
 
-/**
+/** \ingroup type_trait
  * If condition is false, template is disabled
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <typename Check>
 using require_not_t = std::enable_if_t<!Check::value>;
 
-/**
+/** \ingroup type_trait
  * If all conditions are true, template is enabled
  * Returns a type void if all conditions are true and otherwise fails.
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <class... Checks>
 using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
 
-/**
+/** \ingroup type_trait
  * If any condition is true, template is enabled.
  *
  * Returns a type void if any of the conditions are true and otherwise fails.
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <class... Checks>
 using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
 
-/**
+/** \ingroup type_trait
  * If all conditions are false, template is enabled.
  *
  * Returns a type void if all of the conditions are false.
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <class... Checks>
 using require_all_not_t
     = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
-/**
+/** \ingroup type_trait
  * If any condition is false, template is enabled.
  *
  * Returns a type void if any of the conditions are false.
- * @ingroup type_traits
+ * @ingroup type_trait
  */
 template <class... Checks>
 using require_any_not_t

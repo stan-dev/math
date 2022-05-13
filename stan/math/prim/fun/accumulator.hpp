@@ -50,7 +50,7 @@ class accumulator {
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& x) {
-    buf_.push_back(stan::math::sum(m));
+    buf_.push_back(stan::math::sum(x));
   }
 
   /**

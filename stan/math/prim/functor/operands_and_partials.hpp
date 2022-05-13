@@ -77,8 +77,8 @@ constexpr double
     ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 }  // namespace internal
 
-/** \ingroup type_trait
- * \callergraph
+/**
+ *
  * This template builds partial derivatives with respect to a
  * set of
  * operands. There are two reason for the generality of this
@@ -126,7 +126,7 @@ class operands_and_partials {
                         const Op3& /* op3 */, const Op4& /* op4 */,
                         const Op5& /* op5 */) noexcept {}
 
-  /** \ingroup type_trait
+  /**
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *

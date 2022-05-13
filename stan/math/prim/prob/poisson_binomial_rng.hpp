@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a pseudorandom Poisson binomial random variable for the given vector
  * of success parameters using the specified random number
  * generator.

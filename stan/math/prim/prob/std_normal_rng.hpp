@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Return a standard Normal random variate using the specified
  * random number generator.
  *

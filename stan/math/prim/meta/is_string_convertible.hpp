@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Deduces whether type is convertible to string
  * @tparam T type to check
  * @ingroup type_trait

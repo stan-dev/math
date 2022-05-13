@@ -1,10 +1,9 @@
-# Getting Started Guide {#getting_started}
+# Adding New Functions Guide {#getting_started}
 
 This is meant as a basic guide for writing and maintaining functions in the
 [stan-dev/math](https://github.com/stan-dev/math) repository. Stan Math is the
-automatic differentiation (autodiff) library behind the Stan language, and
-the vast majority of the functions exposed at the Stan language level are
-implemented here in C++.
+automatic differentiation (autodiff) library behind the Stan language, and the
+math functions exposed at the Stan language level are implemented here in C++.
 
 In the course of the Math library's existence, C++ has changed substantially.
 Math was originally written before C++11. It currently targets C++14. In the near
@@ -15,30 +14,31 @@ new code to keep the code from getting unwieldy (the old patterns will be
 updated eventually).
 
 The title contains "Current State" to emphasize that if any information here is
-out of date or any advice does not work, it should be reported as a bug (the
-[example-models](https://github.com/stan-dev/example-models)).
+out of date or any advice does not work, it should be reported as a bug (
+[issue tracker link](https://github.com/stan-dev/math/issues/new)).
 
-This document builds on the information in the [Stan Math Library](https://arxiv.org/abs/1509.07164) which should be skimmed over before .
+This document builds on the information in the [Stan Math Library](https://arxiv.org/abs/1509.07164). While some parts of the paper are out of date now it is very useful for understanding the patterns used in the math library.
 
 ## Preliminary Resources:
 
 Before contributing to Stan Math it's recommended you become familiar with C++. While this guide attempts to cover the edges and odd things we do in the math library, we recommend the resources below for getting started on autodiff in C++.
 
-Books:
+Books and Papers:
 - [Effective Modern C++](https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996)
-- [Bob's autodiff book](https://github.com/bob-carpenter/ad-handbook/blob/master/ad-handbook-draft.pdf)
 - [C++ Templates: The Complete Guide](https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121)
-- [Numerical Recipes](https://www.amazon.com/Numerical-Recipes-3rd-Scientific-Computing/dp/0521880688)
 
 Talks:
 - [Give me 15 minutes & I'll change your view of GDB](https://www.youtube.com/watch?v=PorfLSr3DDI)
 - [What Has My Compiler Done for Me Lately?](https://www.youtube.com/watch?v=bSkpMdDe4g4)
 - [Going Nowwhere Faster](https://www.youtube.com/watch?v=2EWejmkKlxs)
 
-Blog Posts:
+Blog Posts and Articles:
 - [Thinking About Automatic Differentiation in Fun New Ways](https://blog.mc-stan.org/2020/11/23/thinking-about-automatic-differentiation-in-fun-new-ways/)
+- [AD HandBook](https://github.com/bob-carpenter/ad-handbook/blob/master/ad-handbook-draft.pdf)
+- [Collected matrix derivative results for forward
+and reverse mode AD](https://people.maths.ox.ac.uk/gilesm/files/AD2008.pdf)
 
-A generally good resource for making minimal examples for bugs is [godbolt.org](https://godbolt.org/)
+A generally good resource for making minimal examples for bugs is [godbolt.org](https://godbolt.org/). The godbolt link [here](https://godbolt.org/z/GEhdcz8eo) ([backup gist](https://gist.github.com/SteveBronder/803227cccc66035f7b1988d0156e562a)) contains a function for printing C++ types and has Eigen and boost headers included.
 
 ## Code Structure
 
@@ -57,45 +57,54 @@ Within each of those folders you will find any one of the following folders
 - err: Functions that perform a check and if true throw an error.
 - fun: The math functions exposed to the Stan language.
 - functor: Functions that take in other functions and data as input such as `reduce_sum()`
-- meta: Type traits for compile time deduction on types.
+- meta: Type traits and helper functions used internally.
 
 Any function callable from the math library, excluding those in the `internal` namespace, should be compatible with Stan's reverse and forward mode autodiff types. Any new function introduced to the Math library is expected to support higher order automatic differentiation. Though exceptions to supporting higher order autodiff have been made in the past such as the differential equations solvers only supporting reverse mode autodiff.
 
-The structure for contributing a function:
-- Functions which operate on arithmetic and autodiff types go in `stan/math/prim`.
-- Functions specializations for reverse mode go in `stan/math/rev`.
-- Functions specializations for forward mode autodiff go in `stan/math/fwd`
-- Functions specializations for a combination of both forward and reverse mode go in `stan/mat/mix/fun`.
-
-Adding a function to Stan can be as simple as adding a generic templated function to `prim/fun`. The `rev`, `fwd`, `mix`, and `opencl` folders are used for adding specialization for:
+You can contribute a new function by writing the function in the `prim/fun` folder. Though the function will need to accept arithmetic, reverse mode (`var`), and forward mode (`fvar<T>`) scalar types and should be tested using the `expect_ad()` testing framework. The `rev`, `fwd`, `mix`, and `opencl` folders are used for adding specialization for:
 
 1. Performance
-2. Better numerical behavior
+2. Better numerical behavior of gradient calculations
 4. Utilize particular hardware
 
 ## Adding a Simple Example function
 
-A generic function that performs a dot product on itself could be written in `prim/fun` as
+A generic function that takes in an Eigen vector and performs a dot product on itself could be written in `prim/fun` as
 
 ```cpp
 // stan/math/prim/fun/dot_self.hpp
-template <typename EigVec>
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr> // (1)
 inline double dot_self(const EigVec& x) {
-  const auto& x_ref = to_ref(x); // (1)
-  value_type_t<EigVec> sum_x = 0.0; // (2)
+  const auto& x_ref = to_ref(x); // (2)
+  value_type_t<EigVec> sum_x = 0.0; // (3)
   for (int i = 0; i < x.size(); ++i) {
-    sum_x += x_ref.coeff(i) * x_ref.coeff(i); // (3)
+    sum_x += x_ref.coeff(i) * x_ref.coeff(i); // (4)
   }
   return sum_x;
 }
 ```
 
-This is pretty standard C++ besides (1), (2), and (3) which I'll go over here.
+Do keep in mind that in reality we would just want to return `x.squaredNorm()` on the input vector `x`. But unrolling this `dot_self()` example gives us a nice example with a few gotchas we need to watch for.
 
-#### (1) Safe elementwise access for Eigen expressions
+There are several odd parts to this function labeled (1), (2), (3), and (4) which I'll go over below.
+
+#### (1) Using Stan's require type traits to specialize overloads.
+
+The Stan math library requires that all functions are able to accept Eigen expression templates, hence the general `EigVec` template above. Though we want general templates parameters to the functions, we also want to ensure that only a restricted subset of types are able to be accepted for a particular function. For example, without the require in the above function it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good! In order to restrict the types that can go into a function the math library uses the `require` type traits to detecting which function a particular type should use.
+
+To avoid document duplication I recommend you skim over @ref require_meta The guide there explains the different styles and patterns of requires that we use throughout the math library as well as in this example. At the bottom of that page you will see subsections which will show you the `requires` we have already setup for types we commonly see.
+
+We want to restrict `self_dot()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`. A very odd piece of the template syntax how we set our require to be a pointer template parameter with a default value of nullptr.
+
+```cpp
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+```
+
+One C++ trick is that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler. Under the hood, if any of the `requires` are successful they will return back a type `void`. So in the case we are passing a type that our requires accepts we get back a `void* = nullptr` which is safely ignored by the compiler. In the case that the type does not satisfy the `require` then the function is removed from the set of possible functions the type could use via SFINAE. So with this scheme we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
+
+#### (2) Ensure Eigen Matrices are Only Evaluated Once
 
 TL;DR: Before accessing individual coefficients of an Eigen type, use `to_ref()` to make sure it's a type that's safe to access by coefficient.
-
 
 In the Stan math library we allow functions to accept Eigen expressions. This is rather nice as for instance the code
 
@@ -110,9 +119,36 @@ Eigen::Product<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Ma
 
 Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at a cost.
 
-In (2), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So `to_ref()` looks at its input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
+In (3), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So `to_ref()` looks at its input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
 
-But! Suppose our input is something like
+Another example to show the need for `to_ref()` is in the below (which you can copy and paste into godbolt.org to try yourself)
+
+```cpp
+#include <Eigen/Dense>
+#include <string_view>
+#include <iostream>
+
+template <typename T>
+double dot_self(const T& A) {
+  double sum_a = 0;
+  for (int i = 0; i < A.size(); ++i) {
+    sum_a += A(i) * A(i);
+  }
+  return sum_a;
+}
+
+int main() {
+  Eigen::VectorXd A_mat = Eigen::VectorXd::Random(5);
+  Eigen::VectorXd A_vec = Eigen::VectorXd::Random(5);
+  // This works fine
+  // double b1 = dot_self(A_vec);
+  double b2 = dot_self(A_mat * A_vec);
+}
+```
+
+Pasting the above into godbolt will show a compilation error! That's because Eigen does now allow coefficient levels access to product functions. Instead that expression needs to be evaluated before it is accessed elementwise.
+
+Now Suppose our input is something like
 
 ```cpp
 Eigen::Matrix<var, Dynamic, 1> A = Eigen::VectorXd::Random(20);
@@ -126,13 +162,13 @@ Here, we will have an expression `Eigen::Block<Eigen::MatrixXd>` as the input ty
 If we used `auto` here then if the return type of `to_ref()` was an `Eigen::MatrixXd` then it would make a copy. But with `const auto&` we do not make a copy the lifetime of the object referenced by the `const auto&` will be the same as if we had done `auto`
 
 
-#### (2) Using `value_type_t<>` and Friends
+#### (3) Using `value_type_t<>` and Friends
 
 The type trait `value_type_t` is one of several type traits we use in the library to query information about types. `value_type_t` will return the inner type of a container,
 so `value_type_t<Eigen::Matrix<double, -1, -1>>` will return `double`, `value_type_t<std::vector<std::vector<double>>>` will return a `std::vector<double>` and `value_type_t<double>` will simply return a double.
 See the module on type traits for a guide on Stan's specific type traits.
 
-#### (3) Accessing Eigen matrices though `.coeff()` and `.coeffRef()`
+#### (4) Accessing Eigen matrices though `.coeff()` and `.coeffRef()`
 
 This is a small bit, but Eigen performs bounds checks by default when using `[]` or `()` to access elements. However `.coeff()` and `.coeffRef()` do not. Because Stan model's perform bounds checking at a higher level its safe to remove the bounds checks here.
 

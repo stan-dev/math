@@ -18,7 +18,7 @@ class matrix_cl_base {};
 
 }  // namespace math
 
-/** \ingroup type_traits
+/** \ingroup type_trait
  * Checks if the decayed type of T is a matrix_cl.
  */
 template <typename T>

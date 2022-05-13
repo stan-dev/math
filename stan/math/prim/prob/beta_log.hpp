@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>beta_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_scale_succ,
@@ -17,7 +17,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_log(
   return beta_lpdf<propto, T_y, T_scale_succ, T_scale_fail>(y, alpha, beta);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>beta_lpdf</code>
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>

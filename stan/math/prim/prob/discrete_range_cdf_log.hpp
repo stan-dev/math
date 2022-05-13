@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>discrete_range_lcdf</code>
  */
 template <typename T_y, typename T_lower, typename T_upper>

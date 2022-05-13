@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * Calculates the beta cumulative distribution function for the given
  * variate and scale variables.
  *

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of the first passage time density function for a (Wiener)
  *  drift diffusion model for the given \f$y\f$,
  * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
@@ -36,7 +36,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_log(
       y, alpha, tau, beta, delta);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>wiener_lpdf</code>
  */
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,

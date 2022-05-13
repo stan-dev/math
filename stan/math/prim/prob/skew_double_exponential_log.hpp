@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>skew_double_exponential_log</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -19,7 +19,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_log(
       y, mu, sigma, tau);
 }
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>skew_double_exponential_log</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>

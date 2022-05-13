@@ -15,7 +15,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Deduces whether type is eigen matrix, standard vector, or var<Matrix>.
  * @tparam Container type to check
  */

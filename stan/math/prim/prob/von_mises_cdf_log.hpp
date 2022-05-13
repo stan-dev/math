@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * @deprecated use <code>von_mises_lcdf</code>
  */
 template <typename T_x, typename T_mu, typename T_k>

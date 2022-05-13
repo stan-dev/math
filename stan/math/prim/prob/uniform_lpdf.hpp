@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of a uniform density for the given
  * y, lower, and upper bound.
  *

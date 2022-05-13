@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/** \ingroup type_traits
+/** \ingroup type_trait
  * Return the scalar type of an OpenCL matrix.
  */
 template <typename T>

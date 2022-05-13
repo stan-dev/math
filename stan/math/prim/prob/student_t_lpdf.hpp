@@ -23,7 +23,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of the Student-t density for the given y, nu, mean, and
  * scale parameter.  The scale parameter must be greater
  * than 0.

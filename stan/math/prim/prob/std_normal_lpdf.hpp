@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup univar_dists
  * The log of the normal density for the specified scalar(s) given
  * a location of 0 and a scale of 1. y can be either
  * a scalar or a vector.

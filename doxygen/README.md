@@ -1,9 +1,7 @@
 # Stan Math Library Docs
 
 The <b>Stan Math Library</b> is a BSD-3 licensed C++, reverse-mode automatic
-differentiation library designed to be usable, extensive and
-extensible, efficient, scalable, stable, portable, and redistributable
-in order to facilitate the construction and utilization of algorithms
+differentiation library designed to facilitate the construction and utilization of algorithms
 that utilize derivatives.
 
 Required Libraries
@@ -27,8 +25,8 @@ If you are interested in contributing to Stan math please check the Contributor 
 Installation
 ------------
 The Stan Math Library is a C++ library which depends on the Intel TBB
-library and requires for some functionality (ordinary differential
-equations and root solving) the Sundials library. The build system is
+library and requires the Sundials library for ordinary differential
+equations and root solving. The build system is
 the make facility, which is used to manage all dependencies.
 
 A simple hello world program using Stan Math is as follows:
@@ -49,10 +47,10 @@ and run this with something like this, with the `/path/to` business
 replaced with actual paths:
 
 ```bash
-> cd /path/to/foo
-> make -j4 -f /path/to/stan-math/make/standalone math-libs
-> make -f /path/to/stan-math/make/standalone foo
-> ./foo
+cd /path/to/foo
+make -j4 -f /path/to/stan-math/make/standalone math-libs
+make -f /path/to/stan-math/make/standalone foo
+./foo
 log normal(1 | 2, 3)=-2.07311
 ```
 
