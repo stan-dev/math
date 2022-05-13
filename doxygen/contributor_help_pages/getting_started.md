@@ -74,7 +74,7 @@ A generic function that takes in an Eigen vector and performs a dot product on i
 ```cpp
 // stan/math/prim/fun/dot_self.hpp
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr> // (1)
-inline double dot_self(const EigVec& x) {
+inline value_type_t<EigVec> dot_self(const EigVec& x) {
   const auto& x_ref = to_ref(x); // (2)
   value_type_t<EigVec> sum_x = 0.0; // (3)
   for (int i = 0; i < x.size(); ++i) {
@@ -166,7 +166,8 @@ If we used `auto` here then if the return type of `to_ref()` was an `Eigen::Matr
 
 The type trait `value_type_t` is one of several type traits we use in the library to query information about types. `value_type_t` will return the inner type of a container,
 so `value_type_t<Eigen::Matrix<double, -1, -1>>` will return `double`, `value_type_t<std::vector<std::vector<double>>>` will return a `std::vector<double>` and `value_type_t<double>` will simply return a double.
-See the module on type traits for a guide on Stan's specific type traits.
+
+See the docs for `value_type`, `scalar_type` and `base_type` for more information on these.
 
 #### (4) Accessing Eigen matrices though `.coeff()` and `.coeffRef()`
 

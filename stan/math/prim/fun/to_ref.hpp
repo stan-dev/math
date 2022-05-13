@@ -8,7 +8,10 @@ namespace math {
 
 /**
  * This evaluates expensive Eigen expressions. If given expression involves no
- * calculations this is a no-op that should be optimized away.
+ * calculations this is a no-op that should be optimized away. If `T` satisfies
+ * the conditions explained in the docs for `ret_type` then the return type will
+ * be `T`. Otherwise the return type will be the `plain_type` of `T`.
+ * For more details on how the return type is selected see `ret_type`.
  * @tparam T argument type
  * @param a argument
  * @return optionally evaluated argument
