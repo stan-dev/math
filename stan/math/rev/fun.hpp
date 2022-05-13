@@ -84,7 +84,6 @@
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
-#include <stan/math/rev/fun/inv_Phi_log.hpp>
 #include <stan/math/rev/fun/inv_cloglog.hpp>
 #include <stan/math/rev/fun/inv_erfc.hpp>
 #include <stan/math/rev/fun/inv_logit.hpp>
@@ -160,6 +159,7 @@
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
+#include <stan/math/rev/fun/std_normal_log_qf.hpp>
 #include <stan/math/rev/fun/svd_U.hpp>
 #include <stan/math/rev/fun/svd_V.hpp>
 #include <stan/math/rev/fun/sinh.hpp>

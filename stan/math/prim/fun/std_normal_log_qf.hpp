@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_INV_PHI_LOG_HPP
-#define STAN_MATH_PRIM_FUN_INV_PHI_LOG_HPP
+#ifndef STAN_MATH_PRIM_FUN_STD_NORMAL_LOG_QF_HPP
+#define STAN_MATH_PRIM_FUN_STD_NORMAL_LOG_QF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -23,9 +23,9 @@ namespace math {
  * @param p argument between -Inf and 0 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
-inline double inv_Phi_log(double log_p) {
-  check_not_nan("inv_Phi_log", "Log probability variable", log_p);
-  check_less_or_equal("inv_Phi_log", "Probability variable", log_p, 0);
+inline double std_normal_log_qf(double log_p) {
+  check_not_nan("std_normal_log_qf", "Log probability variable", log_p);
+  check_less_or_equal("std_normal_log_qf", "Probability variable", log_p, 0);
 
   if (log_p == NEGATIVE_INFTY) {
     return NEGATIVE_INFTY;
@@ -132,15 +132,15 @@ inline double inv_Phi_log(double log_p) {
  * @return inverse of the unit normal CDF of x
  * @throw std::domain_error if x is not less than or equal to 0
  */
-struct inv_Phi_log_fun {
+struct std_normal_log_qf_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return inv_Phi_log(x);
+    return std_normal_log_qf(x);
   }
 };
 
 /**
- * A vectorized version of inv_Phi_log() that accepts std::vectors, Eigen
+ * A vectorized version of std_normal_log_qf() that accepts std::vectors, Eigen
  * Matrix/Array objects, or expressions, and containers of these.
  *
  * @tparam T type of container
@@ -152,8 +152,8 @@ template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
     require_not_var_matrix_t<T>* = nullptr>
-inline auto inv_Phi_log(const T& x) {
-  return apply_scalar_unary<inv_Phi_log_fun, T>::apply(x);
+inline auto std_normal_log_qf(const T& x) {
+  return apply_scalar_unary<std_normal_log_qf_fun, T>::apply(x);
 }
 
 }  // namespace math

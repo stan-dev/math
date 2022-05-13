@@ -2,26 +2,26 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathFunctionsLog, inv_Phi_log) {
-  using stan::math::inv_Phi_log;
+TEST(MathFunctionsLog, std_normal_log_qf) {
+  using stan::math::std_normal_log_qf;
   using stan::math::Phi;
-  EXPECT_FLOAT_EQ(0.0, inv_Phi_log(log(0.5)));
+  EXPECT_FLOAT_EQ(0.0, std_normal_log_qf(log(0.5)));
   double log_p = log(0.123456789);
-  EXPECT_FLOAT_EQ(0.123456789, Phi(inv_Phi_log(log_p)));
+  EXPECT_FLOAT_EQ(0.123456789, Phi(std_normal_log_qf(log_p)));
   log_p = log(8e-311);
-  EXPECT_FLOAT_EQ(8e-311, Phi(inv_Phi_log(log_p)));
+  EXPECT_FLOAT_EQ(8e-311, Phi(std_normal_log_qf(log_p)));
   log_p = log(0.99);
-  EXPECT_FLOAT_EQ(0.99, Phi(inv_Phi_log(log_p)));
+  EXPECT_FLOAT_EQ(0.99, Phi(std_normal_log_qf(log_p)));
 
   // breakpoints
   log_p = log(0.02425);
-  EXPECT_FLOAT_EQ(0.02425, Phi(inv_Phi_log(log_p)));
+  EXPECT_FLOAT_EQ(0.02425, Phi(std_normal_log_qf(log_p)));
   log_p = log(0.97575);
-  EXPECT_FLOAT_EQ(0.97575, Phi(inv_Phi_log(log_p)));
+  EXPECT_FLOAT_EQ(0.97575, Phi(std_normal_log_qf(log_p)));
 }
 
 TEST(MathFunctionsLog, Equal) {
-  using stan::math::inv_Phi_log;
+  using stan::math::std_normal_log_qf;
   // test output generated with WolframAlpha
 
   double log_p[]
@@ -43,22 +43,22 @@ TEST(MathFunctionsLog, Equal) {
   int numValues = sizeof(log_p) / sizeof(double);
 
   for (int i = 0; i < numValues; ++i) {
-    EXPECT_NEAR(exact[i], inv_Phi_log(log_p[i]), 9.5e-14);
+    EXPECT_NEAR(exact[i], std_normal_log_qf(log_p[i]), 9.5e-14);
   }
 }
 
-TEST(MathFunctionsLog, inv_Phi_log_inf) {
-  using stan::math::inv_Phi_log;
+TEST(MathFunctionsLog, std_normal_log_qf_inf) {
+  using stan::math::std_normal_log_qf;
   long double log_p = std::numeric_limits<long double>::min();
   const double inf = std::numeric_limits<double>::infinity();
-  EXPECT_EQ(inv_Phi_log(-inf), -inf);
+  EXPECT_EQ(std_normal_log_qf(-inf), -inf);
   log_p = log(1.);
-  EXPECT_EQ(inv_Phi_log(log_p), inf);
+  EXPECT_EQ(std_normal_log_qf(log_p), inf);
 }
 
-TEST(MathFunctionsLog, inv_Phi_log_nan) {
-  using stan::math::inv_Phi_log;
+TEST(MathFunctionsLog, std_normal_log_qf_nan) {
+  using stan::math::std_normal_log_qf;
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(inv_Phi_log(nan), std::domain_error);
-  EXPECT_THROW(inv_Phi_log(2.1), std::domain_error);
+  EXPECT_THROW(std_normal_log_qf(nan), std::domain_error);
+  EXPECT_THROW(std_normal_log_qf(2.1), std::domain_error);
 }

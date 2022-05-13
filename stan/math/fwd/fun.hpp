@@ -46,7 +46,6 @@
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_erfc.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
-#include <stan/math/fwd/fun/inv_Phi_log.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
 #include <stan/math/fwd/fun/inv_inc_beta.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
@@ -107,6 +106,7 @@
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
+#include <stan/math/fwd/fun/std_normal_log_qf.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
