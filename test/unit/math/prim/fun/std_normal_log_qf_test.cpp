@@ -3,8 +3,8 @@
 #include <limits>
 
 TEST(MathFunctionsLog, std_normal_log_qf) {
-  using stan::math::std_normal_log_qf;
   using stan::math::Phi;
+  using stan::math::std_normal_log_qf;
   EXPECT_FLOAT_EQ(0.0, std_normal_log_qf(log(0.5)));
   double log_p = log(0.123456789);
   EXPECT_FLOAT_EQ(0.123456789, Phi(std_normal_log_qf(log_p)));
