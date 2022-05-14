@@ -104,22 +104,23 @@ One C++ trick is that any non-type template parameter of type `void*` with a def
 
 #### (2) Ensure Eigen Matrices are Only Evaluated Once
 
-TL;DR: Before accessing individual coefficients of an Eigen type, use `to_ref()` to make sure it's a type that's safe to access by coefficient.
+TL;DR: Before accessing individual coefficients of an Eigen type, use `to_ref()` to make sure accessing the coefficients will not cause a compiler error or forcing the coefficient to be computed multiple times.
 
-In the Stan math library we allow functions to accept Eigen expressions. This is rather nice as for instance the code
-
-```cpp
-Eigen::MatrixXd x = multiply(add(A, multiply(B, C)), add(D, E));
-```
-Actually delays evaluation when making `x` and produces an object of type
+In the Stan math library we allow functions to accept Eigen expressions. This can lead to some nice outcomes such as in the below example. Here the additions that go into `subtract()` can all be combined together to form one large computation instead of many smaller ones.
 
 ```cpp
-Eigen::Product<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Matrix, Matrix>>
+Eigen::MatrixXd x = subtract(add(A, multiply(B, C)), add(D, E));
 ```
 
-Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at a cost.
+The type created on the RHS of the above is actually an eigen expression that looks like the below.
 
-In (3), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So `to_ref()` looks at its input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
+```cpp
+Eigen::Subtract<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Matrix, Matrix>>
+```
+
+Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at the cost of code complication.
+
+In (3), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So `to_ref()` looks at its input type, and if the input type is an Eigen expression that performs a calculation then it returns as if we called `.eval()` on our input, otherwise it returns the same type as `x`.
 
 Another example to show the need for `to_ref()` is in the below (which you can copy and paste into godbolt.org to try yourself)
 
