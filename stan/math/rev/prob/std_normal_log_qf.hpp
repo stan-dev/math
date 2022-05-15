@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_STD_NORMAL_LOG_QF_HPP
-#define STAN_MATH_REV_FUN_STD_NORMAL_LOG_QF_HPP
+#ifndef STAN_MATH_REV_PROB_STD_NORMAL_LOG_QF_HPP
+#define STAN_MATH_REV_PROB_STD_NORMAL_LOG_QF_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
