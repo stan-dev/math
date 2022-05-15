@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_STD_NORMAL_LOG_QF_HPP
-#define STAN_MATH_PRIM_FUN_STD_NORMAL_LOG_QF_HPP
+#ifndef STAN_MATH_PRIM_PROB_STD_NORMAL_LOG_QF_HPP
+#define STAN_MATH_PRIM_PROB_STD_NORMAL_LOG_QF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

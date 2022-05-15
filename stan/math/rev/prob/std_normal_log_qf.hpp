@@ -4,7 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/std_normal_log_qf.hpp>
+#include <stan/math/prim/prob/std_normal_log_qf.hpp>
 #include <cmath>
 
 namespace stan {
