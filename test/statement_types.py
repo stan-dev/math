@@ -130,7 +130,10 @@ class MatrixVariable(CppStatement):
         self.size = size
 
         if value is None:
-            self.value = 0.4
+            if 'complex' in stan_arg:
+                self.value = "stan::math::to_complex(0.4,0.4)"
+            else:
+                self.value = 0.4
         else:
             self.value = value
 
@@ -144,7 +147,10 @@ class MatrixVariable(CppStatement):
 
     def is_varmat_compatible(self):
         """Return true (matrix-like types are varmat compatible)"""
-        return True
+        if self.stan_arg.startswith("complex"):
+            return False
+        else:
+            return True
 
     def cpp(self):
         """Generate C++"""
