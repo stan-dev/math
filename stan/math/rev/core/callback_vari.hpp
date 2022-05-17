@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <utility>
 
 namespace stan {
@@ -103,14 +104,13 @@ inline auto make_callback_rev_matrix(T&& value, F&& functor) {
  * matrix. The hard copy is performed so later functions do not modify the
  * `vari` needed for the reverse pass call constructed here.
  */
-
 template <typename Ret, typename T, typename F, require_eigen_t<Ret>* = nullptr>
-inline promote_scalar_t<var, T> make_callback_rev_matrix(T&& value,
+inline promote_scalar_t<var_value<double>, T> make_callback_rev_matrix(T&& value,
                                                          F&& functor) {
-  arena_t<promote_scalar_t<var, T>> ret = std::forward<T>(value);
+  arena_matrix<promote_scalar_t<var_value<double>, T>> ret = std::forward<T>(value);
   reverse_pass_callback(
       [ret, func = std::forward<F>(functor)]() mutable { return func(ret); });
-  return promote_scalar_t<var, T>(ret);
+  return promote_scalar_t<var_value<double>, T>(ret);
 }
 
 }  // namespace math
