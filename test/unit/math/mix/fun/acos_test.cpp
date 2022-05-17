@@ -40,4 +40,5 @@ TEST(mathMixMatFun, acos_varmat) {
     A(i) = all_args[i];
   }
   expect_ad_vector_matvar(f, A);
+  stan::test::expect_ad(stan::test::make_sparse_mat_func<true>(f), A);
 }

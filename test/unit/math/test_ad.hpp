@@ -2150,6 +2150,33 @@ std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
   return xs;
 }
 
+template <typename T1>
+auto gen_sparse_diag_mat(T1&& x) {
+  using triplet_t = Eigen::Triplet<stan::scalar_type_t<T1>>;
+  std::vector<triplet_t> tripletList;
+  tripletList.reserve(x.size());
+  for (int i = 0; i < x.size(); i++) {
+    tripletList.emplace_back(i, i, x(i));
+  }
+  Eigen::SparseMatrix<stan::scalar_type_t<T1>> x_sparse(x.size(), x.size());
+  x_sparse.setFromTriplets(tripletList.begin(), tripletList.end());
+  x_sparse.makeCompressed();
+  return x_sparse;
+}
+
+/**
+ * Takes a unary lambda f taking a vector and makes a diagonal sparse matrix.
+ * @tparam ExpectDenseReturn if true, the return is checked for whether it's
+ * type is derived from `Eigen::DenseBase`, otherwise the return type is checked
+ *  for whether it's type is derived from `Eigen::SparseMatrixBase`.
+ * @tparam A lambda
+ * @param An unary lambda
+ */
+template <bool ExpectDenseReturn, typename F>
+auto make_sparse_mat_func(F&& f) {
+  return [&f](auto&& x) { return f(stan::test::gen_sparse_diag_mat(x)); };
+}
+
 }  // namespace test
 }  // namespace stan
 #endif

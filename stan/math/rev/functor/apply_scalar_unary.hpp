@@ -15,8 +15,8 @@ namespace math {
  *
  * @tparam F Type of function to apply.
  */
-template <typename F>
-struct apply_scalar_unary<F, var> {
+template <typename F, bool ApplyZero>
+struct apply_scalar_unary<F, var, ApplyZero, void> {
   /**
    * Function return type, which is <code>var</code>.
    */
@@ -31,8 +31,8 @@ struct apply_scalar_unary<F, var> {
   static inline return_t apply(const var& x) { return F::fun(x); }
 };
 
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_var_matrix_t<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, T, ApplyZero, require_var_matrix_t<T>> {
   /**
    * Function return type, which is a `var_value` with plain value type.
    */

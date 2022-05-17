@@ -80,7 +80,7 @@ template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline auto log1p(const T& x) {
-  return apply_scalar_unary<log1p_fun, T>::apply(x);
+  return apply_scalar_unary<log1p_fun, T, true>::apply(x);
 }
 
 }  // namespace math

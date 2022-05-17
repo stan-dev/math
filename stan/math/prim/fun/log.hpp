@@ -48,7 +48,7 @@ template <
     require_not_var_matrix_t<Container>* = nullptr,
     require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
 inline auto log(const Container& x) {
-  return apply_scalar_unary<log_fun, Container>::apply(x);
+  return apply_scalar_unary<log_fun, Container, true>::apply(x);
 }
 
 /**
