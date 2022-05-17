@@ -140,7 +140,7 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(T x) { return F::fun(static_cast<double>(x)); }
+  static inline auto apply(T x) { return F::fun(x); }
   /**
    * The return type, double.
    */
@@ -175,8 +175,6 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * container.
    */
   static inline auto apply(const std::vector<T>& x) {
-    // using inner_t = std::decay_t<plain_type_t<decltype(apply_scalar_unary<F,
-    // T>::apply(x[0]))>>;
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       fx[i] = apply_scalar_unary<F, T>::apply(x[i]);

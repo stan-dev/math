@@ -100,7 +100,7 @@ inline double lgamma(int x) {
  */
 struct lgamma_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return lgamma(x);
   }
 };

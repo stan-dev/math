@@ -58,7 +58,7 @@ inline double digamma(double x) {
  */
 struct digamma_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return digamma(x);
   }
 };
