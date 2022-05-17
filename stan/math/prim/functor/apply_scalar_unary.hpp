@@ -59,8 +59,9 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * by F to the specified matrix.
    */
   static inline auto apply(const T& x) {
-    return x.unaryExpr(
-        [](auto&& x) { return apply_scalar_unary<F, std::decay_t<decltype(x)>>::apply(x); });
+    return x.unaryExpr([](auto&& x) {
+      return apply_scalar_unary<F, std::decay_t<decltype(x)>>::apply(x);
+    });
   }
 
   /**
@@ -82,7 +83,7 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
-   using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
+  using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -104,7 +105,6 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
  */
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, require_complex_t<T>> {
-
   /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
@@ -119,7 +119,6 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
    * The return type
    */
   using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
-
 };
 
 /**
@@ -176,7 +175,8 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * container.
    */
   static inline auto apply(const std::vector<T>& x) {
-    //using inner_t = std::decay_t<plain_type_t<decltype(apply_scalar_unary<F, T>::apply(x[0]))>>;
+    // using inner_t = std::decay_t<plain_type_t<decltype(apply_scalar_unary<F,
+    // T>::apply(x[0]))>>;
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
