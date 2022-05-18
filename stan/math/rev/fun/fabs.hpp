@@ -71,7 +71,7 @@ template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto fabs(const VarMat& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<VarMat>(
-      x_arena.val().unaryExpr([](const auto x) {
+      x_arena.val().unaryExpr([](auto&& x) {
         if (unlikely(is_nan(x))) {
           return NOT_A_NUMBER;
         } else {
@@ -81,13 +81,13 @@ inline auto fabs(const VarMat& x) {
       [x_arena](auto&& vi) mutable {
         for (Eigen::Index j = 0; j < vi.cols(); ++j) {
           for (Eigen::Index i = 0; i < vi.rows(); ++i) {
-            const auto x = x_arena.val().coeffRef(i, j);
+            const auto x = x_arena.val().coeff(i, j);
             if (unlikely(is_nan(x))) {
               x_arena.adj().coeffRef(i, j) = NOT_A_NUMBER;
             } else if (x < 0.0) {
-              x_arena.adj().coeffRef(i, j) -= vi.adj_.coeff(i, j);
+              x_arena.adj().coeffRef(i, j) -= vi.adj().coeff(i, j);
             } else {
-              x_arena.adj().coeffRef(i, j) += vi.adj_.coeff(i, j);
+              x_arena.adj().coeffRef(i, j) += vi.adj().coeff(i, j);
             }
           }
         }
