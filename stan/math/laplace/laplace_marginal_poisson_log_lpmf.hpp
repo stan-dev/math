@@ -85,7 +85,7 @@ inline auto laplace_marginal_poisson_log_lpmf(
   Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
-  constexpr int hessian_block_size = 0;
+  constexpr int hessian_block_size = 1;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
   return laplace_marginal_density(
@@ -109,7 +109,7 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
   y_and_ye << y_vec, ye;
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
-  constexpr int hessian_block_size = 0;
+  constexpr int hessian_block_size = 1;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
   return laplace_marginal_density(

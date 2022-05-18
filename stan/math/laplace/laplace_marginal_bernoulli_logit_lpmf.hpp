@@ -61,7 +61,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
     std::ostream* msgs, Args&&... args) {
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
-  constexpr int hessian_block_size = 0;
+  constexpr int hessian_block_size = 1;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
     // TODO: change this to a VectorXd once we have operands & partials.

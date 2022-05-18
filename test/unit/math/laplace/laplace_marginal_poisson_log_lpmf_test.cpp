@@ -61,7 +61,7 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   double tolerance = 1e-6;
   int max_num_steps = 100;
   target = laplace_marginal_tol_poisson_2_log_lpmf(sums, n_samples, ye,
-                        tolerance, max_num_steps, 0, 1, 0, theta_0,
+                        tolerance, max_num_steps, 1, 1, 0, theta_0,
                         sq_kernel, nullptr, x, alpha, rho);
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
@@ -85,20 +85,20 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 
   double target_1u = laplace_marginal_tol_poisson_log_lpmf(
              sums, n_samples,  tolerance, max_num_steps,
-             0, 1, 0, theta_0, sq_kernel,
+             1, 1, 0, theta_0, sq_kernel,
              nullptr, x, phi_1u[0], phi_1u[1]);
   double target_1l = laplace_marginal_tol_poisson_log_lpmf(
              sums, n_samples,
              tolerance, max_num_steps,
-             0, 1, 0, theta_0, sq_kernel,
+             1, 1, 0, theta_0, sq_kernel,
              nullptr, x, phi_1l[0], phi_1l[1]);
   double target_2u = laplace_marginal_tol_poisson_log_lpmf(
              sums, n_samples, tolerance, max_num_steps,
-             0, 1, 0, theta_0, sq_kernel,
+             1, 1, 0, theta_0, sq_kernel,
              nullptr, x, phi_2u[0], phi_2u[1]);
   double target_2l = laplace_marginal_tol_poisson_log_lpmf(
              sums, n_samples, tolerance, max_num_steps,
-             0, 1, 0, theta_0, sq_kernel,
+             1, 1, 0, theta_0, sq_kernel,
              nullptr, x, phi_2l[0], phi_2l[1]);
 
   std::vector<double> g_finite(dim_phi);

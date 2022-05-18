@@ -18,7 +18,8 @@
 #include <cmath>
 
 // Reference for calculations of marginal and its gradients:
-// Margossian et al, 2020, https://arxiv.org/abs/2004.12550
+// Margossian et al (2020), https://arxiv.org/abs/2004.12550
+// and Margossian (2022), https://doi.org/10.7916/0wsc-kz90
 
 // TODO -- either use Eigen's .solve() or mdivide_left_tri.
 // The code needs to be more consistent.
@@ -115,22 +116,16 @@ inline laplace_density_estimates laplace_marginal_density_est(
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
 
-  // Leaving this as 0
-  // solver = 1;
-  // hessian_block_size = 1;
+  check_nonzero_size("laplace_marginal", "initial guess", theta_0);
+  check_finite("laplace_marginal", "initial guess", theta_0);
+  check_nonnegative("laplace_marginal", "tolerance", tolerance);
+  check_positive("laplace_marginal", "max_num_steps", max_num_steps);
+  check_positive("laplace_marginal", "hessian_block_size", hessian_block_size);
+  check_nonnegative("laplace_marginal", "max_steps_line_search",
+                    max_steps_line_search);
+
   Eigen::MatrixXd covariance = covariance_function(covar_args..., msgs);
 
-  const bool is_hessian_block_size_zero = hessian_block_size == 0;
-  if (is_hessian_block_size_zero && solver != 1) {
-    constexpr const char* msg
-        = "laplace_marginal_density: if treating the Hessian as diagonal"
-          " we assume its matrix square-root can be computed."
-          " If you don't want to compute the matrix square-root,"
-          " set hessian_block_size to 1.";
-    throw std::domain_error(std::string(msg));
-  }
-  Eigen::Index block_size = is_hessian_block_size_zero ? hessian_block_size + 1
-                                                       : hessian_block_size;
   auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
     throw std::domain_error(
         std::string("laplace_marginal_density: max number of iterations: ")
@@ -163,11 +158,26 @@ inline laplace_density_estimates laplace_marginal_density_est(
   Eigen::VectorXd a_old;
   Eigen::VectorXd a_new;
   Eigen::VectorXd theta_new;
-  if (solver == 1 && is_hessian_block_size_zero) {
+
+  if (solver == 1 && hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
-      Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
+          = -diff_likelihood.diff(theta, eta, l_grad, hessian_block_size);
+
+      // Compute matrix square-root of W. If all elements of W are positive,
+      // do an element wise square-root. Else try a matirx square-root.
+      bool W_is_spd = TRUE;
+      for (Eigen::Index i = 0; i < theta_0.size(); i++) {
+        if (W.coeff(i, i) < 0) W_is_spd = FALSE;
+      }
+      Eigen::SparseMatrix<double> W_r;
+      if (W_is_spd) {
+        W_r = W.cwiseSqrt();
+      } else {
+        W_r = block_matrix_sqrt(W, hessian_block_size);
+      }
+
+      // Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
                    + quad_form_diag(covariance, W_r.diagonal());
       Eigen::MatrixXd L = cholesky_decompose(B);
@@ -180,6 +190,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
                       transpose(L),
                       mdivide_left_tri<Eigen::Lower>(
                           L, W_r.diagonal().cwiseProduct(covariance * b)));
+
       // Simple Newton step
       theta = covariance * a;
       if (i != 0) {
@@ -212,11 +223,12 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
     }
     throw_overstep(max_num_steps);
-  } else if (solver == 1 && !is_hessian_block_size_zero) {
+  } else if (solver == 1 && !(hessian_block_size == 1)) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
-      Eigen::SparseMatrix<double> W_r = block_matrix_sqrt(W, block_size);
+          = -diff_likelihood.diff(theta, eta, l_grad, hessian_block_size);
+      Eigen::SparseMatrix<double> W_r
+        = block_matrix_sqrt(W, hessian_block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
                    + W_r * (covariance * W_r);
       Eigen::MatrixXd L = cholesky_decompose(B);
@@ -263,7 +275,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   } else if (solver == 2) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+          = -diff_likelihood.diff(theta, eta, l_grad, hessian_block_size);
       // TODO -- use triangularView for K_root.
       Eigen::MatrixXd K_root = cholesky_decompose(covariance);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
@@ -286,7 +298,6 @@ inline laplace_density_estimates laplace_marginal_density_est(
             = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
       }
       // linesearch
-      // CHECK -- does linesearch work for solver 2?
       if (max_steps_line_search > 0 && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
@@ -311,7 +322,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   } else if (solver == 3) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+          = -diff_likelihood.diff(theta, eta, l_grad, hessian_block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
           = Eigen::PartialPivLU<Eigen::MatrixXd>(B);
@@ -509,15 +520,16 @@ inline auto laplace_marginal_density(
             L.triangularView<Eigen::Lower>().solve(W_root_diag));
 
     Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_root * covariance);
-    if (hessian_block_size == 0 && eta_size_ == 0) {
+    if (hessian_block_size == 1 && eta_size_ == 0) {
       s2 = 0.5
            * (covariance.diagonal() - (C.transpose() * C).diagonal())
                  .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
     } else {
-      int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
-                                                 : hessian_block_size;
+      // int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
+      //                                            : hessian_block_size;
       Eigen::MatrixXd A = covariance - C.transpose() * C;
-      partial_parm = diff_likelihood.compute_s2(theta, eta_dbl, A, block_size);
+      partial_parm = diff_likelihood.compute_s2(theta, eta_dbl, A,
+                                                hessian_block_size);
       s2 = partial_parm.head(theta_size);
     }
   } else if (solver == 2) {

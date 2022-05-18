@@ -42,7 +42,6 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   stan::math::test::sqr_exp_kernel_functor kernel_functor;
   var target = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, theta_0, kernel_functor,
                                                    nullptr, x, phi(0), phi(1));
-
   double tol = 8e-5;
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, value_of(target), tol);
@@ -51,7 +50,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   double tolerance = 1e-6;
   int max_num_steps = 100;
   target = laplace_marginal_tol_bernoulli_logit_lpmf(y, n_samples,
-                    tolerance, max_num_steps, 0, 1, 0,
+                    tolerance, max_num_steps, 1, 1, 0,
                     theta_0, kernel_functor, 0, x, phi(0), phi(1));
   EXPECT_NEAR(-195.368, value_of(target), tol);
 

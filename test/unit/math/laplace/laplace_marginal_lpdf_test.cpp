@@ -70,7 +70,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   // Test with optional arguments
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  int hessian_block_size = 0;
+  int hessian_block_size = 1;
   int solver = 1;
   int do_line_search = 1;
   int max_steps_line_search = 10;
@@ -148,7 +148,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
 
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  int hessian_block_size = 0;
+  int hessian_block_size = 1;
   int solver = 1;
   int do_line_search = 0;
   int max_steps_line_search = 0;

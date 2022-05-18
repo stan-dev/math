@@ -102,14 +102,14 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   Eigen::MatrixXd theta_benchmark
     = multi_normal_rng(theta_root, K_laplace, rng);
 
-    /* These are off by 0.18~ (the same) and idk why
+  // These are off by 0.18~ (the same) and idk why
   double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
 
   EXPECT_NEAR(theta_benchmark(0), theta_pred_exp(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred_exp(1), tol);
-  */
+
   // for (int i = 0; i < n_sim; i++) {
   //   rng.seed(1954);
   //   Eigen::MatrixXd theta_pred

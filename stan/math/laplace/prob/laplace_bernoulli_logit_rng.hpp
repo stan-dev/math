@@ -50,7 +50,7 @@ laplace_marginal_bernoulli_logit_rng(
     Args&&... args) {
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
-  constexpr int hessian_block_size = 0;
+  constexpr int hessian_block_size = 1;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
   Eigen::VectorXd eta_dummy(0);
