@@ -24,14 +24,14 @@ struct diff_neg_binomial_2_log {
     sums_ = Eigen::VectorXd::Zero(n_theta);
     n_samples_ = Eigen::VectorXd::Zero(n_theta);
 
-    for (int i = 0; i < n_theta; i++) {
+    for (Eigen::Index i = 0; i < n_theta; i++) {
       n_samples_(y_index[i]) += 1;
       sums_(y_index[i]) += y[i];
     }
   }
 
   template <typename T_theta, typename T_eta>
-  return_type_t<T_theta, T_eta> log_likelihood(
+  inline return_type_t<T_theta, T_eta> log_likelihood(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     T_eta eta_scalar = eta(0);
@@ -41,7 +41,7 @@ struct diff_neg_binomial_2_log {
     }
     // CHECK -- is it better to vectorize this loop?
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    for (int i = 0; i < n_theta_; i++) {
+    for (Eigen::Index i = 0; i < n_theta_; i++) {
       return_type_t<T_theta, T_eta> log_eta_plus_exp_theta
           = log(eta_scalar + exp_theta(i));
       logp += sums_(i) * (theta(i) - log_eta_plus_exp_theta)
@@ -52,14 +52,14 @@ struct diff_neg_binomial_2_log {
   }
 
   template <typename T_theta, typename T_eta>
-  void diff(
+  inline Eigen::SparseMatrix<double> diff(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
       Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>& gradient,
-      Eigen::SparseMatrix<double>& hessian, int hessian_block_size = 1) const {
+      const Eigen::Index hessian_block_size = 1) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     Eigen::VectorXd one = rep_vector(1, theta.size());
-    int theta_size = theta.size();
+    const Eigen::Index theta_size = theta.size();
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_eta, Eigen::Dynamic, 1> sums_plus_n_eta
         = sums_ + eta_scalar * n_samples_;
@@ -71,22 +71,23 @@ struct diff_neg_binomial_2_log {
     Eigen::MatrixXd hessian_val = eta_scalar
                                   * sums_plus_n_eta.cwiseProduct(elt_divide(
                                       exp_neg_theta, square(one_plus_exp)));
-    hessian.resize(theta_size, theta_size);
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++)
       hessian.insert(i, i) = -hessian_val(i);
     /*
         hessian = -eta_scalar
                   * sums_plus_n_eta.cwiseProduct(
                         elt_divide(exp_neg_theta, square(one_plus_exp)));
     */
+    return hessian;
   }
 
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> third_diff(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  third_diff(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+             const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
     T_eta eta_scalar = eta(0);
@@ -103,7 +104,7 @@ struct diff_neg_binomial_2_log {
   }
 
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> diff_eta(
+  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> diff_eta(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
@@ -115,7 +116,7 @@ struct diff_neg_binomial_2_log {
         = exp_theta + rep_vector(eta_scalar, theta.size());
 
     T_eta y_plus_eta_digamma_sum = 0;
-    for (int i = 0; i < y_.size(); i++)
+    for (Eigen::Index i = 0; i < y_.size(); i++)
       y_plus_eta_digamma_sum += digamma(y_plus_eta(i));
 
     Eigen::Matrix<scalar, Eigen::Dynamic, 1> gradient_eta(1);
@@ -129,9 +130,9 @@ struct diff_neg_binomial_2_log {
   }
 
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-  diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+  inline auto diff_theta_eta(
+      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
@@ -146,7 +147,8 @@ struct diff_neg_binomial_2_log {
   // TODO: Address special case where we have an empty group (induces zero
   // elements in W).
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
+  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
+                       Eigen::Dynamic>
   diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;

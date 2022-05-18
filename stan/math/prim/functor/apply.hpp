@@ -21,7 +21,7 @@ namespace internal {
  * @param i placeholder variable for index sequence
  */
 template <class F, class Tuple, std::size_t... I>
-constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
+inline constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
                                     std::index_sequence<I...> i) {
   return f(std::forward<decltype(std::get<I>(t))>(std::get<I>(t))...);
 }
@@ -40,7 +40,7 @@ constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
  * @param t tuple of arguments
  */
 template <class F, class Tuple>
-constexpr decltype(auto) apply(F&& f, Tuple&& t) {
+inline constexpr decltype(auto) apply(F&& f, Tuple&& t) {
   return internal::apply_impl(
       std::forward<F>(f), std::forward<Tuple>(t),
       std::make_index_sequence<

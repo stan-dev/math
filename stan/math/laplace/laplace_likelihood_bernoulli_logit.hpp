@@ -6,14 +6,11 @@ namespace math {
 
 struct bernoulli_logit_likelihood {
   template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+  inline stan::return_type_t<T_theta, T_eta> operator()(
+      const T_theta& theta, const T_eta& /* eta */, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
-    Eigen::VectorXd n_samples = to_vector(delta_int);
-    Eigen::VectorXd one = rep_vector(1, theta.size());
     return sum(theta.cwiseProduct(y)
-               - n_samples.cwiseProduct(log(one + exp(theta))));
+               - to_vector(delta_int).cwiseProduct(log(add(1.0, exp(theta)))));
   }
 };
 
@@ -29,10 +26,10 @@ struct diff_bernoulli_logit {
   Eigen::VectorXd n_samples_;
   /* The sum of counts in each group. */
   Eigen::VectorXd sums_;
-
-  diff_bernoulli_logit(const Eigen::VectorXd& n_samples,
-                       const Eigen::VectorXd& sums)
-      : n_samples_(n_samples), sums_(sums) {}
+  template <typename Vec1, typename Vec2>
+  diff_bernoulli_logit(Vec1&& n_samples, Vec2&& sums)
+      : n_samples_(std::forward<Vec1>(n_samples)),
+        sums_(std::forward<Vec2>(sums)) {}
 
   /**
    * Return the log density.
@@ -40,13 +37,14 @@ struct diff_bernoulli_logit {
    * @param[in] theta log poisson parameters for each group.
    * @return the log density.
    */
-  template <typename T1, typename T2>
-  T1 log_likelihood(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
-    Eigen::VectorXd one = rep_vector(1, theta.size());
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  inline auto log_likelihood(const Theta& theta,
+                             const Eta& /* eta_dummy */) const {
     return sum(theta.cwiseProduct(sums_)
-               - n_samples_.cwiseProduct(log(one + exp(theta))));
+               - n_samples_.cwiseProduct(
+                   log(add(Eigen::VectorXd::Ones(theta.size()), exp(theta)))));
   }
 
   /**
@@ -60,25 +58,26 @@ struct diff_bernoulli_logit {
    * @param[in, out] gradient
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
-  template <typename T1, typename T2>
-  void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
-            Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-            Eigen::SparseMatrix<double>& hessian,
-            int block_size_dummy = 0) const {
-    Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    int theta_size = theta.size();
-    Eigen::VectorXd one = rep_vector(1, theta_size);
-
+  template <typename Theta, typename Eta, typename GradVec,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  inline Eigen::SparseMatrix<double> diff(const Theta& theta,
+                                          const Eta& /* eta */,
+                                          GradVec& gradient,
+                                          const Eigen::Index block_size_dummy
+                                          = 0) const {
+    auto exp_theta = exp(theta).eval();
+    const Eigen::Index theta_size = theta.size();
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
-
-    Eigen::Matrix<T1, Eigen::Dynamic, 1> hessian_diagonal
-        = -n_samples_.cwiseProduct(
-            elt_divide(exp_theta, square(one + exp_theta)));
-    hessian.resize(theta_size, theta_size);
+    auto hessian_diagonal = (-n_samples_.cwiseProduct(elt_divide(
+                                 exp_theta, square(add(1.0, exp_theta)))))
+                                .eval();
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = hessian_diagonal(i);
+    }
+    return hessian;
   }
 
   /**
@@ -90,17 +89,18 @@ struct diff_bernoulli_logit {
    * @return A vector containing the non-zero elements of the third
    *         derivative tensor.
    */
-  template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  inline auto third_diff(const Theta& theta, const Eta& /* eta */) const {
     Eigen::VectorXd exp_theta = exp(theta);
-    Eigen::VectorXd one = rep_vector(1, theta.size());
-    Eigen::VectorXd nominator = exp_theta.cwiseProduct(exp_theta - one);
-    Eigen::VectorXd denominator
-        = square(one + exp_theta).cwiseProduct(one + exp_theta);
+    auto nominator = exp_theta.cwiseProduct(
+        exp_theta - Eigen::VectorXd::Ones(theta.size()));
+    Eigen::VectorXd one_plus_exp_theta = add(1.0, exp_theta);
+    auto denominator
+        = square(one_plus_exp_theta).cwiseProduct(one_plus_exp_theta);
 
-    return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
+    return (n_samples_.cwiseProduct(elt_divide(nominator, denominator))).eval();
   }
 };
 

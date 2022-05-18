@@ -30,6 +30,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
+#include <stan/math/rev/fun/cumulative_sum.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
@@ -78,6 +79,7 @@
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/inv_inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>

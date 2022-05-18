@@ -18,11 +18,12 @@ struct poisson_log_likelihood {
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    */
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
-      const std::vector<int>& delta_int, std::ostream* pstream) const {
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  auto operator()(const Theta& theta, const Eta& /* eta */,
+                  const Eigen::VectorXd& y, const std::vector<int>& delta_int,
+                  std::ostream* pstream) const {
     Eigen::VectorXd n_samples = to_vector(delta_int);
     return -lgamma(y.array() + 1).sum() + theta.dot(y)
            - n_samples.dot(exp(theta));
@@ -44,17 +45,19 @@ struct poisson_log_exposure_likelihood {
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    */
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y_and_ye,
-      const std::vector<int>& delta_int, std::ostream* pstream) const {
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  inline auto operator()(const Theta& theta, const Eta& /* eta */,
+                         const Eigen::VectorXd& y_and_ye,
+                         const std::vector<int>& delta_int,
+                         std::ostream* pstream) const {
     int n = delta_int.size();
     Eigen::VectorXd y = y_and_ye.head(n);
     Eigen::VectorXd ye = y_and_ye.tail(n);
 
     Eigen::VectorXd n_samples = to_vector(delta_int);
-    Eigen::Matrix<T_theta, -1, 1> shifted_mean = theta + log(ye);
+    auto shifted_mean = to_ref(theta + log(ye));
     return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
            - n_samples.dot(exp(shifted_mean));
   }
@@ -109,7 +112,7 @@ struct diff_poisson_log {
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     double factorial_term = 0;
-    for (int i = 0; i < sums_.size(); i++)
+    for (Eigen::Index i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
     Eigen::Matrix<T1, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
@@ -131,22 +134,24 @@ struct diff_poisson_log {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  inline void diff(
+  inline Eigen::SparseMatrix<double> diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
       Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
       // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
-      Eigen::SparseMatrix<double>& hessian, int hessian_block_size = 1) const {
-    int theta_size = theta.size();
+      const Eigen::Index hessian_block_size = 1) const {
+    const Eigen::Index theta_size = theta.size();
     Eigen::Matrix<T1, Eigen::Dynamic, 1> common_term
         = n_samples_.cwiseProduct(exp(theta + log_exposure_));
 
     gradient = sums_ - common_term;
-    hessian.resize(theta_size, theta_size);
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = -common_term(i);
+    }
+    return hessian;
   }
 
   /**

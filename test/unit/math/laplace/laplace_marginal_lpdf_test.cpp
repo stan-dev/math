@@ -11,10 +11,10 @@
 #include <vector>
 
 struct poisson_log_likelihood2 {
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator() (
-    const Eigen::Matrix<T_theta, -1, 1>& theta,
-    const Eigen::Matrix<T_eta, -1, 1>& eta,
+  template <typename Theta, typename Eta>
+  auto operator() (
+    const Theta& theta,
+    const Eta& eta,
     const Eigen::VectorXd& y,
     const std::vector<int>& delta_int,
     std::ostream* pstream) const {
@@ -24,6 +24,7 @@ struct poisson_log_likelihood2 {
 
 TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal_lpmf;
+  using stan::math::laplace_marginal_tol_lpmf;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
@@ -57,8 +58,9 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   var target
     = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
                                    eta_dummy, y_dummy,
-                                   K, phi, x, delta_dummy,
-                                   delta_int_dummy, theta_0);
+                                   theta_0, K,
+                                   nullptr,
+                                   x, phi(0), phi(1));
 
   // TODO: benchmark target against gpstuff.
   // Expected: -2.53056
@@ -73,13 +75,12 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   int do_line_search = 1;
   int max_steps_line_search = 10;
 
-  target = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
+  target = laplace_marginal_tol_lpmf<false>(sums, poisson_log_likelihood2(),
                                         eta_dummy, y_dummy,
-                                        K, phi, x, delta_dummy,
-                                        delta_int_dummy, theta_0,
                                         tolerance, max_num_steps,
                                         hessian_block_size, solver,
-                                        do_line_search, max_steps_line_search);
+                                        max_steps_line_search, theta_0,
+                                        K, nullptr, x, phi(0), phi(1));
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
   std::vector<double> g;
@@ -99,17 +100,17 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
 
   double target_1u = laplace_marginal_lpmf<false>(
-    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1u, x,
-    delta_dummy, delta_int_dummy, theta_0),
-  target_1l = laplace_marginal_lpmf<false>(
-    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1l, x,
-    delta_dummy, delta_int_dummy, theta_0),
-  target_2u = laplace_marginal_lpmf<false>(
-    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2u, x,
-    delta_dummy, delta_int_dummy, theta_0),
-  target_2l = laplace_marginal_lpmf<false>(
-    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2l, x,
-    delta_dummy, delta_int_dummy, theta_0);
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
+     nullptr, x, phi_1u(0), phi_1u(1));
+  double target_1l = laplace_marginal_lpmf<false>(
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
+    nullptr, x, phi_1l(0), phi_1l(1));
+  double target_2u = laplace_marginal_lpmf<false>(
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
+    nullptr, x, phi_2u(0), phi_2u(1));
+  double target_2l = laplace_marginal_lpmf<false>(
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
+    nullptr, x, phi_2l(0), phi_2l(1));
 
   std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
@@ -121,10 +122,10 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 }
 
 struct poisson_log_exposure_likelihood {
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator() (
-    const Eigen::Matrix<T_theta, -1, 1>& theta,
-    const Eigen::Matrix<T_eta, -1, 1>& eta,
+  template <typename Theta, typename Eta>
+  auto operator() (
+    const Theta& theta,
+    const Eta& eta,
     const Eigen::VectorXd& ye,
     const std::vector<int>& delta_int,
     std::ostream* pstream) const {
@@ -150,12 +151,13 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   int hessian_block_size = 0;
   int solver = 1;
   int do_line_search = 0;
-  int max_steps_line_search = 10;
+  int max_steps_line_search = 0;
 
   var marginal_density
     = laplace_marginal_lpmf<false>(y, poisson_log_exposure_likelihood(),
                                    eta_dummy, ye,
-                                   K, phi, x, delta, delta_int, theta_0);
+                                   theta_0, K,
+                                   nullptr, x, phi(0), phi(1));
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
@@ -179,27 +181,27 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
 
   double target_u0 = laplace_marginal_lpmf<false>(
-      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_u0, x,
-      delta, delta_int, theta_0),
-    target_u1 = laplace_marginal_lpmf<false>(
-        y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_u1, x,
-        delta, delta_int, theta_0),
-    target_l0 = laplace_marginal_lpmf<false>(
-            y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_l0, x,
-          delta, delta_int, theta_0),
-    target_l1 = laplace_marginal_lpmf<false>(
-              y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_l1, x,
-              delta, delta_int, theta_0);
+      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
+      nullptr, x, phi_u0(0), phi_u0(1));
+  double target_u1 = laplace_marginal_lpmf<false>(
+        y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
+       nullptr, x, phi_u1(0), phi_u1(1));
+  double target_l0 = laplace_marginal_lpmf<false>(
+            y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
+           nullptr, x, phi_l0(0), phi_l0(1));
+  double target_l1 = laplace_marginal_lpmf<false>(
+              y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
+              nullptr, x, phi_l1(0), phi_l1(1));
 
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
-  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 2e-4);
+  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 0.0016);
 }
 
 struct bernoulli_logit_likelihood {
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator() (
-    const Eigen::Matrix<T_theta, -1, 1>& theta,
-    const Eigen::Matrix<T_eta, -1, 1>& eta,
+  template <typename Theta, typename Eta>
+  auto operator() (
+    const Theta& theta,
+    const Eta& eta,
     const Eigen::VectorXd& ye,
     const std::vector<int>& delta_int,
     std::ostream* pstream) const {
@@ -240,8 +242,8 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   bernoulli_logit_likelihood L;
   var target
     = laplace_marginal_lpmf<false>(y, L, eta_dummy, delta_L,
-                                   K, phi, x, delta, delta_int,
-                                   theta_0);
+                                   theta_0, K,
+                                   nullptr, x, phi(0), phi(1));
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
@@ -263,17 +265,17 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   Eigen::VectorXd eta_dummy_dbl;
 
   double target_1u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
-                                 K, phi_1u, x, delta, delta_int,
-                                 theta_0),
-         target_1l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
-                                        K, phi_1l, x, delta, delta_int,
-                                        theta_0),
-         target_2u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
-                                        K, phi_2u, x, delta, delta_int,
-                                        theta_0),
-         target_2l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
-                                        K, phi_2l, x, delta, delta_int,
-                                        theta_0);
+                                 theta_0, K,
+                                 nullptr, x, phi_1u(0), phi_1u(1));
+  double target_1l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
+                                        theta_0, K,
+                                        nullptr, x, phi_1l(0), phi_1l(1));
+  double target_2u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
+                                        theta_0, K,
+                                        nullptr, x, phi_2u(0), phi_2u(1));
+  double target_2l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
+                                        theta_0, K,
+                                        nullptr, x, phi_2l(0), phi_2l(1));
 
   std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
@@ -285,27 +287,22 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 }
 
 struct covariance_motorcycle_functor {
-  template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const T2& x,
-      const std::vector<double>& delta, const std::vector<int>& delta_int,
+  template <typename TX, typename LengthF, typename LengthG, typename SigmaF, typename SigmaG>
+  auto operator()(
+      const TX& x, const LengthF& length_scale_f, const LengthG& length_scale_g,
+      const SigmaF& sigma_f, const SigmaG& sigma_g, const int n_obs,
       std::ostream* msgs = nullptr) const {
     using Eigen::Matrix;
     using stan::math::gp_exp_quad_cov;
-
-    T1 length_scale_f = phi(0);
-    T1 length_scale_g = phi(1);
-    T1 sigma_f = phi(2);
-    T1 sigma_g = phi(3);
-    int n_obs = delta_int[0];
+    using scalar_t = stan::return_type_t<LengthF, LengthG, SigmaF, SigmaG>;
 
     double jitter = 1e-6;
-    Matrix<T1, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
-    Matrix<T1, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
+    Matrix<scalar_t, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
+    Matrix<scalar_t, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
 
-    Matrix<T1, -1, -1> kernel_all = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
-    for (int i = 0; i < n_obs; i++) {
-      for (int j = 0; j <= i; j++) {
+    Matrix<scalar_t, -1, -1> kernel_all = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
+    for (Eigen::Index i = 0; i < n_obs; i++) {
+      for (Eigen::Index j = 0; j <= i; j++) {
         kernel_all(2 * i, 2 * j) = kernel_f(i, j);
         kernel_all(2 * i + 1, 2 * j + 1) = kernel_g(i, j);
         if (i != j) {
@@ -314,43 +311,39 @@ struct covariance_motorcycle_functor {
         }
       }
     }
-
-    for (int i = 0; i < 2 * n_obs; i++)
+    for (Eigen::Index i = 0; i < 2 * n_obs; i++) {
       kernel_all(i, i) += jitter;
-
+    }
     return kernel_all;
   }
 };
 
 struct normal_likelihood {
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+  template <typename Theta, typename Eta>
+  auto operator()(
+      const Theta& theta, const Eta& eta, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
     int n_obs = delta_int[0];
-    Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
-    Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
-    for (int i = 0; i < n_obs; i++) {
+    Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
+    Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> sigma(n_obs);
+    for (Eigen::Index i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
       sigma(i) = exp(0.5 * theta(2 * i + 1));
     }
-
     return stan::math::normal_lpdf(y, mu, sigma);
   }
 };
 
 struct normal_likelihood2 {
-  template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+  template <typename Theta, typename Eta>
+  auto operator()(
+      const Theta& theta, const Eta& eta, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
     using stan::math::multiply;
     int n_obs = delta_int[0];
-    Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
-    Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
-    T_eta sigma_global = eta(0);
+    Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
+    Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> sigma(n_obs);
+    stan::return_type_t<Eta> sigma_global = eta(0);
     for (int i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
       sigma(i) = exp(0.5 * theta(2 * i + 1));  // * sigma_global;
@@ -443,6 +436,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   using stan::math::laplace_marginal_lpdf;
+  using stan::math::laplace_marginal_tol_lpdf;
   using stan::math::value_of;
   using stan::math::var;
 
@@ -458,10 +452,10 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   covariance_motorcycle_functor K;
   var target
-    = laplace_marginal_lpdf<false>(y, L, eta, delta_int,
-                            K, phi, x, delta_dummy, delta_int, theta0,
-                            tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search);
+    = laplace_marginal_tol_lpdf<false>(y, L, eta, delta_int,
+        tolerance, max_num_steps, hessian_block_size,
+        solver, max_steps_line_search, theta0, K, nullptr,
+         x, phi(0), phi(1), phi(2), phi(3), n_obs);
 
   // TODO: benchmark this result against GPStuff.
 
@@ -477,16 +471,18 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     phi_l(i) -= eps;
 
     double target_u
-      = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
-                              K, phi_u, x, delta_dummy, delta_int, theta0,
-                              tolerance, max_num_steps, hessian_block_size,
-                              solver, do_line_search, max_steps_line_search);
+      = laplace_marginal_tol_lpdf<false>(y, L, eta_dbl, delta_int,
+        tolerance, max_num_steps, hessian_block_size,
+        solver, max_steps_line_search,
+        theta0, K, nullptr, x,
+        phi_u(0), phi_u(1), phi_u(2), phi_u(3), n_obs);
 
     double target_l
-      = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
-                            K, phi_l, x, delta_dummy, delta_int, theta0,
-                            tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search);
+      = laplace_marginal_tol_lpdf<false>(y, L, eta_dbl, delta_int,
+        tolerance, max_num_steps, hessian_block_size,
+        solver, max_steps_line_search,
+                            theta0, K, nullptr,
+                            x, phi_l(0), phi_l(1), phi_l(2), phi_l(3), n_obs);
 
     g_finite = (target_u - target_l) / (2 * eps);
 
@@ -499,16 +495,16 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   eta_l(0) -= eps;
 
   double target_u
-    = laplace_marginal_lpdf<false>(y, L, eta_u, delta_int,
-                            K, phi_dbl, x, delta_dummy, delta_int, theta0,
-                            tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search);
+    = laplace_marginal_tol_lpdf<false>(y, L, eta_u, delta_int,
+      tolerance, max_num_steps, hessian_block_size,
+      solver, max_steps_line_search, theta0, K, nullptr,
+      x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
 
   double target_l
-    = laplace_marginal_lpdf<false>(y, L, eta_l, delta_int,
-                            K, phi_dbl, x, delta_dummy, delta_int, theta0,
-                            tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search);
+    = laplace_marginal_tol_lpdf<false>(y, L, eta_l, delta_int,
+      tolerance, max_num_steps, hessian_block_size,
+      solver, max_steps_line_search, theta0, K, nullptr,
+        x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
 
   g_finite = (target_u - target_l) / (2 * eps);
   double tol = 1e-7;

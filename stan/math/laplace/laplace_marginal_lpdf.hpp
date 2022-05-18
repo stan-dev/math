@@ -46,25 +46,23 @@ namespace math {
  *              efficient computation. Else, a more general but slower solver
  *              is used.
  */
-template <bool propto, typename T0, typename T1, typename T2, typename Tx,
-          typename CovarFun, typename LFun>
-stan::return_type_t<T1, T2> laplace_marginal_lpdf(
-    const Eigen::VectorXd& y, LFun&& L_f,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
-    const std::vector<int>& delta_int_L, CovarFun&& K_f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Tx& x,
-    const std::vector<double>& delta_K, const std::vector<int>& delta_int_K,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    double tolerance = 1e-6, long int max_num_steps = 100,
-    int hessian_block_size = 0, int solver = 1, int do_line_search = 1,
-    int max_steps_line_search = 10, std::ostream* msgs = nullptr) {
+template <bool propto = false, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
+          typename Theta0, typename... Args,
+          require_all_eigen_vector_t<YVec, EtaVec, Theta0>* = nullptr>
+inline auto laplace_marginal_tol_lpdf(
+    const YVec& y, LFun&& L_f, const EtaVec& eta,
+    const std::vector<int>& delta_int_L,
+    double tolerance,
+    long int max_num_steps, const int hessian_block_size,
+    const int solver,
+    const int max_steps_line_search, const Theta0& theta_0, CovarFun&& K_f,
+    std::ostream* msgs,  Args&&... args) {
   // TEST: provisional signature to agree with parser.
-
   return laplace_marginal_density(
       diff_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
-      std::forward<CovarFun>(K_f), phi, eta, x, delta_K, delta_int_K, theta_0,
-      msgs, tolerance, max_num_steps, hessian_block_size, solver,
-      do_line_search, max_steps_line_search);
+      std::forward<CovarFun>(K_f), eta, theta_0, msgs, tolerance, max_num_steps,
+      hessian_block_size, solver, max_steps_line_search,
+      std::forward<Args>(args)...);
 }
 
 /**
@@ -72,23 +70,65 @@ stan::return_type_t<T1, T2> laplace_marginal_lpdf(
  * is now a std::vector of interger and an Eigen::VectorXd
  * of double is passed as data.
  */
-template <bool propto, typename T0, typename T1, typename T2, typename Tx,
-          typename CovarFun, typename LFun>
-stan::return_type_t<T1, T2> laplace_marginal_lpmf(
-    const std::vector<int>& y, LFun&& L_f,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
-    const Eigen::VectorXd& delta_L, CovarFun&& K_f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Tx& x,
-    const std::vector<double>& delta_K, const std::vector<int>& delta_int_K,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    double tolerance = 1e-6, long int max_num_steps = 100,
-    int hessian_block_size = 0, int solver = 1, int do_line_search = 1,
-    int max_steps_line_search = 10, std::ostream* msgs = nullptr) {
-  return laplace_marginal_lpdf<propto>(
-      delta_L, std::forward<LFun>(L_f), eta, y, std::forward<CovarFun>(K_f),
-      phi, x, delta_K, delta_int_K, theta_0, tolerance, max_num_steps,
-      hessian_block_size, solver, do_line_search, max_steps_line_search, msgs);
+template <bool propto = false, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
+          typename Theta0, typename... Args>
+inline auto laplace_marginal_tol_lpmf(
+    const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
+    const DeltaLVec& delta_L, const double tolerance,
+    const long int max_num_steps, const int hessian_block_size,
+    const int solver,
+    const int max_steps_line_search, const Theta0& theta_0, CovarFun&& K_f,
+    std::ostream* msgs, Args&&... args) {
+  return laplace_marginal_tol_lpdf<propto>(
+      delta_L, std::forward<LFun>(L_f), eta, y, tolerance,
+      max_num_steps, hessian_block_size, solver,
+      max_steps_line_search, theta_0, std::forward<CovarFun>(K_f),
+      msgs, std::forward<Args>(args)...);
 }
+
+template <bool propto = false, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
+          typename Theta0, typename... Args,
+          require_all_eigen_vector_t<YVec, EtaVec, Theta0>* = nullptr>
+inline auto laplace_marginal_lpdf(
+    const YVec& y, LFun&& L_f, const EtaVec& eta,
+    const std::vector<int>& delta_int_L, const Theta0& theta_0, CovarFun&& K_f,
+    std::ostream* msgs,  Args&&... args) {
+  // TEST: provisional signature to agree with parser.
+  constexpr double tolerance = 1e-6;
+  constexpr long int max_num_steps = 100;
+  constexpr int hessian_block_size = 0;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
+  return laplace_marginal_density(
+      diff_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
+      std::forward<CovarFun>(K_f), eta, theta_0, msgs, tolerance, max_num_steps,
+      hessian_block_size, solver, max_steps_line_search,
+      std::forward<Args>(args)...);
+}
+
+/**
+ * Overloaded function for lpmf case. The first argument
+ * is now a std::vector of interger and an Eigen::VectorXd
+ * of double is passed as data.
+ */
+template <bool propto = false, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
+          typename Theta0, typename... Args>
+inline auto laplace_marginal_lpmf(
+    const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
+    const DeltaLVec& delta_L, const Theta0& theta_0, CovarFun&& K_f,
+    std::ostream* msgs, Args&&... args) {
+  constexpr double tolerance = 1e-6;
+  constexpr long int max_num_steps = 100;
+  constexpr int hessian_block_size = 0;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
+  return laplace_marginal_tol_lpdf<propto>(
+      delta_L, std::forward<LFun>(L_f), eta, y, tolerance,
+      max_num_steps, hessian_block_size, solver,
+      max_steps_line_search, theta_0, std::forward<CovarFun>(K_f),
+      msgs, std::forward<Args>(args)...);
+}
+
 }  // namespace math
 }  // namespace stan
 
