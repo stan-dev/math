@@ -48,7 +48,7 @@ inline var ceil(const var& a) { return var(std::ceil(a.val())); }
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto ceil(const T& a) {
-  return var_value<T>(a.val().array().ceil());
+  return plain_type_t<T>(a.val().array().ceil());
 }
 
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>

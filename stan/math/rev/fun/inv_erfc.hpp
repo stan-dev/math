@@ -38,7 +38,7 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_erfc(const T& x) {
   auto x_arena = to_arena(x);
   auto precomp_inv_erfc = to_arena(inv_erfc(x_arena.val()));
-  return make_callback_var(
+  return make_callback_rev_matrix<T>(
       precomp_inv_erfc, [x_arena, precomp_inv_erfc](auto& vi) mutable {
         x_arena.adj().array()
             -= vi.adj().array()

@@ -34,7 +34,7 @@ inline var inv_Phi(const var& p) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_Phi(const T& x) {
   auto x_arena = to_arena(x);
-  return make_callback_var(inv_Phi(x_arena.val()), [x_arena](auto& vi) mutable {
+  return make_callback_rev_matrix<T>(inv_Phi(x_arena.val()), [x_arena](auto& vi) mutable {
     x_arena.adj().array() += vi.adj().array() * SQRT_TWO_PI
                              / (-0.5 * vi.val().array().square()).exp();
   });

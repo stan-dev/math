@@ -38,7 +38,7 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inv_square(const T& x) {
   auto x_arena = to_arena(x);
   auto x_cube = to_arena(x_arena.val().array().cube());
-  return make_callback_var(
+  return make_callback_rev_matrix<T>(
       inv_square(x_arena.val()), [x_arena, x_cube](auto&& vi) mutable {
         x_arena.adj().array() -= 2.0 * vi.adj().array() / x_cube;
       });
