@@ -1132,15 +1132,19 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
 }
 
 template <typename F, typename T1, stan::require_not_eigen_t<T1>* = nullptr>
-void expect_expr_test(F&& f, T1&& mat) {};
+void expect_expr_test(F&& f, T1&& mat){};
 
 template <typename T>
 struct EigenCounterOp {
   using type = std::decay_t<T>;
-  mutable Eigen::Array<int, type::RowsAtCompileTime, type::ColsAtCompileTime> counter_;
+  mutable Eigen::Array<int, type::RowsAtCompileTime, type::ColsAtCompileTime>
+      counter_;
   mutable int iter_{0};
   template <typename T1, stan::require_eigen_t<T1>* = nullptr>
-  explicit EigenCounterOp(T1&& x) : counter_(Eigen::Array<int, type::RowsAtCompileTime, type::ColsAtCompileTime>::Zero(x.rows(), x.cols())) { }
+  explicit EigenCounterOp(T1&& x)
+      : counter_(
+          Eigen::Array<int, type::RowsAtCompileTime,
+                       type::ColsAtCompileTime>::Zero(x.rows(), x.cols())) {}
   template <typename T1>
   const T1& operator()(const T1& a) const {
     counter_(iter_) += 1;
@@ -1157,9 +1161,11 @@ void expect_expr_test(F&& f, T1&& x) {
   auto result = stan::math::eval(f(mat_expr));
   // Counter should be less than the size of the matrix.
   for (int i = 0; i < x.size(); ++i) {
-    EXPECT_LE(mat_expr_counter_op.counter_(i), 1) << "Matrix expression was evaluated more than once!"
-    "\nIf looping over an input matrix or sending it to two sub functions"
-    " use to_ref() to force evaluation of expression inputs.";
+    EXPECT_LE(mat_expr_counter_op.counter_(i), 1)
+        << "Matrix expression was evaluated more than once!"
+           "\nIf looping over an input matrix or sending it to two sub "
+           "functions"
+           " use to_ref() to force evaluation of expression inputs.";
   }
 }
 
@@ -1168,7 +1174,6 @@ void expect_expr_test(F&& f, T1&& mat1, T2&& mat2) {}
 
 template <typename F, typename T1, typename T2, typename T3>
 void expect_expr_test(F&& f, T1&& mat1, T2&& mat2) {}
-
 
 /**
  * Test that the specified polymorphic unary functor produces autodiff
