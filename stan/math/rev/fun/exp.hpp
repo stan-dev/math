@@ -66,7 +66,7 @@ inline auto exp(const T& x) {
   auto x_arena = to_arena(x);
   return make_callback_rev_matrix<T>(
       x_arena.val().array().exp().matrix(), [x_arena](const auto& vi) mutable {
-        x_arena.adj() += (vi.val().array() * vi.adj().array()).matrix();
+        x_arena.adj().array() += (vi.val().array() * vi.adj().array()).array();
       });
 }
 

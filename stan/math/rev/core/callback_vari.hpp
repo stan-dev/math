@@ -105,13 +105,13 @@ inline auto make_callback_rev_matrix(T&& value, F&& functor) {
  * `vari` needed for the reverse pass call constructed here.
  */
 template <typename Ret, typename T, typename F, require_eigen_t<Ret>* = nullptr>
-inline promote_scalar_t<var_value<double>, T> make_callback_rev_matrix(
+inline promote_scalar_t<var_value<double>, Ret> make_callback_rev_matrix(
     T&& value, F&& functor) {
-  arena_matrix<plain_type_t<promote_scalar_t<var_value<double>, T>>> ret
+  arena_matrix<plain_type_t<promote_scalar_t<var_value<double>, Ret>>> ret
       = std::forward<T>(value);
   reverse_pass_callback(
       [ret, func = std::forward<F>(functor)]() mutable { return func(ret); });
-  return promote_scalar_t<var_value<double>, T>(ret);
+  return promote_scalar_t<var_value<double>, Ret>(ret);
 }
 
 }  // namespace math
