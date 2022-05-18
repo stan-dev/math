@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
 #include <stan/math/mix.hpp>
-#include <test/expressions/expression_test_helpers.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
@@ -1131,45 +1130,6 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
   EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2)).val().val().val());
 }
 
-template <typename F, typename T1, stan::require_not_eigen_t<T1>* = nullptr>
-void expect_expr_test(F&& f, T1&& mat) {};
-
-template <typename T>
-struct EigenCounterOp {
-  using type = std::decay_t<T>;
-  mutable Eigen::Array<int, type::RowsAtCompileTime, type::ColsAtCompileTime> counter_;
-  mutable int iter_{0};
-  template <typename T1, stan::require_eigen_t<T1>* = nullptr>
-  explicit EigenCounterOp(T1&& x) : counter_(Eigen::Array<int, type::RowsAtCompileTime, type::ColsAtCompileTime>::Zero(x.rows(), x.cols())) { }
-  template <typename T1>
-  const T1& operator()(const T1& a) const {
-    counter_(iter_) += 1;
-    iter_++;
-    return a;
-  }
-};
-template <typename F, typename T1, stan::require_eigen_t<T1>* = nullptr>
-void expect_expr_test(F&& f, T1&& x) {
-  using mat_t = std::decay_t<T1>;
-  stan::plain_type_t<T1> mat = x;
-  EigenCounterOp<T1> mat_expr_counter_op(mat);
-  auto mat_expr = mat.unaryExpr(mat_expr_counter_op);
-  auto result = stan::math::eval(f(mat_expr));
-  // Counter should be less than the size of the matrix.
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_LE(mat_expr_counter_op.counter_(i), 1) << "Matrix expression was evaluated more than once!"
-    "\nIf looping over an input matrix or sending it to two sub functions"
-    " use to_ref() to force evaluation of expression inputs.";
-  }
-}
-
-template <typename F, typename T1, typename T2>
-void expect_expr_test(F&& f, T1&& mat1, T2&& mat2) {}
-
-template <typename F, typename T1, typename T2, typename T3>
-void expect_expr_test(F&& f, T1&& mat1, T2&& mat2) {}
-
-
 /**
  * Test that the specified polymorphic unary functor produces autodiff
  * results consistent with values determined by double or integer
@@ -1184,7 +1144,6 @@ void expect_expr_test(F&& f, T1&& mat1, T2&& mat2) {}
  */
 template <typename F, typename T>
 void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
-  expect_expr_test(f, x);
   internal::expect_ad_v(tols, f, x);
 }
 
@@ -1222,7 +1181,6 @@ void expect_ad(const F& f, const T& x) {
 template <typename F, typename T1, typename T2>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2) {
-  expect_expr_test(f, x1, x2);
   internal::expect_ad_vv(tols, f, x1, x2);
 }
 
@@ -1263,7 +1221,6 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2, const T3& x3) {
-  expect_expr_test(f, x1, x2, x3);
   internal::expect_ad_vvv(tols, f, x1, x2, x3);
 }
 
