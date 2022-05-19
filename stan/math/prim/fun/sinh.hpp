@@ -20,7 +20,7 @@ namespace math {
  */
 struct sinh_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::sinh;
     return sinh(x);
   }

@@ -29,7 +29,7 @@ namespace math {
  */
 struct asinh_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::asinh;
     return asinh(x);
   }

@@ -13,8 +13,8 @@ namespace stan {
 namespace math {
 /** \ingroup multivar_dists
  * Return the natural logarithm of the unnormalized
- * Wishart density of the specified lower-triangular 
- * Cholesky factor variate, positive degrees of freedom, 
+ * Wishart density of the specified lower-triangular
+ * Cholesky factor variate, positive degrees of freedom,
  * and lower-triangular Cholesky factor of the scale matrix.
  *
  * The scale matrix, `L_S`, must be a lower Cholesky factor
@@ -51,7 +51,10 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   Eigen::Index k = L_Y.rows();
   check_size_match(function, "Rows of RSandom variable", L_Y.rows(),
                    "columns of scale parameter", L_S.rows());
-
+  check_size_match(function, "Rows of random variable", L_Y.rows(),
+                   "columns of random variable", L_Y.cols());
+  check_size_match(function, "Rows of scale parameter", L_S.rows(),
+                   "columns of scale parameter", L_S.cols());
   T_L_Y_ref L_Y_ref = L_Y;
   T_nu_ref nu_ref = nu;
   T_L_S_ref L_S_ref = L_S;

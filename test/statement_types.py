@@ -130,7 +130,10 @@ class MatrixVariable(CppStatement):
         self.size = size
 
         if value is None:
-            self.value = 0.4
+            if 'complex' in stan_arg:
+                self.value = "stan::math::to_complex(0.4,0.4)"
+            else:
+                self.value = 0.4
         else:
             self.value = value
 
