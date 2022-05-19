@@ -33,7 +33,7 @@ struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
 
 /** \ingroup type_trait
  * Helper function for accessing underlying type. See the docs for
- * `value_type`
+ * \ref stan::value_type
  */
 template <typename T>
 using value_type_t = typename value_type<T>::type;

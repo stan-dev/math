@@ -21,8 +21,8 @@ struct plain_type {
   using type = std::decay_t<T>;
 };
 
-/**
- * Determine the non-expression type of an Eigen object. See `plain_type` for examples.
+/** \ingroup type_trait
+ * Determine the non-expression type of an Eigen object. See \ref stan::plain_type for examples.
  */
 template <typename T>
 using plain_type_t = typename plain_type<T>::type;
@@ -50,7 +50,7 @@ using eval_return_type_t = typename eval_return_type<T>::type;
 /** \ingroup type_trait
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
- * See the docs for `plain_type` for more information.
+ * See the docs for \ref stan::plain_type for more information.
  * @tparam T type to determine plain type of
  */
 template <typename T>

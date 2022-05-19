@@ -53,7 +53,7 @@ struct arena_type_impl<
 };
 }  // namespace internal
 
-/**
+/** \ingroup type_traits
  * Determines a type that can be used in place of `T` that does any dynamic
  * allocations on the AD stack. This way resulting types are trivially
  * destructible and can be used in vari classes.

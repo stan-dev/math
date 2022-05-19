@@ -14,7 +14,7 @@ struct partials_type {
 };
 
 /** \ingroup type_trait
- * Helper alias for accessing the partial type.
+ * Helper alias for accessing the partial type. See docs for \ref stan::partials_type
  */
 template <typename T>
 using partials_type_t = typename partials_type<T>::type;

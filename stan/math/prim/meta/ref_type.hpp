@@ -14,7 +14,7 @@
 
 namespace stan {
 
-/** /ingroup type_trait
+/** \ingroup type_trait
  * If the condition is true determines appropriate type for assigning expression
  * of given type to, to evaluate expensive expressions, but not make a copy if T
  * involves no calculations. This works similarly as [`Eigen::Ref`](https://eigen.tuxfamily.org/dox/classEigen_1_1Ref.html).
@@ -74,12 +74,15 @@ struct ref_type_if<Condition, T, require_arena_matrix_t<T>> {
       typename ref_type_if<Condition, typename std::decay_t<T>::Base>::type;
 };
 
-/** /ingroup type_trait
- * See the docs for `ret_type_if`
+/** \ingroup type_trait
+ * See the docs for \ref stan::ref_type_if
  */
 template <typename T>
 using ref_type_t = typename ref_type_if<true, T>::type;
 
+/** \ingroup type_trait
+ * See the docs for \ref stan::ref_type_if
+ */
 template <bool Condition, typename T>
 using ref_type_if_t = typename ref_type_if<Condition, T>::type;
 

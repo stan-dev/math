@@ -31,6 +31,9 @@ struct base_type {
   using type = std::decay_t<T>;
 };
 
+/** \ingroup type_trait
+ * See the docs for \ref stan::base_type
+ */
 template <typename T>
 using base_type_t = typename base_type<T>::type;
 

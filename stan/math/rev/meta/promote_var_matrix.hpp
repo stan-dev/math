@@ -6,7 +6,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Given an Eigen type and several inputs, determine if a matrix should be
  * `var<Matrix>` or `Matrix<var>`.
  *

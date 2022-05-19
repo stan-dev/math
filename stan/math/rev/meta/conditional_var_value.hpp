@@ -29,6 +29,9 @@ struct conditional_var_value<T_scalar, T_container,
       T_scalar, value_type_t<T_container>>::type>;
 };
 
+/** \ingroup type_trait
+ * See the docs for \ref stan::conditional_var_value
+ */
 template <typename T_scalar, typename T_container>
 using conditional_var_value_t =
     typename conditional_var_value<T_scalar, T_container>::type;

@@ -40,6 +40,9 @@ struct partials_return_type<T> {
   using type = promote_args_t<double, partials_type_t<scalar_type_t<T>>>;
 };
 
+/** \ingroup type_trait
+ * See the docs for \ref stan::partials_return_type
+ */
 template <typename... Args>
 using partials_return_t = typename partials_return_type<Args...>::type;
 

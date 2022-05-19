@@ -188,9 +188,6 @@ struct return_type {
   using type = double;
 };
 
-/** \ingroup type_trait
- * See the docs for `return_type`
- */
 template <typename T, typename... Ts>
 struct return_type<T, Ts...> {
   using type
@@ -199,7 +196,7 @@ struct return_type<T, Ts...> {
 
 /** \ingroup type_trait
  * Convenience type for the return type of the specified template
- * parameters. See the docs for `return_type`.
+ * parameters. See the docs for \ref stan::return_type.
  *
  * @tparam Ts sequence of types
  * @see return_type

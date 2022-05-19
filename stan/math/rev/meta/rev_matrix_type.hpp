@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Determines a return type for a function that accepts given inputs and wants
  * to return a matrix (or vector or row vector) with given compile time number
  * of rows and columns.
@@ -27,6 +27,9 @@ struct rev_matrix_type {
       Eigen::Matrix<return_type_t<Inputs...>, Rows, Cols>>;
 };
 
+/** \ingroup type_trait
+ * See the docs for \ref stan::rev_matrix_type
+ */
 template <int Rows, int Cols, typename... Inputs>
 using rev_matrix_t = typename rev_matrix_type<Rows, Cols, Inputs...>::type;
 

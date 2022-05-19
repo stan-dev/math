@@ -29,7 +29,7 @@ struct scalar_type {
 };
 
 /** \ingroup type_trait
- * Helper function. See the docs for `scalar_type`
+ * Helper function. See the docs for \ref stan::scalar_type
  */
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;

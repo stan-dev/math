@@ -93,8 +93,8 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
 };
 
-/**
- * See the docs for `promote_scalar_type`.
+/** \ingroup type_trait
+ * See the docs for \ref stan::math::promote_scalar_type.
  */
 template <typename T, typename S>
 using promote_scalar_t =
