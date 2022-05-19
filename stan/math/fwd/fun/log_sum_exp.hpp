@@ -51,7 +51,8 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
  * @param[in] x Matrix of specified values.
  * @return The log of the sum of the exponentiated vector values.
  */
-template <typename FvarContainer, require_container_st<is_fvar, FvarContainer>* = nullptr>
+template <typename FvarContainer,
+          require_container_st<is_fvar, FvarContainer>* = nullptr>
 inline auto log_sum_exp(const FvarContainer& x) {
   return apply_vector_unary<ref_type_t<FvarContainer>>::reduce(
       to_ref(x), [&](const auto& v) {

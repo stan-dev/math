@@ -8,8 +8,8 @@
 
 namespace stan {
 /** \ingroup type_trait
- * Check if a type is a \ref stan::math::var_value whose `value_type` is derived from
- * `Eigen::EigenBase`
+ * Check if a type is a \ref stan::math::var_value whose \ref stan::value_type
+ * is derived from `Eigen::EigenBase`
  * @tparam T type to check.
  * @ingroup type_trait
  */

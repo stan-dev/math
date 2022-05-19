@@ -74,8 +74,9 @@ class var_value<T, require_floating_point_t<T>> {
   /**
    * Construct a variable from the specified floating point argument
    * by constructing a new `vari_value<value_type>`. This constructor is only
-   * valid when `S` is convertible to this `vari_value`'s `value_type`.
-   * @tparam S A type that is convertible to `value_type`.
+   * valid when `S` is convertible to this `vari_value`'s \ref stan::value_type
+   *
+   * @tparam S A type that is convertible to \ref stan::value_type .
    * @param x Value of the variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
@@ -123,8 +124,8 @@ class var_value<T, require_floating_point_t<T>> {
    * 2.4 and earlier, this function did recover memory.
    *
    * @tparam CheckContainer Not set by user. The default value of value_type
-   *  is used to require that grad is only available for scalar \ref stan::math::var_value 
-   *  types.
+   *  is used to require that grad is only available for scalar \ref
+   * stan::math::var_value types.
    * @param x Vector of independent variables.
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
@@ -142,9 +143,9 @@ class var_value<T, require_floating_point_t<T>> {
    * to all (independent) variables.
    *
    * @tparam CheckContainer Not set by user. The default value of value_type
-   *  is used to require that grad is only available for scalar \ref stan::math::var_value 
-   *  types.
-   * The grad() function does <i>not</i> recover memory.
+   *  is used to require that grad is only available for scalar \ref
+   * stan::math::var_value types. The grad() function does <i>not</i> recover
+   * memory.
    */
   void grad() { stan::math::grad(vi_); }
 
@@ -358,8 +359,9 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Construct a variable from the specified floating point argument
    * by constructing a new `vari_value<value_type>`. This constructor is only
-   * valid when `S` is convertible to this `vari_value`'s `value_type`.
-   * @tparam S A type that is convertible to `value_type`.
+   * valid when `S` is convertible to this `vari_value`'s \ref stan::value_type
+   * 
+   * @tparam S A type that is convertible to \ref stan::value_type .
    * @param x Value of the variable.
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr>

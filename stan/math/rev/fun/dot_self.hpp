@@ -15,8 +15,8 @@ namespace math {
 /**
  * Returns the dot product of a vector of var with itself.
  *
- * @tparam EigVec type of the vector (must have one compile time dimension equal to
- * 1)
+ * @tparam EigVec type of the vector (must have one compile time dimension equal
+ * to 1)
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */

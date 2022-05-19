@@ -80,13 +80,16 @@ inline auto as_array_or_scalar(StdVec&& v) {
  * @param v specified vector of vectorised
  * @return An Eigen Array with dynamic rows and columns.
  */
-template <typename Container, require_std_vector_vt<is_std_vector, Container>* = nullptr,
-          require_std_vector_vt<is_stan_scalar, value_type_t<Container>>* = nullptr>
+template <
+    typename Container,
+    require_std_vector_vt<is_std_vector, Container>* = nullptr,
+    require_std_vector_vt<is_stan_scalar, value_type_t<Container>>* = nullptr>
 inline auto as_array_or_scalar(Container&& v) {
   Eigen::Array<scalar_type_t<Container>, -1, -1> ret(v.size(), v[0].size());
   for (size_t i = 0; i < v.size(); ++i) {
-    ret.row(i) = Eigen::Map<const Eigen::Array<scalar_type_t<Container>, 1, -1>>(
-        v[i].data(), v[i].size());
+    ret.row(i)
+        = Eigen::Map<const Eigen::Array<scalar_type_t<Container>, 1, -1>>(
+            v[i].data(), v[i].size());
   }
   return ret;
 }

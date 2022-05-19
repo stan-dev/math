@@ -35,8 +35,8 @@ internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(
 /**
  * no-op that returns a column vector.
  *
- * @tparam EigColVec Type inheriting from `EigenBase` with dynamic compile time rows
- *  and fixed column of 1.
+ * @tparam EigColVec Type inheriting from `EigenBase` with dynamic compile time
+ * rows and fixed column of 1.
  * @param a Specified vector.
  * @return Same vector.
  */
@@ -49,15 +49,16 @@ inline EigColVec&& as_column_vector_or_scalar(EigColVec&& a) {
  * Converts a row vector to an eigen column vector. For row vectors this returns
  *  a `Transpose<Eigen::Matrix<EigRowVec, 1, -1>>`.
  *
- * @tparam EigRowVec Type inheriting from `EigenBase` with dynamic compile time columns
- * and fixed row of 1.
+ * @tparam EigRowVec Type inheriting from `EigenBase` with dynamic compile time
+ * columns and fixed row of 1.
  * @param a Specified vector.
  * @return Transposed vector.
  */
 template <typename EigRowVec, require_eigen_row_vector_t<EigRowVec>* = nullptr,
           require_not_eigen_col_vector_t<EigRowVec>* = nullptr>
 inline auto as_column_vector_or_scalar(EigRowVec&& a) {
-  return make_holder([](auto& x) { return x.transpose(); }, std::forward<EigRowVec>(a));
+  return make_holder([](auto& x) { return x.transpose(); },
+                     std::forward<EigRowVec>(a));
 }
 
 /**
@@ -70,9 +71,9 @@ inline auto as_column_vector_or_scalar(EigRowVec&& a) {
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 inline auto as_column_vector_or_scalar(StdVec&& a) {
   using plain_vector = Eigen::Matrix<value_type_t<StdVec>, Eigen::Dynamic, 1>;
-  using optionally_const_vector
-      = std::conditional_t<std::is_const<std::remove_reference_t<StdVec>>::value,
-                           const plain_vector, plain_vector>;
+  using optionally_const_vector = std::conditional_t<
+      std::is_const<std::remove_reference_t<StdVec>>::value, const plain_vector,
+      plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
   return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
                      std::forward<StdVec>(a));

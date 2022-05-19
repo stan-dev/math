@@ -20,7 +20,8 @@ namespace math {
  * @param x Container.
  * @param y Value.
  */
-template <typename VarMat, typename Var, require_var_matrix_t<VarMat>* = nullptr,
+template <typename VarMat, typename Var,
+          require_var_matrix_t<VarMat>* = nullptr,
           require_var_t<Var>* = nullptr>
 inline void fill(VarMat& x, const Var& y) {
   arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();
@@ -43,7 +44,8 @@ inline void fill(VarMat& x, const Var& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename VarMat, typename Arith, require_var_matrix_t<VarMat>* = nullptr,
+template <typename VarMat, typename Arith,
+          require_var_matrix_t<VarMat>* = nullptr,
           require_arithmetic_t<Arith>* = nullptr>
 inline void fill(VarMat& x, const Arith& y) {
   arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();

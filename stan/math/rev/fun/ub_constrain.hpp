@@ -26,7 +26,8 @@ namespace math {
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
-template <typename T1, typename U1, require_all_stan_scalar_t<T1, U1>* = nullptr,
+template <typename T1, typename U1,
+          require_all_stan_scalar_t<T1, U1>* = nullptr,
           require_any_var_t<T1, U1>* = nullptr>
 inline auto ub_constrain(const T1& x, const U1& ub) {
   const auto ub_val = value_of(ub);
@@ -77,7 +78,8 @@ inline auto ub_constrain(const T1& x, const U1& ub) {
  * @param[in, out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T1, typename U1, require_all_stan_scalar_t<T1, U1>* = nullptr,
+template <typename T1, typename U1,
+          require_all_stan_scalar_t<T1, U1>* = nullptr,
           require_any_var_t<T1, U1>* = nullptr>
 inline auto ub_constrain(const T1& x, const U1& ub, return_type_t<T1, U1>& lp) {
   const auto ub_val = value_of(ub);
@@ -125,8 +127,8 @@ inline auto ub_constrain(const T1& x, const U1& ub, return_type_t<T1, U1>& lp) {
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @tparam Scalar2 Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
@@ -173,8 +175,8 @@ inline auto ub_constrain(const Mat1& x, const Scalar2& ub) {
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @tparam Scalar2 Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
@@ -184,7 +186,8 @@ inline auto ub_constrain(const Mat1& x, const Scalar2& ub) {
 template <typename Mat1, typename Scalar2, require_matrix_t<Mat1>* = nullptr,
           require_stan_scalar_t<Scalar2>* = nullptr,
           require_any_st_var<Mat1, Scalar2>* = nullptr>
-inline auto ub_constrain(const Mat1& x, const Scalar2& ub, return_type_t<Mat1, Scalar2>& lp) {
+inline auto ub_constrain(const Mat1& x, const Scalar2& ub,
+                         return_type_t<Mat1, Scalar2>& lp) {
   using ret_type = return_var_matrix_t<Mat1, Mat1, Scalar2>;
   const auto ub_val = value_of(ub);
   if (unlikely(ub_val == INFTY)) {
@@ -226,15 +229,16 @@ inline auto ub_constrain(const Mat1& x, const Scalar2& ub, return_type_t<Mat1, S
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
- * @tparam Mat2 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
+ * @tparam Mat2 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename Mat1, typename Mat2, require_all_matrix_t<Mat1, Mat2>* = nullptr,
+template <typename Mat1, typename Mat2,
+          require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_st_var<Mat1, Mat2>* = nullptr>
 inline auto ub_constrain(const Mat1& x, const Mat2& ub) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
@@ -288,18 +292,20 @@ inline auto ub_constrain(const Mat1& x, const Mat2& ub) {
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
- * @tparam Mat2 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
+ * @tparam Mat2 A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename Mat1, typename Mat2, require_all_matrix_t<Mat1, Mat2>* = nullptr,
+template <typename Mat1, typename Mat2,
+          require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_st_var<Mat1, Mat2>* = nullptr>
-inline auto ub_constrain(const Mat1& x, const Mat2& ub, return_type_t<Mat1, Mat2>& lp) {
+inline auto ub_constrain(const Mat1& x, const Mat2& ub,
+                         return_type_t<Mat1, Mat2>& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   using ret_type = return_var_matrix_t<Mat1, Mat1, Mat2>;
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {

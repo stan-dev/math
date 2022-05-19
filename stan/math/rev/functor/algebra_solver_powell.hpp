@@ -281,13 +281,10 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
  *
  * This overload handles var parameters.
  *
- * The Jacobian \f$J_{xy}\f$ (i.e., Jacobian of unknown \f$x\f$ w.r.t. the parameter
- * \f$y\f$ is calculated given the solution as follows. Since
- * \f[
- *   f(x, y) = 0,
- * \f]
- * we have \f$J_{pq}\f$ being the Jacobian matrix \f$\tfrac {dq} {dq}\f$
- * \f[
+ * The Jacobian \f$J_{xy}\f$ (i.e., Jacobian of unknown \f$x\f$ w.r.t. the
+ * parameter \f$y\f$ is calculated given the solution as follows. Since \f[ f(x,
+ * y) = 0, \f] we have \f$J_{pq}\f$ being the Jacobian matrix \f$\tfrac {dq}
+ * {dq}\f$ \f[
  *   - J_{fx} J_{xy} = J_{fy},
  * \f]
  * and therefore \f$J_{xy}\f$ can be solved from system

@@ -9,7 +9,8 @@ namespace math {
 
 /**
  * Returns signs of the arguments.
- * @tparam Matcl type of the argument (`matrix_cl` or kernel generator expression)
+ * @tparam Matcl type of the argument (`matrix_cl` or kernel generator
+ * expression)
  * @param x the argument
  * @return sign of `x`
  */

@@ -16,7 +16,6 @@
  * \defgroup returning_expressions Returning expressions
  */
 
-
 namespace stan {
 namespace math {
 
@@ -355,8 +354,8 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename ExprF, typename... Args,
-          require_not_plain_type_t<
-              decltype(std::declval<ExprF>()(std::declval<Args&>()...))>* = nullptr>
+          require_not_plain_type_t<decltype(
+              std::declval<ExprF>()(std::declval<Args&>()...))>* = nullptr>
 auto make_holder(const ExprF& func, Args&&... args) {
   return internal::make_holder_impl(func,
                                     std::make_index_sequence<sizeof...(Args)>(),

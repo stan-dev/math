@@ -20,8 +20,8 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -53,8 +53,8 @@ cov_matrix_constrain(const EigVec& x, Eigen::Index K) {
  * by K resulting from transforming the specified finite vector of
  * size K plus (K choose 2).
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -62,7 +62,8 @@ cov_matrix_constrain(const EigVec& x, Eigen::Index K) {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const EigVec& x, Eigen::Index K, return_type_t<EigVec>& lp) {
+cov_matrix_constrain(const EigVec& x, Eigen::Index K,
+                     return_type_t<EigVec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -96,9 +97,9 @@ cov_matrix_constrain(const EigVec& x, Eigen::Index K, return_type_t<EigVec>& lp)
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::DenseBase` with
+ * compile time dynamic rows and 1 column
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
@@ -125,14 +126,15 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting
+ * from `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+template <bool Jacobian, typename StdVec,
+          require_std_vector_t<StdVec>* = nullptr>
 inline auto cov_matrix_constrain(const StdVec& x, Eigen::Index K,
                                  return_type_t<StdVec>& lp) {
   return apply_vector_unary<StdVec>::apply(x, [&lp, K](auto&& v) {

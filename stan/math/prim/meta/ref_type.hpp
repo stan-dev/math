@@ -17,16 +17,18 @@ namespace stan {
 /** \ingroup type_trait
  * If the condition is true determines appropriate type for assigning expression
  * of given type to, to evaluate expensive expressions, but not make a copy if T
- * involves no calculations. This works similarly as [`Eigen::Ref`](https://eigen.tuxfamily.org/dox/classEigen_1_1Ref.html).
- * The deduction scheme used in `ref_type_if` also handles rvalue references,
- * so it can be used with perfect forwarding. If the condition is false the
- * expression will never be evaluated.
+ * involves no calculations. This works similarly as
+ * [`Eigen::Ref`](https://eigen.tuxfamily.org/dox/classEigen_1_1Ref.html). The
+ * deduction scheme used in `ref_type_if` also handles rvalue references, so it
+ * can be used with perfect forwarding. If the condition is false the expression
+ * will never be evaluated.
  *
  * Internally, this type trait compares `T` and `Eigen::Ref<T>` to see whether
  * the defines all of the following  trait flags as true for each type.
  * 1. HasDirectAccess
- *  - The underlying array of coefficients can be directly accessed as a plain strided array
- *    (This is true for objects with ownership of memory but not for expressions).
+ *  - The underlying array of coefficients can be directly accessed as a plain
+ * strided array (This is true for objects with ownership of memory but not for
+ * expressions).
  * 2. StorageOrderMatch
  *  - Both are either RowMajor or ColumnMajor
  * 3. InnerStrideMatch && OuterStrideMatch

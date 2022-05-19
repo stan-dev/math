@@ -80,10 +80,10 @@ class arena_matrix_cl : public matrix_cl_base {
    * @return `matrix_cl` equivalent to `*this`. Returned matrix references the
    * same underlying buffer.
    */
-  operator const matrix_cl<T> &() const {  // NOLINT(runtime/explicit)
+  operator const matrix_cl<T>&() const {  // NOLINT(runtime/explicit)
     return *static_cast<const matrix_cl<T>*>(impl_);
   }
-  operator matrix_cl<T> &() {  // NOLINT(runtime/explicit)
+  operator matrix_cl<T>&() {  // NOLINT(runtime/explicit)
     return *static_cast<matrix_cl<T>*>(impl_);
   }
 

@@ -90,9 +90,9 @@ inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ * @tparam Vec A type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::DenseBase` with
+ * compile time dynamic rows and 1 column
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
@@ -116,8 +116,8 @@ auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam Vec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting
+ * from `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`

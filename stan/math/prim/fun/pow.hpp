@@ -58,7 +58,8 @@ inline auto pow(const T1& a, const T2& b) {
  * @return the elementwise raising of the first argument to the power of the
  * second argument.
  */
-template <typename Container1, typename Container2, require_any_container_t<Container1, Container2>* = nullptr>
+template <typename Container1, typename Container2,
+          require_any_container_t<Container1, Container2>* = nullptr>
 inline auto pow(const Container1& a, const Container2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::pow;

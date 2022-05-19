@@ -93,7 +93,8 @@ var sd(const VarMat& x) {
  */
 template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
 auto sd(const StdVec& m) {
-  return apply_vector_unary<StdVec>::reduce(m, [](const auto& x) { return sd(x); });
+  return apply_vector_unary<StdVec>::reduce(
+      m, [](const auto& x) { return sd(x); });
 }
 
 }  // namespace math

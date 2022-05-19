@@ -32,7 +32,8 @@ namespace math {
  * @param[in] lb Lower bound
  * @return Constrained matrix
  */
-template <typename ScalarT, typename ScalarL, require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
+template <typename ScalarT, typename ScalarL,
+          require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
           require_all_not_st_var<ScalarT, ScalarL>* = nullptr>
 inline auto lb_constrain(const ScalarT& x, const ScalarL& lb) {
   if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
@@ -55,9 +56,11 @@ inline auto lb_constrain(const ScalarT& x, const ScalarL& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename ScalarT, typename ScalarL, require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
+template <typename ScalarT, typename ScalarL,
+          require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
           require_all_not_st_var<ScalarT, ScalarL>* = nullptr>
-inline auto lb_constrain(const ScalarT& x, const ScalarL& lb, return_type_t<ScalarT, ScalarL>& lp) {
+inline auto lb_constrain(const ScalarT& x, const ScalarL& lb,
+                         return_type_t<ScalarT, ScalarL>& lp) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_constrain(x, lb);
   } else {
@@ -97,7 +100,8 @@ inline auto lb_constrain(EigT&& x, ScalarL&& lb) {
 template <typename EigT, typename ScalarL, require_eigen_t<EigT>* = nullptr,
           require_stan_scalar_t<ScalarL>* = nullptr,
           require_all_not_st_var<EigT, ScalarL>* = nullptr>
-inline auto lb_constrain(const EigT& x, const ScalarL& lb, return_type_t<EigT, ScalarL>& lp) {
+inline auto lb_constrain(const EigT& x, const ScalarL& lb,
+                         return_type_t<EigT, ScalarL>& lp) {
   return eval(
       x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
@@ -112,7 +116,8 @@ inline auto lb_constrain(const EigT& x, const ScalarL& lb, return_type_t<EigT, S
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename EigT, typename EigL, require_all_eigen_t<EigT, EigL>* = nullptr,
+template <typename EigT, typename EigL,
+          require_all_eigen_t<EigT, EigL>* = nullptr,
           require_all_not_st_var<EigT, EigL>* = nullptr>
 inline auto lb_constrain(EigT&& x, EigL&& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
@@ -131,9 +136,11 @@ inline auto lb_constrain(EigT&& x, EigL&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename EigT, typename EigL, require_all_eigen_t<EigT, EigL>* = nullptr,
+template <typename EigT, typename EigL,
+          require_all_eigen_t<EigT, EigL>* = nullptr,
           require_all_not_st_var<EigT, EigL>* = nullptr>
-inline auto lb_constrain(const EigT& x, const EigL& lb, return_type_t<EigT, EigL>& lp) {
+inline auto lb_constrain(const EigT& x, const EigL& lb,
+                         return_type_t<EigT, EigL>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
@@ -143,7 +150,7 @@ inline auto lb_constrain(const EigT& x, const EigL& lb, return_type_t<EigT, EigL
  * Specialization of `lb_constrain` to apply a container of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A Any type with a Scalar `scalar_type`.
+ * @tparam T A Any type with a Scalar \ref stan::scalar_type .
  * @tparam L A type inheriting from `EigenBase` or a scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -162,7 +169,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a container of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A Any type with a Scalar `scalar_type`.
+ * @tparam T A Any type with a Scalar \ref stan::scalar_type .
  * @tparam L A type inheriting from `EigenBase` or a standard vector.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -183,7 +190,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb,
  * Specialization of `lb_constrain` to apply a container of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A Any type with a Scalar `scalar_type`.
+ * @tparam T A Any type with a Scalar \ref stan::scalar_type .
  * @tparam L A type inheriting from `EigenBase` or a standard vector.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -203,7 +210,7 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb) {
  * Specialization of `lb_constrain` to apply a container of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A Any type with a Scalar `scalar_type`.
+ * @tparam T A Any type with a Scalar \ref stan::scalar_type .
  * @tparam L A type inheriting from `EigenBase` or a standard vector.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -230,10 +237,12 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
- * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam L A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
- * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::EigenBase`, a
+ * standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::EigenBase`, a
+ * standard vector, or a scalar
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in, out] lp log density accumulator

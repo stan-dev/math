@@ -27,7 +27,8 @@ namespace math {
  * @param B Second matrix.
  * @return Result of stacking first matrix on top of second.
  */
-template <typename EigMat1, typename EigMat2, require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
 inline auto append_row(const EigMat1& A, const EigMat2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

@@ -14,9 +14,9 @@ namespace math {
  * A valid covariance matrix is a square, symmetric matrix that is positive
  * definite.
  * @tparam Mat Type inheriting from `MatrixBase` with neither rows or columns
- * defined at compile time to be equal to 1 or a \ref stan::math::var_value with the var's
- * inner type inheriting from `Eigen::MatrixBase` with neither rows or columns
- * defined at compile time to be equal to 1
+ * defined at compile time to be equal to 1 or a \ref stan::math::var_value with
+ * the var's inner type inheriting from `Eigen::MatrixBase` with neither rows or
+ * columns defined at compile time to be equal to 1
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -37,9 +37,9 @@ inline void check_cov_matrix(const char* function, const char* name,
  * definite.
  * @tparam StdVec A standard vector with inner type either inheriting from
  * `MatrixBase` with neither rows or columns defined at compile time to be equal
- * to 1 or a \ref stan::math::var_value with the var's inner type inheriting from
- * `Eigen::MatrixBase` with neither rows or columns defined at compile time to
- * be equal to 1
+ * to 1 or a \ref stan::math::var_value with the var's inner type inheriting
+ * from `Eigen::MatrixBase` with neither rows or columns defined at compile time
+ * to be equal to 1
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y standard vector of matrices to test.

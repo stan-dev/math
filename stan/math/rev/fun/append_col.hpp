@@ -31,7 +31,8 @@ namespace math {
  * @return Result of appending the first matrix followed by the
  * second matrix side by side.
  */
-template <typename Mat1, typename Mat2, require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
+template <typename Mat1, typename Mat2,
+          require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto append_col(const Mat1& A, const Mat2& B) {
   check_size_match("append_col", "columns of A", A.rows(), "columns of B",
                    B.rows());

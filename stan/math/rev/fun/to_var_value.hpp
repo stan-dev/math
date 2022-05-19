@@ -11,8 +11,8 @@ namespace math {
 
 /**
  * Converts an Eigen matrix (or vector or row_vector) or expression of `var`s
- * into \ref stan::math::var_value . Adjoint is propagated back to argument in the reverse
- * pass.
+ * into \ref stan::math::var_value . Adjoint is propagated back to argument in
+ * the reverse pass.
  *
  * @tparam T type of the input
  * @param a matrix to convert
@@ -39,8 +39,8 @@ T to_var_value(T&& a) {
 }
 
 /**
- * Convert the elements of the `std::vector` input to \ref stan::math::var_value types
- * if possible
+ * Convert the elements of the `std::vector` input to \ref stan::math::var_value
+ * types if possible
  *
  * @tparam T type of elemnts of the input vector
  * @param a std::vector of elements to convert

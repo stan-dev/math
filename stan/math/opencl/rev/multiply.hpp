@@ -24,10 +24,10 @@ namespace math {
  * @param B second expression
  * @return Matrix product of given arguments
  */
-template <
-    typename Matcl_a, typename T_b,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<Matcl_a, T_b>* = nullptr,
-    require_any_var_t<Matcl_a, T_b>* = nullptr>
+template <typename Matcl_a, typename T_b,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<Matcl_a,
+                                                                T_b>* = nullptr,
+          require_any_var_t<Matcl_a, T_b>* = nullptr>
 inline auto multiply(Matcl_a&& A, T_b&& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
@@ -55,10 +55,10 @@ inline auto multiply(Matcl_a&& A, T_b&& B) {
  * @param B second expression
  * @return Matrix product of given arguments
  */
-template <
-    typename Matcl_a, typename T_b,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<Matcl_a, T_b>* = nullptr,
-    require_any_var_t<Matcl_a, T_b>* = nullptr>
+template <typename Matcl_a, typename T_b,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<Matcl_a,
+                                                                T_b>* = nullptr,
+          require_any_var_t<Matcl_a, T_b>* = nullptr>
 inline auto operator*(const Matcl_a& A, const T_b& B) {
   return multiply(A, B);
 }
@@ -73,9 +73,11 @@ inline auto operator*(const Matcl_a& A, const T_b& B) {
  * @param B matrix
  * @return product of matrix and scalar
  */
-template <typename ScalarA, typename MatclB, require_stan_scalar_t<ScalarA>* = nullptr,
-          require_all_nonscalar_prim_or_rev_kernel_expression_t<MatclB>* = nullptr,
-          require_any_var_t<ScalarA, MatclB>* = nullptr>
+template <
+    typename ScalarA, typename MatclB,
+    require_stan_scalar_t<ScalarA>* = nullptr,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<MatclB>* = nullptr,
+    require_any_var_t<ScalarA, MatclB>* = nullptr>
 inline auto multiply(const ScalarA& A, MatclB&& B) {
   arena_t<MatclB> b_arena = std::forward<MatclB>(B);
 
@@ -98,9 +100,11 @@ inline auto multiply(const ScalarA& A, MatclB&& B) {
  * @param B scalar
  * @return product of matrix and scalar
  */
-template <typename MatclA, typename ScalarB, require_stan_scalar_t<ScalarB>* = nullptr,
-          require_all_nonscalar_prim_or_rev_kernel_expression_t<MatclA>* = nullptr,
-          require_any_var_t<MatclA, ScalarB>* = nullptr>
+template <
+    typename MatclA, typename ScalarB,
+    require_stan_scalar_t<ScalarB>* = nullptr,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<MatclA>* = nullptr,
+    require_any_var_t<MatclA, ScalarB>* = nullptr>
 inline auto multiply(const MatclA& A, const ScalarB& B) {
   return multiply(B, A);
 }

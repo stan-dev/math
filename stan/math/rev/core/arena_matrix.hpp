@@ -34,7 +34,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Constructs \ref stan::math::arena_matrix with given number of rows and columns.
+   * Constructs \ref stan::math::arena_matrix with given number of rows and
+   * columns.
    * @param rows number of rows
    * @param cols number of columns
    */
@@ -44,8 +45,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           rows, cols) {}
 
   /**
-   * Constructs \ref stan::math::arena_matrix with given size. This only works if
-   * `MatrixType` is row or col vector.
+   * Constructs \ref stan::math::arena_matrix with given size. This only works
+   * if `MatrixType` is row or col vector.
    * @param size number of elements
    */
   explicit arena_matrix(Eigen::Index size)
@@ -74,8 +75,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Constructs \ref stan::math::arena_matrix from an expression. This makes an assumption that
-   * any other `Eigen::Map` also contains memory allocated in the arena.
+   * Constructs \ref stan::math::arena_matrix from an expression. This makes an
+   * assumption that any other `Eigen::Map` also contains memory allocated in
+   * the arena.
    * @param other expression
    */
   arena_matrix(const Base& other)  // NOLINT

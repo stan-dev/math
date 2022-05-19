@@ -88,7 +88,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
                         const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
-  /** 
+  /**
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *

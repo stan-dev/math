@@ -32,7 +32,8 @@ namespace math {
 template <typename MatclT, typename L, typename U,
           require_all_kernel_expressions_and_none_scalar_t<MatclT>* = nullptr,
           require_all_kernel_expressions_t<L, U>* = nullptr>
-inline matrix_cl<double> lub_constrain(const MatclT& x, const L& lb, const U& ub) {
+inline matrix_cl<double> lub_constrain(const MatclT& x, const L& lb,
+                                       const U& ub) {
   auto diff = ub - lb;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;

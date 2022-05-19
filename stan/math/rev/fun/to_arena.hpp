@@ -22,7 +22,8 @@ namespace math {
  * @param a argument
  * @return argument
  */
-template <typename Exprcl, require_not_same_t<Exprcl, arena_t<Exprcl>>* = nullptr,
+template <typename Exprcl,
+          require_not_same_t<Exprcl, arena_t<Exprcl>>* = nullptr,
           require_not_container_t<Exprcl>* = nullptr,
           require_not_matrix_cl_t<Exprcl>* = nullptr>
 inline arena_t<Exprcl> to_arena(Exprcl&& a) {

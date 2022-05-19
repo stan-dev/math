@@ -50,8 +50,8 @@ void check_positive_ordered(const char* function, const char* name,
 /**
  * Throw an exception if any of the vectors in a standard vector contains
  * negative values or is not sorted into strictly increasing order.
- * @tparam StdVec A standard vector type with an `value_type` inheriting from
- * `Eigen::EigenBase` with 1 compile time row or column
+ * @tparam StdVec A standard vector type with an \ref stan::value_type
+ * inheriting from `Eigen::EigenBase` with 1 compile time row or column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test

@@ -18,7 +18,7 @@ namespace stan {
  *
  * <p>This base class should be specialized for structured types.</p>
  *
- * This type trait operates similarly to `scalar_type` where it is
+ * This type trait operates similarly to \ref stan::scalar_type where it is
  * recursively called on containers, however
  * `scalar_type_t<std::complex<T>>` and `value_type_t<std::complex<T>>`
  * will return a `std::complex<T>`, while this type trait will return `T`.

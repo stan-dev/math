@@ -72,7 +72,8 @@ template <typename T_xcl, typename T_ubcl,
           require_all_prim_or_rev_kernel_expression_t<T_xcl, T_ubcl>* = nullptr,
           require_any_var_t<T_xcl, T_ubcl>* = nullptr,
           require_any_not_stan_scalar_t<T_xcl, T_ubcl>* = nullptr>
-inline var_value<matrix_cl<double>> ub_constrain(T_xcl&& x, T_ubcl&& ub, var& lp) {
+inline var_value<matrix_cl<double>> ub_constrain(T_xcl&& x, T_ubcl&& ub,
+                                                 var& lp) {
   arena_t<T_xcl> x_arena = std::forward<T_xcl>(x);
   arena_t<T_ubcl> ub_arena = std::forward<T_ubcl>(ub);
 

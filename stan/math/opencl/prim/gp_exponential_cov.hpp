@@ -61,13 +61,16 @@ inline matrix_cl<return_type_t<Matcl1, Arith2, Arith3>> gp_exponential_cov(
  *
  * @return dot product covariance matrix
  */
-template <typename Matcl1, typename Matcl2, typename Arith3, typename Arith4,
-          require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2>* = nullptr,
-          require_all_arithmetic_t<Arith3, Arith4>* = nullptr>
-inline matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> gp_exponential_cov(
-    const Matcl1& x, const Matcl2& y, const Arith3 sigma, const Arith4 length_scale) {
+template <
+    typename Matcl1, typename Matcl2, typename Arith3, typename Arith4,
+    require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2>* = nullptr,
+    require_all_arithmetic_t<Arith3, Arith4>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>>
+gp_exponential_cov(const Matcl1& x, const Matcl2& y, const Arith3 sigma,
+                   const Arith4 length_scale) {
   check_size_match("gp_exponential_cov_cross", "x", x.rows(), "y", y.rows());
-  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> res(x.cols(), y.cols());
+  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> res(x.cols(),
+                                                               y.cols());
   const auto& x_eval = x.eval();
   const auto& y_eval = y.eval();
   int block_size = 16;
@@ -98,9 +101,10 @@ inline matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> gp_exponential_c
  *
  * @return Squared distance between elements of x.
  */
-template <typename Matcl1, typename Arith2, typename Matcl3,
-          require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl3>* = nullptr,
-          require_all_arithmetic_t<Arith2>* = nullptr>
+template <
+    typename Matcl1, typename Arith2, typename Matcl3,
+    require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl3>* = nullptr,
+    require_all_arithmetic_t<Arith2>* = nullptr>
 inline matrix_cl<return_type_t<Matcl1, Arith2, Matcl3>> gp_exponential_cov(
     const Matcl1& x, const Arith2 sigma, const Matcl3& length_scale) {
   const auto& x_eval = elt_divide(x, rowwise_broadcast(length_scale)).eval();
@@ -136,14 +140,16 @@ inline matrix_cl<return_type_t<Matcl1, Arith2, Matcl3>> gp_exponential_cov(
  *
  * @return Squared distance between elements of x and y.
  */
-template <
-    typename Matcl1, typename Matcl2, typename Arith3, typename Matcl4,
-    require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2, Matcl4>* = nullptr,
-    require_all_arithmetic_t<Arith3>* = nullptr>
-inline matrix_cl<return_type_t<Matcl1, Matcl2, Matcl3, Matcl4>> gp_exponential_cov(
-    const Matcl1& x, const Matcl2& y, const Arith3 sigma, const Matcl4& length_scale) {
+template <typename Matcl1, typename Matcl2, typename Arith3, typename Matcl4,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2,
+                                                           Matcl4>* = nullptr,
+          require_all_arithmetic_t<Arith3>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Matcl2, Matcl3, Matcl4>>
+gp_exponential_cov(const Matcl1& x, const Matcl2& y, const Arith3 sigma,
+                   const Matcl4& length_scale) {
   check_size_match("gp_exponential_cov_cross", "x", x.rows(), "y", y.rows());
-  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Matcl4>> res(x.cols(), y.cols());
+  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Matcl4>> res(x.cols(),
+                                                               y.cols());
   const auto& x_eval = elt_divide(x, rowwise_broadcast(length_scale)).eval();
   const auto& y_eval = elt_divide(y, rowwise_broadcast(length_scale)).eval();
   int block_size = 16;

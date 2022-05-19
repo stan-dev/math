@@ -117,10 +117,12 @@ inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a,
  * @param b expression
  * @return Matrix product of given arguments
  */
-template <typename Scalara, typename Matclb, require_stan_scalar_t<Scalara>* = nullptr,
+template <typename Scalara, typename Matclb,
+          require_stan_scalar_t<Scalara>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<Matclb>* = nullptr,
           require_all_not_var_t<Scalara, Matclb>* = nullptr>
-inline matrix_cl<return_type_t<Scalara, Matclb>> multiply(const Scalara& a, const Matclb& b) {
+inline matrix_cl<return_type_t<Scalara, Matclb>> multiply(const Scalara& a,
+                                                          const Matclb& b) {
   return a * b;
 }
 
@@ -132,10 +134,12 @@ inline matrix_cl<return_type_t<Scalara, Matclb>> multiply(const Scalara& a, cons
  * @param b scalar
  * @return Matrix product of given arguments
  */
-template <typename Matcla, typename Scalarb, require_stan_scalar_t<Scalarb>* = nullptr,
+template <typename Matcla, typename Scalarb,
+          require_stan_scalar_t<Scalarb>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<Matcla>* = nullptr,
           require_all_not_var_t<Matcla, Scalarb>* = nullptr>
-inline matrix_cl<return_type_t<Matcla, Scalarb>> multiply(const Matcla& a, const Scalarb& b) {
+inline matrix_cl<return_type_t<Matcla, Scalarb>> multiply(const Matcla& a,
+                                                          const Scalarb& b) {
   return a * b;
 }
 

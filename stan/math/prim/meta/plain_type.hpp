@@ -11,9 +11,10 @@ namespace stan {
  * Determines plain (non expression) type associated with \c T. For non \c Eigen
  * types it is the decayed input type.
  * For Example, `plain_type<decltype(Eigen::MatrixXd() + Eigen::MatrixXd())>`
- * aka `plain_type<Eigen::CwiseBinaryOp<scalar_sum_op<double, double>, MatrixXd, MatrixXd>>`'s
- * `type` will be `Eigen::MatrixXd`. `plain_type<double>`'s `type` will be a double.
- * while `plain_type<std::vector<double>>`'s `type` will be a `double`
+ * aka `plain_type<Eigen::CwiseBinaryOp<scalar_sum_op<double, double>, MatrixXd,
+ * MatrixXd>>`'s `type` will be `Eigen::MatrixXd`. `plain_type<double>`'s `type`
+ * will be a double. while `plain_type<std::vector<double>>`'s `type` will be a
+ * `double`
  * @tparam T type to determine plain type of
  */
 template <typename T, typename Enable = void>
@@ -22,7 +23,8 @@ struct plain_type {
 };
 
 /** \ingroup type_trait
- * Determine the non-expression type of an Eigen object. See \ref stan::plain_type for examples.
+ * Determine the non-expression type of an Eigen object. See \ref
+ * stan::plain_type for examples.
  */
 template <typename T>
 using plain_type_t = typename plain_type<T>::type;

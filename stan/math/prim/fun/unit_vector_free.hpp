@@ -31,8 +31,8 @@ inline auto unit_vector_free(EigVec&& x) {
 /**
  * Overload of `unit_vector_free()` to untransform each Eigen vector
  * in a standard vector.
- * @tparam T A standard vector with with a `value_type` which inherits from
- *  `Eigen::MatrixBase` with compile time rows or columns equal to 1.
+ * @tparam T A standard vector with with a \ref stan::value_type which inherits
+ * from `Eigen::MatrixBase` with compile time rows or columns equal to 1.
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>

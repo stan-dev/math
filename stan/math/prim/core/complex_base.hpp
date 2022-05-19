@@ -36,7 +36,7 @@ class complex_base {
    * Construct a complex base with the specified real part and a zero
    * imaginary part.
    *
-   * @tparam U real type (assignable to `value_type`)
+   * @tparam U real type (assignable to \ref stan::value_type )
    * @param[in] re real part
    */
   template <typename U>  // , typename = require_stan_scalar_t<U>>
@@ -46,8 +46,8 @@ class complex_base {
    * Construct a complex base with the specified real and imaginary
    * parts.
    *
-   * @tparam U real type (assignable to `value_type`)
-   * @tparam V imaginary type (assignable to `value_type`)
+   * @tparam U real type (assignable to \ref stan::value_type )
+   * @tparam V imaginary type (assignable to \ref stan::value_type )
    * @param[in] re real part
    * @param[in] im imaginary part
    */
@@ -86,7 +86,7 @@ class complex_base {
    * Assign the specified value to the real part of this complex number
    * and set imaginary part to zero.
    *
-   * @tparam U argument type (assignable to `value_type`)
+   * @tparam U argument type (assignable to \ref stan::value_type )
    * @param[in] re real part
    * @return this
    */
@@ -100,7 +100,7 @@ class complex_base {
   /**
    * Add specified real value to real part.
    *
-   * @tparam U argument type (assignable to `value_type`)
+   * @tparam U argument type (assignable to \ref stan::value_type )
    * @param[in] x real number to add
    * @return this
    */
@@ -113,7 +113,7 @@ class complex_base {
   /**
    * Adds specified complex number to this.
    *
-   * @tparam U value type of argument (assignable to `value_type`)
+   * @tparam U value type of argument (assignable to \ref stan::value_type )
    * @param[in] other complex number to add
    * @return this
    */
@@ -127,7 +127,7 @@ class complex_base {
   /**
    * Subtracts specified real number from real part.
    *
-   * @tparam U argument type (assignable to `value_type`)
+   * @tparam U argument type (assignable to \ref stan::value_type )
    * @param[in] x real number to subtract
    * @return this
    */
@@ -140,7 +140,7 @@ class complex_base {
   /**
    * Subtracts specified complex number from this.
    *
-   * @tparam U value type of argument (assignable to `value_type`)
+   * @tparam U value type of argument (assignable to \ref stan::value_type )
    * @param[in] other complex number to subtract
    * @return this
    */
@@ -154,7 +154,7 @@ class complex_base {
   /**
    * Multiplies this by the specified real number.
    *
-   * @tparam U type of argument (assignable to `value_type`)
+   * @tparam U type of argument (assignable to \ref stan::value_type )
    * @param[in] x real number to multiply
    * @return this
    */
@@ -168,7 +168,7 @@ class complex_base {
   /**
    * Multiplies this by specified complex number.
    *
-   * @tparam U value type of argument (assignable to `value_type`)
+   * @tparam U value type of argument (assignable to \ref stan::value_type )
    * @param[in] other complex number to multiply
    * @return this
    */
@@ -183,7 +183,7 @@ class complex_base {
   /**
    * Divides this by the specified real number.
    *
-   * @tparam U type of argument (assignable to `value_type`)
+   * @tparam U type of argument (assignable to \ref stan::value_type )
    * @param[in] x real number to divide by
    * @return this
    */
@@ -197,7 +197,7 @@ class complex_base {
   /**
    * Divides this by the specified complex number.
    *
-   * @tparam U value type of argument (assignable to `value_type`)
+   * @tparam U value type of argument (assignable to \ref stan::value_type )
    * @param[in] other number to divide by
    * @return this
    */

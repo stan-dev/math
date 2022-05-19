@@ -70,10 +70,10 @@ static const std::string indexing_rev_local_atomic_kernel_code = STRINGIFY(
      * @note Code is a <code>const char*</code> held in
      * <code>add_batch_kernel_code.</code>
      */
-    __kernel void indexing_rev_local_atomic(__global double* adj, const __global int* index,
-                               const __global double* res,
-                               __local double* adj_loc, int index_size,
-                               int adj_size) {
+    __kernel void indexing_rev_local_atomic(
+        __global double* adj, const __global int* index,
+        const __global double* res, __local double* adj_loc, int index_size,
+        int adj_size) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int gsize = get_global_size(0);
@@ -124,10 +124,10 @@ static const std::string indexing_rev_local_independent_kernel_code = STRINGIFY(
      * @note Code is a <code>const char*</code> held in
      * <code>add_batch_kernel_code.</code>
      */
-    __kernel void indexing_rev_local_independent(__global double* adj, const __global int* index,
-                               const __global double* res,
-                               __local double* adj_loc, int index_size,
-                               int adj_size) {
+    __kernel void indexing_rev_local_independent(
+        __global double* adj, const __global int* index,
+        const __global double* res, __local double* adj_loc, int index_size,
+        int adj_size) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int gsize = get_global_size(0);

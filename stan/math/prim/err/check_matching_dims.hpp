@@ -23,11 +23,13 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename Container1, typename Container2, require_all_not_matrix_t<Container1, Container2>* = nullptr,
+template <typename Container1, typename Container2,
+          require_all_not_matrix_t<Container1, Container2>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container1, Container2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Container1& y1, const char* name2, const Container2& y2) {
+                                const Container1& y1, const char* name2,
+                                const Container2& y2) {
   std::vector<int> y1_d = dims(y1);
   std::vector<int> y2_d = dims(y2);
   bool error = false;
@@ -64,8 +66,10 @@ inline void check_matching_dims(const char* function, const char* name1,
 
 /**
  * Check if two matrices have the same row and column dimensions.
- * @tparam Mat1 Either an Eigen type or a \ref stan::math::var_value with underlying Eigen type.
- * @tparam Mat2 Either an Eigen type or a \ref stan::math::var_value with underlying Eigen type.
+ * @tparam Mat1 Either an Eigen type or a \ref stan::math::var_value with
+ * underlying Eigen type.
+ * @tparam Mat2 Either an Eigen type or a \ref stan::math::var_value with
+ * underlying Eigen type.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first matrix to test
@@ -74,14 +78,15 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <
-    typename Mat1, typename Mat2,
-    require_any_t<conjunction<is_matrix<Mat1>, is_matrix<Mat2>>,
-                  conjunction<is_prim_or_rev_kernel_expression<Mat1>,
-                              is_prim_or_rev_kernel_expression<Mat2>>>* = nullptr,
-    require_any_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
+template <typename Mat1, typename Mat2,
+          require_any_t<
+              conjunction<is_matrix<Mat1>, is_matrix<Mat2>>,
+              conjunction<is_prim_or_rev_kernel_expression<Mat1>,
+                          is_prim_or_rev_kernel_expression<Mat2>>>* = nullptr,
+          require_any_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Mat1& y1, const char* name2, const Mat2& y2) {
+                                const Mat1& y1, const char* name2,
+                                const Mat2& y2) {
   if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {
     [&]() STAN_COLD_PATH {
       std::ostringstream y1_err;
@@ -96,10 +101,10 @@ inline void check_matching_dims(const char* function, const char* name1,
 
 /**
  * Check if two matrices have the same row and column dimensions.
- * @tparam T1 Either an Eigen type, a \ref stan::math::var_value with underlying Eigen type, or
- * scalar.
- * @tparam T2 Either an Eigen type, a \ref stan::math::var_value with underlying Eigen type, or
- * scalar.
+ * @tparam T1 Either an Eigen type, a \ref stan::math::var_value with underlying
+ * Eigen type, or scalar.
+ * @tparam T2 Either an Eigen type, a \ref stan::math::var_value with underlying
+ * Eigen type, or scalar.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first argument to test

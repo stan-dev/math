@@ -57,7 +57,8 @@ void check_ordered(const char* function, const char* name, const Vec& y) {
  * @throw `std::domain_error` if the vector elements are not ordered, if there
  * are duplicated values, or if any element is `NaN`
  */
-template <typename StdVec, require_std_vector_vt<is_stan_scalar, StdVec>* = nullptr>
+template <typename StdVec,
+          require_std_vector_vt<is_stan_scalar, StdVec>* = nullptr>
 void check_ordered(const char* function, const char* name, const StdVec& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {

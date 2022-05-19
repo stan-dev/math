@@ -29,7 +29,7 @@ class complex<stan::math::fvar<T>>
    * Construct a complex number with the specified real part and a zero
    * imaginary part.
    *
-   * @tparam Scalar real type (must be assignable to `value_type`)
+   * @tparam Scalar real type (must be assignable to \ref stan::value_type )
    * @param[in] re real part
    */
   template <typename U, typename = stan::require_stan_scalar_t<U>>

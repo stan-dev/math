@@ -34,7 +34,8 @@ namespace math {
  */
 template <typename Scalar1, typename Scalar2, typename F,
           require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
-inline auto apply_scalar_binary(const Scalar1& x, const Scalar2& y, const F& f) {
+inline auto apply_scalar_binary(const Scalar1& x, const Scalar2& y,
+                                const F& f) {
   return f(x, y);
 }
 
@@ -75,7 +76,8 @@ template <typename EigVec, typename StdVec, typename F,
           require_std_vector_vt<std::is_integral, StdVec>* = nullptr>
 inline auto apply_scalar_binary(const EigVec& x, const StdVec& y, const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
-  using int_vec_t = promote_scalar_t<value_type_t<StdVec>, plain_type_t<EigVec>>;
+  using int_vec_t
+      = promote_scalar_t<value_type_t<StdVec>, plain_type_t<EigVec>>;
   Eigen::Map<const int_vec_t> y_map(y.data(), y.size());
   return x.binaryExpr(y_map, f);
 }
@@ -92,12 +94,14 @@ inline auto apply_scalar_binary(const EigVec& x, const StdVec& y, const F& f) {
  * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename StdVec, typename StdVec, typename F,
-          require_std_vector_vt<std::is_integral, StdVec>* = nullptr,
-          require_eigen_vector_vt<is_stan_scalar, StdVec>* = nullptr>
-inline auto apply_scalar_binary(const StdVec& x, const StdVec& y, const F& f) {
+template <typename StdVec1, typename EigVec2, typename F,
+          require_std_vector_vt<std::is_integral, StdVec1>* = nullptr,
+          require_eigen_vector_vt<is_stan_scalar, EigVec2>* = nullptr>
+inline auto apply_scalar_binary(const StdVec1& x, const EigVec2& y,
+                                const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
-  using int_vec_t = promote_scalar_t<value_type_t<StdVec>, plain_type_t<StdVec>>;
+  using int_vec_t
+      = promote_scalar_t<value_type_t<StdVec1>, plain_type_t<EigVec2>>;
   Eigen::Map<const int_vec_t> x_map(x.data(), x.size());
   return x_map.binaryExpr(y, f);
 }
@@ -118,7 +122,8 @@ template <typename EigMat, typename Container, typename F,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, EigMat>* = nullptr,
           require_std_vector_vt<is_std_vector, Container>* = nullptr,
           require_std_vector_st<std::is_integral, Container>* = nullptr>
-inline auto apply_scalar_binary(const EigMat& x, const Container& y, const F& f) {
+inline auto apply_scalar_binary(const EigMat& x, const Container& y,
+                                const F& f) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;
     msg << "Inputs to vectorized binary function must match in"
@@ -151,7 +156,8 @@ template <typename StdVecVec, typename EigMat, typename F,
           require_std_vector_vt<is_std_vector, StdVecVec>* = nullptr,
           require_std_vector_st<std::is_integral, StdVecVec>* = nullptr,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, EigMat>* = nullptr>
-inline auto apply_scalar_binary(const StdVecVec& x, const EigMat& y, const F& f) {
+inline auto apply_scalar_binary(const StdVecVec& x, const EigMat& y,
+                                const F& f) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;
     msg << "Inputs to vectorized binary function must match in"
@@ -186,7 +192,8 @@ inline auto apply_scalar_binary(const StdVecVec& x, const EigMat& y, const F& f)
  * Note: The return expresssion needs to be evaluated, otherwise the captured
  *         function and scalar fall out of scope.
  */
-template <typename Eig, typename Scalar, typename F, require_eigen_t<Eig>* = nullptr,
+template <typename Eig, typename Scalar, typename F,
+          require_eigen_t<Eig>* = nullptr,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto apply_scalar_binary(const Eig& x, const Scalar& y, const F& f) {
   return x.unaryExpr([&f, y](const auto& v) { return f(v, y); });
@@ -211,7 +218,8 @@ inline auto apply_scalar_binary(const Eig& x, const Scalar& y, const F& f) {
  *         function and scalar fall out of scope.
  */
 template <typename Scalar, typename Eig, typename F,
-          require_stan_scalar_t<Scalar>* = nullptr, require_eigen_t<Eig>* = nullptr>
+          require_stan_scalar_t<Scalar>* = nullptr,
+          require_eigen_t<Eig>* = nullptr>
 inline auto apply_scalar_binary(const Scalar& x, const Eig& y, const F& f) {
   return y.unaryExpr([&f, x](const auto& v) { return f(x, v); });
 }
@@ -233,9 +241,11 @@ inline auto apply_scalar_binary(const Scalar& x, const Eig& y, const F& f) {
  * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename StdVec1, typename StdVec2, typename F,
-          require_all_std_vector_vt<is_stan_scalar, StdVec1, StdVec2>* = nullptr>
-inline auto apply_scalar_binary(const StdVec1& x, const StdVec2& y, const F& f) {
+template <
+    typename StdVec1, typename StdVec2, typename F,
+    require_all_std_vector_vt<is_stan_scalar, StdVec1, StdVec2>* = nullptr>
+inline auto apply_scalar_binary(const StdVec1& x, const StdVec2& y,
+                                const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
@@ -267,7 +277,8 @@ inline auto apply_scalar_binary(const StdVec1& x, const StdVec2& y, const F& f) 
 template <typename StdVecScalar, typename Scalar, typename F,
           require_std_vector_vt<is_stan_scalar, StdVecScalar>* = nullptr,
           require_stan_scalar_t<Scalar>* = nullptr>
-inline auto apply_scalar_binary(const StdVecScalar& x, const StdVec& y, const F& f) {
+inline auto apply_scalar_binary(const StdVecScalar& x, const Scalar& y,
+                                const F& f) {
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   using T_return = std::decay_t<decltype(f(x[0], y))>;
   std::vector<T_return> result(x.size());
@@ -320,10 +331,11 @@ inline auto apply_scalar_binary(const Scalar& x, const StdVec& y, const F& f) {
  * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <
-    typename Container1, typename Container2, typename F,
-    require_all_std_vector_vt<is_container_or_var_matrix, Container1, Container2>* = nullptr>
-inline auto apply_scalar_binary(const Container1& x, const Container2& y, const F& f) {
+template <typename Container1, typename Container2, typename F,
+          require_all_std_vector_vt<is_container_or_var_matrix, Container1,
+                                    Container2>* = nullptr>
+inline auto apply_scalar_binary(const Container1& x, const Container2& y,
+                                const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y[0], f))>;
   size_t y_size = y.size();
@@ -348,10 +360,12 @@ inline auto apply_scalar_binary(const Container1& x, const Container2& y, const 
  * @param f functor to apply to inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename Container, typename Scalar, typename F,
-          require_std_vector_vt<is_container_or_var_matrix, Container>* = nullptr,
-          require_stan_scalar_t<Scalar>* = nullptr>
-inline auto apply_scalar_binary(const Container& x, const Scalar& y, const F& f) {
+template <
+    typename Container, typename Scalar, typename F,
+    require_std_vector_vt<is_container_or_var_matrix, Container>* = nullptr,
+    require_stan_scalar_t<Scalar>* = nullptr>
+inline auto apply_scalar_binary(const Container& x, const Scalar& y,
+                                const F& f) {
   using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y, f))>;
   size_t x_size = x.size();
   std::vector<T_return> result(x_size);
@@ -375,10 +389,12 @@ inline auto apply_scalar_binary(const Container& x, const Scalar& y, const F& f)
  * @param f functor to apply to inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename Scalar, typename Container, typename F,
-          require_stan_scalar_t<Scalar>* = nullptr,
-          require_std_vector_vt<is_container_or_var_matrix, Container>* = nullptr>
-inline auto apply_scalar_binary(const Scalar& x, const Container& y, const F& f) {
+template <
+    typename Scalar, typename Container, typename F,
+    require_stan_scalar_t<Scalar>* = nullptr,
+    require_std_vector_vt<is_container_or_var_matrix, Container>* = nullptr>
+inline auto apply_scalar_binary(const Scalar& x, const Container& y,
+                                const F& f) {
   using T_return = plain_type_t<decltype(apply_scalar_binary(x, y[0], f))>;
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);

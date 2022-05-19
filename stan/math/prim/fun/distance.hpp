@@ -24,7 +24,8 @@ namespace math {
  */
 template <typename Scalar1, typename Scalar2,
           require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
-inline return_type_t<Scalar1, Scalar2> distance(const Scalar1& x1, const Scalar2& x2) {
+inline return_type_t<Scalar1, Scalar2> distance(const Scalar1& x1,
+                                                const Scalar2& x2) {
   check_finite("distance", "x1", x1);
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
@@ -43,7 +44,8 @@ inline return_type_t<Scalar1, Scalar2> distance(const Scalar1& x1, const Scalar2
  * @throw std::domain_error If the vectors are not the same
  * size.
  */
-template <typename Vec1, typename Vec2, require_all_vector_t<Vec1, Vec2>* = nullptr>
+template <typename Vec1, typename Vec2,
+          require_all_vector_t<Vec1, Vec2>* = nullptr>
 inline return_type_t<Vec1, Vec2> distance(const Vec1& x1, const Vec2& x2) {
   using std::sqrt;
   check_matching_sizes("distance", "x1", x1, "x2", x2);

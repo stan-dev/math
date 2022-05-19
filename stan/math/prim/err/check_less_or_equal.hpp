@@ -32,7 +32,8 @@ namespace math {
  * or high is `NaN`
  */
 template <typename ScalarY, typename ScalarHigh,
-          require_all_stan_scalar_t<ScalarY, ScalarHigh>* = nullptr, typename... Idxs>
+          require_all_stan_scalar_t<ScalarY, ScalarHigh>* = nullptr,
+          typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const ScalarY& y, const ScalarHigh& high,
                                 Idxs... idxs) {
@@ -54,8 +55,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * element of `high`.
  * @tparam ScalarY A scalar type
  * @tparam VecHigh A standard vector or type inheriting from `Eigen::DenseBase`
- * with compile time rows or columns equal to one and `value_type` equal to a
- * stan scalar.
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -67,7 +68,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <
-    typename ScalarY, typename VecHigh, require_stan_scalar_t<ScalarY>* = nullptr,
+    typename ScalarY, typename VecHigh,
+    require_stan_scalar_t<ScalarY>* = nullptr,
     require_vector_t<VecHigh>* = nullptr,
     require_not_std_vector_vt<is_container_or_var_matrix, VecHigh>* = nullptr,
     typename... Idxs>
@@ -94,9 +96,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * function is vectorized and will check each element of `y` against each
  * element of `high`.
  * @tparam ScalarY A scalar type
- * @tparam DenseHigh Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- * the var's inner type inheriting from `Eigen::DenseBase` where the compile
- * time number of rows or columns is not equal to one
+ * @tparam DenseHigh Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -107,7 +110,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename ScalarY, typename DenseHigh, require_stan_scalar_t<ScalarY>* = nullptr,
+template <typename ScalarY, typename DenseHigh,
+          require_stan_scalar_t<ScalarY>* = nullptr,
           require_dense_dynamic_t<DenseHigh>* = nullptr, typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const ScalarY& y, const DenseHigh& high,
@@ -134,9 +138,9 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than `high`. This
  * function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan
- * scalar.
+ * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam ScalarHigh A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
@@ -148,9 +152,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename VecY, typename ScalarHigh, require_vector_t<VecY>* = nullptr,
-          require_not_std_vector_vt<is_container_or_var_matrix, VecY>* = nullptr,
-          require_stan_scalar_t<ScalarHigh>* = nullptr, typename... Idxs>
+template <
+    typename VecY, typename ScalarHigh, require_vector_t<VecY>* = nullptr,
+    require_not_std_vector_vt<is_container_or_var_matrix, VecY>* = nullptr,
+    require_stan_scalar_t<ScalarHigh>* = nullptr, typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const VecY& y, const ScalarHigh& high,
                                 Idxs... idxs) {
@@ -174,9 +179,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than `high`. This
  * function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
- * var's inner type inheriting from `Eigen::DenseBase` where the compile time
- * number of rows or columns is not equal to one
+ * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam ScalarHigh A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
@@ -216,12 +222,12 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than the associated
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
- * @tparam DenseY A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan
- * scalar.
+ * @tparam DenseY A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam VecHigh A standard vector or type inheriting from `Eigen::DenseBase`
- * with compile time rows or columns equal to one and `value_type` equal to a
- * stan scalar.
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -261,12 +267,14 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than the associated
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
- * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
- * var's inner type inheriting from `Eigen::DenseBase` where the compile time
- * number of rows or columns is not equal to one
- * @tparam DenseHigh Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- * the var's inner type inheriting from `Eigen::DenseBase` where the compile
- * time number of rows or columns is not equal to one
+ * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
+ * @tparam DenseHigh Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -278,7 +286,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename DenseY, typename DenseHigh,
-          require_all_dense_dynamic_t<DenseY, DenseHigh>* = nullptr, typename... Idxs>
+          require_all_dense_dynamic_t<DenseY, DenseHigh>* = nullptr,
+          typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const DenseY& y, const DenseHigh& high,
                                 Idxs... idxs) {
@@ -305,9 +314,9 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than `high`. This
  * function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam ContainerY A standard vector type with a `value_type` of a standard vector
- * or type inheriting from `Eigen::DenseBase`
- * @tparam T_high A scalar or the same `value_type` of `ContainerY`
+ * @tparam ContainerY A standard vector type with a \ref stan::value_type of a
+ * standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_high A scalar or the same \ref stan::value_type of `ContainerY`
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -318,9 +327,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename ContainerY, typename T_high,
-          require_std_vector_vt<is_container_or_var_matrix, ContainerY>* = nullptr,
-          require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
+template <
+    typename ContainerY, typename T_high,
+    require_std_vector_vt<is_container_or_var_matrix, ContainerY>* = nullptr,
+    require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const ContainerY& y, const T_high& high,
                                 Idxs... idxs) {
@@ -333,9 +343,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if `y` is not less than each element of `high`. This
  * function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam T_y A scalar type or the same `value_type` of `ContainerHigh`
- * @tparam ContainerHigh A standard vector type with a `value_type` of a standard
- * vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_y A scalar type or the same \ref stan::value_type of
+ * `ContainerHigh`
+ * @tparam ContainerHigh A standard vector type with a \ref stan::value_type of
+ * a standard vector or type inheriting from `Eigen::DenseBase`
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -346,10 +357,11 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename T_y, typename ContainerHigh,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container_or_var_matrix, ContainerHigh>* = nullptr,
-          typename... Idxs>
+template <
+    typename T_y, typename ContainerHigh,
+    require_not_std_vector_t<T_y>* = nullptr,
+    require_std_vector_vt<is_container_or_var_matrix, ContainerHigh>* = nullptr,
+    typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const ContainerHigh& high,
                                 Idxs... idxs) {
@@ -362,10 +374,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than each associated
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
- * @tparam StdVecY A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::EigenBase`, or another standard vector
- * @tparam StdVecHigh A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam StdVecY A standard vector type whose \ref stan::value_type is a
+ * scalar, type inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam StdVecHigh A standard vector type whose \ref stan::value_type is a
+ * scalar, type inheriting from `Eigen::EigenBase`, or another standard vector
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -379,7 +391,8 @@ inline void check_less_or_equal(const char* function, const char* name,
 template <typename StdVecY, typename StdVecHigh,
           require_any_std_vector_vt<is_container_or_var_matrix, StdVecY,
                                     StdVecHigh>* = nullptr,
-          require_all_std_vector_t<StdVecY, StdVecHigh>* = nullptr, typename... Idxs>
+          require_all_std_vector_t<StdVecY, StdVecHigh>* = nullptr,
+          typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const StdVecY& y, const StdVecHigh& high,
                                 Idxs... idxs) {

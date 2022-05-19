@@ -65,7 +65,8 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
  * @param b Second input
  * @return multiply_log function applied to the two inputs.
  */
-template <typename Container1, typename Container2, require_any_container_t<Container1, Container2>* = nullptr,
+template <typename Container1, typename Container2,
+          require_any_container_t<Container1, Container2>* = nullptr,
           require_all_not_var_matrix_t<Container1, Container2>* = nullptr>
 inline auto multiply_log(const Container1& a, const Container2& b) {
   return apply_scalar_binary(

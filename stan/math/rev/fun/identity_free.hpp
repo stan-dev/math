@@ -10,12 +10,13 @@ namespace math {
 
 /**
  * Returns the result of applying the identity constraint
- * transform to the input. For any of the inputs being a \ref stan::math::var_value type
- * this promotes the input `x` to \ref stan::math::var_value .
+ * transform to the input. For any of the inputs being a \ref
+ * stan::math::var_value type this promotes the input `x` to \ref
+ * stan::math::var_value .
  *
  * @tparam VarMat Any type.
- * @tparam Types Any type with one of `VarMat` and `Types` being a \ref stan::math::var_value
- * matrix.
+ * @tparam Types Any type with one of `VarMat` and `Types` being a \ref
+ * stan::math::var_value matrix.
  * @param[in] x object
  * @return transformed input
  */

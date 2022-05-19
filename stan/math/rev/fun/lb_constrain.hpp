@@ -37,7 +37,8 @@ namespace math {
  * @param[in] lb lower bound on constrained output
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename ScalarT, typename L, require_all_stan_scalar_t<ScalarT, L>* = nullptr,
+template <typename ScalarT, typename L,
+          require_all_stan_scalar_t<ScalarT, L>* = nullptr,
           require_any_var_t<ScalarT, L>* = nullptr>
 inline auto lb_constrain(const ScalarT& x, const L& lb) {
   const auto lb_val = value_of(lb);
@@ -87,7 +88,8 @@ inline auto lb_constrain(const ScalarT& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename ScalarT, typename L, require_all_stan_scalar_t<ScalarT, L>* = nullptr,
+template <typename ScalarT, typename L,
+          require_all_stan_scalar_t<ScalarT, L>* = nullptr,
           require_any_var_t<ScalarT, L>* = nullptr>
 inline auto lb_constrain(const ScalarT& x, const L& lb, var& lp) {
   const auto lb_val = value_of(lb);
@@ -122,8 +124,8 @@ inline auto lb_constrain(const ScalarT& x, const L& lb, var& lp) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -170,8 +172,8 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -181,7 +183,8 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
 template <typename MatT, typename L, require_matrix_t<MatT>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_any_st_var<MatT, L>* = nullptr>
-inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp) {
+inline auto lb_constrain(const MatT& x, const L& lb,
+                         return_type_t<MatT, L>& lp) {
   using ret_type = return_var_matrix_t<MatT, MatT, L>;
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
@@ -223,10 +226,10 @@ inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp)
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
+ * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value
+ * with inner type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
@@ -286,10 +289,10 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
- * inheriting from `EigenBase`.
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `EigenBase`.
+ * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value
+ * with inner type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -297,7 +300,8 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
  */
 template <typename MatT, typename L, require_all_matrix_t<MatT, L>* = nullptr,
           require_any_st_var<MatT, L>* = nullptr>
-inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp) {
+inline auto lb_constrain(const MatT& x, const L& lb,
+                         return_type_t<MatT, L>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   using ret_type = return_var_matrix_t<MatT, MatT, L>;
   if (!is_constant<MatT>::value && !is_constant<L>::value) {

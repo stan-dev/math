@@ -14,8 +14,8 @@ namespace math {
 /**
  * Returns the L1 norm of a vector of var.
  *
- * @tparam EigVec type of the vector (must have one compile-time dimension equal to
- * 1)
+ * @tparam EigVec type of the vector (must have one compile-time dimension equal
+ * to 1)
  * @param[in] x Vector.
  * @return L1 norm of x.
  */
@@ -32,7 +32,8 @@ inline var norm1(const EigVec& x) {
 /**
  * Returns the L1 norm of a `var_value<Vector>`.
  *
- * @tparam VarVec `var_value<>` whose inner type has one compile-time row or column.
+ * @tparam VarVec `var_value<>` whose inner type has one compile-time row or
+ * column.
  * @param[in] x Vector.
  * @return L1 norm of x.
  */

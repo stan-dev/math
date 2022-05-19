@@ -62,7 +62,7 @@ inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
 
-/** 
+/**
  * Assume which type we get. If actual type is convertible to assumed type or in
  * case of eigen types compile time rows and columns also match or desired sizes
  * are dynamic this is a no-op. Otherwise it throws std::runtime_error,

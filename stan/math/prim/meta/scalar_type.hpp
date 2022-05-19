@@ -14,10 +14,10 @@ namespace stan {
  * - Eigen types this will return their `Scalar` member
  * - `std::vector<T>` will call `scalar_type<T>` which will
  *  continue to be called recursively until a scalar type is reached.
- * The recursive part of `scalar_type` is what seperates it from `value_type`
- * in that `value_type` will only go one level down in a container of
- * containers while `scalar_type` will recursively call `scalar_type` on
- * inner types until a scalar value is reached.
+ * The recursive part of \ref stan::scalar_type is what seperates it from \ref
+ * stan::value_type in that \ref stan::value_type will only go one level down in
+ * a container of containers while \ref stan::scalar_type will recursively call
+ * \ref stan::scalar_type on inner types until a scalar value is reached.
  *
  * <p>This base class should be specialized for structured types.</p>
  *

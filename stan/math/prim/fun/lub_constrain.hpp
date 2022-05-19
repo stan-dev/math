@@ -40,9 +40,10 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename ScalarT, typename ScalarL, typename ScalarU,
-          require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
-          require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
+template <
+    typename ScalarT, typename ScalarL, typename ScalarU,
+    require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
+    require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
 inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
@@ -91,10 +92,12 @@ inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename ScalarT, typename ScalarL, typename ScalarU,
-          require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
-          require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
-inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub, return_type_t<ScalarT, ScalarL, ScalarU>& lp) {
+template <
+    typename ScalarT, typename ScalarL, typename ScalarU,
+    require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
+    require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
+inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub,
+                          return_type_t<ScalarT, ScalarL, ScalarU>& lp) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
   if (unlikely(is_ub_inf && is_lb_inf)) {
@@ -114,7 +117,8 @@ inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub, return_type_t
 /**
  * Overload for Eigen matrix and scalar bounds.
  */
-template <typename EigT, typename ScalarL, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+template <typename EigT, typename ScalarL, typename ScalarU,
+          require_eigen_t<EigT>* = nullptr,
           require_all_stan_scalar_t<ScalarL, ScalarU>* = nullptr,
           require_not_var_t<return_type_t<EigT, ScalarL, ScalarU>>* = nullptr>
 inline auto lub_constrain(const EigT& x, const ScalarL& lb, const ScalarU& ub) {
@@ -125,7 +129,8 @@ inline auto lub_constrain(const EigT& x, const ScalarL& lb, const ScalarU& ub) {
 /**
  * Overload for Eigen matrix and scalar bounds plus lp.
  */
-template <typename EigT, typename ScalarL, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+template <typename EigT, typename ScalarL, typename ScalarU,
+          require_eigen_t<EigT>* = nullptr,
           require_all_stan_scalar_t<ScalarL, ScalarU>* = nullptr,
           require_not_var_t<return_type_t<EigT, ScalarL, ScalarU>>* = nullptr>
 inline auto lub_constrain(const EigT& x, const ScalarL& lb, const ScalarU& ub,
@@ -206,7 +211,8 @@ inline auto lub_constrain(const EigT& x, const EigL& lb, const EigU& ub) {
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(),
+                                                                x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(
@@ -229,7 +235,8 @@ inline auto lub_constrain(const EigT& x, const EigL& lb, const EigU& ub,
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(),
+                                                                x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(
@@ -376,12 +383,15 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
- * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam L A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
- * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam U A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
- * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::EigenBase`, a
+ * standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::EigenBase`, a
+ * standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::EigenBase`, a
+ * standard vector, or a scalar
  * @param[in] x Free scalar to transform
  * @param[in] lb Lower bound
  * @param[in] ub Upper bound

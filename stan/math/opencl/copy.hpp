@@ -140,7 +140,8 @@ inline auto from_matrix_cl(const Exprcl& src) {
  * @param src A 1x1 matrix on the device.
  * @return dst Arithmetic to receive the matrix_cl value.
  */
-template <typename DstArith, typename Arith, require_arithmetic_t<Arith>* = nullptr,
+template <typename DstArith, typename Arith,
+          require_arithmetic_t<Arith>* = nullptr,
           require_same_t<DstArith, Arith>* = nullptr>
 inline DstArith from_matrix_cl(const matrix_cl<Arith>& src) {
   Arith dst;
@@ -152,7 +153,8 @@ inline DstArith from_matrix_cl(const matrix_cl<Arith>& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(Arith), &dst, &src.write_events(), &copy_event);
+                            sizeof(Arith), &dst, &src.write_events(),
+                            &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -208,7 +210,8 @@ template <typename DstStdVecEig, typename Arith,
           require_std_vector_vt<is_eigen_vector, DstStdVecEig>* = nullptr,
           require_all_st_same<DstStdVecEig, Arith>* = nullptr>
 inline DstStdVecEig from_matrix_cl(const matrix_cl<Arith>& src) {
-  Eigen::Matrix<Arith, Eigen::Dynamic, Eigen::Dynamic> tmp = from_matrix_cl(src);
+  Eigen::Matrix<Arith, Eigen::Dynamic, Eigen::Dynamic> tmp
+      = from_matrix_cl(src);
   DstStdVecEig dst;
   dst.reserve(src.cols());
   for (int i = 0; i < src.cols(); i++) {
@@ -228,7 +231,8 @@ inline DstStdVecEig from_matrix_cl(const matrix_cl<Arith>& src) {
 template <typename Exprcl, require_all_kernel_expressions_t<Exprcl>* = nullptr>
 auto from_matrix_cl(const Exprcl& src) {
   return from_matrix_cl<
-      Eigen::Matrix<scalar_type_t<Exprcl>, Eigen::Dynamic, Eigen::Dynamic>>(src);
+      Eigen::Matrix<scalar_type_t<Exprcl>, Eigen::Dynamic, Eigen::Dynamic>>(
+      src);
 }
 
 /** \ingroup opencl

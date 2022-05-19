@@ -51,8 +51,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
 /**
  * Overload of `cholesky_factor_free()` to untransform each matrix
  * in a standard vector.
- * @tparam StdVec A standard vector with with a `value_type` which inherits from
- *  `Eigen::MatrixBase`.
+ * @tparam StdVec A standard vector with with a \ref stan::value_type which
+ * inherits from `Eigen::MatrixBase`.
  * @param x The standard vector to untransform.
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>

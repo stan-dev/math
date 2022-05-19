@@ -31,7 +31,8 @@ namespace math {
  * high is `NaN`
  */
 template <typename ScalarY, typename T_high,
-          require_all_stan_scalar_t<ScalarY, T_high>* = nullptr, typename... Idxs>
+          require_all_stan_scalar_t<ScalarY, T_high>* = nullptr,
+          typename... Idxs>
 inline void check_less(const char* function, const char* name, const ScalarY& y,
                        const T_high& high, Idxs... idxs) {
   if (!(y < high)) {
@@ -51,8 +52,8 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * element of `high`.
  * @tparam ScalarY A scalar type
  * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase`
- * with compile time rows or columns equal to one and `value_type` equal to a
- * stan scalar.
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -64,7 +65,8 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * high is `NaN`
  */
 template <
-    typename ScalarY, typename T_high, require_stan_scalar_t<ScalarY>* = nullptr,
+    typename ScalarY, typename T_high,
+    require_stan_scalar_t<ScalarY>* = nullptr,
     require_vector_t<T_high>* = nullptr,
     require_not_std_vector_vt<is_container_or_var_matrix, T_high>* = nullptr,
     typename... Idxs>
@@ -89,9 +91,10 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
  * @tparam ScalarY A scalar type
- * @tparam T_high Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- * the var's inner type inheriting from `Eigen::DenseBase` where the compile
- * time number of rows or columns is not equal to one
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -102,7 +105,8 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
-template <typename ScalarY, typename T_high, require_stan_scalar_t<ScalarY>* = nullptr,
+template <typename ScalarY, typename T_high,
+          require_stan_scalar_t<ScalarY>* = nullptr,
           require_dense_dynamic_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const ScalarY& y,
                        const T_high& high, Idxs... idxs) {
@@ -128,9 +132,9 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * Throw an exception if each element of `y` is not strictly less than `high`.
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan
- * scalar.
+ * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam T_high A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
@@ -142,9 +146,10 @@ inline void check_less(const char* function, const char* name, const ScalarY& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
-template <typename VecY, typename T_high, require_vector_t<VecY>* = nullptr,
-          require_not_std_vector_vt<is_container_or_var_matrix, VecY>* = nullptr,
-          require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
+template <
+    typename VecY, typename T_high, require_vector_t<VecY>* = nullptr,
+    require_not_std_vector_vt<is_container_or_var_matrix, VecY>* = nullptr,
+    require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const VecY& y,
                        const T_high& high, Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
@@ -166,9 +171,10 @@ inline void check_less(const char* function, const char* name, const VecY& y,
  * Throw an exception if each element of `y` is not strictly less than `high`.
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
- * var's inner type inheriting from `Eigen::DenseBase` where the compile time
- * number of rows or columns is not equal to one
+ * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam T_high A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
@@ -206,12 +212,12 @@ inline void check_less(const char* function, const char* name, const DenseY& y,
  * Throw an exception if each element of `y` is not strictly less than each
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
- * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan
- * scalar.
+ * @tparam VecY A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase`
- * with compile time rows or columns equal to one and `value_type` equal to a
- * stan scalar.
+ * with compile time rows or columns equal to one and \ref stan::value_type
+ * equal to a stan scalar.
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -249,12 +255,14 @@ inline void check_less(const char* function, const char* name, const VecY& y,
  * Throw an exception if each element of `y` is not strictly less than each
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
- * @tparam VecY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
- * var's inner type inheriting from `Eigen::DenseBase` where the compile time
- * number of rows or columns is not equal to one
- * @tparam T_high Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- * the var's inner type inheriting from `Eigen::DenseBase` where the compile
- * time number of rows or columns is not equal to one
+ * @tparam VecY Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with the var's inner type inheriting from
+ * `Eigen::DenseBase` where the compile time number of rows or columns is not
+ * equal to one
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -266,7 +274,8 @@ inline void check_less(const char* function, const char* name, const VecY& y,
  * high is `NaN`
  */
 template <typename VecY, typename T_high,
-          require_all_dense_dynamic_t<VecY, T_high>* = nullptr, typename... Idxs>
+          require_all_dense_dynamic_t<VecY, T_high>* = nullptr,
+          typename... Idxs>
 inline void check_less(const char* function, const char* name, const VecY& y,
                        const T_high& high, Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
@@ -292,8 +301,8 @@ inline void check_less(const char* function, const char* name, const VecY& y,
  * Throw an exception if each element of `y` is not strictly less than `high`.
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
- * @tparam ContainerY A standard vector type with a `value_type` of a standard vector
- * or type inheriting from `Eigen::DenseBase`
+ * @tparam ContainerY A standard vector type with a \ref stan::value_type of a
+ * standard vector or type inheriting from `Eigen::DenseBase`
  * @tparam T_high A scalar type or the same type as the inner type of `T_high`
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
@@ -305,11 +314,12 @@ inline void check_less(const char* function, const char* name, const VecY& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
-template <typename ContainerY, typename T_high,
-          require_std_vector_vt<is_container_or_var_matrix, ContainerY>* = nullptr,
-          require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
-inline void check_less(const char* function, const char* name, const ContainerY& y,
-                       const T_high& high, Idxs... idxs) {
+template <
+    typename ContainerY, typename T_high,
+    require_std_vector_vt<is_container_or_var_matrix, ContainerY>* = nullptr,
+    require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
+inline void check_less(const char* function, const char* name,
+                       const ContainerY& y, const T_high& high, Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_less(function, name, y[i], high, idxs..., i);
   }
@@ -320,8 +330,8 @@ inline void check_less(const char* function, const char* name, const ContainerY&
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_high`
- * @tparam T_high A standard vector type with a `value_type` of a standard
- * vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_high A standard vector type with a \ref stan::value_type of a
+ * standard vector or type inheriting from `Eigen::DenseBase`
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -347,10 +357,10 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * Throw an exception if each element of `y` is not strictly less than each
  * associated element of `high`. This function is vectorized and will check each
  * element of `y` against each element of `high`.
- * @tparam StdVecY A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::DenseBase`, or another standard vector
- * @tparam T_high A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::DenseBase`, or another standard vector
+ * @tparam StdVecY A standard vector type whose \ref stan::value_type is a
+ * scalar, type inheriting from `Eigen::DenseBase`, or another standard vector
+ * @tparam T_high A standard vector type whose \ref stan::value_type is a
+ * scalar, type inheriting from `Eigen::DenseBase`, or another standard vector
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -364,7 +374,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 template <typename StdVecY, typename T_high,
           require_any_std_vector_vt<is_container_or_var_matrix, StdVecY,
                                     T_high>* = nullptr,
-          require_all_std_vector_t<StdVecY, T_high>* = nullptr, typename... Idxs>
+          require_all_std_vector_t<StdVecY, T_high>* = nullptr,
+          typename... Idxs>
 inline void check_less(const char* function, const char* name, const StdVecY& y,
                        const T_high& high, Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {

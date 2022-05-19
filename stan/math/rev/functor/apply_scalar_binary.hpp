@@ -57,7 +57,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * Specialisation for use with a two-dimensional std::vector of integer types
  * and one `var_value<Matrix>`.
  *
-* @tparam T3 Type of first argument to which functor is applied.
+ * @tparam T3 Type of first argument to which functor is applied.
  * @tparam T4 Type of second argument to which functor is applied.
  * @tparam F Type of functor to apply.
  * @param x Either a var matrix or nested integer std::vector input to which

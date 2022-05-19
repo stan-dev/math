@@ -76,7 +76,8 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  * @param[in] x matrix of specified values
  * @return The log of the sum of the exponentiated vector values.
  */
-template <typename ArithContainer, require_container_st<std::is_arithmetic, ArithContainer>* = nullptr>
+template <typename ArithContainer,
+          require_container_st<std::is_arithmetic, ArithContainer>* = nullptr>
 inline auto log_sum_exp(const ArithContainer& x) {
   return apply_vector_unary<ArithContainer>::reduce(x, [&](const auto& v) {
     if (v.size() == 0) {

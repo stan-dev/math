@@ -114,7 +114,8 @@ void elementwise_throw_domain_error(const Args... args) {
 template <typename F, typename Scalar, typename... Indexings,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const Scalar& x, const char* must_be,
+                              const char* name, const Scalar& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
     [&]() STAN_COLD_PATH {
@@ -148,7 +149,8 @@ template <typename F, typename EigVec, typename... Indexings,
                             & Eigen::LinearAccessBit)
                            || EigVec::IsVectorAtCompileTime>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const EigVec& x, const char* must_be,
+                              const char* name, const EigVec& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   for (size_t i = 0; i < x.size(); i++) {
     auto scal = value_of_rec(x.coeff(i));
@@ -158,7 +160,8 @@ inline void elementwise_check(const F& is_good, const char* function,
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[", i + error_index::value,
               "] is ", scal, ", but must be ", must_be, "!");
-        } else if (Eigen::internal::traits<EigVec>::Flags & Eigen::RowMajorBit) {
+        } else if (Eigen::internal::traits<EigVec>::Flags
+                   & Eigen::RowMajorBit) {
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[",
               i / x.cols() + error_index::value, ", ",
@@ -202,7 +205,8 @@ template <typename F, typename EigMat, typename... Indexings,
                            && !(Eigen::internal::traits<EigMat>::Flags
                                 & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const EigMat& x, const char* must_be,
+                              const char* name, const EigMat& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   for (size_t i = 0; i < x.rows(); i++) {
     for (size_t j = 0; j < x.cols(); j++) {
@@ -239,13 +243,15 @@ inline void elementwise_check(const F& is_good, const char* function,
  */
 template <typename F, typename EigRowMajorMat, typename... Indexings,
           require_eigen_t<EigRowMajorMat>* = nullptr,
-          std::enable_if_t<
-              !(Eigen::internal::traits<EigRowMajorMat>::Flags & Eigen::LinearAccessBit)
-              && !EigRowMajorMat::IsVectorAtCompileTime
-              && static_cast<bool>(Eigen::internal::traits<EigRowMajorMat>::Flags
-                                   & Eigen::RowMajorBit)>* = nullptr>
+          std::enable_if_t<!(Eigen::internal::traits<EigRowMajorMat>::Flags
+                             & Eigen::LinearAccessBit)
+                           && !EigRowMajorMat::IsVectorAtCompileTime
+                           && static_cast<bool>(
+                               Eigen::internal::traits<EigRowMajorMat>::Flags
+                               & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const EigRowMajorMat& x, const char* must_be,
+                              const char* name, const EigRowMajorMat& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.cols(); j++) {
     for (size_t i = 0; i < x.rows(); i++) {
@@ -283,7 +289,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 template <typename F, typename StdVec, typename... Indexings,
           require_std_vector_t<StdVec>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const StdVec& x, const char* must_be,
+                              const char* name, const StdVec& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.size(); j++) {
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
@@ -312,7 +319,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 template <typename F, typename VarMat, typename... Indexings,
           require_var_matrix_t<VarMat>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const VarMat& x, const char* must_be,
+                              const char* name, const VarMat& x,
+                              const char* must_be,
                               const Indexings&... indexings) {
   elementwise_check(is_good, function, name, x.val(), must_be, indexings...);
 }

@@ -27,8 +27,8 @@ class complex<stan::math::var>
   /**
    * Construct a complex number from real and imaginary parts.
    *
-   * @tparam U type of real part (assignable to `value_type`)
-   * @tparam V type of imaginary part (assignable to `value_type`)
+   * @tparam U type of real part (assignable to \ref stan::value_type )
+   * @tparam V type of imaginary part (assignable to \ref stan::value_type )
    * @param[in] re real part
    * @param[in] im imaginary part
    */
@@ -39,7 +39,7 @@ class complex<stan::math::var>
    * Construct a complex number with specified real part and zero
    * imaginary part.
    *
-   * @tparam U type of real part (assignable to `value_type`)
+   * @tparam U type of real part (assignable to \ref stan::value_type )
    * @param[in] re real part
    */
   template <typename U, typename = stan::require_stan_scalar_t<U>>

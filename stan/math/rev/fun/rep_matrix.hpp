@@ -31,13 +31,14 @@ inline auto rep_matrix(const T& x, int m, int n) {
 }
 
 /**
- * Impl of rep_matrix returning a `var_value<Eigen::Matrix>` from a \ref stan::math::var_value 
- * with an inner Eigen vector type.
- * @tparam Ret A \ref stan::math::var_value with inner Eigen dynamic matrix type.
+ * Impl of rep_matrix returning a `var_value<Eigen::Matrix>` from a \ref
+ * stan::math::var_value with an inner Eigen vector type.
+ * @tparam Ret A \ref stan::math::var_value with inner Eigen dynamic matrix
+ * type.
  * @tparam Vec A \ref stan::math::var_value with an inner Eigen vector type.
- * @param x A \ref stan::math::var_value with inner Eigen vector type. For Row vectors the
- * values are replacated rowwise and for column vectors the values are
- * repliacated colwise.
+ * @param x A \ref stan::math::var_value with inner Eigen vector type. For Row
+ * vectors the values are replacated rowwise and for column vectors the values
+ * are repliacated colwise.
  * @param n Number of rows or columns.
  */
 template <typename Ret, typename Vec, require_var_matrix_t<Ret>* = nullptr,

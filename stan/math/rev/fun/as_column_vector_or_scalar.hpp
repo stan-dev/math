@@ -21,8 +21,8 @@ inline auto as_column_vector_or_scalar(T&& a) {
 }
 
 /**
- * Converts \ref stan::math::var_value with row vector inner type to a `var_value<>`
- * with inner column vector type
+ * Converts \ref stan::math::var_value with row vector inner type to a
+ * `var_value<>` with inner column vector type
  * @tparam T A `var_value<>` with an inner row vector type.
  * @param a Specified vector.
  * @return Transposed vector.

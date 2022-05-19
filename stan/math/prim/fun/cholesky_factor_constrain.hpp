@@ -18,8 +18,8 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -62,8 +62,8 @@ cholesky_factor_constrain(const EigVec& x, int M, int N) {
  * transform.  A total of (N choose 2) + N + N * (M - N) free parameters are
  * required to read an M by N Cholesky factor.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -73,7 +73,8 @@ cholesky_factor_constrain(const EigVec& x, int M, int N) {
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const EigVec& x, int M, int N, return_type_t<EigVec>& lp) {
+cholesky_factor_constrain(const EigVec& x, int M, int N,
+                          return_type_t<EigVec>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -97,9 +98,9 @@ cholesky_factor_constrain(const EigVec& x, int M, int N, return_type_t<EigVec>& 
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::DenseBase` with
+ * compile time dynamic rows and 1 column
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -128,15 +129,16 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting
+ * from `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
  * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
-template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+template <bool Jacobian, typename StdVec,
+          require_std_vector_t<StdVec>* = nullptr>
 inline auto cholesky_factor_constrain(const StdVec& x, int M, int N,
                                       return_type_t<StdVec>& lp) {
   return apply_vector_unary<StdVec>::apply(x, [&lp, M, N](auto&& v) {

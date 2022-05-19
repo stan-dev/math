@@ -89,8 +89,8 @@ inline var multiply_log(double a, const var& b) {
 /**
  * Return the elementwise product `a * log(b)`.
  *
- * Both `RevMat1` and `RevMat2` are matrices, and one of `RevMat1` or `RevMat2` must be a
- * \ref stan::math::var_value
+ * Both `RevMat1` and `RevMat2` are matrices, and one of `RevMat1` or `RevMat2`
+ * must be a \ref stan::math::var_value
  *
  * @tparam RevMat1 Type of first argument
  * @tparam RevMat2 Type of second argument
@@ -98,7 +98,8 @@ inline var multiply_log(double a, const var& b) {
  * @param b Second argument
  * @return elementwise product of `a` and `log(b)`
  */
-template <typename RevMat1, typename RevMat2, require_all_matrix_t<RevMat1, RevMat2>* = nullptr,
+template <typename RevMat1, typename RevMat2,
+          require_all_matrix_t<RevMat1, RevMat2>* = nullptr,
           require_any_var_matrix_t<RevMat1, RevMat2>* = nullptr>
 inline auto multiply_log(const RevMat1& a, const RevMat2& b) {
   check_matching_dims("multiply_log", "a", a, "b", b);
@@ -146,7 +147,8 @@ inline auto multiply_log(const RevMat1& a, const RevMat2& b) {
  * @param b Scalar argument
  * @return Product of `a` and `log(b)`
  */
-template <typename RevMat1, typename Scalar2, require_var_matrix_t<RevMat1>* = nullptr,
+template <typename RevMat1, typename Scalar2,
+          require_var_matrix_t<RevMat1>* = nullptr,
           require_stan_scalar_t<Scalar2>* = nullptr>
 inline auto multiply_log(const RevMat1& a, const Scalar2& b) {
   using std::log;
@@ -192,7 +194,8 @@ inline auto multiply_log(const RevMat1& a, const Scalar2& b) {
  * @param b Matrix argument
  * @return Product of `a` and `log(b)`
  */
-template <typename Scalar1, typename RevMat2, require_stan_scalar_t<Scalar1>* = nullptr,
+template <typename Scalar1, typename RevMat2,
+          require_stan_scalar_t<Scalar1>* = nullptr,
           require_var_matrix_t<RevMat2>* = nullptr>
 inline auto multiply_log(const Scalar1& a, const RevMat2& b) {
   if (!is_constant<Scalar1>::value && !is_constant<RevMat2>::value) {

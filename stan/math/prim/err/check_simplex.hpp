@@ -78,7 +78,8 @@ void check_simplex(const char* function, const char* name, const Mat& theta) {
  * is `NaN`
  */
 template <typename Container, require_std_vector_t<Container>* = nullptr>
-void check_simplex(const char* function, const char* name, const Container& theta) {
+void check_simplex(const char* function, const char* name,
+                   const Container& theta) {
   for (size_t i = 0; i < theta.size(); ++i) {
     check_simplex(function, internal::make_iter_name(name, i).c_str(),
                   theta[i]);

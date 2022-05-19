@@ -36,8 +36,8 @@ auto cholesky_corr_free(const T& x) {
 /**
  * Overload of `cholesky_corr_free()` to untransform each matrix
  * in a standard vector.
- * @tparam StdVec A standard vector with with a `value_type` which inherits from
- *  `Eigen::MatrixBase`.
+ * @tparam StdVec A standard vector with with a \ref stan::value_type which
+ * inherits from `Eigen::MatrixBase`.
  * @param x The standard vector to untransform.
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>

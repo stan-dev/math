@@ -57,7 +57,8 @@ inline auto unit_vector_constrain(const RevColVec& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <typename EigVarColVec, require_eigen_col_vector_vt<is_var, EigVarColVec>* = nullptr>
+template <typename EigVarColVec,
+          require_eigen_col_vector_vt<is_var, EigVarColVec>* = nullptr>
 inline auto unit_vector_constrain(const EigVarColVec& y, var& lp) {
   const auto& y_ref = to_ref(y);
   auto x = unit_vector_constrain(y_ref);

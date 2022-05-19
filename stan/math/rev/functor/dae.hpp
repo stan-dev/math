@@ -11,8 +11,8 @@ namespace stan {
 namespace math {
 
 /**
- * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
- * a set of times, `{ t1, t2, t3, ... }` using IDAS.
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`,
+ * `y'(t0)=yp0` at a set of times, `{ t1, t2, t3, ... }` using IDAS.
  *
  * `f` must define an `operator()` with the signature as:
  *
@@ -87,10 +87,10 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
 }
 
 /**
- * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
- * a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming default controls
- * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
- * `f` must define an `operator()` with the signature as:
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`,
+ * `y'(t0)=yp0` at a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming
+ * default controls (relative tol, absolute tol, max number of steps) =
+ * (1.e-10, 1.e-10, 1e8). `f` must define an `operator()` with the signature as:
  *
  * ~~~~~~~~~~~~~{.cpp}
  *   template<typename T_yy, typename T_yp, typename... T_Args>
@@ -134,9 +134,10 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
 }
 
 /**
- * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
- * a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming default controls
- * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`,
+ * `y'(t0)=yp0` at a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming
+ * default controls (relative tol, absolute tol, max number of steps) =
+ * (1.e-10, 1.e-10, 1e8).
  *
  * `f` must define an `operator()` with the signature as:
  * ~~~~~~~~~~~~~{.cpp}

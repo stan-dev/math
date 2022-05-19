@@ -29,7 +29,8 @@ namespace math {
  * @return Result of appending the first matrix followed by the
  * second matrix side by side.
  */
-template <typename EigMat1, typename EigMat2, typename = require_all_eigen_t<EigMat1, EigMat2>>
+template <typename EigMat1, typename EigMat2,
+          typename = require_all_eigen_t<EigMat1, EigMat2>>
 inline auto append_col(const EigMat1& A, const EigMat2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

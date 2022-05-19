@@ -59,7 +59,7 @@ STAN_ADD_REQUIRE_UNARY(complex, is_complex, require_stan_scalar_complex);
 STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex, require_stan_scalar_complex);
 
 /** \ingroup type_trait
- * If the `value_type` of the type `T` is of type
+ * If the \ref stan::value_type of the type `T` is of type
  *  `std::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
  * `false`.
@@ -71,7 +71,7 @@ template <typename T>
 struct is_vt_complex : is_complex<value_type_t<std::decay_t<T>>> {};
 
 /** \ingroup type_trait
- * If the `value_type` of the type `T` is not of type
+ * If the \ref stan::value_type of the type `T` is not of type
  * `std::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
  * `false`.

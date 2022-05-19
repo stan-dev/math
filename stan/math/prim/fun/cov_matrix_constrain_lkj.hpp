@@ -22,8 +22,8 @@ namespace math {
  * in <code>corr_matrix_constrain(Matrix, size_t)</code>
  * with the constrained deviations.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -45,8 +45,8 @@ cov_matrix_constrain_lkj(const EigVec& x, size_t k) {
  * values and increment the specified log probability reference
  * with the log absolute Jacobian determinant.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -73,9 +73,9 @@ cov_matrix_constrain_lkj(const EigVec& x, size_t k, return_type_t<EigVec>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
- *  inner type inheriting from `Eigen::DenseBase` with compile time rows or
- * columns equal to 1
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref
+ * stan::math::var_value with inner type inheriting from `Eigen::DenseBase` with
+ * compile time rows or columns equal to 1
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations
  * @param k Dimensionality of returned covariance matrix
@@ -104,8 +104,8 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
- * `Eigen::DenseBase` with compile time rows or columns equal to 1
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting
+ * from `Eigen::DenseBase` with compile time rows or columns equal to 1
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations
  * @param k Dimensionality of returned covariance matrix
@@ -113,7 +113,8 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+template <bool Jacobian, typename StdVec,
+          require_std_vector_t<StdVec>* = nullptr>
 inline auto cov_matrix_constrain_lkj(const StdVec& x, size_t k,
                                      return_type_t<StdVec>& lp) {
   return apply_vector_unary<StdVec>::apply(x, [&lp, k](auto&& v) {

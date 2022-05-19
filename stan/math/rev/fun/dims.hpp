@@ -13,7 +13,7 @@ namespace math {
  * Pushes dimensions of given argument into given result vector.
  *
  * For \ref stan::math::var_value that is the dimensions of inner `vari_value`.
- * @tparam type in \ref stan::math::var_value 
+ * @tparam type in \ref stan::math::var_value
  * @param x argument
  * @param result result
  */

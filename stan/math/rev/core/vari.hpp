@@ -683,7 +683,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
-   * @tparam S A dense Eigen type that is convertible to `value_type`
+   * @tparam S A dense Eigen type that is convertible to \ref stan::value_type
    * @param x Value of the constructed variable.
    */
   template <typename S, require_assignable_t<T, S>* = nullptr>
@@ -711,7 +711,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
    *
-   * @tparam S A dense Eigen type that is convertible to `value_type`
+   * @tparam S A dense Eigen type that is convertible to \ref stan::value_type
    * @param x Value of the constructed variable.
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
@@ -842,7 +842,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
-   * @tparam S A sparse Eigen type that is convertible to `value_type`
+   * @tparam S A sparse Eigen type that is convertible to \ref stan::value_type
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
@@ -863,7 +863,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
    *
-   * @tparam S A sparse Eigen type that is convertible to `value_type`
+   * @tparam S A sparse Eigen type that is convertible to \ref stan::value_type
    * @param x Value of the constructed variable.
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
