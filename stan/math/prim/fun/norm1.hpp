@@ -16,7 +16,7 @@ namespace math {
  * @param v Vector.
  * @return L1 norm of v.
  */
-template <typename T, require_eigen_vector_vt<std::is_arithmetic, T>* = nullptr>
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 inline double norm1(const T& v) {
   ref_type_t<T> v_ref = v;
   return v_ref.template lpNorm<1>();
