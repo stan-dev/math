@@ -94,7 +94,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam Scaler1 A scalar type
- * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @tparam Idxs A parameter pack of Integral types
@@ -174,7 +174,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
  * @tparam Scalar2 A scalar type
@@ -260,10 +260,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than the
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
- * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
- * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @tparam Idxs A parameter pack of Integral types

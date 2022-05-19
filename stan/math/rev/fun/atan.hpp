@@ -62,7 +62,7 @@ inline var atan(const var& x) {
  * specified variable (cmath).
  *
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param x Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */

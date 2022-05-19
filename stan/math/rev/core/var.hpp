@@ -123,7 +123,7 @@ class var_value<T, require_floating_point_t<T>> {
    * 2.4 and earlier, this function did recover memory.
    *
    * @tparam CheckContainer Not set by user. The default value of value_type
-   *  is used to require that grad is only available for scalar `var_value`
+   *  is used to require that grad is only available for scalar \ref stan::math::var_value 
    *  types.
    * @param x Vector of independent variables.
    * @param g Gradient vector of partial derivatives of this
@@ -142,7 +142,7 @@ class var_value<T, require_floating_point_t<T>> {
    * to all (independent) variables.
    *
    * @tparam CheckContainer Not set by user. The default value of value_type
-   *  is used to require that grad is only available for scalar `var_value`
+   *  is used to require that grad is only available for scalar \ref stan::math::var_value 
    *  types.
    * The grad() function does <i>not</i> recover memory.
    */
@@ -367,7 +367,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
 
   /**
    * Copy constructor for var_val.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
    * @return this
    */
@@ -376,9 +376,9 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   var_value(const var_value<S>& other) : vi_(other.vi_) {}
 
   /**
-   * Construct a `var_value` with a plain type
-   *  from another `var_value` containing an expression.
-   * @tparam S type of the value in the `var_value` to assing
+   * Construct a \ref stan::math::var_value with a plain type
+   *  from another \ref stan::math::var_value containing an expression.
+   * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
    * @return this
    */
@@ -998,7 +998,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Assignment of another plain var value, when this also contains a plain
    * type.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
    * @return this
    */
@@ -1033,7 +1033,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Assignment of another var value, when either this or the other one does not
    * contain a plain type.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
    * @return this
    */

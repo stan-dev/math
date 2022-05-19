@@ -82,7 +82,7 @@ inline var log_sum_exp(const T& v) {
 /**
  * Returns the log sum of exponentials of the input.
  *
- * @tparam T A `var_value` with an input vector or matrix
+ * @tparam T A \ref stan::math::var_value with an input vector or matrix
  * @param x input
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>

@@ -59,7 +59,7 @@ inline var Phi(const var& a) {
 /**
  * Elementwise unit normal cumulative density function for varmat types.
  *
- * @tparam T a `var_value` with inner Eigen type
+ * @tparam T a \ref stan::math::var_value with inner Eigen type
  * @param a input
  * @return The vectorized unit normal cdf
  */

@@ -20,7 +20,7 @@ namespace math {
  * A valid correlation matrix is symmetric positive definite, has a unit
  * diagonal (all 1 values), and has all values between -1 and 1 (inclusive).
  * @tparam Mat Type inheriting from `MatrixBase` with neither rows or columns
- * defined at compile time to be equal to 1 or a `var_value` with the var's
+ * defined at compile time to be equal to 1 or a \ref stan::math::var_value with the var's
  * inner type inheriting from `Eigen::MatrixBase` with neither rows or columns
  * defined at compile time to be equal to 1
  * @param function Name of the function this was called from
@@ -62,7 +62,7 @@ inline void check_corr_matrix(const char* function, const char* name,
  * diagonal (all 1 values), and has all values between -1 and 1 (inclusive).
  * @tparam StdVec A standard vector with inner type either inheriting from
  * `Eigen::MatrixBase` with neither rows or columns defined at compile time to
- * be equal to 1 or a `var_value` with the var's inner type inheriting from
+ * be equal to 1 or a \ref stan::math::var_value with the var's inner type inheriting from
  * `Eigen::MatrixBase` with neither rows or columns defined at compile time to
  * be equal to 1.
  * @param function Name of the function this was called from

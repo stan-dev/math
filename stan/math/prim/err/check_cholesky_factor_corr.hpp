@@ -23,7 +23,7 @@ namespace math {
  * `math::CONSTRAINT_TOLERANCE`. Tolerance is specified by
  * `math::CONSTRAINT_TOLERANCE`.
  * @tparam Mat Type inheriting from `MatrixBase` with neither rows or columns
- * defined at compile time to be equal to 1 or a `var_value` with the var's
+ * defined at compile time to be equal to 1 or a \ref stan::math::var_value with the var's
  * inner type inheriting from `Eigen::MatrixBase` with neither rows or columns
  * defined at compile time to be equal to 1
  * @param function Function name (for error messages)
@@ -55,7 +55,7 @@ void check_cholesky_factor_corr(const char* function, const char* name,
  * `math::CONSTRAINT_TOLERANCE`.
  * @tparam StdVec A standard vector with inner type either inheriting from
  * `MatrixBase` with neither rows or columns defined at compile time to be equal
- * to 1 or a `var_value` with the var's inner type inheriting from
+ * to 1 or a \ref stan::math::var_value with the var's inner type inheriting from
  * `Eigen::MatrixBase` with neither rows or columns defined at compile time to
  * be equal to 1
  * @param function Function name (for error messages)

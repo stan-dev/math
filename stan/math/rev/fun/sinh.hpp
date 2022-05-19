@@ -51,7 +51,7 @@ inline var sinh(const var& a) {
  * Return the hyperbolic of a radian-scaled variable (cmath).
  *
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Variable for radians of angle.
  * @return Hyperbolid Sine of variable.
  */

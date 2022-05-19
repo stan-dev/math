@@ -16,7 +16,7 @@ namespace math {
 /**
  * Returns the log det of a symmetric, positive-definite matrix
  *
- * @tparam T Type is an Eigen Matrix or `var_value` with inner Eigen matrix type
+ * @tparam T Type is an Eigen Matrix or \ref stan::math::var_value with inner Eigen matrix type
  * @param M a symmetric, positive-definite matrix
  * @return The log determinant of the specified matrix
  */

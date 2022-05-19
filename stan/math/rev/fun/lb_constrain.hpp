@@ -122,7 +122,7 @@ inline auto lb_constrain(const ScalarT& x, const L& lb, var& lp) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
@@ -170,7 +170,7 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
@@ -223,9 +223,9 @@ inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp)
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
@@ -286,9 +286,9 @@ inline auto lb_constrain(const MatT& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam L A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output

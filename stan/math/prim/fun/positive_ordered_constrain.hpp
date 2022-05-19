@@ -66,7 +66,7 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
+ * @tparam Vec A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with
  * inner type inheriting from `Eigen::EigenBase`
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato
@@ -93,7 +93,7 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam Vec A standard vector with inner type inheriting from
- * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
+ * `Eigen::EigenBase`, a \ref stan::math::var_value with inner type inheriting from
  * `Eigen::EigenBase`
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato

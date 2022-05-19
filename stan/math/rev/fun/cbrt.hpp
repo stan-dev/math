@@ -42,7 +42,7 @@ inline var cbrt(const var& a) {
 
 /**
  * Returns the cube root of the specified variable (C99).
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Specified variable.
  * @return Cube root of the variable.
  */

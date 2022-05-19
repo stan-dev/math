@@ -41,9 +41,9 @@ struct promote_scalar_type<T, std::vector<S>> {
 };
 
 /** \ingroup type_trait
- * Specialization for `var_value` when the type to convert to is a `var_value`.
- * @tparam T a `var_value`.
- * @tparam S A `var_value` whose template type is derived from `EigenBase`.
+ * Specialization for \ref stan::math::var_value when the type to convert to is a \ref stan::math::var_value .
+ * @tparam T a \ref stan::math::var_value .
+ * @tparam S A \ref stan::math::var_value whose template type is derived from `EigenBase`.
  *  This specialization holds type `S`.
  */
 template <typename T, typename S>
@@ -56,9 +56,9 @@ struct promote_scalar_type<
 };
 
 /** \ingroup type_trait
- * Specialization for `var_value` when the type to convert to is arithmetic.
+ * Specialization for \ref stan::math::var_value when the type to convert to is arithmetic.
  * @tparam T an arithmetic type.
- * @tparam S A `var_value` whose template type is derived from `EigenBase`.
+ * @tparam S A \ref stan::math::var_value whose template type is derived from `EigenBase`.
  *  This specialization the promoted value type of `S`.
  */
 template <typename T, typename S>

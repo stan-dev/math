@@ -244,7 +244,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
  *
  * This overload handles arguments where one of T1 or T2 are
  * `var_value<T>` where `T` is an Eigen type. The other type can
- * also be a `var_value` or it can be a matrix type that inherits
+ * also be a \ref stan::math::var_value or it can be a matrix type that inherits
  * from EigenBase
  *
  * @tparam T1 type of the first matrix

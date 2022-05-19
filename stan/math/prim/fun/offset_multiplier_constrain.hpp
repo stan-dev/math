@@ -281,11 +281,11 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam T1 A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam M1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam M1 A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam S1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam S1 A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output

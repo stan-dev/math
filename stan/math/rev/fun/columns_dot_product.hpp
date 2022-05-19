@@ -46,7 +46,7 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
  *
  * This overload is used when at least one of Mat1 and Mat2 is
  * a `var_value<T>` where `T` inherits from `EigenBase`. The other
- * argument can be another `var_value` or a type that inherits from
+ * argument can be another \ref stan::math::var_value or a type that inherits from
  * `EigenBase`.
  *
  * @tparam Mat1 type of the first matrix

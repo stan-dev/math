@@ -34,13 +34,13 @@ namespace math {
  * value (wich will be broadcast - used for all instances);
  * @tparam T_x_cl type of the design matrix
  * @tparam T_alpha_cl type of the intercept(s);
- * this can be a (optionally `var_value` containing) `matrix_cl` column vector
+ * this can be a (optionally \ref stan::math::var_value containing) `matrix_cl` column vector
  * (of the same length as y) of intercepts or a scalar (for models with
  * constant intercept)
  * @tparam T_beta_cl type of the weight vector;
- * (optionally `var_value` containing) `matrix_cl` column vector
+ * (optionally \ref stan::math::var_value containing) `matrix_cl` column vector
  * @tparam T_sigma_cl type of the (positive) scale(s);
- * (optionally `var_value` containing) `matrix_cl` column vector (of the same
+ * (optionally \ref stan::math::var_value containing) `matrix_cl` column vector (of the same
  * length as y, for heteroskedasticity) or a scalar.
  * @param y scalar or vector parameter on OpenCL device. If it is a scalar it
  * will be broadcast - used for all instances.

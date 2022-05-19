@@ -163,7 +163,7 @@ inline auto cholesky_decompose(const EigMat& A) {
  * stan::math::cholesky_decompose in order to use an inplace decomposition.
  *
  * Note chainable stack varis are created below in Matrix<var, -1, -1>
- * @tparam T A `var_value` holding an inner eigen type.
+ * @tparam T A \ref stan::math::var_value holding an inner eigen type.
  * @param A A square positive definite matrix with no nan values.
  * @return L Cholesky factor of A
  */

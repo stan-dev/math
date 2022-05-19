@@ -91,7 +91,7 @@ inline void check_greater(const char* function, const char* name, const ScalarY&
  * element of `low`.
  * @tparam Idxs A parameter pack of Integral types
  * @tparam ScalarY A scalar type
- * @tparam DenseLow Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam DenseLow Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)
@@ -168,7 +168,7 @@ inline void check_greater(const char* function, const char* name, const VecY& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam Idxs A parameter pack of Integral types
- * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
  * @tparam ScalarLow A scalar type
@@ -251,10 +251,10 @@ inline void check_greater(const char* function, const char* name, const VecY& y,
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
  * @tparam Idxs A parameter pack of Integral types
- * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam DenseY Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
- * @tparam DenseLow Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam DenseLow Type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)

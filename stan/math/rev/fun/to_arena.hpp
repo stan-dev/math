@@ -35,7 +35,7 @@ inline arena_t<Exprcl> to_arena(Exprcl&& a) {
  * recovered.
  *
  * For types that already have this property (including scalars and
- * `var_value`s) this is a no-op.
+ * \ref stan::math::var_value ) this is a no-op.
  *
  * Passing in a lvalue reference to objects not using AD stack, such as a
  * `matrix_cl` is inefficient as they need to be copied in this case.
@@ -57,7 +57,7 @@ inline std::remove_reference_t<ArenaT> to_arena(ArenaT&& a) {
  * AD stack or schedules its destructor to be called when AD stack memory is
  * recovered.
  *
- * Converts eigen types to `arena_matrix`.
+ * Converts eigen types to \ref stan::math::arena_matrix.
  * @tparam Eig type of argument
  * @param a argument
  * @return argument copied/evaluated on AD stack

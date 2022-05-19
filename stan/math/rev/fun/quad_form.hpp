@@ -291,7 +291,7 @@ inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
  *
  * This overload handles arguments where one of Mat1 or Mat2 are
  * `var_value<T>` where `T` is an Eigen type. The other type can
- * also be a `var_value` or it can be a matrix type that inherits
+ * also be a \ref stan::math::var_value or it can be a matrix type that inherits
  * from EigenBase
  *
  * @tparam Mat1 type of the first (square) matrix
@@ -317,7 +317,7 @@ inline auto quad_form(const Mat1& A, const Mat2& B, bool symmetric = false) {
  *
  * This overload handles arguments where one of Mat or Vec are
  * `var_value<T>` where `T` is an Eigen type. The other type can
- * also be a `var_value`, or it can be a type that inherits from
+ * also be a \ref stan::math::var_value , or it can be a type that inherits from
  * EigenBase
  *
  * @tparam Mat type of the matrix

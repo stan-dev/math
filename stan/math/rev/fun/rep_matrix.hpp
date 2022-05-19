@@ -13,7 +13,7 @@ namespace math {
 /**
  * Impl of rep_matrix returning an `var_value<Eigen::Matrix>` with a var scalar
  * type.
- * @tparam Ret A `var_value` with inner Eigen type.
+ * @tparam Ret A \ref stan::math::var_value with inner Eigen type.
  * @tparam T A Scalar type.
  * @param x A Scalar whose values are propogated to all values in the return
  * matrix.
@@ -31,11 +31,11 @@ inline auto rep_matrix(const T& x, int m, int n) {
 }
 
 /**
- * Impl of rep_matrix returning a `var_value<Eigen::Matrix>` from a `var_value`
+ * Impl of rep_matrix returning a `var_value<Eigen::Matrix>` from a \ref stan::math::var_value 
  * with an inner Eigen vector type.
- * @tparam Ret A `var_value` with inner Eigen dynamic matrix type.
- * @tparam Vec A `var_value` with an inner Eigen vector type.
- * @param x A `var_value` with inner Eigen vector type. For Row vectors the
+ * @tparam Ret A \ref stan::math::var_value with inner Eigen dynamic matrix type.
+ * @tparam Vec A \ref stan::math::var_value with an inner Eigen vector type.
+ * @param x A \ref stan::math::var_value with inner Eigen vector type. For Row vectors the
  * values are replacated rowwise and for column vectors the values are
  * repliacated colwise.
  * @param n Number of rows or columns.

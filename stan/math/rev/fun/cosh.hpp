@@ -50,7 +50,7 @@ inline var cosh(const var& a) {
 /**
  * Return the hyperbolic cosine of the specified variable (cmath).
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Variable.
  * @return Hyperbolic cosine of variable.
  */

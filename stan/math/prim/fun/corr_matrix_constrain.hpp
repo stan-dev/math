@@ -86,7 +86,7 @@ corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @param x Vector of unconstrained partial correlations
@@ -116,7 +116,7 @@ inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param y Vector of unconstrained partial correlations
  * @param K Dimensionality of returned correlation matrix

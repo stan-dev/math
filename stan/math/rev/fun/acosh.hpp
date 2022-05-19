@@ -70,7 +70,7 @@ inline var acosh(const var& x) {
  *
  * For non-variable function, see ::acosh().
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param x The variable
  * @return Inverse hyperbolic cosine of the variable.
  */

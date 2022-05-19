@@ -60,7 +60,7 @@ inline var asin(const var& x) {
  * Return the principal value of the arc sine, in radians, of the
  * specified variable (cmath).
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param x Variable with cells in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */

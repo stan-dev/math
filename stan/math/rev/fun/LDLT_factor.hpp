@@ -39,7 +39,7 @@ class LDLT_factor<T, require_eigen_matrix_dynamic_vt<is_var, T>> {
 
 /**
  * An LDLT_factor of a `var_value<Eigen::MatrixXd>`
- * holds a copy of the input `var_value` and the LDLT of its values.
+ * holds a copy of the input \ref stan::math::var_value and the LDLT of its values.
  */
 template <typename T>
 class LDLT_factor<T, require_var_matrix_t<T>> {
@@ -54,7 +54,7 @@ class LDLT_factor<T, require_var_matrix_t<T>> {
       : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
 
   /**
-   * Return a const reference the underlying `var_value`
+   * Return a const reference the underlying \ref stan::math::var_value 
    */
   const auto& matrix() const noexcept { return matrix_; }
 

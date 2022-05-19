@@ -14,7 +14,7 @@ namespace math {
  * of doubles to var matrix types.
  *
  * @tparam ArithEigMat Any type.
- * @tparam Types Any type with one of `ArithEigMat` and `Types` being a `var_value`
+ * @tparam Types Any type with one of `ArithEigMat` and `Types` being a \ref stan::math::var_value
  * matrix.
  * @param[in] x object
  * @return transformed input

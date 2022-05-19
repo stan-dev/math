@@ -53,7 +53,7 @@ inline var cos(var a) {
  * Return the cosine of a radian-scaled variable (cmath).
  *
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Variable for radians of angle.
  * @return Cosine of variable.
  */

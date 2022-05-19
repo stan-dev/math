@@ -240,9 +240,9 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output

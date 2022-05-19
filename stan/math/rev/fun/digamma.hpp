@@ -26,7 +26,7 @@ inline var digamma(const var& a) {
  * Return the elementwise derivative of the log gamma function
  * at the given input vector
  *
- * @tparam T a `var_value` with inner Eigen type
+ * @tparam T a \ref stan::math::var_value with inner Eigen type
  * @param[in] a vector
  * @return elementwise derivative of log gamma function
  */

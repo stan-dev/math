@@ -54,7 +54,7 @@ inline var tan(const var& a) {
  * Return the tangent of a radian-scaled variable (cmath).
  *
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Variable for radians of angle.
  * @return Tangent of variable.
  */

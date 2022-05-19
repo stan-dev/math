@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Converts `var_value` into an Eigen Matrix. Adjoint is propagated back to
+ * Converts \ref stan::math::var_value into an Eigen Matrix. Adjoint is propagated back to
  * argument in the reverse pass.
  *
  * @tparam T type of the input
@@ -42,7 +42,7 @@ T from_var_value(T&& a) {
 }
 
 /**
- * Convert the elements of the `std::vector` input to `var_value` types
+ * Convert the elements of the `std::vector` input to \ref stan::math::var_value types
  * if possible
  *
  * @tparam T type of elemnts of the input vector

@@ -64,8 +64,8 @@ inline void check_matching_dims(const char* function, const char* name1,
 
 /**
  * Check if two matrices have the same row and column dimensions.
- * @tparam Mat1 Either an Eigen type or a `var_value` with underlying Eigen type.
- * @tparam Mat2 Either an Eigen type or a `var_value` with underlying Eigen type.
+ * @tparam Mat1 Either an Eigen type or a \ref stan::math::var_value with underlying Eigen type.
+ * @tparam Mat2 Either an Eigen type or a \ref stan::math::var_value with underlying Eigen type.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first matrix to test
@@ -96,9 +96,9 @@ inline void check_matching_dims(const char* function, const char* name1,
 
 /**
  * Check if two matrices have the same row and column dimensions.
- * @tparam T1 Either an Eigen type, a `var_value` with underlying Eigen type, or
+ * @tparam T1 Either an Eigen type, a \ref stan::math::var_value with underlying Eigen type, or
  * scalar.
- * @tparam T2 Either an Eigen type, a `var_value` with underlying Eigen type, or
+ * @tparam T2 Either an Eigen type, a \ref stan::math::var_value with underlying Eigen type, or
  * scalar.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)

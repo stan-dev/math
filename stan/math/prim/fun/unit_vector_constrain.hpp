@@ -65,7 +65,7 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @param y vector of K unrestricted variables
@@ -91,7 +91,7 @@ inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator

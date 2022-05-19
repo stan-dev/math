@@ -8,7 +8,7 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Determines plain (non expression) type associated with \c T. For `var_value`
+ * Determines plain (non expression) type associated with \c T. For \ref stan::math::var_value
  * with an underlying eigen type this is a `var_value<plain_type_t<T>>`
  *
  * @tparam T type to determine plain type of

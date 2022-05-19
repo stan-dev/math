@@ -64,7 +64,7 @@ inline var atanh(const var& x) {
 /**
  * The inverse hyperbolic tangent function for variables (C99).
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param x The variable.
  * @return Inverse hyperbolic tangent of the variable.
  * @throw std::domain_error if a < -1 or a > 1

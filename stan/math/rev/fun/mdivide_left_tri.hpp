@@ -325,7 +325,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
  *
  * This overload handles arguments where one of T1 or T2 are
  * `var_value<T>` where `T` is an Eigen type. The other type can
- * also be a `var_value` or it can be a matrix type that inherits
+ * also be a \ref stan::math::var_value or it can be a matrix type that inherits
  * from EigenBase
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)

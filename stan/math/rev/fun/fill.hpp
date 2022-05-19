@@ -14,7 +14,7 @@ namespace math {
  *
  * The specified matrix is filled by element.
  *
- * @tparam VarMat a `var_value` with inner type from `EigenBase`
+ * @tparam VarMat a \ref stan::math::var_value with inner type from `EigenBase`
  * @tparam Var A var.
  *
  * @param x Container.
@@ -37,7 +37,7 @@ inline void fill(VarMat& x, const Var& y) {
  *
  * The specified matrix is filled by element.
  *
- * @tparam VarMat a `var_value` with inner type from `EigenBase`
+ * @tparam VarMat a \ref stan::math::var_value with inner type from `EigenBase`
  * @tparam Arith An arithmetic type.
  *
  * @param x Container.

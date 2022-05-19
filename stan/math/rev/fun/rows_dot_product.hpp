@@ -45,7 +45,7 @@ inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
  *
  * This overload is used when at least one of Mat1 and Mat2 is
  * a `var_value<T>` where `T` inherits from `EigenBase`. The other
- * argument can be another `var_value` or a type that inherits from
+ * argument can be another \ref stan::math::var_value or a type that inherits from
  * `EigenBase`.
  *
  * @tparam Mat1 type of the first matrix

@@ -90,7 +90,7 @@ inline var multiply_log(double a, const var& b) {
  * Return the elementwise product `a * log(b)`.
  *
  * Both `RevMat1` and `RevMat2` are matrices, and one of `RevMat1` or `RevMat2` must be a
- * `var_value`
+ * \ref stan::math::var_value
  *
  * @tparam RevMat1 Type of first argument
  * @tparam RevMat2 Type of second argument

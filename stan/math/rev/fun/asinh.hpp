@@ -65,7 +65,7 @@ inline var asinh(const var& x) {
 /**
  * The inverse hyperbolic sine function for variables (C99).
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param x The variable.
  * @return Inverse hyperbolic sine of the variable.
  */

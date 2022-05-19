@@ -11,7 +11,7 @@ namespace math {
  * Converts input argument to a `var_value<>` with column vector or a scalar.
  * For column vector inputs this is an identity function.
  *
- * @tparam T Type of `var_value`.
+ * @tparam T Type of \ref stan::math::var_value .
  * @param a Specified vector.
  * @return Same vector.
  */
@@ -21,7 +21,7 @@ inline auto as_column_vector_or_scalar(T&& a) {
 }
 
 /**
- * Converts `var_value` with row vector inner type to a `var_value<>`
+ * Converts \ref stan::math::var_value with row vector inner type to a `var_value<>`
  * with inner column vector type
  * @tparam T A `var_value<>` with an inner row vector type.
  * @param a Specified vector.

@@ -23,8 +23,8 @@ namespace math {
  * (vector, vector) -> matrix,
  * (row vector, row vector) -> row_vector.
  *
- * @tparam Mat1 A `var_value` with inner matrix type.
- * @tparam Mat2 A `var_value` with inner matrix type.
+ * @tparam Mat1 A \ref stan::math::var_value with inner matrix type.
+ * @tparam Mat2 A \ref stan::math::var_value with inner matrix type.
  *
  * @param A First matrix.
  * @param B Second matrix.
@@ -69,7 +69,7 @@ inline auto append_col(const Mat1& A, const Mat2& B) {
  * row vector.
  *
  * @tparam Scal type of the scalar
- * @tparam RowVec A `var_value` with an inner type of row vector.
+ * @tparam RowVec A \ref stan::math::var_value with an inner type of row vector.
  *
  * @param A scalar.
  * @param B row vector.
@@ -108,7 +108,7 @@ inline auto append_col(const Scal& A, const var_value<RowVec>& B) {
  * This function applies to (row vector, scalar) and returns a
  * row vector.
  *
- * @tparam RowVec A `var_value` with an inner type of row vector.
+ * @tparam RowVec A \ref stan::math::var_value with an inner type of row vector.
  * @tparam Scal type of the scalar
  *
  * @param A row vector.

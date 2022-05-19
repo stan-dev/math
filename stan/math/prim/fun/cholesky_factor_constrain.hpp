@@ -97,7 +97,7 @@ cholesky_factor_constrain(const EigVec& x, int M, int N, return_type_t<EigVec>& 
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a \ref stan::math::var_value with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @param x Vector of unconstrained values
@@ -128,7 +128,7 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` or a \ref stan::math::var_value with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Vector of unconstrained values
  * @param M number of rows

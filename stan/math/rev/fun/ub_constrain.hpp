@@ -125,7 +125,7 @@ inline auto ub_constrain(const T1& x, const U1& ub, return_type_t<T1, U1>& lp) {
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @tparam Scalar2 Scalar.
  * @param[in] x unconstrained input
@@ -173,7 +173,7 @@ inline auto ub_constrain(const Mat1& x, const Scalar2& ub) {
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @tparam Scalar2 Scalar.
  * @param[in] x unconstrained input
@@ -226,9 +226,9 @@ inline auto ub_constrain(const Mat1& x, const Scalar2& ub, return_type_t<Mat1, S
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
- * @tparam Mat2 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat2 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
@@ -288,9 +288,9 @@ inline auto ub_constrain(const Mat1& x, const Mat2& ub) {
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam Mat1 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat1 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
- * @tparam Mat2 A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam Mat2 A type inheriting from `EigenBase` or a \ref stan::math::var_value with inner type
  * inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output

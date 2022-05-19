@@ -63,7 +63,7 @@ inline var fabs(const var& a) {
 /**
  * Return the absolute value of the variable (cmath).
  *
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a \ref stan::math::var_value with inner Eigen type
  * @param a Input variable.
  * @return Absolute value of variable.
  */

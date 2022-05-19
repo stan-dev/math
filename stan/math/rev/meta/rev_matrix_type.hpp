@@ -12,7 +12,7 @@ namespace stan {
  * to return a matrix (or vector or row vector) with given compile time number
  * of rows and columns.
  *
- * Returns `var_value` if any of the inputs are `var_value`, otherwise an Eigen
+ * Returns \ref stan::math::var_value if any of the inputs are \ref stan::math::var_value , otherwise an Eigen
  * matrix of `var` or `double`.
  * @tparam Rows number of compile time rows
  * @tparam Cols number of compile time columns

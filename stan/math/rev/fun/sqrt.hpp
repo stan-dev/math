@@ -50,7 +50,7 @@ inline var sqrt(const var& a) {
 /**
  * Return elementwise square root of vector
  *
- * @tparam T a `var_value` with inner Eigen type
+ * @tparam T a \ref stan::math::var_value with inner Eigen type
  * @param a input
  * @return elementwise square root of vector
  */

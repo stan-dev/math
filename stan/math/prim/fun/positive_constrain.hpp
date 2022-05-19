@@ -55,7 +55,7 @@ inline auto positive_constrain(const T& x, S& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam T1 A type inheriting from `Eigen::EigenBase`, a \ref stan::math::var_value with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param x unconstrained value or container
  * @param[in, out] lp log density accumulator
@@ -80,7 +80,7 @@ inline auto positive_constrain(const T1& x, return_type_t<T1>& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam StdVec A standard vector with inner type inheriting from
- * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
+ * `Eigen::EigenBase`, a \ref stan::math::var_value with inner type inheriting from
  * `Eigen::EigenBase`, a standard vector, or a scalar
  * @param x unconstrained value or container
  * @param[in, out] lp log density accumulator

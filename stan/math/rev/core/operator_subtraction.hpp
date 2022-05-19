@@ -189,7 +189,7 @@ inline auto subtract(const Arith& a, const VarMat& b) {
 /**
  * Subtraction operator for an arithmetic matrix and variable.
  *
- * @tparam Var A `var_value` with an underlying arithmetic type.
+ * @tparam Var A \ref stan::math::var_value with an underlying arithmetic type.
  * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
  * @param a First variable operand.
  * @param b Second variable operand.
@@ -209,7 +209,7 @@ inline auto subtract(const Var& a, const EigMat& b) {
  * Subtraction operator for a variable and arithmetic matrix.
  *
  * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
- * @tparam Var A `var_value` with an underlying arithmetic type.
+ * @tparam Var A \ref stan::math::var_value with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
@@ -228,8 +228,8 @@ inline auto subtract(const EigMat& a, const Var& b) {
  * Subtraction operator for a variable and variable matrix.
  *
  * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
- * `var_value` with an underlying matrix type.
- * @tparam Var A `var_value` with an underlying arithmetic type.
+ * \ref stan::math::var_value with an underlying matrix type.
+ * @tparam Var A \ref stan::math::var_value with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
@@ -257,8 +257,8 @@ inline auto subtract(const Var& a, const VarMat& b) {
  * Subtraction operator for a variable matrix and variable.
  *
  * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
- * `var_value` with an underlying matrix type.
- * @tparam Var A `var_value` with an underlying arithmetic type.
+ * \ref stan::math::var_value with an underlying matrix type.
+ * @tparam Var A \ref stan::math::var_value with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.

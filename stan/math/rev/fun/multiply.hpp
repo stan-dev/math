@@ -124,7 +124,7 @@ inline var multiply(const T1& A, const T2& B) {
 
 /**
  * Return specified matrix multiplied by specified scalar where at least one
- * input has a scalar type of a `var_value`.
+ * input has a scalar type of a \ref stan::math::var_value .
  *
  * @tparam T1 type of the scalar
  * @tparam T2 type of the matrix or expression
@@ -177,7 +177,7 @@ inline auto multiply(const T1& A, const T2& B) {
 
 /**
  * Return specified matrix multiplied by specified scalar where at least one
- * input has a scalar type of a `var_value`.
+ * input has a scalar type of a \ref stan::math::var_value .
  *
  * @tparam T1 type of the matrix or expression
  * @tparam T2 type of the scalar

@@ -27,7 +27,7 @@ inline var inv_Phi(const var& p) {
 /**
  * Return the elementwise inverse of unit normal cumulative density function.
  *
- * @tparam T a `var_value` with inner Eigen type
+ * @tparam T a \ref stan::math::var_value with inner Eigen type
  * @param p Probability vector
  * @return Elementwise unit normal inverse cdf
  */
