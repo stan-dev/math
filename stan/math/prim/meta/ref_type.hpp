@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_PRIM_META_REF_TYPE_HPP
 #define STAN_MATH_PRIM_META_REF_TYPE_HPP
 
+/**
+ * \file
+ */
+
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>

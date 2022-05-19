@@ -43,7 +43,7 @@ function generate_autotoc() {
                     i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
       }
     });
-    resizeHeight();
+    //resizeHeight();
   }
 }
 
@@ -362,15 +362,13 @@ $(document).ready(function() {
     try {
 
       // this line will triger an exception if there is no #selected element, i.e., before the tree structure is complete.
-      document.getElementById("selected").className = "item selected";
+      //document.getElementById("selected").className = "item selected";
 
       // ok, the default tree has been created, we can keep going...
 
       // expand the "Chapters" node
-      if(window.location.href.indexOf('unsupported')==-1)
-        expandNode(global_navtree_object, global_navtree_object.node.children[0].children[2], true, true);
-      else
-        expandNode(global_navtree_object, global_navtree_object.node.children[0].children[1], true, true);
+      expandNode(global_navtree_object, global_navtree_object.node.children[0].children[1], true, true);
+      expandNode(global_navtree_object, global_navtree_object.node.children[0].children[2], true, true);
 
       // Hide the root node "Eigen"
       $(document.getElementsByClassName('index.html')[0]).parent().parent().css({display:"none"});
