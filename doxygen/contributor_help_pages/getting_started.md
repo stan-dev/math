@@ -90,17 +90,17 @@ There are several odd parts to this function labeled (1), (2), (3), and (4) whic
 
 #### (1) Using Stan's require type traits to specialize overloads.
 
-The Stan math library requires that all functions are able to accept Eigen expression templates, hence the general `EigVec` template above. Though we want general templates parameters to the functions, we also want to ensure that only a restricted subset of types are able to be accepted for a particular function. For example, without the require in the above function it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good! In order to restrict the types that can go into a function the math library uses the `require` type traits to detecting which function a particular type should use.
+The Stan math library requires that all functions are able to accept Eigen expression templates, hence the general `EigVec` template above. Though we want general templates parameters to the functions, we also want to ensure that only a restricted subset of types are able to be accepted for a particular function. For example, without the require in the above function it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good! In order to restrict the types that can go into a function the math library uses the `require` type traits to detecting which function a particular type should use. This is very similar conceptually to [C++20 requires](https://en.cppreference.com/w/cpp/language/constraints#Constraints).
 
 To avoid document duplication I recommend you skim over @ref require_meta The guide there explains the different styles and patterns of requires that we use throughout the math library as well as in this example. At the bottom of that page you will see subsections which will show you the `requires` we have already setup for types we commonly see.
 
-We want to restrict `self_dot()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`. A very odd piece of the template syntax how we set our require to be a pointer template parameter with a default value of nullptr.
+We want to restrict `self_dot()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`. A very odd piece of the template syntax is how we set our require to be a pointer template parameter with a default value of nullptr.
 
 ```cpp
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 ```
 
-One C++ trick is that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler. Under the hood, if any of the `requires` are successful they will return back a type `void`. So in the case we are passing a type that our requires accepts we get back a `void* = nullptr` which is safely ignored by the compiler. In the case that the type does not satisfy the `require` then the function is removed from the set of possible functions the type could use via SFINAE. So with this scheme we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
+One C++ trick is that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler. Under the hood, if any of the `requires` are successful they will return back a type `void`. So in the case we are passing a type that our requires accepts we get back a `void* = nullptr` which is safely ignored by the compiler. In the case that the type does not satisfy the `require` then the function is removed from the set of possible functions the caller could use via SFINAE. So with this scheme we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
 
 #### (2) Ensure Eigen Matrices are Only Evaluated Once
 

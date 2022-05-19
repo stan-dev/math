@@ -25,15 +25,15 @@ namespace math {
  *
  * <p>where \f$U\f$ is the upper bound.
  *
- * @tparam T type of Matrix
- * @tparam U type of upper bound
+ * @tparam ScalarT type of Matrix
+ * @tparam ScalarU type of upper bound
  * @param[in] x free Matrix.
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
-template <typename T, typename U, require_all_stan_scalar_t<T, U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub) {
+template <typename ScalarT, typename ScalarU, require_all_stan_scalar_t<ScalarT, ScalarU>* = nullptr,
+          require_all_not_st_var<ScalarT, ScalarU>* = nullptr>
+inline auto ub_constrain(const ScalarT& x, const ScalarU& ub) {
   if (value_of_rec(ub) == INFTY) {
     return identity_constrain(x, ub);
   } else {
@@ -54,18 +54,18 @@ inline auto ub_constrain(const T& x, const U& ub) {
  * <p>\f$ \log | \frac{d}{dx} -\mbox{exp}(x) + U |
  *     = \log | -\mbox{exp}(x) + 0 | = x\f$.
  *
- * @tparam T type of scalar
- * @tparam U type of upper bound
+ * @tparam ScalarT type of scalar
+ * @tparam ScalarU type of upper bound
  * @tparam S type of log probability
  * @param[in] x free scalar
  * @param[in] ub upper bound
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename U, require_all_stan_scalar_t<T, U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub,
-                         std::decay_t<return_type_t<T, U>>& lp) {
+template <typename ScalarT, typename ScalarU, require_all_stan_scalar_t<ScalarT, ScalarU>* = nullptr,
+          require_all_not_st_var<ScalarT, ScalarU>* = nullptr>
+inline auto ub_constrain(const ScalarT& x, const ScalarU& ub,
+                         std::decay_t<return_type_t<ScalarT, ScalarU>>& lp) {
   if (value_of_rec(ub) == INFTY) {
     return identity_constrain(x, ub);
   } else {
@@ -78,16 +78,16 @@ inline auto ub_constrain(const T& x, const U& ub,
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam U Scalar.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam ScalarU Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_eigen_t<T>* = nullptr,
-          require_stan_scalar_t<U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub) {
+template <typename EigT, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+          require_stan_scalar_t<ScalarU>* = nullptr,
+          require_all_not_st_var<EigT, ScalarU>* = nullptr>
+inline auto ub_constrain(const EigT& x, const ScalarU& ub) {
   return eval(x.unaryExpr([ub](auto&& xx) { return ub_constrain(xx, ub); }));
 }
 
@@ -95,18 +95,18 @@ inline auto ub_constrain(const T& x, const U& ub) {
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam U Scalar.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam ScalarU Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_eigen_t<T>* = nullptr,
-          require_stan_scalar_t<U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub,
-                         std::decay_t<return_type_t<T, U>>& lp) {
+template <typename EigT, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+          require_stan_scalar_t<ScalarU>* = nullptr,
+          require_all_not_st_var<EigT, ScalarU>* = nullptr>
+inline auto ub_constrain(const EigT& x, const ScalarU& ub,
+                         std::decay_t<return_type_t<EigT, ScalarU>>& lp) {
   return eval(
       x.unaryExpr([ub, &lp](auto&& xx) { return ub_constrain(xx, ub, lp); }));
 }
@@ -115,15 +115,15 @@ inline auto ub_constrain(const T& x, const U& ub,
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam U A type inheriting from `EigenBase`.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam EigU A type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub) {
+template <typename EigT, typename EigU, require_all_eigen_t<EigT, EigU>* = nullptr,
+          require_all_not_st_var<EigT, EigU>* = nullptr>
+inline auto ub_constrain(const EigT& x, const EigU& ub) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
@@ -133,17 +133,17 @@ inline auto ub_constrain(const T& x, const U& ub) {
  * Specialization of `ub_constrain` to apply a matrix of upper bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam U A type inheriting from `EigenBase`.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam EigU A type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub,
-                         std::decay_t<return_type_t<T, U>>& lp) {
+template <typename EigT, typename EigU, require_all_eigen_t<EigT, EigU>* = nullptr,
+          require_all_not_st_var<EigT, EigU>* = nullptr>
+inline auto ub_constrain(const EigT& x, const EigU& ub,
+                         std::decay_t<return_type_t<EigT, EigU>>& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
@@ -154,13 +154,13 @@ inline auto ub_constrain(const T& x, const U& ub,
  *  to each input element.
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam U Scalar.
+ * @tparam ScalarU Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
+template <typename T, typename ScalarU, require_not_std_vector_t<ScalarU>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const ScalarU& ub) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = ub_constrain(x[i], ub);
@@ -173,15 +173,15 @@ inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
  *  to each input element.
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam U Scalar.
+ * @tparam ScalarU Scalar.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const U& ub,
-                         return_type_t<T, U>& lp) {
+template <typename T, typename ScalarU, require_not_std_vector_t<ScalarU>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const ScalarU& ub,
+                         return_type_t<T, ScalarU>& lp) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = ub_constrain(x[i], ub, lp);

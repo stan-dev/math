@@ -20,7 +20,7 @@ namespace math {
  * is vectorized and will check each element of `y` against each element of
  * `low`.
  * @tparam T_y A scalar type
- * @tparam T_low A scalar type
+ * @tparam Scalar2 A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -31,10 +31,10 @@ namespace math {
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_all_stan_scalar_t<T_y, T_low>* = nullptr, typename... Idxs>
+template <typename Scaler1, typename Scalar2,
+          require_all_stan_scalar_t<Scaler1, Scalar2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Scaler1& y, const Scalar2& low,
                                    Idxs... idxs) {
   if (unlikely(!(y >= low))) {
     [](auto y, auto low, auto function, auto name,
@@ -52,8 +52,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if `y` is not greater or equal than each element of `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A scalar type
- * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam Scaler1 A scalar type
+ * @tparam Scalar2 A standard vector or type inheriting from `Eigen::DenseBase`
  * with compile time rows or columns equal to one and `value_type` equal to a
  * stan scalar
  * @tparam Idxs A parameter pack of Integral types
@@ -67,12 +67,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <
-    typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-    require_vector_t<T_low>* = nullptr,
-    require_not_std_vector_vt<is_container_or_var_matrix, T_low>* = nullptr,
+    typename Scaler1, typename Vec2, require_stan_scalar_t<Scaler1>* = nullptr,
+    require_vector_t<Vec2>* = nullptr,
+    require_not_std_vector_vt<is_container_or_var_matrix, Vec2>* = nullptr,
     typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Scaler1& y, const Vec2& low,
                                    Idxs... idxs) {
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
@@ -93,8 +93,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if `y` is not greater or equal than each element of `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A scalar type
- * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam Scaler1 A scalar type
+ * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a `var_value` with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @tparam Idxs A parameter pack of Integral types
@@ -107,10 +107,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_dense_dynamic_t<T_low>* = nullptr, typename... Idxs>
+template <typename Scaler1, typename Dense2, require_stan_scalar_t<Scaler1>* = nullptr,
+          require_dense_dynamic_t<Dense2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Scaler1& y, const Dense2& low,
                                    Idxs... idxs) {
   auto&& low_arr = value_of_rec(to_ref(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
@@ -134,10 +134,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
+ * @tparam Vec A standard vector or type inheriting from `Eigen::DenseBase` with
  *  compile time rows or columns equal to one and `value_type` equal to a stan
  * scalar
- * @tparam T_low A scalar type
+ * @tparam Scalar2 A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -148,11 +148,11 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_vector_t<T_y>* = nullptr,
-          require_not_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
+template <typename Vec, typename Scalar2, require_vector_t<Vec>* = nullptr,
+          require_not_std_vector_vt<is_container_or_var_matrix, Vec>* = nullptr,
+          require_stan_scalar_t<Scalar2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Vec& y, const Scalar2& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
@@ -174,10 +174,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a `var_value` with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
- * @tparam T_low A scalar type
+ * @tparam Scalar2 A scalar type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -188,10 +188,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_dense_dynamic_t<T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
+template <typename Dense1, typename Scalar2, require_dense_dynamic_t<Dense1>* = nullptr,
+          require_stan_scalar_t<Scalar2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Dense1& y, const Scalar2& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
@@ -215,10 +215,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than the
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
- * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
+ * @tparam Vec1 A standard vector or type inheriting from `Eigen::DenseBase` with
  *  compile time rows or columns equal to one and `value_type` equal to a stan
  * scalar
- * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam Vec2 A standard vector or type inheriting from `Eigen::DenseBase`
  * with compile time rows or columns equal to one and `value_type` equal to a
  * stan scalar
  * @tparam Idxs A parameter pack of Integral types
@@ -231,13 +231,13 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_all_vector_t<T_y, T_low>* = nullptr,
-          require_all_not_std_vector_vt<is_container_or_var_matrix, T_y,
-                                        T_low>* = nullptr,
+template <typename Vec1, typename Vec2,
+          require_all_vector_t<Vec1, Vec2>* = nullptr,
+          require_all_not_std_vector_vt<is_container_or_var_matrix, Vec1,
+                                        Vec2>* = nullptr,
           typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Vec1& y, const Vec2& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
@@ -260,10 +260,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than the
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * @tparam Dense1 Type inheriting from `Eigen::DenseBase` or a `var_value` with the
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
- * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam Dense2 Type inheriting from `Eigen::DenseBase` or a `var_value` with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
  * @tparam Idxs A parameter pack of Integral types
@@ -276,10 +276,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_all_dense_dynamic_t<T_y, T_low>* = nullptr, typename... Idxs>
+template <typename Dense1, typename Dense2,
+          require_all_dense_dynamic_t<Dense1, Dense2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Dense1& y, const Dense2& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
   auto&& low_arr = value_of_rec(to_ref(low));
@@ -304,9 +304,9 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A standard vector type with a `value_type` of a standard vector
+ * @tparam Container1 A standard vector type with a `value_type` of a standard vector
  * or type inheriting from `Eigen::DenseBase`
- * @tparam T_low A standard vector type
+ * @tparam NotStdVec2 A standard vector type
  * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -317,11 +317,11 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
-          require_not_std_vector_t<T_low>* = nullptr, typename... Idxs>
+template <typename Container1, typename NotStdVec2,
+          require_std_vector_vt<is_container_or_var_matrix, Container1>* = nullptr,
+          require_not_std_vector_t<NotStdVec2>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const Container1& y, const NotStdVec2& low,
                                    Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_greater_or_equal(function, name, y[i], low, idxs..., i);
@@ -332,8 +332,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A standard vector
- * @tparam T_low  A standard vector type with a `value_type` of a standard
+ * @tparam NotStdVec A standard vector
+ * @tparam Container2  A standard vector type with a `value_type` of a standard
  * @tparam Idxs A parameter pack of Integral types
  * vector or type inheriting from `Eigen::DenseBase`
  * @param function Function name (for error messages)
@@ -345,12 +345,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is NaN
  */
-template <typename T_y, typename T_low,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container_or_var_matrix, T_low>* = nullptr,
+template <typename NotStdVec, typename Container2,
+          require_not_std_vector_t<NotStdVec>* = nullptr,
+          require_std_vector_vt<is_container_or_var_matrix, Container2>* = nullptr,
           typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+                                   const NotStdVec& y, const Container2& low,
                                    Idxs... idxs) {
   for (size_t i = 0; i < low.size(); ++i) {
     check_greater_or_equal(function, name, y, low[i], idxs..., i);

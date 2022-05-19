@@ -35,12 +35,12 @@ class Iser {
 
   /**
    * Check the scalar.
-   * @tparam T type of scalar
+   * @tparam Scalar type of scalar
    * @param x scalar
    * @return `false` if the scalar fails the error check
    */
-  template <typename T, typename = require_stan_scalar_t<T>>
-  bool is(const T& x) {
+  template <typename Scalar, typename = require_stan_scalar_t<Scalar>>
+  bool is(const Scalar& x) {
     return is_good(value_of_rec(x));
   }
 
@@ -98,7 +98,7 @@ void elementwise_throw_domain_error(const Args... args) {
  * works on scalars.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam Scalar type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -111,10 +111,10 @@ void elementwise_throw_domain_error(const Args... args) {
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_stan_scalar_t<T>* = nullptr>
+template <typename F, typename Scalar, typename... Indexings,
+          require_stan_scalar_t<Scalar>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const Scalar& x, const char* must_be,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
     [&]() STAN_COLD_PATH {
@@ -129,7 +129,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * overload works on Eigen types that support linear indexing.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam EigVec type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -142,23 +142,23 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_eigen_t<T>* = nullptr,
-          std::enable_if_t<(Eigen::internal::traits<T>::Flags
+template <typename F, typename EigVec, typename... Indexings,
+          require_eigen_t<EigVec>* = nullptr,
+          std::enable_if_t<(Eigen::internal::traits<EigVec>::Flags
                             & Eigen::LinearAccessBit)
-                           || T::IsVectorAtCompileTime>* = nullptr>
+                           || EigVec::IsVectorAtCompileTime>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const EigVec& x, const char* must_be,
                               const Indexings&... indexings) {
   for (size_t i = 0; i < x.size(); i++) {
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       [&]() STAN_COLD_PATH {
-        if (is_eigen_vector<T>::value) {
+        if (is_eigen_vector<EigVec>::value) {
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[", i + error_index::value,
               "] is ", scal, ", but must be ", must_be, "!");
-        } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
+        } else if (Eigen::internal::traits<EigVec>::Flags & Eigen::RowMajorBit) {
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[",
               i / x.cols() + error_index::value, ", ",
@@ -181,7 +181,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * overload works on col-major Eigen types that do not support linear indexing.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam EigMat type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -194,15 +194,15 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_eigen_t<T>* = nullptr,
-          std::enable_if_t<!(Eigen::internal::traits<T>::Flags
+template <typename F, typename EigMat, typename... Indexings,
+          require_eigen_t<EigMat>* = nullptr,
+          std::enable_if_t<!(Eigen::internal::traits<EigMat>::Flags
                              & Eigen::LinearAccessBit)
-                           && !T::IsVectorAtCompileTime
-                           && !(Eigen::internal::traits<T>::Flags
+                           && !EigMat::IsVectorAtCompileTime
+                           && !(Eigen::internal::traits<EigMat>::Flags
                                 & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const EigMat& x, const char* must_be,
                               const Indexings&... indexings) {
   for (size_t i = 0; i < x.rows(); i++) {
     for (size_t j = 0; j < x.cols(); j++) {
@@ -224,7 +224,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * overload works on row-major Eigen types that do not support linear indexing.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam EigRowMajorMat type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -237,15 +237,15 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_eigen_t<T>* = nullptr,
+template <typename F, typename EigRowMajorMat, typename... Indexings,
+          require_eigen_t<EigRowMajorMat>* = nullptr,
           std::enable_if_t<
-              !(Eigen::internal::traits<T>::Flags & Eigen::LinearAccessBit)
-              && !T::IsVectorAtCompileTime
-              && static_cast<bool>(Eigen::internal::traits<T>::Flags
+              !(Eigen::internal::traits<EigRowMajorMat>::Flags & Eigen::LinearAccessBit)
+              && !EigRowMajorMat::IsVectorAtCompileTime
+              && static_cast<bool>(Eigen::internal::traits<EigRowMajorMat>::Flags
                                    & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const EigRowMajorMat& x, const char* must_be,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.cols(); j++) {
     for (size_t i = 0; i < x.rows(); i++) {
@@ -267,7 +267,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * overload works on `std::vector` types.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam StdVec type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -280,10 +280,10 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_std_vector_t<T>* = nullptr>
+template <typename F, typename StdVec, typename... Indexings,
+          require_std_vector_t<StdVec>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const StdVec& x, const char* must_be,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.size(); j++) {
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
@@ -296,7 +296,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * overload works on `var`s containing Eigen types.
  *
  * @tparam F type of predicate
- * @tparam T type of `x`
+ * @tparam VarMat type of `x`
  * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
@@ -309,10 +309,10 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T, typename... Indexings,
-          require_var_matrix_t<T>* = nullptr>
+template <typename F, typename VarMat, typename... Indexings,
+          require_var_matrix_t<VarMat>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x, const char* must_be,
+                              const char* name, const VarMat& x, const char* must_be,
                               const Indexings&... indexings) {
   elementwise_check(is_good, function, name, x.val(), must_be, indexings...);
 }

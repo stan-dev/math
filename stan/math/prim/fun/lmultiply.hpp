@@ -15,14 +15,14 @@ namespace math {
  * `lmultiply(x, y) = x * log(y)` if `x` or `y` is non-zero and
  * `lmultiply(0, 0) = 0` otherwise.
  *
- * @tparam T1 type of the first argument
- * @tparam T2 type of the second argument
+ * @tparam Scalar1 type of the first argument
+ * @tparam Scalar2 type of the second argument
  * @param a first argument
  * @param b second argument
  * @return the first argument times the log of the second argument
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
+template <typename Scalar1, typename Scalar2, require_all_arithmetic_t<Scalar1, Scalar2>* = nullptr>
+inline return_type_t<Scalar1, Scalar2> lmultiply(const Scalar1 a, const Scalar2 b) {
   using std::log;
   if (a == 0 && b == 0) {
     return 0;
@@ -35,15 +35,15 @@ inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
  * elementwise, with broadcasting if one of the arguments is a scalar.
  * At least one of the arguments must be a container.
  *
- * @tparam T1 type of the first argument
- * @tparam T2 type of the second argument
+ * @tparam Container1 type of the first argument
+ * @tparam Container2 type of the second argument
  * @param a first argument
  * @param b second argument
  * @return result of applying `lmultiply` to the arguments
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_var_matrix_t<T1, T2>* = nullptr>
-inline auto lmultiply(const T1& a, const T2& b) {
+template <typename Container1, typename Container2, require_any_container_t<Container1, Container2>* = nullptr,
+          require_all_not_var_matrix_t<Container1, Container2>* = nullptr>
+inline auto lmultiply(const Container1& a, const Container2& b) {
   return apply_scalar_binary(
       a, b, [&](const auto& c, const auto& d) { return lmultiply(c, d); });
 }

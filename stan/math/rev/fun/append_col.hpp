@@ -23,36 +23,36 @@ namespace math {
  * (vector, vector) -> matrix,
  * (row vector, row vector) -> row_vector.
  *
- * @tparam T1 A `var_value` with inner matrix type.
- * @tparam T1 A `var_value` with inner matrix type.
+ * @tparam Mat1 A `var_value` with inner matrix type.
+ * @tparam Mat2 A `var_value` with inner matrix type.
  *
  * @param A First matrix.
  * @param B Second matrix.
  * @return Result of appending the first matrix followed by the
  * second matrix side by side.
  */
-template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto append_col(const T1& A, const T2& B) {
+template <typename Mat1, typename Mat2, require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
+inline auto append_col(const Mat1& A, const Mat2& B) {
   check_size_match("append_col", "columns of A", A.rows(), "columns of B",
                    B.rows());
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
+    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
     return make_callback_var(
         append_col(value_of(arena_A), value_of(arena_B)),
         [arena_A, arena_B](auto& vi) mutable {
           arena_A.adj() += vi.adj().leftCols(arena_A.cols());
           arena_B.adj() += vi.adj().rightCols(arena_B.cols());
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+  } else if (!is_constant<Mat1>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
     return make_callback_var(append_col(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
                                arena_A.adj()
                                    += vi.adj().leftCols(arena_A.cols());
                              });
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
     return make_callback_var(append_col(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj()

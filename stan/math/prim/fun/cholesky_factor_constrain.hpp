@@ -18,18 +18,18 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
  * @return Cholesky factor
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N) {
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const EigVec& x, int M, int N) {
   using std::exp;
-  using T_scalar = value_type_t<T>;
+  using T_scalar = value_type_t<EigVec>;
   check_greater_or_equal("cholesky_factor_constrain",
                          "num rows (must be greater or equal to num cols)", M,
                          N);
@@ -62,7 +62,7 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * transform.  A total of (N choose 2) + N + N * (M - N) free parameters are
  * required to read an M by N Cholesky factor.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
  * @param M number of rows
@@ -71,9 +71,9 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * determinant
  * @return Cholesky factor
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const EigVec& x, int M, int N, return_type_t<EigVec>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -127,7 +127,7 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
+ * @tparam StdVec A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Vector of unconstrained values
@@ -136,10 +136,10 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp, M, N](auto&& v) {
+template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto cholesky_factor_constrain(const StdVec& x, int M, int N,
+                                      return_type_t<StdVec>& lp) {
+  return apply_vector_unary<StdVec>::apply(x, [&lp, M, N](auto&& v) {
     return cholesky_factor_constrain<Jacobian>(v, M, N, lp);
   });
 }

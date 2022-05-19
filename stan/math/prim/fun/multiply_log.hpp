@@ -59,15 +59,15 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
  * Enables the vectorised application of the multiply_log
  * function, when the first and/or second arguments are containers.
  *
- * @tparam T1 type of first input
- * @tparam T2 type of second input
+ * @tparam Container1 type of first input
+ * @tparam Container2 type of second input
  * @param a First input
  * @param b Second input
  * @return multiply_log function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_var_matrix_t<T1, T2>* = nullptr>
-inline auto multiply_log(const T1& a, const T2& b) {
+template <typename Container1, typename Container2, require_any_container_t<Container1, Container2>* = nullptr,
+          require_all_not_var_matrix_t<Container1, Container2>* = nullptr>
+inline auto multiply_log(const Container1& a, const Container2& b) {
   return apply_scalar_binary(
       a, b, [&](const auto& c, const auto& d) { return multiply_log(c, d); });
 }

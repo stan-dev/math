@@ -15,15 +15,15 @@ namespace math {
 /**
  * Returns the dot product of a vector of var with itself.
  *
- * @tparam T type of the vector (must have one compile time dimension equal to
+ * @tparam EigVec type of the vector (must have one compile time dimension equal to
  * 1)
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
-inline var dot_self(const T& v) {
+template <typename EigVec, require_eigen_vector_vt<is_var, EigVec>* = nullptr>
+inline var dot_self(const EigVec& v) {
   const auto& v_ref = to_ref(v);
-  arena_t<T> arena_v(v_ref.size());
+  arena_t<EigVec> arena_v(v_ref.size());
   double res_val = 0;
   for (size_t i = 0; i < arena_v.size(); ++i) {
     arena_v.coeffRef(i) = v_ref.coeffRef(i);
@@ -44,8 +44,8 @@ inline var dot_self(const T& v) {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline var dot_self(const T& v) {
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline var dot_self(const VarMat& v) {
   var res = v.val().dot(v.val());
   reverse_pass_callback(
       [res, v]() mutable { v.adj() += (2.0 * res.adj()) * v.val(); });

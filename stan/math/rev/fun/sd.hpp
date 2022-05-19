@@ -17,16 +17,16 @@ namespace math {
  * Return the sample standard deviation of a variable which
  * inherits from EigenBase.
  *
- * @tparam T Input type
+ * @tparam EigVarMat Input type
  * @param[in] x input
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T, require_eigen_st<is_var, T>* = nullptr>
-var sd(const T& x) {
+template <typename EigVarMat, require_eigen_st<is_var, EigVarMat>* = nullptr>
+var sd(const EigVarMat& x) {
   using std::sqrt;
-  using T_vi = promote_scalar_t<vari*, T>;
-  using T_d = promote_scalar_t<double, T>;
+  using T_vi = promote_scalar_t<vari*, EigVarMat>;
+  using T_d = promote_scalar_t<double, EigVarMat>;
 
   check_nonzero_size("sd", "x", x);
 
@@ -60,13 +60,13 @@ var sd(const T& x) {
 /**
  * Return the sample standard deviation of the var_value matrix
  *
- * @tparam T Input type
+ * @tparam VarMat Input type
  * @param[in] x input matrix
  * @return sample standard deviation of specified matrix
  * @throw domain error  size is not greater than zero.
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-var sd(const T& x) {
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+var sd(const VarMat& x) {
   check_nonzero_size("sd", "x", x);
 
   if (x.size() == 1) {
@@ -86,14 +86,14 @@ var sd(const T& x) {
  * Return the sample standard deviation of the specified std vector, column
  * vector, row vector, matrix, or std vector of any of these types.
  *
- * @tparam T Input type
+ * @tparam VarMat Input type
  * @param[in] m input matrix
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-auto sd(const T& m) {
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) { return sd(x); });
+template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
+auto sd(const StdVec& m) {
+  return apply_vector_unary<StdVec>::reduce(m, [](const auto& x) { return sd(x); });
 }
 
 }  // namespace math

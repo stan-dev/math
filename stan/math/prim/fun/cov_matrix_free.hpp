@@ -61,13 +61,13 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
 /**
  * Overload of `cov_matrix_free()` to untransform each matrix
  * in a standard vector.
- * @tparam T A standard vector with with a `value_type` which inherits from
+ * @tparam StdVec A standard vector with with a `value_type` which inherits from
  *  `Eigen::MatrixBase`.
  * @param x The standard vector to untransform.
  */
-template <typename T, require_std_vector_t<T>* = nullptr>
-auto cov_matrix_free(const T& x) {
-  return apply_vector_unary<T>::apply(
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+auto cov_matrix_free(const StdVec& x) {
+  return apply_vector_unary<StdVec>::apply(
       x, [](auto&& v) { return cov_matrix_free(v); });
 }
 

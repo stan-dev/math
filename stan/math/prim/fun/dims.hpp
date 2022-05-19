@@ -12,22 +12,23 @@ namespace math {
  * Pushes dimensions of given argument into given result vector.
  *
  * For a scalar that is a no-op.
- * @tparam type of scalar
+ * @tparam Scalar type of scalar
  * @param x argument
  * @param result result
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline void dims(const T& x, std::vector<int>& result) {}
+template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+inline void dims(const Scalar& x, std::vector<int>& result) {}
 
 /**
  * Pushes dimensions of given argument into given result vector.
  *
  * For an Eigen type those are the numbers of rows and columns.
+ * @tparam Mat A Matrix
  * @param x argument
  * @param result result
  */
-template <typename T, require_matrix_t<T>* = nullptr>
-inline void dims(const T& x, std::vector<int>& result) {
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
+inline void dims(const Mat& x, std::vector<int>& result) {
   result.push_back(x.rows());
   result.push_back(x.cols());
 }

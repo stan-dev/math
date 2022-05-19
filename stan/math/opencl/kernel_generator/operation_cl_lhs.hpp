@@ -104,7 +104,6 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   /**
    * Evaluates an expression and assigns it to this.
    * @tparam T_expression type of expression
-   * @param rhs input expression
    */
   template <typename T_expression,
             typename
@@ -121,9 +120,12 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
     expression.evaluate_into(derived());
     return derived();
   }
-  // Copy assignment delegates to general assignment operator. If we didn't
-  // implement this, we would get ambiguities in overload resolution with
-  // implicitly generated one
+  /*
+   * Copy assignment delegates to general assignment operator. If we didn't
+   * implement this, we would get ambiguities in overload resolution with
+   * implicitly generated one
+   * @param rhs input expression
+   */
   inline const operation_cl_lhs<Derived, Scalar, Args...>& operator=(
       const operation_cl_lhs<Derived, Scalar, Args...>& rhs) const {
     return operator=<const operation_cl_lhs<Derived, Scalar, Args...>&>(rhs);

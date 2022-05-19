@@ -45,15 +45,15 @@ inline auto ceil(const Container& x) {
  * Version of `ceil()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
- * @tparam Container Type of x
+ * @tparam ArithContainer Type of x
  * @param x Container
  * @return Least integer >= each value in x.
  */
-template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr>
-inline auto ceil(const Container& x) {
-  return apply_vector_unary<Container>::apply(
+template <typename ArithContainer,
+          require_container_st<std::is_arithmetic, ArithContainer>* = nullptr,
+          require_not_var_matrix_t<ArithContainer>* = nullptr>
+inline auto ceil(const ArithContainer& x) {
+  return apply_vector_unary<ArithContainer>::apply(
       x, [](const auto& v) { return v.array().ceil(); });
 }
 

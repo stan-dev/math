@@ -17,7 +17,7 @@ namespace math {
 /**
  * Throw an exception if the specified vector is not sorted into strictly
  * increasing order.
- * @tparam T_y A type inheriting from EigenBase with either 1 compile time row
+ * @tparam Vec A type inheriting from EigenBase with either 1 compile time row
  * or column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -25,9 +25,9 @@ namespace math {
  * @throw `std::domain_error` if the vector elements are not ordered, if there
  * are duplicated values, or if any element is `NaN`
  */
-template <typename T_y, require_vector_t<T_y>* = nullptr,
-          require_not_std_vector_t<T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+template <typename Vec, require_vector_t<Vec>* = nullptr,
+          require_not_std_vector_t<Vec>* = nullptr>
+void check_ordered(const char* function, const char* name, const Vec& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] > y_ref[n - 1])) {
@@ -50,15 +50,15 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 /**
  * Throw an exception if the specified vector is not sorted into strictly
  * increasing order.
- * @tparam T_y A standard vector with inner scalar type
+ * @tparam StdVec A standard vector with inner scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y `std::vector` to test
  * @throw `std::domain_error` if the vector elements are not ordered, if there
  * are duplicated values, or if any element is `NaN`
  */
-template <typename T_y, require_std_vector_vt<is_stan_scalar, T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+template <typename StdVec, require_std_vector_vt<is_stan_scalar, StdVec>* = nullptr>
+void check_ordered(const char* function, const char* name, const StdVec& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       [&]() STAN_COLD_PATH {
@@ -80,16 +80,16 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 /**
  * Throw an exception if each vector in a standard vector is not sorted into
  * strictly increasing order.
- * @tparam T_y A standard vector with an inner vector type
+ * @tparam Container A standard vector with an inner vector type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y `std::vector` to test
  * @throw `std::domain_error` if the vector elements are not ordered, if there
  * are duplicated values, or if any element is `NaN`
  */
-template <typename T_y, require_std_vector_t<T_y>* = nullptr,
-          require_not_vt_stan_scalar<T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+template <typename Container, require_std_vector_t<Container>* = nullptr,
+          require_not_vt_stan_scalar<Container>* = nullptr>
+void check_ordered(const char* function, const char* name, const Container& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_ordered(function, internal::make_iter_name(name, i).c_str(), y[i]);
   }

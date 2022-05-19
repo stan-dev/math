@@ -13,8 +13,8 @@ namespace math {
 
 /**
  * Check if the two containers have the same dimensions.
- * @tparam T1 type of the first container
- * @tparam T2 type of the second container
+ * @tparam Container1 type of the first container
+ * @tparam Container2 type of the second container
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first container to test
@@ -23,11 +23,11 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename T1, typename T2, require_all_not_matrix_t<T1, T2>* = nullptr,
+template <typename Container1, typename Container2, require_all_not_matrix_t<Container1, Container2>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T1, T2>* = nullptr>
+              Container1, Container2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const T1& y1, const char* name2, const T2& y2) {
+                                const Container1& y1, const char* name2, const Container2& y2) {
   std::vector<int> y1_d = dims(y1);
   std::vector<int> y2_d = dims(y2);
   bool error = false;
@@ -64,8 +64,8 @@ inline void check_matching_dims(const char* function, const char* name1,
 
 /**
  * Check if two matrices have the same row and column dimensions.
- * @tparam T1 Either an Eigen type or a `var_value` with underlying Eigen type.
- * @tparam T2 Either an Eigen type or a `var_value` with underlying Eigen type.
+ * @tparam Mat1 Either an Eigen type or a `var_value` with underlying Eigen type.
+ * @tparam Mat2 Either an Eigen type or a `var_value` with underlying Eigen type.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first matrix to test
@@ -75,13 +75,13 @@ inline void check_matching_dims(const char* function, const char* name1,
  *    containers do not match
  */
 template <
-    typename T1, typename T2,
-    require_any_t<conjunction<is_matrix<T1>, is_matrix<T2>>,
-                  conjunction<is_prim_or_rev_kernel_expression<T1>,
-                              is_prim_or_rev_kernel_expression<T2>>>* = nullptr,
-    require_any_not_stan_scalar_t<T1, T2>* = nullptr>
+    typename Mat1, typename Mat2,
+    require_any_t<conjunction<is_matrix<Mat1>, is_matrix<Mat2>>,
+                  conjunction<is_prim_or_rev_kernel_expression<Mat1>,
+                              is_prim_or_rev_kernel_expression<Mat2>>>* = nullptr,
+    require_any_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const T1& y1, const char* name2, const T2& y2) {
+                                const Mat1& y1, const char* name2, const Mat2& y2) {
   if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {
     [&]() STAN_COLD_PATH {
       std::ostringstream y1_err;
@@ -123,8 +123,8 @@ inline void check_matching_dims(const char* function, const char* name1,
  * sizes as well. For example, a 4x1 matrix is not the same as a vector
  * with 4 elements.
  * @tparam check_compile Whether to check the static sizes
- * @tparam Mat1 type of the first matrix
- * @tparam Mat2 type of the second matrix
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the second matrix
  * @param function name of function (for error messages)
  * @param name1 variable name for the first matrix (for error messages)
  * @param y1 first matrix to test
@@ -133,16 +133,16 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the matrices
  *    do not match
  */
-template <bool check_compile, typename Mat1, typename Mat2,
-          typename = require_all_eigen_t<Mat1, Mat2>>
+template <bool check_compile, typename EigMat1, typename EigMat2,
+          typename = require_all_eigen_t<EigMat1, EigMat2>>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Mat1& y1, const char* name2,
-                                const Mat2& y2) {
+                                const EigMat1& y1, const char* name2,
+                                const EigMat2& y2) {
   if (check_compile
-      && (static_cast<int>(Mat1::RowsAtCompileTime)
-              != static_cast<int>(Mat2::RowsAtCompileTime)
-          || static_cast<int>(Mat1::ColsAtCompileTime)
-                 != static_cast<int>(Mat2::ColsAtCompileTime))) {
+      && (static_cast<int>(EigMat1::RowsAtCompileTime)
+              != static_cast<int>(EigMat2::RowsAtCompileTime)
+          || static_cast<int>(EigMat1::ColsAtCompileTime)
+                 != static_cast<int>(EigMat2::ColsAtCompileTime))) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
       msg << "Static rows and cols of " << name1 << " and " << name2

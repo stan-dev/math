@@ -11,18 +11,18 @@ namespace stan {
 namespace math {
 
 /**
- * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
  * a set of times, `{ t1, t2, t3, ... }` using IDAS.
  *
- * \p `f` must define an `operator()` with the signature as:
+ * `f` must define an `operator()` with the signature as:
  *
- * ```
+ * ~~~~~~~~~~~~~{.cpp}
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
- * ```
+ * ~~~~~~~~~~~~~
  *
  * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
  * state derivative, `msgs` a stream for error
@@ -87,19 +87,18 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
 }
 
 /**
- * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
- * a set of times, `{ t1, t2, t3, ... }` using IDAS.
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
+ * a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming default controls
+ * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
+ * `f` must define an `operator()` with the signature as:
  *
- * \p `f` must define an `operator()` with the signature as:
- *
- * ```
+ * ~~~~~~~~~~~~~{.cpp}
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
- * ```
-
+ * ~~~~~~~~~~~~~
  * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
  * state derivative, `msgs` a stream for error
  * messages, and `args` the optional arguments passed to the DAE solve function
@@ -135,18 +134,18 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
 }
 
 /**
- * Solve the DAE initial value problem \f$f(t, y, y')=0\f$, \f$y(t0) = yy0\f$, \f$y'(t0)=yp0\f$ at
+ * Solve the DAE initial value problem `f(t, y, y')=0`, `y(t0) = yy0`, `y'(t0)=yp0` at
  * a set of times, `{ t1, t2, t3, ... }` using IDAS, assuming default controls
  * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
  *
- * \p `f` must define an `operator()` with the signature as:
- * ```
+ * `f` must define an `operator()` with the signature as:
+ * ~~~~~~~~~~~~~{.cpp}
  *   template<typename T_yy, typename T_yp, typename... T_Args>
  *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
  * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
- * ```
+ * ~~~~~~~~~~~~~
  *
  * `t` is the time, `yy` the vector-valued state, `yp` the vector-valued
  * state derivative, `msgs` a stream for error

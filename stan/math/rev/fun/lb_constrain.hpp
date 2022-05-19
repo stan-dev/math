@@ -31,20 +31,20 @@ namespace math {
  * <p>If the lower bound is negative infinity, this function
  * reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T Scalar
+ * @tparam ScalarT Scalar
  * @tparam L Scalar
  * @param[in] x Unconstrained input
  * @param[in] lb lower bound on constrained output
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
-          require_any_var_t<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+template <typename ScalarT, typename L, require_all_stan_scalar_t<ScalarT, L>* = nullptr,
+          require_any_var_t<ScalarT, L>* = nullptr>
+inline auto lb_constrain(const ScalarT& x, const L& lb) {
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
+    if (!is_constant<ScalarT>::value && !is_constant<L>::value) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(
           exp_x + lb_val,
@@ -52,7 +52,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
             arena_x.adj() += vi.adj() * exp_x;
             arena_lb.adj() += vi.adj();
           });
-    } else if (!is_constant<T>::value) {
+    } else if (!is_constant<ScalarT>::value) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(exp_x + lb_val,
                                [arena_x = var(x), exp_x](auto& vi) mutable {
@@ -80,22 +80,22 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * <p>If the lower bound is negative infinity, this function
  * reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T Scalar
+ * @tparam ScalarT Scalar
  * @tparam L Scalar
  * @param[in] x Unconstrained input
  * @param[in] lb lower bound on constrained output
  * @param[in,out] lp reference to log probability to increment
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
-          require_any_var_t<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, var& lp) {
+template <typename ScalarT, typename L, require_all_stan_scalar_t<ScalarT, L>* = nullptr,
+          require_any_var_t<ScalarT, L>* = nullptr>
+inline auto lb_constrain(const ScalarT& x, const L& lb, var& lp) {
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
     lp += value_of(x);
-    if (!is_constant<T>::value && !is_constant<L>::value) {
+    if (!is_constant<ScalarT>::value && !is_constant<L>::value) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(
           exp_x + lb_val,
@@ -103,7 +103,7 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
             arena_x.adj() += vi.adj() * exp_x + lp.adj();
             arena_lb.adj() += vi.adj();
           });
-    } else if (!is_constant<T>::value) {
+    } else if (!is_constant<ScalarT>::value) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(exp_x + lb_val,
                                [lp, arena_x = var(x), exp_x](auto& vi) mutable {
@@ -122,24 +122,24 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_matrix_t<T>* = nullptr,
+template <typename MatT, typename L, require_matrix_t<MatT>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
-          require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
-  using ret_type = return_var_matrix_t<T, T, L>;
+          require_any_st_var<MatT, L>* = nullptr>
+inline auto lb_constrain(const MatT& x, const L& lb) {
+  using ret_type = return_var_matrix_t<MatT, MatT, L>;
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return ret_type(identity_constrain(x, lb));
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    if (!is_constant<MatT>::value && !is_constant<L>::value) {
+      arena_t<promote_scalar_t<var, MatT>> arena_x = x;
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       reverse_pass_callback(
@@ -148,8 +148,8 @@ inline auto lb_constrain(const T& x, const L& lb) {
             arena_lb.adj() += ret.adj().sum();
           });
       return ret_type(ret);
-    } else if (!is_constant<T>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    } else if (!is_constant<MatT>::value) {
+      arena_t<promote_scalar_t<var, MatT>> arena_x = x;
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       reverse_pass_callback([arena_x, ret, exp_x]() mutable {
@@ -170,7 +170,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
  * @tparam L Scalar.
  * @param[in] x unconstrained input
@@ -178,17 +178,17 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_matrix_t<T>* = nullptr,
+template <typename MatT, typename L, require_matrix_t<MatT>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
-          require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  using ret_type = return_var_matrix_t<T, T, L>;
+          require_any_st_var<MatT, L>* = nullptr>
+inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp) {
+  using ret_type = return_var_matrix_t<MatT, MatT, L>;
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return ret_type(identity_constrain(x, lb));
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    if (!is_constant<MatT>::value && !is_constant<L>::value) {
+      arena_t<promote_scalar_t<var, MatT>> arena_x = x;
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       lp += arena_x.val().sum();
@@ -198,8 +198,8 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
             arena_lb.adj() += ret.adj().sum();
           });
       return ret_type(ret);
-    } else if (!is_constant<T>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    } else if (!is_constant<MatT>::value) {
+      arena_t<promote_scalar_t<var, MatT>> arena_x = x;
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       lp += arena_x.val().sum();
@@ -223,7 +223,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
  * @tparam L A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
@@ -231,13 +231,13 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
-          require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+template <typename MatT, typename L, require_all_matrix_t<MatT, L>* = nullptr,
+          require_any_st_var<MatT, L>* = nullptr>
+inline auto lb_constrain(const MatT& x, const L& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
-  using ret_type = return_var_matrix_t<T, T, L>;
-  if (!is_constant<T>::value && !is_constant<L>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+  using ret_type = return_var_matrix_t<MatT, MatT, L>;
+  if (!is_constant<MatT>::value && !is_constant<L>::value) {
+    arena_t<promote_scalar_t<var, MatT>> arena_x = x;
     arena_t<promote_scalar_t<var, L>> arena_lb = lb;
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     auto precomp_x_exp = to_arena((arena_x.val().array()).exp());
@@ -252,8 +252,8 @@ inline auto lb_constrain(const T& x, const L& lb) {
       arena_lb.adj().array() += (is_not_inf_lb).select(ret.adj().array(), 0);
     });
     return ret_type(ret);
-  } else if (!is_constant<T>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+  } else if (!is_constant<MatT>::value) {
+    arena_t<promote_scalar_t<var, MatT>> arena_x = x;
     auto lb_ref = to_ref(value_of(lb));
     auto is_not_inf_lb = to_arena((lb_ref.array() != NEGATIVE_INFTY));
     auto precomp_x_exp = to_arena((arena_x.val().array()).exp());
@@ -286,7 +286,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase` or a `var_value` with inner type
+ * @tparam MatT A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
  * @tparam L A type inheriting from `EigenBase` or a `var_value` with inner type
  * inheriting from `EigenBase`.
@@ -295,13 +295,13 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
-          require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <typename MatT, typename L, require_all_matrix_t<MatT, L>* = nullptr,
+          require_any_st_var<MatT, L>* = nullptr>
+inline auto lb_constrain(const MatT& x, const L& lb, return_type_t<MatT, L>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
-  using ret_type = return_var_matrix_t<T, T, L>;
-  if (!is_constant<T>::value && !is_constant<L>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+  using ret_type = return_var_matrix_t<MatT, MatT, L>;
+  if (!is_constant<MatT>::value && !is_constant<L>::value) {
+    arena_t<promote_scalar_t<var, MatT>> arena_x = x;
     arena_t<promote_scalar_t<var, L>> arena_lb = lb;
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     auto exp_x = to_arena(arena_x.val().array().exp());
@@ -326,8 +326,8 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
           }
         });
     return ret_type(ret);
-  } else if (!is_constant<T>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+  } else if (!is_constant<MatT>::value) {
+    arena_t<promote_scalar_t<var, MatT>> arena_x = x;
     auto lb_val = value_of(lb).array();
     auto is_not_inf_lb = to_arena((lb_val != NEGATIVE_INFTY));
     auto exp_x = to_arena(arena_x.val().array().exp());

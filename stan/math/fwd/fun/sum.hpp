@@ -35,17 +35,17 @@ inline fvar<T> sum(const std::vector<fvar<T>>& m) {
 /**
  * Return the sum of the entries of the specified matrix.
  *
- * @tparam T type of the matrix
+ * @tparam FvarEig type of the matrix
  *
  * @param m Matrix.
  * @return Sum of matrix entries.
  */
-template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
-inline value_type_t<T> sum(const T& m) {
+template <typename FvarEig, require_eigen_vt<is_fvar, FvarEig>* = nullptr>
+inline value_type_t<FvarEig> sum(const FvarEig& m) {
   if (m.size() == 0) {
     return 0.0;
   }
-  const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
+  const Eigen::Ref<const plain_type_t<FvarEig>>& m_ref = m;
   return {sum(m_ref.val()), sum(m_ref.d())};
 }
 

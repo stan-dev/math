@@ -89,22 +89,22 @@ inline var multiply_log(double a, const var& b) {
 /**
  * Return the elementwise product `a * log(b)`.
  *
- * Both `T1` and `T2` are matrices, and one of `T1` or `T2` must be a
+ * Both `RevMat1` and `RevMat2` are matrices, and one of `RevMat1` or `RevMat2` must be a
  * `var_value`
  *
- * @tparam T1 Type of first argument
- * @tparam T2 Type of second argument
+ * @tparam RevMat1 Type of first argument
+ * @tparam RevMat2 Type of second argument
  * @param a First argument
  * @param b Second argument
  * @return elementwise product of `a` and `log(b)`
  */
-template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto multiply_log(const T1& a, const T2& b) {
+template <typename RevMat1, typename RevMat2, require_all_matrix_t<RevMat1, RevMat2>* = nullptr,
+          require_any_var_matrix_t<RevMat1, RevMat2>* = nullptr>
+inline auto multiply_log(const RevMat1& a, const RevMat2& b) {
   check_matching_dims("multiply_log", "a", a, "b", b);
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
+  if (!is_constant<RevMat1>::value && !is_constant<RevMat2>::value) {
+    arena_t<promote_scalar_t<var, RevMat1>> arena_a = a;
+    arena_t<promote_scalar_t<var, RevMat2>> arena_b = b;
 
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
@@ -114,9 +114,9 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj().array() += res.adj().array() * arena_a.val().array()
                                    / arena_b.val().array();
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
+  } else if (!is_constant<RevMat1>::value) {
+    arena_t<promote_scalar_t<var, RevMat1>> arena_a = a;
+    arena_t<promote_scalar_t<double, RevMat2>> arena_b = value_of(b);
 
     return make_callback_var(multiply_log(arena_a.val(), arena_b),
                              [arena_a, arena_b](const auto& res) mutable {
@@ -125,8 +125,8 @@ inline auto multiply_log(const T1& a, const T2& b) {
                                       * arena_b.val().array().log();
                              });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
+    arena_t<promote_scalar_t<double, RevMat1>> arena_a = value_of(a);
+    arena_t<promote_scalar_t<var, RevMat2>> arena_b = b;
 
     return make_callback_var(multiply_log(arena_a, arena_b.val()),
                              [arena_a, arena_b](const auto& res) mutable {
@@ -140,19 +140,19 @@ inline auto multiply_log(const T1& a, const T2& b) {
 /**
  * Return the product `a * log(b)`.
  *
- * @tparam T1 Type of matrix argument
- * @tparam T2 Type of scalar argument
+ * @tparam RevMat1 Type of matrix argument
+ * @tparam Scalar2 Type of scalar argument
  * @param a Matrix argument
  * @param b Scalar argument
  * @return Product of `a` and `log(b)`
  */
-template <typename T1, typename T2, require_var_matrix_t<T1>* = nullptr,
-          require_stan_scalar_t<T2>* = nullptr>
-inline auto multiply_log(const T1& a, const T2& b) {
+template <typename RevMat1, typename Scalar2, require_var_matrix_t<RevMat1>* = nullptr,
+          require_stan_scalar_t<Scalar2>* = nullptr>
+inline auto multiply_log(const RevMat1& a, const Scalar2& b) {
   using std::log;
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
+  if (!is_constant<RevMat1>::value && !is_constant<Scalar2>::value) {
+    arena_t<promote_scalar_t<var, RevMat1>> arena_a = a;
     var arena_b = b;
 
     return make_callback_var(
@@ -162,8 +162,8 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj() += (res.adj().array() * arena_a.val().array()).sum()
                            / arena_b.val();
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
+  } else if (!is_constant<RevMat1>::value) {
+    arena_t<promote_scalar_t<var, RevMat1>> arena_a = a;
 
     return make_callback_var(multiply_log(arena_a.val(), value_of(b)),
                              [arena_a, b](const auto& res) mutable {
@@ -171,7 +171,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
                                    += res.adj().array() * log(value_of(b));
                              });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
+    arena_t<promote_scalar_t<double, RevMat1>> arena_a = value_of(a);
     var arena_b = b;
 
     return make_callback_var(
@@ -186,18 +186,18 @@ inline auto multiply_log(const T1& a, const T2& b) {
 /**
  * Return the product `a * log(b)`.
  *
- * @tparam T1 Type of scalar argument
- * @tparam T2 Type of matrix argument
+ * @tparam Scalar1 Type of scalar argument
+ * @tparam RevMat2 Type of matrix argument
  * @param a Scalar argument
  * @param b Matrix argument
  * @return Product of `a` and `log(b)`
  */
-template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
-          require_var_matrix_t<T2>* = nullptr>
-inline auto multiply_log(const T1& a, const T2& b) {
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+template <typename Scalar1, typename RevMat2, require_stan_scalar_t<Scalar1>* = nullptr,
+          require_var_matrix_t<RevMat2>* = nullptr>
+inline auto multiply_log(const Scalar1& a, const RevMat2& b) {
+  if (!is_constant<Scalar1>::value && !is_constant<RevMat2>::value) {
     var arena_a = a;
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
+    arena_t<promote_scalar_t<var, RevMat2>> arena_b = b;
 
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
@@ -207,9 +207,9 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj().array()
               += arena_a.val() * res.adj().array() / arena_b.val().array();
         });
-  } else if (!is_constant<T1>::value) {
+  } else if (!is_constant<Scalar1>::value) {
     var arena_a = a;
-    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
+    arena_t<promote_scalar_t<double, RevMat2>> arena_b = value_of(b);
 
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b),
@@ -218,7 +218,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
               += (res.adj().array() * arena_b.val().array().log()).sum();
         });
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
+    arena_t<promote_scalar_t<var, RevMat2>> arena_b = b;
 
     return make_callback_var(multiply_log(value_of(a), arena_b.val()),
                              [a, arena_b](const auto& res) mutable {

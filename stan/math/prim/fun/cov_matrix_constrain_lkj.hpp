@@ -22,7 +22,7 @@ namespace math {
  * in <code>corr_matrix_constrain(Matrix, size_t)</code>
  * with the constrained deviations.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
@@ -30,9 +30,9 @@ namespace math {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const EigVec& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = to_ref(x);
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
@@ -45,7 +45,7 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  * values and increment the specified log probability reference
  * with the log absolute Jacobian determinant.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
@@ -54,9 +54,9 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const EigVec& x, size_t k, return_type_t<EigVec>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = x;
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
@@ -103,7 +103,7 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
+ * @tparam StdVec A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time rows or columns equal to 1
  * @param x Input vector of unconstrained partial correlations and
@@ -113,10 +113,10 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
-                                     return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp, k](auto&& v) {
+template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto cov_matrix_constrain_lkj(const StdVec& x, size_t k,
+                                     return_type_t<StdVec>& lp) {
+  return apply_vector_unary<StdVec>::apply(x, [&lp, k](auto&& v) {
     return cov_matrix_constrain_lkj<Jacobian>(v, k, lp);
   });
 }

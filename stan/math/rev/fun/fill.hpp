@@ -15,14 +15,14 @@ namespace math {
  * The specified matrix is filled by element.
  *
  * @tparam VarMat a `var_value` with inner type from `EigenBase`
- * @tparam S A var.
+ * @tparam Var A var.
  *
  * @param x Container.
  * @param y Value.
  */
-template <typename VarMat, typename S, require_var_matrix_t<VarMat>* = nullptr,
-          require_var_t<S>* = nullptr>
-inline void fill(VarMat& x, const S& y) {
+template <typename VarMat, typename Var, require_var_matrix_t<VarMat>* = nullptr,
+          require_var_t<Var>* = nullptr>
+inline void fill(VarMat& x, const Var& y) {
   arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();
   x.vi_->val_.fill(y.val());
   reverse_pass_callback([x, y, prev_vals]() mutable {
@@ -38,14 +38,14 @@ inline void fill(VarMat& x, const S& y) {
  * The specified matrix is filled by element.
  *
  * @tparam VarMat a `var_value` with inner type from `EigenBase`
- * @tparam S An arithmetic type.
+ * @tparam Arith An arithmetic type.
  *
  * @param x Container.
  * @param y Value.
  */
-template <typename VarMat, typename S, require_var_matrix_t<VarMat>* = nullptr,
-          require_arithmetic_t<S>* = nullptr>
-inline void fill(VarMat& x, const S& y) {
+template <typename VarMat, typename Arith, require_var_matrix_t<VarMat>* = nullptr,
+          require_arithmetic_t<Arith>* = nullptr>
+inline void fill(VarMat& x, const Arith& y) {
   arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();
   x.vi_->val_.fill(y);
   reverse_pass_callback([x, prev_vals]() mutable {

@@ -26,19 +26,19 @@ namespace math {
  *
  * <p>where \f$U\f$ is the constant upper bound.
  *
- * @tparam T_x kernel generator expression
- * @tparam T_ub kernel generator expression
+ * @tparam T_xcl kernel generator expression
+ * @tparam T_ubcl kernel generator expression
  * @param[in] x unconstrained input
  * @param[in] ub upper bound
  * @return constrained matrix
  */
-template <typename T_x, typename T_ub,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_ub>* = nullptr,
-          require_any_var_t<T_x, T_ub>* = nullptr,
-          require_any_not_stan_scalar_t<T_x, T_ub>* = nullptr>
-inline var_value<matrix_cl<double>> ub_constrain(T_x&& x, T_ub&& ub) {
-  arena_t<T_x> x_arena = std::forward<T_x>(x);
-  arena_t<T_ub> ub_arena = std::forward<T_ub>(ub);
+template <typename T_xcl, typename T_ubcl,
+          require_all_prim_or_rev_kernel_expression_t<T_xcl, T_ubcl>* = nullptr,
+          require_any_var_t<T_xcl, T_ubcl>* = nullptr,
+          require_any_not_stan_scalar_t<T_xcl, T_ubcl>* = nullptr>
+inline var_value<matrix_cl<double>> ub_constrain(T_xcl&& x, T_ubcl&& ub) {
+  arena_t<T_xcl> x_arena = std::forward<T_xcl>(x);
+  arena_t<T_ubcl> ub_arena = std::forward<T_ubcl>(ub);
 
   return make_callback_var(
       ub_constrain(value_of(x_arena), value_of(ub_arena)),
@@ -61,20 +61,20 @@ inline var_value<matrix_cl<double>> ub_constrain(T_x&& x, T_ub&& ub) {
  *
  * <p>where \f$U\f$ is the constant upper bound.
  *
- * @tparam T_x kernel generator expression
- * @tparam T_ub kernel generator expression
+ * @tparam T_xcl kernel generator expression
+ * @tparam T_ubcl kernel generator expression
  * @param[in] x unconstrained input
  * @param[in] ub upper bound
  * @param[in,out] lp reference to log probability to increment
  * @return constrained matrix
  */
-template <typename T_x, typename T_ub,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_ub>* = nullptr,
-          require_any_var_t<T_x, T_ub>* = nullptr,
-          require_any_not_stan_scalar_t<T_x, T_ub>* = nullptr>
-inline var_value<matrix_cl<double>> ub_constrain(T_x&& x, T_ub&& ub, var& lp) {
-  arena_t<T_x> x_arena = std::forward<T_x>(x);
-  arena_t<T_ub> ub_arena = std::forward<T_ub>(ub);
+template <typename T_xcl, typename T_ubcl,
+          require_all_prim_or_rev_kernel_expression_t<T_xcl, T_ubcl>* = nullptr,
+          require_any_var_t<T_xcl, T_ubcl>* = nullptr,
+          require_any_not_stan_scalar_t<T_xcl, T_ubcl>* = nullptr>
+inline var_value<matrix_cl<double>> ub_constrain(T_xcl&& x, T_ubcl&& ub, var& lp) {
+  arena_t<T_xcl> x_arena = std::forward<T_xcl>(x);
+  arena_t<T_ubcl> ub_arena = std::forward<T_ubcl>(ub);
 
   double lp_inc = 0;
   matrix_cl<double> res

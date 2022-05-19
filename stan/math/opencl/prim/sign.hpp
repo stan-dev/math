@@ -9,13 +9,13 @@ namespace math {
 
 /**
  * Returns signs of the arguments.
- * @tparam T type of the argument (`matrix_cl` or kernel generator expression)
+ * @tparam Matcl type of the argument (`matrix_cl` or kernel generator expression)
  * @param x the argument
  * @return sign of `x`
  */
-template <typename T,
-          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-auto sign(const T& x) {
+template <typename Matcl,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl>* = nullptr>
+auto sign(const Matcl& x) {
   return select(x == 0, 0, select(x < 0, -1, 1));
 }
 

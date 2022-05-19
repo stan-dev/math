@@ -21,18 +21,18 @@ namespace math {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ * @tparam RevColVec type inheriting from `EigenBase` that has a `var`
  *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y) {
-  using ret_type = return_var_matrix_t<T>;
+template <typename RevColVec, require_rev_col_vector_t<RevColVec>* = nullptr>
+inline auto unit_vector_constrain(const RevColVec& y) {
+  using ret_type = return_var_matrix_t<RevColVec>;
   check_nonzero_size("unit_vector", "y", y);
 
-  arena_t<T> arena_y = y;
-  arena_t<promote_scalar_t<double, T>> arena_y_val = arena_y.val();
+  arena_t<RevColVec> arena_y = y;
+  arena_t<promote_scalar_t<double, RevColVec>> arena_y_val = arena_y.val();
 
   const double r = arena_y_val.norm();
   arena_t<ret_type> res = arena_y_val / r;
@@ -57,8 +57,8 @@ inline auto unit_vector_constrain(const T& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, var& lp) {
+template <typename EigVarColVec, require_eigen_col_vector_vt<is_var, EigVarColVec>* = nullptr>
+inline auto unit_vector_constrain(const EigVarColVec& y, var& lp) {
   const auto& y_ref = to_ref(y);
   auto x = unit_vector_constrain(y_ref);
   lp -= 0.5 * dot_self(y_ref);
@@ -75,8 +75,8 @@ inline auto unit_vector_constrain(const T& y, var& lp) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <typename T, require_var_col_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, var& lp) {
+template <typename VarColVec, require_var_col_vector_t<VarColVec>* = nullptr>
+inline auto unit_vector_constrain(const VarColVec& y, var& lp) {
   auto x = unit_vector_constrain(y);
   lp -= 0.5 * dot_self(y);
   return x;

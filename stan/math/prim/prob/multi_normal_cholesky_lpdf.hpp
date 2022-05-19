@@ -37,23 +37,23 @@ namespace math {
  * @return The log of the multivariate normal density.
  * @throw std::domain_error if LL' is not square, not symmetric,
  * or not semi-positive definite.
- * @tparam T_y Type of scalar.
+ * @tparam T_yy Type of scalar.
  * @tparam T_loc Type of location.
  * @tparam T_covar Type of scale.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_covar,
-          require_any_not_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
+template <bool propto, typename T_yy, typename T_loc, typename T_covar,
+          require_any_not_vector_vt<is_stan_scalar, T_yy, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
+              T_yy, T_loc, T_covar>* = nullptr>
+return_type_t<T_yy, T_loc, T_covar> multi_normal_cholesky_lpdf(
+    const T_yy& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
-  using T_return = return_type_t<T_y, T_loc, T_covar>;
-  using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
+  using T_return = return_type_t<T_yy, T_loc, T_covar>;
+  using T_partials_return = partials_return_t<T_yy, T_loc, T_covar>;
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
-  using T_y_ref = ref_type_t<T_y>;
+  using T_yy_ref = ref_type_t<T_yy>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_L_ref = ref_type_t<T_covar>;
 
@@ -64,10 +64,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     return 0;
   }
 
-  T_y_ref y_ref = y;
+  T_yy_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_L_ref L_ref = L;
-  vector_seq_view<T_y_ref> y_vec(y_ref);
+  vector_seq_view<T_yy_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
   const size_t size_vec = max_size_mvt(y, mu);
 
@@ -111,7 +111,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     return T_return(0);
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
+  operands_and_partials<T_yy_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
                                                                  L_ref);
 
   T_partials_return logp(0);
@@ -119,7 +119,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if (include_summand<propto, T_yy, T_loc, T_covar_elem>::value) {
     Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
         y_val_minus_mu_val(size_y, size_vec);
 
@@ -168,7 +168,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     logp -= 0.5 * sum(columns_dot_self(half));
 
     for (size_t i = 0; i < size_vec; i++) {
-      if (!is_constant_all<T_y>::value) {
+      if (!is_constant_all<T_yy>::value) {
         ops_partials.edge1_.partials_vec_[i] -= scaled_diff.col(i);
       }
       if (!is_constant_all<T_loc>::value) {

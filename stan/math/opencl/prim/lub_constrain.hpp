@@ -19,7 +19,7 @@ namespace math {
  *
  * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
  *
- * @tparam T matrix expression type
+ * @tparam MatclT matrix expression type
  * @tparam L lower bound expression type
  * @tparam U upper bound expression type
  * @param[in] x Free matrix to transform.
@@ -29,10 +29,10 @@ namespace math {
  *   the free matrix.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
-          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
+template <typename MatclT, typename L, typename U,
+          require_all_kernel_expressions_and_none_scalar_t<MatclT>* = nullptr,
           require_all_kernel_expressions_t<L, U>* = nullptr>
-inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
+inline matrix_cl<double> lub_constrain(const MatclT& x, const L& lb, const U& ub) {
   auto diff = ub - lb;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;
@@ -57,7 +57,7 @@ inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
  *
  * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
  *
- * @tparam T matrix expression type
+ * @tparam MatclT matrix expression type
  * @tparam L lower bound expression type
  * @tparam U upper bound expression type
  * @param[in] x Free matrix to transform.
@@ -68,11 +68,11 @@ inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
  *   the free matrix.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
-          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
+template <typename MatclT, typename L, typename U,
+          require_all_kernel_expressions_and_none_scalar_t<MatclT>* = nullptr,
           require_all_kernel_expressions_t<L, U>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+inline auto lub_constrain(const MatclT& x, const L& lb, const U& ub,
+                          return_type_t<MatclT, L, U>& lp) {
   auto diff = ub - lb;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;

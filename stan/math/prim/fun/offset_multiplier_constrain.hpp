@@ -281,11 +281,11 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam T1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam M1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam S1 A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output
@@ -295,9 +295,9 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <bool Jacobian, typename T, typename M, typename S>
-inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
-                                        return_type_t<T, M, S>& lp) {
+template <bool Jacobian, typename T1, typename M1, typename S1>
+inline auto offset_multiplier_constrain(const T1& x, const M1& mu, const S1& sigma,
+                                        return_type_t<T1, M1, S1>& lp) {
   if (Jacobian) {
     return offset_multiplier_constrain(x, mu, sigma, lp);
   } else {

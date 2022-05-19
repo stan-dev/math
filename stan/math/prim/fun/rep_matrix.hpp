@@ -12,16 +12,16 @@ namespace math {
  * Implementation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
  * @tparam Ret An Eigen type.
- * @tparam T A Scalar type.
+ * @tparam Scalar1 A Scalar type.
  * @param x A Scalar whose values are propogated to all values in the return
  * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
  */
-template <typename Ret, typename T,
+template <typename Ret, typename Scalar1,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, Ret>* = nullptr,
-          require_stan_scalar_t<T>* = nullptr>
-inline auto rep_matrix(const T& x, int m, int n) {
+          require_stan_scalar_t<Scalar1>* = nullptr>
+inline auto rep_matrix(const Scalar1& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
   return Ret::Constant(m, n, x);
@@ -30,16 +30,16 @@ inline auto rep_matrix(const T& x, int m, int n) {
 /**
  * Default Implementation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
- * @tparam T A Scalar type.
+ * @tparam Scalar2 A Scalar type.
  * @param x A Scalar whose values are propogated to all values in the return
  * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto rep_matrix(const T& x, int m, int n) {
+template <typename Scalar2, require_stan_scalar_t<Scalar2>* = nullptr>
+inline auto rep_matrix(const Scalar2& x, int m, int n) {
   return rep_matrix<
-      Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
+      Eigen::Matrix<return_type_t<Scalar2>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
 }
 
 /**

@@ -30,9 +30,9 @@ namespace math {
  *
  * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
  *
- * @tparam T Scalar.
- * @tparam L Scalar.
- * @tparam U Scalar.
+ * @tparam ScalarT Scalar.
+ * @tparam ScalarL Scalar.
+ * @tparam ScalarU Scalar.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -40,10 +40,10 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
-          require_all_stan_scalar_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
+template <typename ScalarT, typename ScalarL, typename ScalarU,
+          require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
+inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
   if (unlikely(is_ub_inf && is_lb_inf)) {
@@ -65,7 +65,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  * density with the log absolute Jacobian determinant.
  *
  * <p>The transform is as defined in
- * <code>lub_constrain(T, double, double)</code>.  The log absolute
+ * <code>lub_constrain(ScalarT, double, double)</code>.  The log absolute
  * Jacobian determinant is given by
  *
  * <p>\f$\log \left| \frac{d}{dx} \left(
@@ -80,9 +80,9 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  * <p>\f$ {} = \log (U - L) + \log (\mbox{logit}^{-1}(x))
  *                          + \log (1 - \mbox{logit}^{-1}(x))\f$
  *
- * @tparam T Scalar.
- * @tparam L Scalar.
- * @tparam U Scalar.
+ * @tparam ScalarT Scalar.
+ * @tparam ScalarL Scalar.
+ * @tparam ScalarU Scalar.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -91,10 +91,10 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
-          require_all_stan_scalar_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
+template <typename ScalarT, typename ScalarL, typename ScalarU,
+          require_all_stan_scalar_t<ScalarT, ScalarL, ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<ScalarT, ScalarL, ScalarU>>* = nullptr>
+inline auto lub_constrain(ScalarT&& x, ScalarL&& lb, ScalarU&& ub, return_type_t<ScalarT, ScalarL, ScalarU>& lp) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
   if (unlikely(is_ub_inf && is_lb_inf)) {
@@ -114,10 +114,10 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
 /**
  * Overload for Eigen matrix and scalar bounds.
  */
-template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
-          require_all_stan_scalar_t<L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+template <typename EigT, typename ScalarL, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+          require_all_stan_scalar_t<ScalarL, ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, ScalarL, ScalarU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const ScalarL& lb, const ScalarU& ub) {
   return eval(
       x.unaryExpr([ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
 }
@@ -125,11 +125,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 /**
  * Overload for Eigen matrix and scalar bounds plus lp.
  */
-template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
-          require_all_stan_scalar_t<L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+template <typename EigT, typename ScalarL, typename ScalarU, require_eigen_t<EigT>* = nullptr,
+          require_all_stan_scalar_t<ScalarL, ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, ScalarL, ScalarU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const ScalarL& lb, const ScalarU& ub,
+                          return_type_t<EigT, ScalarL, ScalarU>& lp) {
   return eval(x.unaryExpr(
       [lb, ub, &lp](auto&& xx) { return lub_constrain(xx, lb, ub, lp); }));
 }
@@ -138,11 +138,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
  * Overload for Eigen matrix with matrix lower bound and scalar upper
  * bound.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, L>* = nullptr,
-          require_stan_scalar_t<U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+template <typename EigT, typename EigL, typename ScalarU,
+          require_all_eigen_t<EigT, EigL>* = nullptr,
+          require_stan_scalar_t<ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, EigL, ScalarU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const EigL& lb, const ScalarU& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [ub](auto&& x, auto&& lb) { return lub_constrain(x, lb, ub); }));
@@ -152,12 +152,12 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  * Overload for Eigen matrix with matrix lower bound and scalar upper
  * bound plus lp.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, L>* = nullptr,
-          require_stan_scalar_t<U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+template <typename EigT, typename EigL, typename ScalarU,
+          require_all_eigen_t<EigT, EigL>* = nullptr,
+          require_stan_scalar_t<ScalarU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, EigL, ScalarU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const EigL& lb, const ScalarU& ub,
+                          return_type_t<EigT, EigL, ScalarU>& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(lb, [ub, &lp](auto&& x, auto&& lb) {
     return lub_constrain(x, lb, ub, lp);
@@ -168,11 +168,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
  * Overload for Eigen matrix with scalar lower bound and matrix upper
  * bound.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, U>* = nullptr,
-          require_stan_scalar_t<L>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+template <typename EigT, typename ScalarL, typename EigU,
+          require_all_eigen_t<EigT, EigU>* = nullptr,
+          require_stan_scalar_t<ScalarL>* = nullptr,
+          require_not_var_t<return_type_t<EigT, ScalarL, EigU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const ScalarL& lb, const EigU& ub) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [lb](auto&& x, auto&& ub) { return lub_constrain(x, lb, ub); }));
@@ -182,12 +182,12 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  * Overload for Eigen matrix with scalar lower bound and matrix upper
  * bound plus lp.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, U>* = nullptr,
-          require_stan_scalar_t<L>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+template <typename EigT, typename ScalarL, typename EigU,
+          require_all_eigen_t<EigT, EigU>* = nullptr,
+          require_stan_scalar_t<ScalarL>* = nullptr,
+          require_not_var_t<return_type_t<EigT, ScalarL, EigU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const ScalarL& lb, const EigU& ub,
+                          return_type_t<EigT, ScalarL, EigU>& lp) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(ub, [lb, &lp](auto&& x, auto&& ub) {
     return lub_constrain(x, lb, ub, lp);
@@ -197,16 +197,16 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 /**
  * Overload for Eigen matrix and matrix bounds.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+template <typename EigT, typename EigL, typename EigU,
+          require_all_eigen_t<EigT, EigL, EigU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, EigL, EigU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const EigL& lb, const EigU& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(
@@ -219,17 +219,17 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 /**
  * Overload for Eigen matrix and matrix bounds plus lp.
  */
-template <typename T, typename L, typename U,
-          require_all_eigen_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+template <typename EigT, typename EigL, typename EigU,
+          require_all_eigen_t<EigT, EigL, EigU>* = nullptr,
+          require_not_var_t<return_type_t<EigT, EigL, EigU>>* = nullptr>
+inline auto lub_constrain(const EigT& x, const EigL& lb, const EigU& ub,
+                          return_type_t<EigT, EigL, EigU>& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<EigT, EigL, EigU>, EigT> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(

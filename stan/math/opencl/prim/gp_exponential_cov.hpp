@@ -14,22 +14,22 @@ namespace math {
 /** \ingroup opencl
  * Matern exponential kernel on the GPU.
  *
- * @tparam T1 Type of the matrix
- * @tparam T2 Type of sigma
- * @tparam T3 Type of length_scale
+ * @tparam Matcl1 Type of the matrix
+ * @tparam Arith2 Type of sigma
+ * @tparam Arith3 Type of length_scale
  * @param x input vector or matrix
  * @param sigma standard deviation
  * @param length_scale length scale
  *
  * @return dot product covariance matrix that is positive semi-definite
  */
-template <typename T1, typename T2, typename T3,
-          require_all_kernel_expressions_and_none_scalar_t<T1>* = nullptr,
-          require_all_arithmetic_t<T2, T3>* = nullptr>
-inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
-    const T1& x, const T2 sigma, const T3 length_scale) {
+template <typename Matcl1, typename Arith2, typename Arith3,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl1>* = nullptr,
+          require_all_arithmetic_t<Arith2, Arith3>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Arith2, Arith3>> gp_exponential_cov(
+    const Matcl1& x, const Arith2 sigma, const Arith3 length_scale) {
   const auto& x_eval = x.eval();
-  matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
+  matrix_cl<return_type_t<Matcl1, Arith2, Arith3>> res(x.cols(), x.cols());
   int block_size = 16;
   int n_blocks = (x.cols() + block_size - 1) / block_size;
   int blocked_size = block_size * n_blocks;
@@ -50,10 +50,10 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
  * This function is for the cross covariance
  * matrix needed to compute the posterior predictive density.
  *
- * @tparam T1 Type of the first matrix
- * @tparam T2 Type of the second matrix
- * @tparam T3 Type of sigma
- * @tparam T4 Type of length scale
+ * @tparam Matcl1 Type of the first matrix
+ * @tparam Matcl2 Type of the second matrix
+ * @tparam Arith3 Type of sigma
+ * @tparam Arith4 Type of length scale
  * @param x first input vector or matrix
  * @param y second input vector or matrix
  * @param sigma standard deviation
@@ -61,13 +61,13 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
  *
  * @return dot product covariance matrix
  */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr,
-          require_all_arithmetic_t<T3, T4>* = nullptr>
-inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exponential_cov(
-    const T1& x, const T2& y, const T3 sigma, const T4 length_scale) {
+template <typename Matcl1, typename Matcl2, typename Arith3, typename Arith4,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2>* = nullptr,
+          require_all_arithmetic_t<Arith3, Arith4>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> gp_exponential_cov(
+    const Matcl1& x, const Matcl2& y, const Arith3 sigma, const Arith4 length_scale) {
   check_size_match("gp_exponential_cov_cross", "x", x.rows(), "y", y.rows());
-  matrix_cl<return_type_t<T1, T2, T3, T4>> res(x.cols(), y.cols());
+  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Arith4>> res(x.cols(), y.cols());
   const auto& x_eval = x.eval();
   const auto& y_eval = y.eval();
   int block_size = 16;
@@ -89,22 +89,22 @@ inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exponential_cov(
 /** \ingroup opencl
  * Squared exponential kernel on the GPU.
  *
- * @tparam T1 Type of the matrix
- * @tparam T2 Type of sigma
- * @tparam T3 Type of length_scale
+ * @tparam Matcl1 Type of the matrix
+ * @tparam Arith2 Type of sigma
+ * @tparam Matcl3 Type of length_scale
  * @param x input vector or matrix
  * @param sigma standard deviation
  * @param length_scale length scale
  *
  * @return Squared distance between elements of x.
  */
-template <typename T1, typename T2, typename T3,
-          require_all_kernel_expressions_and_none_scalar_t<T1, T3>* = nullptr,
-          require_all_arithmetic_t<T2>* = nullptr>
-inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
-    const T1& x, const T2 sigma, const T3 length_scale) {
+template <typename Matcl1, typename Arith2, typename Matcl3,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl3>* = nullptr,
+          require_all_arithmetic_t<Arith2>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Arith2, Matcl3>> gp_exponential_cov(
+    const Matcl1& x, const Arith2 sigma, const Matcl3& length_scale) {
   const auto& x_eval = elt_divide(x, rowwise_broadcast(length_scale)).eval();
-  matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
+  matrix_cl<return_type_t<Matcl1, Arith2, Matcl3>> res(x.cols(), x.cols());
   int block_size = 16;
   int n_blocks = (x.cols() + block_size - 1) / block_size;
   int blocked_size = block_size * n_blocks;
@@ -125,10 +125,10 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
  * This function is for the cross covariance
  * matrix needed to compute the posterior predictive density.
  *
- * @tparam T1 Type of the first matrix
- * @tparam T2 Type of the second matrix
- * @tparam T3 Type of sigma
- * @tparam T4 Type of length scale
+ * @tparam Matcl1 Type of the first matrix
+ * @tparam Matcl2 Type of the second matrix
+ * @tparam Arith3 Type of sigma
+ * @tparam Matcl4 Type of length scale
  * @param x first input vector or matrix
  * @param y second input vector or matrix
  * @param sigma standard deviation
@@ -137,13 +137,13 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
  * @return Squared distance between elements of x and y.
  */
 template <
-    typename T1, typename T2, typename T3, typename T4,
-    require_all_kernel_expressions_and_none_scalar_t<T1, T2, T4>* = nullptr,
-    require_all_arithmetic_t<T3>* = nullptr>
-inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exponential_cov(
-    const T1& x, const T2& y, const T3 sigma, const T4 length_scale) {
+    typename Matcl1, typename Matcl2, typename Arith3, typename Matcl4,
+    require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2, Matcl4>* = nullptr,
+    require_all_arithmetic_t<Arith3>* = nullptr>
+inline matrix_cl<return_type_t<Matcl1, Matcl2, Matcl3, Matcl4>> gp_exponential_cov(
+    const Matcl1& x, const Matcl2& y, const Arith3 sigma, const Matcl4& length_scale) {
   check_size_match("gp_exponential_cov_cross", "x", x.rows(), "y", y.rows());
-  matrix_cl<return_type_t<T1, T2, T3, T4>> res(x.cols(), y.cols());
+  matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Matcl4>> res(x.cols(), y.cols());
   const auto& x_eval = elt_divide(x, rowwise_broadcast(length_scale)).eval();
   const auto& y_eval = elt_divide(y, rowwise_broadcast(length_scale)).eval();
   int block_size = 16;

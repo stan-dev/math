@@ -22,12 +22,12 @@ inline double dot_self(const std::vector<double>& x) {
  * Returns squared norm of a vector or matrix. For vectors that equals the dot
  * product of the specified vector with itself.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
+ * @tparam Vec type of the vector (must be derived from \c Eigen::MatrixBase)
  * @param v Vector.
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_eigen_vt<is_var, T>* = nullptr>
-inline value_type_t<T> dot_self(const T& v) {
+template <typename Vec, require_eigen_t<Vec>* = nullptr,
+          require_not_eigen_vt<is_var, Vec>* = nullptr>
+inline value_type_t<Vec> dot_self(const Vec& v) {
   return v.squaredNorm();
 }
 

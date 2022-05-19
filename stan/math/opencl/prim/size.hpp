@@ -13,9 +13,9 @@ namespace math {
  * @param m input to determine size of
  * @return number of elements in m
  */
-template <typename T,
+template <typename Matcl,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-size_t size(const T& m) {
+size_t size(const Matcl& m) {
   return m.rows() * m.cols();
 }
 

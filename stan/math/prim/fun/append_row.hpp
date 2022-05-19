@@ -20,20 +20,20 @@ namespace math {
  * (row_vector, row_vector) -> matrix,
  * (vector, vector) -> vector.
  *
- * @tparam T1 type of the first matrix
- * @tparam T2 type of the second matrix
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the second matrix
  *
  * @param A First matrix.
  * @param B Second matrix.
  * @return Result of stacking first matrix on top of second.
  */
-template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr>
-inline auto append_row(const T1& A, const T2& B) {
+template <typename EigMat1, typename EigMat2, require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+inline auto append_row(const EigMat1& A, const EigMat2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using T_return = return_type_t<T1, T2>;
+  using T_return = return_type_t<EigMat1, EigMat2>;
   constexpr int col_type
-      = (T1::ColsAtCompileTime == 1 && T2::ColsAtCompileTime == 1)
+      = (EigMat1::ColsAtCompileTime == 1 && EigMat2::ColsAtCompileTime == 1)
             ? 1
             : Eigen::Dynamic;
 
@@ -58,7 +58,7 @@ inline auto append_row(const T1& A, const T2& B) {
  * @tparam Scal type of the scalar
  * @tparam ColVec type of the vector
  *
- * @param A scalar.
+ * @param a scalar.
  * @param B vector.
  * @return Result of stacking the scalar on top of the vector.
  */
@@ -66,13 +66,13 @@ template <typename Scal, typename ColVec,
           require_stan_scalar_t<Scal>* = nullptr,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr>
 inline Eigen::Matrix<return_type_t<Scal, ColVec>, Eigen::Dynamic, 1> append_row(
-    const Scal& A, const ColVec& B) {
+    const Scal& a, const ColVec& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using T_return = return_type_t<Scal, ColVec>;
 
   Matrix<T_return, Dynamic, 1> result(B.size() + 1);
-  result << A, B.template cast<T_return>();
+  result << a, B.template cast<T_return>();
   return result;
 }
 
@@ -86,20 +86,20 @@ inline Eigen::Matrix<return_type_t<Scal, ColVec>, Eigen::Dynamic, 1> append_row(
  * @tparam Scal type of the scalar
  *
  * @param A vector.
- * @param B scalar.
+ * @param b scalar.
  * @return Result of stacking the vector on top of the scalar.
  */
 template <typename ColVec, typename Scal,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr>
 inline Eigen::Matrix<return_type_t<ColVec, Scal>, Eigen::Dynamic, 1> append_row(
-    const ColVec& A, const Scal& B) {
+    const ColVec& A, const Scal& b) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using T_return = return_type_t<ColVec, Scal>;
 
   Matrix<T_return, Dynamic, 1> result(A.size() + 1);
-  result << A.template cast<T_return>(), B;
+  result << A.template cast<T_return>(), b;
   return result;
 }
 

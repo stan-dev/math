@@ -18,15 +18,15 @@ namespace math {
  * This overload is used for kernel generator expressions. It also handles any
  * other types that do not have a special overload for them.
  *
- * @tparam T type of scalar
+ * @tparam Exprcl type of scalar
  * @param a argument
  * @return argument
  */
-template <typename T, require_not_same_t<T, arena_t<T>>* = nullptr,
-          require_not_container_t<T>* = nullptr,
-          require_not_matrix_cl_t<T>* = nullptr>
-inline arena_t<T> to_arena(T&& a) {
-  return std::forward<T>(a);
+template <typename Exprcl, require_not_same_t<Exprcl, arena_t<Exprcl>>* = nullptr,
+          require_not_container_t<Exprcl>* = nullptr,
+          require_not_matrix_cl_t<Exprcl>* = nullptr>
+inline arena_t<Exprcl> to_arena(Exprcl&& a) {
+  return std::forward<Exprcl>(a);
 }
 
 /**
@@ -39,17 +39,17 @@ inline arena_t<T> to_arena(T&& a) {
  *
  * Passing in a lvalue reference to objects not using AD stack, such as a
  * `matrix_cl` is inefficient as they need to be copied in this case.
- * @tparam T type of scalar
+ * @tparam ArenaT type of scalar
  * @param a argument
  * @return argument
  */
-template <typename T, require_same_t<T, arena_t<T>>* = nullptr,
-          require_not_matrix_cl_t<T>* = nullptr,
-          require_not_std_vector_t<T>* = nullptr>
-inline std::remove_reference_t<T> to_arena(T&& a) {
+template <typename ArenaT, require_same_t<ArenaT, arena_t<ArenaT>>* = nullptr,
+          require_not_matrix_cl_t<ArenaT>* = nullptr,
+          require_not_std_vector_t<ArenaT>* = nullptr>
+inline std::remove_reference_t<ArenaT> to_arena(ArenaT&& a) {
   // intentionally never returning a reference. If an object is just
   // referenced it will likely go out of scope before it is used.
-  return std::forward<T>(a);
+  return std::forward<ArenaT>(a);
 }
 
 /**
@@ -58,14 +58,14 @@ inline std::remove_reference_t<T> to_arena(T&& a) {
  * recovered.
  *
  * Converts eigen types to `arena_matrix`.
- * @tparam T type of argument
+ * @tparam Eig type of argument
  * @param a argument
  * @return argument copied/evaluated on AD stack
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_same_t<T, arena_t<T>>* = nullptr>
-inline arena_t<T> to_arena(const T& a) {
-  return arena_t<T>(a);
+template <typename Eig, require_eigen_t<Eig>* = nullptr,
+          require_not_same_t<Eig, arena_t<Eig>>* = nullptr>
+inline arena_t<Eig> to_arena(const Eig& a) {
+  return arena_t<Eig>(a);
 }
 
 /**
@@ -74,20 +74,20 @@ inline arena_t<T> to_arena(const T& a) {
  * recovered.
  *
  * For std vectors that have data already on AD stack this is a shallow copy.
- * @tparam T type of scalar
+ * @tparam Scalar type of scalar
  * @param a argument
  * @return argument
  */
-template <typename T>
-inline std::vector<T, arena_allocator<T>> to_arena(
-    const std::vector<T, arena_allocator<T>>& a) {
+template <typename Scalar>
+inline std::vector<Scalar, arena_allocator<Scalar>> to_arena(
+    const std::vector<Scalar, arena_allocator<Scalar>>& a) {
   // What we want to do here is the same as moving input into output, except
   // that we want input to be left unchanged. With any normal allocator that
   // lead to deallocating memory twice (probably segfaulting). However,
   // dealocation with `arena_allocator` is a no-op, so we can do that.
-  std::vector<T, arena_allocator<T>> res;
+  std::vector<Scalar, arena_allocator<Scalar>> res;
   std::memcpy(static_cast<void*>(&res), static_cast<const void*>(&a),
-              sizeof(std::vector<T, arena_allocator<T>>));
+              sizeof(std::vector<Scalar, arena_allocator<Scalar>>));
   return res;
 }
 
@@ -101,12 +101,12 @@ inline std::vector<T, arena_allocator<T>> to_arena(
  * This overload works on vectors with simple scalars that don't need to be
  * converthed themselves.
  *
- * @tparam T type of argument
+ * @tparam ArenaT type of argument
  * @param a argument
  * @return argument copied on AD stack
  */
-template <typename T, require_same_t<T, arena_t<T>>* = nullptr>
-inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
+template <typename ArenaT, require_same_t<ArenaT, arena_t<ArenaT>>* = nullptr>
+inline arena_t<std::vector<ArenaT>> to_arena(const std::vector<ArenaT>& a) {
   return {a.begin(), a.end()};
 }
 
@@ -137,17 +137,17 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
  * If the condition is true, converts given argument into a type that has any
  * dynamic allocation on AD stack. Otherwise returns the argument
  *
- * @tparam T type of argument
+ * @tparam T1 type of argument
  * @param a argument
  * @return argument copied/evaluated on AD stack
  */
-template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
-inline T to_arena_if(T&& a) {
-  return std::forward<T>(a);
+template <bool Condition, typename T1, std::enable_if_t<!Condition>* = nullptr>
+inline T1 to_arena_if(T1&& a) {
+  return std::forward<T1>(a);
 }
 
-template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
-inline arena_t<T> to_arena_if(const T& a) {
+template <bool Condition, typename T2, std::enable_if_t<Condition>* = nullptr>
+inline arena_t<T2> to_arena_if(const T2& a) {
   return to_arena(a);
 }
 

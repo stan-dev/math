@@ -21,12 +21,12 @@ namespace math {
  * types requiring pass-by-reference, this template function
  * should be specialized.
  *
- * @tparam T Type of scalar.
+ * @tparam Scalar Type of scalar.
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline double value_of_rec(const T x) {
+template <typename Scalar, typename = require_stan_scalar_t<Scalar>>
+inline double value_of_rec(const Scalar x) {
   return static_cast<double>(x);
 }
 
@@ -86,10 +86,10 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename T, require_std_vector_t<T>* = nullptr,
-          require_vt_same<double, T>* = nullptr>
-inline T value_of_rec(T&& x) {
-  return std::forward<T>(x);
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
+          require_vt_same<double, StdVec>* = nullptr>
+inline StdVec value_of_rec(StdVec&& x) {
+  return std::forward<StdVec>(x);
 }
 
 /**
@@ -98,18 +98,18 @@ inline T value_of_rec(T&& x) {
  * T must implement value_of_rec. See
  * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
  *
- * @tparam T Type of matrix
+ * @tparam EigMat Type of matrix
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline auto value_of_rec(T&& M) {
+template <typename EigMat, typename = require_not_st_same<EigMat, double>,
+          typename = require_eigen_t<EigMat>>
+inline auto value_of_rec(EigMat&& M) {
   return make_holder(
       [](auto& m) {
         return m.unaryExpr([](auto x) { return value_of_rec(x); });
       },
-      std::forward<T>(M));
+      std::forward<EigMat>(M));
 }
 
 /**
@@ -120,14 +120,14 @@ inline auto value_of_rec(T&& M) {
  *
  * <p>This inline pass-through no-op should be compiled away.
  *
- * @tparam T Type of matrix.
+ * @tparam ArithEigMat Type of matrix.
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline T value_of_rec(T&& x) {
-  return std::forward<T>(x);
+template <typename ArithEigMat, typename = require_st_same<ArithEigMat, double>,
+          typename = require_eigen_t<ArithEigMat>>
+inline ArithEigMat value_of_rec(ArithEigMat&& x) {
+  return std::forward<ArithEigMat>(x);
 }
 }  // namespace math
 }  // namespace stan

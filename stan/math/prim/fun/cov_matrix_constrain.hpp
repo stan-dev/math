@@ -20,21 +20,21 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K) {
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain(const EigVec& x, Eigen::Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
 
-  Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
+  Matrix<value_type_t<EigVec>, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   const auto& x_ref = to_ref(x);
@@ -53,23 +53,23 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * by K resulting from transforming the specified finite vector of
  * size K plus (K choose 2).
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain(const EigVec& x, Eigen::Index K, return_type_t<EigVec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using std::log;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
+  Matrix<value_type_t<EigVec>, Dynamic, Dynamic> L(K, K);
   const auto& x_ref = to_ref(x);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
@@ -124,7 +124,7 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
+ * @tparam StdVec A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x The vector to convert to a covariance matrix
@@ -132,10 +132,10 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
  * @param[in, out] lp log density accumulator
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
-                                 return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp, K](auto&& v) {
+template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto cov_matrix_constrain(const StdVec& x, Eigen::Index K,
+                                 return_type_t<StdVec>& lp) {
+  return apply_vector_unary<StdVec>::apply(x, [&lp, K](auto&& v) {
     return cov_matrix_constrain<Jacobian>(v, K, lp);
   });
 }

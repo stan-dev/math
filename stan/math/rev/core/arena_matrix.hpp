@@ -136,6 +136,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
 namespace Eigen {
 namespace internal {
 
+/**
+ * Traits for `arena_matrix` 
+ */
 template <typename T>
 struct traits<stan::math::arena_matrix<T>> {
   using base = traits<Eigen::Map<T>>;

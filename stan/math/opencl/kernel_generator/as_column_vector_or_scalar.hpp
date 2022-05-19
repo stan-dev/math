@@ -315,14 +315,14 @@ class as_column_vector_or_scalar_
 /**
  * as_column_vector_or_scalar of a kernel generator expression.
  *
- * @tparam T type of argument
+ * @tparam Matcl type of argument
  * @param a input argument (must be a row or a column vector)
  * @return as_column_vector_or_scalar of given expression
  */
-template <typename T,
-          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline auto as_column_vector_or_scalar(T&& a) {
-  auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
+template <typename Matcl,
+          require_all_kernel_expressions_and_none_scalar_t<Matcl>* = nullptr>
+inline auto as_column_vector_or_scalar(Matcl&& a) {
+  auto&& a_operation = as_operation_cl(std::forward<Matcl>(a)).deep_copy();
   return as_column_vector_or_scalar_<
       std::remove_reference_t<decltype(a_operation)>>(std::move(a_operation));
 }

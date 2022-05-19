@@ -1,4 +1,3 @@
-
 /******** Eigen specific CSS code ************/
 
 /**** Styles removing elements ****/
@@ -152,8 +151,7 @@ h2 {
   border-width: 1px;
   border-color: #cccccc;
 }
-a#details + h2.groupheader { display:none; } 
-div.textblock { border-bottom: 1px solid #879ECB; width: 100%; }
+
 /**** Table of content in the side-nav ****/
 
 
@@ -161,9 +159,7 @@ div.toc {
   margin:0;
   padding: 0.3em 0 0 0;
   width:100%;
-  float:none;
-  position:absolute;
-  bottom:0;
+  float: none;
   border-radius:0px;
   border-style: solid none none none;
   max-height:50%;

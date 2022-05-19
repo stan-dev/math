@@ -18,8 +18,8 @@ class empty_broadcast_array;
  * @param a Specified scalar.
  * @return the scalar.
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T as_column_vector_or_scalar(const T& a) {
+template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+inline Scalar as_column_vector_or_scalar(const Scalar& a) {
   return a;
 }
 
@@ -35,47 +35,47 @@ internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(
 /**
  * no-op that returns a column vector.
  *
- * @tparam T Type inheriting from `EigenBase` with dynamic compile time rows
+ * @tparam EigColVec Type inheriting from `EigenBase` with dynamic compile time rows
  *  and fixed column of 1.
  * @param a Specified vector.
  * @return Same vector.
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline T&& as_column_vector_or_scalar(T&& a) {
-  return std::forward<T>(a);
+template <typename EigColVec, require_eigen_col_vector_t<EigColVec>* = nullptr>
+inline EigColVec&& as_column_vector_or_scalar(EigColVec&& a) {
+  return std::forward<EigColVec>(a);
 }
 
 /**
  * Converts a row vector to an eigen column vector. For row vectors this returns
- *  a `Transpose<Eigen::Matrix<T, 1, -1>>`.
+ *  a `Transpose<Eigen::Matrix<EigRowVec, 1, -1>>`.
  *
- * @tparam T Type inheriting from `EigenBase` with dynamic compile time columns
+ * @tparam EigRowVec Type inheriting from `EigenBase` with dynamic compile time columns
  * and fixed row of 1.
  * @param a Specified vector.
  * @return Transposed vector.
  */
-template <typename T, require_eigen_row_vector_t<T>* = nullptr,
-          require_not_eigen_col_vector_t<T>* = nullptr>
-inline auto as_column_vector_or_scalar(T&& a) {
-  return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
+template <typename EigRowVec, require_eigen_row_vector_t<EigRowVec>* = nullptr,
+          require_not_eigen_col_vector_t<EigRowVec>* = nullptr>
+inline auto as_column_vector_or_scalar(EigRowVec&& a) {
+  return make_holder([](auto& x) { return x.transpose(); }, std::forward<EigRowVec>(a));
 }
 
 /**
  * Converts `std::vector` to a column vector.
  *
- * @tparam T `std::vector` type.
+ * @tparam StdVec `std::vector` type.
  * @param a Specified vector.
  * @return input converted to a column vector.
  */
-template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto as_column_vector_or_scalar(T&& a) {
-  using plain_vector = Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1>;
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto as_column_vector_or_scalar(StdVec&& a) {
+  using plain_vector = Eigen::Matrix<value_type_t<StdVec>, Eigen::Dynamic, 1>;
   using optionally_const_vector
-      = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+      = std::conditional_t<std::is_const<std::remove_reference_t<StdVec>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
   return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
-                     std::forward<T>(a));
+                     std::forward<StdVec>(a));
 }
 
 }  // namespace math

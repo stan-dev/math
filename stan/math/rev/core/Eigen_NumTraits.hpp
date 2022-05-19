@@ -246,18 +246,39 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::var>, std::complex<double>,
   using ReturnType = std::complex<stan::math::var>;
 };
 
+/**
+ * Traits specialization for Eigen binary operations for
+ * autodiff and complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<stan::math::var, std::complex<stan::math::var>,
                             BinaryOp> {
   using ReturnType = std::complex<stan::math::var>;
 };
 
+/**
+ * Traits specialization for Eigen binary operations for
+ * complex autodiff and autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<stan::math::var>, stan::math::var,
                             BinaryOp> {
   using ReturnType = std::complex<stan::math::var>;
 };
 
+/**
+ * Traits specialization for Eigen binary operations for
+ * compelx autodiff and complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
                             std::complex<stan::math::var>, BinaryOp> {
@@ -309,7 +330,7 @@ struct remove_all<stan::math::vari*> {
 };
 
 /**
- * Specialization of matrix-vector products for reverse-mode
+ * Specialization of matrix-vector col major products for reverse-mode
  * autodiff variables.
  *
  * @tparam Index index type
@@ -354,6 +375,17 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
   }
 };
 
+/**
+ * Specialization of matrix-vector row major products for reverse-mode
+ * autodiff variables.
+ *
+ * @tparam Index index type
+ * @tparam LhsMapper left-hand side data and stride
+ * @tparam CongjuageLhs left-hand side conjugacy flag
+ * @tparam CongjuageRhs right-hand side conjugacy flag
+ * @tparam RhsMapper right-hand side data and stride
+ * @tparam Version integer version number
+ */
 template <typename Index, typename LhsMapper, bool ConjugateLhs,
           bool ConjugateRhs, typename RhsMapper, int Version>
 struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
@@ -395,12 +427,32 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
 };
 
 #if EIGEN_VERSION_AT_LEAST(3, 3, 8)
+/**
+ * Specialization of matrix-vector row major products for reverse-mode
+ * autodiff variables.
+ *
+ * @tparam Index index type
+ * @tparam LhsStorageOrder left-hand side data and stride
+ * @tparam CongjuageLhs left-hand side conjugacy flag
+ * @tparam CongjuageRhs right-hand side conjugacy flag
+ * @tparam RhsStorageOrder right-hand side data and stride
+ */
 template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
           int RhsStorageOrder, bool ConjugateRhs, int ResInnerStride>
 struct general_matrix_matrix_product<
     Index, stan::math::var, LhsStorageOrder, ConjugateLhs, stan::math::var,
     RhsStorageOrder, ConjugateRhs, ColMajor, ResInnerStride> {
 #else
+/**
+ * Specialization of matrix-vector row major products for reverse-mode
+ * autodiff variables.
+ *
+ * @tparam Index index type
+ * @tparam LhsStorageOrder left-hand side data and stride
+ * @tparam CongjuageLhs left-hand side conjugacy flag
+ * @tparam CongjuageRhs right-hand side conjugacy flag
+ * @tparam RhsStorageOrder right-hand side data and stride
+ */
 template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
           int RhsStorageOrder, bool ConjugateRhs>
 struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,

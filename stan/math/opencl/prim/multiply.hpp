@@ -111,31 +111,31 @@ inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a,
 
 /**
  * Matrix multiplication of a scalar and a  kernel generator expressions.
- * @tparam T_a type of scalar
- * @tparam T_b type of the kernel generator expression
+ * @tparam Scalara type of scalar
+ * @tparam Matclb type of the kernel generator expression
  * @param a scalar
  * @param b expression
  * @return Matrix product of given arguments
  */
-template <typename T_a, typename T_b, require_stan_scalar_t<T_a>* = nullptr,
-          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr,
-          require_all_not_var_t<T_a, T_b>* = nullptr>
-inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+template <typename Scalara, typename Matclb, require_stan_scalar_t<Scalara>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<Matclb>* = nullptr,
+          require_all_not_var_t<Scalara, Matclb>* = nullptr>
+inline matrix_cl<return_type_t<Scalara, Matclb>> multiply(const Scalara& a, const Matclb& b) {
   return a * b;
 }
 
 /**
  * Matrix multiplication of a scalar and a  kernel generator expressions.
- * @tparam T_a type of the kernel generator expression
- * @tparam T_b type of scalar
+ * @tparam Matcla type of the kernel generator expression
+ * @tparam Scalarb type of scalar
  * @param a expression
  * @param b scalar
  * @return Matrix product of given arguments
  */
-template <typename T_a, typename T_b, require_stan_scalar_t<T_b>* = nullptr,
-          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
-          require_all_not_var_t<T_a, T_b>* = nullptr>
-inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+template <typename Matcla, typename Scalarb, require_stan_scalar_t<Scalarb>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<Matcla>* = nullptr,
+          require_all_not_var_t<Matcla, Scalarb>* = nullptr>
+inline matrix_cl<return_type_t<Matcla, Scalarb>> multiply(const Matcla& a, const Scalarb& b) {
   return a * b;
 }
 

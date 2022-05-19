@@ -78,6 +78,9 @@ class Holder;
 namespace Eigen {
 namespace internal {
 
+/**
+ * Traits for holder class
+ */
 template <class ArgType, typename... Ptrs>
 struct traits<stan::math::Holder<ArgType, Ptrs...>> {
   typedef typename ArgType::StorageKind StorageKind;
@@ -110,8 +113,8 @@ namespace math {
  * A no-op Eigen operation. This object also owns pointers to dynamically
  * allocated objects used in its argument expression. When this object is
  * destructed, those objects are deleted.
- * @tparam Derived derived type
- * @tparam T type of the argument
+ * @tparam ArgType type of the argument
+ * @tparam Ptrs Types of pointers to intermediate types.
  */
 template <typename ArgType, typename... Ptrs>
 class Holder
@@ -167,6 +170,9 @@ class Holder
 namespace Eigen {
 namespace internal {
 
+/**
+ * evaluator overload for `Holder`.
+ */
 template <typename ArgType, typename... Ptrs>
 struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
     : evaluator_base<stan::math::Holder<ArgType, Ptrs...>> {
@@ -342,16 +348,16 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * rvalue argument will be moved to heap first. The arguments moved to heap are
  * deleted once the expression is destructed.
  *
- * @tparam F type of the functor
+ * @tparam ExprF type of the functor
  * @tparam Args types of the arguments
  * @param func the functor
  * @param args arguments for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <typename F, typename... Args,
+template <typename ExprF, typename... Args,
           require_not_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
-auto make_holder(const F& func, Args&&... args) {
+              decltype(std::declval<ExprF>()(std::declval<Args&>()...))>* = nullptr>
+auto make_holder(const ExprF& func, Args&&... args) {
   return internal::make_holder_impl(func,
                                     std::make_index_sequence<sizeof...(Args)>(),
                                     std::forward<Args>(args)...);

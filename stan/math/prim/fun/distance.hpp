@@ -15,16 +15,16 @@ namespace math {
 /**
  * Returns the distance between two scalars.
  *
- * @tparam T1 type of first scalar.
- * @tparam T2 type of second scalar
+ * @tparam Scalar1 type of first scalar.
+ * @tparam Scalar2 type of second scalar
  * @param x1 First scalar.
  * @param x2 Second scalar.
  * @return Distance between two scalars
  * @throw std::domain_error If the arguments are not finite.
  */
-template <typename T1, typename T2,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
+template <typename Scalar1, typename Scalar2,
+          require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
+inline return_type_t<Scalar1, Scalar2> distance(const Scalar1& x1, const Scalar2& x2) {
   check_finite("distance", "x1", x1);
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
@@ -33,9 +33,9 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
 /**
  * Returns the distance between the specified vectors.
  *
- * @tparam T1 type of the first vector (must be derived from \c
+ * @tparam Vec1 type of the first vector (must be derived from \c
  * Eigen::MatrixBase and have one compile time dimension equal to 1)
- * @tparam T2 type of the second vector (must be derived from \c
+ * @tparam Vec2 type of the second vector (must be derived from \c
  * Eigen::MatrixBase and have one compile time dimension equal to 1)
  * @param x1 First vector.
  * @param x2 Second vector.
@@ -43,8 +43,8 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
  * @throw std::domain_error If the vectors are not the same
  * size.
  */
-template <typename T1, typename T2, require_all_vector_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
+template <typename Vec1, typename Vec2, require_all_vector_t<Vec1, Vec2>* = nullptr>
+inline return_type_t<Vec1, Vec2> distance(const Vec1& x1, const Vec2& x2) {
   using std::sqrt;
   check_matching_sizes("distance", "x1", x1, "x2", x2);
   return sqrt(squared_distance(x1, x2));

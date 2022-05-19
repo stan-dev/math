@@ -22,7 +22,7 @@ namespace math {
  * function tests that the sum is within the tolerance specified by
  * `CONSTRAINT_TOLERANCE`. This function only accepts Eigen vectors, statically
  * typed vectors, not general matrices with 1 column.
- * @tparam T A type inheriting from `Eigen::EigenBase`
+ * @tparam Mat A type inheriting from `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
@@ -30,15 +30,15 @@ namespace math {
  * @throw `std::domain_error` if the vector is not a simplex or if any element
  * is `NaN`
  */
-template <typename T, require_matrix_t<T>* = nullptr>
-void check_simplex(const char* function, const char* name, const T& theta) {
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
+void check_simplex(const char* function, const char* name, const Mat& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
   auto&& theta_ref = to_ref(value_of_rec(theta));
   if (!(fabs(1.0 - theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
-      scalar_type_t<T> sum = theta_ref.sum();
+      scalar_type_t<Mat> sum = theta_ref.sum();
       msg << "is not a valid simplex.";
       msg.precision(10);
       msg << " sum(" << name << ") = " << sum << ", but should be ";
@@ -68,7 +68,7 @@ void check_simplex(const char* function, const char* name, const T& theta) {
  * to 1.  This function tests that the sum is within the tolerance specified by
  * `CONSTRAINT_TOLERANCE`. This function only accepts Eigen vectors, statically
  * typed vectors, not general matrices with 1 column.
- * @tparam T A standard vector with inner type inheriting from
+ * @tparam Container A standard vector with inner type inheriting from
  * `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -77,8 +77,8 @@ void check_simplex(const char* function, const char* name, const T& theta) {
  * @throw `std::domain_error` if the vector is not a simplex or if any element
  * is `NaN`
  */
-template <typename T, require_std_vector_t<T>* = nullptr>
-void check_simplex(const char* function, const char* name, const T& theta) {
+template <typename Container, require_std_vector_t<Container>* = nullptr>
+void check_simplex(const char* function, const char* name, const Container& theta) {
   for (size_t i = 0; i < theta.size(); ++i) {
     check_simplex(function, internal::make_iter_name(name, i).c_str(),
                   theta[i]);

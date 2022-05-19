@@ -41,9 +41,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, require_st_arithmetic<T>* = nullptr>
-inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<scalar_type_t<T>>(std::forward<T>(src));
+template <typename EigMat, require_st_arithmetic<EigMat>* = nullptr>
+inline matrix_cl<scalar_type_t<EigMat>> to_matrix_cl(EigMat&& src) {
+  return matrix_cl<scalar_type_t<EigMat>>(std::forward<EigMat>(src));
 }
 
 /** \ingroup opencl
@@ -51,15 +51,15 @@ inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
  * destination Eigen matrix.
  *
  * @tparam T_ret destination type
- * @tparam T scalar in the source matrix
+ * @tparam Matcl scalar in the source matrix
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T_ret, typename T, require_eigen_t<T_ret>* = nullptr,
-          require_matrix_cl_t<T>* = nullptr,
-          require_st_same<T_ret, T>* = nullptr>
-inline auto from_matrix_cl(const T& src) {
-  using T_val = value_type_t<T>;
+template <typename T_ret, typename Matcl, require_eigen_t<T_ret>* = nullptr,
+          require_matrix_cl_t<Matcl>* = nullptr,
+          require_st_same<T_ret, Matcl>* = nullptr>
+inline auto from_matrix_cl(const Matcl& src) {
+  using T_val = value_type_t<Matcl>;
   using T_ret_col_major
       = Eigen::Matrix<scalar_type_t<T_ret>, T_ret::RowsAtCompileTime,
                       T_ret::ColsAtCompileTime>;
@@ -123,27 +123,27 @@ inline auto from_matrix_cl(const T& src) {
  * destination type.
  *
  * @tparam T_ret destination type
- * @tparam T type of expression
+ * @tparam Exprcl type of expression
  * @param src source expression
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T_ret, typename T,
-          require_all_kernel_expressions_t<T>* = nullptr,
-          require_not_matrix_cl_t<T>* = nullptr>
-inline auto from_matrix_cl(const T& src) {
+template <typename T_ret, typename Exprcl,
+          require_all_kernel_expressions_t<Exprcl>* = nullptr,
+          require_not_matrix_cl_t<Exprcl>* = nullptr>
+inline auto from_matrix_cl(const Exprcl& src) {
   return from_matrix_cl<T_ret>(src.eval());
 }
 
 /** \ingroup opencl
  * Copy A 1 by 1 source matrix from the Device to the host.
- * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
+ * @tparam Arith An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
  * @return dst Arithmetic to receive the matrix_cl value.
  */
-template <typename T_dst, typename T, require_arithmetic_t<T>* = nullptr,
-          require_same_t<T_dst, T>* = nullptr>
-inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
-  T dst;
+template <typename DstArith, typename Arith, require_arithmetic_t<Arith>* = nullptr,
+          require_same_t<DstArith, Arith>* = nullptr>
+inline DstArith from_matrix_cl(const matrix_cl<Arith>& src) {
+  Arith dst;
   check_size_match("from_matrix_cl<scalar>", "src.rows()", src.rows(),
                    "dst.rows()", 1);
   check_size_match("from_matrix_cl<scalar>", "src.cols()", src.cols(),
@@ -152,7 +152,7 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T), &dst, &src.write_events(), &copy_event);
+                            sizeof(Arith), &dst, &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -165,18 +165,18 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
  * Copies the source matrix that is stored on the OpenCL device to the
  * destination `std::vector`.
  *
- * @tparam T_dst destination type
- * @tparam T scalar in the source matrix
+ * @tparam DstStdVec destination type
+ * @tparam Arith scalar in the source matrix
  * @param src source matrix on the OpenCL device
  * @return `std::vector` with a copy of the data in the source matrix
  */
-template <typename T_dst, typename T,
-          require_std_vector_vt<std::is_arithmetic, T_dst>* = nullptr,
-          require_all_st_same<T_dst, T>* = nullptr>
-inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+template <typename DstStdVec, typename Arith,
+          require_std_vector_vt<std::is_arithmetic, DstStdVec>* = nullptr,
+          require_all_st_same<DstStdVec, Arith>* = nullptr>
+inline DstStdVec from_matrix_cl(const matrix_cl<Arith>& src) {
   check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
                    "dst.cols()", 1);
-  T_dst dst(src.rows());
+  DstStdVec dst(src.rows());
   if (src.rows() == 0) {
     return dst;
   }
@@ -184,7 +184,7 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T) * src.rows(), dst.data(),
+                            sizeof(Arith) * src.rows(), dst.data(),
                             &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
@@ -198,18 +198,18 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
  * Copies the source matrix that is stored on the OpenCL device to the
  * destination `std::vector` containing Eigen vectors.
  *
- * @tparam T_dst destination type
- * @tparam T scalar in the source matrix
+ * @tparam DstStdVecEig destination type
+ * @tparam Arith scalar in the source matrix
  * @param src source matrix on the OpenCL device
  * @return `std::vector` containing Eigen vectors with a copy of the data in the
  * source matrix
  */
-template <typename T_dst, typename T,
-          require_std_vector_vt<is_eigen_vector, T_dst>* = nullptr,
-          require_all_st_same<T_dst, T>* = nullptr>
-inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> tmp = from_matrix_cl(src);
-  T_dst dst;
+template <typename DstStdVecEig, typename Arith,
+          require_std_vector_vt<is_eigen_vector, DstStdVecEig>* = nullptr,
+          require_all_st_same<DstStdVecEig, Arith>* = nullptr>
+inline DstStdVecEig from_matrix_cl(const matrix_cl<Arith>& src) {
+  Eigen::Matrix<Arith, Eigen::Dynamic, Eigen::Dynamic> tmp = from_matrix_cl(src);
+  DstStdVecEig dst;
   dst.reserve(src.cols());
   for (int i = 0; i < src.cols(); i++) {
     dst.emplace_back(tmp.col(i));
@@ -221,14 +221,14 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
  * Copies the source kernel generator expression or matrix that is stored on the
  * OpenCL device to the destination Eigen matrix.
  *
- * @tparam T source type
+ * @tparam Exprcl source type
  * @param src expression or source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-auto from_matrix_cl(const T& src) {
+template <typename Exprcl, require_all_kernel_expressions_t<Exprcl>* = nullptr>
+auto from_matrix_cl(const Exprcl& src) {
   return from_matrix_cl<
-      Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(src);
+      Eigen::Matrix<scalar_type_t<Exprcl>, Eigen::Dynamic, Eigen::Dynamic>>(src);
 }
 
 /** \ingroup opencl

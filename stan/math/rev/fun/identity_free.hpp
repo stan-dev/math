@@ -13,15 +13,15 @@ namespace math {
  * transform to the input. For any of the inputs being a `var_value` type
  * this promotes the input `x` to `var_value`.
  *
- * @tparam T Any type.
- * @tparam Types Any type with one of `T` and `Types` being a `var_value`
+ * @tparam VarMat Any type.
+ * @tparam Types Any type with one of `VarMat` and `Types` being a `var_value`
  * matrix.
  * @param[in] x object
  * @return transformed input
  */
-template <typename T, typename... Types,
-          require_any_var_matrix_t<T, Types...>* = nullptr>
-inline auto identity_free(T&& x, Types&&... /* args */) {
+template <typename VarMat, typename... Types,
+          require_any_var_matrix_t<VarMat, Types...>* = nullptr>
+inline auto identity_free(VarMat&& x, Types&&... /* args */) {
   return to_var_value(x);
 }
 

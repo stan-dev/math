@@ -26,15 +26,15 @@ namespace math {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T Scalar.
- * @tparam L Scalar.
+ * @tparam ScalarT Scalar.
+ * @tparam ScalarL Scalar.
  * @param[in] x Unconstrained input
  * @param[in] lb Lower bound
  * @return Constrained matrix
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+template <typename ScalarT, typename ScalarL, require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
+          require_all_not_st_var<ScalarT, ScalarL>* = nullptr>
+inline auto lb_constrain(const ScalarT& x, const ScalarL& lb) {
   if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
@@ -48,16 +48,16 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * reference with the log absolute Jacobian determinant of the
  * transform.
  *
- * @tparam T Scalar.
- * @tparam L Scalar.
+ * @tparam ScalarT Scalar.
+ * @tparam ScalarL Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <typename ScalarT, typename ScalarL, require_all_stan_scalar_t<ScalarT, ScalarL>* = nullptr,
+          require_all_not_st_var<ScalarT, ScalarL>* = nullptr>
+inline auto lb_constrain(const ScalarT& x, const ScalarL& lb, return_type_t<ScalarT, ScalarL>& lp) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_constrain(x, lb);
   } else {
@@ -70,16 +70,16 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam L Scalar.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam ScalarL Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_eigen_t<T>* = nullptr,
-          require_stan_scalar_t<L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(T&& x, L&& lb) {
+template <typename EigT, typename ScalarL, require_eigen_t<EigT>* = nullptr,
+          require_stan_scalar_t<ScalarL>* = nullptr,
+          require_all_not_st_var<EigT, ScalarL>* = nullptr>
+inline auto lb_constrain(EigT&& x, ScalarL&& lb) {
   return eval(x.unaryExpr([lb](auto&& x) { return lb_constrain(x, lb); }));
 }
 
@@ -87,17 +87,17 @@ inline auto lb_constrain(T&& x, L&& lb) {
  * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
  *  to each input.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam L Scalar.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam ScalarL Scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_eigen_t<T>* = nullptr,
-          require_stan_scalar_t<L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <typename EigT, typename ScalarL, require_eigen_t<EigT>* = nullptr,
+          require_stan_scalar_t<ScalarL>* = nullptr,
+          require_all_not_st_var<EigT, ScalarL>* = nullptr>
+inline auto lb_constrain(const EigT& x, const ScalarL& lb, return_type_t<EigT, ScalarL>& lp) {
   return eval(
       x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
@@ -106,15 +106,15 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase`.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam EigL A type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(T&& x, L&& lb) {
+template <typename EigT, typename EigL, require_all_eigen_t<EigT, EigL>* = nullptr,
+          require_all_not_st_var<EigT, EigL>* = nullptr>
+inline auto lb_constrain(EigT&& x, EigL&& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
@@ -124,16 +124,16 @@ inline auto lb_constrain(T&& x, L&& lb) {
  * Specialization of `lb_constrain` to apply a matrix of lower bounds
  * elementwise to each input element.
  *
- * @tparam T A type inheriting from `EigenBase`.
- * @tparam L A type inheriting from `EigenBase`.
+ * @tparam EigT A type inheriting from `EigenBase`.
+ * @tparam EigL A type inheriting from `EigenBase`.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
-          require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <typename EigT, typename EigL, require_all_eigen_t<EigT, EigL>* = nullptr,
+          require_all_not_st_var<EigT, EigL>* = nullptr>
+inline auto lb_constrain(const EigT& x, const EigL& lb, return_type_t<EigT, EigL>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));

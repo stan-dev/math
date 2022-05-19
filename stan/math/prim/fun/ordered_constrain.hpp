@@ -70,15 +70,15 @@ inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * @tparam T1 A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename T1, require_not_std_vector_t<T1>* = nullptr>
+inline auto ordered_constrain(const T1& x, return_type_t<T1>& lp) {
   if (Jacobian) {
     return ordered_constrain(x, lp);
   } else {
@@ -97,15 +97,15 @@ inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
+ * @tparam StdVec A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto ordered_constrain(const StdVec& x, return_type_t<StdVec>& lp) {
   return apply_vector_unary<T>::apply(
       x, [&lp](auto&& v) { return ordered_constrain<Jacobian>(v, lp); });
 }

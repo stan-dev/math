@@ -14,14 +14,14 @@ namespace math {
 /**
  * Return the log softmax of the specified vector or container of vectors.
  *
- * @tparam T Type of input vector or matrix.
+ * @tparam FvarVec Type of input vector or matrix.
  * @param[in] x Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_vector_st<is_fvar, T>* = nullptr>
-inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
+template <typename FvarVec, require_vector_st<is_fvar, FvarVec>* = nullptr>
+inline auto log_softmax(const FvarVec& x) {
+  return apply_vector_unary<FvarVec>::apply(x, [&](const auto& alpha) {
     using T_alpha = decltype(alpha);
     using T_fvar = value_type_t<T_alpha>;
     using T_fvar_inner = typename T_fvar::Scalar;

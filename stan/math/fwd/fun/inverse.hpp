@@ -16,20 +16,20 @@ namespace math {
 /**
  * Forward mode specialization of calculating the inverse of the matrix.
  *
- * @tparam T type of elements in the matrix
+ * @tparam EigFvarMat type of elements in the matrix
  *
  * @param m specified matrix
  * @return Inverse of the matrix (an empty matrix if the specified matrix has
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
-inverse(const EigMat& m) {
-  using T = typename value_type_t<EigMat>::Scalar;
-  constexpr int R = EigMat::RowsAtCompileTime;
-  constexpr int C = EigMat::ColsAtCompileTime;
+template <typename EigFvarMat, require_eigen_vt<is_fvar, EigFvarMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigFvarMat>, EigFvarMat::RowsAtCompileTime,
+                     EigFvarMat::ColsAtCompileTime>
+inverse(const EigFvarMat& m) {
+  using T = typename value_type_t<EigFvarMat>::Scalar;
+  constexpr int R = EigFvarMat::RowsAtCompileTime;
+  constexpr int C = EigFvarMat::ColsAtCompileTime;
 
   check_square("inverse", "m", m);
   if (m.size() == 0) {
@@ -39,7 +39,7 @@ inverse(const EigMat& m) {
   Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
   Eigen::Matrix<T, R, C> m_inv(m.rows(), m.cols());
 
-  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
+  const Eigen::Ref<const plain_type_t<EigFvarMat>>& m_ref = m;
   for (size_type j = 0; j < m.cols(); j++) {
     for (size_type i = 0; i < m.rows(); i++) {
       m_inv.coeffRef(i, j) = m_ref.coeff(i, j).val_;
