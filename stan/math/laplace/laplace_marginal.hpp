@@ -166,9 +166,9 @@ inline laplace_density_estimates laplace_marginal_density_est(
 
       // Compute matrix square-root of W. If all elements of W are positive,
       // do an element wise square-root. Else try a matirx square-root.
-      bool W_is_spd = TRUE;
+      bool W_is_spd = true;
       for (Eigen::Index i = 0; i < theta_0.size(); i++) {
-        if (W.coeff(i, i) < 0) W_is_spd = FALSE;
+        if (W.coeff(i, i) < 0) W_is_spd = false;
       }
       Eigen::SparseMatrix<double> W_r;
       if (W_is_spd) {
