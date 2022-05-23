@@ -71,7 +71,7 @@ inline double std_normal_log_qf(double log_p) {
                                   -15.76637472711685,
                                   -33.82373901099482};
 
-  double val{0};
+  double val;
   double log_q = log_p <= LOG_HALF
                      ? log_diff_exp(0, log_sum_exp(log_p, LOG_HALF))
                      : log_diff_exp(log_p, LOG_HALF);
