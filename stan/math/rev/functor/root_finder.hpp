@@ -15,14 +15,18 @@ namespace math {
 
 /**
  * var specialization for root solving using Boost's Halley method
- * @tparam FTuple A tuple holding functors whose signatures all match
- *  `(GuessScalar g, Types&&... Args)`.
+ * @tparam FRootFunc A struct or class with a static function called `run`.
+ *  The structs `run` function must have a boolean template parameter that
+ *  when `true` returns a tuple containing the function result and the
+ * derivatives needed for the root finder. When the boolean template parameter
+ * is `false` the function should return a single value containing the function
+ * result.
+ * @tparam SolverFun One of the three struct types used to call the root solver.
+ *  (`NewtonRootSolver`, `HalleyRootSolver`, `SchroderRootSolver`).
  * @tparam GuessScalar Scalar type
  * @tparam MinScalar Scalar type
  * @tparam MaxScalar Scalar type
  * @tparam Types Arg types to pass to functors in `f_tuple`
- * @param f_tuple A tuple of functors to calculate the value and any derivates
- * needed.
  * @param guess An initial guess at the root value
  * @param min The minimum possible value for the result, this is used as an
  * initial lower bracket
@@ -34,12 +38,11 @@ namespace math {
  * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
  */
 template <
-    typename SolverFun, typename FTuple, typename GuessScalar,
+    typename FRootFunc, typename SolverFun, typename GuessScalar,
     typename MinScalar, typename MaxScalar, typename... Types,
     require_any_st_var<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr,
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr>
-auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
-                     const GuessScalar guess, const MinScalar min,
+auto root_finder_tol(const GuessScalar guess, const MinScalar min,
                      const MaxScalar max, const int digits,
                      std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
@@ -54,19 +57,21 @@ auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
       *arena_args_tuple);
   // Solve the system
   double theta_dbl = apply(
-      [&f_solver, &f_tuple, &max_iter, digits, guess_val = value_of(guess),
-       min_val = value_of(min), max_val = value_of(max)](auto&&... vals) {
-        return root_finder_tol(f_solver, f_tuple, guess_val, min_val, max_val,
-                               digits, max_iter, vals...);
+      [&max_iter, digits, guess_val = value_of(guess), min_val = value_of(min),
+       max_val = value_of(max)](auto&&... vals) {
+        return root_finder_tol<FRootFunc, SolverFun>(
+            guess_val, min_val, max_val, digits, max_iter, vals...);
       },
       args_vals_tuple);
   double Jf_x;
-  auto&& f = std::get<0>(f_tuple);
   {
     nested_rev_autodiff nested;
     stan::math::var x_var(theta_dbl);
     stan::math::var fx_var = apply(
-        [&x_var, &f](auto&&... args) { return f(x_var, std::move(args)...); },
+        [&x_var](auto&&... args) {
+          return std::decay_t<FRootFunc>::template run<false>(
+              x_var, std::move(args)...);
+        },
         std::move(args_vals_tuple));
     fx_var.grad();
     Jf_x = x_var.adj();
@@ -76,24 +81,22 @@ auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
    * Note: Because we put this on the callback stack, if `f` is a lambda
    * its captures must be in Stan's arena memory or trivially destructable.
    */
-  return make_callback_var(theta_dbl,
-                           [f, arena_args_tuple, Jf_x](auto& ret) mutable {
-                             // Eigen::VectorXd eta =
-                             // -Jf_x_T_lu_ptr->solve(ret.adj().eval());
-                             // Contract with Jacobian of f with respect to y
-                             // using a nested reverse autodiff pass.
-                             {
-                               nested_rev_autodiff rev;
-                               double ret_val = ret.val();
-                               auto x_nrad_ = apply(
-                                   [&ret_val, &f](const auto&... args) {
-                                     return eval(f(ret_val, args...));
-                                   },
-                                   *arena_args_tuple);
-                               x_nrad_.adj() = -(ret.adj() / Jf_x);
-                               grad();
-                             }
-                           });
+  return make_callback_var(
+      theta_dbl, [arena_args_tuple, Jf_x](auto& ret) mutable {
+        {
+          nested_rev_autodiff rev;
+          double ret_val = ret.val();
+          auto x_nrad_ = apply(
+              [&ret_val](const auto&... args) {
+                auto f = internal::make_root_func<false, FRootFunc>();
+                return eval(std::decay_t<FRootFunc>::template run<false>(
+                    ret_val, args...));
+              },
+              *arena_args_tuple);
+          x_nrad_.adj() = -(ret.adj() / Jf_x);
+          grad();
+        }
+      });
 }
 
 }  // namespace math
