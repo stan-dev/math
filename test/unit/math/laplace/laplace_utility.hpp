@@ -93,23 +93,36 @@ struct squared_kernel_functor {
   }
 };
 
-// TO DO: delete this structure.
-// To experiment with the prototype, provide a built-in covariance
-// function. In the final version, the user will pass the covariance
-// function.
 struct sqr_exp_kernel_functor {
   template <typename T1, typename T2, typename T3>
   auto operator()(
       const T1& x, const T2& alpha, const T3& rho,
       std::ostream* msgs = nullptr) const {
     double jitter = 1e-8;
-    Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic> kernel
-        = stan::math::gp_exp_quad_cov(x, alpha, rho);
+    Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
+      kernel = stan::math::gp_exp_quad_cov(x, alpha, rho);
     for (int i = 0; i < kernel.cols(); i++)
       kernel(i, i) += jitter;
 
     return kernel;
   }
+};
+
+struct sqr_exp_kernel_diag_functor {
+  template <typename T1, typename T2, typename T3>
+  auto operator()(
+    const T1& x, const T2& alpha, const T3& rho,
+    std::ostream* msgs = nullptr) const {
+      double jitter = 1e-8;
+      int n_observations = 911;
+      Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
+        kernel = Eigen::MatrixXd::Zero(n_observations, n_observations);
+      for (int i = 0; i < n_observations; i++) {
+        kernel(i, i) = alpha * alpha + jitter;
+      }
+
+      return kernel;
+    }
 };
 
 // Naive implementation of the functor (a smarter implementation

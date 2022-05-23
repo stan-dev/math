@@ -159,6 +159,8 @@ inline laplace_density_estimates laplace_marginal_density_est(
   Eigen::VectorXd a_new;
   Eigen::VectorXd theta_new;
 
+  int covariance_block_size = 1;
+
   if (solver == 1 && hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
@@ -177,22 +179,42 @@ inline laplace_density_estimates laplace_marginal_density_est(
         W_r = block_matrix_sqrt(W, hessian_block_size);
       }
 
-      // Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
-      MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
-                   + quad_form_diag(covariance, W_r.diagonal());
-      Eigen::MatrixXd L = cholesky_decompose(B);
-      B_log_determinant = 2 * sum(L.diagonal().array().log());
-      VectorXd b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
-      Eigen::VectorXd a
-          = b
-            - W_r
-                  * mdivide_left_tri<Eigen::Upper>(
-                      transpose(L),
-                      mdivide_left_tri<Eigen::Lower>(
-                          L, W_r.diagonal().cwiseProduct(covariance * b)));
+      Eigen::MatrixXd L;
+      Eigen::VectorXd a, b;
+      if (hessian_block_size == 1 & covariance_block_size == 1) {
+        Eigen::VectorXd B = W_r.diagonal().cwiseProduct(covariance.diagonal().
+                              cwiseProduct(W_r.diagonal()));
+        B.array() += 1;
+        L = B.cwiseSqrt().asDiagonal();
 
-      // Simple Newton step
-      theta = covariance * a;
+        B_log_determinant = 2 * sum(L.diagonal().array().log());
+        b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
+
+        a = b - W_r.diagonal().cwiseProduct(
+              B.cwiseInverse().cwiseProduct(
+                W_r.diagonal().cwiseProduct(
+                  covariance.diagonal().cwiseProduct(b))));
+
+        theta = covariance.diagonal().cwiseProduct(a);
+      } else {
+        Eigen::MatrixXd B = quad_form_diag(covariance, W_r.diagonal());
+        B.diagonal().array() += 1;  // add identity matrix
+        L = cholesky_decompose(B);
+
+        B_log_determinant = 2 * sum(L.diagonal().array().log());
+        b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
+
+        a = b - W_r
+                    * mdivide_left_tri<Eigen::Upper>(
+                        transpose(L),
+                        mdivide_left_tri<Eigen::Lower>(
+                            L, W_r.diagonal().cwiseProduct(covariance * b)));
+
+        // Newton step
+        theta = covariance * a;
+      }
+
+      // Compute objective
       if (i != 0) {
         objective_old = objective_new;
       }
@@ -201,7 +223,6 @@ inline laplace_density_estimates laplace_marginal_density_est(
             = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
       }
       // linesearch
-      // CHECK -- does linesearch work for solver 2?
       if (max_steps_line_search && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
@@ -513,24 +534,47 @@ inline auto laplace_marginal_density(
   Eigen::VectorXd partial_parm;
   Eigen::VectorXd s2;
 
-  if (solver == 1) {
-    Eigen::MatrixXd W_root_diag = W_root;
-    R = W_root
-        * L.transpose().triangularView<Eigen::Upper>().solve(
-            L.triangularView<Eigen::Lower>().solve(W_root_diag));
+  int covariance_block_size = 1;
 
-    Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_root * covariance);
-    if (hessian_block_size == 1 && eta_size_ == 0) {
-      s2 = 0.5
-           * (covariance.diagonal() - (C.transpose() * C).diagonal())
-                 .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
-    } else {
-      // int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
-      //                                            : hessian_block_size;
-      Eigen::MatrixXd A = covariance - C.transpose() * C;
+  if (solver == 1) {
+    if (covariance_block_size == 1 & hessian_block_size == 1) {
+      Eigen::VectorXd B_vector = L.diagonal().cwiseProduct(L.diagonal());
+      // Eigen::VectorXd R_vector = W_root.diagonal().cwiseProduct(
+      //       B_vector.cwiseInverse().cwiseProduct(W_root.diagonal()));
+      R = W_root.diagonal().cwiseProduct(
+             B_vector.cwiseInverse().cwiseProduct(W_root.diagonal()))
+             .asDiagonal();
+      Eigen::VectorXd KW_root
+        = covariance.diagonal().cwiseProduct(W_root.diagonal());
+
+      Eigen::MatrixXd A = (covariance.diagonal()
+        - KW_root.cwiseProduct(
+          B_vector.cwiseInverse().cwiseProduct(KW_root))).asDiagonal();
+
       partial_parm = diff_likelihood.compute_s2(theta, eta_dbl, A,
                                                 hessian_block_size);
       s2 = partial_parm.head(theta_size);
+    } else {
+      Eigen::MatrixXd W_root_m = W_root;  // build matrix to use solve.
+      R = W_root
+          * L.transpose().triangularView<Eigen::Upper>().solve(
+              L.triangularView<Eigen::Lower>().solve(W_root_m));
+
+      Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_root * covariance);
+
+      // CHECK -- does this specialized code actually improve performance?
+      if (hessian_block_size == 1 && eta_size_ == 0) {
+        s2 = 0.5
+             * (covariance.diagonal() - (C.transpose() * C).diagonal())
+                   .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
+
+        Eigen::VectorXd s_test = (C.transpose() * C).diagonal();
+      } else {
+        Eigen::MatrixXd A = covariance - C.transpose() * C;
+        partial_parm = diff_likelihood.compute_s2(theta, eta_dbl, A,
+                                                  hessian_block_size);
+        s2 = partial_parm.head(theta_size);
+      }
     }
   } else if (solver == 2) {
     // TODO -- use triangularView for K_root.
@@ -569,7 +613,6 @@ inline auto laplace_marginal_density(
                 return covariance_function(args..., msgs);
               },
               args_refs);
-      //  = covariance_function(x, phi_v, delta, delta_int, msgs);
       var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
