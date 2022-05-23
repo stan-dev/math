@@ -20,7 +20,7 @@ namespace math {
  */
 struct sqrt_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::sqrt;
     return sqrt(x);
   }

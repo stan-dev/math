@@ -21,7 +21,7 @@ namespace math {
  */
 struct log10_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::log10;
     return log10(x);
   }

@@ -18,7 +18,7 @@ namespace math {
  */
 struct inv_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return 1.0 / x;
   }
 };
