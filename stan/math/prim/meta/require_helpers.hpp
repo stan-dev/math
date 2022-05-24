@@ -62,6 +62,8 @@ template <class... Checks>
 using require_any_not_t
     = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
+// clang-format off
+
 /** \ingroup macro_helpers
  * Adds Unary require aliases.
  * @param check_type The name of the type to check, used to define
@@ -74,7 +76,7 @@ using require_any_not_t
   /*! \defgroup check_type##_types check_type  */                       \
   /*! \addtogroup check_type##_types */                                 \
   /*! @{ */                                                             \
-  /*! \brief checker##<T> is true */                                    \
+  /*! \brief `##checker##<T>` is true */                                    \
   template <typename T>                                                 \
   using require_##check_type##_t = require_t<checker<std::decay_t<T>>>; \
                                                                         \
@@ -83,22 +85,22 @@ using require_any_not_t
   using require_not_##check_type##_t                                    \
       = require_not_t<checker<std::decay_t<T>>>;                        \
                                                                         \
-  /*! \brief conjunction<##checker##<Types>...> is true */              \
+  /*! \brief `stan::math::conjunction<##checker##<Types>...>` is true */              \
   template <typename... Types>                                          \
   using require_all_##check_type##_t                                    \
       = require_all_t<checker<std::decay_t<Types>>...>;                 \
                                                                         \
-  /*! \brief disjunction<##checker##<Types>...> is true */              \
+  /*! \brief `stan::math::disjunction<##checker##<Types>...> `is true */              \
   template <typename... Types>                                          \
   using require_any_##check_type##_t                                    \
       = require_any_t<checker<std::decay_t<Types>>...>;                 \
                                                                         \
-  /*! \brief `conjunction<##checker##<Types>...>` is false */           \
+  /*! \brief `stan::math::conjunction<##checker##<Types>...>` is false */           \
   template <typename... Types>                                          \
   using require_all_not_##check_type##_t                                \
       = require_all_not_t<checker<std::decay_t<Types>>...>;             \
                                                                         \
-  /*! \brief disjunction<##checker##<Types>...> is false */             \
+  /*! \brief `stan::math::disjunction<##checker##<Types>...>` is false */             \
   template <typename... Types>                                          \
   using require_any_not_##check_type##_t                                \
       = require_any_not_t<checker<std::decay_t<Types>>...>;             \
@@ -115,62 +117,62 @@ using require_any_not_t
   /*! \ingroup doxygen_group */                                              \
   /*! \addtogroup check_type##_types */                                      \
   /*! @{ */                                                                  \
-  /*! \brief `##checker##<value_type_t<T>>` is true */                       \
+  /*! \brief `##checker##<stan::value_type_t<T>>` is true */                       \
   template <typename T>                                                      \
   using require_vt_##check_type                                              \
       = require_t<checker<value_type_t<std::decay_t<T>>>>;                   \
                                                                              \
-  /*! \brief `##checker##<value_type_t<T>>` is false */                      \
+  /*! \brief `##checker##<stan::value_type_t<T>>` is false */                      \
   template <typename T>                                                      \
   using require_not_vt_##check_type                                          \
       = require_not_t<checker<value_type_t<std::decay_t<T>>>>;               \
                                                                              \
-  /*! \brief `conjunction<##checker##<value_type_t<Types>>...>` is true */   \
+  /*! \brief `stan::math::conjunction<##checker##<stan::value_type_t<Types>>...>` is true */   \
   template <typename... Types>                                               \
   using require_all_vt_##check_type                                          \
       = require_all_t<checker<value_type_t<std::decay_t<Types>>>...>;        \
                                                                              \
-  /*! \brief `disjunction<##checker##<value_type_t<Types>>...>` is true */   \
+  /*! \brief `stan::math::disjunction<##checker##<stan::value_type_t<Types>>...>` is true */   \
   template <typename... Types>                                               \
   using require_any_vt_##check_type                                          \
       = require_any_t<checker<value_type_t<std::decay_t<Types>>>...>;        \
                                                                              \
-  /*! \brief `conjunction<##checker##<value_type_t<Types>>...>` is false */  \
+  /*! \brief `stan::math::conjunction<##checker##<stan::value_type_t<Types>>...>` is false */  \
   template <typename... Types>                                               \
   using require_all_not_vt_##check_type                                      \
       = require_all_not_t<checker<value_type_t<std::decay_t<Types>>>...>;    \
                                                                              \
-  /*! \brief `disjunction<##checker##<value_type_t<Types>>...>` is false */  \
+  /*! \brief `stan::math::disjunction<##checker##<stan::value_type_t<Types>>...>` is false */  \
   template <typename... Types>                                               \
   using require_any_not_vt_##check_type                                      \
-      = require_any_not_t<checker<value_type_t<std::decay_t<Types>>>...>;    \
+      = require_any_not_t<checker<stan::value_type_t<std::decay_t<Types>>>...>;    \
                                                                              \
-  /*! \brief `##checker##<scalar_type_t<T>>` is true */                      \
+  /*! \brief `##checker##<stan::scalar_type_t<T>>` is true */                      \
   template <typename T>                                                      \
   using require_st_##check_type                                              \
       = require_t<checker<scalar_type_t<std::decay_t<T>>>>;                  \
                                                                              \
-  /*! \brief `##checker##<scalar_type_t<T>>` is false */                     \
+  /*! \brief `##checker##<stan::scalar_type_t<T>>` is false */                     \
   template <typename T>                                                      \
   using require_not_st_##check_type                                          \
       = require_not_t<checker<scalar_type_t<std::decay_t<T>>>>;              \
                                                                              \
-  /*! \brief `conjunction<##checker##<scalar_type_t<Types>>...>` is true */  \
+  /*! \brief `stan::math::conjunction<##checker##<stan::scalar_type_t<Types>>...>` is true */  \
   template <typename... Types>                                               \
   using require_all_st_##check_type                                          \
       = require_all_t<checker<scalar_type_t<std::decay_t<Types>>>...>;       \
                                                                              \
-  /*! \brief `disjunction<##checker##<scalar_type_t<Types>>...>` is true */  \
+  /*! \brief `stan::math::disjunction<##checker##<stan::scalar_type_t<Types>>...>` is true */  \
   template <typename... Types>                                               \
   using require_any_st_##check_type                                          \
       = require_any_t<checker<scalar_type_t<std::decay_t<Types>>>...>;       \
                                                                              \
-  /*! \brief `conjunction<##checker##<scalar_type_t<Types>>...>` is false */ \
+  /*! \brief `stan::math::conjunction<##checker##<stan::scalar_type_t<Types>>...>` is false */ \
   template <typename... Types>                                               \
   using require_all_not_st_##check_type                                      \
       = require_all_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>;   \
                                                                              \
-  /*! \brief `disjunction<##checker##<scalar_type_t<Types>>...>` is false */ \
+  /*! \brief `stan::math::disjunction<##checker##<stan::scalar_type_t<Types>>...>` is false */ \
   template <typename... Types>                                               \
   using require_any_not_st_##check_type                                      \
       = require_any_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>;   \
@@ -188,32 +190,32 @@ using require_any_not_t
   /*! \defgroup check_type##_types check_type  */                            \
   /*! \addtogroup check_type##_types */                                      \
   /*! @{ */                                                                  \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::conjunction<##checker##<T>, ##checker##<S>> is true` */        \
   template <typename T, typename S>                                          \
   using require_##check_type##_t                                             \
       = require_t<checker<std::decay_t<T>, std::decay_t<S>>>;                \
                                                                              \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::conjunction<##checker##<T>, ##checker##<S>>` is true */        \
   template <typename T, typename S>                                          \
   using require_not_##check_type##_t                                         \
       = require_not_t<checker<std::decay_t<T>, std::decay_t<S>>>;            \
                                                                              \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::conjunction<##checker##<T>, ##checker##<S>>` is true */        \
   template <typename T, typename... Types>                                   \
   using require_all_##check_type##_t                                         \
       = require_all_t<checker<std::decay_t<T>, std::decay_t<Types>>...>;     \
                                                                              \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::disjunction<##checker##<T>, ##checker##<S>>` is true */        \
   template <typename T, typename... Types>                                   \
   using require_any_##check_type##_t                                         \
       = require_any_t<checker<std::decay_t<T>, std::decay_t<Types>>...>;     \
                                                                              \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::disjunction<##checker##<T>, ##checker##<S>>` is false */        \
   template <typename T, typename... Types>                                   \
   using require_all_not_##check_type##_t                                     \
       = require_all_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \
                                                                              \
-  /*! \brief `conjunction<##checker##<T>, ##checker##<S>> is true` */        \
+  /*! \brief `stan::math::conjunction<##checker##<T>, ##checker##<S>>` is false */        \
   template <typename T, typename... Types>                                   \
   using require_any_not_##check_type##_t                                     \
       = require_any_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \
@@ -230,71 +232,71 @@ using require_any_not_t
   /*! \ingroup doxygen_group */                                                \
   /*! \addtogroup check_type##_types */                                        \
   /*! @{ */                                                                    \
-  /*! \brief Require that value types of `T` and `S` satisfies checker */      \
+  /*! \brief `##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<S>>` is true */      \
   template <typename T, typename S>                                            \
   using require_st_##check_type                                                \
       = require_t<checker<scalar_type_t<std::decay_t<T>>,                      \
                           scalar_type_t<std::decay_t<S>>>>;                    \
                                                                                \
-  /*! \brief Require scalar types of `T` and `S` does not satisfy checker */   \
+  /*! \brief `##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<S>>` is false */   \
   template <typename T, typename S>                                            \
   using require_not_st_##check_type                                            \
       = require_not_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<S>>>>;                \
                                                                                \
-  /*! \brief All scalar types of `T` and all of the `Types` satisfy checker */ \
+  /*! \brief `stan::math::conjunction<##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<Types>>...>` is true */ \
   template <typename T, typename... Types>                                     \
   using require_all_st_##check_type                                            \
       = require_all_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<Types>>>...>;         \
                                                                                \
-  /*! \brief Any of the scalar types of `Types` and `T` satisfy checker */     \
+  /*! \brief `stan::math::disjunction<##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<Types>>...>` is true */     \
   template <typename T, typename... Types>                                     \
   using require_any_st_##check_type                                            \
       = require_any_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<Types>>>...>;         \
                                                                                \
-  /*! \brief None of the scalar types of `Types` and `T` satisfy checker */    \
+  /*! \brief `stan::math::conjunction<##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<Types>>...>` is false */    \
   template <typename T, typename... Types>                                     \
   using require_all_not_st_##check_type                                        \
       = require_all_not_t<checker<scalar_type_t<std::decay_t<T>>,              \
                                   scalar_type_t<std::decay_t<Types>>>...>;     \
                                                                                \
-  /*! \brief Any of the scalar types `Types` and `T` do not satisfy checker */ \
+  /*! \brief `stan::math::disjunction<##checker##<stan::scalar_type_t<T>, stan::scalar_type_t<Types>>...>` is false */ \
   template <typename T, typename... Types>                                     \
   using require_any_not_st_##check_type                                        \
       = require_any_not_t<checker<scalar_type_t<std::decay_t<T>>,              \
                                   scalar_type_t<std::decay_t<Types>>>...>;     \
                                                                                \
-  /*! \brief Value types of `T` and `S` satisfies checker */                   \
+  /*! \brief `##checker##<stan::value_type_t<T>, stan::value_type_t<S>>` is true */                   \
   template <typename T, typename S>                                            \
   using require_vt_##check_type = require_t<                                   \
       checker<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;  \
                                                                                \
-  /*! \brief Value types of `T` and `S` does not satisfy checker */            \
+  /*! \brief `##checker##<stan::value_type_t<T>, stan::value_type_t<S>>` is false */            \
   template <typename T, typename S>                                            \
   using require_not_vt_##check_type = require_not_t<                           \
       checker<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;  \
                                                                                \
-  /*! \brief Value types of `T` and all of the `Types` satisfy checker */      \
+  /*! \brief `stan::math::conjunction<##checker##<stan::value_type_t<T>, stan::value_type_t<Types>>...>` is true */      \
   template <typename T, typename... Types>                                     \
   using require_all_vt_##check_type                                            \
       = require_all_t<checker<value_type_t<std::decay_t<T>>,                   \
                               value_type_t<std::decay_t<Types>>>...>;          \
                                                                                \
-  /*! \brief Any of the value types of `Types` and `T` satisfy checker */      \
+  /*! \brief  `stan::math::disjunction<##checker##<stan::value_type_t<T>, stan::value_type_t<Types>>...>` is true */      \
   template <typename T, typename... Types>                                     \
   using require_any_vt_##check_type                                            \
       = require_any_t<checker<value_type_t<std::decay_t<T>>,                   \
                               value_type_t<std::decay_t<Types>>>...>;          \
                                                                                \
-  /*! \brief None of the value types of `Types` and `T` satisfy checker */     \
+  /*! \brief `stan::math::conjunction<##checker##<stan::value_type_t<T>, stan::value_type_t<Types>>...>` is false */     \
   template <typename T, typename... Types>                                     \
   using require_all_not_vt_##check_type                                        \
       = require_all_not_t<checker<value_type_t<std::decay_t<T>>,               \
                                   value_type_t<std::decay_t<Types>>>...>;      \
                                                                                \
-  /*! \brief Any of the value types `Types` and `T` do not satisfy checker */  \
+  /*! \brief `stan::math::disjunction<##checker##<stan::value_type_t<T>, stan::value_type_t<Types>>...>` is false */  \
   template <typename T, typename... Types>                                     \
   using require_any_not_vt_##check_type                                        \
       = require_any_not_t<checker<value_type_t<std::decay_t<T>>,               \
@@ -335,48 +337,48 @@ using container_type_check_base
   /*! \addtogroup check_type##_types */                                        \
   /*! @{ */                                                                    \
   /*! \brief Require `##checker##<Check>` is true and */                       \
-  /*! \brief `TypeCheck<value_type_t<Check>>` is true */                       \
+  /*! \brief `TypeCheck<stan::value_type_t<Check>>` is true */                       \
   /*! @tparam Check the type to check */                                       \
-  /*! @tparam TypeCheck The type trait to check the */                         \
+  /*! @tparam TypeCheck The type trait to check */                         \
   /*!  \ref stan::value_type against */                                        \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_##check_type##_vt = require_t<                                 \
       container_type_check_base<checker, value_type_t, TypeCheck, Check...>>;  \
                                                                                \
   /*! \brief Require `##checker##<Check>` is false or */                       \
-  /*! \brief `TypeCheck<value_type_t<Check>>` is false */                      \
+  /*! \brief `TypeCheck<stan::value_type_t<Check>>` is false */                      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::value_type against*/    \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_not_##check_type##_vt = require_not_t<                         \
       container_type_check_base<checker, value_type_t, TypeCheck, Check...>>;  \
                                                                                \
-  /*! \brief Require `disjunction<##checker##<Check>...>` is true and */       \
-  /*! \brief `disjunction<TypeCheck<value_type_t<Check>>...>` is true */       \
+  /*! \brief Require `stan::math::disjunction<##checker##<Check>...>` is true and */       \
+  /*! \brief `disjunction<TypeCheck<stan::value_type_t<Check>>...>` is true */       \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::value_type against*/    \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_any_##check_type##_vt = require_any_t<                         \
       container_type_check_base<checker, value_type_t, TypeCheck, Check>...>;  \
                                                                                \
-  /*! \brief Require `disjunction<##checker##<Check>...>` is false or */       \
-  /*! \brief `disjunction<TypeCheck<value_type_t<Check>>...>` is false */      \
+  /*! \brief Require `stan::math::disjunction<##checker##<Check>...>` is false or */       \
+  /*! \brief `stan::math::disjunction<TypeCheck<stan::value_type_t<Check>>...>` is false */      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::value_type against*/    \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_any_not_##check_type##_vt = require_any_not_t<                 \
       container_type_check_base<checker, value_type_t, TypeCheck, Check>...>;  \
                                                                                \
-  /*! \brief Require `conjunction<##checker##<Check>...>` is true and */       \
-  /*! \brief `conjunction<TypeCheck<value_type_t<Check>>...>` is true */       \
+  /*! \brief Require `stan::math::conjunction<##checker##<Check>...>` is true and */       \
+  /*! \brief `stan::math::conjunction<TypeCheck<stan::value_type_t<Check>>...>` is true */       \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::value_type against*/    \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_all_##check_type##_vt = require_all_t<                         \
       container_type_check_base<checker, value_type_t, TypeCheck, Check>...>;  \
                                                                                \
-  /*! \brief Require `conjunction<##checker##<Check>...>` is false and */      \
-  /*! \brief `conjunction<TypeCheck<value_type_t<Check>>...>` is false */      \
+  /*! \brief Require `stan::math::conjunction<##checker##<Check>...>` is false and */      \
+  /*! \brief `stan::math::conjunction<TypeCheck<stan::value_type_t<Check>>...>` is false */      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::value_type against*/    \
   template <template <class...> class TypeCheck, class... Check>               \
@@ -384,7 +386,7 @@ using container_type_check_base
       container_type_check_base<checker, value_type_t, TypeCheck, Check>...>;  \
                                                                                \
   /*! \brief Require `##checker##<Check>` is true and */                       \
-  /*! \brief `TypeCheck<scalar_type_t<Check>>` is true */                      \
+  /*! \brief `TypeCheck<stan::scalar_type_t<Check>>` is true */                      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
@@ -392,45 +394,47 @@ using container_type_check_base
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check...>>; \
                                                                                \
   /*! \brief Require `##checker##<Check>` is false or */                       \
-  /*! \brief `TypeCheck<scalar_type_t<Check>>` is false */                     \
+  /*! \brief `TypeCheck<stan::scalar_type_t<Check>>` is false */                     \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_not_##check_type##_st = require_not_t<                         \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check...>>; \
                                                                                \
-  /*! \brief Require `disjunction<##checker##<Check>...>` is true and */       \
-  /*! \brief `disjunction<TypeCheck<scalar_type_t<Check>...>>` is true */      \
+  /*! \brief Require `stan::math::disjunction<##checker##<Check>...>` is true and */       \
+  /*! \brief `stan::math::disjunction<TypeCheck<stan::scalar_type_t<Check>...>>` is true */      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_any_##check_type##_st = require_any_t<                         \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check>...>; \
                                                                                \
-  /*! \brief Require `disjunction<##checker##<Check>...>` is false or */       \
-  /*! \brief `disjunction<TypeCheck<scalar_type_t<Check>>...>` is false */     \
+  /*! \brief Require `stan::math::disjunction<##checker##<Check>...>` is false or */       \
+  /*! \brief `stan::math::disjunction<TypeCheck<stan::scalar_type_t<Check>>...>` is false */     \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_any_not_##check_type##_st = require_any_not_t<                 \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check>...>; \
                                                                                \
-  /*! \brief Require `conjunction<##checker##<Check>...>` is true and */       \
-  /*! \brief `conjunction<TypeCheck<scalar_type_t<Check>>...>` is true */      \
+  /*! \brief Require `stan::math::conjunction<##checker##<Check>...>` is true and */       \
+  /*! \brief `stan::math::conjunction<TypeCheck<stan::scalar_type_t<Check>>...>` is true */      \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_all_##check_type##_st = require_all_t<                         \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check>...>; \
                                                                                \
-  /*! \brief Require `conjunction<##checker##<Check>...>` is false and */      \
-  /*! \brief `conjunction<TypeCheck<scalar_type_t<Check>>...>` is false */     \
+  /*! \brief Require `stan::math::conjunction<##checker##<Check>...>` is false and */      \
+  /*! \brief `stan::math::conjunction<TypeCheck<stan::scalar_type_t<Check>>...>` is false */     \
   /*! @tparam Check the type to check */                                       \
   /*! @tparam TypeCheck type trait to check \ref stan::scalar_type against*/   \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_all_not_##check_type##_st = require_all_not_t<                 \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check>...>; \
   /*! @} */
+
+  // clang-format on
 
 }  // namespace stan
 

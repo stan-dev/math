@@ -360,7 +360,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * Construct a variable from the specified floating point argument
    * by constructing a new `vari_value<value_type>`. This constructor is only
    * valid when `S` is convertible to this `vari_value`'s \ref stan::value_type
-   * 
+   *
    * @tparam S A type that is convertible to \ref stan::value_type .
    * @param x Value of the variable.
    */
@@ -1097,7 +1097,9 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   }
 };
 
-// For backwards compatability the default value is double
+/**
+ * See the docs for @ref stan::math::var_value<double, require_floating_point_t<double>>
+ */
 using var = var_value<double>;
 
 }  // namespace math
