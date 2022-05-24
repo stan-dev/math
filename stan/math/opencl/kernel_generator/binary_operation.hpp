@@ -210,8 +210,8 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_modulo_, operator%, common_scalar_t<T_a COMMA T_b>, "%",
     static_assert(
-        std::is_integral<scalar_type_t<T_a>>::value
-            && std::is_integral<scalar_type_t<T_b>>::value,
+        std::is_integral<scalar_type_t<T_a>>::value&&
+            std::is_integral<scalar_type_t<T_b>>::value,
         "both operands to operator% must have integral scalar types!");
     inline std::pair<int, int> extreme_diagonals() const {
       return {-rows() + 1, cols() - 1};

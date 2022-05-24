@@ -16,11 +16,12 @@ namespace stan {
  * ```
  *  aka
  * ```cpp
- * stan::plain_type<Eigen::CwiseBinaryOp<scalar_sum_op<double, double>, Eigen::MatrixXd, Eigen::MatrixXd>>
+ * stan::plain_type<Eigen::CwiseBinaryOp<scalar_sum_op<double, double>,
+ * Eigen::MatrixXd, Eigen::MatrixXd>>
  * ```
  * the `type` will be `Eigen::MatrixXd`. `stan::plain_type<double>`'s `type`
- * will be a double. while `stan::plain_type<std::vector<double>>`'s `type` will be a
- * `std::vector<double>`
+ * will be a double. while `stan::plain_type<std::vector<double>>`'s `type` will
+ * be a `std::vector<double>`
  * @tparam T type to determine plain type of
  */
 template <typename T, typename Enable = void>

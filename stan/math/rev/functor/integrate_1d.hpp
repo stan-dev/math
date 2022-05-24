@@ -39,7 +39,7 @@ template <typename F, typename T_a, typename T_b, typename... Args,
           require_any_st_var<T_a, T_b, Args...> * = nullptr>
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
-    std::ostream *msgs, const Args &...args) {
+    std::ostream *msgs, const Args &... args) {
   static constexpr const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -58,7 +58,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     double integral = integrate(
         [&](const auto &x, const auto &xc) {
           return apply(
-              [&](auto &&...val_args) { return f(x, xc, msgs, val_args...); },
+              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
               args_val_tuple);
         },
         a_val, b_val, relative_tolerance);
@@ -80,7 +80,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     if (is_var<T_a>::value && !is_inf(a)) {
       *partials_ptr = apply(
-          [&f, a_val, msgs](auto &&...val_args) {
+          [&f, a_val, msgs](auto &&... val_args) {
             return -f(a_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
@@ -89,7 +89,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     if (!is_inf(b) && is_var<T_b>::value) {
       *partials_ptr = apply(
-          [&f, b_val, msgs](auto &&...val_args) {
+          [&f, b_val, msgs](auto &&... val_args) {
             return f(b_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
@@ -105,7 +105,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       // Save the varis so it's easy to efficiently access the nth adjoint
       std::vector<vari *> local_varis(num_vars_args);
       apply(
-          [&](const auto &...args) { save_varis(local_varis.data(), args...); },
+          [&](const auto &... args) {
+            save_varis(local_varis.data(), args...);
+          },
           args_tuple_local_copy);
 
       for (size_t n = 0; n < num_vars_args; ++n) {
@@ -117,7 +119,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
               nested_rev_autodiff gradient_nest;
               var fx = apply(
-                  [&f, &x, &xc, msgs](auto &&...local_args) {
+                  [&f, &x, &xc, msgs](auto &&... local_args) {
                     return f(x, xc, msgs, local_args...);
                   },
                   args_tuple_local_copy);

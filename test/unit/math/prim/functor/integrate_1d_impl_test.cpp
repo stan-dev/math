@@ -253,7 +253,7 @@ double order(double down, double up, const std::vector<double> &theta,
  */
 template <typename F, typename... Args>
 void test_integration(const F &f, double a, double b, double val,
-                      const Args &...args) {
+                      const Args &... args) {
   using stan::math::integrate_1d_impl;
 
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};
@@ -265,7 +265,7 @@ void test_integration(const F &f, double a, double b, double val,
               tolerance);
     // Flip the domain of integration and check that the integral is working
     auto flipped
-        = [&](double x, double xc, std::ostream *msgs, const auto &...args) {
+        = [&](double x, double xc, std::ostream *msgs, const auto &... args) {
             return f(-x, -xc, msgs, args...);
           };
 
