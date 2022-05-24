@@ -17,9 +17,6 @@
 
 #include <cmath>
 
-// Reference for calculations of marginal and its gradients:
-// Margossian et al (2020), https://arxiv.org/abs/2004.12550
-// and Margossian (2022), https://doi.org/10.7916/0wsc-kz90
 
 // TODO -- either use Eigen's .solve() or mdivide_left_tri.
 // The code needs to be more consistent.
@@ -48,49 +45,55 @@ struct laplace_density_estimates {
 /**
  * For a latent Gaussian model with hyperparameters phi and eta,
  * latent variables theta, and observations y, this function computes
- * an approximation of the log marginal density, p(y | phi).
+ * an approximation of the log marginal density, p(y | phi, eta).
  * This is done by marginalizing out theta, using a Laplace
  * approxmation. The latter is obtained by finding the mode,
- * via Newton's method, and computing the Hessian of the likelihood.
+ * via Newton's method, and computing the cuvature of the conditional
+ * distribution, p(theta | y, phi, eta).
  *
  * The convergence criterion for the Newton is a small change in
- * log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
- * TO DO: add more robust convergence criterion.
- *
- * This algorithm is adapted from Rasmussen and Williams,
- * "Gaussian Processes for Machine Learning", second edition,
- * MIT Press 2006, algorithm 3.1.
+ * log marginal density, p(theta | y, phi, eta). The user controls
+ * the tolerance (i.e. threshold under which change is deemed small
+ * enough) and maximum number of steps.
  *
  * Variables needed for the gradient or generating quantities
  * are stored by reference.
  *
+ * References:
+ *  - Margossian (2022, Chapter 5), https://doi.org/10.7916/0wsc-kz90
+ *  - Margossian et al (2020), https://doi.org/10.7916/0wsc-kz90
+ *  - Rasmussen and Williams (2006, Chapters 3 and 5),
+ *        http://gaussianprocess.org/gpml/chapters/RW.pdf
+ *
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- * @tparam Tx type of x, which can in Stan be passed as a matrix or
- *            an array of vectors.
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type for initial guess.
+ * @tparam Eta type for vector of eta parameters for the likelihood
+ * @tparam Args type for variadic arguments to covariance function.
+ *
  * @param[in] D structure to compute and differentiate the log likelihood.
- * @param[in] K structure to compute the covariance function.
+ * @param[in] covariance_function structure to compute the covariance function.
  * @param[in] phi hyperparameter (input for the covariance function).
  * @param[in] eta hyperparameter (input for likelihood).
- * @param[in] x fixed spatial data (input for the covariance function).
- * @param[in] delta additional fixed real data (input for covariance
- *            function).
- * @param[in] delta_int additional fixed integer data (input for covariance
- *            function).
  * @param[in] theta_0 the initial guess for the mode.
+ * @param[in, out] msgs use for print statements
  * @param[in] tolerance the convergence criterion for the Newton solver.
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @param[in] hessian_block_size the size of the block, where we assume
  *              the Hessian is block-diagonal.
+ * @param[in] covariance_block_size the size of the block, where we assume
+ *               the covariance is block-diagonal. The 0 default assumes
+ *               that the covariance is dense. (for now only 1 uses specialized
+ *               code).
  * @param[in] solver which Newton solver to use:
  *                     (1) method using the root of W.
  *                     (2) method using the root of the covariance.
  *                     (3) method using an LU decomposition.
+ * @param[in] max_steps_line_search The number of steps the line search takes
+ *            during each Newton step. If set to 0, no line search is performed.
  *
  * @return A struct containing
- * 1. lmd the log marginal density, p(y | phi).
+ * 1. lmd the log marginal density, log p(y | phi, eta).
  * 2. covariance the evaluated covariance function for the latent gaussian
  * variable.
  * 3. theta a vector to store the mode.
@@ -109,8 +112,8 @@ inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0, std::ostream* msgs,
     const double tolerance, const long int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search,
+    const int hessian_block_size, const int covariance_block_size,
+    const int solver, const int max_steps_line_search,
     Args&&... covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
@@ -121,6 +124,8 @@ inline laplace_density_estimates laplace_marginal_density_est(
   check_nonnegative("laplace_marginal", "tolerance", tolerance);
   check_positive("laplace_marginal", "max_num_steps", max_num_steps);
   check_positive("laplace_marginal", "hessian_block_size", hessian_block_size);
+  check_nonnegative("laplace_marginal", "covariance_block_size",
+                    covariance_block_size);
   check_nonnegative("laplace_marginal", "max_steps_line_search",
                     max_steps_line_search);
 
@@ -159,8 +164,6 @@ inline laplace_density_estimates laplace_marginal_density_est(
   Eigen::VectorXd a_new;
   Eigen::VectorXd theta_new;
 
-  int covariance_block_size = 1;
-
   if (solver == 1 && hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
       SparseMatrix<double> W
@@ -181,7 +184,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
 
       Eigen::MatrixXd L;
       Eigen::VectorXd a, b;
-      if (hessian_block_size == 1 & covariance_block_size == 1) {
+      if (hessian_block_size == 1 && covariance_block_size == 1) {
         Eigen::VectorXd B = W_r.diagonal().cwiseProduct(covariance.diagonal().
                               cwiseProduct(W_r.diagonal()));
         B.array() += 1;
@@ -393,38 +396,69 @@ inline laplace_density_estimates laplace_marginal_density_est(
 }
 
 /**
- * For a latent Gaussian model with global parameters phi, latent
- * variables theta, and observations y, this function computes
- * an approximation of the log marginal density, p(y | phi).
+ * For a latent Gaussian model with hyperparameters phi and eta,
+ * latent variables theta, and observations y, this function computes
+ * an approximation of the log marginal density, p(y | phi, eta).
  * This is done by marginalizing out theta, using a Laplace
  * approxmation. The latter is obtained by finding the mode,
- * using a custom Newton method, and the Hessian of the likelihood.
+ * via Newton's method, and computing the cuvature of the conditional
+ * distribution, p(theta | y, phi, eta).
  *
  * The convergence criterion for the Newton is a small change in
- * log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
+ * log marginal density, p(theta | y, phi, eta). The user controls
+ * the tolerance (i.e. threshold under which change is deemed small
+ * enough) and maximum number of steps.
  *
- * Wrapper for when the hyperparameters passed as a double.
+ * Variables needed for the gradient or generating quantities
+ * are stored by reference.
  *
- * @tparam T type of the initial guess.
+ * References:
+ *  - Margossian (2022, Chapter 5), https://doi.org/10.7916/0wsc-kz90
+ *  - Margossian et al (2020), https://doi.org/10.7916/0wsc-kz90
+ *  - Rasmussen and Williams (2006, Chapters 3 and 5),
+ *        http://gaussianprocess.org/gpml/chapters/RW.pdf
+ *
+ * Wrapper for when the hyperparameters are passed as double.
+ *
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- * @tparam Tx type of spatial data for covariance: in Stan, this can
- *            either be a matrix or an array of vectors.
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type for initial guess.
+ * @tparam Eta type for vector of eta parameters for the likelihood
+ * @tparam Args type for variadic arguments to covariance function.
+ *
  * @param[in] D structure to compute and differentiate the log likelihood.
- *            The object stores the sufficient stats for the observations.
- * @param[in] K structure to compute the covariance function.
- * @param[in] phi the global parameter (input for the covariance function).
- * @param[in] x data for the covariance function.
- * @param[in] delta additional fixed real data (input for covariance
- *            function).
- * @param[in] delta_int additional fixed integer data (input for covariance
- *            function).
+ * @param[in] covariance_function structure to compute the covariance function.
+ * @param[in] phi hyperparameter (input for the covariance function).
+ * @param[in] eta hyperparameter (input for likelihood).
  * @param[in] theta_0 the initial guess for the mode.
+ * @param[in, out] msgs use for print statements
  * @param[in] tolerance the convergence criterion for the Newton solver.
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
- * @return the log maginal density, p(y | phi).
+ * @param[in] hessian_block_size the size of the block, where we assume
+ *              the Hessian is block-diagonal.
+ * @param[in] covariance_block_size the size of the block, where we assume
+ *               the covariance is block-diagonal. The 0 default assumes
+ *               that the covariance is dense. (for now only 1 uses specialized
+ *               code).
+ * @param[in] solver which Newton solver to use:
+ *                     (1) method using the root of W.
+ *                     (2) method using the root of the covariance.
+ *                     (3) method using an LU decomposition.
+ * @param[in] max_steps_line_search The number of steps the line search takes
+ *            during each Newton step. If set to 0, no line search is performed.
+ *
+ * @return A struct containing
+ * 1. lmd the log marginal density, log p(y | phi, eta).
+ * 2. covariance the evaluated covariance function for the latent gaussian
+ * variable.
+ * 3. theta a vector to store the mode.
+ * 4. W_r a vector to store the square root of the
+ *                 negative Hessian or the negative Hessian, depending
+ *                 on which solver we use.
+ * 5. L cholesky decomposition of stabilized inverse covariance.
+ * 6. a element in the Newton step
+ * 7. l_grad the log density of the likelihood.
+ *
  */
 template <typename D, typename CovarFun, typename Eta, typename ThetaVec,
           typename... Args, require_eigen_t<Eta>* = nullptr,
@@ -435,10 +469,12 @@ inline double laplace_marginal_density(
     const ThetaVec& theta_0,
     std::ostream* msgs, const double tolerance,
     const long int max_num_steps, const int hessian_block_size,
+    const int covariance_block_size,
     const int solver, const int max_steps_line_search, Args&&... args) {
   return laplace_marginal_density_est(
              diff_likelihood, covariance_function, eta, value_of(theta_0), msgs,
-             tolerance, max_num_steps, hessian_block_size, solver,
+             tolerance, max_num_steps, hessian_block_size,
+             covariance_block_size, solver,
              max_steps_line_search, to_ref(value_of(args))...)
       .lmd;
 }
@@ -450,36 +486,59 @@ template <typename... Types>
 using is_any_var = disjunction<is_var<scalar_type_t<Types>>...>;
 
 /**
- * For a latent Gaussian model with global parameters phi, latent
- * variables theta, and observations y, this function computes
- * an approximation of the log marginal density, p(y | phi).
+ * For a latent Gaussian model with hyperparameters phi and eta,
+ * latent variables theta, and observations y, this function computes
+ * an approximation of the log marginal density, p(y | phi, eta).
  * This is done by marginalizing out theta, using a Laplace
  * approxmation. The latter is obtained by finding the mode,
- * using a custom Newton method, and the Hessian of the likelihood.
+ * via Newton's method, and computing the cuvature of the conditional
+ * distribution, p(theta | y, phi, eta).
  *
  * The convergence criterion for the Newton is a small change in
- * the log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
+ * log marginal density, p(theta | y, phi, eta). The user controls
+ * the tolerance (i.e. threshold under which change is deemed small
+ * enough) and maximum number of steps.
  *
- * Wrapper for when the global parameter is passed as a double.
+ * Variables needed for the gradient or generating quantities
+ * are stored by reference.
  *
- * @tparam T0 type of the initial guess.
- * @tparam T1 type of the global parameters.
+ * References:
+ *  - Margossian (2022, Chapter 5), https://doi.org/10.7916/0wsc-kz90
+ *  - Margossian et al (2020), https://doi.org/10.7916/0wsc-kz90
+ *  - Rasmussen and Williams (2006, Chapters 3 and 5),
+ *        http://gaussianprocess.org/gpml/chapters/RW.pdf
+ *
+ * Wrapper for when the hyperparameters are passed as var.
+ * This code contains the adjoint-differentiation method.
+ *
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- *@tparam Tx type for the spatial data passed to the covariance.
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type for initial guess.
+ * @tparam Eta type for vector of eta parameters for the likelihood
+ * @tparam Args type for variadic arguments to covariance function.
+ *
  * @param[in] D structure to compute and differentiate the log likelihood.
- *            The object stores the sufficient stats for the observations.
- * @param[in] K structure to compute the covariance function.
- * @param[in] phi the global parameter (input for the covariance function).
- * @param[in] x data for the covariance function.
- * @param[in] delta addition real data for covariance function.
- * @param[in] delta_int additional interger data for covariance function.
+ * @param[in] covariance_function structure to compute the covariance function.
+ * @param[in] phi hyperparameter (input for the covariance function).
+ * @param[in] eta hyperparameter (input for likelihood).
  * @param[in] theta_0 the initial guess for the mode.
+ * @param[in, out] msgs use for print statements
  * @param[in] tolerance the convergence criterion for the Newton solver.
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
- * @return the log maginal density, p(y | phi).
+ * @param[in] hessian_block_size the size of the block, where we assume
+ *              the Hessian is block-diagonal.
+ * @param[in] covariance_block_size the size of the block, where we assume
+ *               the covariance is block-diagonal. The 0 default assumes
+ *               that the covariance is dense. (for now only 1 uses specialized
+ *               code).
+ * @param[in] solver which Newton solver to use:
+ *                     (1) method using the root of W.
+ *                     (2) method using the root of the covariance.
+ *                     (3) method using an LU decomposition.
+ * @param[in] max_steps_line_search The number of steps the line search takes
+ *            during each Newton step. If set to 0, no line search is performed.
+ *
+ * @return the log maginal density, log p(y | phi, eta).
  */
 template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
           typename... Args, require_eigen_t<Eta>* = nullptr,
@@ -490,6 +549,7 @@ inline auto laplace_marginal_density(
     const ThetaVec& theta_0,
     std::ostream* msgs, const double tolerance,
     const long int max_num_steps, const int hessian_block_size,
+    const int covariance_block_size,
     const int solver, const int max_steps_line_search, Args&&... args) {
   auto args_refs = stan::math::apply(
       [](auto&&... args) { return std::make_tuple(to_ref(args)...); },
@@ -511,8 +571,8 @@ inline auto laplace_marginal_density(
         return laplace_marginal_density_est(
             diff_likelihood, covariance_function, value_of(eta_arena),
             value_of(theta_0), msgs, tolerance, max_num_steps,
-            hessian_block_size, solver, max_steps_line_search,
-            v_args...);
+            hessian_block_size, covariance_block_size, solver,
+            max_steps_line_search, v_args...);
       },
       value_args);
   double marginal_density_dbl = marginal_density_ests.lmd;
@@ -534,13 +594,9 @@ inline auto laplace_marginal_density(
   Eigen::VectorXd partial_parm;
   Eigen::VectorXd s2;
 
-  int covariance_block_size = 1;
-
   if (solver == 1) {
-    if (covariance_block_size == 1 & hessian_block_size == 1) {
+    if (covariance_block_size == 1 && hessian_block_size == 1) {
       Eigen::VectorXd B_vector = L.diagonal().cwiseProduct(L.diagonal());
-      // Eigen::VectorXd R_vector = W_root.diagonal().cwiseProduct(
-      //       B_vector.cwiseInverse().cwiseProduct(W_root.diagonal()));
       R = W_root.diagonal().cwiseProduct(
              B_vector.cwiseInverse().cwiseProduct(W_root.diagonal()))
              .asDiagonal();
@@ -603,6 +659,7 @@ inline auto laplace_marginal_density(
 
   // TODO: Why does remove this phi_size != 0 check work but for eta it fails?
   // Because we have an eta_dummy sometimes...
+  bool B_is_diag = (hessian_block_size == 1) && (covariance_block_size == 1);
   if (is_any_var<Args...>::value && !is_constant<Eta>::value
       && eta_size_ != 0) {
     {
@@ -613,7 +670,8 @@ inline auto laplace_marginal_density(
                 return covariance_function(args..., msgs);
               },
               args_refs);
-      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2,
+                                    B_is_diag);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
     }
@@ -658,8 +716,8 @@ inline auto laplace_marginal_density(
                 return covariance_function(args..., msgs);
               },
               args_refs);
-      //  = covariance_function(x, phi_v, delta, delta_int, msgs);
-      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2,
+                                    B_is_diag);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
     }

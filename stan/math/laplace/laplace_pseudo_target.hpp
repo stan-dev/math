@@ -19,23 +19,20 @@ inline constexpr double laplace_pseudo_target(const KMat& K,
                                               const Eigen::VectorXd& a,
                                               const Eigen::MatrixXd& R,
                                               const Eigen::VectorXd& l_grad,
-                                              const Eigen::VectorXd& s2) {
-  // double s1 = 0.5 * quad_form(K, a) - 0.5 * sum((R * K).diagonal());
-  // Eigen::VectorXd b = K * l_grad;
-  // Eigen::VectorXd s3 = b - K * (R * b);
-  // return s1 + s2.dot(s3);
+                                              const Eigen::VectorXd& s2,
+                                              bool B_is_diag = false) {
   return 0;
 }
 
 /**
  * Overload function for case where K is passed as a matrix of var.
- * NOTE (@charlesm93): Steve, why would K be passed as a matrix of var?
  */
 template <typename KMat, typename AVec, typename RMat, typename LGradVec,
           typename S2Vec,
           require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
 inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
-                                  LGradVec&& l_grad, S2Vec&& s2) {
+                                  LGradVec&& l_grad, S2Vec&& s2,
+                                  bool B_is_diag = false) {
   const Eigen::Index dim_theta = K.rows();
   auto K_arena = to_arena(std::forward<KMat>(K));
   auto&& a_ref = to_ref(std::forward<AVec>(a));
@@ -43,16 +40,14 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
   auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));
   auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
 
-  bool B_is_diag = true;
-
   arena_matrix<Eigen::MatrixXd> K_adj_arena;
-  //  NOTE: initial unit test (poisson) suggests this specialized
-  //  code neither speeds up nor slows down code.
   if (B_is_diag) {
     K_adj_arena = 0.5 * a_ref.cwiseProduct(a_ref).asDiagonal();
     K_adj_arena.diagonal() -= 0.5 * R_ref.diagonal();
+    // K_adj_arena = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref;
     K_adj_arena.diagonal() += (s2_ref - R_ref.diagonal().cwiseProduct(
-      value_of(K_arena.diagonal()).cwiseProduct(s2_ref)));
+      value_of(K_arena.diagonal()).cwiseProduct(s2_ref))).
+      cwiseProduct(l_grad_ref);
   } else {
     K_adj_arena
         = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
