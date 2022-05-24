@@ -171,7 +171,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
   var marginal_density_dense = laplace_marginal_poisson_2_log_lpmf(
       y, n_samples, ye, theta_0,
       stan::math::test::sqr_exp_kernel_diag_functor(),
-      nullptr, x, phi(0), phi(1));
+      nullptr, x, phi(0), phi(1), n_observations);
 
   double tolerance = 1e-6;
   int max_num_steps = 100;
@@ -185,7 +185,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
       tolerance, max_num_steps, hessian_block_size,
       covariance_block_size, solver, max_steps_line_search,
       theta_0, stan::math::test::sqr_exp_kernel_diag_functor(),
-      nullptr, x, phi(0), phi(1));
+      nullptr, x, phi(0), phi(1), n_observations);
 
   double tol = 6e-4;
   // Benchmark from dense case.
@@ -213,7 +213,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
              covariance_block_size, solver, max_steps_line_search,
              theta_0,
              stan::math::test::sqr_exp_kernel_diag_functor(),
-           nullptr, x, phi_u0(0), phi_u0(1)),
+           nullptr, x, phi_u0(0), phi_u0(1), n_observations),
 
          target_u1 = laplace_marginal_tol_poisson_2_log_lpmf(
              y, n_samples, ye,
@@ -221,7 +221,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
              covariance_block_size, solver, max_steps_line_search,
              theta_0,
              stan::math::test::sqr_exp_kernel_diag_functor(),
-           nullptr, x, phi_u1(0), phi_u1(1)),
+           nullptr, x, phi_u1(0), phi_u1(1), n_observations),
 
          target_l0 = laplace_marginal_tol_poisson_2_log_lpmf(
              y, n_samples, ye,
@@ -229,7 +229,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
              covariance_block_size, solver, max_steps_line_search,
              theta_0,
              stan::math::test::sqr_exp_kernel_diag_functor(),
-           nullptr, x, phi_l0(0), phi_l0(1)),
+           nullptr, x, phi_l0(0), phi_l0(1), n_observations),
 
          target_l1 = laplace_marginal_tol_poisson_2_log_lpmf(
              y, n_samples, ye,
@@ -237,7 +237,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf_diag) {
              covariance_block_size, solver, max_steps_line_search,
              theta_0,
              stan::math::test::sqr_exp_kernel_diag_functor(),
-           nullptr, x, phi_l1(0), phi_l1(1));
+           nullptr, x, phi_l1(0), phi_l1(1), n_observations);
 
   EXPECT_NEAR((target_u0 - target_l0) / (2.0 * eps), g[0], 2e-3);
   EXPECT_NEAR((target_u1 - target_l1) / (2.0 * eps), g[1], 0.0017);

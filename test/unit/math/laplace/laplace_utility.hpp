@@ -111,10 +111,9 @@ struct sqr_exp_kernel_functor {
 struct sqr_exp_kernel_diag_functor {
   template <typename T1, typename T2, typename T3>
   auto operator()(
-    const T1& x, const T2& alpha, const T3& rho,
+    const T1& x, const T2& alpha, const T3& rho, int n_observations,
     std::ostream* msgs = nullptr) const {
       double jitter = 1e-8;
-      int n_observations = 911;
       Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
         kernel = Eigen::MatrixXd::Zero(n_observations, n_observations);
       for (int i = 0; i < n_observations; i++) {
@@ -421,5 +420,48 @@ class laplace_disease_map_test : public ::testing::Test {
   // stan::math::poisson_log_likelihood f;
 };
 
+class laplace_bernoulli_dim500_test : public::testing::Test {
+protected:
+  void SetUp() override {
+    dim_theta = 500;
+    n_observations = 500;
+    x1.resize(dim_theta);
+    x2.resize(dim_theta);
+    y.resize(n_observations);
+    std::string data_directory = "test/unit/math/laplace/aki_synth_data/";
+    stan::math::test::read_in_data(dim_theta, n_observations, data_directory,
+                                   x1, x2, y);
+    dim_x = 2;
+    x.resize(dim_theta);
+    for (int i = 0; i < dim_theta; i++) {
+      Eigen::VectorXd coordinate(dim_x);
+      coordinate << x1[i], x2[i];
+      x[i] = coordinate;
+    }
+    n_samples = stan::math::rep_array(1, dim_theta);
+    theta_0 = Eigen::VectorXd::Zero(dim_theta);
+    dim_phi = 2;
+    phi.resize(dim_phi);
+    phi << 1.6, 1;
+  }
+
+  int dim_theta;
+  int n_observations;
+  std::vector<double> x1, x2;
+  std::vector<int> y;
+  Eigen::VectorXd ye;
+  int dim_x;
+  std::vector<Eigen::VectorXd> x;
+  std::vector<int> n_samples;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+
+  Eigen::VectorXd theta_0;
+  int dim_phi;
+  Eigen::Matrix<stan::math::var, -1, 1> phi;
+  Eigen::Matrix<stan::math::var, -1, 1> eta_dummy;
+
+  Eigen::VectorXd delta_lk;
+};
 
 #endif

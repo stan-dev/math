@@ -38,18 +38,22 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     double tolerance,
     long int max_num_steps, const int hessian_block_size,
+    const int covariance_block_size,
     const int solver, const int max_steps_line_search,
     const ThetaMatrix& theta_0,
     CovarF&& covariance_function,
     std::ostream* msgs, Args&&... args) {
+  int covariance_block_size_adj =
+      (covariance_block_size == 0) ? theta_0.size() : covariance_block_size;
+
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
-      hessian_block_size, solver, max_steps_line_search,
-      std::forward<Args>(args)...);
+      hessian_block_size, covariance_block_size_adj, solver,
+      max_steps_line_search, std::forward<Args>(args)...);
 }
 
 template <typename CovarF, typename ThetaMatrix, typename... Args,
@@ -62,6 +66,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
   constexpr int hessian_block_size = 1;
+  constexpr int covariance_block_size = 0;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
     // TODO: change this to a VectorXd once we have operands & partials.
@@ -70,7 +75,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
-      hessian_block_size, solver, max_steps_line_search,
+      hessian_block_size, covariance_block_size, solver, max_steps_line_search,
       std::forward<Args>(args)...);
 }
 
