@@ -10,8 +10,8 @@ namespace math {
 
 template <typename T>
 inline auto sign(const fvar<T>& x) {
-  double x_val = value_of_rec(x);
-  return (0. < x_val) - (x_val < 0.);
+  double z = value_of_rec(x);
+  return (z == 0) ? 0 : z < 0 ? -1 : 1;
 }
 
 }  // namespace math
