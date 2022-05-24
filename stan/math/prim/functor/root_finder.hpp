@@ -63,7 +63,6 @@ auto root_finder_tol(SolverFun&& f_solver, FTuple&& f_tuple,
     ret = f_solver(f_plus_div, ret_t(guess), ret_t(min), ret_t(max), digits,
                    max_iter);
   } catch (const std::exception& e) {
-    std::cout << "err: \n" << e.what() << "\n";
     throw e;
   }
   return ret;
