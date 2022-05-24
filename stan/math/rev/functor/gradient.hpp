@@ -100,8 +100,7 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad(fx_var.vi_);
-  for (size_t i = 0;
-       first_grad_fx != last_grad_fx && i < x.size();
+  for (size_t i = 0; first_grad_fx != last_grad_fx && i < x.size();
        ++first_grad_fx, ++i) {
     *first_grad_fx = x_var(i).adj();
   }
