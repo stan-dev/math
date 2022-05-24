@@ -156,5 +156,4 @@ TEST_F(laplace_bernoulli_dim500_test, diagonal_covariance) {
    tol = 5e-3;
    EXPECT_NEAR(g_finite[0], g[0], tol);
    EXPECT_NEAR(g_finite[1], g[1], tol);
-
 }
