@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stdexcept>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -73,10 +74,12 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * general namespace imports that eventually depend on functions
  * defined in Stan.
  *
- * The evaluated gradient is stored into an array named
- * <code>grad_fx</code>.  The caller is responsible for ensuring
- * the length of <code>grad_fx</code> matches the size of the
- * argument <code>x</code>.
+ * The evaluated gradient is stored into the object whose data
+ * begins at <code>*first_grad_fx</code> and ends at
+ * <code>*last_grad_fx</code>.  The caller is responsible for
+ * ensuring the size of the object pointed to by
+ * <code>first_grad_fx</code> matches the size of the argument
+ * <code>x</code>.
  *
  * <p>Time and memory usage is on the order of the size of the
  * fully unfolded expression for the function applied to the
@@ -88,17 +91,19 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
  */
-template <typename F>
+template <typename F, typename InputIt>
 void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-              double& fx, double* grad_fx) {
+              double& fx, InputIt first_grad_fx, InputIt last_grad_fx) {
   nested_rev_autodiff nested;
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad(fx_var.vi_);
-  for (size_t i = 0; i < x.size(); i++) {
-    grad_fx[i] = x_var(i).adj();
+  for (size_t i = 0;
+       first_grad_fx != last_grad_fx && i < x.size();
+       ++first_grad_fx, ++i) {
+    *first_grad_fx = x_var(i).adj();
   }
 }
 
