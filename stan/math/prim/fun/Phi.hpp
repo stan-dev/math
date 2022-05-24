@@ -51,7 +51,7 @@ inline double Phi(double x) {
  */
 struct Phi_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return Phi(x);
   }
 };

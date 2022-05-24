@@ -24,7 +24,7 @@ struct exp_fun {
    * @return Exponential of argument.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::exp;
     return exp(x);
   }

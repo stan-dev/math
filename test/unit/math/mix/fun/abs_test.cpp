@@ -18,8 +18,18 @@ TEST(mixFun, absBasics) {
   std::vector<int> v = abs(u);
 }
 
+template <typename T1, typename T2>
+using is_complex_and_base_ret = stan::bool_constant<
+    (!stan::is_complex<stan::scalar_type_t<std::decay_t<T1>>>::value)
+    || (stan::is_complex<stan::scalar_type_t<std::decay_t<T1>>>::value
+        && !stan::is_complex<stan::scalar_type_t<std::decay_t<T2>>>::value)>;
 TEST(mixFun, abs) {
-  auto f = [](const auto& x) { return stan::math::abs(x); };
+  auto f = [](const auto& x) {
+    auto xx = stan::math::abs(x);
+    static_assert(is_complex_and_base_ret<decltype(x), decltype(xx)>::value,
+                  "if x is complex<T> the return must not be T!");
+    return xx;
+  };
   stan::test::expect_common_nonzero_unary(f);
   // 0 (no derivative at 0)
   stan::test::expect_value(f, 0);

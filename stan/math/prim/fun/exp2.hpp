@@ -20,7 +20,7 @@ struct exp2_fun {
    * @return Base two exponent of the argument.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::exp2;
     return exp2(x);
   }

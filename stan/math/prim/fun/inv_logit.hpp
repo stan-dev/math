@@ -69,7 +69,7 @@ inline double inv_logit(double a) {
  */
 struct inv_logit_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return inv_logit(x);
   }
 };
