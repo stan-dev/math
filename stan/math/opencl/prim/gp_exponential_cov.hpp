@@ -144,7 +144,7 @@ template <typename Matcl1, typename Matcl2, typename Arith3, typename Matcl4,
           require_all_kernel_expressions_and_none_scalar_t<Matcl1, Matcl2,
                                                            Matcl4>* = nullptr,
           require_all_arithmetic_t<Arith3>* = nullptr>
-inline matrix_cl<return_type_t<Matcl1, Matcl2, Matcl3, Matcl4>>
+inline matrix_cl<return_type_t<Matcl1, Matcl2, Arith3, Matcl4>>
 gp_exponential_cov(const Matcl1& x, const Matcl2& y, const Arith3 sigma,
                    const Matcl4& length_scale) {
   check_size_match("gp_exponential_cov_cross", "x", x.rows(), "y", y.rows());

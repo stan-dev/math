@@ -14,8 +14,8 @@ namespace math {
  * @return number of elements in m
  */
 template <typename Matcl,
-          require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-size_t size(const Matcl& m) {
+          require_nonscalar_prim_or_rev_kernel_expression_t<Matcl>* = nullptr>
+inline size_t size(const Matcl& m) {
   return m.rows() * m.cols();
 }
 
