@@ -34,7 +34,7 @@ inline double square(double x) { return std::pow(x, 2); }
  */
 struct square_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return square(x);
   }
 };

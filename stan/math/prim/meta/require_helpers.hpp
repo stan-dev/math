@@ -434,7 +434,7 @@ using container_type_check_base
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check>...>; \
   /*! @} */
 
-  // clang-format on
+// clang-format on
 
 }  // namespace stan
 

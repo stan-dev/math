@@ -160,7 +160,7 @@ inline double inv_Phi(double p) {
  */
 struct inv_Phi_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return inv_Phi(x);
   }
 };

@@ -1098,7 +1098,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
 };
 
 /**
- * See the docs for @ref stan::math::var_value<double, require_floating_point_t<double>>
+ * See the docs for @ref stan::math::var_value<double,
+ * require_floating_point_t<double>>
  */
 using var = var_value<double>;
 

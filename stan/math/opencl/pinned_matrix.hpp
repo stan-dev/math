@@ -77,10 +77,10 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    * @param cols number of columns
    */
   pinned_matrix(Eigen::Index rows, Eigen::Index cols) try
-      : pinned_matrix(rows * cols != 0 ? cl::Buffer(
-                          opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
-                          sizeof(Scalar) * rows * cols)
-                                       : cl::Buffer(),
+      : pinned_matrix(rows* cols != 0 ? cl::Buffer(opencl_context.context(),
+                                                   CL_MEM_ALLOC_HOST_PTR,
+                                                   sizeof(Scalar) * rows * cols)
+                                      : cl::Buffer(),
                       rows, cols) {
   } catch (const cl::Error& e) {
     check_opencl_error("pinned_matrix(rows, cols)", e);
@@ -92,11 +92,11 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    * @param size number of elements
    */
   explicit pinned_matrix(Eigen::Index size) try
-      : pinned_matrix(
-          size != 0 ? cl::Buffer(opencl_context.context(),
-                                 CL_MEM_ALLOC_HOST_PTR, sizeof(Scalar) * size)
-                    : cl::Buffer(),
-          size) {
+      : pinned_matrix(size != 0 ? cl::Buffer(opencl_context.context(),
+                                             CL_MEM_ALLOC_HOST_PTR,
+                                             sizeof(Scalar) * size)
+                                : cl::Buffer(),
+                      size) {
   } catch (const cl::Error& e) {
     check_opencl_error("pinned_matrix(size)", e);
   }
