@@ -64,6 +64,8 @@ using require_any_not_t
 
 // clang-format off
 
+// NOLINTBEGIN
+
 /** \ingroup macro_helpers
  * Adds Unary require aliases.
  * @param check_type The name of the type to check, used to define
@@ -435,6 +437,8 @@ using container_type_check_base
   /*! @} */
 
 // clang-format on
+
+// NOLINTEND
 
 }  // namespace stan
 
