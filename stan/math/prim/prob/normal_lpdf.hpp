@@ -69,11 +69,12 @@ struct prob_broadcaster<T, require_stan_scalar_t<T>> {
     return *this;
   }
   inline auto ret() noexcept {
+    static_assert(!is_var<T>::value, "NOOO");
     return ret_;
   }
-  template <typename T1>
-  static auto zero(T1&& /* */) {
-    return T(0);
+  template <typename... Types>
+  static auto zero(int /* */) {
+    return return_type_t<Types...>(0);
   }
 
 };
@@ -86,7 +87,7 @@ struct prob_broadcaster<T, require_eigen_t<T>> {
 
   template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
   inline auto operator=(EigArr&& x) {
-    ret_ = sum(x);
+    ret_ = x;
     return *this;
   }
 
@@ -124,9 +125,9 @@ struct prob_broadcaster<T, require_eigen_t<T>> {
     return std::move(ret_);
   }
 
-  template <typename T1>
-  static auto zero(T1&& size) {
-    return Eigen::Array<value_type_t<T>, -1, 1>::Constant(0, size).eval();
+  template <typename... Types>
+  static auto zero(int size) {
+    return Eigen::Array<return_type_t<Types...>, -1, 1>::Constant(0, size).eval();
   }
 
 };
@@ -182,10 +183,10 @@ inline auto normal_lpdf(const T_y& y,
   using ret_t = prob_return_t<RetType, T_partials_return>;
   const size_t N = max_size(y, mu, sigma);
   if (size_zero(y, mu, sigma)) {
-    return ret_t::zero(N);
+    return ret_t::template zero<T_y, T_loc, T_scale>(N);
   }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return ret_t::zero(N);
+    return ret_t::template zero<T_y, T_loc, T_scale>(N);
   }
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(

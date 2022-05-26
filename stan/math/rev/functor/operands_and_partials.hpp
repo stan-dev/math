@@ -87,7 +87,7 @@ template <typename Scalar1, typename Scalar2, typename T3, require_var_t<Scalar1
 inline void update_adjoints(Scalar1 x, Scalar2 y, const T3& z) noexcept {
   x.adj() += sum(z.adj() * y);
 }
-template <typename Matrix1, typename Matrix2, typename T3
+template <typename Matrix1, typename Matrix2, typename T3,
           require_rev_matrix_t<Matrix1>* = nullptr,
           require_st_arithmetic<Matrix2>* = nullptr,
           require_eigen_t<T3>* = nullptr>
@@ -214,19 +214,19 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
             operand5 = edge5_.operand(),
             partial5 = edge5_.partial()]() mutable {
       if (!is_constant<Op1>::value) {
-        internal::update_adjoints(operand1, partial1, vi);
+        internal::update_adjoints(operand1, partial1, ret);
       }
       if (!is_constant<Op2>::value) {
-        internal::update_adjoints(operand2, partial2, vi);
+        internal::update_adjoints(operand2, partial2, ret);
       }
       if (!is_constant<Op3>::value) {
-        internal::update_adjoints(operand3, partial3, vi);
+        internal::update_adjoints(operand3, partial3, ret);
       }
       if (!is_constant<Op4>::value) {
-        internal::update_adjoints(operand4, partial4, vi);
+        internal::update_adjoints(operand4, partial4, ret);
       }
       if (!is_constant<Op5>::value) {
-        internal::update_adjoints(operand5, partial5, vi);
+        internal::update_adjoints(operand5, partial5, ret);
       }
     });
     return plain_type_t<promote_scalar_t<var, T>>(ret);
