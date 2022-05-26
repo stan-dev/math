@@ -139,7 +139,8 @@ class operands_and_partials {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  inline double build(double value) const noexcept { return value; }
+  template <typename T>
+  inline auto build(T&& value) const noexcept { return std::forward<T>(value); }
 
   // These will always be 0 size base template instantiations (above).
   internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;

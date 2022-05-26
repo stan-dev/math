@@ -74,6 +74,41 @@ inline void update_adjoints(StdVec1& x, const Vec2& y, const vari& z) {
   }
 }
 
+template <typename T1, typename T2, typename T3,
+          require_all_kernel_expressions_and_none_scalar_t<T1, T2, T3>* = nullptr>
+inline void update_adjoints(var_value<T1>& x, const T2& y, const T3& z) {
+  x.adj() += z.adj() * y;
+}
+
+template <typename Scalar1, typename Scalar2, typename T3, require_var_t<Scalar1>* = nullptr,
+          require_not_var_matrix_t<Scalar1>* = nullptr,
+          require_arithmetic_t<Scalar2>* = nullptr,
+          require_eigen_t<T3>* = nullptr>
+inline void update_adjoints(Scalar1 x, Scalar2 y, const T3& z) noexcept {
+  x.adj() += sum(z.adj() * y);
+}
+template <typename Matrix1, typename Matrix2, typename T3
+          require_rev_matrix_t<Matrix1>* = nullptr,
+          require_st_arithmetic<Matrix2>* = nullptr,
+          require_eigen_t<T3>* = nullptr>
+inline void update_adjoints(Matrix1& x, const Matrix2& y, const T3& z) {
+  x.adj().array() += z.adj() * y.array();
+}
+
+template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr, typename T3, require_eigen_t<T3>* = nullptr>
+inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
+                                      const T3& /* z */) noexcept {}
+
+template <typename StdVec1, typename Vec2, typename T3,
+          require_std_vector_t<StdVec1>* = nullptr,
+          require_st_arithmetic<Vec2>* = nullptr,
+          require_eigen_t<T3>* = nullptr>
+inline void update_adjoints(StdVec1& x, const Vec2& y, const T3& z) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    update_adjoints(x[i], y[i], z[i]);
+  }
+}
+
 }  // namespace internal
 
 /** \ingroup type_trait
@@ -168,6 +203,33 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
             internal::update_adjoints(operand5, partial5, vi);
           }
         });
+  }
+  template <typename T, require_eigen_t<T>* = nullptr>
+  auto build(T&& value) {
+    arena_t<promote_scalar_t<var, T>> ret = value;
+    reverse_pass_callback([ret, operand1 = edge1_.operand(), partial1 = edge1_.partial(),
+            operand2 = edge2_.operand(), partial2 = edge2_.partial(),
+            operand3 = edge3_.operand(), partial3 = edge3_.partial(),
+            operand4 = edge4_.operand(), partial4 = edge4_.partial(),
+            operand5 = edge5_.operand(),
+            partial5 = edge5_.partial()]() mutable {
+      if (!is_constant<Op1>::value) {
+        internal::update_adjoints(operand1, partial1, vi);
+      }
+      if (!is_constant<Op2>::value) {
+        internal::update_adjoints(operand2, partial2, vi);
+      }
+      if (!is_constant<Op3>::value) {
+        internal::update_adjoints(operand3, partial3, vi);
+      }
+      if (!is_constant<Op4>::value) {
+        internal::update_adjoints(operand4, partial4, vi);
+      }
+      if (!is_constant<Op5>::value) {
+        internal::update_adjoints(operand5, partial5, vi);
+      }
+    });
+    return plain_type_t<promote_scalar_t<var, T>>(ret);
   }
 };
 

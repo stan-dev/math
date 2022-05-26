@@ -13,12 +13,20 @@ TEST(ProbNormal, log_matches_lpdf) {
   EXPECT_FLOAT_EQ((stan::math::normal_lpdf<false>(y, mu, sigma)),
                   (stan::math::normal_log<false>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<true, double, double, double>(y, mu, sigma)),
-      (stan::math::normal_log<true, double, double, double>(y, mu, sigma)));
+      (stan::math::normal_lpdf<true>(y, mu, sigma)),
+      (stan::math::normal_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<false, double, double, double>(y, mu, sigma)),
-      (stan::math::normal_log<false, double, double, double>(y, mu, sigma)));
+      (stan::math::normal_lpdf<false>(y, mu, sigma)),
+      (stan::math::normal_log<false>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<double, double, double>(y, mu, sigma)),
-      (stan::math::normal_log<double, double, double>(y, mu, sigma)));
+      (stan::math::normal_lpdf(y, mu, sigma)),
+      (stan::math::normal_log(y, mu, sigma)));
+}
+
+TEST(ProbNormal, test_vlpdf) {
+  Eigen::Matrix<double, -1, 1> Y = Eigen::Matrix<double, -1, 1>::Random(5);
+  Eigen::Matrix<double, -1, 1> Mu = Eigen::Matrix<double, -1, 1>::Random(5);
+  Eigen::Matrix<double, -1, 1> Sigma = stan::math::abs(Eigen::Matrix<double, -1, 1>::Random(5));
+  Eigen::Matrix<double, -1, 1> A = stan::math::normal_lpdf<false, stan::math::ProbReturnType::Vector>(Y, Mu, Sigma);
+
 }

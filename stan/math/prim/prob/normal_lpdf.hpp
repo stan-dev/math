@@ -19,6 +19,123 @@
 namespace stan {
 namespace math {
 
+enum class ProbReturnType {Scalar, Vector};
+
+template <typename T, typename = void>
+struct prob_broadcaster;
+
+template <typename T>
+struct prob_broadcaster<T, require_stan_scalar_t<T>> {
+  T ret_;
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  prob_broadcaster(EigArr&& x) : ret_(sum(std::forward<EigArr>(x))) {}
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  prob_broadcaster(Scalar&& x) : ret_(x) {}
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator=(EigArr&& x) {
+    ret_ = sum(x);
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator=(Scalar x) {
+    ret_ = x;
+    return *this;
+  }
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator+=(EigArr&& x) {
+    ret_ += sum(x);
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator+=(Scalar&& x) {
+    ret_ += x;
+    return *this;
+  }
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator-=(EigArr&& x) {
+    ret_ -= sum(x);
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator-=(Scalar&& x) {
+    ret_ -= x;
+    return *this;
+  }
+  inline auto ret() noexcept {
+    return ret_;
+  }
+  template <typename T1>
+  static auto zero(T1&& /* */) {
+    return T(0);
+  }
+
+};
+
+template <typename T>
+struct prob_broadcaster<T, require_eigen_t<T>> {
+  T ret_;
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  prob_broadcaster(EigArr&& x) : ret_(std::forward<EigArr>(x)) {}
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator=(EigArr&& x) {
+    ret_ = sum(x);
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator=(Scalar x) {
+    ret_ = Eigen::Array<value_type_t<T>, -1, 1>::Constant(x, ret_.size());
+    return *this;
+  }
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator+=(EigArr&& x) {
+    ret_ += x;
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator+=(Scalar&& x) {
+    ret_ += x;
+    return *this;
+  }
+
+  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
+  inline auto operator-=(EigArr&& x) {
+    ret_ -= x;
+    return *this;
+  }
+
+  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
+  inline auto operator-=(Scalar&& x) {
+    ret_ -= x;
+    return *this;
+  }
+
+  inline auto&& ret() noexcept {
+    return std::move(ret_);
+  }
+
+  template <typename T1>
+  static auto zero(T1&& size) {
+    return Eigen::Array<value_type_t<T>, -1, 1>::Constant(0, size).eval();
+  }
+
+};
+
+
+
+template <ProbReturnType ReturnType, typename... Types>
+using prob_return_t = prob_broadcaster<std::conditional_t<ReturnType == ProbReturnType::Scalar, return_type_t<Types...>, Eigen::Array<return_type_t<Types...>, -1, 1>>>;
+
 /** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s). y, mu, or sigma can
@@ -38,10 +155,10 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale,
+template <bool propto, ProbReturnType RetType = ProbReturnType::Scalar, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
+inline auto normal_lpdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -62,12 +179,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", sigma_val);
-
+  using ret_t = prob_return_t<RetType, T_partials_return>;
+  const size_t N = max_size(y, mu, sigma);
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return ret_t::zero(N);
   }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
+    return ret_t::zero(N);
   }
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
@@ -79,13 +197,16 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   const auto& y_scaled_sq
       = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
 
-  size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = -0.5 * sum(y_scaled_sq);
+  prob_return_t<RetType, T_partials_return> logp = -0.5 * y_scaled_sq;
   if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    if (RetType == ProbReturnType::Scalar) {
+      logp -= sum(log(sigma_val)) * N / size(sigma);
+    } else {
+      logp -= log(sigma_val);
+    }
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
@@ -103,11 +224,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
       ops_partials.edge2_.partials_ = std::move(scaled_diff);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(logp.ret());
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
+inline auto normal_lpdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
   return normal_lpdf<false>(y, mu, sigma);

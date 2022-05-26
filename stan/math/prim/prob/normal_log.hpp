@@ -32,7 +32,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_scale& sigma) {
-  return normal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
+  return normal_lpdf<propto>(y, mu, sigma);
 }
 
 /** \ingroup prob_dists
@@ -42,7 +42,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_scale& sigma) {
-  return normal_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
+  return normal_lpdf<false>(y, mu, sigma);
 }
 
 }  // namespace math
