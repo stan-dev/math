@@ -14,13 +14,13 @@ namespace math {
 /**
  * Compute the L2 norm of the specified vector of values.
  *
- * @tparam T Type of input vector.
+ * @tparam FvarEigVec Type of input vector.
  * @param[in] x Vector of specified values.
  * @return L2 norm of x.
  */
-template <typename Container, require_eigen_vt<is_fvar, Container>* = nullptr>
-inline auto norm2(const Container& x) {
-  return apply_vector_unary<ref_type_t<Container>>::reduce(
+template <typename FvarEigVec, require_eigen_vt<is_fvar, FvarEigVec>* = nullptr>
+inline auto norm2(const FvarEigVec& x) {
+  return apply_vector_unary<ref_type_t<FvarEigVec>>::reduce(
       to_ref(x), [&](const auto& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         T_fvar_inner res = norm2(v.val());

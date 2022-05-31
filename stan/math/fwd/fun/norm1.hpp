@@ -16,13 +16,14 @@ namespace math {
 /**
  * Compute the L1 norm of the specified vector of values.
  *
- * @tparam T Type of input vector.
+ * @tparam FvarContainer Type of input vector.
  * @param[in] x Vector of specified values.
  * @return L1 norm of x.
  */
-template <typename Container, require_eigen_vt<is_fvar, Container>* = nullptr>
-inline auto norm1(const Container& x) {
-  return apply_vector_unary<ref_type_t<Container>>::reduce(
+template <typename FvarContainer,
+ require_eigen_vt<is_fvar, FvarContainer>* = nullptr>
+inline auto norm1(const FvarContainer& x) {
+  return apply_vector_unary<ref_type_t<FvarContainer>>::reduce(
       to_ref(x), [&](const auto& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         return fvar<T_fvar_inner>(norm1(v.val()),

@@ -13,7 +13,7 @@ namespace math {
  * sum of squares of the elements.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
- * @param x Vector.
+ * @param v Vector.
  * @return L2 norm of x.
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
@@ -27,7 +27,7 @@ inline double norm2(const T& v) {
  * sum of squares of the elements.
  *
  * @tparam Container type of the vector (must be derived from \c std::vector)
- * @param v Vector.
+ * @param x Vector.
  * @return L2 norm of v.
  */
 template <typename Container, require_std_vector_t<Container>* = nullptr>

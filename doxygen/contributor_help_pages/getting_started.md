@@ -121,7 +121,7 @@ The type created on the RHS of the above is actually an eigen expression that lo
 Eigen::Subtract<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Matrix, Matrix>>
 ```
 
-Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at the cost of code complication.
+Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at the cost of code complication time and being careful around handling inputs to functions.
 
 In (3), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So @ref stan::math::to_ref  looks at its input type, and if the input type is an Eigen expression that performs a calculation then it returns as if we called `.eval()` on our input, otherwise it returns the same type as `x`.
 
@@ -136,21 +136,35 @@ template <typename T>
 double dot_self(const T& A) {
   double sum_a = 0;
   for (int i = 0; i < A.size(); ++i) {
-    sum_a += A(i) * A(i);
+    sum_a += A.coeff(i) * A.coeff(i);
   }
   return sum_a;
 }
 
 int main() {
-  Eigen::VectorXd A_mat = Eigen::VectorXd::Random(5);
+  Eigen::MatrixXd A_mat = Eigen::MatrixXd::Random(5, 5);
   Eigen::VectorXd A_vec = Eigen::VectorXd::Random(5);
   // This works fine
-  // double b1 = dot_self(A_vec);
+  //double b2 = dot_self((A_mat * A_vec).eval());
+  // This fails
   double b2 = dot_self(A_mat * A_vec);
+  std::cout << b2;
 }
 ```
 
-Pasting the above into godbolt will show a compilation error! That's because Eigen does now allow coefficient levels access to product functions. Instead that expression needs to be evaluated before it is accessed elementwise.
+Pasting the above into godbolt will show a compilation error! That's because Eigen does now allow coefficient levels access to product functions. Instead that expression needs to be evaluated before it is accessed elementwise. Alternatively, say we have something such as the below where we pass in an expression for elementwise multiplication.
+
+```cpp
+int main() {
+  Eigen::VectorXd A_vec1 = Eigen::VectorXd::Random(5);
+  Eigen::VectorXd A_vec2 = Eigen::VectorXd::Random(5);
+  double b2 = dot_self(A_vec1.array() * A_vec2.array());
+  std::cout << b2;
+}
+```
+
+
+This will appear fine, but in our call to `dot_self`, when we call `A.coeff(i)` twice in the for loop we will end up evaluating the expression twice.
 
 Now Suppose our input is something like
 
@@ -166,16 +180,16 @@ Here, we will have an expression `Eigen::Block<Eigen::MatrixXd>` as the input ty
 If we used `auto` here then if the return type of @ref stan::math::to_ref  was an `Eigen::MatrixXd` then it would make a copy. But with `const auto&` we do not make a copy the lifetime of the object referenced by the `const auto&` will be the same as if we had done `auto`
 
 
-#### (3) Using `value_type_t<>` and Friends
+#### (3) Using value_type_t and Friends
 
 The type trait @ref stan::value_type_t  is one of several type traits we use in the library to query information about types. @ref stan::value_type_t  will return the inner type of a container,
 so `value_type_t<Eigen::Matrix<double, -1, -1>>` will return `double`, `value_type_t<std::vector<std::vector<double>>>` will return a `std::vector<double>` and `value_type_t<double>` will simply return a double.
 
-See the docs for `value_type`, `scalar_type` and `base_type` for more information on these.
+See the docs for @ref stan::value_type, @ref stan::scalar_type and @ref stan::base_type for more information on these.
 
 #### (4) Accessing Eigen matrices though `.coeff()` and `.coeffRef()`
 
-This is a small bit, but Eigen performs bounds checks by default when using `[]` or `()` to access elements. However `.coeff()` and `.coeffRef()` do not. Because Stan model's perform bounds checking at a higher level its safe to remove the bounds checks here.
+This is a small bit, but Eigen performs bounds checks by default when using `[]` or `()` to access elements. However `.coeff()` and `.coeffRef()` do not. Because Stan model's perform bounds checking at a higher level its safe to remove the bounds checks here. Note that `.coeff()` should be used when accessing values of an Eigen types and `.coeffRef()` should be used when assigning values of an Eigen type.
 
 #### Testing
 
@@ -207,30 +221,13 @@ But, while your function will work for all of our types, it probably won't be as
 
 At this point I'll assume you have looked over the preliminary resources listed above describing Stan math's automatic differentiation.
 
-For reverse mode we can do the math by hand or use a site like [matrixcalculus.org](http://www.matrixcalculus.org/) to find the adjoint method for a self dot product is
-
-```cpp
-x.adj() += sum_x.adj() * 2.0 * x.val()
-```
-
-and so we want to add a specialization in `stan/math/rev/fun` that calculates reverse mode's adjoint directly. The methods on `x` above use custom Eigen methods for matrices, vectors, and arrays, `.val()` and `.adj()`. For an `Eigen::Matrix<var, Rows, Cols>` the internal Eigen representation comes down to a struct holding an array of @ref stan::math::var  types and information on the row and column sizes.
-
-```
-struct DenseStorage {
-  var* m_data; // array of Stan's var type
-  Eigen::Index m_rows;
-  Eigen::Index m_cols;
-}
-```
-
-It's very common for us to want to access just the `val_` or `adj_` of the `vari`'s inside of the @ref stan::math::var  's and so we have written custom methods `.adj()` and `.val()` using Eigen's plugin system which returns an expression of an `Eigen::Matrix<double, Rows, Cols>` representing the @ref stan::math::var  's values and adjoints, respectively.
-
 #### Using type traits to Expose Our New Function
 
-First we need to stop our current function from compiling for reverse mod autodiff. This can be done using the [requires](@ref require_meta) type traits in stan. The only thing that has changed in the function above and below is the new non-type template parameter ([NTTP](https://en.cppreference.com/w/cpp/language/template_parameters)) that is now in the template definition.
+First we need to stop our current function from compiling for reverse mod autodiff. This can be done using the [requires](@ref require_meta) type traits in stan. The only thing that has changed in the function above and below is the require on the function.
 
 ```cpp
-template <typename EigVec, require_not_st_var<EigVec>* = nullptr> // (1)
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
+ require_not_st_var<EigVec>* = nullptr>
 inline double dot_self(const EigVec& x) {
   auto x_ref = to_ref(x);
   var sum = 0.0;
@@ -241,25 +238,18 @@ inline double dot_self(const EigVec& x) {
 }
 ```
 
-TL;DR: Use Stan's `require` type trait library for limiting a function's scope to certain types.
-
-Reading from left to right, `require_not_st_var` requires that a signature's template does _not have a scalar type of a @ref stan::math::var  _. This line is exactly the same as
+The require in the above stops the function from working specifically with Eigen vectors whose inner `Scalar` type is a @ref stan::math::var type. Now we can write the signature of our function that will go into the `stan/math/rev/fun/` folder
 
 ```cpp
-template <typename EigVec, std::enable_if_t<is_var<scalar_type_t<EigVec>>::value>* = nullptr>
+template <typename EigVec, require_eigen_vector_vt<is_var, EigVec>* = nullptr>
+inline double dot_self(const EigVec& x) {
+  // ... Will fill this out in a moment
+}
+
 ```
 
-but we tend to use these type traits so frequently in the math library it made sense to write specializations for them.
+The above signature is set to only work with Eigen vector types whose @ref stan::value_type is @ref stan::math::var .
 
-But how does that line work? Note that, on success, `std::enable_if_t` returns a `void` type, and on failure the functions is removed from the set of possible signatures though Substitution Failure is not an Error [SFINAE](https://en.cppreference.com/w/cpp/language/sfinae). So on success the template signature is
-
-```cpp
-template <typename EigVec, void* = nullptr>
-```
-
-where `void* = nullptr` follows a nice little rule in the C++ standard that says any void pointer non-type template parameters with a default value of a `nullptr` will be ignored by template instantiation. So good! We get exactly what we want at the expense of a some annoying legalize and a bit of an odd `nullptr` style syntax.
-
-So we stopped our original function for compiling for @ref stan::math::var types and now we can add a specialization that does work for @ref stan::math::var .
 
 ### Working in Reverse Mode
 
@@ -277,9 +267,9 @@ template <typename EigVec, require_eigen_vt<is_var, EigVec>* = nullptr>
 inline var dot_self(const EigVec& v) {
   // (1) put v into our arena
   arena_t<EigVec> arena_v(v);
-   // calculate forward pass
-  var res = arena_v.val().dot(arena_v.val());
-  // (2) Place a callback for the reverse pass on the callback stack.
+  // (2) calculate forward pass using (3) the .val() method for matrices of var types  
+  var res = dot_self(arena_v.val());
+  // (4) Place a callback for the reverse pass on the callback stack.
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() += (2.0 * res.adj().array()) * arena_v.val().array();
   });
@@ -299,7 +289,7 @@ Remember from [Thinking About Automatic Differentiation in Fun New Ways](https:/
 2. Storing the input and output into a memory arena
 3. Adding a callback to a callback stack that calculates the adjoint of the function
 
-This process allows us to call @ref stan::math::grad and from the last in, call each of
+This process allows us to call @ref stan::math::grad , call each of
 the callbacks in the callback stack and accumulates the gradients through
 all the outputs and inputs. (reverse pass)
 
@@ -351,11 +341,25 @@ auto myfunc(const T& x) {
 }
 ```
 
-## (2) Setting up the Reverse Pass
+## (2) Calculating the forward pass
+
+This one does not require too much explanation. The only thing I would like to call out here is that because of our previous `requires` we can now call `dot_self()` using the values of the matrix which will then know to call the previous definition of `dot_self` we wrote that can work with `double` scalar types.
+
+## (3) Accessing the Values and Adjoints of Matrices.
+
+The calculation for forward and reverse pass in the above uses custom Eigen methods for matrices, vectors, and arrays. In the above, `.val()` will return a view of all of the values of the @ref stan::math::var scalars in the matrix while `.adj()` will return a view for all of the adjoints of the matrices @ref stan::math::var scalars. You can think of `.val()` and `.adj()` as returning an Eigen matrix of doubles such as `Eigen::Matrix<double, Rows, Cols>` where both functions's scalars are references to the values or adjoints of the original matrix with @ref stan::math::var scalars.
+
+## (4) Setting up the Reverse Pass
 
 Once we have stored the data we need for the reverse pass we need to actually write that reverse pass! We need to take our adjoint calculation and put it onto the callback stack so that when the users call @ref stan::math::grad the adjoints are propagated upwards properly.
 
-For this we have a function called @ref stan::math::reverse_pass_callback . Calling @ref stan::math::reverse_pass_callback with a functor `f` creates an object on the callback stack that will call `f`.
+For reverse mode we can do the math by hand or use a site like [matrixcalculus.org](http://www.matrixcalculus.org/) to find the adjoint method for a self dot product is
+
+```cpp
+x.adj() += sum_x.adj() * 2.0 * x.val()
+```
+
+Once we know the adjoint calculation we can use @ref stan::math::reverse_pass_callback to actually place the adjoint calculation onto the callback stack for the reverse pass. Calling @ref stan::math::reverse_pass_callback with a lambda will place the lambda on Stan's callback stack so that it can be calculated in the reverse pass.
 
 ```cpp
 reverse_pass_callback([res, arena_v]() mutable { // (2)
@@ -363,7 +367,7 @@ reverse_pass_callback([res, arena_v]() mutable { // (2)
 });
 ```
 
-Notice that the lambda we create *copies* the objects `res` and `arena_v`. The trick here is that, because anything allocated with Stan's arena using @ref stan::arena_t or @ref stan::math::to_arena are [TriviallyCopyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) (as are arithmetic scalars). So the memory is safe and sound within our arena and so these are safe and fast to copy.
+Notice that for the lambda we create *copies* of the objects `res` and `arena_v`. The trick here is that anything allocated with Stan's arena using @ref stan::arena_t or @ref stan::math::to_arena are [TriviallyCopyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) (as are arithmetic scalars). So the memory is safe and sound within our arena and so these are safe and fast to copy.
 
 An alternative approach to the above function could also have been
 
@@ -380,7 +384,7 @@ inline var dot_self(const EigVec& v) {
 `make_callback_var(x, f)` is similar to @ref stan::math::reverse_pass_callback , but it constructs
 an autodiff type from the argument `x`. The function `f` is called on the
 reverse pass similarly to @ref stan::math::reverse_pass_callback . @ref stan::math::make_callback_var should
-only be used when returning back a `var<double>` or `var<Matrix>`.
+only be used when returning back a `var_value<double>` or `var_value<Matrix>`.
 
 ## Argument Types
 
