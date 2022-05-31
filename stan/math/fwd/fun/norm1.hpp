@@ -21,7 +21,7 @@ namespace math {
  * @return L1 norm of x.
  */
 template <typename FvarContainer,
- require_eigen_vt<is_fvar, FvarContainer>* = nullptr>
+          require_eigen_vt<is_fvar, FvarContainer>* = nullptr>
 inline auto norm1(const FvarContainer& x) {
   return apply_vector_unary<ref_type_t<FvarContainer>>::reduce(
       to_ref(x), [&](const auto& v) {

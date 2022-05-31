@@ -17,7 +17,7 @@ namespace math {
  * @return L1 norm of v.
  */
 template <typename EigVec,
- require_eigen_vt<std::is_arithmetic, EigVec>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, EigVec>* = nullptr>
 inline double norm1(const EigVec& v) {
   ref_type_t<EigVec> v_ref = v;
   return v_ref.template lpNorm<1>();
