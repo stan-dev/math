@@ -58,9 +58,9 @@ struct numeric_limits<stan::math::fvar<T>> {
 
   static constexpr bool traps{numeric_limits<T>::traps};
   static constexpr bool tinyness_before{numeric_limits<T>::tinyness_before};
-  static constexpr float_round_style round_style{numeric_limits<T>::round_style};
+  static constexpr float_round_style round_style{
+      numeric_limits<T>::round_style};
 };
-
 
 }  // namespace std
 #endif

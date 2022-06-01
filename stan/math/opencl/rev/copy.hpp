@@ -177,7 +177,8 @@ inline T_var_stdvec_dst from_matrix_cl(const var_value<T>& a) {
  * @param a source matrix_cl or expression
  * @return var with a copy of the data on the host
  */
-template <typename T_stdvec_dst, typename T, require_std_vector_t<T_stdvec_dst>* = nullptr,
+template <typename T_stdvec_dst, typename T,
+          require_std_vector_t<T_stdvec_dst>* = nullptr,
           require_rev_vector_t<value_type_t<T_stdvec_dst>>* = nullptr,
           require_all_kernel_expressions_t<T>* = nullptr>
 inline T_stdvec_dst from_matrix_cl(const var_value<T>& a) {
