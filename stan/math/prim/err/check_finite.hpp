@@ -22,7 +22,6 @@ namespace math {
  * @param function name of function (for error messages)
  * @param name variable name (for error messages)
  * @param y scalar or container to test
- * @return <code>true</code> if all values are finite
  **/
 template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {

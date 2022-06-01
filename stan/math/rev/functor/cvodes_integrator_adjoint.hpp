@@ -202,9 +202,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * @param[in, out] msgs the print stream for warning messages
    * @param args Extra arguments passed unmodified through to ODE right hand
    * side function
-   * @return Solution to ODE at times \p ts
-   * @return a vector of states, each state being a vector of the
-   * same size as the state variable, corresponding to a time in ts.
    */
   template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(

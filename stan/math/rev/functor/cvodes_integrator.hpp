@@ -176,9 +176,6 @@ class cvodes_integrator {
    * @param[in, out] msgs the print stream for warning messages
    * @param args Extra arguments passed unmodified through to ODE right hand
    * side function
-   * @return Solution to ODE at times \p ts
-   * @return a vector of states, each state being a vector of the
-   *   same size as the state variable, corresponding to a time in ts.
    * @throw <code>std::domain_error</code> if y0, t0, ts, theta, x are not
    *   finite, all elements of ts are not greater than t0, or ts is not
    *   sorted in strictly increasing order.

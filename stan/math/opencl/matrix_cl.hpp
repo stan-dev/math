@@ -573,7 +573,6 @@ class matrix_cl : public matrix_cl_base {
    * @tparam No_heap whether to move the object to heap first
    * @tparam U type of object
    * @param obj object
-   * @return event for the copy
    */
   template <bool No_heap, typename U, std::enable_if_t<No_heap>* = nullptr>
   void initialize_buffer_no_heap_if(U&& obj) {

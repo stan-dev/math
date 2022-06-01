@@ -17,11 +17,9 @@ namespace math {
  *
  * @tparam T1 Type of first matrix
  * @tparam T2 Type of second matrix
- * @param A first matrix
+ * @param[in,out] A matrix which is divided inplace.
  * @param B Vector of elements to divide each column of \c A by element-wise.
- *
- * @return element-wise division of \c A by \c B.
- *
+ * *
  * @throw <code>std::invalid_argument</code> if the
  * input matrices do not have matching dimensions
  *
@@ -46,10 +44,9 @@ inline void divide_columns(matrix_cl<T1>& A, const matrix_cl<T2>& B) {
  *
  * @tparam T1 Type of first matrix
  * @tparam T2 Type of the divisor
- * @param A Matrix to divide
+ * @param[in,out] A Matrix to divide inplace
  * @param divisor scalar to divide by
  *
- * @return element-wise division of \c A by \c divisor.
  *
  */
 template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>

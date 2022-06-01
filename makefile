@@ -88,8 +88,16 @@ help:
 .PHONY: doxygen
 doxygen:
 	mkdir -p doc/api
+	doxygen -v
 	doxygen doxygen/doxygen.cfg
 	cp ./doxygen/pretty_stuff/eigen_navtree_hacks.js ./doc/api/html
+
+.PHONY: docker-doxygen
+docker-doxygen:
+	sudo docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t math-doxygen ./doxygen/docker/alpine/
+	sudo docker run -it --rm --mount "type=bind,src=$(pwd),dst=$(pwd)" --user "$(id -u):$(id -g)" --workdir $(pwd) math-doxygen make doxygen
+
+# 	sudo docker run --it --rm --security-opt label:disable --mount "type=bind,src=$(pwd),dst=$(pwd)" --user "$(id -u):$(id -g)" --workdir "$(pwd)" math-doxygen make doxygen
 
 ##
 # Clean up.

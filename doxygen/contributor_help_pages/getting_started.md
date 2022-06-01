@@ -341,15 +341,15 @@ auto myfunc(const T& x) {
 }
 ```
 
-## (2) Calculating the forward pass
+### (2) Calculating the forward pass
 
 This one does not require too much explanation. The only thing I would like to call out here is that because of our previous `requires` we can now call `dot_self()` using the values of the matrix which will then know to call the previous definition of `dot_self` we wrote that can work with `double` scalar types.
 
-## (3) Accessing the Values and Adjoints of Matrices.
+### (3) Accessing the Values and Adjoints of Matrices.
 
 The calculation for forward and reverse pass in the above uses custom Eigen methods for matrices, vectors, and arrays. In the above, `.val()` will return a view of all of the values of the @ref stan::math::var scalars in the matrix while `.adj()` will return a view for all of the adjoints of the matrices @ref stan::math::var scalars. You can think of `.val()` and `.adj()` as returning an Eigen matrix of doubles such as `Eigen::Matrix<double, Rows, Cols>` where both functions's scalars are references to the values or adjoints of the original matrix with @ref stan::math::var scalars.
 
-## (4) Setting up the Reverse Pass
+### (4) Setting up the Reverse Pass
 
 Once we have stored the data we need for the reverse pass we need to actually write that reverse pass! We need to take our adjoint calculation and put it onto the callback stack so that when the users call @ref stan::math::grad the adjoints are propagated upwards properly.
 

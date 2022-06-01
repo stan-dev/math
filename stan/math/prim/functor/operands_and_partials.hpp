@@ -72,9 +72,6 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 };
-template <typename ViewElt, typename Op>
-constexpr double
-    ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 }  // namespace internal
 
 /**

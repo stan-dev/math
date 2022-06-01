@@ -371,7 +371,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * Copy constructor for var_val.
    * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
-   * @return this
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
@@ -382,7 +381,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    *  from another \ref stan::math::var_value containing an expression.
    * @tparam S type of the value in the \ref stan::math::var_value to assing
    * @param other the value to assign
-   * @return this
    */
   template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
