@@ -148,15 +148,15 @@ inline T_dst from_matrix_cl(const var_value<T>& a) {
  * destination `std::vector` containing vars.
  *
  * @tparam T_var_stdvec_dst destination type
- * @tparam T type of the matrix or expression on the OpenCL device
+ * @tparam T_inner type of the matrix or expression on the OpenCL device
  * @param a source matrix_cl or expression
  * @return var with a copy of the data on the host
  */
 template <typename T_var_stdvec_dst, typename T_inner,
           require_std_vector_vt<is_var, T_var_stdvec_dst>* = nullptr,
           require_all_stan_scalar_t<value_type_t<T_var_stdvec_dst>>* = nullptr,
-          require_all_kernel_expressions_t<T>* = nullptr>
-inline T_var_stdvec_dst from_matrix_cl(const var_value<T>& a) {
+          require_all_kernel_expressions_t<T_inner>* = nullptr>
+inline T_var_stdvec_dst from_matrix_cl(const var_value<T_inner>& a) {
   check_size_match("from_matrix_cl<std::vector<var>>", "src.cols()", a.cols(),
                    "dst.cols()", 1);
   std::vector<double> val = from_matrix_cl<std::vector<double>>(a.val());
