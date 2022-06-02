@@ -26,5 +26,4 @@ TEST(mathMixMatFun, to_complex_vectorized) {
   Eigen::MatrixXd mat_in1 = in1.replicate(1, 2);
   std::vector<std::vector<int>> std_std_in2{std_in2, std_in2};
   stan::test::expect_ad_vectorized_binary(f, mat_in1, std_std_in2);
-
 }
