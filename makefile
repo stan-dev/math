@@ -92,12 +92,13 @@ doxygen:
 	doxygen doxygen/doxygen.cfg
 	cp ./doxygen/pretty_stuff/eigen_navtree_hacks.js ./doc/api/html
 
+MAKE_DIR = $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
+
 .PHONY: docker-doxygen
 docker-doxygen:
-	sudo docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t math-doxygen ./doxygen/docker/alpine/
-	sudo docker run -it --rm --mount "type=bind,src=$(pwd),dst=$(pwd)" --user "$(id -u):$(id -g)" --workdir $(pwd) math-doxygen make doxygen
+	docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t math-doxygen ./doxygen/docker/alpine/
+	docker run -it --rm --mount "type=bind,src=$(MAKE_DIR),dst=$(MAKE_DIR)" --user "$(id -u):$(id -g)" --workdir $(MAKE_DIR) math-doxygen make doxygen
 
-# 	sudo docker run --it --rm --security-opt label:disable --mount "type=bind,src=$(pwd),dst=$(pwd)" --user "$(id -u):$(id -g)" --workdir "$(pwd)" math-doxygen make doxygen
 
 ##
 # Clean up.
