@@ -44,8 +44,8 @@ template <
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr,
     require_any_not_stan_scalar_t<Types...>* = nullptr>
 inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
-                     const MaxScalar max, const int digits,
-                     std::uintmax_t& max_iter, Types&&... args) {
+                            const MaxScalar max, const int digits,
+                            std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
@@ -61,7 +61,8 @@ inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
       [&max_iter, digits, guess_val = value_of(guess), min_val = value_of(min),
        max_val = value_of(max)](auto&&... vals) {
         return root_finder_tol<FRootFunc, SolverFun>(
-            guess_val, min_val, max_val, digits > 20 ? digits : 21, max_iter, vals...);
+            guess_val, min_val, max_val, digits > 20 ? digits : 21, max_iter,
+            vals...);
       },
       args_vals_tuple);
   double Jf_x;
@@ -132,14 +133,15 @@ template <
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr,
     require_all_stan_scalar_t<Types...>* = nullptr>
 inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
-                     const MaxScalar max, const int digits,
-                     std::uintmax_t& max_iter, Types... args) {
+                            const MaxScalar max, const int digits,
+                            std::uintmax_t& max_iter, Types... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
   // Solve the system
   double theta_dbl = root_finder_tol<FRootFunc, SolverFun>(
-              value_of(guess), value_of(min), value_of(max), digits > 20 ? digits : 21, max_iter, value_of(args)...);
+      value_of(guess), value_of(min), value_of(max), digits > 20 ? digits : 21,
+      max_iter, value_of(args)...);
   double Jf_x;
   {
     nested_rev_autodiff nested;
@@ -154,19 +156,18 @@ inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
    * Note: Because we put this on the callback stack, if `f` is a lambda
    * its captures must be in Stan's arena memory or trivially destructable.
    */
-  return make_callback_var(
-      theta_dbl, [Jf_x, args...](auto& ret) mutable {
-        {
-          nested_rev_autodiff rev;
-          double eta = -(ret.adj() / Jf_x);
-          double ret_val = ret.val();
-          auto f = internal::make_root_func<false, FRootFunc>();
-          auto x_nrad = std::decay_t<FRootFunc>::template run<false>(
-                              ret_val, args...);
-          x_nrad.adj() = eta;
-          grad();
-        }
-      });
+  return make_callback_var(theta_dbl, [Jf_x, args...](auto& ret) mutable {
+    {
+      nested_rev_autodiff rev;
+      double eta = -(ret.adj() / Jf_x);
+      double ret_val = ret.val();
+      auto f = internal::make_root_func<false, FRootFunc>();
+      auto x_nrad
+          = std::decay_t<FRootFunc>::template run<false>(ret_val, args...);
+      x_nrad.adj() = eta;
+      grad();
+    }
+  });
 }
 
 }  // namespace math

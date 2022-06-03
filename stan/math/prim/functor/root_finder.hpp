@@ -82,8 +82,8 @@ template <typename FRootFunc, typename SolverFun, typename GuessScalar,
           require_all_not_st_var<GuessScalar, MinScalar, MaxScalar,
                                  Types...>* = nullptr>
 inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
-                     const MaxScalar max, const int digits,
-                     std::uintmax_t& max_iter, Types&&... args) {
+                            const MaxScalar max, const int digits,
+                            std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
@@ -103,27 +103,27 @@ inline auto root_finder_tol(const GuessScalar guess, const MinScalar min,
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
 inline auto root_finder_halley_tol(const GuessScalar guess, const MinScalar min,
-                            const MaxScalar max, const int digits,
-                            std::uintmax_t& max_iter, Types&&... args) {
+                                   const MaxScalar max, const int digits,
+                                   std::uintmax_t& max_iter, Types&&... args) {
   return root_finder_tol<FRootFunc, internal::HalleyRootSolver>(
       guess, min, max, digits, max_iter, std::forward<Types>(args)...);
 }
 
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
-inline auto root_finder_newton_raphson_tol(const GuessScalar guess,
-                                    const MinScalar min, const MaxScalar max,
-                                    const int digits, std::uintmax_t& max_iter,
-                                    Types&&... args) {
+inline auto root_finder_newton_raphson_tol(
+    const GuessScalar guess, const MinScalar min, const MaxScalar max,
+    const int digits, std::uintmax_t& max_iter, Types&&... args) {
   return root_finder_tol<FRootFunc, internal::NewtonRootSolver>(
       guess, min, max, digits, max_iter, std::forward<Types>(args)...);
 }
 
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
-inline auto root_finder_schroder_tol(const GuessScalar guess, const MinScalar min,
-                              const MaxScalar max, const int digits,
-                              std::uintmax_t& max_iter, Types&&... args) {
+inline auto root_finder_schroder_tol(const GuessScalar guess,
+                                     const MinScalar min, const MaxScalar max,
+                                     const int digits, std::uintmax_t& max_iter,
+                                     Types&&... args) {
   return root_finder_tol<FRootFunc, internal::SchroderRootSolver>(
       guess, min, max, digits, max_iter, std::forward<Types>(args)...);
 }
@@ -152,7 +152,7 @@ inline auto root_finder_schroder_tol(const GuessScalar guess, const MinScalar mi
 template <typename FRootFunc, typename SolverFun, typename GuessScalar,
           typename MinScalar, typename MaxScalar, typename... Types>
 inline auto root_finder(const GuessScalar guess, const MinScalar min,
-                 const MaxScalar max, Types&&... args) {
+                        const MaxScalar max, Types&&... args) {
   constexpr int digits = 16;
   std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
   return root_finder_tol<FRootFunc, SolverFun>(
@@ -162,7 +162,7 @@ inline auto root_finder(const GuessScalar guess, const MinScalar min,
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
 inline auto root_finder_hailey(const GuessScalar guess, const MinScalar min,
-                        const MaxScalar max, Types&&... args) {
+                               const MaxScalar max, Types&&... args) {
   constexpr int digits = 16;
   std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
   return root_finder_halley_tol<FRootFunc>(guess, min, max, digits, max_iter,
@@ -171,8 +171,9 @@ inline auto root_finder_hailey(const GuessScalar guess, const MinScalar min,
 
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
-inline auto root_finder_newton_raphson(const GuessScalar guess, const MinScalar min,
-                                const MaxScalar max, Types&&... args) {
+inline auto root_finder_newton_raphson(const GuessScalar guess,
+                                       const MinScalar min, const MaxScalar max,
+                                       Types&&... args) {
   constexpr int digits = 16;
   std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
   return root_finder_newton_raphson_tol<FRootFunc>(
@@ -182,7 +183,7 @@ inline auto root_finder_newton_raphson(const GuessScalar guess, const MinScalar 
 template <typename FRootFunc, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types>
 inline auto root_finder_schroder(const GuessScalar guess, const MinScalar min,
-                          const MaxScalar max, Types&&... args) {
+                                 const MaxScalar max, Types&&... args) {
   constexpr int digits = 16;
   std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
   return root_finder_schroder_tol<FRootFunc>(guess, min, max, digits, max_iter,

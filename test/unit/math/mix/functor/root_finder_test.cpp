@@ -2,7 +2,7 @@
 
 struct CubedRootFinder {
   template <bool ReturnDeriv, typename T1, typename T2,
-   std::enable_if_t<ReturnDeriv>* = nullptr>
+            std::enable_if_t<ReturnDeriv>* = nullptr>
   static auto run(T1&& g, T2&& x) {
     auto g_pow = g;
     auto second_deriv = 20 * g_pow;
@@ -13,7 +13,7 @@ struct CubedRootFinder {
     return std::make_tuple(func_val, first_deriv, second_deriv);
   }
   template <bool ReturnDeriv, typename T1, typename T2,
-   std::enable_if_t<!ReturnDeriv>* = nullptr>
+            std::enable_if_t<!ReturnDeriv>* = nullptr>
   static auto run(T1&& g, T2&& x) {
     return g * g * g - x;
   }
@@ -43,11 +43,9 @@ TEST(MixFun, root_finder_cubed) {
   stan::test::expect_ad(full_f, x);
 }
 
-
-
 struct FifthRootFinder {
   template <bool ReturnDeriv, typename T1, typename T2,
-   std::enable_if_t<ReturnDeriv>* = nullptr>
+            std::enable_if_t<ReturnDeriv>* = nullptr>
   static auto run(T1&& g, T2&& x) {
     auto g_pow = g * g * g;
     auto second_deriv = 20 * g_pow;
@@ -58,7 +56,7 @@ struct FifthRootFinder {
     return std::make_tuple(func_val, first_deriv, second_deriv);
   }
   template <bool ReturnDeriv, typename T1, typename T2,
-   std::enable_if_t<!ReturnDeriv>* = nullptr>
+            std::enable_if_t<!ReturnDeriv>* = nullptr>
   static auto run(T1&& g, T2&& x) {
     return g * g * g * g * g - x;
   }
@@ -94,9 +92,15 @@ struct BetaCdfRoot {
   static auto run(T1&& x, T2&& alpha, T3&& beta, T4&& p) {
     auto f_val = stan::math::inc_beta(alpha, beta, x) - p;
     auto beta_ab = stan::math::beta(alpha, beta);
-    auto f_val_d = (stan::math::pow(1.0 - x,-1.0 + beta)*stan::math::pow(x,-1.0 + alpha)) / beta_ab;
-    auto f_val_dd = (stan::math::pow(1 - x,-1 + beta)*stan::math::pow(x,-2 + alpha)*(-1 + alpha))/beta_ab -
-   (stan::math::pow(1 - x,-2 + beta)*stan::math::pow(x,-1 + alpha)*(-1 + beta))/beta_ab;
+    auto f_val_d = (stan::math::pow(1.0 - x, -1.0 + beta)
+                    * stan::math::pow(x, -1.0 + alpha))
+                   / beta_ab;
+    auto f_val_dd = (stan::math::pow(1 - x, -1 + beta)
+                     * stan::math::pow(x, -2 + alpha) * (-1 + alpha))
+                        / beta_ab
+                    - (stan::math::pow(1 - x, -2 + beta)
+                       * stan::math::pow(x, -1 + alpha) * (-1 + beta))
+                          / beta_ab;
 
     return std::make_tuple(f_val, f_val_d, f_val_dd);
   }

@@ -6,16 +6,20 @@
 #include <boost/math/special_functions/polygamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
-
 struct BetaCdfRoot {
   template <bool ReturnDeriv, typename T1, typename T2, typename T3,
             typename T4, std::enable_if_t<ReturnDeriv>* = nullptr>
   static auto run(T1&& x, T2&& alpha, T3&& beta, T4&& p) {
     auto f_val = boost::math::ibeta(alpha, beta, x) - p;
     auto beta_ab = boost::math::beta(alpha, beta);
-    double f_val_d = (std::pow(1.0 - x,-1.0 + beta)*std::pow(x,-1.0 + alpha)) / beta_ab;
-    double f_val_dd = (std::pow(1 - x,-1 + beta)*std::pow(x,-2 + alpha)*(-1 + alpha))/beta_ab -
-   (std::pow(1 - x,-2 + beta)*std::pow(x,-1 + alpha)*(-1 + beta))/beta_ab;
+    double f_val_d
+        = (std::pow(1.0 - x, -1.0 + beta) * std::pow(x, -1.0 + alpha))
+          / beta_ab;
+    double f_val_dd
+        = (std::pow(1 - x, -1 + beta) * std::pow(x, -2 + alpha) * (-1 + alpha))
+              / beta_ab
+          - (std::pow(1 - x, -2 + beta) * std::pow(x, -1 + alpha) * (-1 + beta))
+                / beta_ab;
 
     return std::make_tuple(f_val, f_val_d, f_val_dd);
   }
@@ -263,20 +267,19 @@ TEST(RevFunctor, root_finder_beta_cdf2) {
   check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder,
                        5e-2, .5, .5, .3);
 
- check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder,
-                      5e-2, .5, .6, .5);
+  check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder,
+                       5e-2, .5, .6, .5);
 
   // For some reason this fails after a while??
   for (double p = .1; p < .9; p += .1) {
     for (double a = .1; a < .9; a += .1) {
       for (double b = .1; b < .9; b += .1) {
-          check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p),
-                              f_schroder, 1e-9, a, b, p);
-          if (::testing::Test::HasFailure()) {
-            std::cout << "--\na: " << a << "\nb: " << b << "\np: " << p << "\n";
-          }
+        check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p),
+                             f_schroder, 1e-9, a, b, p);
+        if (::testing::Test::HasFailure()) {
+          std::cout << "--\na: " << a << "\nb: " << b << "\np: " << p << "\n";
+        }
       }
     }
   }
-
 }
