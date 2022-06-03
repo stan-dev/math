@@ -61,7 +61,6 @@ inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
  * @param[in] y vector to inverse transform
  * @return inverse discrete Fourier transform of `y`
  */
-
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr,
           require_not_var_t<base_type_t<value_type_t<V>>>* = nullptr>
 inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
