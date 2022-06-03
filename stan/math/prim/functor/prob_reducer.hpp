@@ -28,14 +28,6 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
   T ret_;  // Underlying return type
 
   /**
-   * Construct from an Eigen type
-   * @tparam EigArr A type inheriting from `Eigen::EigenBase`
-   * @param x will be summed and passed into `ret_`.
-   */
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  prob_reducer(EigArr&& x) : ret_(sum(std::forward<EigArr>(x))) {}
-
-  /**
    * Construct from an Eigen type while ignoring size argument passed.
    * @tparam EigArr A type inheriting from `Eigen::EigenBase`
    * @tparam Tossed An integral type
@@ -46,14 +38,6 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
             require_integral_t<Tossed>* = nullptr>
   prob_reducer(EigArr&& x, Tossed&& /* */)
       : ret_(sum(std::forward<EigArr>(x))) {}
-
-  /**
-   * Construct from a scalar type.
-   * @tparam Scalar a scalar
-   * @param x passed to `ret_`.
-   */
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  prob_reducer(Scalar&& x) : ret_(x) {}
 
   /**
    * Construct from an Eigen type while ignoring size argument passed.
@@ -140,17 +124,9 @@ struct prob_reducer<T, require_eigen_t<T>> {
   T ret_;
 
   /**
-   * Construct from an Eigen type
-   * @tparam EigArr A type inheriting from `Eigen::EigenBase`
-   * @param x will be forwarded into `ret_`.
-   */
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  prob_reducer(EigArr&& x) : ret_(std::forward<EigArr>(x)) {}
-
-  /**
    * Construct from an Eigen type while ignoring size argument passed.
    * @tparam EigArr A type inheriting from `Eigen::EigenBase`
-   * @tparam Tossed An integral type
+   * @tparam Size An integral type
    * @param x will be forwarded to `ret_`.
    */
   template <typename EigArr, typename Size, require_eigen_t<EigArr>* = nullptr,

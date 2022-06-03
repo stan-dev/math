@@ -17,11 +17,7 @@ TEST(mathMixScalFun, vnormal_lpdf) {
         y, mu, sigma);
   };
   Eigen::VectorXd y = Eigen::VectorXd::Random(5);
-  // y << 0, 0;
   Eigen::VectorXd mu = Eigen::VectorXd::Random(5);
-  // mu << 0, 0;
   Eigen::VectorXd sigma = stan::math::abs(Eigen::VectorXd::Random(5));
-  // sigma << 1, 1;
   stan::test::expect_ad_distribution(f, y, mu, sigma);
-  // stan::test::expect_ad(f, y, mu, sigma);
 }
