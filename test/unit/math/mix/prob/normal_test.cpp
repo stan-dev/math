@@ -13,15 +13,15 @@ TEST(mathMixScalFun, normal_lpdf) {
 
 TEST(mathMixScalFun, vnormal_lpdf) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
-    return stan::math::normal_lpdf<true, stan::math::ProbReturnType::Vector>(y, mu, sigma);
+    return stan::math::normal_lpdf<true, stan::math::ProbReturnType::Vector>(
+        y, mu, sigma);
   };
   Eigen::VectorXd y = Eigen::VectorXd::Random(5);
-  //y << 0, 0;
+  // y << 0, 0;
   Eigen::VectorXd mu = Eigen::VectorXd::Random(5);
-  //mu << 0, 0;
+  // mu << 0, 0;
   Eigen::VectorXd sigma = stan::math::abs(Eigen::VectorXd::Random(5));
-  //sigma << 1, 1;
+  // sigma << 1, 1;
   stan::test::expect_ad_distribution(f, y, mu, sigma);
-  //stan::test::expect_ad(f, y, mu, sigma);
-
+  // stan::test::expect_ad(f, y, mu, sigma);
 }

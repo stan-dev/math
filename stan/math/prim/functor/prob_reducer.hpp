@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_PROB_REDUCER_HPP
 #define STAN_MATH_PRIM_FUNCTOR_PROB_REDUCER_HPP
 
-
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Used by distributions to decide whether return type shoudl be Scalar or Vector.
+ * Used by distributions to decide whether return type shoudl be Scalar or
+ * Vector.
  */
-enum class ProbReturnType {Scalar, Vector};
+enum class ProbReturnType { Scalar, Vector };
 
 /**
  * For scalars performs summations and is a no-op reducer for eigen vectors.
@@ -25,7 +25,7 @@ struct prob_reducer;
  */
 template <typename T>
 struct prob_reducer<T, require_stan_scalar_t<T>> {
-  T ret_; // Underlying return type
+  T ret_;  // Underlying return type
 
   /**
    * Construct from an Eigen type
@@ -41,9 +41,11 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
    * @tparam Tossed An integral type
    * @param x will be summed and passed into `ret_`.
    */
-  template <typename EigArr, typename Tossed, require_eigen_t<EigArr>* = nullptr,
-   require_integral_t<Tossed>* = nullptr>
-  prob_reducer(EigArr&& x, Tossed&& /* */) : ret_(sum(std::forward<EigArr>(x))) {}
+  template <typename EigArr, typename Tossed,
+            require_eigen_t<EigArr>* = nullptr,
+            require_integral_t<Tossed>* = nullptr>
+  prob_reducer(EigArr&& x, Tossed&& /* */)
+      : ret_(sum(std::forward<EigArr>(x))) {}
 
   /**
    * Construct from a scalar type.
@@ -59,7 +61,8 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
    * @tparam Tossed an integral type
    * @param x will be summed and inserted into `ret_`.
    */
-  template <typename Scalar, typename Tossed, require_stan_scalar_t<Scalar>* = nullptr>
+  template <typename Scalar, typename Tossed,
+            require_stan_scalar_t<Scalar>* = nullptr>
   prob_reducer(Scalar&& x, Tossed&& /* */) : ret_(x) {}
 
   /**
@@ -119,9 +122,7 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
   /**
    * Return the underlying scalar return type.
    */
-  inline auto ret() noexcept {
-    return ret_;
-  }
+  inline auto ret() noexcept { return ret_; }
 
   /**
    * Return a zero value, used when distribution has special cases that
@@ -132,7 +133,6 @@ struct prob_reducer<T, require_stan_scalar_t<T>> {
   static auto zero(int /* */) {
     return return_type_t<Types...>(0);
   }
-
 };
 
 template <typename T>
@@ -153,7 +153,8 @@ struct prob_reducer<T, require_eigen_t<T>> {
    * @tparam Tossed An integral type
    * @param x will be forwarded to `ret_`.
    */
-  template <typename EigArr, typename Size, require_eigen_t<EigArr>* = nullptr, require_integral_t<Size>* = nullptr>
+  template <typename EigArr, typename Size, require_eigen_t<EigArr>* = nullptr,
+            require_integral_t<Size>* = nullptr>
   prob_reducer(EigArr&& x, Size /* x */) : ret_(std::forward<EigArr>(x)) {}
 
   /**
@@ -163,8 +164,9 @@ struct prob_reducer<T, require_eigen_t<T>> {
    * @param x passed to `ret_` along with size to fill with a base value.
    * @param n The size `ret_` should be
    */
-  template <typename Scalar, typename Size, require_stan_scalar_t<Scalar>* = nullptr,
-   require_integral_t<Size>* = nullptr>
+  template <typename Scalar, typename Size,
+            require_stan_scalar_t<Scalar>* = nullptr,
+            require_integral_t<Size>* = nullptr>
   prob_reducer(Scalar constant, Size n) : ret_(T::Constant(n, constant)) {}
 
   /**
@@ -216,9 +218,7 @@ struct prob_reducer<T, require_eigen_t<T>> {
    * Return the underlying scalar return type. Passed the underlying by
    * moving it which can cause `ret_` to be uninitialized after.
    */
-  inline auto&& ret() noexcept {
-    return std::move(ret_);
-  }
+  inline auto&& ret() noexcept { return std::move(ret_); }
 
   /**
    * Return a zero value, used when distribution has special cases that
@@ -228,20 +228,23 @@ struct prob_reducer<T, require_eigen_t<T>> {
    */
   template <typename... Types>
   static auto zero(int size) {
-    return Eigen::Array<return_type_t<Types...>, -1, 1>::Constant(0, size).eval();
+    return Eigen::Array<return_type_t<Types...>, -1, 1>::Constant(0, size)
+        .eval();
   }
-
 };
 
 /**
  * Generate a reducer with correct return type.
  * @tparam ReturnType Either Scalar or Vector.
- * @tparam Types A parameter pack of types to deduce the underlying scalar type from
+ * @tparam Types A parameter pack of types to deduce the underlying scalar type
+ * from
  */
 template <ProbReturnType ReturnType, typename... Types>
-using prob_return_t = prob_reducer<std::conditional_t<ReturnType == ProbReturnType::Scalar, return_type_t<Types...>, Eigen::Array<return_type_t<Types...>, -1, 1>>>;
+using prob_return_t = prob_reducer<std::conditional_t<
+    ReturnType == ProbReturnType::Scalar, return_type_t<Types...>,
+    Eigen::Array<return_type_t<Types...>, -1, 1>>>;
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

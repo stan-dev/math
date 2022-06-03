@@ -39,12 +39,11 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
-template <bool propto, ProbReturnType RetType = ProbReturnType::Scalar, typename T_y, typename T_loc, typename T_scale,
+template <bool propto, ProbReturnType RetType = ProbReturnType::Scalar,
+          typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline auto normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
@@ -116,9 +115,7 @@ inline auto normal_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return normal_lpdf<false>(y, mu, sigma);
 }
 
