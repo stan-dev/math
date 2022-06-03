@@ -14,128 +14,11 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/prob_reducer.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
-
-enum class ProbReturnType {Scalar, Vector};
-
-template <typename T, typename = void>
-struct prob_broadcaster;
-
-template <typename T>
-struct prob_broadcaster<T, require_stan_scalar_t<T>> {
-  T ret_;
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  prob_broadcaster(EigArr&& x) : ret_(sum(std::forward<EigArr>(x))) {}
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  prob_broadcaster(Scalar&& x) : ret_(x) {}
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator=(EigArr&& x) {
-    ret_ = sum(x);
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator=(Scalar x) {
-    ret_ = x;
-    return *this;
-  }
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator+=(EigArr&& x) {
-    ret_ += sum(x);
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator+=(Scalar&& x) {
-    ret_ += x;
-    return *this;
-  }
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator-=(EigArr&& x) {
-    ret_ -= sum(x);
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator-=(Scalar&& x) {
-    ret_ -= x;
-    return *this;
-  }
-  inline auto ret() noexcept {
-    static_assert(!is_var<T>::value, "NOOO");
-    return ret_;
-  }
-  template <typename... Types>
-  static auto zero(int /* */) {
-    return return_type_t<Types...>(0);
-  }
-
-};
-
-template <typename T>
-struct prob_broadcaster<T, require_eigen_t<T>> {
-  T ret_;
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  prob_broadcaster(EigArr&& x) : ret_(std::forward<EigArr>(x)) {}
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator=(EigArr&& x) {
-    ret_ = x;
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator=(Scalar x) {
-    ret_ = Eigen::Array<value_type_t<T>, -1, 1>::Constant(x, ret_.size());
-    return *this;
-  }
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator+=(EigArr&& x) {
-    ret_ += x;
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator+=(Scalar&& x) {
-    ret_ += x;
-    return *this;
-  }
-
-  template <typename EigArr, require_eigen_t<EigArr>* = nullptr>
-  inline auto operator-=(EigArr&& x) {
-    ret_ -= x;
-    return *this;
-  }
-
-  template <typename Scalar, require_stan_scalar_t<Scalar>* = nullptr>
-  inline auto operator-=(Scalar&& x) {
-    ret_ -= x;
-    return *this;
-  }
-
-  inline auto&& ret() noexcept {
-    return std::move(ret_);
-  }
-
-  template <typename... Types>
-  static auto zero(int size) {
-    return Eigen::Array<return_type_t<Types...>, -1, 1>::Constant(0, size).eval();
-  }
-
-};
-
-
-
-template <ProbReturnType ReturnType, typename... Types>
-using prob_return_t = prob_broadcaster<std::conditional_t<ReturnType == ProbReturnType::Scalar, return_type_t<Types...>, Eigen::Array<return_type_t<Types...>, -1, 1>>>;
 
 /** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
@@ -198,9 +81,13 @@ inline auto normal_lpdf(const T_y& y,
   const auto& y_scaled_sq
       = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
 
-  prob_return_t<RetType, T_partials_return> logp = -0.5 * y_scaled_sq;
+  prob_return_t<RetType, T_partials_return> logp(-0.5 * y_scaled_sq, N);
   if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * N;
+    if (RetType == ProbReturnType::Scalar) {
+      logp += NEG_LOG_SQRT_TWO_PI * N;
+    } else {
+      logp += NEG_LOG_SQRT_TWO_PI;
+    }
   }
   if (include_summand<propto, T_scale>::value) {
     if (RetType == ProbReturnType::Scalar) {

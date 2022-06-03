@@ -48,12 +48,25 @@ inline void update_adjoints(var_value<T1>& x, const T2& y, const vari& z) {
   x.adj() += z.adj() * y;
 }
 
+template <typename T1, typename T2,
+          require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr>
+inline void update_adjoints(var_value<T1>& x, const T2& y, const var& z) {
+  x.adj() += z.adj() * y;
+}
+
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr,
           require_arithmetic_t<Scalar2>* = nullptr>
 inline void update_adjoints(Scalar1 x, Scalar2 y, const vari& z) noexcept {
   x.adj() += z.adj() * y;
 }
+template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
+          require_not_var_matrix_t<Scalar1>* = nullptr,
+          require_arithmetic_t<Scalar2>* = nullptr>
+inline void update_adjoints(Scalar1 x, Scalar2 y, const var& z) noexcept {
+  x.adj() += z.adj() * y;
+}
+
 template <typename Matrix1, typename Matrix2,
           require_rev_matrix_t<Matrix1>* = nullptr,
           require_st_arithmetic<Matrix2>* = nullptr>
@@ -61,14 +74,34 @@ inline void update_adjoints(Matrix1& x, const Matrix2& y, const vari& z) {
   x.adj().array() += z.adj() * y.array();
 }
 
+template <typename Matrix1, typename Matrix2,
+          require_rev_matrix_t<Matrix1>* = nullptr,
+          require_st_arithmetic<Matrix2>* = nullptr>
+inline void update_adjoints(Matrix1& x, const Matrix2& y, const var& z) {
+  x.adj().array() += z.adj() * y.array();
+}
+
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
 inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
                                       const vari& /* z */) noexcept {}
+
+template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
+inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
+                                      const var& /* z */) noexcept {}
 
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
           require_st_arithmetic<Vec2>* = nullptr>
 inline void update_adjoints(StdVec1& x, const Vec2& y, const vari& z) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    update_adjoints(x[i], y[i], z);
+  }
+}
+
+template <typename StdVec1, typename Vec2,
+          require_std_vector_t<StdVec1>* = nullptr,
+          require_st_arithmetic<Vec2>* = nullptr>
+inline void update_adjoints(StdVec1& x, const Vec2& y, const var& z) {
   for (size_t i = 0; i < x.size(); ++i) {
     update_adjoints(x[i], y[i], z);
   }
@@ -95,7 +128,7 @@ inline void update_adjoints(Matrix1& x, const Matrix2& y, const T3& z) {
   x.adj().array() += z.adj() * y.array();
 }
 
-template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr, typename T3, require_eigen_t<T3>* = nullptr>
+template <typename Arith, typename Alt, typename T3, require_st_arithmetic<Arith>* = nullptr, require_eigen_t<T3>* = nullptr>
 inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
                                       const T3& /* z */) noexcept {}
 

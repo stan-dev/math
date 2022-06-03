@@ -62,6 +62,7 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * expression returning zero.
    */
   static constexpr double dx() noexcept { return 0.0; }
+  static constexpr double dx_v() noexcept { return 0.0; }
   /**
    * Return the size of the operand for the edge. For doubles this is a compile
    * time expression returning zero.

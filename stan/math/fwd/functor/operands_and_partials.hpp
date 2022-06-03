@@ -27,6 +27,7 @@ class ops_partials_edge<Dx, fvar<Dx>> {
   const Op& operand_;
 
   Dx dx() { return this->partials_[0] * this->operand_.d_; }
+  Dx dx_v() { return this->partials_[0] * this->operand_.d_; }
 };
 }  // namespace internal
 
@@ -106,6 +107,13 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
         = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
     return T_return_type(value, deriv);
   }
+
+  template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+  auto build(EigVec&& value) {
+    Eigen::Array<fvar<Dx>, -1, 1> ret(value.template cast<fvar<Dx>>());
+    ret.d() = (edge1_.dx_v() + edge2_.dx_v() + edge3_.dx_v() + edge4_.dx_v() + edge5_.dx_v());
+    return ret;
+  }
 };
 
 namespace internal {
@@ -135,6 +143,14 @@ class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
     }
     return derivative;
   }
+  Eigen::Array<Dx, -1, 1> dx_v() {
+    Eigen::Array<Dx, -1, 1> derivative(this->operands_.size());
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      derivative[i] = this->partials_[i] * this->operands_[i].d_;
+    }
+    return derivative;
+  }
+
 };
 
 template <typename Dx, int R, int C>
@@ -160,6 +176,10 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
       derivative += this->partials_(i) * this->operands_(i).d_;
     }
     return derivative;
+  }
+
+  Eigen::Array<Dx, -1, 1> dx_v() {
+    return this->partials_.array() * this->operands_.d().array();
   }
 };
 
@@ -191,6 +211,14 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
     }
     return derivative;
   }
+
+  Eigen::Array<Dx, -1, 1> dx_v() {
+    Eigen::Array<Dx, -1, 1> derivative(this->operands_.size());
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+        derivative[i] = this->partials_vec_[i].dot(this->operands_[i].d());
+    }
+    return derivative;
+  }
 };
 
 template <typename Dx>
@@ -216,6 +244,15 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
     for (size_t i = 0; i < this->operands_.size(); ++i) {
       for (size_t j = 0; j < this->operands_[i].size(); ++j) {
         derivative += this->partials_vec_[i][j] * this->operands_[i][j].d_;
+      }
+    }
+    return derivative;
+  }
+  Eigen::Array<Dx, -1, 1> dx_v() {
+    Eigen::Array<Dx, -1, 1> derivative = Eigen::Array<Dx, -1, 1>::Zero(this->operands_.size());
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      for (int j = 0; j < this->operands_[i].size(); ++j) {
+        derivative[i] = this->partials_vec_[i][j] * this->operands_[i][j].d_;
       }
     }
     return derivative;
