@@ -156,6 +156,8 @@
 #include <stan/math/prim/prob/inv_gamma_log.hpp>
 #include <stan/math/prim/prob/inv_gamma_lpdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_rng.hpp>
+#include <stan/math/prim/prob/inv_wishart_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/inv_wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_log.hpp>
 #include <stan/math/prim/prob/inv_wishart_lpdf.hpp>
 #include <stan/math/prim/prob/inv_wishart_rng.hpp>

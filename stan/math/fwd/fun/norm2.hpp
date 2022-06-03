@@ -18,8 +18,7 @@ namespace math {
  * @param[in] x Vector of specified values.
  * @return L2 norm of x.
  */
-template <typename Container,
-          require_container_st<is_fvar, Container>* = nullptr>
+template <typename Container, require_eigen_vt<is_fvar, Container>* = nullptr>
 inline auto norm2(const Container& x) {
   return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [&](const auto& v) {

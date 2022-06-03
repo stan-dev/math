@@ -68,7 +68,7 @@ struct acosh_fun {
    * @return Inverse hyperbolic cosine of the argument.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return acosh(x);
   }
 };

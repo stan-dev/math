@@ -48,7 +48,7 @@ namespace internal {
  */
 struct lambert_w0_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return lambert_w0(x);
   }
 };
@@ -64,7 +64,7 @@ struct lambert_w0_fun {
  */
 struct lambert_wm1_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return lambert_wm1(x);
   }
 };
