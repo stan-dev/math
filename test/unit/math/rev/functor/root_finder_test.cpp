@@ -5,66 +5,24 @@
 #include <boost/math/special_functions/hypergeometric_pFq.hpp>
 #include <boost/math/special_functions/polygamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-/*
-TEST(RevFunctor, root_finder) {
-  using stan::math::root_finder;
-  using stan::math::var;
-  // return cube root of x using 1st and 2nd derivatives and Halley.
-  // using namespace std;  // Help ADL of std functions.
-  var x = 27;
-  int exponent;
-  // Get exponent of z (ignore mantissa).
-  std::frexp(x.val(), &exponent);
-  // Rough guess is to divide the exponent by three.
-  var guess = ldexp(1., exponent / 3);
-  // Minimum possible value is half our guess.
-  var min = ldexp(0.5, exponent / 3);
-  // Maximum possible value is twice our guess.
-  var max = ldexp(2., exponent / 3);
-  // Maximum possible binary digits accuracy for type T.
-  const int digits = std::numeric_limits<double>::digits;
-  int get_digits = static_cast<int>(digits * 0.4);
-  std::uintmax_t maxit = 20;
-  auto f = [](const auto& g, const auto x) { return g * g * g - x; };
-  auto f_g = [](const auto& g, const auto x) { return 3 * g * g; };
-  auto f_gg = [](const auto& g, const auto x) { return 6 * g; };
-  var result = root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, x);
-  result.grad();
-  EXPECT_EQ(27, x.val());
-  EXPECT_NEAR(0.037037, x.adj(), 1e-6);
-}
-*/
+
 
 struct BetaCdfRoot {
   template <bool ReturnDeriv, typename T1, typename T2, typename T3,
             typename T4, std::enable_if_t<ReturnDeriv>* = nullptr>
   static auto run(T1&& x, T2&& alpha, T3&& beta, T4&& p) {
-    auto f = [](auto&& x, auto&& alpha, auto&& beta, auto&& p) {
-      return stan::math::beta_cdf(x, alpha, beta) - p;
-    }(x, alpha, beta, p);
-    auto beta_pdf_deriv = [](auto&& x, auto&& alpha, auto&& beta) {
-      using stan::math::lgamma;
-      using stan::math::pow;
-      auto val = -(pow((1 - x), beta) * pow(x, (-2 + alpha))
-                   * (1. - 2. * x - alpha + x * alpha + x * beta)
-                   * lgamma(alpha + beta))
-                 / (pow((-1 + x), 2) * lgamma(alpha) * lgamma(beta));
-      return val;
-    }(x, alpha, beta);
-    auto beta_pdf = [](auto&& x, auto&& alpha, auto&& beta) {
-      using stan::math::lgamma;
-      using stan::math::pow;
-      auto val
-          = (pow(x, alpha - 1) * pow((1 - x), beta - 1) * lgamma(alpha + beta))
-            / ((lgamma(alpha) * lgamma(beta)));
-      return val;
-    }(x, alpha, beta);
-    return std::make_tuple(f, beta_pdf, beta_pdf_deriv);
+    auto f_val = boost::math::ibeta(alpha, beta, x) - p;
+    auto beta_ab = boost::math::beta(alpha, beta);
+    double f_val_d = (std::pow(1.0 - x,-1.0 + beta)*std::pow(x,-1.0 + alpha)) / beta_ab;
+    double f_val_dd = (std::pow(1 - x,-1 + beta)*std::pow(x,-2 + alpha)*(-1 + alpha))/beta_ab -
+   (std::pow(1 - x,-2 + beta)*std::pow(x,-1 + alpha)*(-1 + beta))/beta_ab;
+
+    return std::make_tuple(f_val, f_val_d, f_val_dd);
   }
   template <bool ReturnDeriv, typename T1, typename T2, typename T3,
             typename T4, std::enable_if_t<!ReturnDeriv>* = nullptr>
   static auto run(T1&& x, T2&& alpha, T3&& beta, T4&& p) {
-    return stan::math::beta_cdf(x, alpha, beta) - p;
+    return stan::math::inc_beta(alpha, beta, x) - p;
   }
 };
 TEST(RevFunctor, root_finder_beta_cdf) {
@@ -293,6 +251,8 @@ TEST(RevFunctor, root_finder_beta_cdf2) {
                                                                alpha, beta, p);
   };
   auto f_schroder = [guess, min, max](auto&& alpha, auto&& beta, auto&& p) {
+    constexpr int digits = 16;
+    std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
     return stan::math::root_finder_schroder<BetaCdfRoot>(guess, min, max, alpha,
                                                          beta, p);
   };
@@ -303,18 +263,20 @@ TEST(RevFunctor, root_finder_beta_cdf2) {
   check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder,
                        5e-2, .5, .5, .3);
 
-  /* For some reason this fails after a while??
-  for (double p = .3; p < .7; p += .1) {
-    for (double a = .3; a < .7; a += .1) {
-      for (double b = .3; b < .7; b += .1) {
+ check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p), f_schroder,
+                      5e-2, .5, .6, .5);
 
+  // For some reason this fails after a while??
+  for (double p = .1; p < .9; p += .1) {
+    for (double a = .1; a < .9; a += .1) {
+      for (double b = .1; b < .9; b += .1) {
           check_vs_known_grads(std::make_tuple(deriv_a, deriv_b, deriv_p),
-                              f_schroder, 5e-2, a, b, p);
+                              f_schroder, 1e-9, a, b, p);
           if (::testing::Test::HasFailure()) {
             std::cout << "--\na: " << a << "\nb: " << b << "\np: " << p << "\n";
           }
       }
     }
   }
-  */
+
 }
