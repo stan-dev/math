@@ -141,7 +141,9 @@ class operands_and_partials {
    * @return the value with its derivative
    */
   template <typename T>
-  inline auto build(T&& value) const noexcept { return std::forward<T>(value); }
+  inline auto build(T&& value) const noexcept {
+    return std::forward<T>(value);
+  }
 
   // These will always be 0 size base template instantiations (above).
   internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
