@@ -381,7 +381,6 @@ stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
   for (int i = 0; i < x.size(); ++i)
     y += x(i);
   throw std::domain_error("fooey");
-  return y;
 }
 
 TEST(RevFunctor, RecoverMemory) {
@@ -421,4 +420,25 @@ TEST(RevFunctor, RecoverMemory_gradient_array) {
   // without recovery_memory in autodiff::apply_recover(), takes 67M
   EXPECT_LT(stan::math::ChainableStack::instance_->memalloc_.bytes_allocated(),
             100000);
+}
+
+
+
+TEST(RevFunctor, gradientBoundaryConds) {
+  VectorXd x(5);
+  using stan::math::gradient;
+      x << 1, 2, 3, 4, 5;
+      double fx;
+      double grad_fx[5];
+      EXPECT_NO_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
+			       x, fx, std::begin(grad_fx),
+			       std::end(grad_fx)));
+      EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
+			    x, fx, std::begin(grad_fx) + 1,
+			    std::end(grad_fx)),
+		   std::invalid_argument);
+      EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
+			    x, fx, std::begin(grad_fx),
+			    std::end(grad_fx) + 1),
+		   std::invalid_argument);
 }
