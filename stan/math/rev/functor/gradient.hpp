@@ -101,16 +101,17 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   if (last_grad_fx - first_grad_fx != x.size()) {
     std::stringstream s;
     s << "gradient(): iterator and gradient different sizes; iterator size = "
-      << last_grad_fx - first_grad_fx << "; grad size = "
-      << x.size() << std::endl;
+      << last_grad_fx - first_grad_fx << "; grad size = " << x.size()
+      << std::endl;
     throw std::invalid_argument(s.str());
   }
-  
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad(fx_var.vi_);
-  for (Eigen::Matrix<var, Eigen::Dynamic, -1>::Index i = 0; i < x_var.size(); ++i) {
+  for (Eigen::Matrix<var, Eigen::Dynamic, -1>::Index i = 0; i < x_var.size();
+       ++i) {
     *first_grad_fx++ = x_var(i).adj();
   }
 }

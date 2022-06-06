@@ -422,23 +422,18 @@ TEST(RevFunctor, RecoverMemory_gradient_array) {
             100000);
 }
 
-
-
 TEST(RevFunctor, gradientBoundaryConds) {
   VectorXd x(5);
   using stan::math::gradient;
-      x << 1, 2, 3, 4, 5;
-      double fx;
-      double grad_fx[5];
-      EXPECT_NO_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
-			       x, fx, std::begin(grad_fx),
-			       std::end(grad_fx)));
-      EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
-			    x, fx, std::begin(grad_fx) + 1,
-			    std::end(grad_fx)),
-		   std::invalid_argument);
-      EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); },
-			    x, fx, std::begin(grad_fx),
-			    std::end(grad_fx) + 1),
-		   std::invalid_argument);
+  x << 1, 2, 3, 4, 5;
+  double fx;
+  double grad_fx[5];
+  EXPECT_NO_THROW(gradient([](const auto& x) { return stan::math::sum(x); }, x,
+                           fx, std::begin(grad_fx), std::end(grad_fx)));
+  EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); }, x, fx,
+                        std::begin(grad_fx) + 1, std::end(grad_fx)),
+               std::invalid_argument);
+  EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); }, x, fx,
+                        std::begin(grad_fx), std::end(grad_fx) + 1),
+               std::invalid_argument);
 }
