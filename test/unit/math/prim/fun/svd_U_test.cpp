@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <stdexcept>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <complex>
 
 TEST(MathMatrixPrimMat, svd_U) {
   using stan::math::matrix_d;
