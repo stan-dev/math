@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <complex>
 
-
 TEST(MathMatrixPrimMat, svd_V) {
   using stan::math::matrix_d;
   using stan::math::svd_V;
@@ -49,7 +48,7 @@ TEST(MathMatrixPrimMat, svd_V) {
   c32 << compl_t(0.86636546, 0.34306449), compl_t(0.28267243, 0.52462912),
       compl_t(0.12104914, 0.2533793), compl_t(0.66889264, 0.39276455),
       compl_t(0.02184348, 0.0614428), compl_t(0.96599692, 0.16180684);
-  matrix_c c32_V(2,2);
+  matrix_c c32_V(2, 2);
   c32_V << compl_t(0.45315061, 0.), compl_t(0.89143395, 0.),
       compl_t(0.85785925, -0.2423469), compl_t(-0.43608328, 0.12319437);
 

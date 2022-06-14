@@ -45,5 +45,4 @@ TEST(MathMatrixPrimMat, singular_values) {
   c32_D << 1.50077492, 0.78435681;
 
   EXPECT_MATRIX_FLOAT_EQ(c32_D, singular_values(c32));
-
 }
