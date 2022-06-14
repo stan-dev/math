@@ -134,7 +134,7 @@ inline double std_normal_log_qf(double log_p) {
  */
 struct std_normal_log_qf_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return std_normal_log_qf(x);
   }
 };
