@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_FUN_HPP
-#define STAN_MATH_FWD_FUN_HPP
+#ifndef STAN_MATH_FWD_PROB_HPP
+#define STAN_MATH_FWD_PROB_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
