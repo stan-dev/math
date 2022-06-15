@@ -31,4 +31,9 @@ TEST(MathMixMatFun, svd_V) {
   a22 << 1, 2, 3, 4;
   stan::test::expect_ad(f, a22);
   stan::test::expect_ad_matvar(f, a22);
+
+  Eigen::MatrixXcd c22(2, 2);
+  a22 << 1, 2, 3, 4;
+  stan::test::expect_ad(f, a22);
+  stan::test::expect_ad_matvar(f, a22);
 }
