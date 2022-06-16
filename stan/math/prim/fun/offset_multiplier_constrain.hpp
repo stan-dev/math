@@ -272,6 +272,39 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
   return ret;
 }
 
+/**
+ * Return the linearly transformed value for the specified unconstrained input
+ * and specified offset and multiplier. If the `Jacobian` parameter is `true`,
+ * the log density accumulator is incremented with the log absolute Jacobian
+ * determinant of the transform.  All of the transforms are specified with their
+ * Jacobians in the *Stan Reference Manual* chapter Constraint Transforms.
+ *
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x Unconstrained scalar input
+ * @param[in] mu offset of constrained output
+ * @param[in] sigma multiplier of constrained output
+ * @param[in, out] lp log density accumulator
+ * @return linear transformed value corresponding to inputs
+ * @throw std::domain_error if sigma <= 0
+ * @throw std::domain_error if mu is not finite
+ */
+template <bool Jacobian, typename T, typename M, typename S>
+inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
+                                        return_type_t<T, M, S>& lp) {
+  if (Jacobian) {
+    return offset_multiplier_constrain(x, mu, sigma, lp);
+  } else {
+    return offset_multiplier_constrain(x, mu, sigma);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 

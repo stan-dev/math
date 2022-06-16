@@ -427,7 +427,7 @@ TEST(StanMath_integrate_1d_rev, TestBeta) {
 
   var alpha = 9.0 / 5;
   var beta = 13.0 / 7;
-  AVEC theta = {alpha, beta};
+  std::vector<stan::math::var> theta = {alpha, beta};
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
                 std::ostream *msgs) {
     return exp(stan::math::beta_lpdf(x, theta[0], theta[1]));
@@ -435,8 +435,8 @@ TEST(StanMath_integrate_1d_rev, TestBeta) {
   var I = integrate_1d(pdf, 0.0, 1.0, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(alpha, beta);
-  VEC g;
+  std::vector<stan::math::var> x{alpha, beta};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -449,7 +449,7 @@ TEST(StanMath_integrate_1d_rev, TestCauchy) {
 
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
+  std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -459,8 +459,8 @@ TEST(StanMath_integrate_1d_rev, TestCauchy) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -472,7 +472,7 @@ TEST(StanMath_integrate_1d_rev, TestChiSquare) {
   using stan::math::var;
 
   var nu = 9.0 / 5;
-  AVEC theta = {nu};
+  std::vector<stan::math::var> theta = {nu};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -482,8 +482,8 @@ TEST(StanMath_integrate_1d_rev, TestChiSquare) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(nu);
-  VEC g;
+  std::vector<stan::math::var> x = {nu};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
@@ -495,7 +495,7 @@ TEST(StanMath_integrate_1d_rev, TestDoubleExponential) {
 
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
+  std::vector<stan::math::var> theta = {mu, sigma};
   double a = -std::numeric_limits<double>::infinity();
   double b = mu.val();
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -507,8 +507,8 @@ TEST(StanMath_integrate_1d_rev, TestDoubleExponential) {
           + integrate_1d(pdf, b, -a, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -520,7 +520,7 @@ TEST(StanMath_integrate_1d_rev, TestExponential) {
   using stan::math::var;
 
   var beta = 9.0 / 5;
-  AVEC theta = {beta};
+  std::vector<stan::math::var> theta = {beta};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -530,8 +530,8 @@ TEST(StanMath_integrate_1d_rev, TestExponential) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(beta);
-  VEC g;
+  std::vector<stan::math::var> x = {beta};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
@@ -543,7 +543,7 @@ TEST(StanMath_integrate_1d_rev, TestFrechet) {
 
   var alpha = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {alpha, sigma};
+  std::vector<stan::math::var> theta = {alpha, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -553,8 +553,8 @@ TEST(StanMath_integrate_1d_rev, TestFrechet) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(alpha, sigma);
-  VEC g;
+  std::vector<stan::math::var> x = {alpha, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -567,7 +567,7 @@ TEST(StanMath_integrate_1d_rev, TestGamma) {
 
   var alpha = 9.0 / 5;
   var beta = 13.0 / 7;
-  AVEC theta = {alpha, beta};
+  std::vector<stan::math::var> theta = {alpha, beta};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -577,8 +577,8 @@ TEST(StanMath_integrate_1d_rev, TestGamma) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(alpha, beta);
-  VEC g;
+  std::vector<stan::math::var> x{alpha, beta};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -591,7 +591,7 @@ TEST(StanMath_integrate_1d_rev, TestGumbel) {
 
   var mu = 9.0 / 5;
   var beta = 13.0 / 7;
-  AVEC theta = {mu, beta};
+  std::vector<stan::math::var> theta = {mu, beta};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -601,8 +601,8 @@ TEST(StanMath_integrate_1d_rev, TestGumbel) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, beta);
-  VEC g;
+  std::vector<stan::math::var> x{mu, beta};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -614,7 +614,7 @@ TEST(StanMath_integrate_1d_rev, TestInvChiSquared) {
   using stan::math::var;
 
   var nu = 9.0 / 5;
-  AVEC theta = {nu};
+  std::vector<stan::math::var> theta = {nu};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -624,8 +624,8 @@ TEST(StanMath_integrate_1d_rev, TestInvChiSquared) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(nu);
-  VEC g;
+  std::vector<stan::math::var> x = {nu};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
@@ -637,7 +637,7 @@ TEST(StanMath_integrate_1d_rev, TestLogistic) {
 
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
+  std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -647,8 +647,8 @@ TEST(StanMath_integrate_1d_rev, TestLogistic) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -661,7 +661,7 @@ TEST(StanMath_integrate_1d_rev, TestLogNormal) {
 
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
+  std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -671,8 +671,8 @@ TEST(StanMath_integrate_1d_rev, TestLogNormal) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -685,7 +685,7 @@ TEST(StanMath_integrate_1d_rev, TestNormal) {
 
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
+  std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -695,8 +695,8 @@ TEST(StanMath_integrate_1d_rev, TestNormal) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -709,7 +709,7 @@ TEST(StanMath_integrate_1d_rev, TestPareto) {
 
   var m = 9.0 / 5;
   var alpha = 13.0 / 7;
-  AVEC theta = {m, alpha};
+  std::vector<stan::math::var> theta = {m, alpha};
   double b = std::numeric_limits<double>::infinity();
   var a = m;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -719,8 +719,8 @@ TEST(StanMath_integrate_1d_rev, TestPareto) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(m, alpha);
-  VEC g;
+  std::vector<stan::math::var> x{m, alpha};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -734,7 +734,7 @@ TEST(StanMath_integrate_1d_rev, TestPareto2) {
   var mu = 9.0 / 5;
   var lambda = 13.0 / 7;
   var alpha = 11.0 / 3;
-  AVEC theta = {mu, lambda, alpha};
+  std::vector<stan::math::var> theta = {mu, lambda, alpha};
   double b = std::numeric_limits<double>::infinity();
   var a = mu;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -744,8 +744,8 @@ TEST(StanMath_integrate_1d_rev, TestPareto2) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, lambda, alpha);
-  VEC g;
+  std::vector<stan::math::var> x{mu, lambda, alpha};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -758,7 +758,7 @@ TEST(StanMath_integrate_1d_rev, TestRayleigh) {
   using stan::math::var;
 
   var sigma = 13.0 / 7;
-  AVEC theta = {sigma};
+  std::vector<stan::math::var> theta = {sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -768,8 +768,8 @@ TEST(StanMath_integrate_1d_rev, TestRayleigh) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(sigma);
-  VEC g;
+  std::vector<stan::math::var> x{sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
@@ -781,7 +781,7 @@ TEST(StanMath_integrate_1d_rev, TestScaledInvChiSquare) {
 
   var nu = 9.0 / 5;
   var s = 13.0 / 7;
-  AVEC theta = {nu, s};
+  std::vector<stan::math::var> theta = {nu, s};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -791,8 +791,8 @@ TEST(StanMath_integrate_1d_rev, TestScaledInvChiSquare) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(nu, s);
-  VEC g;
+  std::vector<stan::math::var> x{nu, s};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -806,7 +806,7 @@ TEST(StanMath_integrate_1d_rev, TestStudentT) {
   var nu = 11.0 / 3;
   var mu = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {nu, mu, sigma};
+  std::vector<stan::math::var> theta = {nu, mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -816,8 +816,8 @@ TEST(StanMath_integrate_1d_rev, TestStudentT) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(nu, mu, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{nu, mu, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -831,7 +831,7 @@ TEST(StanMath_integrate_1d_rev, TestUniform) {
 
   var a = 9.0 / 5;
   var b = 13.0 / 7;
-  AVEC theta = {a, b};
+  std::vector<stan::math::var> theta = {a, b};
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
                 std::ostream *msgs) {
     return exp(stan::math::uniform_lpdf(x, theta[0], theta[1]));
@@ -839,8 +839,8 @@ TEST(StanMath_integrate_1d_rev, TestUniform) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(a, b);
-  VEC g;
+  std::vector<stan::math::var> x{a, b};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -853,7 +853,7 @@ TEST(StanMath_integrate_1d_rev, TestVonMises) {
 
   var mu = 9.0 / 5;
   var kappa = 13.0 / 7;
-  AVEC theta = {mu, kappa};
+  std::vector<stan::math::var> theta = {mu, kappa};
   double b = stan::math::pi() * 2;
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -863,8 +863,8 @@ TEST(StanMath_integrate_1d_rev, TestVonMises) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(mu, kappa);
-  VEC g;
+  std::vector<stan::math::var> x{mu, kappa};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
@@ -877,7 +877,7 @@ TEST(StanMath_integrate_1d_rev, TestWeibull) {
 
   var alpha = 9.0 / 5;
   var sigma = 13.0 / 7;
-  AVEC theta = {alpha, sigma};
+  std::vector<stan::math::var> theta = {alpha, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
@@ -887,8 +887,8 @@ TEST(StanMath_integrate_1d_rev, TestWeibull) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  AVEC x = createAVEC(alpha, sigma);
-  VEC g;
+  std::vector<stan::math::var> x{alpha, sigma};
+  std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
@@ -50,11 +51,6 @@ struct apply_scalar_unary;
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, require_eigen_t<T>> {
   /**
-   * Type of underlying scalar for the matrix type T.
-   */
-  using scalar_t = value_type_t<T>;
-
-  /**
    * Return the result of applying the function defined by the
    * template parameter F to the specified matrix argument.
    *
@@ -63,8 +59,9 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * by F to the specified matrix.
    */
   static inline auto apply(const T& x) {
-    return x.unaryExpr(
-        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
+    return x.unaryExpr([](auto&& x) {
+      return apply_scalar_unary<F, std::decay_t<decltype(x)>>::apply(x);
+    });
   }
 
   /**
@@ -86,7 +83,7 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
-  using return_t = double;
+  using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -97,7 +94,31 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(T x) { return F::fun(x); }
+  static inline auto apply(T x) { return F::fun(x); }
+};
+
+/**
+ * Template specialization for vectorized functions applying to
+ * complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ */
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_complex_t<T>> {
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for double
+   * arguments.
+   *
+   * @param x Argument scalar.
+   * @return Result of applying F to the scalar.
+   */
+  static inline auto apply(const T& x) { return F::fun(x); }
+  /**
+   * The return type
+   */
+  using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
 };
 
 /**
@@ -111,11 +132,6 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, require_integral_t<T>> {
   /**
-   * The return type, double.
-   */
-  using return_t = double;
-
-  /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
    * <code>F::fun()</code>, which must be defined for double
@@ -124,7 +140,11 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(T x) { return F::fun(static_cast<double>(x)); }
+  static inline auto apply(T x) { return F::fun(x); }
+  /**
+   * The return type, double.
+   */
+  using return_t = std::decay_t<decltype(F::fun(std::declval<double>()))>;
 };
 
 /**
@@ -154,7 +174,7 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  static inline return_t apply(const std::vector<T>& x) {
+  static inline auto apply(const std::vector<T>& x) {
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       fx[i] = apply_scalar_unary<F, T>::apply(x[i]);

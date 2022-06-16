@@ -5,20 +5,21 @@ namespace ub_constrain_test {
 template <typename T1, typename T2>
 void expect(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
-    return stan::math::ub_constrain(x, ub);
+    stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
+    return stan::math::ub_constrain<false>(x, ub, lp);
   };
   auto f2 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    return stan::math::ub_constrain(x, ub, lp);
+    return stan::math::ub_constrain<true>(x, ub, lp);
   };
   auto f3 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    stan::math::ub_constrain(x, ub, lp);
+    stan::math::ub_constrain<true>(x, ub, lp);
     return lp;
   };
   auto f4 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    auto xx = stan::math::ub_constrain(x, ub, lp);
+    auto xx = stan::math::ub_constrain<true>(x, ub, lp);
     return stan::math::add(lp, stan::math::sum(xx));
   };
 
@@ -31,20 +32,21 @@ void expect(const T1& x, const T2& ub) {
 template <typename T1, typename T2>
 void expect_vec(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
-    return stan::math::ub_constrain(x, ub);
+    stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
+    return stan::math::ub_constrain<false>(x, ub, lp);
   };
   auto f2 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    return stan::math::ub_constrain(x, ub, lp);
+    return stan::math::ub_constrain<true>(x, ub, lp);
   };
   auto f3 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    stan::math::ub_constrain(x, ub, lp);
+    stan::math::ub_constrain<true>(x, ub, lp);
     return lp;
   };
   auto f4 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    auto xx = stan::math::eval(stan::math::ub_constrain(x, ub, lp));
+    auto xx = stan::math::eval(stan::math::ub_constrain<true>(x, ub, lp));
     stan::return_type_t<decltype(x), decltype(ub)> xx_acc = 0;
     for (size_t i = 0; i < xx.size(); ++i) {
       xx_acc += stan::math::sum(xx[i]);

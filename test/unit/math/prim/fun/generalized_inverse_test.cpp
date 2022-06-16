@@ -45,3 +45,17 @@ TEST(MathMatrixPrim, Equal2) {
   stan::math::matrix_d m3 = m1 * generalized_inverse(m1);
   EXPECT_MATRIX_NEAR(m2, m3, 1e-9);
 }
+
+TEST(MathMatrixPrim, Equal3) {
+  using stan::math::generalized_inverse;
+
+  stan::math::matrix_d m1(3, 3);
+  m1 << 4, 4, -2, 4, 4, -2, -2, -2, 10;
+
+  stan::math::matrix_d m2(3, 3);
+  m2 << 0.069444444, 0.069444444, 0.0277777777, 0.069444444, 0.069444444,
+      0.0277777777, 0.027777777, 0.027777777, 0.1111111111;
+
+  stan::math::matrix_d m3 = generalized_inverse(m1);
+  EXPECT_MATRIX_NEAR(m2, m3, 1e-9);
+}

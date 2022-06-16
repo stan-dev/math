@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <sundials/sundials_context.h>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -32,6 +33,8 @@ namespace math {
  */
 template <typename F>
 struct KinsolFixedPointEnv {
+  /** Sundials context **/
+  sundials::Context sundials_context_;
   /** RHS functor. */
   const F& f_;
   /** val of params for @c y_ to refer to when
@@ -65,7 +68,8 @@ struct KinsolFixedPointEnv {
                       const std::vector<int>& x_i, std::ostream* msgs,
                       const std::vector<T_u>& u_scale,
                       const std::vector<T_f>& f_scale)
-      : f_(f),
+      : sundials_context_(),
+        f_(f),
         y_dummy(),
         y_(y),
         N_(x.size()),
@@ -73,10 +77,10 @@ struct KinsolFixedPointEnv {
         x_r_(x_r),
         x_i_(x_i),
         msgs_(msgs),
-        mem_(KINCreate()),
-        nv_x_(N_VNew_Serial(N_)),
-        nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_)) {
+        mem_(KINCreate(sundials_context_)),
+        nv_x_(N_VNew_Serial(N_, sundials_context_)),
+        nv_u_scal_(N_VNew_Serial(N_, sundials_context_)),
+        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)) {
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
       NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
@@ -92,7 +96,8 @@ struct KinsolFixedPointEnv {
                       const std::vector<int>& x_i, std::ostream* msgs,
                       const std::vector<T_u>& u_scale,
                       const std::vector<T_f>& f_scale)
-      : f_(f),
+      : sundials_context_(),
+        f_(f),
         y_dummy(stan::math::value_of(y)),
         y_(y_dummy),
         N_(x.size()),
@@ -100,10 +105,10 @@ struct KinsolFixedPointEnv {
         x_r_(x_r),
         x_i_(x_i),
         msgs_(msgs),
-        mem_(KINCreate()),
-        nv_x_(N_VNew_Serial(N_)),
-        nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_)) {
+        mem_(KINCreate(sundials_context_)),
+        nv_x_(N_VNew_Serial(N_, sundials_context_)),
+        nv_u_scal_(N_VNew_Serial(N_, sundials_context_)),
+        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)) {
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
       NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
@@ -239,18 +244,13 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     const int default_anderson_depth = 4;
     int anderson_depth = std::min(N, default_anderson_depth);
 
-    check_flag_sundials(KINSetNumMaxIters(mem, max_num_steps),
-                        "KINSetNumMaxIters");
-    check_flag_sundials(KINSetMAA(mem, anderson_depth), "KINSetMAA");
-    check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_),
-                        "KINInit");
-    check_flag_sundials(KINSetFuncNormTol(mem, f_tol), "KINSetFuncNormTol");
-    check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
-                        "KINSetUserData");
-
-    check_flag_kinsol(
-        KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
-        max_num_steps);
+    CHECK_KINSOL_CALL(KINSetNumMaxIters(mem, max_num_steps));
+    CHECK_KINSOL_CALL(KINSetMAA(mem, anderson_depth));
+    CHECK_KINSOL_CALL(KINInit(mem, &env.kinsol_f_system, env.nv_x_));
+    CHECK_KINSOL_CALL(KINSetFuncNormTol(mem, f_tol));
+    CHECK_KINSOL_CALL(KINSetUserData(mem, static_cast<void*>(&env)));
+    kinsol_check(KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
+                 "KINSol", max_num_steps);
 
     for (int i = 0; i < N; ++i) {
       x(i) = NV_Ith_S(env.nv_x_, i);

@@ -2,10 +2,14 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <stdexcept>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <complex>
 
 TEST(MathMatrixPrimMat, svd_V) {
   using stan::math::matrix_d;
   using stan::math::svd_V;
+  using compl_t = std::complex<double>;
+  using matrix_c = Eigen::Matrix<compl_t, Eigen::Dynamic, Eigen::Dynamic>;
 
   // Values generated using R base::svd
 
@@ -39,4 +43,14 @@ TEST(MathMatrixPrimMat, svd_V) {
       0.60622380392317887;
   EXPECT_MATRIX_FLOAT_EQ(
       m32_V, svd_V(m32));  // R's SVD returns different signs than Eigen.
+
+  matrix_c c32(3, 2);
+  c32 << compl_t(0.86636546, 0.34306449), compl_t(0.28267243, 0.52462912),
+      compl_t(0.12104914, 0.2533793), compl_t(0.66889264, 0.39276455),
+      compl_t(0.02184348, 0.0614428), compl_t(0.96599692, 0.16180684);
+  matrix_c c32_V(2, 2);
+  c32_V << compl_t(0.45315061, 0.), compl_t(0.89143395, 0.),
+      compl_t(0.85785925, -0.2423469), compl_t(-0.43608328, 0.12319437);
+
+  EXPECT_MATRIX_COMPLEX_FLOAT_EQ(c32_V, svd_V(c32));
 }

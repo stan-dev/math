@@ -26,7 +26,7 @@ namespace math {
  *   or if it is not positive semi-definite,
  *   or if any element of the matrix is <code>NaN</code>.
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
 inline void check_pos_semidefinite(const char* function, const char* name,
                                    const EigMat& y) {
   const auto& y_ref = to_ref(y);

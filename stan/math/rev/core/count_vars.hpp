@@ -114,7 +114,7 @@ inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
  * Arguments without vars contribute zero to the total number of vars.
  *
  * Return the running total number of vars plus the number of
- *   vars in the remaining aruments.
+ *   vars in the remaining arguments.
  *
  * @tparam Arith An object that is either arithmetic or holds arithmetic
  * types

@@ -1,6 +1,4 @@
-#include <stan/math/fwd.hpp>
-#include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>

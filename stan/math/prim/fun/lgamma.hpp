@@ -12,7 +12,7 @@
  * back. For details on the speed evaluations, please refer to
  * https://github.com/stan-dev/math/pull/1255 .
  */
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
@@ -61,7 +61,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
@@ -80,7 +80,7 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
@@ -100,7 +100,7 @@ inline double lgamma(int x) {
  */
 struct lgamma_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return lgamma(x);
   }
 };

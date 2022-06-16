@@ -18,14 +18,14 @@ TEST(mathMixMatFun, read_corr_L) {
 TEST(mathMixMatFun, read_corr_L_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
-      stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
       return stan::math::read_corr_L(x1, K, lp);
     };
   };
 
   auto f2 = [](int K) {
     return [K](const auto& x1) {
-      stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
       stan::math::read_corr_L(x1, K, lp);
       return lp;
     };

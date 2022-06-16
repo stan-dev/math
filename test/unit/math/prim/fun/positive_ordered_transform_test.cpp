@@ -54,9 +54,24 @@ TEST(prob_transform, positive_ordered_rt) {
   Matrix<double, Dynamic, 1> x(3);
   x << -1.0, 8.0, -3.9;
   Matrix<double, Dynamic, 1> y = stan::math::positive_ordered_constrain(x);
-  Matrix<double, Dynamic, 1> xrt = stan::math::positive_ordered_free(y);
-  EXPECT_EQ(x.size(), xrt.size());
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_FLOAT_EQ(x[i], xrt[i]);
+  std::vector<Matrix<double, Dynamic, 1>> xrt
+      = stan::math::positive_ordered_free(
+          std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
+  for (auto&& x_i : xrt) {
+    EXPECT_EQ(x.size(), x_i.size());
+    EXPECT_MATRIX_FLOAT_EQ(x, x_i);
+  }
+}
+
+TEST(prob_transform, positive_ordered_vectorized) {
+  double lp = 0;
+  Eigen::VectorXd x = Eigen::VectorXd::Random(4);
+  std::vector<Eigen::VectorXd> x_vec = {x, x, x};
+  std::vector<Eigen::VectorXd> y_vec
+      = stan::math::positive_ordered_constrain<false>(x_vec, lp);
+  std::vector<Eigen::VectorXd> x_free_vec
+      = stan::math::positive_ordered_free(y_vec);
+  for (int i = 0; i < x_vec.size(); ++i) {
+    EXPECT_MATRIX_FLOAT_EQ(x_vec[i], x_free_vec[i]);
   }
 }

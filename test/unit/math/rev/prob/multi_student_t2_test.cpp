@@ -87,7 +87,7 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
   mu << 1.0, -1.0, 3.0;
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-10.213695,
+  EXPECT_FLOAT_EQ(-10.2136949646,
                   stan::math::multi_student_t_log(y, nu, mu, Sigma).val());
 
   stan::math::recover_memory();
@@ -330,31 +330,32 @@ void test_all_multi_student_t2() {
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, mu_, get_vvar(sigma_), 5);
+            y_, mu_, stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, get_vvar(mu_), sigma_, 5);
+            y_, stan::math::to_var(mu_), sigma_, 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, get_vvar(mu_), get_vvar(sigma_), 5);
+            y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), mu_, sigma_, 5);
+            stan::math::to_var(y_), mu_, sigma_, 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), mu_, get_vvar(sigma_), 5);
+            stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), get_vvar(mu_), sigma_, 5);
+            stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), 5);
+            stan::math::to_var(y_), stan::math::to_var(mu_),
+            stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
@@ -362,31 +363,32 @@ void test_all_multi_student_t2() {
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, mu_, get_vvar(sigma_), var(5));
+            y_, mu_, stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, get_vvar(mu_), sigma_, var(5));
+            y_, stan::math::to_var(mu_), sigma_, var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            y_, get_vvar(mu_), get_vvar(sigma_), var(5));
+            y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), mu_, sigma_, var(5));
+            stan::math::to_var(y_), mu_, sigma_, var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), mu_, get_vvar(sigma_), var(5));
+            stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), get_vvar(mu_), sigma_, var(5));
+            stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
         test_grad_multi_student_t(
             vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
                                                                         ii, jj),
-            get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
+            stan::math::to_var(y_), stan::math::to_var(mu_),
+            stan::math::to_var(sigma_), var(5));
       }
   }
 
@@ -424,49 +426,51 @@ void test_all_multi_student_t2() {
         mu_, sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, get_vvar(sigma_), 5);
+        mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), sigma_, 5);
+        stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), get_vvar(sigma_), 5);
+        stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, sigma_, 5);
+        stan::math::to_var(y_), mu_, sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, get_vvar(sigma_), 5);
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), sigma_, 5);
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), 5);
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
         mu_, sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, get_vvar(sigma_), var(5));
+        mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), sigma_, var(5));
+        stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), get_vvar(sigma_), var(5));
+        stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, sigma_, var(5));
+        stan::math::to_var(y_), mu_, sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, get_vvar(sigma_), var(5));
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), sigma_, var(5));
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_), var(5));
   }
   {
     using stan::math::var;
@@ -480,49 +484,51 @@ void test_all_multi_student_t2() {
         mu_, sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, get_vvar(sigma_), 5);
+        mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), sigma_, 5);
+        stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), get_vvar(sigma_), 5);
+        stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, sigma_, 5);
+        stan::math::to_var(y_), mu_, sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, get_vvar(sigma_), 5);
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), sigma_, 5);
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), 5);
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
         mu_, sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, get_vvar(sigma_), var(5));
+        mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), sigma_, var(5));
+        stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), get_vvar(sigma_), var(5));
+        stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, sigma_, var(5));
+        stan::math::to_var(y_), mu_, sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, get_vvar(sigma_), var(5));
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), sigma_, var(5));
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t(
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_), var(5));
   }
 }
 

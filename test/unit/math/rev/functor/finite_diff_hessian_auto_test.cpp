@@ -14,8 +14,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-using std::exp;
-using std::pow;
+using stan::math::pow;
 
 /*
  * A set of functions to test the finite-difference approximation on.
@@ -41,7 +40,7 @@ struct linear {
 struct exp_diag {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return exp(2 * x(0)) + exp(x(1));
+    return stan::math::exp(2 * x(0)) + stan::math::exp(x(1));
   }
 };
 
@@ -49,7 +48,7 @@ struct exp_diag {
 struct exp_full {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return exp(x(0) - x(1));
+    return stan::math::exp(x(0) - x(1));
   }
 };
 
@@ -141,10 +140,10 @@ TEST(RevFunctor, exp_diag) {
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
   EXPECT_EQ(2, hess_fx.rows());
   EXPECT_EQ(2, hess_fx.cols());
-  EXPECT_FLOAT_EQ(4 * exp(2 * 2), hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(4 * stan::math::exp(2 * 2), hess_fx(0, 0));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
   EXPECT_FLOAT_EQ(0, hess_fx(1, 0));
-  EXPECT_FLOAT_EQ(exp(-1), hess_fx(1, 1));
+  EXPECT_FLOAT_EQ(stan::math::exp(-1), hess_fx(1, 1));
 }
 
 TEST(RevFunctor, exp_full) {
@@ -157,10 +156,10 @@ TEST(RevFunctor, exp_full) {
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
   EXPECT_EQ(2, hess_fx.rows());
   EXPECT_EQ(2, hess_fx.cols());
-  EXPECT_FLOAT_EQ(exp(4), hess_fx(0, 0));
-  EXPECT_FLOAT_EQ(-exp(4), hess_fx(0, 1));
-  EXPECT_FLOAT_EQ(-exp(4), hess_fx(1, 0));
-  EXPECT_FLOAT_EQ(exp(4), hess_fx(1, 1));
+  EXPECT_FLOAT_EQ(stan::math::exp(4), hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(-stan::math::exp(4), hess_fx(0, 1));
+  EXPECT_FLOAT_EQ(-stan::math::exp(4), hess_fx(1, 0));
+  EXPECT_FLOAT_EQ(stan::math::exp(4), hess_fx(1, 1));
 }
 
 TEST(RevFunctor, one_arg) {

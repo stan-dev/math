@@ -2,11 +2,15 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <stdexcept>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <complex>
 
 TEST(MathMatrixPrimMat, singular_values) {
   using stan::math::matrix_d;
   using stan::math::singular_values;
   using stan::math::vector_d;
+  using compl_t = std::complex<double>;
+  using matrix_c = Eigen::Matrix<compl_t, Eigen::Dynamic, Eigen::Dynamic>;
 
   matrix_d m0(0, 0);
   EXPECT_THROW(singular_values(m0), std::invalid_argument);
@@ -32,4 +36,13 @@ TEST(MathMatrixPrimMat, singular_values) {
   vector_d m32_D(2);
   m32_D << 16.698998232964481, 2.672724829728879;
   EXPECT_MATRIX_FLOAT_EQ(m32_D, singular_values(m32));
+
+  matrix_c c32(3, 2);
+  c32 << compl_t(0.86636546, 0.34306449), compl_t(0.28267243, 0.52462912),
+      compl_t(0.12104914, 0.2533793), compl_t(0.66889264, 0.39276455),
+      compl_t(0.02184348, 0.0614428), compl_t(0.96599692, 0.16180684);
+  vector_d c32_D(2);
+  c32_D << 1.50077492, 0.78435681;
+
+  EXPECT_MATRIX_FLOAT_EQ(c32_D, singular_values(c32));
 }

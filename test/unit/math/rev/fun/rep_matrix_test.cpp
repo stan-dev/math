@@ -38,8 +38,9 @@ TEST(MathMixMatFun, repVarMatrix) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
+  using var_matrix = var_value<Eigen::MatrixXd>;
   auto x_var = var(1.0);
-  auto x = rep_matrix<var_value<Eigen::MatrixXd>>(x_var, 5, 5);
+  auto x = rep_matrix<var_matrix>(x_var, 5, 5);
   EXPECT_TRUE(stan::is_var_matrix<decltype(x)>::value);
   auto x_sum = sum(x);
   x_sum.grad();
@@ -53,8 +54,9 @@ TEST(MathMixMatFun, repVarMatrixVec) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
+  using var_matrix = var_value<Eigen::MatrixXd>;
   var_value<Eigen::VectorXd> x_var(Eigen::VectorXd::Ones(5));
-  auto x = rep_matrix(x_var, 5);
+  auto x = rep_matrix<var_matrix>(x_var, 5);
   EXPECT_TRUE(stan::is_var_matrix<decltype(x)>::value);
   auto x_sum = sum(x);
   x_sum.grad();
@@ -70,8 +72,9 @@ TEST(MathMixMatFun, repVarMatrixRowVec) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
+  using var_matrix = var_value<Eigen::MatrixXd>;
   var_value<Eigen::RowVectorXd> x_var(Eigen::RowVectorXd::Ones(5));
-  auto x = rep_matrix(x_var, 5);
+  auto x = rep_matrix<var_matrix>(x_var, 5);
   EXPECT_TRUE(stan::is_var_matrix<decltype(x)>::value);
   auto x_sum = sum(x);
   x_sum.grad();

@@ -148,7 +148,7 @@ TEST(KernelGenerator, trigamma_test) {
                                                                            \
     Eigen::Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);  \
     Eigen::Matrix<bool, -1, -1> correct = fun(m1.array());                 \
-    EXPECT_TYPED_MATRIX_EQ(correct, res, bool);                            \
+    EXPECT_MATRIX_EQ(correct, res);                                        \
                                                                            \
     MatrixXi m1i(3, 3);                                                    \
     m1i << 1, 2, 3, 4, 5, 6, 7, 8, 9;                                      \
@@ -158,7 +158,7 @@ TEST(KernelGenerator, trigamma_test) {
                                                                            \
     Eigen::Matrix<bool, -1, -1> resi = stan::math::from_matrix_cl(res_cl); \
     Eigen::Matrix<bool, -1, -1> correcti = fun(m1.array());                \
-    EXPECT_TYPED_MATRIX_EQ(correcti, resi, bool);                          \
+    EXPECT_MATRIX_EQ(correcti, resi);                                      \
   }
 
 TEST_CLASSIFICATION_FUNCTION(isfinite)
@@ -257,14 +257,15 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
     EXPECT_NEAR_REL(correct5, res5);                                        \
   }
 
+TEST_BINARY_FUNCTION(beta)
+TEST_BINARY_FUNCTION(binomial_coefficient_log)
 TEST_BINARY_FUNCTION(fdim)
 TEST_BINARY_FUNCTION(fmax)
 TEST_BINARY_FUNCTION(fmin)
 TEST_BINARY_FUNCTION(fmod)
-TEST_BINARY_FUNCTION(pow)
-TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(lbeta)
-TEST_BINARY_FUNCTION(binomial_coefficient_log)
+TEST_BINARY_FUNCTION(lmultiply)
 TEST_BINARY_FUNCTION(multiply_log)
+TEST_BINARY_FUNCTION(pow)
 
 #endif
