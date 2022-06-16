@@ -384,3 +384,22 @@ TEST(RevMath, grad_F32_double_sign_flip_2) {
   EXPECT_FLOAT_EQ(g_calc[4], std::get<1>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
 }
+
+TEST(RevMath, grad_2F1_negative_z) {
+  using stan::math::grad_pFq;
+  using stan::math::var;
+  using stan::math::vector_v;
+
+  vector_v a_v(2);
+  a_v << 3.70975, 1.0;
+  vector_v b_v(1);
+  b_v << 2.70975;
+  var z_v = -0.2;
+
+  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+
+  EXPECT_FLOAT_EQ(-0.0488658806159776, std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(-0.193844936204681, std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(0.0677809985598383, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(0.865295247272367, std::get<2>(grad_tuple));
+}

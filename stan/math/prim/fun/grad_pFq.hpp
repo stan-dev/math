@@ -149,6 +149,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     T_vec log_phammer_ap1_mpn(a_size);
     T_vec log_phammer_bp1_mpn(b_size);
 
+    int z_pow_m_sign = 1;
     Eigen::VectorXi curr_signs_da(a_size);
     Eigen::VectorXi curr_signs_db(b_size);
     Eigen::VectorXi log_phammer_an_sign(a_size);
@@ -172,7 +173,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
       int n = 0;
       Tz log_z_mn = log_z_m;
-      int z_pow_mn_sign = z_sign;
+      int z_pow_mn_sign = z_pow_m_sign;
       scalar_t inner_diff = 0;
       lgamma_np1 = 0;
 
@@ -257,6 +258,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         ap1mn.array() += 1;
         bp1mn.array() += 1;
       }
+
+      z_pow_m_sign *= z_sign;
 
       n_iter = n;
 
