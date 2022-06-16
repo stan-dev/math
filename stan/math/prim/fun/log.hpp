@@ -27,7 +27,7 @@ struct log_fun {
    * @return Natural log of x.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::log;
     return log(x);
   }
