@@ -26,8 +26,7 @@ inline auto std_normal_log_qf(const var_value<T>& log_p) {
 
         const auto& deriv = as_array_or_scalar(log_p).val()
                             + log(as_array_or_scalar(vi.adj()) * vi_sign)
-                            - NEG_LOG_SQRT_TWO_PI
-                            + 0.5 * square(vi_array);
+                            - NEG_LOG_SQRT_TWO_PI + 0.5 * square(vi_array);
         as_array_or_scalar(log_p).adj() += vi_sign * exp(deriv);
       });
 }

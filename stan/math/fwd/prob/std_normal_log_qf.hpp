@@ -21,8 +21,10 @@ inline fvar<T> std_normal_log_qf(const fvar<T>& p) {
   if (p.d_ < 0) {
     p_sign = -1;
     p_d *= -1;
-   }
-  return fvar<T>(xv,  p_sign * exp(p.val_ + log(p_d)- NEG_LOG_SQRT_TWO_PI + 0.5 * square(xv)));
+  }
+  return fvar<T>(
+      xv,
+      p_sign * exp(p.val_ + log(p_d) - NEG_LOG_SQRT_TWO_PI + 0.5 * square(xv)));
 }
 }  // namespace math
 }  // namespace stan
