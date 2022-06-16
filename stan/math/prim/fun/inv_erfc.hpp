@@ -30,7 +30,7 @@ inline auto inv_erfc(const T& x) {
  */
 struct inv_erfc_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return inv_erfc(x);
   }
 };

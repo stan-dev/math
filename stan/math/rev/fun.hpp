@@ -61,6 +61,7 @@
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
+#include <stan/math/rev/fun/fft.hpp>
 #include <stan/math/rev/fun/fill.hpp>
 #include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
