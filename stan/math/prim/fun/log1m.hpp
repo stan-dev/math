@@ -55,7 +55,7 @@ inline double log1m(double x) {
  */
 struct log1m_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return log1m(x);
   }
 };

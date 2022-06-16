@@ -11,12 +11,12 @@ namespace stan {
 namespace math {
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-auto fabs(T x) {
+inline auto fabs(T x) {
   return std::abs(x);
 }
 
 template <typename T, require_complex_t<T>* = nullptr>
-auto fabs(T x) {
+inline auto fabs(T x) {
   return hypot(x.real(), x.imag());
 }
 
@@ -29,7 +29,7 @@ auto fabs(T x) {
  */
 struct fabs_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return fabs(x);
   }
 };
