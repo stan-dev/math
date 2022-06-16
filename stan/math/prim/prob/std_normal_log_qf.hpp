@@ -73,7 +73,7 @@ inline double std_normal_log_qf(double log_p) {
 
   double val;
   double log_q = log_p <= LOG_HALF
-                     ? log_diff_exp(0, log_sum_exp(log_p, LOG_HALF))
+                     ? log_diff_exp(LOG_HALF, log_p)
                      : log_diff_exp(log_p, LOG_HALF);
   int log_q_sign = log_p <= LOG_HALF ? -1 : 1;
 
@@ -89,7 +89,7 @@ inline double std_normal_log_qf(double log_p) {
 
     return log_q_sign * exp(log_q + log_agg_a - log_agg_b);
   } else {
-    double log_r = log_q_sign == -1 ? log_p : log_diff_exp(0., log_p);
+    double log_r = log_q_sign == -1 ? log_p : log1m_exp(log_p);
 
     if (stan::math::is_inf(log_r)) {
       return 0;
@@ -125,7 +125,7 @@ inline double std_normal_log_qf(double log_p) {
 }
 
 /**
- * Structure to wrap inv_Phi_log() so it can be vectorized.
+ * Structure to wrap std_normal_log_qf() so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable in range [-Inf, 0]
