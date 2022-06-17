@@ -20,7 +20,6 @@ template <class RNG>
 inline double std_normal_rng(RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-  static const char* function = "std_normal_rng";
 
   variate_generator<RNG&, normal_distribution<>> norm_rng(
       rng, normal_distribution<>(0, 1));
