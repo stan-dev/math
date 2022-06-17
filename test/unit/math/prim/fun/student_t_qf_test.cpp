@@ -4,10 +4,10 @@
 
 TEST(MathFunctions, student_t_qf) {
   using stan::math::student_t_qf;
-  EXPECT_FLOAT_EQ(0.0, student_t_qf(2, 0.5));
+  EXPECT_FLOAT_EQ(0.0, student_t_qf(0.5, 2));
 
-  EXPECT_NEAR(519.666270120263562, student_t_qf(0.31, 0.95), 1.5e-10);
-  EXPECT_NEAR(-31830.988607907, student_t_qf(1, 0.00001), 1.5e-10);
+  EXPECT_NEAR(519.666270120263562, student_t_qf(0.95, 0.31), 1.5e-10);
+  EXPECT_NEAR(-31830.988607907, student_t_qf(0.00001, 1), 1.5e-10);
 }
 
 TEST(MathFunctions, Equal) {
@@ -40,22 +40,22 @@ TEST(MathFunctions, Equal) {
   int numValues = sizeof(p) / sizeof(double);
 
   for (int i = 0; i < numValues; ++i) {
-    EXPECT_NEAR(exact[i], student_t_qf(4, p[i]), 1.5e-11);
+    EXPECT_NEAR(exact[i], student_t_qf(p[i], 4), 1.5e-11);
   }
 }
 
 TEST(MathFunctions, student_t_qf_inf) {
   using stan::math::student_t_qf;
   const double inf = std::numeric_limits<double>::infinity();
-  EXPECT_EQ(student_t_qf(2, 0), -inf);
-  EXPECT_EQ(student_t_qf(2, 1.0), inf);
+  EXPECT_EQ(student_t_qf(0, 2), -inf);
+  EXPECT_EQ(student_t_qf(1.0, 2), inf);
 }
 
 TEST(MathFunctions, student_t_qf_nan) {
   using stan::math::student_t_qf;
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(student_t_qf(nan, 0.3), std::domain_error);
   EXPECT_THROW(student_t_qf(0.3, nan), std::domain_error);
+  EXPECT_THROW(student_t_qf(nan, 0.3), std::domain_error);
   EXPECT_THROW(student_t_qf(-2.0, 0.3), std::domain_error);
   EXPECT_THROW(student_t_qf(2.0, -0.3), std::domain_error);
 }

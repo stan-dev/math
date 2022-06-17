@@ -6,6 +6,7 @@
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/detail/t_distribution_inv.hpp>
+#include <boost/math/distributions/students_t.hpp>
 
 namespace stan {
 namespace math {
@@ -14,12 +15,12 @@ namespace math {
  * The quantile function of the Student's T density function for the
  * given degrees of freedom and probability value.
  *
- * @param df degrees of freedom parameter df > 0
  * @param p random variate. 0 <= p <= 1
+ * @param df degrees of freedom parameter df > 0
  * @throws if constraints are violated or if any argument is NaN
  * @return real value of the inverse cdf for the Student's T distribution.
  */
-inline double student_t_qf(double df, double p) {
+inline double student_t_qf(double p, double df) {
   check_not_nan("student_t_qf", "df", df);
   check_not_nan("student_t_qf", "p", p);
   check_positive("student_t_qf", "df", df);
@@ -33,7 +34,8 @@ inline double student_t_qf(double df, double p) {
   if (p == 0.5) {
       return 0;
   }
-  return boost::math::detail::fast_students_t_quantile(df, p, boost_policy_t<>());
+  boost::math::students_t dist(df);
+  return boost::math::quantile(dist, p);
 }
 
 /**
