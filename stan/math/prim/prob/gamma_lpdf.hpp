@@ -68,7 +68,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
   decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
-  check_not_nan(function, "Random variable", y_val);
+  check_positive_finite(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);
 
