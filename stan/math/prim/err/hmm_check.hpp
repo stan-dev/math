@@ -30,7 +30,6 @@ template <typename T_omega, typename T_Gamma, typename T_rho,
 inline void hmm_check(const T_omega& log_omegas, const T_Gamma& Gamma,
                       const T_rho& rho, const char* function) {
   int n_states = log_omegas.rows();
-  int n_transitions = log_omegas.cols() - 1;
 
   check_consistent_size(function, "rho", rho, n_states);
   check_square(function, "Gamma", Gamma);

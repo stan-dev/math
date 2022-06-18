@@ -83,8 +83,6 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   using T_theta_ref = ref_type_t<T_theta>;
   using T_lam_ref = ref_type_t<T_lam>;
 
-  const int N = stan::math::size(theta);
-
   check_consistent_sizes(function, "theta", theta, "lambda", lambda);
   T_theta_ref theta_ref = theta;
   T_lam_ref lambda_ref = lambda;
