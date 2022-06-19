@@ -46,10 +46,10 @@ void calc_lambda(T_StdVec& log_g_old, T_StdVecInt& log_g_old_sign, T& log_t_new,
   log_t_new += log(fabs(p)) + log_z;
   log_t_new_sign = sign(value_of_rec(p)) * log_t_new_sign;
 
-  Eigen::Array<T, Eigen::Dynamic, 1> hyper_args(3);
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> hyper_args(3);
   hyper_args << a1 + k, a2 + k, -(b1 + k);
 
-  Eigen::Array<T, Eigen::Dynamic, 1> term
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> term
       = log_g_old_sign * log_t_old_sign * exp(log_g_old - log_t_old)
         + inv(hyper_args);
 
