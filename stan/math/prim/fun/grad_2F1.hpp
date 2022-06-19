@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
@@ -43,23 +44,17 @@ void calc_lambda(T_StdVec& log_g_old, T_StdVecInt& log_g_old_sign, T& log_t_new,
   using ret_t = return_type_t<T, T_int, T_StdVec, T_StdVecInt>;
 
   log_t_new += log(fabs(p)) + log_z;
-  log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  log_t_new_sign = sign(value_of_rec(p)) * log_t_new_sign;
 
-  ret_t term
-      = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-        + inv(a1 + k);
-  log_g_old[0] = log_t_new + log(fabs(term));
-  log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  Eigen::Array<T, Eigen::Dynamic, 1> hyper_args(3);
+  hyper_args << a1 + k, a2 + k, -(b1 + k);
 
-  term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-         + inv(a2 + k);
-  log_g_old[1] = log_t_new + log(fabs(term));
-  log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  Eigen::Array<T, Eigen::Dynamic, 1> term
+    = log_g_old_sign * log_t_old_sign * exp(log_g_old - log_t_old)
+       + inv(hyper_args);
 
-  term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
-         - inv(b1 + k);
-  log_g_old[2] = log_t_new + log(fabs(term));
-  log_g_old_sign[2] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+  log_g_old = log_t_new + log(fabs(term));
+  log_g_old_sign = sign(value_of_rec(term)) * log_t_new_sign;
 }
 }  // namespace internal
 
@@ -99,18 +94,15 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   using std::max;
   using ret_t = return_type_t<T1, T2, T3, T_z>;
 
-  g_a1 = 0.0;
-  g_a2 = 0.0;
-  g_b1 = 0.0;
-
   if (z == 0) {
     return;
   }
-
-  ret_t log_g_old[3];
-  for (auto& i : log_g_old) {
-    i = NEGATIVE_INFTY;
-  }
+  
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> g(3);
+  g << 0.0, 0.0, 0.0;
+ 
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> log_g_old(3);
+  log_g_old <<  NEGATIVE_INFTY,  NEGATIVE_INFTY,  NEGATIVE_INFTY;
 
   ret_t log_t_old = 0.0;
   ret_t log_t_new = 0.0;
@@ -120,10 +112,9 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   ret_t log_precision = log(precision);
   ret_t log_t_new_sign = 1.0;
   ret_t log_t_old_sign = 1.0;
-  ret_t log_g_old_sign[3];
-  for (ret_t& x : log_g_old_sign) {
-    x = 1.0;
-  }
+
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> log_g_old_sign(3);
+  log_g_old_sign << 1., 1., 1.;
 
   int sign_zk = sign_z;
 
@@ -135,18 +126,16 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     internal::calc_lambda(log_g_old, log_g_old_sign, log_t_new, log_t_new_sign,
                           p, log_z, log_t_old, log_t_old_sign, k, a1, a2, b1);
 
-    g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) * sign_zk
-                                  : -exp(log_g_old[0]) * sign_zk;
-    g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) * sign_zk
-                                  : -exp(log_g_old[1]) * sign_zk;
-    g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) * sign_zk
-                                  : -exp(log_g_old[2]) * sign_zk;
+    g += log_g_old_sign * exp(log_g_old) * sign_zk;
+    g_a1 = g(0);
+    g_a2 = g(1);
+    g_b1 = g(2);
 
-    if (log_g_old[0]
-            <= max(log(fabs(value_of_rec(g_a1))) + log_precision, log_precision)
-        && log_g_old[1] <= max(
-               log(std::abs(value_of_rec(g_a2))) + log_precision, log_precision)
-        && log_g_old[2] <= max(log(fabs(value_of_rec(g_b1))) + log_precision,
+    if (log_g_old(0)
+            <= max(log(fabs(value_of_rec(g(0)))) + log_precision, log_precision)
+        && log_g_old(1) <= max(
+               log(std::abs(value_of_rec(g(1)))) + log_precision, log_precision)
+        && log_g_old(2) <= max(log(fabs(value_of_rec(g(2)))) + log_precision,
                                log_precision)) {
       return;
     }
