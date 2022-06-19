@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
+#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sign.hpp>
@@ -53,7 +53,7 @@ void calc_lambda(T_StdVec& log_g_old, T_StdVecInt& log_g_old_sign, T& log_t_new,
       = log_g_old_sign * log_t_old_sign * exp(log_g_old - log_t_old)
         + inv(hyper_args);
 
-  log_g_old = log_t_new + log(fabs(term));
+  log_g_old = log_t_new + log(abs(term));
   log_g_old_sign = sign(value_of_rec(term)) * log_t_new_sign;
 }
 }  // namespace internal
@@ -107,7 +107,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   ret_t log_t_old = 0.0;
   ret_t log_t_new = 0.0;
   int sign_z = sign(z);
-  ret_t log_z = log(fabs(z));
+  ret_t log_z = log(abs(z));
 
   ret_t log_precision = log(precision);
   ret_t log_t_new_sign = 1.0;
@@ -132,10 +132,10 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
     g_b1 = g(2);
 
     if (log_g_old(0)
-            <= max(log(fabs(value_of_rec(g(0)))) + log_precision, log_precision)
+            <= max(log(abs(value_of_rec(g(0)))) + log_precision, log_precision)
         && log_g_old(1) <= max(
                log(std::abs(value_of_rec(g(1)))) + log_precision, log_precision)
-        && log_g_old(2) <= max(log(fabs(value_of_rec(g(2)))) + log_precision,
+        && log_g_old(2) <= max(log(abs(value_of_rec(g(2)))) + log_precision,
                                log_precision)) {
       return;
     }
