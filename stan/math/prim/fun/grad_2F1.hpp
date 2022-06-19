@@ -50,8 +50,8 @@ void calc_lambda(T_StdVec& log_g_old, T_StdVecInt& log_g_old_sign, T& log_t_new,
   hyper_args << a1 + k, a2 + k, -(b1 + k);
 
   Eigen::Array<T, Eigen::Dynamic, 1> term
-    = log_g_old_sign * log_t_old_sign * exp(log_g_old - log_t_old)
-       + inv(hyper_args);
+      = log_g_old_sign * log_t_old_sign * exp(log_g_old - log_t_old)
+        + inv(hyper_args);
 
   log_g_old = log_t_new + log(fabs(term));
   log_g_old_sign = sign(value_of_rec(term)) * log_t_new_sign;
@@ -97,12 +97,12 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
   if (z == 0) {
     return;
   }
-  
+
   Eigen::Array<ret_t, Eigen::Dynamic, 1> g(3);
   g << 0.0, 0.0, 0.0;
- 
+
   Eigen::Array<ret_t, Eigen::Dynamic, 1> log_g_old(3);
-  log_g_old <<  NEGATIVE_INFTY,  NEGATIVE_INFTY,  NEGATIVE_INFTY;
+  log_g_old << NEGATIVE_INFTY, NEGATIVE_INFTY, NEGATIVE_INFTY;
 
   ret_t log_t_old = 0.0;
   ret_t log_t_new = 0.0;
