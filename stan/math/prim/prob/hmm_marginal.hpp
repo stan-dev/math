@@ -23,7 +23,6 @@ inline auto hmm_marginal_val(
     Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms,
     T_alpha& norm_norm) {
-  const int n_states = omegas.rows();
   const int n_transitions = omegas.cols() - 1;
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_val);
 

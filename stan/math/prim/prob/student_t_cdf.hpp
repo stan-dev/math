@@ -65,11 +65,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   T_partials_return digammaHalf = 0;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
+      digamma_vec(math::size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digammaNu_vec(size(nu));
+      digammaNu_vec(math::size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digammaNuPlusHalf_vec(size(nu));
+      digammaNuPlusHalf_vec(math::size(nu));
 
   if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);

@@ -11,7 +11,7 @@ namespace math {
 /**
  * Reset all adjoint values in the stack to zero.
  */
-static void set_zero_all_adjoints() {
+static inline void set_zero_all_adjoints() {
   for (auto &x : ChainableStack::instance_->var_stack_) {
     x->set_zero_adjoint();
   }

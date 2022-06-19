@@ -76,7 +76,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     logp -= HALF_LOG_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     logp -= sum(square(y_minus_mu_over_sigma)) * 0.5 * N
