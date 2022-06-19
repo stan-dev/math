@@ -59,7 +59,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t N = max_size(n, theta);
 
-  if (size(theta) == 1) {
+  if (math::size(theta) == 1) {
     size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
       sum += n_vec.val(n);

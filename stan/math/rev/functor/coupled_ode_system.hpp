@@ -6,6 +6,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stdexcept>
@@ -125,9 +126,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
     for (size_t n = 0; n < N_; ++n)
       y_vars.coeffRef(n) = z[n];
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = math::apply(
+        [&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+        local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -143,7 +144,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
                sizeof(double) * args_adjoints_.size());
       }
 
-      apply(
+      math::apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(), args...);
           },

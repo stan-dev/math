@@ -66,7 +66,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   T_partials_return logp = -sum(y_minus_mu_div_sigma)
                            - 2.0 * sum(log1p(exp(-y_minus_mu_div_sigma)));
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
   if (!is_constant_all<T_y, T_scale>::value) {

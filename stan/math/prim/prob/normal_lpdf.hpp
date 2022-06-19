@@ -85,7 +85,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {

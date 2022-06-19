@@ -92,7 +92,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   size_t N = max_size(y, alpha, beta);
   T_partials_return logp(0.0);
   if (include_summand<propto, T_shape>::value) {
-    logp = -sum(lgamma(alpha_val)) * N / size(alpha);
+    logp = -sum(lgamma(alpha_val)) * N / math::size(alpha);
   }
   const auto& log_y = to_ref_if<is_constant_all<T_shape>::value>(log(y_val));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {

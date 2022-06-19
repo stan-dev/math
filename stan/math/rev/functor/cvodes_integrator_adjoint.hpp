@@ -7,6 +7,7 @@
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <sundials/sundials_context.h>
 #include <cvodes/cvodes.h>
@@ -544,7 +545,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   template <typename yT, typename... ArgsT>
   constexpr auto rhs(double t, const yT& y,
                      const std::tuple<ArgsT...>& args_tuple) const {
-    return apply(
+    return math::apply(
         [&](auto&&... args) { return solver_->f_(t, y, msgs_, args...); },
         args_tuple);
   }
@@ -641,7 +642,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                      f_y_t_vars.size(), "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
-    apply(
+    math::apply(
         [&qBdot](auto&&... args) {
           accumulate_adjoints(NV_DATA_S(qBdot), args...);
         },
