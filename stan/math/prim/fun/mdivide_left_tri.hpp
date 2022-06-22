@@ -26,8 +26,7 @@ namespace math {
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
           require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
-inline auto
-mdivide_left_tri(const T1 &A, const T2 &b) {
+inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
   using T_return = return_type_t<T1, T2>;
   using ret_type = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
   check_square("mdivide_left_tri", "A", A);
