@@ -1,7 +1,4 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/prim/fun/ternary_scalar_tester.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
 TEST(ProbInternalMath, inv_inc_beta_fv1) {
   using stan::math::fvar;
@@ -79,15 +76,16 @@ TEST(ProbInternalMath, inv_inc_beta_fv2) {
   EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.530989359806);
 }
 
-TEST(MathFunctions, inv_inc_beta) {
+TEST(mathMixScalFun, inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
-    return stan::math::inv_inc_beta(x1, x2, x3);
+    return stan::math::inc_beta(x1, x2, x3);
   };
 
-  Eigen::VectorXd in1 = Eigen::VectorXd::Random(6).array().abs().matrix();
-  Eigen::VectorXd in2 = Eigen::VectorXd::Random(6).array().abs().matrix();
-  Eigen::VectorXd in3(6);
-  in3 << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6;
-
-  stan::test::ternary_scalar_tester(f, in1, in2, in3);
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 10.2, 3.4;
+  Eigen::VectorXd in3(2);
+  in3 << 0.1, 0.4;
+  stan::test::expect_ad_vectorized_ternary(f, in1, in2, in3);
 }
