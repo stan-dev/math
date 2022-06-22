@@ -3,7 +3,6 @@
 #include <test/unit/math/prim/fun/ternary_scalar_tester.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
-
 TEST(ProbInternalMath, inv_inc_beta_fv1) {
   using stan::math::fvar;
   using stan::math::inv_inc_beta;
@@ -79,7 +78,6 @@ TEST(ProbInternalMath, inv_inc_beta_fv2) {
   EXPECT_FLOAT_EQ(b.val_.val_.adj(), -0.0161882044585);
   EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.530989359806);
 }
-
 
 TEST(MathFunctions, inv_inc_beta) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
