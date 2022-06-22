@@ -1,3 +1,4 @@
+#include <stan/math/fwd/core/fvar.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
