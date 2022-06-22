@@ -444,8 +444,8 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       [](const auto&... args) {
         return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
                || stan::math::disjunction<stan::math::conjunction<
-                      is_std_vector<decltype(args)>,
-                      is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+                   is_std_vector<decltype(args)>,
+                   is_var_matrix<value_type_t<decltype(args)>>>...>::value;
       },
       A_vm_tuple);
 

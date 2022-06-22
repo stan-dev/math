@@ -30,6 +30,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
+#include <stan/math/rev/fun/cumulative_sum.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
@@ -60,6 +61,7 @@
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
+#include <stan/math/rev/fun/fft.hpp>
 #include <stan/math/rev/fun/fill.hpp>
 #include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
@@ -78,11 +80,13 @@
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/inv_inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
 #include <stan/math/rev/fun/inv_cloglog.hpp>
+#include <stan/math/rev/fun/inv_erfc.hpp>
 #include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>

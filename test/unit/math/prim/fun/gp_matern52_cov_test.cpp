@@ -24,13 +24,13 @@ TEST(MathPrimMat, vec_double_gp_matern52_cov1) {
               * (1
                  + std::pow(5, 0.5) / l
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x[i], x[j]))
+                           stan::math::squared_distance(x[i], x[j]))
                  + (5.0 / 3.0) * stan::math::squared_distance(x[i], x[j])
                        / std::pow(l, 2))
               * std::exp(
-                    -1.0 * pow(5.0, 0.5)
-                    * stan::math::sqrt(stan::math::squared_distance(x[i], x[j]))
-                    / l),
+                  -1.0 * pow(5.0, 0.5)
+                  * stan::math::sqrt(stan::math::squared_distance(x[i], x[j]))
+                  / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
@@ -54,13 +54,13 @@ TEST(MathPrimMat, vec_eigen_gp_matern52_cov1) {
               * (1
                  + std::pow(5, 0.5) / l
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x1[i], x1[j]))
+                           stan::math::squared_distance(x1[i], x1[j]))
                  + (5.0 / 3.0) * stan::math::squared_distance(x1[i], x1[j])
                        / std::pow(l, 2))
-              * std::exp(-1.0 * pow(5.0, 0.5)
-                         * stan::math::sqrt(
-                               stan::math::squared_distance(x1[i], x1[j]))
-                         / l),
+              * std::exp(
+                  -1.0 * pow(5.0, 0.5)
+                  * stan::math::sqrt(stan::math::squared_distance(x1[i], x1[j]))
+                  / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -92,13 +92,13 @@ TEST(MathPrimMat, vec_eigen_eigen_gp_matern52_cov1) {
               * (1
                  + std::pow(5, 0.5) / l
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x1[i], x2[j]))
+                           stan::math::squared_distance(x1[i], x2[j]))
                  + (5.0 / 3.0) * stan::math::squared_distance(x1[i], x2[j])
                        / std::pow(l, 2))
-              * std::exp(-1.0 * pow(5.0, 0.5)
-                         * stan::math::sqrt(
-                               stan::math::squared_distance(x1[i], x2[j]))
-                         / l),
+              * std::exp(
+                  -1.0 * pow(5.0, 0.5)
+                  * stan::math::sqrt(stan::math::squared_distance(x1[i], x2[j]))
+                  / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -128,13 +128,13 @@ TEST(MathPrimMat, vec_double_double_gp_matern52_cov1) {
               * (1
                  + std::pow(5, 0.5) / l
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x1[i], x2[j]))
+                           stan::math::squared_distance(x1[i], x2[j]))
                  + (5.0 / 3.0) * stan::math::squared_distance(x1[i], x2[j])
                        / std::pow(l, 2))
-              * std::exp(-1.0 * pow(5.0, 0.5)
-                         * stan::math::sqrt(
-                               stan::math::squared_distance(x1[i], x2[j]))
-                         / l),
+              * std::exp(
+                  -1.0 * pow(5.0, 0.5)
+                  * stan::math::sqrt(stan::math::squared_distance(x1[i], x2[j]))
+                  / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
@@ -167,12 +167,12 @@ TEST(MathPrimMat, vec_eigen_ard_gp_matern52_cov1) {
               * (1
                  + std::pow(5.0, 0.5)
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x_new[i], x_new[j]))
+                           stan::math::squared_distance(x_new[i], x_new[j]))
                  + (5.0 / 3.0)
                        * stan::math::squared_distance(x_new[i], x_new[j]))
               * std::exp(-1.0 * pow(5.0, 0.5)
-                         * stan::math::sqrt(stan::math::squared_distance(
-                               x_new[i], x_new[j]))),
+                         * stan::math::sqrt(
+                             stan::math::squared_distance(x_new[i], x_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -220,12 +220,12 @@ TEST(MathPrimMat, vec_eigen_eigen_ard_gp_matern52_cov1) {
               * (1
                  + std::pow(5.0, 0.5)
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x1_new[i], x2_new[j]))
+                           stan::math::squared_distance(x1_new[i], x2_new[j]))
                  + (5.0 / 3.0)
                        * stan::math::squared_distance(x1_new[i], x2_new[j]))
               * std::exp(-1.0 * pow(5.0, 0.5)
                          * stan::math::sqrt(stan::math::squared_distance(
-                               x1_new[i], x2_new[j]))),
+                             x1_new[i], x2_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -251,13 +251,13 @@ TEST(MathPrimMat, rvec_eigen_gp_matern52_cov1) {
               * (1
                  + std::pow(5, 0.5) / l
                        * stan::math::sqrt(
-                             stan::math::squared_distance(x1[i], x1[j]))
+                           stan::math::squared_distance(x1[i], x1[j]))
                  + (5.0 / 3.0) * stan::math::squared_distance(x1[i], x1[j])
                        / std::pow(l, 2))
-              * std::exp(-1.0 * pow(5.0, 0.5)
-                         * stan::math::sqrt(
-                               stan::math::squared_distance(x1[i], x1[j]))
-                         / l),
+              * std::exp(
+                  -1.0 * pow(5.0, 0.5)
+                  * stan::math::sqrt(stan::math::squared_distance(x1[i], x1[j]))
+                  / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }

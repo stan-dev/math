@@ -39,9 +39,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param cols number of columns
    */
   arena_matrix(Eigen::Index rows, Eigen::Index cols)
-      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                      rows * cols),
-                  rows, cols) {}
+      : Base::Map(
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows * cols),
+          rows, cols) {}
 
   /**
    * Constructs `arena_matrix` with given size. This only works if
@@ -50,8 +50,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   explicit arena_matrix(Eigen::Index size)
       : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
-            size) {}
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+          size) {}
 
   /**
    * Constructs `arena_matrix` from an expression.
@@ -60,16 +60,16 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
       : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                other.size()),
-            (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-                ? other.cols()
-                : other.rows(),
-            (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-                ? other.rows()
-                : other.cols()) {
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+              other.size()),
+          (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+              ? other.cols()
+              : other.rows(),
+          (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+              ? other.rows()
+              : other.cols()) {
     *this = other;
   }
 

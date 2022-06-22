@@ -74,7 +74,7 @@ class kinsol_system_data {
 
     Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval),
                                            explicit_system->N_);
-    auto result = apply(
+    auto result = math::apply(
         [&](const auto&... args) {
           return explicit_system->f_(x_eigen, explicit_system->msgs_, args...);
         },
@@ -109,7 +109,7 @@ class kinsol_system_data {
                                            explicit_system->N_);
 
     auto f_wrt_x = [&](const auto& x) {
-      return apply(
+      return math::apply(
           [&](const auto&... args) {
             return explicit_system->f_(x, explicit_system->msgs_, args...);
           },

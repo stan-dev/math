@@ -60,7 +60,7 @@ inline double log1p_exp(double a) {
  */
 struct log1p_exp_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return log1p_exp(x);
   }
 };

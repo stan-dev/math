@@ -64,9 +64,9 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
   }
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(size(nu));
+      gamma_vec(math::size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
+      digamma_vec(math::size(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {

@@ -67,9 +67,9 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
 
     dz_dt.resize(y.size());
 
-    Eigen::VectorXd f_y_t
-        = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
-                args_tuple_);
+    Eigen::VectorXd f_y_t = math::apply(
+        [&](const Args&... args) { return f_(t, y, msgs_, args...); },
+        args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t.size(), "states",
                      y.size());
@@ -110,8 +110,8 @@ struct coupled_ode_system
                      const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                      std::ostream* msgs, const Args&... args)
       : coupled_ode_system_impl<
-            std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F, T_y0,
-            Args...>(f, y0, msgs, args...) {}
+          std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F, T_y0,
+          Args...>(f, y0, msgs, args...) {}
 };
 
 }  // namespace math

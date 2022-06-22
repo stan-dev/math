@@ -19,4 +19,11 @@ TEST(MathMixMatFun, norm2) {
     stan::test::expect_ad(f, a);
     stan::test::expect_ad_matvar(f, a);
   }
+
+  std::vector<Eigen::VectorXd> vec_eig{x3, x3, x3};
+  stan::test::expect_ad(f, vec_eig);
+  stan::test::expect_ad_matvar(f, vec_eig);
+
+  std::vector<double> vec_real{1, 2, 3, 4};
+  stan::test::expect_ad(f, vec_real);
 }
