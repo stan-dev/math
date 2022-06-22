@@ -76,7 +76,7 @@ TEST(ProbInternalMath, inv_inc_beta_fv2) {
   EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.530989359806);
 }
 
-TEST(mathMixScalFun, inc_beta_vec) {
+TEST(mathMixScalFun, inv_inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inc_beta(x1, x2, x3);
   };

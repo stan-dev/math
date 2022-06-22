@@ -70,7 +70,7 @@ TEST(MathFunctions, inv_inc_beta_nan) {
   EXPECT_THROW(stan::math::inv_inc_beta(nan, nan, nan), std::domain_error);
 }
 
-TEST(MathFunctions, inv_inc_beta) {
+TEST(MathFunctions, inv_inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inv_inc_beta(x1, x2, x3);
   };
