@@ -25,4 +25,4 @@ If this is a **feature request**, show what you expect to happen if the feature 
 
 
 #### Current Version:
-v4.3.2
+v4.4.0
