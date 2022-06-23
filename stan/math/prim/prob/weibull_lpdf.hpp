@@ -89,7 +89,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   size_t N = max_size(y, alpha, sigma);
   T_partials_return logp = -sum(y_div_sigma_pow_alpha);
   if (include_summand<propto, T_shape>::value) {
-    logp += sum(log(alpha_val)) * N / size(alpha);
+    logp += sum(log(alpha_val)) * N / math::size(alpha);
   }
   if (include_summand<propto, T_y, T_shape>::value) {
     logp += sum((alpha_val - 1.0) * log_y) * N / max_size(alpha, y);

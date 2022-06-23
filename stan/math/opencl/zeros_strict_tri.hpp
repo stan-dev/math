@@ -40,7 +40,7 @@ inline void matrix_cl<T>::zeros_strict_tri() try {
         "zeros_strict_tri", "matrix_view",
         "matrix_cl_view::Diagonal is not a valid template parameter value", "");
   }
-  if (size() == 0) {
+  if (this->size() == 0) {
     return;
   }
   this->view_ = both(this->view_, invert(matrix_view));
