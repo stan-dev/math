@@ -111,10 +111,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   if (include_summand<propto, T_dof>::value) {
     logp += (sum(lgamma(half_nu + 0.5)) - sum(lgamma(half_nu))
              - 0.5 * sum(log(nu_val)))
-            * N / size(nu);
+            * N / math::size(nu);
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {

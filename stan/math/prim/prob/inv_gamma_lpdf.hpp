@@ -83,7 +83,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
 
   size_t N = max_size(y, alpha, beta);
   if (include_summand<propto, T_shape>::value) {
-    logp -= sum(lgamma(alpha_val)) * N / size(alpha);
+    logp -= sum(lgamma(alpha_val)) * N / math::size(alpha);
   }
   if (include_summand<propto, T_shape, T_scale>::value) {
     const auto& log_beta

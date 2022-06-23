@@ -107,7 +107,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
   T_partials_return logp = -sum(cons_expr / (2 * sigma_squared));
   if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / size(n_obs);
+    logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / math::size(n_obs);
   }
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(n_obs_val * log(sigma_val)) * N / max_size(n_obs, sigma);
@@ -141,7 +141,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
             ops_partials.edge2_.partials_)
-            = -0.5 / sigma_squared * N / size(sigma);
+            = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }
   }

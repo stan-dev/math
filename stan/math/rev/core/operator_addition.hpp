@@ -77,7 +77,7 @@ inline var operator+(const var& a, Arith b) {
   }
   return make_callback_vari(
       a.vi_->val_ + b,
-      [avi = a.vi_, b](const auto& vi) mutable { avi->adj_ += vi.adj_; });
+      [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_; });
 }
 
 /**

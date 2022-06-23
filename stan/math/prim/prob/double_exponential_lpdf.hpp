@@ -83,7 +83,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     logp -= N * LOG_TWO;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   logp -= sum(scaled_diff);
 

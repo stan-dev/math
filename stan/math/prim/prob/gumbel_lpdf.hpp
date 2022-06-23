@@ -78,7 +78,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, beta);
   T_partials_return logp = -sum(y_minus_mu_over_beta + exp_y_m_mu_over_beta);
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(beta_val)) * N / size(beta);
+    logp -= sum(log(beta_val)) * N / math::size(beta);
   }
 
   if (!is_constant_all<T_y, T_loc, T_scale>::value) {

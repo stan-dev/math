@@ -74,7 +74,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
       (y_val - mu_val) * inv_sigma);
   const auto& exp_scaled_diff = to_ref(exp(scaled_diff));
 
-  size_t N = max_size(y, mu, sigma);
   T_rep_deriv rep_deriv;
   if (is_vector<T_y>::value || is_vector<T_loc>::value) {
     using array_bool = Eigen::Array<bool, Eigen::Dynamic, 1>;

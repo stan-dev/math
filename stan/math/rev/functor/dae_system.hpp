@@ -99,7 +99,7 @@ class dae_system {
   }
 
   void eval_residual(double t) {
-    dbl_rr = apply(
+    dbl_rr = math::apply(
         [&](auto&&... args) { return f_(t, dbl_yy, dbl_yp, msgs_, args...); },
         dbl_args_tuple_);
   }
@@ -144,7 +144,7 @@ class dae_system {
     }
 
     Eigen::VectorXd g(m);
-    Eigen::Matrix<var, -1, 1> fy = apply(
+    Eigen::Matrix<var, -1, 1> fy = math::apply(
         [&](auto&&... args) {
           return dae->f_(t, yy_var, yp_var, dae->msgs_, args...);
         },

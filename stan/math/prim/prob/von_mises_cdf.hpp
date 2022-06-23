@@ -69,7 +69,6 @@ return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
  */
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
-  double ck = 50;
   using return_t = return_type_t<T_x, T_k>;
   return_t f;
   if (k < 49) {

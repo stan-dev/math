@@ -95,7 +95,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     if (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha * size(y);
+        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha * math::size(y);
       } else {
         ops_partials.edge3_.partials_ = -inv_beta_minus_alpha;
       }
@@ -103,7 +103,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     if (!is_constant_all<T_low>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        ops_partials.edge2_.partials_ = inv_beta_minus_alpha * size(y);
+        ops_partials.edge2_.partials_ = inv_beta_minus_alpha * math::size(y);
       } else {
         ops_partials.edge2_.partials_ = std::move(inv_beta_minus_alpha);
       }

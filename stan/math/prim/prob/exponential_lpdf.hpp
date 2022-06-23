@@ -76,7 +76,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
 
   T_partials_return logp(0.0);
   if (include_summand<propto, T_inv_scale>::value) {
-    logp = sum(log(beta_val)) * max_size(y, beta) / size(beta);
+    logp = sum(log(beta_val)) * max_size(y, beta) / math::size(beta);
   }
   if (include_summand<propto, T_y, T_inv_scale>::value) {
     logp -= sum(beta_val * y_val);
@@ -87,7 +87,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
       ops_partials.edge1_.partials_ = T_partials_array::Constant(
-          size(y), -forward_as<beta_val_scalar>(beta_val));
+          math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if (is_vector<T_inv_scale>::value) {
       ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val);
     } else {
