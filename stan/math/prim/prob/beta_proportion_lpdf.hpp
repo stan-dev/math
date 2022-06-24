@@ -89,7 +89,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   size_t N = max_size(y, mu, kappa);
   T_partials_return logp(0);
   if (include_summand<propto, T_prec>::value) {
-    logp += sum(lgamma(kappa_val)) * N / size(kappa);
+    logp += sum(lgamma(kappa_val)) * N / math::size(kappa);
   }
   if (include_summand<propto, T_loc, T_prec>::value) {
     logp -= sum(lgamma(mukappa) + lgamma(kappa_val - mukappa)) * N

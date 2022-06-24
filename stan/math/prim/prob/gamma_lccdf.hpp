@@ -64,9 +64,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(size(alpha));
+      gamma_vec(math::size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(size(alpha));
+      digamma_vec(math::size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {

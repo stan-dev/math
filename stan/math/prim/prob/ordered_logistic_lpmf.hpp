@@ -86,7 +86,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   T_cut_ref c_ref = c;
   vector_seq_view<T_cut_ref> c_vec(c_ref);
-  int N = size(lambda);
+  int N = math::size(lambda);
   int C_l = size_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);

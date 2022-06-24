@@ -63,7 +63,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   size_t N = max_size(y, y_min, alpha);
   T_partials_return logp(0);
   if (include_summand<propto, T_shape>::value) {
-    logp = sum(log(alpha_val)) * N / size(alpha);
+    logp = sum(log(alpha_val)) * N / math::size(alpha);
   }
   if (include_summand<propto, T_y, T_shape>::value) {
     logp -= sum(alpha_val * log_y + log_y) * N / max_size(alpha, y);
