@@ -23,7 +23,7 @@ Similarly, there are other representations of vectors and matrices
 yet discussed, in particular matrices stored in Math's special arena
 memory or matrices stored on a GPU. In either case, it is expedient
 to not write explicit overloads for all the different types that a
-function might accept, but limit them with template meta-programs.
+function might accept, but limit them with template metaprograms.
 
 For instance, if only base Eigen types are allowed, then a function
 that takes column vector types could be defined as follows:
@@ -78,7 +78,7 @@ return_type_t<T> norm(const T&);
 SFINAE should be thought of as filters on what functions are visible to the
 compiler when it does name lookup for a specific function. `require_st_var`
 should be read "require the @ref stan::scalar_type of the argument to be a @ref stan::math::var". The
-meta-program `require_st_var<T>` will evaluate to a valid type if the scalar
+metaprogram `require_st_var<T>` will evaluate to a valid type if the scalar
 type of `T` is a @ref stan::math::var. If the scalar type of `T` is not a @ref stan::math::var, then
 `require_st_var<T>` does not evaluate to a valid type and the compiler treats it as
 if the signature does not exist. This is how SFINAE (substitution failure is not an error)
@@ -89,12 +89,12 @@ template metaprogram.
 
 Again, there are many ways to solve a problem in C++. In particular there
 are cases where simple overloads or template specializations can achieve the
-same thing as the SFINAE template meta-programs. Unless there is a specific
-reason though, new functions in Math should use the SFINAE meta-programs to
+same thing as the SFINAE template metaprograms. Unless there is a specific
+reason though, new functions in Math should use the SFINAE metaprograms to
 handle different implementations. These are tested to work with the broad
 set of C++ types that the relatively compact set of Stan types map to.
 
-All of the SFINAE template meta-programs in Math are special to Stan or Math. Documentation can be found in the @ref require_meta docs.
+All of the SFINAE template metaprograms in Math are special to Stan or Math. Documentation can be found in the @ref require_meta docs.
 
 ### Reference types
 
@@ -151,7 +151,7 @@ std::cout << c(0);
 
 [godbolt example](https://godbolt.org/z/6Te856Mv7)
 
-When we return back an **eigen expression** containing objects created in the local scope we need a way to store those locally created objects till the expression is evaluated.
+When we return back an **Eigen expression** containing objects created in the local scope we need a way to store those locally created objects till the expression is evaluated.
 Stan's @ref stan::math::make_holder can be used to extend the lifetime of objects created in a local scope so that it matches the expression it is used in.
 
 ```cpp
@@ -200,7 +200,9 @@ class my_big_type {
 
 We can see in the above that the standard style of a move (the constructor taking an rvalue reference) is to copy the pointer and then null out the original pointer. But in Stan, particularly for reverse mode, we need to keep memory around even if  it's only a temporary for when we call the gradient calculations in the reverse pass. And since memory for reverse mode is stored in our arena allocator no copying happens in the first place.
 
-When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy. For instance, Stan's `var` type is a PIMPL implementation, so it simply holds a pointer of size 8 bytes. A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs with at least 64 byte cache lines. While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into cache, then go fetch the value that is being referenced which now takes up two words instead of one!
+When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy. For instance, Stan's `var` type uses the pointer to implementation (PIMPL) pattern, so it simply holds a pointer of size 8 bytes. 
+A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs with at least 64 byte cache lines. 
+While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into cache, then go fetch the value that is being referenced which now takes up two words instead of one!
 
 The general rules to follow for passing values to a function are:
 
@@ -252,7 +254,7 @@ inline var cool_fun(const EigVec& v) {
 }
 ```
 
-There's a deceptive problem in this return! We are returning back an @ref stan::math::arena_matrix, which is an Eigen matrix whose dynamic memory sits on our arena allocator. The problem here is that we've also passed `res` to our callback, and now suppose a user does something like the following.
+There's a deceptive problem in this return! We are returning back a @ref stan::math::arena_matrix, which is an Eigen matrix whose dynamic memory sits in our arena allocator. The problem here is that we've also passed `res` to our callback, and now suppose a user does something like the following.
 
 ```cpp
 Eigen::Matrix<var, -1, 1> x = Eigen::Matrix<double, -1, 1>::Random(5);
@@ -297,7 +299,7 @@ if (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
 }
 ```
 
-Do note that in the above, since the if statements values are known at compile time, the compiler will always remove the unused side of the `if` during the dead code elimination pass. But the dead code elimination pass does not happen until all the code is instantiated and verified as compilable. So @ref stan::math::forward_as exists to trick the compiler into believing both sides of the `if` will compile. If we used C++17, the above would become
+Since the if statements values are known at compile time, the compiler will always remove the unused side of the `if` during the dead code elimination pass. But the dead code elimination pass does not happen until all the code is instantiated and verified as compilable. So @ref stan::math::forward_as exists to trick the compiler into believing both sides of the `if` will compile. If we used C++17, the above would become
 
 ```cpp
 T_partials_return cdf(1.0);

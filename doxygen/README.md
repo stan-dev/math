@@ -37,19 +37,18 @@ A simple hello world program using Stan Math is as follows:
 
 int main() {
   std::cout << "log normal(1 | 2, 3)="
-            << stan::math::normal_log(1, 2, 3)
+            << stan::math::normal_lpdf(1, 2, 3)
             << std::endl;
 }
 ```
 
-If this is in the file `/path/to/foo/foo.cpp`, then you can compile
-and run this with something like this, with the `/path/to` business
-replaced with actual paths:
+If this is in the file `<path>/foo.cpp`, then you can compile
+and run this with something like this with `<path>` replaced with the path to the file:
 
 ```bash
-cd /path/to/foo
-make -j4 -f /path/to/stan-math/make/standalone math-libs
-make -f /path/to/stan-math/make/standalone foo
+cd <path>/foo
+make -j4 -f <path>/stan-math/make/standalone math-libs
+make -f <path>/stan-math/make/standalone foo
 ./foo
 log normal(1 | 2, 3)=-2.07311
 ```
