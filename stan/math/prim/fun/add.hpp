@@ -62,7 +62,11 @@ template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Mat, Scal>* = nullptr>
 inline auto add(const Mat& m, const Scal c) {
+#ifdef USE_STANC3
   return (m.array() + c).matrix();
+#else
+  return (m.array() + c).matrix().eval();
+#endif
 }
 
 /**
