@@ -10,7 +10,11 @@ namespace math {
 template <typename T>
 inline auto rep_vector(const T& x, int n) {
   check_nonnegative("rep_vector", "n", n);
+#ifdef USE_STANC3
   return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, 1>::Constant(n, x);
+#else
+  return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, 1>::Constant(n, x).eval();
+#endif
 }
 
 }  // namespace math
