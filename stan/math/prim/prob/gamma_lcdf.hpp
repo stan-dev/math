@@ -96,11 +96,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     P += log_Pn;
 
     if (!is_constant_all<T_y, T_inv_scale>::value) {
-      const T_partials_return d_num = (-beta_y_dbl) + (alpha_dbl - 1)
-                                      * (log_beta_dbl + log_y_dbl);
+      const T_partials_return d_num
+          = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
       const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;
       const T_partials_return d = exp(d_num - d_den);
-
 
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += beta_dbl * d;
@@ -111,8 +110,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
-          += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl)
-             / Pn;
+          += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
     }
   }
   return ops_partials.build(P);
