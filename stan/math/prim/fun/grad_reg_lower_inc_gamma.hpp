@@ -169,8 +169,7 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
   lgamma_a_plus_n_plus_1 = lgamma_a_plus_1 + log(a_plus_n);
   while (true) {
     digammap1 += 1 / a_plus_n;
-    term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1)
-           * digammap1;
+    term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1) * digammap1;
     sum_b += term;
     if (term <= precision) {
       return emz * (log_z * sum_a - sum_b);
