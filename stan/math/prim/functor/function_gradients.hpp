@@ -8,64 +8,145 @@
 
 namespace stan {
 namespace math {
-
-template <bool FwdGradients, typename ReturnT, typename ArgsTupleT, typename ValFunT,
+/**
+ * Implementation functor for applying user-specified gradients for a function
+ * with arithmetic inputs, simply returning the function result
+ * 
+ * @tparam FwdGradients Boolean indicating whether user provided functors for
+ *          forward-mode
+ * @tparam ScalarReturnT Scalar return type of the function
+ * @tparam ArgsTupleT Type of tuple containing all input arguments
+ * @tparam ValFunT Type of functor for calculating return value
+ * @tparam RevGradFunT Type of tuple containing functors for reverse-mode
+ *          gradients
+ * @tparam FwdGradFunT Type of tuple containing functors for forward-mode
+ *          gradients
+ * @param input_input_args_tuple Tuple containing all input arguments
+ * @param value_functor Functor for calculating return value
+ * @param rev_grad_functors_tuple Tuple containing functors for reverse-mode
+ *          gradients
+ * @param fwd_grad_functors_tuple Tuple containing functors for forward-mode
+ *          gradients
+ * @return double or container of double with the values calculated by
+ *          the value_functor functor
+ */
+template <bool FwdGradients, typename ScalarReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
-          require_st_arithmetic<ReturnT>* = nullptr>
+          require_st_arithmetic<ScalarReturnT>* = nullptr>
 decltype(auto) function_gradients_impl(
-    ArgsTupleT&& args_tuple, ValFunT&& val_fun,
-    RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
+    ArgsTupleT&& input_args_tuple, ValFunT&& value_functor,
+    RevGradFunT&& rev_grad_functors_tuple, FwdGradFunT&& fwd_grad_functors_tuple) {
+  // The function return needs to be wrapped in a Holder<T> to allow for
+  // returning Eigen expressions
   return make_holder(
-      [](auto&& fun, auto&& tuple_arg) {
-        return to_ref(
-            math::apply([&](auto&&... args) { return fun(args...); },
-                        std::forward<decltype(tuple_arg)>(tuple_arg)));
+      [](auto&& functor, auto&& tuple_args) {
+        return math::apply([&](auto&&... input_args) { return functor(input_args...); },
+                        std::forward<decltype(tuple_args)>(tuple_args));
       },
-      std::forward<ValFunT>(val_fun), std::forward<ArgsTupleT>(args_tuple));
-}
-
-template <typename ArgsTupleT, typename ValFunT, typename RevGradFunT,
-          typename FwdGradFunT>
-decltype(auto) function_gradients(ArgsTupleT&& args_tuple,
-                                  ValFunT&& val_fun,
-                                  RevGradFunT&& rev_grad_fun_tuple,
-                                  FwdGradFunT&& fwd_grad_fun_tuple) {
-  using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
-  return function_gradients_impl<true, scalar_rtn_t>(
-      std::forward<ArgsTupleT>(args_tuple), std::forward<ValFunT>(val_fun),
-      std::forward<RevGradFunT>(rev_grad_fun_tuple),
-      std::forward<FwdGradFunT>(fwd_grad_fun_tuple));
+      std::forward<ValFunT>(value_functor), std::forward<ArgsTupleT>(input_args_tuple));
 }
 
 /**
- * If only one gradient functor tuple has been supplied because the function
- * elementwise (i.e., diagonal Jacobian), then the same functor is used for
- * both. Otherwise the functor is only used for reverse-mode, and the
- * forward-mode gradients are left to auto-diff
+ * Entry point for the function_gradients framework. This function checks the
+ * scalar return type of the function and then delegates to the appropriate
+ * function_gradients_impl overload
+ * 
+ * @tparam ArgsTupleT Type of tuple containing all input arguments
+ * @tparam ValFunT Type of functor for calculating return value
+ * @tparam RevGradFunT Type of tuple containing functors for reverse-mode
+ *          gradients
+ * @tparam FwdGradFunT Type of tuple containing functors for forward-mode
+ *          gradients
+ * @param input_input_args_tuple Tuple containing all input arguments
+ * @param value_functor Functor for calculating return value
+ * @param rev_grad_functors_tuple Tuple containing functors for reverse-mode
+ *          gradients
+ * @param fwd_grad_functors_tuple Tuple containing functors for forward-mode
+ *          gradients
+ * @return scalar or container of scalars with the values calculated by
+ *          the value_functor functor and gradients calculated by the
+ *          rev_grad_functors_tuple or fwd_grad_functors_tuple of functors,
+ *          as appropriate
+ */
+template <typename ArgsTupleT, typename ValFunT, typename RevGradFunT,
+          typename FwdGradFunT>
+decltype(auto) function_gradients(ArgsTupleT&& input_args_tuple,
+                                  ValFunT&& value_functor,
+                                  RevGradFunT&& rev_grad_functors_tuple,
+                                  FwdGradFunT&& fwd_grad_functors_tuple) {
+  return function_gradients_impl<true, return_type_t<ArgsTupleT>>(
+      std::forward<ArgsTupleT>(input_args_tuple),
+      std::forward<ValFunT>(value_functor),
+      std::forward<RevGradFunT>(rev_grad_functors_tuple),
+      std::forward<FwdGradFunT>(fwd_grad_functors_tuple));
+}
+
+
+/**
+ * Specialisation for when function_gradients is called with only one tuple of
+ * gradient functors, and a boolean flag indicating whether to use the functors
+ * for both reverse and forward-mode.
+ * 
+ * The forward-mode function_gradients_impl handles the different behaviours.
+ * 
+ * @tparam ArgsTupleT Type of tuple containing all input arguments
+ * @tparam ValFunT Type of functor for calculating return value
+ * @tparam RevGradFunT Type of tuple containing functors for reverse-mode
+ *          gradients
+ * @tparam FwdGradFunT Type of tuple containing functors for forward-mode
+ *          gradients
+ * @param input_input_args_tuple Tuple containing all input arguments
+ * @param value_functor Functor for calculating return value
+ * @param grad_functors_tuple Tuple containing functors for gradients
+ * @return scalar or container of scalars with the values calculated by
+ *          the value_functor functor and gradients calculated by the
+ *          grad_functors_tuple for reverse-mode and autodiff for
+ *          forward-mode, as appropriate.
  */
 template <bool FwdGradients, typename ArgsTupleT, typename ValFunT,
           typename GradFunT>
-decltype(auto) function_gradients(ArgsTupleT&& args_tuple,
-                                  ValFunT&& val_fun,
-                                  GradFunT&& grad_fun_tuple) {
-  using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
-    return function_gradients_impl<FwdGradients, scalar_rtn_t>(
-        std::forward<ArgsTupleT>(args_tuple), std::forward<ValFunT>(val_fun),
-        std::forward<GradFunT>(grad_fun_tuple),
-        std::forward<GradFunT>(grad_fun_tuple));
+decltype(auto) function_gradients(ArgsTupleT&& input_args_tuple,
+                                  ValFunT&& value_functor,
+                                  GradFunT&& grad_functors_tuple) {
+    return function_gradients_impl<FwdGradients, return_type_t<ArgsTupleT>>(
+        std::forward<ArgsTupleT>(input_args_tuple),
+        std::forward<ValFunT>(value_functor),
+        std::forward<GradFunT>(grad_functors_tuple),
+        std::forward<GradFunT>(grad_functors_tuple));
 }
 
+/**
+ * Specialisation for when function_gradients is called with only one tuple of
+ * gradient functors, and no boolean flag indicating to use the functors for
+ * both reverse and forward-mode.
+ * 
+ * The gradient functors are assumed to be for reverse-mode, and that autodiff
+ * should be used for forward-mode
+ * 
+ * @tparam ArgsTupleT Type of tuple containing all input arguments
+ * @tparam ValFunT Type of functor for calculating return value
+ * @tparam RevGradFunT Type of tuple containing functors for reverse-mode
+ *          gradients
+ * @tparam FwdGradFunT Type of tuple containing functors for forward-mode
+ *          gradients
+ * @param input_input_args_tuple Tuple containing all input arguments
+ * @param value_functor Functor for calculating return value
+ * @param grad_functors_tuple Tuple containing functors for reverse-mode
+ * @return scalar or container of scalars with the values calculated by
+ *          the value_functor functor and gradients calculated by the
+ *          grad_functors_tuple for reverse-mode and autodiff for
+ *          forward-mode, as appropriate.
+ */
 template <typename ArgsTupleT, typename ValFunT,
           typename GradFunT>
-decltype(auto) function_gradients(ArgsTupleT&& args_tuple,
-                                  ValFunT&& val_fun,
-                                  GradFunT&& grad_fun_tuple) {
-  using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
-    return function_gradients_impl<false, scalar_rtn_t>(
-        std::forward<ArgsTupleT>(args_tuple),
-        std::forward<ValFunT>(val_fun),
-        std::forward<GradFunT>(grad_fun_tuple),
-        std::forward<GradFunT>(grad_fun_tuple));
+decltype(auto) function_gradients(ArgsTupleT&& input_args_tuple,
+                                  ValFunT&& value_functor,
+                                  GradFunT&& grad_functors_tuple) {
+    return function_gradients_impl<false, return_type_t<ArgsTupleT>>(
+        std::forward<ArgsTupleT>(input_args_tuple),
+        std::forward<ValFunT>(value_functor),
+        std::forward<GradFunT>(grad_functors_tuple),
+        std::forward<GradFunT>(grad_functors_tuple));
 }
 
 }  // namespace math
