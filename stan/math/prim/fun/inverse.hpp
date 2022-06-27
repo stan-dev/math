@@ -10,14 +10,6 @@
 namespace stan {
 namespace math {
 
-template <typename EigMat, require_st_arithmetic<EigMat>* = nullptr>
-inline plain_type_t<EigMat> inverse(const EigMat& m) {
-  check_square("inverse", "m", m);
-  if (m.size() == 0) {
-    return {};
-  }
-  return m.inverse();
-}
 
 /**
  * Returns the inverse of the specified matrix.
@@ -31,21 +23,22 @@ inline plain_type_t<EigMat> inverse(const EigMat& m) {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat, require_not_st_arithmetic<EigMat>* = nullptr>
+template <typename EigMat>
 inline plain_type_t<EigMat> inverse(const EigMat& m) {
-  check_square("inverse", "m", m);
-  if (m.size() == 0) {
-    return m;
-  }
-
   ref_type_t<EigMat> m_ref = m;
 
-  decltype(auto) val_fun = [](auto&& x) { return inverse(x); };
+  decltype(auto) val_fun = [](auto&& x) {
+    check_square("inverse", "m", x);
+    if (x.size() == 0) {
+      return plain_type_t<decltype(x)>();
+    }
+    return x.inverse().eval();
+  };
   auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
-    return to_ref(-multiply(multiply(transpose(val), adj), transpose(val)));
+    return -multiply(multiply(transpose(val), adj), transpose(val));
   };
   auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
-    return to_ref(-multiply(multiply(val, adj), val));
+    return -multiply(multiply(val, adj), val);
   };
   return function_gradients(
       std::forward_as_tuple(m_ref),

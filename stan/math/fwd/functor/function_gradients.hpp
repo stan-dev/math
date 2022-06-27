@@ -53,14 +53,13 @@ decltype(auto) function_gradients_impl(
       [&](auto&& f, auto&& arg, auto&& dummy) {
         using arg_t = decltype(arg);
         if (!is_constant_all<arg_t>::value) {
-          decltype(auto) fun_ret = math::apply(
+          d_ += math::apply(
               [&](auto&&... args) {
                 return f(rtn,
                          forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d(),
                          args...);
               },
               val_tuple);
-          d_ += fun_ret;
         }
       },
       std::forward<FwdGradFunT>(fwd_grad_fun_tuple),
@@ -74,7 +73,7 @@ template <bool FwdGradients, typename ReturnT, typename ArgsTupleT,
           typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
           require_st_fvar<ReturnT>* = nullptr,
           require_not_t<std::integral_constant<bool, FwdGradients>>* = nullptr>
-decltype(auto) function_gradients_impl(
+constexpr decltype(auto) function_gradients_impl(
     ArgsTupleT&& args_tuple, ValFunT&& val_fun,
     RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
 

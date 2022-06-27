@@ -40,9 +40,8 @@ inline auto hypot(const T1& a, const T2& b) {
       = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
         return elt_multiply(adj, elt_divide(y, val));
       };
-  return function_gradients(std::forward_as_tuple(a, b),
+  return function_gradients<true>(std::forward_as_tuple(a, b),
                             std::forward<decltype(val_fun)>(val_fun),
-                            std::forward_as_tuple(grad_fun_a, grad_fun_b),
                             std::forward_as_tuple(grad_fun_a, grad_fun_b));
 }
 

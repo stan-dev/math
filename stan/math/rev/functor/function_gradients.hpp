@@ -45,7 +45,7 @@ inline decltype(auto) arena_val(T&& arg) {
 template <bool FwdGradients, typename ReturnT, typename ArgsTupleT,
           typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
           require_st_var<ReturnT>* = nullptr>
-auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                                      RevGradFunT&& rev_grad_fun_tuple,
                                      FwdGradFunT&& fwd_grad_fun_tuple) {
   // Extract values from input arguments to use in value
@@ -108,7 +108,7 @@ auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                     // primitive arguments
                     math::apply(
                         [&](auto&&... args) {
-                          return f(to_ref(rtn.val()), to_ref(rtn.adj()),
+                          return f(rtn.val_op(), rtn.adj_op(),
                                    internal::arena_val(
                                        std::forward<decltype(args)>(args))...);
                         },

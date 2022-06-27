@@ -95,6 +95,13 @@ class var_value<T, require_floating_point_t<T>> {
   inline const auto& val() const noexcept { return vi_->val(); }
 
   /**
+   * Return a constant reference to the value of this variable.
+   *
+   * @return The value of this variable.
+   */
+  inline const auto& val_op() const noexcept { return vi_->val(); }
+
+  /**
    * Return a reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
@@ -103,6 +110,16 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() const noexcept { return vi_->adj(); }
+
+  /**
+   * Return a reference of the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this variable.
+   */
+  inline auto& adj_op() const noexcept { return vi_->adj(); }
 
   /**
    * Return a reference to the derivative of the root expression with
