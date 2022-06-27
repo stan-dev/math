@@ -38,7 +38,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
 
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
-  const size_t N = is_n_vector ? size(n) : size(lambda);
+  const size_t N = is_n_vector ? math::size(n) : math::size(lambda);
   if (N == 0) {
     return 0.0;
   }

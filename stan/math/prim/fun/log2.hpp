@@ -14,7 +14,7 @@ namespace math {
  *
  * @return Natural logarithm of two.
  */
-inline double log2() { return LOG_TWO; }
+inline constexpr double log2() { return LOG_TWO; }
 
 /**
  * Structure to wrap `log2()` so it can be vectorized.
@@ -28,7 +28,7 @@ struct log2_fun {
    * @return base two log of the argument
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::log2;
     return log2(x);
   }

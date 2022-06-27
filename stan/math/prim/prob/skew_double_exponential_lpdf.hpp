@@ -97,10 +97,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     logp += N * LOG_TWO;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_skewness>::value) {
-    logp += sum(log(tau_val) + log1m(tau_val)) * N / size(tau);
+    logp += sum(log(tau_val) + log1m(tau_val)) * N / math::size(tau);
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {

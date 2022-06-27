@@ -3,52 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
-#include <stan/math/prim/functor/function_gradients.hpp>
 #include <cmath>
 #include <complex>
 #include <limits>
 
 namespace stan {
 namespace math {
-
-/**
- * Version of `exp()` that accepts std::vectors, Eigen Matrix/Array objects
- *  or expressions, and containers of these.
- *
- * @tparam Container Type of x
- * @param x Container
- * @return Elementwise application of exponentiation to the argument.
- */
-template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto exp(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().exp(); });
-}
-
-template <
-    typename T,
-    require_t<disjunction<std::is_arithmetic<T>, is_complex<T>>>* = nullptr>
-return_type_t<T> exp(T x) {
-  using std::exp;
-  return exp(x);
-}
-
-template <
-    typename T,
-    require_t<disjunction<is_stan_scalar<T>, is_var_matrix<T>>>* = nullptr,
-    require_not_arithmetic_t<T>* = nullptr, require_not_complex_t<T>* = nullptr>
-inline auto exp(const T& a) {
-  auto val_fun = [&](auto&& x) { return exp(x); };
-  auto grad_fun = [&](auto&& val, auto&& x) { return val; };
-  return function_gradients(std::forward_as_tuple(a),
-                            std::forward<decltype(val_fun)>(val_fun),
-                            std::forward_as_tuple(grad_fun));
-}
-
 /**
  * Structure to wrap `exp()` so that it can be
  * vectorized.
@@ -62,7 +24,8 @@ struct exp_fun {
    * @return Exponential of argument.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
+    using std::exp;
     return exp(x);
   }
 };
@@ -77,12 +40,27 @@ struct exp_fun {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <
-    typename Container, require_container_t<Container>* = nullptr,
+    typename Container,
     require_not_container_st<std::is_arithmetic, Container>* = nullptr,
     require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr,
     require_not_var_matrix_t<Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
+}
+
+/**
+ * Version of `exp()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
+ *
+ * @tparam Container Type of x
+ * @param x Container
+ * @return Elementwise application of exponentiation to the argument.
+ */
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto exp(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().exp(); });
 }
 
 namespace internal {

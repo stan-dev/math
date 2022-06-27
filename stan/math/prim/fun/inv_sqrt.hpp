@@ -26,7 +26,7 @@ inline auto inv_sqrt(T x) {
  */
 struct inv_sqrt_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return inv_sqrt(x);
   }
 };
