@@ -301,7 +301,6 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   T_s sigma_sq = square(sigma);
   double root_5 = sqrt(5.0);
   double five_thirds = 5.0 / 3.0;
-  double neg_root_5 = -root_5;
 
   std::vector<Eigen::Matrix<return_type_t<T_x1, T_l>, -1, 1>> x1_new
       = divide_columns(x1, length_scale);

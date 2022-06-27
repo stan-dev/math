@@ -9,7 +9,7 @@ TEST(ProbDistributionsGamma, error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
-  y << -2.0, 0.5, 1;
+  y << 2.0, 0.5, 1;
   Eigen::VectorXd y_size(N - 1);
   y_size << 0.1, 0.5;
   Eigen::VectorXd y_value(N);
@@ -81,7 +81,7 @@ TEST(ProbDistributionsGamma, opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
-  y << 0, 0.5, 1;
+  y << 0.1, 0.5, 1;
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 1.0;
   Eigen::VectorXd beta(N);
@@ -97,21 +97,6 @@ TEST(ProbDistributionsGamma, opencl_matches_cpu_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       gamma_lpdf_functor_propto, y.transpose().eval(), alpha.transpose().eval(),
       beta.transpose().eval());
-}
-TEST(ProbDistributionsGamma, opencl_matches_cpu_small_negative_y) {
-  int N = 3;
-
-  Eigen::VectorXd y(N);
-  y << -10, 0.5, 1;
-  Eigen::VectorXd alpha(N);
-  alpha << 0.3, 0.8, 1.0;
-  Eigen::VectorXd beta(N);
-  beta << 0.3, 0.8, 1.0;
-
-  stan::math::test::compare_cpu_opencl_prim_rev(gamma_lpdf_functor, y, alpha,
-                                                beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(gamma_lpdf_functor_propto, y,
-                                                alpha, beta);
 }
 
 TEST(ProbDistributionsGamma, opencl_broadcast_y) {

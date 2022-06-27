@@ -21,7 +21,7 @@ struct trunc_fun {
    * @return truncation of the argument
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::trunc;
     return trunc(x);
   }

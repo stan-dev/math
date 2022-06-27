@@ -52,6 +52,26 @@
   }
 
 /**
+ * Tests for elementwise equality of the input matrices
+ * of std::complex<double>s with the EXPECT_FLOAT_EQ macro
+ * from GTest.
+ *
+ * @param A first input matrix to compare
+ * @param B second input matrix to compare
+ */
+#define EXPECT_MATRIX_COMPLEX_FLOAT_EQ(A, B)               \
+  {                                                        \
+    const Eigen::MatrixXcd& A_eval = A;                    \
+    const Eigen::MatrixXcd& B_eval = B;                    \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());               \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());               \
+    for (int i = 0; i < A_eval.size(); i++) {              \
+      EXPECT_FLOAT_EQ(A_eval(i).real(), B_eval(i).real()); \
+      EXPECT_FLOAT_EQ(A_eval(i).imag(), B_eval(i).imag()); \
+    }                                                      \
+  }
+
+/**
  * Tests for elementwise equality of the input std::vectors
  * of any type with the EXPECT_FLOAT_EQ macro from GTest.
  *

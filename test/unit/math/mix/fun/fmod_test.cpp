@@ -3,7 +3,6 @@
 
 TEST(mathMixScalFun, fmod) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::fmod;
     using stan::math::fmod;
     return fmod(x1, x2);
   };
@@ -24,7 +23,6 @@ TEST(mathMixScalFun, fmod) {
 
 TEST(mathMixScalFun, fmod_vec) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::fmod;
     using stan::math::fmod;
     return fmod(x1, x2);
   };

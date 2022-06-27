@@ -65,7 +65,7 @@ struct log1m_inv_logit_fun {
    * @return natural log of one minus inverse logit of argument
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return log1m_inv_logit(x);
   }
 };

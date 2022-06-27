@@ -65,7 +65,7 @@ struct fvar {
    *
    * @return tangent of this variable
    */
-  T tangent() const { return d_; }
+  T d() const { return d_; }
 
   /**
    * Construct a forward variable with zero value and tangent.

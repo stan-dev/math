@@ -3,7 +3,6 @@
 
 TEST(mathMixCore, atan2) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::atan2;
     using stan::math::atan2;
     return atan2(x1, x2);
   };
