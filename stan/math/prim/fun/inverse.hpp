@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
-#include <stan/math/prim/functor/function_gradients_adj_jac.hpp>
+#include <stan/math/prim/functor/function_gradients.hpp>
 
 namespace stan {
 namespace math {
@@ -47,9 +47,11 @@ inline plain_type_t<EigMat> inverse(const EigMat& m) {
   auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
     return to_ref(-multiply(multiply(val, adj), val));
   };
-  return function_gradients_adj_jac(
-      std::forward_as_tuple(m_ref), std::move(val_fun),
-      std::forward_as_tuple(rev_grad_fun), std::forward_as_tuple(fwd_grad_fun));
+  return function_gradients(
+      std::forward_as_tuple(m_ref),
+      std::move(val_fun),
+      std::forward_as_tuple(rev_grad_fun),
+      std::forward_as_tuple(fwd_grad_fun));
 }
 
 }  // namespace math
