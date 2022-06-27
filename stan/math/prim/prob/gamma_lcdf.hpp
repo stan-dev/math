@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
-#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
@@ -63,19 +63,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(math::size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(math::size(alpha));
-
-  if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::math::size(alpha); i++) {
-      const T_partials_return alpha_dbl = alpha_vec.val(i);
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
-    }
-  }
-
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -84,28 +71,33 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     }
 
     const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return log_y_dbl = log(y_dbl);
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
+    const T_partials_return log_beta_dbl = log(beta_dbl);
+    const T_partials_return beta_y_dbl = beta_dbl * y_dbl;
 
-    const T_partials_return Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials_return Pn = gamma_p(alpha_dbl, beta_y_dbl);
+    const T_partials_return log_Pn = log(Pn);
 
-    P += log(Pn);
+    P += log_Pn;
 
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+    if (!is_constant_all<T_y, T_inv_scale>::value) {
+      const T_partials_return d_num
+          = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
+      const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;
+      const T_partials_return d = exp(d_num - d_den);
+
+      if (!is_constant_all<T_y>::value) {
+        ops_partials.edge1_.partials_[n] += beta_dbl * d;
+      }
+      if (!is_constant_all<T_inv_scale>::value) {
+        ops_partials.edge3_.partials_[n] += y_dbl * d;
+      }
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
-          -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                digamma_vec[n])
-             / Pn;
-    }
-    if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+          += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
     }
   }
   return ops_partials.build(P);
