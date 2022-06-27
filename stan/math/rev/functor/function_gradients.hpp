@@ -61,7 +61,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fu
 
   // Have to wrap the holder functor to avoid compiler
   // errors when using lambda expressions in decltype call
-  decltype(auto) f = [&](auto&& fun, auto&& tuple_arg) {
+  decltype(auto) holder_wrapper = [&](auto&& fun, auto&& tuple_arg) {
     return make_holder(
         [](auto&& h_f, auto&& h_t) {
           return math::apply(
@@ -77,7 +77,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fu
 
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
-  using val_t = decltype(f(std::forward<ValFunT>(val_fun),
+  using val_t = decltype(holder_wrapper(std::forward<ValFunT>(val_fun),
                            std::forward<decltype(prim_tuple)>(prim_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
@@ -87,7 +87,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fu
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn = f(std::forward<ValFunT>(val_fun),
+  arena_t<ret_type> rtn = holder_wrapper(std::forward<ValFunT>(val_fun),
                             std::forward<decltype(prim_tuple)>(prim_tuple));
   if (unlikely(math::size(rtn) == 0)) {
     return ret_type(rtn);
@@ -98,7 +98,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fu
         // Iterate over input arguments, applying the respective gradient
         // function with the tuple of extracted primitive values
         walk_tuples(
-            [&](auto&& f, auto&& arg) {
+            [&](auto&& grad_funs, auto&& arg) {
               // Only calculate gradients if the input argument is not primitive
               if (!is_constant_all<decltype(arg)>::value) {
                 // Need to wrap the argument in a forward_as<var>() so that it
@@ -108,7 +108,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fu
                     // primitive arguments
                     math::apply(
                         [&](auto&&... args) {
-                          return f(rtn.val_op(), rtn.adj_op(),
+                          return grad_funs(rtn.val_op(), rtn.adj_op(),
                                    internal::arena_val(
                                        std::forward<decltype(args)>(args))...);
                         },
