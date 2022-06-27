@@ -6,13 +6,44 @@
 #include <stan/math/prim/functor/walk_tuples.hpp>
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/function_gradients.hpp>
 
 namespace stan {
 namespace math {
+namespace internal {
 
-template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
-          typename RevGradFunT, typename FwdGradFunT,
+/**
+ * Helper function for agnostically using arena<T> and scalar
+ * types as inputs.
+ *
+ * Specialisation for non-arena types, reduces to a no-op
+ *
+ * @tparam T Type of non-arena matrix input
+ * @param arg Non-arena matrix input
+ * @return Unmodified input
+ */
+template <typename T, require_not_arena_matrix_t<T>* = nullptr>
+inline T arena_val(T&& arg) {
+  return std::forward<T>(arg);
+}
+
+/**
+ * Helper function for agnostically using arena<T> and scalar
+ * types as inputs.
+ *
+ * Specialisation for arena types
+ *
+ * @tparam T Type of arena matrix input
+ * @param arg Arena matrix input
+ * @return Value within arena matrix
+ */
+template <typename T, require_arena_matrix_t<T>* = nullptr>
+inline decltype(auto) arena_val(T&& arg) {
+  return arg.val();
+}
+}  // namespace internal
+
+template <bool FwdGradients, typename ReturnT, typename ArgsTupleT,
+          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
           require_st_var<ReturnT>* = nullptr>
 auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                                      RevGradFunT&& rev_grad_fun_tuple,
@@ -77,7 +108,7 @@ auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                     // primitive arguments
                     math::apply(
                         [&](auto&&... args) {
-                          return f(rtn.val_op(), rtn.adj_op(),
+                          return f(to_ref(rtn.val()), to_ref(rtn.adj()),
                                    internal::arena_val(
                                        std::forward<decltype(args)>(args))...);
                         },

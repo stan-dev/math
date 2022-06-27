@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/fabs.hpp>
-#include <stan/math/rev/fun/hypot.hpp>
 #include <complex>
 
 namespace stan {

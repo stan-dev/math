@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/atan.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/cos.hpp>

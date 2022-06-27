@@ -6,16 +6,29 @@
 #include <stan/math/prim/functor/walk_tuples.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/functor/function_gradients.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
 #include <iostream>
 
 namespace stan {
 namespace math {
 
-template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
-          typename RevGradFunT, typename FwdGradFunT,
-          require_st_fvar<ReturnT>* = nullptr>
+namespace internal {
+
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+constexpr T initialize_grad(T&& rtn_val) {
+  return 0;
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+plain_type_t<T> initialize_grad(T&& rtn_eigen) {
+  return plain_type_t<T>::Zero(rtn_eigen.rows(), rtn_eigen.cols());
+}
+}  // namespace internal
+
+template <bool FwdGradients, typename ReturnT, typename ArgsTupleT,
+          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
+          require_st_fvar<ReturnT>* = nullptr,
+          require_t<std::integral_constant<bool, FwdGradients>>* = nullptr>
 decltype(auto) function_gradients_impl(
     ArgsTupleT&& args_tuple, ValFunT&& val_fun,
     RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
@@ -55,6 +68,20 @@ decltype(auto) function_gradients_impl(
       std::forward<decltype(dummy_tuple)>(dummy_tuple));
 
   return to_fvar(rtn, d_);
+}
+
+template <bool FwdGradients, typename ReturnT, typename ArgsTupleT,
+          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
+          require_st_fvar<ReturnT>* = nullptr,
+          require_not_t<std::integral_constant<bool, FwdGradients>>* = nullptr>
+decltype(auto) function_gradients_impl(
+    ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+    RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
+
+  decltype(auto) rtn
+      = math::apply([&](auto&&... args) { return val_fun(args...); },
+                    std::forward<ArgsTupleT>(args_tuple));
+  return to_ref(rtn);
 }
 
 }  // namespace math

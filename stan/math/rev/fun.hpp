@@ -75,7 +75,6 @@
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
-#include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
@@ -90,7 +89,6 @@
 #include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
-#include <stan/math/rev/fun/inverse.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>

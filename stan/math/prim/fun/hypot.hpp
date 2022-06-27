@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
+#include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/functor/function_gradients.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
@@ -41,6 +42,7 @@ inline auto hypot(const T1& a, const T2& b) {
       };
   return function_gradients(std::forward_as_tuple(a, b),
                             std::forward<decltype(val_fun)>(val_fun),
+                            std::forward_as_tuple(grad_fun_a, grad_fun_b),
                             std::forward_as_tuple(grad_fun_a, grad_fun_b));
 }
 
