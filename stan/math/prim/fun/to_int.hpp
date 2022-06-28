@@ -15,8 +15,8 @@ namespace math {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline int to_int(T x) {
-  if (x < std::numeric_limits<int>::min() ||
-      x > std::numeric_limits<int>::max()) {
+  if (x < std::numeric_limits<int>::min()
+      || x > std::numeric_limits<int>::max()) {
     std::ostringstream msg;
     msg << "Value " << x << " is too large to be represented as an integer";
     throw std::invalid_argument(msg.str());

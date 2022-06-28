@@ -18,9 +18,9 @@ TEST(MathFunctions, to_int) {
   EXPECT_EQ(-36574, to_int(-36574.999999999));
 
   EXPECT_THROW(to_int(std::numeric_limits<int>::max() + 1.0),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(to_int(std::numeric_limits<int>::min() - 1.0),
-                std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(MathFunctions, to_int_vec) {
