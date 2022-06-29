@@ -19,22 +19,19 @@ TEST(MathFunctions, to_int_values) {
 }
 
 TEST(MathFunctions, to_int_errors) {
-  using stan::math::to_int;
-  using stan::math::NOT_A_NUMBER;
   using stan::math::INFTY;
   using stan::math::NEGATIVE_INFTY;
+  using stan::math::NOT_A_NUMBER;
+  using stan::math::to_int;
 
   EXPECT_THROW(to_int(std::numeric_limits<int>::max() + 1.0),
                std::domain_error);
   EXPECT_THROW(to_int(std::numeric_limits<int>::min() - 1.0),
                std::domain_error);
 
-  EXPECT_THROW(to_int(NOT_A_NUMBER),
-               std::domain_error);
-  EXPECT_THROW(to_int(INFTY),
-               std::domain_error);
-  EXPECT_THROW(to_int(NEGATIVE_INFTY),
-               std::domain_error);
+  EXPECT_THROW(to_int(NOT_A_NUMBER), std::domain_error);
+  EXPECT_THROW(to_int(INFTY), std::domain_error);
+  EXPECT_THROW(to_int(NEGATIVE_INFTY), std::domain_error);
 }
 
 TEST(MathFunctions, to_int_vec) {
