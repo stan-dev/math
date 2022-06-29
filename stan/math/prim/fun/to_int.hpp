@@ -35,7 +35,7 @@ inline T to_int(T x) {
  *
  * @tparam T type of argument (must be arithmetic)
  * @param x argument
- * @return iIteger value of argument
+ * @return Integer value of argument
  */
 template <typename T, require_floating_point_t<T>* = nullptr>
 inline int to_int(T x) {
