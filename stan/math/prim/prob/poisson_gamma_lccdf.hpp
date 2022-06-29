@@ -9,9 +9,7 @@
 namespace stan {
 namespace math {
 
-template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_n, T_shape, T_inv_scale>* = nullptr>
+template <typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> poisson_gamma_lccdf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
@@ -29,16 +27,10 @@ return_type_t<T_shape, T_inv_scale> poisson_gamma_lccdf(const T_n& n,
   check_positive_finite(function, "Shape parameter", alpha_ref);
   check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
-  return neg_binomial_2_lccdf<propto>(n_ref,
-                                     elt_divide(alpha_ref, beta_ref),
-                                     alpha_ref);
+  return neg_binomial_2_lccdf(n_ref, elt_divide(alpha_ref, beta_ref),
+                              alpha_ref);
 }
 
-template <typename T_n, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_shape, T_inv_scale> poisson_gamma_lccdf(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
-  return poisson_gamma_lccdf<false>(n, alpha, beta);
-}
 
 }  // namespace math
 }  // namespace stan
