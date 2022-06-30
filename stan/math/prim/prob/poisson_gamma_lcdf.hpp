@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/neg_binomial_2_lcdf.hpp>
@@ -29,9 +28,16 @@ return_type_t<T_shape, T_inv_scale> poisson_gamma_lcdf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   static const char* function = "poisson_gamma_lcdf";
+  // To avoid an integer division below, the shape parameter is promoted to a
+  // double if it is an integer
+  using AlphaScalarT = scalar_type_t<T_shape>;
+  using PromotedIfIntT = std::conditional_t<
+    std::is_integral<AlphaScalarT>::value,
+    double, AlphaScalarT>;
+
   const auto& n_ref = to_ref(n);
-  const auto& alpha_ref = to_ref(as_column_vector_or_scalar(alpha));
-  const auto& beta_ref = to_ref(as_column_vector_or_scalar(beta));
+  ref_type_t<promote_scalar_t<PromotedIfIntT, T_shape>> alpha_ref = alpha;
+  const auto& beta_ref = to_ref(beta);
 
   check_nonnegative(function, "Random variable", n_ref);
   check_positive_finite(function, "Shape parameter", alpha_ref);

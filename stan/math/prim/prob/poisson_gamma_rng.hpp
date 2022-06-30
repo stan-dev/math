@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/neg_binomial_2_rng.hpp>
@@ -35,13 +34,22 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type
   poisson_gamma_rng(
     const T_shape& alpha, const T_inv& beta, RNG& rng) {
   static const char* function = "poisson_gamma_rng";
+  // To avoid an integer division below, the shape parameter is promoted to a
+  // double if it is an integer
+  using AlphaScalarT = scalar_type_t<T_shape>;
+  using PromotedIfIntT = std::conditional_t<
+    std::is_integral<AlphaScalarT>::value,
+    double, AlphaScalarT>;
+
   check_consistent_sizes(function, "Shape parameter", alpha,
                          "Inverse scale Parameter", beta);
-  const auto& alpha_ref = to_ref(as_column_vector_or_scalar(alpha));
-  const auto& beta_ref = to_ref(as_column_vector_or_scalar(beta));
+
+  ref_type_t<promote_scalar_t<PromotedIfIntT, T_shape>> alpha_ref = alpha;
+  const auto& beta_ref = to_ref(beta);
+
   check_positive_finite(function, "Shape parameter", alpha_ref);
   check_positive_finite(function, "Inverse scale parameter", beta_ref);
-  std::cout << alpha_ref << std::endl << std::endl << beta_ref << std::endl;
+
   return neg_binomial_2_rng(elt_divide(alpha_ref, beta_ref), alpha_ref, rng);
 }
 
