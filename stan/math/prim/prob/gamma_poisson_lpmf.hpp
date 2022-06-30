@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_POISSON_GAMMA_LPMF_HPP
-#define STAN_MATH_PRIM_PROB_POISSON_GAMMA_LPMF_HPP
+#ifndef STAN_MATH_PRIM_PROB_GAMMA_POISSON_LPMF_HPP
+#define STAN_MATH_PRIM_PROB_GAMMA_POISSON_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -31,10 +31,10 @@ namespace math {
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_shape, T_inv_scale>* = nullptr>
-return_type_t<T_shape, T_inv_scale> poisson_gamma_lpmf(const T_n& n,
+return_type_t<T_shape, T_inv_scale> gamma_poisson_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
-  static const char* function = "poisson_gamma_lpmf";
+  static const char* function = "gamma_poisson_lpmf";
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;
@@ -56,9 +56,9 @@ return_type_t<T_shape, T_inv_scale> poisson_gamma_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_shape, T_inv_scale> poisson_gamma_lpmf(
+inline return_type_t<T_shape, T_inv_scale> gamma_poisson_lpmf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
-  return poisson_gamma_lpmf<false>(n, alpha, beta);
+  return gamma_poisson_lpmf<false>(n, alpha, beta);
 }
 
 }  // namespace math

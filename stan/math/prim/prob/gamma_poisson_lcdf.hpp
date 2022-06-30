@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_POISSON_GAMMA_LCDF_HPP
-#define STAN_MATH_PRIM_PROB_POISSON_GAMMA_LCDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_GAMMA_POISSON_LCDF_HPP
+#define STAN_MATH_PRIM_PROB_GAMMA_POISSON_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -24,10 +24,10 @@ namespace math {
  * @return Log CDF
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> poisson_gamma_lcdf(const T_n& n,
+return_type_t<T_shape, T_inv_scale> gamma_poisson_lcdf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
-  static const char* function = "poisson_gamma_lcdf";
+  static const char* function = "gamma_poisson_lcdf";
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;

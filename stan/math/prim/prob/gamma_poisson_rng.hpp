@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_POISSON_GAMMA_RNG_HPP
-#define STAN_MATH_PRIM_PROB_POISSON_GAMMA_RNG_HPP
+#ifndef STAN_MATH_PRIM_PROB_GAMMA_POISSON_RNG_HPP
+#define STAN_MATH_PRIM_PROB_GAMMA_POISSON_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -31,9 +31,9 @@ namespace math {
  */
 template <typename T_shape, typename T_inv, class RNG>
 inline typename VectorBuilder<true, int, T_shape, T_inv>::type
-  poisson_gamma_rng(
+  gamma_poisson_rng(
     const T_shape& alpha, const T_inv& beta, RNG& rng) {
-  static const char* function = "poisson_gamma_rng";
+  static const char* function = "gamma_poisson_rng";
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;
