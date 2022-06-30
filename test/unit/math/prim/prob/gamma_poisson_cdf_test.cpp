@@ -19,8 +19,8 @@ TEST(ProbDistributionsPoissonGammaCDF, values) {
   Eigen::VectorXd beta(4);
   beta << 6, 3, 1, 0.1;
 
-  double cdf = 0.999991500140248 * 0.982700161635877 * 0.0625
-              * 0.932876334310129;
+  double cdf
+      = 0.999991500140248 * 0.982700161635877 * 0.0625 * 0.932876334310129;
 
   EXPECT_FLOAT_EQ(poisson_gamma_cdf(y, alpha, beta), cdf);
 }

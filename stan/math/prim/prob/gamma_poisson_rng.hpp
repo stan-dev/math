@@ -31,15 +31,14 @@ namespace math {
  */
 template <typename T_shape, typename T_inv, class RNG>
 inline typename VectorBuilder<true, int, T_shape, T_inv>::type
-  gamma_poisson_rng(
-    const T_shape& alpha, const T_inv& beta, RNG& rng) {
+gamma_poisson_rng(const T_shape& alpha, const T_inv& beta, RNG& rng) {
   static const char* function = "gamma_poisson_rng";
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;
-  using PromotedIfIntT = std::conditional_t<
-    std::is_integral<AlphaScalarT>::value,
-    double, AlphaScalarT>;
+  using PromotedIfIntT
+      = std::conditional_t<std::is_integral<AlphaScalarT>::value, double,
+                           AlphaScalarT>;
 
   check_consistent_sizes(function, "Shape parameter", alpha,
                          "Inverse scale Parameter", beta);

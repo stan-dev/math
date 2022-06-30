@@ -31,16 +31,15 @@ namespace math {
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_shape, T_inv_scale>* = nullptr>
-return_type_t<T_shape, T_inv_scale> gamma_poisson_lpmf(const T_n& n,
-                                                      const T_shape& alpha,
-                                                      const T_inv_scale& beta) {
+return_type_t<T_shape, T_inv_scale> gamma_poisson_lpmf(
+    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   static const char* function = "gamma_poisson_lpmf";
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;
-  using PromotedIfIntT = std::conditional_t<
-    std::is_integral<AlphaScalarT>::value,
-    double, AlphaScalarT>;
+  using PromotedIfIntT
+      = std::conditional_t<std::is_integral<AlphaScalarT>::value, double,
+                           AlphaScalarT>;
 
   const auto& n_ref = to_ref(n);
   ref_type_t<promote_scalar_t<PromotedIfIntT, T_shape>> alpha_ref = alpha;
@@ -50,8 +49,7 @@ return_type_t<T_shape, T_inv_scale> gamma_poisson_lpmf(const T_n& n,
   check_positive_finite(function, "Shape parameter", alpha_ref);
   check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
-  return neg_binomial_2_lpmf<propto>(n_ref,
-                                     elt_divide(alpha_ref, beta_ref),
+  return neg_binomial_2_lpmf<propto>(n_ref, elt_divide(alpha_ref, beta_ref),
                                      alpha_ref);
 }
 

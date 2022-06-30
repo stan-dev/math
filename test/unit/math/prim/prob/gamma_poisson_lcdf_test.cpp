@@ -20,7 +20,7 @@ TEST(ProbDistributionsPoissonGammaLCDF, values) {
   beta << 6, 3, 1, 0.1;
 
   double cdf = -8.49989587616611e-06 - 0.0174512291323641 - 2.77258872223978
-                - 0.0694826332112239;
+               - 0.0694826332112239;
 
   EXPECT_FLOAT_EQ(poisson_gamma_lcdf(y, alpha, beta), cdf);
 }

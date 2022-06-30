@@ -31,9 +31,9 @@ return_type_t<T_shape, T_inv_scale> gamma_poisson_cdf(const T_n& n,
   // To avoid an integer division below, the shape parameter is promoted to a
   // double if it is an integer
   using AlphaScalarT = scalar_type_t<T_shape>;
-  using PromotedIfIntT = std::conditional_t<
-    std::is_integral<AlphaScalarT>::value,
-    double, AlphaScalarT>;
+  using PromotedIfIntT
+      = std::conditional_t<std::is_integral<AlphaScalarT>::value, double,
+                           AlphaScalarT>;
 
   const auto& n_ref = to_ref(n);
   ref_type_t<promote_scalar_t<PromotedIfIntT, T_shape>> alpha_ref = alpha;

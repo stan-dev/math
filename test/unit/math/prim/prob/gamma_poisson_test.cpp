@@ -20,7 +20,7 @@ TEST(ProbDistributionsPoissonGamma, values) {
   beta << 2, 1, 1, 1;
 
   double lp = -6.95199150829391 - 1.38629436111989 - 0.693147180559945
-                - 693147.873707126;
+              - 693147.873707126;
 
   EXPECT_FLOAT_EQ(poisson_gamma_lpmf(y, alpha, beta), lp);
 

@@ -13,8 +13,8 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> gamma_poisson_log(const T_n& n,
-                                                     const T_shape& alpha,
-                                                     const T_inv_scale& beta) {
+                                                      const T_shape& alpha,
+                                                      const T_inv_scale& beta) {
   return gamma_poisson_lpmf<propto, T_n, T_shape, T_inv_scale>(n, alpha, beta);
 }
 
