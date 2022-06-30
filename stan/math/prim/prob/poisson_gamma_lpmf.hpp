@@ -3,12 +3,32 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/elt_divide.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/neg_binomial_2_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
+/**
+ * Returns the log-probability of a Poisson distribution with a gamma prior
+ * for the rate parameter, after marginalizing the rate parameter out of the
+ * likelihood. The likelihood is implemented using the neg_binomial_2_lpmf,
+ * for more details on the derivation see:
+ * https://gregorygundersen.com/blog/2019/09/16/poisson-gamma-nb/
+ *
+ *
+ * @tparam propto
+ * @tparam T_n Type of count outcome
+ * @tparam T_shape Type of shape parameter for the Gamma prior
+ * @tparam T_inv_scale Type of rate parameter for the Gamma prior
+ * @param n Discrete count outcome
+ * @param alpha Shape parameter for the Gamma prior
+ * @param beta Rate parameter for the Gamma prior
+ * @return log-likelihood
+ */
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_shape, T_inv_scale>* = nullptr>
@@ -16,14 +36,9 @@ return_type_t<T_shape, T_inv_scale> poisson_gamma_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   static const char* function = "poisson_gamma_lpmf";
-
-  using T_n_ref = ref_type_t<T_n>;
-  using T_alpha_ref = ref_type_t<T_shape>;
-  using T_beta_ref = ref_type_t<T_inv_scale>;
-
-  T_n_ref n_ref = n;
-  T_alpha_ref alpha_ref = alpha;
-  T_beta_ref beta_ref = beta;
+  const auto& n_ref = to_ref(n);
+  const auto& alpha_ref = to_ref(as_column_vector_or_scalar(alpha));
+  const auto& beta_ref = to_ref(as_column_vector_or_scalar(beta));
 
   check_nonnegative(function, "Random variable", n_ref);
   check_positive_finite(function, "Shape parameter", alpha_ref);

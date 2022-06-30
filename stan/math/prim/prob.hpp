@@ -280,7 +280,14 @@
 #include <stan/math/prim/prob/poisson_binomial_log.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lpmf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_rng.hpp>
+#include <stan/math/prim/prob/poisson_gamma_ccdf_log.hpp>
+#include <stan/math/prim/prob/poisson_gamma_cdf.hpp>
+#include <stan/math/prim/prob/poisson_gamma_cdf_log.hpp>
+#include <stan/math/prim/prob/poisson_gamma_lccdf.hpp>
+#include <stan/math/prim/prob/poisson_gamma_lcdf.hpp>
+#include <stan/math/prim/prob/poisson_gamma_log.hpp>
 #include <stan/math/prim/prob/poisson_gamma_lpmf.hpp>
+#include <stan/math/prim/prob/poisson_gamma_rng.hpp>
 #include <stan/math/prim/prob/poisson_ccdf_log.hpp>
 #include <stan/math/prim/prob/poisson_cdf.hpp>
 #include <stan/math/prim/prob/poisson_cdf_log.hpp>
