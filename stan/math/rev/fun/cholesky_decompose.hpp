@@ -9,6 +9,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
@@ -84,8 +85,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    Eigen::MatrixXd L_adj = Eigen::MatrixXd::Zero(L.rows(), L.cols());
-    L_adj.template triangularView<Eigen::Lower>() = L.adj();
+    Eigen::MatrixXd L_adj = L.adj();
     const int M_ = L_A.rows();
     int block_size_ = std::max(M_ / 8, 8);
     block_size_ = std::min(block_size_, 128);
@@ -116,7 +116,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
       R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
       D_adj.diagonal() *= 0.5;
     }
-    A.adj().template triangularView<Eigen::Lower>() += L_adj;
+    A.adj() += symmetrize_from_lower_tri(L_adj);
   };
 }
 }  // namespace internal
