@@ -20,11 +20,11 @@ namespace math {
 
 namespace internal {
 template <typename LMat, typename LAMat>
-inline void initialize_return(LMat& L, const LAMat& L_A, vari*& dummy) {
+inline void initialize_return(LMat& L, const LAMat& L_A) {
   for (Eigen::Index j = 0; j < L_A.rows(); ++j) {
     for (Eigen::Index i = 0; i < L_A.rows(); ++i) {
       if (j > i) {
-        L.coeffRef(i, j) = dummy;
+        L.coeffRef(i, j) = new vari(L_A.coeffRef(i, j), false);
       } else {
         L.coeffRef(i, j) = new vari(L_A.coeffRef(i, j), false);
       }
@@ -58,6 +58,7 @@ inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
           adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
         } else {
           adjA.coeffRef(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
+          adjA.coeffRef(j, i) = adjA.coeff(i, j); 
           adjL.coeffRef(j, j)
               -= adjL.coeff(i, j) * L_A.coeff(i, j) / L_A.coeff(j, j);
         }
@@ -144,13 +145,16 @@ inline auto cholesky_decompose(const EigMat& A) {
   L_A.template triangularView<Eigen::StrictlyUpper>().setZero();
   // looping gradient calcs faster for small matrices compared to
   // cholesky_block
-  vari* dummy = new vari(0.0, false);
+  // ** CHANGED 07/01/2022 ** 
+  // testing if symmetric return makes the gradients more stable
+  // vari* dummy = new vari(0.0, false);
+  
   arena_t<EigMat> L(L_A.rows(), L_A.cols());
   if (L_A.rows() <= 35) {
-    internal::initialize_return(L, L_A, dummy);
+    internal::initialize_return(L, L_A);
     reverse_pass_callback(internal::unblocked_cholesky_lambda(L_A, L, arena_A));
   } else {
-    internal::initialize_return(L, L_A, dummy);
+    internal::initialize_return(L, L_A);
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, arena_A));
   }
   return plain_type_t<EigMat>(L);
