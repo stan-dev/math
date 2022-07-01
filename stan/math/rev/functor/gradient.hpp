@@ -90,20 +90,29 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * @param[in] x Argument to function
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
+ * @throw std::invalid_argument if the iterator isn't the right size
+ * to hold the gradients
  */
 template <typename F, typename InputIt>
 void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, InputIt first_grad_fx, InputIt last_grad_fx) {
   nested_rev_autodiff nested;
 
+  if (last_grad_fx - first_grad_fx != x.size()) {
+    std::stringstream s;
+    s << "gradient(): iterator and gradient different sizes; iterator size = "
+      << last_grad_fx - first_grad_fx << "; grad size = " << x.size()
+      << std::endl;
+    throw std::invalid_argument(s.str());
+  }
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad(fx_var.vi_);
-  for (size_t i = 0;
-       first_grad_fx != last_grad_fx && i < x.size();
-       ++first_grad_fx, ++i) {
-    *first_grad_fx = x_var(i).adj();
+  for (Eigen::Matrix<var, Eigen::Dynamic, -1>::Index i = 0; i < x_var.size();
+       ++i) {
+    *first_grad_fx++ = x_var(i).adj();
   }
 }
 
