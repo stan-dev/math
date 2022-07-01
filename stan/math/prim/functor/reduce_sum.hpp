@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
@@ -80,7 +81,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
         sub_slice.emplace_back(vmapped_[i]);
       }
 
-      sum_ += apply(
+      sum_ += math::apply(
           [&](auto&&... args) {
             return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, &msgs_,
                                     args...);

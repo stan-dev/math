@@ -12,11 +12,10 @@
 namespace stan {
 namespace math {
 /** \ingroup multivar_dists
- * Return the natural logarithm of the unnormalized Wishart density of the
- specified
- * lower-triangular Cholesky factor variate, positive degrees of freedom, and
- lower-triangular
- * Cholesky factor of the scale matrix.
+ * Return the natural logarithm of the unnormalized
+ * Wishart density of the specified lower-triangular
+ * Cholesky factor variate, positive degrees of freedom,
+ * and lower-triangular Cholesky factor of the scale matrix.
  *
  * The scale matrix, `L_S`, must be a lower Cholesky factor
  * dimension, k, is implicit
@@ -50,7 +49,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   using T_return = return_type_t<T_y, T_dof, T_scale>;
   static const char* function = "wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
-  check_size_match(function, "Rows of random variable", L_Y.rows(),
+  check_size_match(function, "Rows of RSandom variable", L_Y.rows(),
                    "columns of scale parameter", L_S.rows());
   check_size_match(function, "Rows of random variable", L_Y.rows(),
                    "columns of random variable", L_Y.cols());
@@ -61,7 +60,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   T_L_S_ref L_S_ref = L_S;
 
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
-  check_positive(function, "Cholesky random variable", L_Y_ref.diagonal());
+  check_positive(function, "Cholesky Random variable", L_Y_ref.diagonal());
   check_positive(function, "columns of Cholesky Random variable",
                  L_Y_ref.cols());
   check_positive(function, "Cholesky scale matrix", L_S_ref.diagonal());

@@ -79,7 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     logp -= LOG_TWO * N;
   }
   if (include_summand<propto, T_inv_scale>::value) {
-    logp += sum(log(lambda_val)) * N / size(lambda);
+    logp += sum(log(lambda_val)) * N / math::size(lambda);
   }
   const auto& log_erfc_calc = log(erfc_calc);
   logp
