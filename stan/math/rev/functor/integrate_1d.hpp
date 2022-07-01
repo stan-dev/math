@@ -8,6 +8,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <cmath>
 #include <functional>
@@ -57,7 +58,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     double integral = integrate(
         [&](const auto &x, const auto &xc) {
-          return apply(
+          return math::apply(
               [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
               args_val_tuple);
         },
@@ -79,7 +80,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     }
 
     if (is_var<T_a>::value && !is_inf(a)) {
-      *partials_ptr = apply(
+      *partials_ptr = math::apply(
           [&f, a_val, msgs](auto &&... val_args) {
             return -f(a_val, 0.0, msgs, val_args...);
           },
@@ -88,7 +89,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     }
 
     if (!is_inf(b) && is_var<T_b>::value) {
-      *partials_ptr = apply(
+      *partials_ptr = math::apply(
           [&f, b_val, msgs](auto &&... val_args) {
             return f(b_val, 0.0, msgs, val_args...);
           },
@@ -104,7 +105,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
       // Save the varis so it's easy to efficiently access the nth adjoint
       std::vector<vari *> local_varis(num_vars_args);
-      apply(
+      math::apply(
           [&](const auto &... args) {
             save_varis(local_varis.data(), args...);
           },
@@ -118,7 +119,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
               argument_nest.set_zero_all_adjoints();
 
               nested_rev_autodiff gradient_nest;
-              var fx = apply(
+              var fx = math::apply(
                   [&f, &x, &xc, msgs](auto &&... local_args) {
                     return f(x, xc, msgs, local_args...);
                   },

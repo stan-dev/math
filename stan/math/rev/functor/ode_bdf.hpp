@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <ostream>
 #include <vector>
 
@@ -55,7 +56,7 @@ ode_bdf_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                  long int max_num_steps,  // NOLINT(runtime/int)
                  std::ostream* msgs, const T_Args&... args) {
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-  return apply(
+  return math::apply(
       [&](const auto&... args_refs) {
         cvodes_integrator<CV_BDF, F, T_y0, T_t0, T_ts, ref_type_t<T_Args>...>
         integrator(function_name, f, y0, t0, ts, relative_tolerance,

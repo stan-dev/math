@@ -38,7 +38,7 @@ return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
 
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  const size_t N = is_n_vector ? size(n) : size(theta);
+  const size_t N = is_n_vector ? math::size(n) : math::size(theta);
   if (N == 0) {
     return 0.0;
   }
