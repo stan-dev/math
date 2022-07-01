@@ -66,7 +66,7 @@ namespace math {
  * @return Base raised to the exponent.
  */
 template <typename Scal1, typename Scal2,
-          require_all_st_var_or_arithmetic<Scal1, Scal2>* = nullptr,
+          require_any_st_var<Scal1, Scal2>* = nullptr,
           require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
 inline var pow(const Scal1& base, const Scal2& exponent) {
   if (is_constant<Scal2>::value) {
