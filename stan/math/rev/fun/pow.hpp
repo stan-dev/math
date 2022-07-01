@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
@@ -64,16 +65,40 @@ namespace math {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, const var& exponent) {
-  return make_callback_var(std::pow(base.val(), exponent.val()),
+template <typename Scal1, typename Scal2,
+          require_all_st_var_or_arithmetic<Scal1, Scal2>* = nullptr,
+          require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
+inline var pow(const Scal1& base, const Scal2& exponent) {
+  if (is_constant<Scal2>::value) {
+    if (exponent == 0.5) {
+      return sqrt(base);
+    } else if (exponent == 1.0) {
+      return base;
+    } else if (exponent == 2.0) {
+      return square(base);
+    } else if (exponent == -2.0) {
+      return inv_square(base);
+    } else if (exponent == -1.0) {
+      return inv(base);
+    } else if (exponent == -0.5) {
+      return inv_sqrt(base);
+    }
+  }
+  return make_callback_var(std::pow(value_of(base), value_of(exponent)),
                            [base, exponent](auto&& vi) mutable {
-                             if (base.val() == 0.0) {
-                               return;  // partials zero, avoids 0 & log(0)
-                             }
-                             const double vi_mul = vi.adj() * vi.val();
-                             base.adj() += vi_mul * exponent.val() / base.val();
-                             exponent.adj() += vi_mul * std::log(base.val());
-                           });
+    if (value_of(base) == 0.0) {
+      return;  // partials zero, avoids 0 & log(0)
+    }
+    const double vi_mul = vi.adj() * vi.val();
+
+    if (!is_constant<Scal1>::value) {
+      forward_as<var>(base).adj()
+        += vi_mul * value_of(exponent) / value_of(base);
+    }
+    if (!is_constant<Scal2>::value) {
+      forward_as<var>(exponent).adj() += vi_mul * std::log(value_of(base));
+    }
+  });
 }
 
 /**
@@ -94,57 +119,41 @@ template <typename Mat1, typename Mat2,
           require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr,
           require_all_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
 inline auto pow(const Mat1& base, const Mat2& exponent) {
+  check_consistent_sizes("pow", "base", base, "exponent", exponent);
+
   using val_type = decltype(as_array_or_scalar(value_of(base))
                                 .pow(as_array_or_scalar(value_of(exponent)))
                                 .matrix()
                                 .eval());
   using ret_type = return_var_matrix_t<val_type, Mat1, Mat2>;
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
-    using base_t = decltype(as_array_or_scalar(base));
-    arena_t<promote_scalar_t<var, base_t>> arena_base
-        = as_array_or_scalar(base);
-    using exp_t = decltype(as_array_or_scalar(exponent));
-    arena_t<promote_scalar_t<var, exp_t>> arena_exponent
-        = as_array_or_scalar(exponent);
-    arena_t<ret_type> ret = arena_base.val().pow(arena_exponent.val()).matrix();
-    reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
-      auto are_vals_zero = (arena_base.val() != 0.0).eval();
-      auto ret_mul = (ret.adj().array() * ret.val().array()).eval();
-      arena_base.adj()
+  using base_t = decltype(as_array_or_scalar(base));
+  using exp_t = decltype(as_array_or_scalar(exponent));
+  using base_arena_t = arena_t<base_t>;
+  using exp_arena_t = arena_t<exp_t>;
+
+  base_arena_t arena_base = as_array_or_scalar(base);
+  exp_arena_t arena_exponent = as_array_or_scalar(exponent);
+  arena_t<ret_type> ret = value_of(arena_base).pow(value_of(arena_exponent))
+                                              .matrix();
+
+  reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
+    const auto& are_vals_zero = to_ref(value_of(arena_base) != 0.0);
+    const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
+    if (!is_constant<Mat1>::value) {
+      using base_var_arena_t = arena_t<promote_scalar_t<var, base_arena_t>>;
+      forward_as<base_var_arena_t>(arena_base).adj()
           += (are_vals_zero)
-                 .select(ret_mul * arena_exponent.val() / arena_base.val(), 0);
-      arena_exponent.adj()
-          += (are_vals_zero).select(ret_mul * arena_base.val().log(), 0);
-    });
-    return ret_type(ret);
-  } else if (!is_constant<Mat2>::value) {
-    auto arena_base = to_arena(as_array_or_scalar(value_of(base)));
-    using exp_t = decltype(as_array_or_scalar(exponent));
-    arena_t<promote_scalar_t<var, exp_t>> arena_exponent
-        = as_array_or_scalar(exponent);
-    arena_t<ret_type> ret = arena_base.pow(arena_exponent.val()).matrix();
-    reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
-      arena_exponent.adj() += (arena_base != 0)
-                                  .select(ret.adj().array() * arena_base.log()
-                                              * ret.val().array(),
-                                          0);
-    });
-    return ret_type(ret);
-  } else {
-    using base_t = decltype(as_array_or_scalar(base));
-    arena_t<promote_scalar_t<var, base_t>> arena_base
-        = as_array_or_scalar(base);
-    auto arena_exponent = to_arena(as_array_or_scalar(value_of(exponent)));
-    arena_t<ret_type> ret = arena_base.val().pow(arena_exponent).matrix();
-    reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
-      arena_base.adj()
-          += (arena_base.val() != 0)
-                 .select(ret.adj().array() * arena_exponent * ret.val().array()
-                             / arena_base.val(),
-                         0);
-    });
-    return ret_type(ret);
-  }
+                  .select(ret_mul * value_of(arena_exponent)
+                            / value_of(arena_base),
+                          0);
+    }
+    if (!is_constant<Mat2>::value) {
+      using exp_var_arena_t = arena_t<promote_scalar_t<var, exp_arena_t>>;
+      forward_as<exp_var_arena_t>(arena_exponent).adj()
+          += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
+    }
+  });
+  return ret_type(ret);
 }
 
 /**
@@ -157,187 +166,52 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-template <typename Mat1,
-          require_matrix_st<is_var_or_arithmetic, Mat1>* = nullptr>
-inline auto pow(const Mat1& base, const var& exponent) {
+template <typename Mat1, typename Scal1,
+          require_all_st_var_or_arithmetic<Mat1, Scal1>* = nullptr,
+          require_all_matrix_st<is_var, Mat1>* = nullptr,
+          require_stan_scalar_t<Scal1>* = nullptr>
+inline auto pow(const Mat1& base, const Scal1& exponent) {
   using ret_type = promote_scalar_t<var, plain_type_t<Mat1>>;
-  if (!is_constant<Mat1>::value) {
-    arena_t<ret_type> arena_base = base;
-    arena_t<ret_type> ret
-        = arena_base.val().array().pow(exponent.val()).matrix();
-    reverse_pass_callback([arena_base, exponent, ret]() mutable {
-      auto are_vals_zero = (arena_base.val().array() != 0.0).eval();
-      auto ret_mul = (ret.adj().array() * ret.val().array()).eval();
-      arena_base.adj().array()
+
+  if (is_constant<Scal1>::value) {
+    if (exponent == 0.5) {
+      return ret_type(sqrt(base));
+    } else if (exponent == 1.0) {
+      return ret_type(base);
+    } else if (exponent == 2.0) {
+      return ret_type(square(base));
+    } else if (exponent == -2.0) {
+      return ret_type(inv_square(base));
+    } else if (exponent == -1.0) {
+      return ret_type(inv(base));
+    } else if (exponent == -0.5) {
+      return ret_type(inv_sqrt(base));
+    }
+  }
+
+  arena_t<plain_type_t<Mat1>> arena_base = base;
+  arena_t<ret_type> ret
+      = value_of(arena_base).array().pow(value_of(exponent)).matrix();
+
+  reverse_pass_callback([arena_base, exponent, ret]() mutable {
+    const auto& are_vals_zero = to_ref(value_of(arena_base).array() != 0.0);
+    const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
+    if (!is_constant<Mat1>::value) {
+      forward_as<ret_type>(arena_base).adj().array()
           += (are_vals_zero)
-                 .select(ret_mul * exponent.val() / arena_base.val().array(),
-                         0);
-      exponent.adj() += (are_vals_zero)
-                            .select(ret_mul * arena_base.val().array().log(), 0)
-                            .sum();
-    });
-    return ret_type(ret);
-  } else {
-    arena_t<promote_scalar_t<double, Mat1>> arena_base = value_of(base);
-    arena_t<ret_type> ret = arena_base.array().pow(exponent.val()).matrix();
-    reverse_pass_callback([arena_base, exponent, ret]() mutable {
-      exponent.adj() += (arena_base.array() != 0)
-                            .select(ret.adj().array() * arena_base.array().log()
-                                        * ret.val().array(),
+                  .select(ret_mul * value_of(exponent)
+                            / value_of(arena_base).array(),
+                          0);
+    }
+    if (!is_constant<Scal1>::value) {
+      forward_as<var>(exponent).adj()
+          += (are_vals_zero).select(ret_mul
+                                      * value_of(arena_base).array().log(),
                                     0)
                             .sum();
-    });
-    return ret_type(ret);
-  }
-}
-
-/**
- * Return the base variable raised to the power of the exponent
- * scalar (cmath).
- *
- * The derivative for the variable is
- *
- * \f$\frac{d}{dx} \mbox{pow}(x, c) = c x^{c-1}\f$.
- *
- * The template parameters are coded as they are so that arithmetic
- * types will not be promoted into the `var` slots.
- *
- * @tparam T arithmetic type
- * @param base Base variable.
- * @param exponent Exponent scalar.
- * @return Base raised to the exponent.
- */
-template <typename T, require_arithmetic_t<T>* = nullptr>
-inline var pow(const var& base, T exponent) {
-  if (exponent == 0.5) {
-    return sqrt(base);
-  } else if (exponent == 1.0) {
-    return base;
-  } else if (exponent == 2.0) {
-    return square(base);
-  } else if (exponent == -2.0) {
-    return inv_square(base);
-  } else if (exponent == -1.0) {
-    return inv(base);
-  } else if (exponent == -0.5) {
-    return inv_sqrt(base);
-  } else {
-    return make_callback_var(
-        std::pow(base.val(), exponent), [base, exponent](auto&& vi) mutable {
-          if (base.val() == 0.0) {
-            return;  // partials zero, avoids 0 & log(0)
-          }
-          base.adj() += vi.adj() * exponent * vi.val() / base.val();
-        });
-  }
-}
-
-/**
- * Return the base matrix variable raised to the power of the exponent
- * scalar (cmath).
- *
- * The derivative for the variable is the same as the elementwise
- *
- * \f$\frac{d}{dx} \mbox{pow}(x, c) = c x^{c-1}\f$.
- *
- * @tparam Mat An Eigen type deriving from Eigen::EigenBase or
- *  a `var_value` with inner Eigen type as defined above. The `scalar_type`
- *  must be a `var`.
- * @tparam T arithmetic type
- * @param base Base matrix.
- * @param exponent Exponent scalar.
- * @return Base raised to the exponent.
- */
-template <typename Mat, typename T, require_arithmetic_t<T>* = nullptr,
-          require_matrix_st<is_var, Mat>* = nullptr>
-inline auto pow(const Mat& base, T exponent) {
-  using ret_type = plain_type_t<Mat>;
-  if (exponent == 0.5) {
-    return ret_type(sqrt(base));
-  } else if (exponent == 1.0) {
-    return ret_type(base);
-  } else if (exponent == 2.0) {
-    return ret_type(square(base));
-  } else if (exponent == -2.0) {
-    return ret_type(inv_square(base));
-  } else if (exponent == -1.0) {
-    return ret_type(inv(base));
-  } else if (exponent == -0.5) {
-    return ret_type(inv_sqrt(base));
-  } else {
-    arena_t<Mat> arena_base = base;
-    arena_t<Mat> ret = arena_base.val().array().pow(exponent);
-    reverse_pass_callback([arena_base, exponent, ret]() mutable {
-      arena_base.adj().array()
-          += (arena_base.val().array() != 0.0)
-                 .select(ret.adj().array() * exponent * ret.val().array()
-                             / arena_base.val().array(),
-                         0);
-    });
-    return ret_type(ret);
-  }
-}
-
-/**
- * Return the base scalar raised to the power of the exponent
- * variable (cmath).
- *
- * The derivative for the variable is
- *
- * \f$\frac{d}{d y} \mbox{pow}(c, y) = c^y \log c \f$.
- *
- * The template parameters are coded as they are so that arithmetic
- * types will not be promoted into the `var` slots.
- *
- * @tparam T arithmetic type
- *
- * @param base Base scalar.
- * @param exponent Exponent variable.
- * @return Base raised to the exponent.
- */
-template <typename T, require_arithmetic_t<T>* = nullptr>
-inline var pow(T base, const var& exponent) {
-  return make_callback_var(
-      std::pow(base, exponent.val()), [base, exponent](auto&& vi) mutable {
-        if (base == 0.0) {
-          return;  // partials zero, avoids 0 & log(0)
-        }
-        exponent.adj() += vi.adj() * std::log(base) * vi.val();
-      });
-}
-
-/**
- * Return the base scalar raised to the power of the exponent
- * matrix elementwise.
- *
- * The derivative for the variable is
- *
- * \f$\frac{d}{d y} \mbox{pow}(c, y) = c^y \log c \f$.
- *
- *
- * @tparam T arithmetic type
- * @tparam Mat An Eigen type deriving from Eigen::EigenBase or
- *  a `var_value` with inner Eigen type as defined above. The `scalar_type`
- * must be a `var`.
- *
- * @param base Base scalar.
- * @param exponent Exponent variable.
- * @return Base raised to the exponent.
- */
-template <typename T, typename Mat, require_arithmetic_t<T>* = nullptr,
-          require_matrix_st<is_var, Mat>* = nullptr>
-inline auto pow(T base, const Mat& exponent) {
-  using ret_type = plain_type_t<Mat>;
-  arena_t<ret_type> arena_exponent = exponent;
-  arena_t<ret_type> ret = arena_exponent.val().unaryExpr(
-      [base](auto&& x) { return std::pow(base, x); });
-  reverse_pass_callback([base, arena_exponent, ret]() mutable {
-    if (base == 0.0) {
-      return;  // partials zero, avoids 0 & log(0)
     }
-    arena_exponent.adj().array()
-        += ret.adj().array() * std::log(base) * ret.val().array();
   });
+
   return ret_type(ret);
 }
 
@@ -358,37 +232,31 @@ inline auto pow(T base, const Mat& exponent) {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-template <typename Mat, require_matrix_st<is_var_or_arithmetic, Mat>* = nullptr>
-inline auto pow(var base, const Mat& exponent) {
-  using ret_type = promote_scalar_t<var, plain_type_t<Mat>>;
-  if (!is_constant<Mat>::value) {
-    arena_t<ret_type> arena_exponent = exponent;
-    arena_t<ret_type> ret = arena_exponent.val().unaryExpr(
-        [base_val = base.val()](auto&& x) { return std::pow(base_val, x); });
-    reverse_pass_callback([base, arena_exponent, ret]() mutable {
-      if (unlikely(base.val() == 0.0)) {
-        return;  // partials zero, avoids 0 & log(0)
-      }
-      auto ret_mul = (ret.adj().array() * ret.val().array()).eval();
-      base.adj() += (ret_mul * arena_exponent.val().array() / base.val()).sum();
-      arena_exponent.adj().array() += ret_mul * std::log(base.val());
-    });
-    return ret_type(ret);
-  } else {
-    arena_t<promote_scalar_t<double, ret_type>> arena_exponent
-        = value_of(exponent);
-    arena_t<promote_scalar_t<var, ret_type>> ret = arena_exponent.unaryExpr(
-        [base_val = base.val()](auto&& x) { return std::pow(base_val, x); });
-    reverse_pass_callback([base, arena_exponent, ret]() mutable {
-      if (unlikely(base.val() == 0.0)) {
-        return;  // partials zero, avoids 0 & log(0)
-      }
-      base.adj() += (ret.adj().array() * arena_exponent.array()
-                     * ret.val().array() / base.val())
-                        .sum();
-    });
-    return ret_type(ret);
-  }
+template <typename Scal1, typename Mat1,
+          require_all_st_var_or_arithmetic<Scal1, Mat1>* = nullptr,
+          require_stan_scalar_t<Scal1>* = nullptr,
+          require_all_matrix_st<is_var, Mat1>* = nullptr>
+inline auto pow(Scal1 base, const Mat1& exponent) {
+  using ret_type = promote_scalar_t<var, plain_type_t<Mat1>>;
+  arena_t<Mat1> arena_exponent = exponent;
+  arena_t<ret_type> ret = Eigen::pow(value_of(base),
+                                     value_of(arena_exponent).array());
+
+  reverse_pass_callback([base, arena_exponent, ret]() mutable {
+    if (unlikely(value_of(base) == 0.0)) {
+      return;  // partials zero, avoids 0 & log(0)
+    }
+    const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
+    if (!is_constant<Scal1>::value) {
+      forward_as<var>(base).adj()
+        += (ret_mul * value_of(arena_exponent).array() / value_of(base)).sum();
+    }
+    if (!is_constant<Mat1>::value) {
+      forward_as<ret_type>(arena_exponent).adj().array()
+        += ret_mul * std::log(value_of(base));
+    }
+  });
+  return ret_type(ret);
 }
 
 // must uniquely match all pairs of { complex<var>, complex<T>, var, T }

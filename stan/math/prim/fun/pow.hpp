@@ -28,24 +28,20 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
 }
 }  // namespace internal
 
-/**
- * Return the first argument raised to the power of the second
- * argument.
- *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
- * @param a first argument
- * @param b second argument
- * @return the first argument raised to the power of the second
- * argument.
- */
-template <typename T1, typename T2,
-          require_all_t<
-              disjunction<is_complex<T1>, std::is_arithmetic<T1>>,
-              disjunction<is_complex<T2>, std::is_arithmetic<T2>>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
-  return std::pow(a, b);
-}
+#define CREATE_POW_OVERLOAD(type_a, type_b) \
+  inline auto pow(type_a a, type_b b) {     \
+    return std::pow(a, b);                  \
+  }                                         \
+
+CREATE_POW_OVERLOAD(int, int);
+CREATE_POW_OVERLOAD(int, double);
+CREATE_POW_OVERLOAD(int, std::complex<double>);
+CREATE_POW_OVERLOAD(double, int);
+CREATE_POW_OVERLOAD(std::complex<double>, int);
+CREATE_POW_OVERLOAD(double, double);
+CREATE_POW_OVERLOAD(double, std::complex<double>);
+CREATE_POW_OVERLOAD(std::complex<double>, double);
+CREATE_POW_OVERLOAD(std::complex<double>, std::complex<double>);
 
 /**
  * Returns the elementwise raising of the first argument to the power of the
