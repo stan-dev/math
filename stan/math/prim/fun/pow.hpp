@@ -29,9 +29,7 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
 }  // namespace internal
 
 #define CREATE_POW_OVERLOAD(type_a, type_b) \
-  inline auto pow(type_a a, type_b b) {     \
-    return std::pow(a, b);                  \
-  }                                         \
+  inline auto pow(type_a a, type_b b) { return std::pow(a, b); }
 
 CREATE_POW_OVERLOAD(int, int);
 CREATE_POW_OVERLOAD(int, double);
