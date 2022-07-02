@@ -182,17 +182,15 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param y Scalar input to which operation is applied.
  * @param f functor to apply to Eigen and scalar inputs.
  * @return Eigen object with result of applying functor to inputs.
- *
- * Note: The return expresssion needs to be evaluated, otherwise the captured
- *         function and scalar fall out of scope.
  */
 template <typename T1, typename T2, typename F, require_eigen_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  auto f2 = [f](const auto& y2) {
-    return [=](const auto& x2) { return f(x2, y2); };
-  };
-  return x.unaryExpr(f2(y));
+inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+  return make_holder(
+      [](auto& f2, auto& x2, auto& y2) {
+        return x2.unaryExpr([&f2, y2](const auto& v) { return f2(v, y2); });
+      },
+      std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -209,17 +207,15 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param y Eigen input to which operation is applied.
  * @param f functor to apply to Eigen and scalar inputs.
  * @return Eigen object with result of applying functor to inputs.
- *
- * Note: The return expresssion needs to be evaluated, otherwise the captured
- *         function and scalar fall out of scope.
  */
 template <typename T1, typename T2, typename F,
           require_stan_scalar_t<T1>* = nullptr, require_eigen_t<T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  auto f2 = [f](const auto& x2) {
-    return [=](const auto& y2) { return f(x2, y2); };
-  };
-  return y.unaryExpr(f2(x));
+inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+  return make_holder(
+      [](auto& f2, auto& x2, auto& y2) {
+        return y2.unaryExpr([&f2, x2](const auto& v) { return f2(x2, v); });
+      },
+      std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**

@@ -137,45 +137,43 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
 }
 
 /**
- * Specialisation for use where the first two arguments are containers, and the
- * third is a scalar.
+ * Specialisation for use where the third argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
- * @tparam T1 Type of container first input.
- * @tparam T2 Type of container second input.
+ * @tparam T1 Type of first input.
+ * @tparam T2 Type of second input.
  * @tparam T3 Type of scalar third input
  * @tparam F Type of functor to apply.
- * @param x First container input to which operation is applied.
- * @param y Second container input to which operation is applied.
+ * @param x First input to which operation is applied.
+ * @param y Second input to which operation is applied.
  * @param z Third scalar input to which operation is applied.
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename T3, typename F,
-          require_all_container_t<T1, T2>* = nullptr,
+          require_any_container_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
                                  const F& f) {
   return apply_scalar_binary(
-      x, y, [&f, z](const auto& a, const auto& b) { return f(a, b, z); });
+    x, y, [f, z](const auto& a, const auto& b) { return f(a, b, z); });
 }
 
 /**
- * Specialisation for use where the first and third arguments are containers,
- * and the second is a scalar.
+ * Specialisation for use where the second argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
- * @tparam T1 Type of container first input.
+ * @tparam T1 Type of first input.
  * @tparam T2 Type of scalar second input.
- * @tparam T3 Type of container third input
+ * @tparam T3 Type of third input
  * @tparam F Type of functor to apply.
- * @param x First container input to which operation is applied.
+ * @param x First input to which operation is applied.
  * @param y Second scalar input to which operation is applied.
- * @param z Third container input to which operation is applied.
+ * @param z Third input to which operation is applied.
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
@@ -185,111 +183,32 @@ template <typename T1, typename T2, typename T3, typename F,
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
                                  const F& f) {
   return apply_scalar_binary(
-      x, z, [&f, y](const auto& a, const auto& c) { return f(a, y, c); });
+    x, z, [f, y](const auto& a, const auto& c) { return f(a, y, c); });
 }
 
 /**
- * Specialisation for use where the first argument is a container, and the
- * second and third are scalars.
- *
- * The implementation is delegated to apply_scalar_binary to handle both Eigen
- * and std::vector inputs, as well as nested containers.
- *
- * @tparam T1 Type of container first input.
- * @tparam T2 Type of scalar second input.
- * @tparam T3 Type of scalar third input
- * @tparam F Type of functor to apply.
- * @param x First container input to which operation is applied.
- * @param y Second scalar input to which operation is applied.
- * @param z Third scalar input to which operation is applied.
- * @param f functor to apply to inputs.
- * @return container with result of applying functor to inputs.
- */
-template <typename T1, typename T2, typename T3, typename F,
-          require_container_t<T1>* = nullptr,
-          require_all_stan_scalar_t<T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
-  return apply_scalar_binary(
-      x, y, [&](const auto& a, const auto& b) { return f(a, b, z); });
-}
-
-/**
- * Specialisation for use where the first argument is a scalar and the last two
- * arguments are containers.
+ * Specialisation for use where the first argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
  * @tparam T1 Type of scalar first input.
- * @tparam T2 Type of container second input.
- * @tparam T3 Type of container third input
+ * @tparam T2 Type of second input.
+ * @tparam T3 Type of third input
  * @tparam F Type of functor to apply.
  * @param x First scalar input to which operation is applied.
- * @param y Second container input to which operation is applied.
- * @param z Third container input to which operation is applied.
- * @param f functor to apply to inputs.
- * @return container with result of applying functor to inputs.
- */
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_container_t<T2, T3>* = nullptr,
-          require_stan_scalar_t<T1>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
-  return apply_scalar_binary(
-      y, z, [&f, x](const auto& b, const auto& c) { return f(x, b, c); });
-}
-
-/**
- * Specialisation for use where the second argument is a container, and the
- * first and third are scalars.
- *
- * The implementation is delegated to apply_scalar_binary to handle both Eigen
- * and std::vector inputs, as well as nested containers.
- *
- * @tparam T1 Type of scalar first input.
- * @tparam T2 Type of container second input.
- * @tparam T3 Type of scalar third input
- * @tparam F Type of functor to apply.
- * @param x First scalar input to which operation is applied.
- * @param y Second container input to which operation is applied.
- * @param z Third scalar input to which operation is applied.
- * @param f functor to apply to inputs.
- * @return container with result of applying functor to inputs.
- */
-template <typename T1, typename T2, typename T3, typename F,
-          require_container_t<T2>* = nullptr,
-          require_all_stan_scalar_t<T1, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
-  return apply_scalar_binary(
-      y, z, [&](const auto& b, const auto& c) { return f(x, b, c); });
-}
-
-/**
- * Specialisation for use where the third argument is a container, and the
- * first and second are scalars.
- *
- * The implementation is delegated to apply_scalar_binary to handle both Eigen
- * and std::vector inputs, as well as nested containers.
- *
- * @tparam T1 Type of scalar first input.
- * @tparam T2 Type of scalar second input.
- * @tparam T3 Type of container third input
- * @tparam F Type of functor to apply.
- * @param x First container input to which operation is applied.
- * @param y Second scalar input to which operation is applied.
- * @param z Third scalar input to which operation is applied.
+ * @param y Second input to which operation is applied.
+ * @param z Third input to which operation is applied.
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename T3, typename F,
           require_container_t<T3>* = nullptr,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
+          require_stan_scalar_t<T1>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
                                  const F& f) {
   return apply_scalar_binary(
-      y, z, [&](const auto& b, const auto& c) { return f(x, b, c); });
+    y, z, [f, x](const auto& b, const auto& c) { return f(x, b, c); });
 }
 
 }  // namespace math

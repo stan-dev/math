@@ -2,7 +2,7 @@
 #include <test/unit/math/prim/fun/ternary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-
+/*
 TEST(MathFunctions, inc_beta) {
   using stan::math::inc_beta;
 
@@ -83,7 +83,7 @@ TEST(MathFunctions, inc_beta_nan) {
   EXPECT_THROW(stan::math::inc_beta(nan, nan, 0.0), std::domain_error);
   EXPECT_THROW(stan::math::inc_beta(nan, nan, nan), std::domain_error);
 }
-
+*/
 TEST(MathFunctions, inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inc_beta(x1, x2, x3);
