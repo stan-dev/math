@@ -118,21 +118,14 @@ decltype(auto) function_gradients_impl(
       = math::apply([&](auto&&... args) { return value_functor(args...); },
                     std::forward<decltype(values_tuple)>(values_tuple));
 
+  // Create tuple of shared arguments for gradient calculations
   decltype(auto) shared_args_tuple = math::apply(
     [&](auto&&... prim_args) {
       return shared_args_functor(
-        rtn_value.val(), rtn_value.d(),
+        rtn_value, 0,
         prim_args...);
     }, values_tuple
   );
-
-  // g++-4.9 has a bug with using decltype within a lambda for a captured
-  // value. Create a tuple of unitialised values of the same type as the
-  // function return that will be passed to the grad functor
-  plain_type_t<decltype(rtn_value)> dummy_value;
-  auto dummy_tuple = map_tuple([&](auto&& arg) {
-    return scalar_type_t<decltype(arg)>();
-    }, std::forward<ArgsTupleT>(input_args_tuple));
 
   // Initialise variable for accumulating output gradients
   auto rtn_grad = internal::initialize_grad(std::forward<decltype(rtn_value)>(
@@ -142,8 +135,8 @@ decltype(auto) function_gradients_impl(
   // functors, calculating the gradient at each and accumulating into the
   // rtn_grad variable
   walk_tuples(
-      [&](auto&& grad_functor, auto&& input_arg, auto&& dummy) {
-        using arg_t = decltype(dummy);
+      [&](auto&& grad_functor, auto&& input_arg) {
+        using arg_t = decltype(input_arg);
         if (!is_constant_all<arg_t>::value) {
           rtn_grad += math::apply(
               [&](auto&&... args_values) {
@@ -156,8 +149,7 @@ decltype(auto) function_gradients_impl(
         }
       },
       std::forward<FwdGradFunT>(fwd_grad_functors_tuple),
-      std::forward<ArgsTupleT>(input_args_tuple),
-      std::forward<decltype(dummy_tuple)>(dummy_tuple));
+      std::forward<ArgsTupleT>(input_args_tuple));
 
   return to_fvar(rtn_value, rtn_grad);
 }

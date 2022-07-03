@@ -34,15 +34,20 @@ inline plain_type_t<EigMat> inverse(const EigMat& m) {
     }
     return x.inverse().eval();
   };
-  auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
+  auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& shared_args, auto&& x) {
     return -multiply(multiply(transpose(val), adj), transpose(val));
   };
-  auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
+  auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& shared_args, auto&& x) {
     return -multiply(multiply(val, adj), val);
   };
+  auto shared_args_fun
+      = [&](auto&& val, auto&& adj, auto&& xy) {
+        return std::tuple<double>(1.0);
+      };
   return function_gradients(
       std::forward_as_tuple(m_ref),
       std::move(val_fun),
+      std::forward<decltype(shared_args_fun)>(shared_args_fun),
       std::forward_as_tuple(rev_grad_fun),
       std::forward_as_tuple(fwd_grad_fun));
 }

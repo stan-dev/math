@@ -122,7 +122,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple,
             return shared_args_functor(
               rtn_value.val_op(), rtn_value.adj_op(),
               internal::arena_val(
-                  std::forward<decltype(prim_args)>(prim_args))...)
+                  std::forward<decltype(prim_args)>(prim_args))...);
           }, prim_values_tuple
         );
         // Iterate over input arguments, applying the respective gradient
