@@ -15,9 +15,9 @@ namespace internal {
  * Helper function to create a variable for accumulating function gradients.
  * The function takes the return value as an input, so that the correct type
  * and dimensions can be deduced.
- * 
+ *
  * Specialisation for scalar inputs
- * 
+ *
  * @tparam T Type of return scalar
  * @param rtn_val Return value from function
  * @return Scalar of same type as return value, initialised to 0
@@ -29,9 +29,9 @@ constexpr T initialize_grad(T&& rtn_val) {
 
 /**
  * Helper function to create a variable for accumulating function gradients.
- * 
+ *
  * Specialisation for Eigen inputs
- * 
+ *
  * @tparam T Type of return Eigen object
  * @param rtn_val Return value from function
  * @return Eigen object of same type as return value, initialised to all 0
@@ -45,7 +45,7 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
 /**
  * Implementation functor for applying user-specified gradients for a function
  * with fvar<T> inputs.
- * 
+ *
  * @tparam FwdGradients Boolean indicating whether user provided functors for
  *          forward-mode
  * @tparam ScalarReturnT Scalar return type of the function
@@ -65,11 +65,13 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
  *          the value_functor functor and gradients by auto-differentiation
  */
 template <bool FwdGradients, typename ScalarReturnT, typename ArgsTupleT,
-          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
+          typename ValFunT, typename SharedArgsFunT, typename RevGradFunT,
+          typename FwdGradFunT,
           require_st_fvar<ScalarReturnT>* = nullptr,
           require_not_t<std::integral_constant<bool, FwdGradients>>* = nullptr>
 constexpr decltype(auto) function_gradients_impl(
     ArgsTupleT&& input_args_tuple, ValFunT&& value_functor,
+    SharedArgsFunT&& shared_args_functor,
     RevGradFunT&& rev_grad_functors_tuple, FwdGradFunT&& fwd_grad_functors_tuple) {
   return math::apply([&](auto&&... input_args) { return value_functor(input_args...); },
                     std::forward<ArgsTupleT>(input_args_tuple));
@@ -78,7 +80,7 @@ constexpr decltype(auto) function_gradients_impl(
 /**
  * Implementation functor for applying user-specified gradients for a function
  * with fvar<T> inputs.
- * 
+ *
  * @tparam FwdGradients Boolean indicating whether user provided functors for
  *          forward-mode
  * @tparam ScalarReturnT Scalar return type of the function
@@ -99,11 +101,13 @@ constexpr decltype(auto) function_gradients_impl(
  *          tuple of functors
  */
 template <bool FwdGradients, typename ScalarReturnT, typename ArgsTupleT,
-          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
+          typename ValFunT, typename SharedArgsFunT, typename RevGradFunT,
+          typename FwdGradFunT,
           require_st_fvar<ScalarReturnT>* = nullptr,
           require_t<std::integral_constant<bool, FwdGradients>>* = nullptr>
 decltype(auto) function_gradients_impl(
     ArgsTupleT&& input_args_tuple, ValFunT&& value_functor,
+    SharedArgsFunT&& shared_args_functor,
     RevGradFunT&& rev_grad_functors_tuple, FwdGradFunT&& fwd_grad_functors_tuple) {
   // Extract values from input arguments
   decltype(auto) values_tuple
@@ -114,12 +118,21 @@ decltype(auto) function_gradients_impl(
       = math::apply([&](auto&&... args) { return value_functor(args...); },
                     std::forward<decltype(values_tuple)>(values_tuple));
 
+  decltype(auto) shared_args_tuple = math::apply(
+    [&](auto&&... prim_args) {
+      return shared_args_functor(
+        rtn_value.val(), rtn_value.d(),
+        prim_args...);
+    }, values_tuple
+  );
+
   // g++-4.9 has a bug with using decltype within a lambda for a captured
   // value. Create a tuple of unitialised values of the same type as the
   // function return that will be passed to the grad functor
   plain_type_t<decltype(rtn_value)> dummy_value;
-  auto dummy_tuple = map_tuple([&](auto&& arg) { return dummy_value; },
-                               std::forward<ArgsTupleT>(input_args_tuple));
+  auto dummy_tuple = map_tuple([&](auto&& arg) {
+    return scalar_type_t<decltype(arg)>();
+    }, std::forward<ArgsTupleT>(input_args_tuple));
 
   // Initialise variable for accumulating output gradients
   auto rtn_grad = internal::initialize_grad(std::forward<decltype(rtn_value)>(
@@ -130,12 +143,13 @@ decltype(auto) function_gradients_impl(
   // rtn_grad variable
   walk_tuples(
       [&](auto&& grad_functor, auto&& input_arg, auto&& dummy) {
-        using arg_t = decltype(input_arg);
+        using arg_t = decltype(dummy);
         if (!is_constant_all<arg_t>::value) {
           rtn_grad += math::apply(
               [&](auto&&... args_values) {
                 return grad_functor(rtn_value,
                          forward_as<promote_scalar_t<ScalarReturnT, arg_t>>(input_arg).d(),
+                         shared_args_tuple,
                          args_values...);
               },
               values_tuple);
@@ -147,8 +161,6 @@ decltype(auto) function_gradients_impl(
 
   return to_fvar(rtn_value, rtn_grad);
 }
-
-
 
 }  // namespace math
 }  // namespace stan

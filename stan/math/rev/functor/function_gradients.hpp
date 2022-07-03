@@ -43,31 +43,35 @@ inline decltype(auto) arena_val(T&& arg) {
 }  // namespace internal
 
 /**
- * @brief 
- * 
- * @tparam FwdGradients 
- * @tparam ScalarReturnT 
- * @tparam ArgsTupleT 
- * @tparam ValFunT 
- * @tparam RevGradFunT 
- * @tparam FwdGradFunT 
- * @param input_args_tuple 
- * @param value_functor 
- * @param rev_grad_functors_tuple 
- * @param fwd_grad_functors_tuple 
- * @return decltype(auto) 
+ * @brief
+ *
+ * @tparam FwdGradients
+ * @tparam ScalarReturnT
+ * @tparam ArgsTupleT
+ * @tparam ValFunT
+ * @tparam RevGradFunT
+ * @tparam FwdGradFunT
+ * @param input_args_tuple
+ * @param value_functor
+ * @param rev_grad_functors_tuple
+ * @param fwd_grad_functors_tuple
+ * @return decltype(auto)
  */
 template <bool FwdGradients, typename ScalarReturnT, typename ArgsTupleT,
-          typename ValFunT, typename RevGradFunT, typename FwdGradFunT,
-          require_st_var<ScalarReturnT>* = nullptr>
-decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple, ValFunT&& value_functor,
-                                     RevGradFunT&& rev_grad_functors_tuple,
-                                     FwdGradFunT&& fwd_grad_functors_tuple) {
+          typename ValFunT, typename SharedArgsFunT, typename RevGradFunT,
+          typename FwdGradFunT, require_st_var<ScalarReturnT>* = nullptr>
+decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple,
+                                       ValFunT&& value_functor,
+                                       SharedArgsFunT&& shared_args_functor,
+                                       RevGradFunT&& rev_grad_functors_tuple,
+                                       FwdGradFunT&& fwd_grad_functors_tuple) {
   // Extract values from input arguments to use in value
   // and gradient calculations
   decltype(auto) prim_values_tuple
       = map_tuple([&](auto&& input_arg) { return to_arena(value_of(input_arg)); },
                   std::forward<ArgsTupleT>(input_args_tuple));
+
+  using prim_tuple_t = decltype(prim_values_tuple);
 
   // Copy arguments to arena storage for use in callback
   decltype(auto) arena_args_tuple
@@ -93,7 +97,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple, ValFunT&& 
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
   using val_t = decltype(holder_wrapper(std::forward<ValFunT>(value_functor),
-                           std::forward<decltype(prim_values_tuple)>(prim_values_tuple)));
+                           std::forward<prim_tuple_t>(prim_values_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
   // or var<Matrix>
@@ -102,14 +106,25 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple, ValFunT&& 
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn_value = holder_wrapper(std::forward<ValFunT>(value_functor),
-                            std::forward<decltype(prim_values_tuple)>(prim_values_tuple));
+  arena_t<ret_type> rtn_value
+    = holder_wrapper(std::forward<ValFunT>(value_functor),
+                     std::forward<prim_tuple_t>(prim_values_tuple));
+
   if (unlikely(math::size(rtn_value) == 0)) {
     return ret_type(rtn_value);
   }
 
   reverse_pass_callback(
-      [rev_grad_functors_tuple, arena_args_tuple, prim_values_tuple, rtn_value]() mutable {
+      [rev_grad_functors_tuple, arena_args_tuple, prim_values_tuple,
+        shared_args_functor, rtn_value]() mutable {
+        decltype(auto) shared_args_tuple = math::apply(
+          [&](auto&&... prim_args) {
+            return shared_args_functor(
+              rtn_value.val_op(), rtn_value.adj_op(),
+              internal::arena_val(
+                  std::forward<decltype(prim_args)>(prim_args))...)
+          }, prim_values_tuple
+        );
         // Iterate over input arguments, applying the respective gradient
         // function with the tuple of extracted primitive values
         walk_tuples(
@@ -124,6 +139,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple, ValFunT&& 
                     math::apply(
                         [&](auto&&... prim_args) {
                           return grad_funs(rtn_value.val_op(), rtn_value.adj_op(),
+                                   shared_args_tuple,
                                    internal::arena_val(
                                        std::forward<decltype(prim_args)>(prim_args))...);
                         },
