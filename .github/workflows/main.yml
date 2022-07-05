@@ -60,7 +60,7 @@ jobs:
         python.exe runTests.py -j2 test/unit/math/memory
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -111,7 +111,7 @@ jobs:
         python.exe runTests.py test/unit/math/mix/*_test.cpp
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -157,7 +157,7 @@ jobs:
         python.exe runTests.py $MixFunTests[0..$HalfNumberTests]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -203,7 +203,7 @@ jobs:
         python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
