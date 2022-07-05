@@ -75,6 +75,7 @@
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/fun/hypergeometric_pFq.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>

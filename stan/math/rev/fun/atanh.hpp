@@ -9,6 +9,7 @@
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <cmath>
 #include <complex>
 
