@@ -41,7 +41,7 @@ inline plain_type_t<EigMat> inverse(const EigMat& m) {
     return -multiply(multiply(val, adj), val);
   };
   auto shared_args_fun
-      = [&](auto&& val, auto&& adj, auto&& xy) {
+      = [&](auto&& val, auto&& adj, auto&& x) {
         return std::tuple<double>(1.0);
       };
   return function_gradients(

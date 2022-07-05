@@ -16,7 +16,6 @@
 #include <stan/math/fwd/fun/atanh.hpp>
 #include <stan/math/fwd/fun/bessel_first_kind.hpp>
 #include <stan/math/fwd/fun/bessel_second_kind.hpp>
-#include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/binary_log_loss.hpp>
 #include <stan/math/fwd/fun/cbrt.hpp>
 #include <stan/math/fwd/fun/ceil.hpp>

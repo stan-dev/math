@@ -108,7 +108,8 @@ template <bool FwdGradients, typename ScalarReturnT, typename ArgsTupleT,
 decltype(auto) function_gradients_impl(
     ArgsTupleT&& input_args_tuple, ValFunT&& value_functor,
     SharedArgsFunT&& shared_args_functor,
-    RevGradFunT&& rev_grad_functors_tuple, FwdGradFunT&& fwd_grad_functors_tuple) {
+    RevGradFunT&& rev_grad_functors_tuple,
+    FwdGradFunT&& fwd_grad_functors_tuple) {
   // Extract values from input arguments
   decltype(auto) values_tuple
       = map_tuple([&](auto&& input_arg) { return value_of(input_arg); },

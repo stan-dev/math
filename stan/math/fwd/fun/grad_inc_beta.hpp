@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/log.hpp>

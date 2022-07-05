@@ -117,7 +117,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple,
   reverse_pass_callback(
       [rev_grad_functors_tuple, arena_args_tuple, prim_values_tuple,
         shared_args_functor, rtn_value]() mutable {
-        decltype(auto) shared_args_tuple = math::apply(
+        auto shared_args_tuple = math::apply(
           [&](auto&&... prim_args) {
             return shared_args_functor(
               rtn_value.val_op(), rtn_value.adj_op(),
@@ -134,6 +134,10 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple,
                 // Need to wrap the argument in a forward_as<var>() so that it
                 // will compile with both primitive and var inputs
                 forward_as<promote_scalar_t<var, decltype(input_arg)>>(input_arg).adj() +=
+                  // Structure partial to correct type & dimension for target
+                  // adjoint
+                  aggregate_partial(
+                    std::forward<decltype(input_arg)>(input_arg),
                     // Use the relevant gradient function with the tuple of
                     // primitive arguments
                     math::apply(
@@ -143,7 +147,8 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& input_args_tuple,
                                    internal::arena_val(
                                        std::forward<decltype(prim_args)>(prim_args))...);
                         },
-                        prim_values_tuple);
+                        prim_values_tuple)
+                  );
               }
             },
             std::forward<RevGradFunT>(rev_grad_functors_tuple),

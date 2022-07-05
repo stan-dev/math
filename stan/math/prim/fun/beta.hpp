@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/add.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
@@ -49,10 +52,45 @@ namespace math {
  * @param b Second value
  * @return Beta function applied to the two values.
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
-  using std::exp;
-  return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+template <typename T1, typename T2,
+          require_all_not_std_vector_t<T1, T2>* = nullptr,
+          require_t<
+            disjunction<
+              is_any_var_matrix<T1, T2>,
+              conjunction<is_stan_scalar<T1>,is_stan_scalar<T2>>
+            >
+          >* = nullptr>
+inline auto beta(const T1 a, const T2 b) {
+  auto val_fun = [&](auto&& x, auto&& y) {
+    using std::exp;
+    return exp(subtract(add(lgamma(x), lgamma(y)), lgamma(add(x, y))));
+  };
+
+  auto shared_args_fun
+      = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
+        auto digamma_xy = digamma(add(x, y));
+        return std::tuple<decltype(digamma_xy)>(digamma_xy);
+      };
+
+  auto grad_fun_a
+    = [&](auto&& val, auto&& adj, auto&& shared_args, auto&& x, auto&& y) {
+      const auto& digamma_xy = std::get<0>(shared_args);
+
+      return elt_multiply(val,
+                          elt_multiply(adj, subtract(digamma(x), digamma_xy)));
+    };
+  auto grad_fun_b
+    = [&](auto&& val, auto&& adj, auto&& shared_args, auto&& x, auto&& y) {
+      const auto& digamma_xy = std::get<0>(shared_args);
+
+      return elt_multiply(val,
+                          elt_multiply(adj, subtract(digamma(y), digamma_xy)));
+    };
+  return function_gradients<true>(
+    std::forward_as_tuple(a, b),
+    std::forward<decltype(val_fun)>(val_fun),
+    std::forward<decltype(shared_args_fun)>(shared_args_fun),
+    std::forward_as_tuple(grad_fun_a, grad_fun_b));
 }
 
 /**
@@ -65,7 +103,8 @@ inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
  * @param b Second input
  * @return Beta function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+template <typename T1, typename T2,
+          require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_matrix_t<T1, T2>* = nullptr>
 inline auto beta(const T1& a, const T2& b) {
   return apply_scalar_binary(

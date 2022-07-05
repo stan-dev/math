@@ -4,9 +4,9 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
+#include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/pow.hpp>
