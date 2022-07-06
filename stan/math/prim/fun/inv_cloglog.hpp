@@ -47,7 +47,7 @@ namespace math {
  */
 inline double inv_cloglog(double x) {
   using std::exp;
-  return 1 - exp(-exp(x));
+  return 1. - exp(-exp(x));
 }
 
 /**
@@ -59,7 +59,7 @@ inline double inv_cloglog(double x) {
  */
 struct inv_cloglog_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return inv_cloglog(x);
   }
 };

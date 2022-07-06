@@ -80,7 +80,6 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
@@ -88,7 +87,7 @@ pipeline {
     }
     environment {
         STAN_NUM_THREADS = 4
-        CLANG_CXX = 'clang++-6.0'
+        CLANG_CXX = 'clang++-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
         N_TESTS = 150
@@ -117,7 +116,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu'
+                    image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
                 }
             }
@@ -168,7 +167,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu'
+                    image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
                 }
             }
@@ -203,7 +202,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu'
+                    image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
                 }
             }
@@ -225,7 +224,7 @@ pipeline {
         stage('Headers check') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu'
+                    image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
                 }
             }
@@ -253,7 +252,7 @@ pipeline {
                 stage('Rev/Fwd Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -276,7 +275,7 @@ pipeline {
                 stage('Mix Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -290,7 +289,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", true)
+                            runTests("test/unit/math/mix", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -298,7 +297,7 @@ pipeline {
                 stage('Prim Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -314,7 +313,7 @@ pipeline {
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", false)                            
+                            runTests("test/unit/math/prim", false)
                             runTests("test/unit/math/memory", false)
                         }
                     }
@@ -333,7 +332,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
                         }
                     }
@@ -353,7 +352,7 @@ pipeline {
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'v100'
                             args '--gpus 1'
                         }
@@ -376,9 +375,8 @@ pipeline {
                 stage('Distribution tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
@@ -410,9 +408,8 @@ pipeline {
                 stage('Expressions test') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
@@ -446,9 +443,8 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu'
+                            image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
@@ -470,26 +466,6 @@ pipeline {
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    when {
-                        allOf {
-                            anyOf {
-                                branch 'develop'
-                                branch 'master'
-                                expression { params.run_win_tests }
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit", true, false)
-                    }
                 }
             }
         }
@@ -516,7 +492,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu'
+                    image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
                 }
             }

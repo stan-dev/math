@@ -99,6 +99,7 @@
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/fun/falling_factorial.hpp>
 #include <stan/math/prim/fun/fdim.hpp>
+#include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
 #include <stan/math/prim/fun/floor.hpp>
@@ -123,10 +124,13 @@
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <stan/math/prim/fun/grad_inc_beta.hpp>
+#include <stan/math/prim/fun/grad_pFq.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/head.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F2.hpp>
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>

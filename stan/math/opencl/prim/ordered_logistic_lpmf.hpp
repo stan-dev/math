@@ -73,8 +73,8 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   static const char* function = "ordered_logistic_lpmf(OpenCL)";
 
   if (size(y) != 1) {
-    check_size_match(function, "Size of ", "y", size(y), "Size of", "lambda",
-                     size(lambda));
+    check_size_match(function, "Size of ", "y", math::size(y), "Size of",
+                     "lambda", math::size(lambda));
   }
 
   int N_instances = max_size(y, lambda);

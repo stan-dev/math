@@ -37,7 +37,7 @@ inline complex_return_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
  * @param y second argument
  * @return product of the arguments
  */
-template <typename U, typename V>
+template <typename U, typename V, require_all_stan_scalar_t<U, V>* = nullptr>
 inline complex_return_t<U, V> operator*(const std::complex<U>& x,
                                         const std::complex<V>& y) {
   return internal::complex_multiply(x, y);

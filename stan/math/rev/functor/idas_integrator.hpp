@@ -64,7 +64,6 @@ class idas_integrator {
     N_Vector* yys = serv.nv_yys;
     N_Vector* yps = serv.nv_yps;
     const size_t n = dae.N;
-    const size_t ns = dae.ns;
 
     CHECK_IDAS_CALL(IDASStolerances(mem, rtol_, atol_));
     CHECK_IDAS_CALL(IDASetMaxNumSteps(mem, max_num_steps_));

@@ -61,7 +61,7 @@ struct log1p_fun {
    * @return natural log of one plus the argument
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return log1p(x);
   }
 };
