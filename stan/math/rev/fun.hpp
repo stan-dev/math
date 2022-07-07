@@ -61,6 +61,7 @@
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
+#include <stan/math/rev/fun/fft.hpp>
 #include <stan/math/rev/fun/fill.hpp>
 #include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
@@ -74,6 +75,7 @@
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
+#include <stan/math/rev/fun/hypergeometric_pFq.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/identity_free.hpp>

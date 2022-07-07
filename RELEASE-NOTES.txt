@@ -1,6 +1,36 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.4.0 (1 July 2022)
+======================================================================
+
+Complex:
+ - Added fast Fourier transform (FFT) implementations of 1D and 2D discrete Fourier transform and their inverses. (#2686, #2750)
+ - Added type traits for detecting whether a type has a value type that is complex. (#2694)
+ - Added vectorized versions of get_real and get_imag. (#2700)
+ - Vectorized complex `abs()`, `to_complex`. (#2737, #2749)
+
+New functions:
+ - Added the incomplete beta function inverse. (#2637)
+ - Added the `wishart_cholesky_lpdf`, which is the Cholesky parameterization of the Wishart distribution of both the input matrix and the scale matrix. (#2710)
+ - Added the  inverse Wishart Cholesky parameterization `lpdf\lupdf` is available along with `inv_wishart_cholesky_rng`. (#2713)
+ - Added the Cholesky parameterization of the multivariate Student's T distribution. (#2715)
+ - Added the quantile function of the standard normal density function with log input. (#2744)
+
+Misc:
+ - Upgraded Sundials to version 6.1.1. (#2692)
+ - Updated Boost to 1.78.0. (#2725)
+ - Added namespace qualifiers to `size` and `apply` calls for C++17 compatibility. (#2693)
+ - Enabled address sanitizer and fix it when running inside Docker in Flatiron CI. (#2702)
+ - Made `arena_allocator` usable for all std containers. (#2708)
+ - Added gradient calculation for the a2 input in stan-math for the `grad_2F1` function and fixes incorrect return values when `z` is between -1 and 0. (#2721)
+ - Updated the signatures of `eigenvalues` and `eigenvectors` to use our pseudo-concept require templates.(#2728)
+ - `norm1` and `norm2` were extended with the `apply_vector_unary` to accept general std::vectors as well as the Eigen vectors previously supported. (#2742)
+ - Cleaned up compiler warnings for unused variables and non-consistent use of class and struct for ops_partials_edge. (#2757)
+ - Fixed the check for `y` in `gamma_lpdf` so that it now errors if y is not a positive finite value. (#2758)
+ - Improved numerical stability of gamma_lcdf gradients (#2767)
+
+======================================================================
 v4.3.2 (25 March 2022)
 ======================================================================
 

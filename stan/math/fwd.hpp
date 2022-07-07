@@ -11,6 +11,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun.hpp>
 #include <stan/math/fwd/functor.hpp>
+#include <stan/math/fwd/prob.hpp>
 
 #include <stan/math/prim.hpp>
 
