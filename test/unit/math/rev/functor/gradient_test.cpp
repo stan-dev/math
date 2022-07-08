@@ -168,11 +168,11 @@ TEST(RevFunctor, gradient_array_threaded) {
   std::vector<std::future<VectorXd>> ad_futures_ref;
 
   for (std::size_t i = 0; i < 100; i++) {
-   /*
-    * the use pattern in stan-math will be to defer the first job in
-    * order to make the main thread do some work which is why we
-    * alter the execution policy here
-    */
+    /*
+     * the use pattern in stan-math will be to defer the first job in
+     * order to make the main thread do some work which is why we
+     * alter the execution policy here
+     */
     ad_futures_ref.emplace_back(std::async(i == 0 ? std::launch::deferred
 #ifndef STAN_THREADS
                                                   : std::launch::deferred,
