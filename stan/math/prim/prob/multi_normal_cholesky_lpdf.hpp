@@ -253,13 +253,15 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     row_vector_partials_t half;
     vector_partials_t scaled_diff;
+    vector_partials_t y_val_minus_mu_val = y_val - mu_val;
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
       matrix_partials_t L_val = value_of(L_ref);
 
-      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val - mu_val).transpose();
+      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
+                 .transpose();
 
       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
@@ -271,7 +273,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
           = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
 
       half = (inv_L_val.template triangularView<Eigen::Lower>()
-              * (y_val - mu_val).template cast<T_partials_return>())
+              * y_val_minus_mu_val.template cast<T_partials_return>())
                  .transpose();
 
       scaled_diff = (half * inv_L_val.template triangularView<Eigen::Lower>())

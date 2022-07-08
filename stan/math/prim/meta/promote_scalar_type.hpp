@@ -96,6 +96,17 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
 };
 
 /** \ingroup type_trait
+ * Overload for specializing sets of tuples.
+ * See the docs for \ref stan::math::promote_scalar_type.
+ */
+template <typename... PromotionScalars, typename... UnPromotedTypes>
+struct promote_scalar_type<std::tuple<PromotionScalars...>,
+                           std::tuple<UnPromotedTypes...>> {
+  using type = std::tuple<typename promote_scalar_type<
+      std::decay_t<PromotionScalars>, std::decay_t<UnPromotedTypes>>::type...>;
+};
+
+/** \ingroup type_trait
  * See the docs for \ref stan::math::promote_scalar_type.
  */
 template <typename T, typename S>
