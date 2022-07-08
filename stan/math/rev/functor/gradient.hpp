@@ -94,8 +94,10 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * to hold the gradients
  */
 template <typename F, typename InputIt>
-void gradient(const F& f, const Eigen::Ref<const Eigen::Matrix<double, Eigen::Dynamic, 1>>& x,
-              double& fx, InputIt first_grad_fx, InputIt last_grad_fx) {
+void gradient(
+    const F& f,
+    const Eigen::Ref<const Eigen::Matrix<double, Eigen::Dynamic, 1>>& x,
+    double& fx, InputIt first_grad_fx, InputIt last_grad_fx) {
   nested_rev_autodiff nested;
 
   if (last_grad_fx - first_grad_fx != x.size()) {
@@ -110,8 +112,7 @@ void gradient(const F& f, const Eigen::Ref<const Eigen::Matrix<double, Eigen::Dy
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad(fx_var.vi_);
-  for (Eigen::VectorXd::Index i = 0; i < x_var.size();
-       ++i) {
+  for (Eigen::VectorXd::Index i = 0; i < x_var.size(); ++i) {
     *first_grad_fx++ = x_var.coeff(i).adj();
   }
 }
