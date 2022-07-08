@@ -112,7 +112,7 @@ void gradient(const F& f, const Eigen::Ref<const Eigen::Matrix<double, Eigen::Dy
   grad(fx_var.vi_);
   for (Eigen::VectorXd::Index i = 0; i < x_var.size();
        ++i) {
-    *first_grad_fx++ = x_var(i).adj();
+    *first_grad_fx++ = x_var.coeff(i).adj();
   }
 }
 
