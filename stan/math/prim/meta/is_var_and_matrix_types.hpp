@@ -1,8 +1,11 @@
 #ifndef STAN_MATH_PRIM_META_IS_VAR_AND_MATRIX_TYPES_HPP
 #define STAN_MATH_PRIM_META_IS_VAR_AND_MATRIX_TYPES_HPP
 
+#include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_matrix.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
 
 namespace stan {
 
