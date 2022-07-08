@@ -40,10 +40,10 @@ TEST(RevFunctor, gradient_array) {
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
   double fx;
-  double grad_fx[2];
+  std::vector<double> grad_fx(2, 0);
   stan::math::gradient(f, x, fx, std::begin(grad_fx), std::end(grad_fx));
   EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx);
-  EXPECT_EQ(2, sizeof(grad_fx) / sizeof(grad_fx[0]));
+  EXPECT_EQ(2, grad_fx.size());
   EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad_fx[0]);
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx[1]);
 }
@@ -139,12 +139,12 @@ TEST(RevFunctor, gradient_array_threaded) {
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
   double fx_ref;
-  double grad_fx_ref[2];
+  std::vector<double> grad_fx_ref(2, 0);
   stan::math::gradient(f, x_ref, fx_ref, std::begin(grad_fx_ref),
                        std::end(grad_fx_ref));
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
                   fx_ref);
-  EXPECT_EQ(2, sizeof(grad_fx_ref) / sizeof(grad_fx_ref[0]));
+  EXPECT_EQ(2, grad_fx_ref.size());
   EXPECT_FLOAT_EQ(2 * x_ref(0) * x_ref(1), grad_fx_ref[0]);
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref[1]);
 
@@ -153,7 +153,7 @@ TEST(RevFunctor, gradient_array_threaded) {
     double fx;
     VectorXd x_local(2);
     x_local << x1, x2;
-    double grad_fx[2];
+    std::vector<double> grad_fx(2, 0);
     stan::math::gradient(fun1(), x_local, fx, std::begin(grad_fx),
                          std::end(grad_fx));
     VectorXd res(1 + x_local.size());
@@ -200,7 +200,7 @@ TEST(RevFunctor, gradient_array_threaded) {
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
     EXPECT_FLOAT_EQ(fx_ref, fx_job);
-    EXPECT_EQ(sizeof(grad_fx_ref) / sizeof(grad_fx_ref[0]), grad_fx_job.size());
+    EXPECT_EQ(grad_fx_ref.size(), grad_fx_job.size());
     EXPECT_FLOAT_EQ(grad_fx_ref[0], grad_fx_job(0));
     EXPECT_FLOAT_EQ(grad_fx_ref[1], grad_fx_job(1));
   }
@@ -303,12 +303,12 @@ TEST(RevFunctor, gradient_array_threaded_tbb) {
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
   double fx_ref;
-  double grad_fx_ref[2];
+  std::vector<double> grad_fx_ref(2, 0);
   stan::math::gradient(f, x_ref, fx_ref, std::begin(grad_fx_ref),
                        std::end(grad_fx_ref));
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
                   fx_ref);
-  EXPECT_EQ(2, sizeof(grad_fx_ref) / sizeof(grad_fx_ref[0]));
+  EXPECT_EQ(2, grad_fx_ref.size());
   EXPECT_FLOAT_EQ(2 * x_ref(0) * x_ref(1), grad_fx_ref[0]);
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref[1]);
 
@@ -343,7 +343,7 @@ TEST(RevFunctor, gradient_array_threaded_tbb) {
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
     EXPECT_FLOAT_EQ(fx_ref, fx_job);
-    EXPECT_EQ(sizeof(grad_fx_ref) / sizeof(grad_fx_ref[0]), grad_fx_job.size());
+    EXPECT_EQ(grad_fx_ref.size(), grad_fx_job.size());
     EXPECT_FLOAT_EQ(grad_fx_ref[0], grad_fx_job(0));
     EXPECT_FLOAT_EQ(grad_fx_ref[1], grad_fx_job(1));
   }
@@ -409,7 +409,7 @@ TEST(RevFunctor, RecoverMemory_gradient_array) {
       VectorXd x(5);
       x << 1, 2, 3, 4, 5;
       double fx;
-      double grad_fx[5];
+      std::vector<double> grad_fx(5, 0);
       stan::math::gradient(sum_and_throw, x, fx, std::begin(grad_fx),
                            std::end(grad_fx));
     } catch (const std::domain_error& e) {
@@ -427,7 +427,7 @@ TEST(RevFunctor, gradientBoundaryConds) {
   using stan::math::gradient;
   x << 1, 2, 3, 4, 5;
   double fx;
-  double grad_fx[5];
+  std::vector<double> grad_fx(5, 0);
   EXPECT_NO_THROW(gradient([](const auto& x) { return stan::math::sum(x); }, x,
                            fx, std::begin(grad_fx), std::end(grad_fx)));
   EXPECT_THROW(gradient([](const auto& x) { return stan::math::sum(x); }, x, fx,
