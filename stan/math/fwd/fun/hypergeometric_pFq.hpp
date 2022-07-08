@@ -24,8 +24,8 @@ namespace math {
 template <typename FvarVec1, typename FvarVec2, typename Fvar,
           require_all_matrix_t<FvarVec1, FvarVec2>* = nullptr,
           require_return_type_t<is_fvar, FvarVec1, FvarVec2, Fvar>* = nullptr>
-inline return_type_t<FvarVec1, FvarVec2, Fvar> hypergeometric_pFq(const FvarVec1& a, const FvarVec2& b,
-                                                    const Fvar& z) {
+inline return_type_t<FvarVec1, FvarVec2, Fvar> hypergeometric_pFq(
+    const FvarVec1& a, const FvarVec2& b, const Fvar& z) {
   using fvar_t = return_type_t<FvarVec1, FvarVec2, Fvar>;
   ref_type_t<FvarVec1> a_ref = a;
   ref_type_t<FvarVec2> b_ref = b;
@@ -34,12 +34,14 @@ inline return_type_t<FvarVec1, FvarVec2, Fvar> hypergeometric_pFq(const FvarVec1
   typename fvar_t::Scalar grad = 0;
 
   if (!is_constant<FvarVec1>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, FvarVec1>>(a_ref).d(),
-                        std::get<0>(grad_tuple));
+    grad += dot_product(
+        forward_as<promote_scalar_t<fvar_t, FvarVec1>>(a_ref).d(),
+        std::get<0>(grad_tuple));
   }
   if (!is_constant<FvarVec2>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, FvarVec2>>(b_ref).d(),
-                        std::get<1>(grad_tuple));
+    grad += dot_product(
+        forward_as<promote_scalar_t<fvar_t, FvarVec2>>(b_ref).d(),
+        std::get<1>(grad_tuple));
   }
   if (!is_constant<Fvar>::value) {
     grad += forward_as<promote_scalar_t<fvar_t, Fvar>>(z).d_

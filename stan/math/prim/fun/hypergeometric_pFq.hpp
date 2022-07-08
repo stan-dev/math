@@ -28,11 +28,12 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Generalised hypergeometric function
  */
-template <typename ArithVec1, typename ArithVec2, typename Arithmetic,
-          require_all_eigen_st<std::is_arithmetic, ArithVec1, ArithVec2>* = nullptr,
-          require_arithmetic_t<Arithmetic>* = nullptr>
-return_type_t<ArithVec1, ArithVec2, Arithmetic> hypergeometric_pFq(const ArithVec1& a, const ArithVec2& b,
-                                             const Arithmetic& z) {
+template <
+    typename ArithVec1, typename ArithVec2, typename Arithmetic,
+    require_all_eigen_st<std::is_arithmetic, ArithVec1, ArithVec2>* = nullptr,
+    require_arithmetic_t<Arithmetic>* = nullptr>
+return_type_t<ArithVec1, ArithVec2, Arithmetic> hypergeometric_pFq(
+    const ArithVec1& a, const ArithVec2& b, const Arithmetic& z) {
   plain_type_t<ArithVec1> a_ref = a;
   plain_type_t<ArithVec2> b_ref = b;
   check_finite("hypergeometric_pFq", "a", a_ref);

@@ -24,7 +24,8 @@ namespace math {
 template <typename VarVec1, typename VarVec2, typename Var,
           require_all_matrix_t<VarVec1, VarVec2>* = nullptr,
           require_return_type_t<is_var, VarVec1, VarVec2, Var>* = nullptr>
-inline var hypergeometric_pFq(const VarVec1& a, const VarVec2& b, const Var& z) {
+inline var hypergeometric_pFq(const VarVec1& a, const VarVec2& b,
+                              const Var& z) {
   arena_t<VarVec1> arena_a = a;
   arena_t<VarVec2> arena_b = b;
   return make_callback_var(

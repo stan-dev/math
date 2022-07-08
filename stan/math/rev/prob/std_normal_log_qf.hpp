@@ -17,7 +17,8 @@ namespace math {
  * @param log_p log probability vector
  * @return Elementwise unit normal inverse cdf
  */
-template <typename VarValue, require_stan_scalar_or_eigen_t<VarValue>* = nullptr>
+template <typename VarValue,
+          require_stan_scalar_or_eigen_t<VarValue>* = nullptr>
 inline auto std_normal_log_qf(const var_value<VarValue>& log_p) {
   return make_callback_var(
       std_normal_log_qf(log_p.val()), [log_p](auto& vi) mutable {
