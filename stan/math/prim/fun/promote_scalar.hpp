@@ -1,120 +1,107 @@
 #ifndef STAN_MATH_PRIM_FUN_PROMOTE_SCALAR_HPP
 #define STAN_MATH_PRIM_FUN_PROMOTE_SCALAR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
+#include <tuple>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
 /**
- * General struct to hold static function for promoting underlying
- * scalar types.
+ * Promote a scalar to another scalar type
  *
- * @tparam T return type of nested static function.
- * @tparam S input type for nested static function, whose underlying
- * scalar type must be assignable to T.
+ * @tparam PromotionScalar scalar type of output.
+ * @tparam UnPromotedType input type. `UnPromotedType` must be constructible
+ * from `PromotionScalar`
+ * @param x input scalar to be promoted to `PromotionScalar` type
  */
-template <typename T, typename S, typename Enable = void>
-struct promote_scalar_struct {
-  /**
-   * Return the value of the input argument promoted to the type
-   * specified by the template parameter.
-   *
-   * This is the base case for mismatching template parameter
-   * types in which the underlying scalar type of template
-   * parameter <code>S</code> is assignable to type <code>T</code>.
-   *
-   * @param x input of type S.
-   * @return input promoted to have scalars of type T.
-   */
-  static T apply(S x) { return T(x); }
-};
-
-/**
- * Struct to hold static function for promoting underlying scalar
- * types.  This specialization is for equal input and output types
- * of function types.
- *
- * @tparam T input and return type of nested static function.
- */
-template <typename T>
-struct promote_scalar_struct<T, T> {
-  /**
-   * Return the unmodified input.
-   *
-   * @param x input of type T.
-   * @return input unmodified.
-   */
-  static T apply(const T& x) { return x; }
-};
-
-/**
- * This is the top-level function to call to promote the scalar
- * types of an input of type S to type T.
- *
- * @tparam T scalar type of output.
- * @tparam S input type.
- * @param x input vector.
- * @return input vector with scalars promoted to type T.
- */
-template <typename T, typename S>
-typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
-  return promote_scalar_struct<T, S>::apply(x);
+template <typename PromotionScalar, typename UnPromotedType,
+          require_constructible_t<PromotionScalar, UnPromotedType>* = nullptr,
+          require_not_same_t<PromotionScalar, UnPromotedType>* = nullptr>
+inline constexpr auto promote_scalar(UnPromotedType&& x) {
+  return PromotionScalar(std::forward<UnPromotedType>(x));
 }
 
 /**
- * Struct to hold static function for promoting underlying scalar
- * types.  This specialization is for standard vector inputs.
+ * No-op overload when promoting a type's scalar to the type it already has.
  *
- * @tparam T return scalar type
- * @tparam S input type for standard vector elements in static
- * nested function, which must have an underlying scalar type
- * assignable to T.
+ * @tparam PromotionScalar scalar type of output.
+ * @tparam UnPromotedType input type. `UnPromotedType`'s `scalar_type` must be
+ * equal to `PromotionScalar`
+ * @param x input
  */
-template <typename T, typename S>
-struct promote_scalar_struct<T, std::vector<S>> {
-  /**
-   * Return the standard vector consisting of the recursive
-   * promotion of the elements of the input standard vector to the
-   * scalar type specified by the return template parameter.
-   *
-   * @param x input standard vector.
-   * @return standard vector with values promoted from input vector.
-   */
-  static std::vector<typename promote_scalar_type<T, S>::type> apply(
-      const std::vector<S>& x) {
-    using return_t = std::vector<typename promote_scalar_type<T, S>::type>;
-    using idx_t = index_type_t<return_t>;
-    return_t y(x.size());
-    for (idx_t i = 0; i < x.size(); ++i) {
-      y[i] = promote_scalar_struct<T, S>::apply(x[i]);
-    }
-    return y;
-  }
-};
+template <
+    typename PromotionScalar, typename UnPromotedType,
+    require_same_t<PromotionScalar, scalar_type_t<UnPromotedType>>* = nullptr>
+inline constexpr auto promote_scalar(UnPromotedType&& x) noexcept {
+  return std::forward<UnPromotedType>(x);
+}
 
 /**
- * Struct to hold static function for promoting underlying scalar
- * types.  This specialization is for Eigen inputs.
+ * Promote the scalar type of an eigen matrix to the requested type.
  *
- * @tparam T return scalar type
- * @tparam S input matrix or vector or row vector type for static nested
- * function, which must have a scalar type assignable to T
+ * @tparam PromotionScalar scalar type of output.
+ * @tparam UnPromotedType input type. The `PromotionScalar` type must be
+ * constructible from `UnPromotedType`'s `scalar_type`
+ * @param x input
  */
-template <typename T, typename S>
-struct promote_scalar_struct<T, S, require_eigen_t<S>> {
-  /**
-   * Return the matrix consisting of the recursive promotion of
-   * the elements of the input matrix to the scalar type specified
-   * by the return template parameter.
-   *
-   * @param x input matrix.
-   * @return matrix with values promoted from input vector.
-   */
-  static auto apply(const S& x) { return x.template cast<T>(); }
-};
+template <typename PromotionScalar, typename UnPromotedType,
+          require_eigen_t<UnPromotedType>* = nullptr,
+          require_not_same_t<PromotionScalar,
+                             value_type_t<UnPromotedType>>* = nullptr>
+inline auto promote_scalar(UnPromotedType&& x) {
+  return x.template cast<PromotionScalar>();
+}
+
+// Forward decl for iterating over tuples used in std::vector<tuple>
+template <typename PromotionScalars, typename UnPromotedTypes,
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr>
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
+promote_scalar(UnPromotedTypes&& x);
+/**
+ * Promote the scalar type of an standard vector to the requested type.
+ *
+ * @tparam PromotionScalar scalar type of output.
+ * @tparam UnPromotedType input type. The `PromotionScalar` type must be
+ * constructible from `UnPromotedType`'s `scalar_type`
+ * @param x input
+ */
+template <typename PromotionScalar, typename UnPromotedType,
+          require_std_vector_t<UnPromotedType>* = nullptr,
+          require_not_same_t<PromotionScalar,
+                             scalar_type_t<UnPromotedType>>* = nullptr>
+inline auto promote_scalar(UnPromotedType&& x) {
+  const auto x_size = x.size();
+  promote_scalar_t<PromotionScalar, UnPromotedType> ret(x_size);
+  for (size_t i = 0; i < x_size; ++i) {
+    ret[i] = promote_scalar<PromotionScalar>(x[i]);
+  }
+  return ret;
+}
+
+/**
+ * Promote the scalar type of a tuples elements to the requested types.
+ *
+ * @tparam PromotionScalars A tuple of scalar types that is the same size as the
+ * tuple of `UnPromotedTypes`.
+ * @tparam UnPromotedTypes tuple input. Each `PromotionScalars` element must be
+ * constructible from it's associated element of `UnPromotedTypes` `scalar_type`
+ * @param x input
+ */
+template <typename PromotionScalars, typename UnPromotedTypes,
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>*>
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
+promote_scalar(UnPromotedTypes&& x) {
+  return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
+      [&x](auto... Is) {
+        return std::make_tuple(
+            promote_scalar<std::decay_t<decltype(std::get<Is>(
+                std::declval<PromotionScalars>()))>>(std::get<Is>(x))...);
+      });
+}
 
 }  // namespace math
 }  // namespace stan
