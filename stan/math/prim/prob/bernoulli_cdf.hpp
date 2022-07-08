@@ -47,7 +47,10 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
+  const auto& log1m_theta = to_ref(log1m(theta_ref));
+  scalar_seq_view<decltype(log1m_theta)> theta_vec(log1m_theta);
+  scalar_seq_view<decltype(exp(-log1m_theta))> partials_vec(exp(-log1m_theta));
+
   size_t max_size_seq_view = max_size(n, theta);
 
   // Explicit return for extreme values
@@ -65,21 +68,21 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
       continue;
     }
 
-    const T_partials_return Pi = 1 - theta_vec.val(i);
-
-    P *= Pi;
+    P += theta_vec.val(i);
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] += -1 / Pi;
+      ops_partials.edge1_.partials_[i] -= partials_vec.val(i);
     }
   }
+
+  const auto& exp_P = to_ref(exp(P));
 
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      ops_partials.edge1_.partials_[i] *= exp_P;
     }
   }
-  return ops_partials.build(P);
+  return ops_partials.build(exp_P);
 }
 
 }  // namespace math
