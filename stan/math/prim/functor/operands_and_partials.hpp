@@ -18,7 +18,7 @@ class operands_and_partials;  // Forward declaration
 
 namespace internal {
 template <typename ViewElt, typename Op, typename = void>
-struct ops_partials_edge;
+class ops_partials_edge;
 /**
  * Class representing an edge with an inner type of double. This class
  *  should never be used by the program and only exists so that
@@ -29,7 +29,8 @@ struct ops_partials_edge;
  *  for this specialization must be an `Arithmetic`
  */
 template <typename ViewElt, typename Op>
-struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
+class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
+ public:
   using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
                                       value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;

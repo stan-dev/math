@@ -1,7 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDistributionsNormal, intVsDouble) {
+TEST(ProbDistributionsNormal, intVsDoublerev) {
   using stan::math::var;
   for (double thetaval = -5.0; thetaval < 6.0; thetaval += 0.5) {
     var theta(thetaval);
@@ -22,7 +22,7 @@ TEST(ProbDistributionsNormal, intVsDouble) {
   }
 }
 
-TEST(ProbNormal, test_vlpdf) {
+TEST(ProbNormal, test_vlpdf_rev) {
   using stan::math::var;
   Eigen::Matrix<var, -1, 1> Y = Eigen::Matrix<double, -1, 1>::Random(5);
   Eigen::Matrix<var, -1, 1> Mu = Eigen::Matrix<double, -1, 1>::Random(5);

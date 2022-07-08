@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_SIZE_ZERO_HPP
 #define STAN_MATH_PRIM_FUN_SIZE_ZERO_HPP
 
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <utility>
 
@@ -16,7 +17,7 @@ namespace math {
  */
 template <typename T>
 inline bool size_zero(const T& x) {
-  return !size(x);
+  return !math::size(x);
 }
 
 /**

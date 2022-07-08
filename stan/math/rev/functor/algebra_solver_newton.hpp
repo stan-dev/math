@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/algebra_solver_adapter.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -142,7 +143,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const int64_t max_num_steps, const T_Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
-  auto args_vals_tuple = apply(
+  auto args_vals_tuple = math::apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
       },
@@ -157,7 +158,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
-  Eigen::VectorXd theta_dbl = apply(
+  Eigen::VectorXd theta_dbl = math::apply(
       [&](const auto&... vals) {
         return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
                             max_num_steps, 1, 10, KIN_LINESEARCH, msgs,
@@ -166,8 +167,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
       args_vals_tuple);
 
   auto f_wrt_x = [&](const auto& x) {
-    return apply([&](const auto&... args) { return f(x, msgs, args...); },
-                 args_vals_tuple);
+    return math::apply([&](const auto&... args) { return f(x, msgs, args...); },
+                       args_vals_tuple);
   };
 
   Eigen::MatrixXd Jf_x;
@@ -190,7 +191,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
           nested_rev_autodiff rev;
 
           Eigen::VectorXd ret_val = ret.val();
-          auto x_nrad_ = apply(
+          auto x_nrad_ = math::apply(
               [&ret_val, &f, msgs](const auto&... args) {
                 return eval(f(ret_val, msgs, args...));
               },

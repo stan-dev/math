@@ -35,7 +35,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
   using std::isfinite;
   using std::isnan;
 
-  const size_t N = size(y);
+  const size_t N = math::size(y);
   if (N == 0) {
     return 0.0;
   }

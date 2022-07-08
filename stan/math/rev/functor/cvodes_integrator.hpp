@@ -6,6 +6,7 @@
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <sundials/sundials_context.h>
 #include <cvodes/cvodes.h>
@@ -104,9 +105,9 @@ class cvodes_integrator {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-                value_of_args_tuple_);
+    Eigen::VectorXd dy_dt_vec = math::apply(
+        [&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+        value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
                      N_);
@@ -123,8 +124,9 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
-                   value_of_args_tuple_);
+      return math::apply(
+          [&](auto&&... args) { return f_(t, y, msgs_, args...); },
+          value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
@@ -214,7 +216,7 @@ class cvodes_integrator {
 
     // Code from: https://stackoverflow.com/a/17340003 . Should probably do
     // something better
-    apply(
+    math::apply(
         [&](auto&&... args) {
           std::vector<int> unused_temp{
               0, (check_finite(function_name, "ode parameters and data", args),
@@ -313,7 +315,7 @@ class cvodes_integrator {
           }
         }
 
-        y.emplace_back(apply(
+        y.emplace_back(math::apply(
             [&](auto&&... args) {
               return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
                                              ts_[n], msgs_, args...);

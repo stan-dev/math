@@ -90,7 +90,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   }
   if (include_summand<propto, T_scale>::value) {
     if (RetType == ProbReturnType::Scalar) {
-      logp -= sum(log(sigma_val)) * N / size(sigma);
+      logp -= sum(log(sigma_val)) * N / math::size(sigma);
     } else {
       logp -= log(sigma_val);
     }
