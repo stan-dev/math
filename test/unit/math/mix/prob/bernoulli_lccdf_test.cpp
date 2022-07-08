@@ -13,12 +13,10 @@ TEST(mathMixScalFun, bernoulliLCCDF) {
   stan::test::expect_ad(f(1), std::numeric_limits<double>::quiet_NaN());
   stan::test::expect_ad(f(1), 0.2);
 
-  
   std::vector<int> std_in1{0, 1};
   Eigen::VectorXd in2(2);
   in2 << 0.5, 0.9;
 
-  
   stan::test::expect_ad(f(std_in1), 0.2);
   stan::test::expect_ad(f(std_in1), std::numeric_limits<double>::quiet_NaN());
   stan::test::expect_ad(f(1), in2);

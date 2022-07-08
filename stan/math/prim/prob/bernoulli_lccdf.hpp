@@ -69,7 +69,6 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-
     P += theta_vec.val(i);
 
     if (!is_constant_all<T_prob>::value) {
