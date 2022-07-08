@@ -207,6 +207,7 @@
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_and_matrix_types.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_var_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_var_eigen.hpp>
