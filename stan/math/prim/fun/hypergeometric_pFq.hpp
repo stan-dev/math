@@ -20,18 +20,21 @@ namespace math {
  *
  * See 'grad_pFq.hpp' for the derivatives wrt each parameter
  *
+ * @tparam ArithVec1 An Eigen vector with arithmetic scalar type
+ * @tparam ArithVec2 An Eigen vector with arithmetic scalar type
+ * @tparam Arithmetic An arithmetic scalar
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
  * @return Generalised hypergeometric function
  */
-template <typename Ta, typename Tb, typename Tz,
-          require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,
-          require_arithmetic_t<Tz>* = nullptr>
-return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
-                                             const Tz& z) {
-  plain_type_t<Ta> a_ref = a;
-  plain_type_t<Tb> b_ref = b;
+template <typename ArithVec1, typename ArithVec2, typename Arithmetic,
+          require_all_eigen_st<std::is_arithmetic, ArithVec1, ArithVec2>* = nullptr,
+          require_arithmetic_t<Arithmetic>* = nullptr>
+return_type_t<ArithVec1, ArithVec2, Arithmetic> hypergeometric_pFq(const ArithVec1& a, const ArithVec2& b,
+                                             const Arithmetic& z) {
+  plain_type_t<ArithVec1> a_ref = a;
+  plain_type_t<ArithVec2> b_ref = b;
   check_finite("hypergeometric_pFq", "a", a_ref);
   check_finite("hypergeometric_pFq", "b", b_ref);
   check_finite("hypergeometric_pFq", "z", z);

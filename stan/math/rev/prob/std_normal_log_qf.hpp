@@ -13,12 +13,12 @@ namespace math {
 /**
  * Return the elementwise inverse of unit normal cumulative density function.
  *
- * @tparam T a `var_value` with inner Eigen type
- * @param p log probability vector
+ * @tparam VarValue Either a scalar or Eigen type
+ * @param log_p log probability vector
  * @return Elementwise unit normal inverse cdf
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto std_normal_log_qf(const var_value<T>& log_p) {
+template <typename VarValue, require_stan_scalar_or_eigen_t<VarValue>* = nullptr>
+inline auto std_normal_log_qf(const var_value<VarValue>& log_p) {
   return make_callback_var(
       std_normal_log_qf(log_p.val()), [log_p](auto& vi) mutable {
         auto vi_array = as_array_or_scalar(vi.val());

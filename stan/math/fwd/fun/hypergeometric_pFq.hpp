@@ -13,36 +13,36 @@ namespace math {
  * Returns the generalised hypergeometric (pFq) function applied to the
  * input arguments.
  *
- * @tparam Ta Type of Eigen vector with scalar type fvar or arithmetic
- * @tparam Tb Type of Eigen vector with scalar type fvar or arithmetic
- * @tparam Tz Scalar of type fvar or arithmetic
+ * @tparam FvarVec1 An Eigen vector with arithmetic scalar type
+ * @tparam FvarVec2 An Eigen vector with arithmetic scalar type
+ * @tparam Fvar An arithmetic scalar
  * @param[in] a Vector of 'a' arguments (of length p)
  * @param[in] b Vector of 'b' arguments (of length q)
  * @param[in] z Scalar z argument
  * @return Generalised hypergeometric function
  */
-template <typename Ta, typename Tb, typename Tz,
-          require_all_matrix_t<Ta, Tb>* = nullptr,
-          require_return_type_t<is_fvar, Ta, Tb, Tz>* = nullptr>
-inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
-                                                    const Tz& z) {
-  using fvar_t = return_type_t<Ta, Tb, Tz>;
-  ref_type_t<Ta> a_ref = a;
-  ref_type_t<Tb> b_ref = b;
+template <typename FvarVec1, typename FvarVec2, typename Fvar,
+          require_all_matrix_t<FvarVec1, FvarVec2>* = nullptr,
+          require_return_type_t<is_fvar, FvarVec1, FvarVec2, Fvar>* = nullptr>
+inline return_type_t<FvarVec1, FvarVec2, Fvar> hypergeometric_pFq(const FvarVec1& a, const FvarVec2& b,
+                                                    const Fvar& z) {
+  using fvar_t = return_type_t<FvarVec1, FvarVec2, Fvar>;
+  ref_type_t<FvarVec1> a_ref = a;
+  ref_type_t<FvarVec2> b_ref = b;
   auto grad_tuple = grad_pFq(a_ref, b_ref, z);
 
   typename fvar_t::Scalar grad = 0;
 
-  if (!is_constant<Ta>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, Ta>>(a_ref).d(),
+  if (!is_constant<FvarVec1>::value) {
+    grad += dot_product(forward_as<promote_scalar_t<fvar_t, FvarVec1>>(a_ref).d(),
                         std::get<0>(grad_tuple));
   }
-  if (!is_constant<Tb>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, Tb>>(b_ref).d(),
+  if (!is_constant<FvarVec2>::value) {
+    grad += dot_product(forward_as<promote_scalar_t<fvar_t, FvarVec2>>(b_ref).d(),
                         std::get<1>(grad_tuple));
   }
-  if (!is_constant<Tz>::value) {
-    grad += forward_as<promote_scalar_t<fvar_t, Tz>>(z).d_
+  if (!is_constant<Fvar>::value) {
+    grad += forward_as<promote_scalar_t<fvar_t, Fvar>>(z).d_
             * std::get<2>(grad_tuple);
   }
 
