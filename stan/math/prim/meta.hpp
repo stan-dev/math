@@ -220,6 +220,7 @@
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/possibly_sum.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
