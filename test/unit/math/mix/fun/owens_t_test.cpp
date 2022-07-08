@@ -53,4 +53,5 @@ TEST(mathMixScalFun, owensT_vec_matvar) {
   in1 << 0.5, 3.4, 5.2, 0.5;
   Eigen::MatrixXd in2(2, 2);
   in2 << 3.3, 0.9, 6.7, 3.3;
-  stan::test::expect_ad_vectorized_matvar(f, in1, in2);}
+  stan::test::expect_ad_vectorized_matvar(f, in1, in2);
+}
