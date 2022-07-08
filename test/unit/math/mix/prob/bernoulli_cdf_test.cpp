@@ -4,8 +4,7 @@
 TEST(mathMixScalFun, bernoulliCDF) {
   // bind integer arg because can't autodiff through
   auto f = [](const auto& x1) {
-    return
-        [=](const auto& x2) { return stan::math::bernoulli_cdf(x1, x2); };
+    return [=](const auto& x2) { return stan::math::bernoulli_cdf(x1, x2); };
   };
   stan::test::expect_ad(f(0), 0.1);
   stan::test::expect_ad(f(0), std::numeric_limits<double>::quiet_NaN());
