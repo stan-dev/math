@@ -8,8 +8,8 @@ namespace math {
 
 namespace internal {
 template <class F, std::size_t... Is>
-constexpr auto index_apply_impl(F f, std::index_sequence<Is...>) {
-  return f(std::integral_constant<std::size_t, Is>{}...);
+inline constexpr auto index_apply_impl(F&& f, std::index_sequence<Is...>) {
+  return std::forward<F>(f)(std::integral_constant<std::size_t, Is>{}...);
 }
 }  // namespace internal
 
@@ -23,8 +23,9 @@ constexpr auto index_apply_impl(F f, std::index_sequence<Is...>) {
  * @return what the given callable returns
  */
 template <std::size_t N, class F>
-constexpr auto index_apply(F f) {
-  return internal::index_apply_impl(f, std::make_index_sequence<N>{});
+inline constexpr auto index_apply(F&& f) {
+  return internal::index_apply_impl(std::forward<F>(f),
+                                    std::make_index_sequence<N>{});
 }
 
 }  // namespace math
