@@ -31,13 +31,19 @@ inline auto select(const bool c, const T_true y_true, const T_false y_false) {
 template <typename T_true, typename T_false,
           require_all_eigen_t<T_true, T_false>* = nullptr>
 inline auto select(const bool c, const T_true y_true, const T_false y_false) {
-  return c ? y_true : y_false;
+  using return_scalar_t = return_type_t<T_true, T_false>;
+  if (c) {
+    return y_true.template cast<return_scalar_t>().eval();
+  }
+
+  return y_false.template cast<return_scalar_t>().eval();
 }
 
 template <typename T_true, typename T_false,
           require_eigen_t<T_true>* = nullptr,
           require_stan_scalar_t<T_false>* = nullptr>
-inline plain_type_t<T_true> select(const bool c, const T_true& y_true, const T_false& y_false) {
+inline plain_type_t<T_true> select(const bool c, const T_true& y_true,
+                                    const T_false& y_false) {
   if (c) {
     return y_true;
   }
