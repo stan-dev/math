@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -36,6 +37,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;
+  const auto& n_arr = as_array_or_scalar(n);
   check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
                 1.0);
 
@@ -43,46 +45,23 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
     return 1.0;
   }
 
-  T_partials_return P(0.0);
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
-
-  scalar_seq_view<T_n> n_vec(n);
-  const auto& log1m_theta = to_ref(log1m(theta_ref));
-  scalar_seq_view<decltype(log1m_theta)> theta_vec(log1m_theta);
-  scalar_seq_view<decltype(exp(-log1m_theta))> partials_vec(exp(-log1m_theta));
-
-  size_t max_size_seq_view = max_size(n, theta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
-    }
+  if (sum(n_arr < 0)) {
+    return ops_partials.build(0.0);
   }
+  const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
+  const auto& log1m_theta = select(theta_arr == 1, 0.0, log1m(theta_arr));
+  const auto& P1 = select(n_arr == 0, log1m_theta, 0.0);
 
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (n_vec.val(i) >= 1) {
-      continue;
-    }
-
-    P += theta_vec.val(i);
-
-    if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] -= partials_vec.val(i);
-    }
-  }
-
-  plain_type_t<decltype(exp(P))> exp_P = exp(P);
+  T_partials_return P = sum(P1);
 
   if (!is_constant_all<T_prob>::value) {
-    for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      ops_partials.edge1_.partials_[i] *= exp_P;
-    }
+    ops_partials.edge1_.partials_ = select(n_arr == 0, -exp(P - P1), 0.0);
   }
-  return ops_partials.build(exp_P);
+  return ops_partials.build(exp(P));
 }
 
 }  // namespace math
