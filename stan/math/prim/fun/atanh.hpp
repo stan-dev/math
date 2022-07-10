@@ -57,7 +57,7 @@ struct atanh_fun {
    * @return Inverse hyperbolic tangent of the argument.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     return atanh(x);
   }
 };

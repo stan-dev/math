@@ -93,7 +93,7 @@ inline var beta(const var& a, double b) {
 inline var beta(double a, const var& b) {
   auto beta_val = beta(a, b.val());
   auto digamma_ab = (digamma(b.val()) - digamma(a + b.val())) * beta_val;
-  return make_callback_var(beta_val, [a, b, digamma_ab](auto& vi) mutable {
+  return make_callback_var(beta_val, [b, digamma_ab](auto& vi) mutable {
     b.adj() += vi.adj() * digamma_ab;
   });
 }

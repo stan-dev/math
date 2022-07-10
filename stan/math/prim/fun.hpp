@@ -22,6 +22,7 @@
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/assign.hpp>
 #include <stan/math/prim/fun/atan.hpp>
+#include <stan/math/prim/fun/atan2.hpp>
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/autocorrelation.hpp>
 #include <stan/math/prim/fun/autocovariance.hpp>
@@ -98,6 +99,7 @@
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/fun/falling_factorial.hpp>
 #include <stan/math/prim/fun/fdim.hpp>
+#include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
 #include <stan/math/prim/fun/floor.hpp>
@@ -122,10 +124,13 @@
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <stan/math/prim/fun/grad_inc_beta.hpp>
+#include <stan/math/prim/fun/grad_pFq.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/head.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F2.hpp>
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
@@ -139,7 +144,9 @@
 #include <stan/math/prim/fun/int_step.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
+#include <stan/math/prim/fun/inv_erfc.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
@@ -227,6 +234,8 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/norm.hpp>
+#include <stan/math/prim/fun/norm1.hpp>
+#include <stan/math/prim/fun/norm2.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
@@ -329,6 +338,7 @@
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_array_2d.hpp>
 #include <stan/math/prim/fun/to_complex.hpp>
+#include <stan/math/prim/fun/to_int.hpp>
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>

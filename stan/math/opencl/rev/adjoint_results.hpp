@@ -65,7 +65,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
                   std::tie(std::get<0>(std::get<Is_scal>(scalars))...)
                       = std::make_tuple(std::get<0>(std::get<Is_scal>(scalars))
                                         + sum(from_matrix_cl(std::get<2>(
-                                              std::get<Is_scal>(scalars))))...);
+                                            std::get<Is_scal>(scalars))))...);
                 });
           });
     });

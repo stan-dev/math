@@ -473,11 +473,11 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
 
   theta = is_newton
               ? algebra_solver_newton_impl(
-                    variadic_eq_functor(), x, &std::cout, scaling_step_size,
-                    function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
+                  variadic_eq_functor(), x, &std::cout, scaling_step_size,
+                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
               : algebra_solver_powell_impl(
-                    variadic_eq_functor(), x, &std::cout, relative_tolerance,
-                    function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
+                  variadic_eq_functor(), x, &std::cout, relative_tolerance,
+                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);
   EXPECT_NEAR(2, value_of(theta(1)), 1e-6);

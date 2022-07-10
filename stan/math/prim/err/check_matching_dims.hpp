@@ -30,7 +30,6 @@ inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   std::vector<int> y1_d = dims(y1);
   std::vector<int> y2_d = dims(y2);
-  bool error = false;
   auto error_throw = [&]() STAN_COLD_PATH {
     std::ostringstream y1s;
     if (y1_d.size() > 0) {

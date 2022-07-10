@@ -41,10 +41,11 @@ inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
   var C = exp(a * c1 + b * c2) / a;
   var dF1 = 0;
   var dF2 = 0;
+  var dF3 = 0;
   if (value_of(value_of(C))) {
-    grad_2F1(dF1, dF2, a + b, var(1.0), a + 1, z);
+    grad_2F1(dF1, dF2, dF3, a + b, var(1.0), a + 1, z);
   }
-  g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF2);
+  g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF3);
   g2 = c2 * c3 + C * dF1;
 }
 

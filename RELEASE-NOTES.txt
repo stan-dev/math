@@ -1,6 +1,69 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.4.0 (1 July 2022)
+======================================================================
+
+Complex:
+ - Added fast Fourier transform (FFT) implementations of 1D and 2D discrete Fourier transform and their inverses. (#2686, #2750)
+ - Added type traits for detecting whether a type has a value type that is complex. (#2694)
+ - Added vectorized versions of get_real and get_imag. (#2700)
+ - Vectorized complex `abs()`, `to_complex`. (#2737, #2749)
+
+New functions:
+ - Added the incomplete beta function inverse. (#2637)
+ - Added the `wishart_cholesky_lpdf`, which is the Cholesky parameterization of the Wishart distribution of both the input matrix and the scale matrix. (#2710)
+ - Added the  inverse Wishart Cholesky parameterization `lpdf\lupdf` is available along with `inv_wishart_cholesky_rng`. (#2713)
+ - Added the Cholesky parameterization of the multivariate Student's T distribution. (#2715)
+ - Added the quantile function of the standard normal density function with log input. (#2744)
+
+Misc:
+ - Upgraded Sundials to version 6.1.1. (#2692)
+ - Updated Boost to 1.78.0. (#2725)
+ - Added namespace qualifiers to `size` and `apply` calls for C++17 compatibility. (#2693)
+ - Enabled address sanitizer and fix it when running inside Docker in Flatiron CI. (#2702)
+ - Made `arena_allocator` usable for all std containers. (#2708)
+ - Added gradient calculation for the a2 input in stan-math for the `grad_2F1` function and fixes incorrect return values when `z` is between -1 and 0. (#2721)
+ - Updated the signatures of `eigenvalues` and `eigenvectors` to use our pseudo-concept require templates.(#2728)
+ - `norm1` and `norm2` were extended with the `apply_vector_unary` to accept general std::vectors as well as the Eigen vectors previously supported. (#2742)
+ - Cleaned up compiler warnings for unused variables and non-consistent use of class and struct for ops_partials_edge. (#2757)
+ - Fixed the check for `y` in `gamma_lpdf` so that it now errors if y is not a positive finite value. (#2758)
+ - Improved numerical stability of gamma_lcdf gradients (#2767)
+
+======================================================================
+v4.3.2 (25 March 2022)
+======================================================================
+
+- Fixed template error for fma with matrix inputs.
+- Fixed bug that did not allow for `var<Matrix>` types with different compile-time rows/cols to be assigned to one another.
+
+======================================================================
+v4.3.1 (2 March 2022)
+======================================================================
+
+- Fixed a bug with to_matrix(row_vector) and to_matrix(vector) that cause compile-time issues while the result was not stored in a temporary variable.
+
+======================================================================
+v4.3.0 (14 February 2022)
+======================================================================
+
+ - Changed constants to `static constexpr` for efficiency, added Euler's Gamma constant. (#2478)
+ - Added `lmultiply()` that parallels `multiply_log()` so that the language doesn't have to rename. (#2596)
+ - Cleaned up tests to include <CL/opencl.hpp> instead of <CL/cl2.hpp>. (#2610)
+ - Added missing implementations of function signatures that shadow of math function signatures in the `std::` namespace. (#2612)
+ - Fixed the bug where 2x2 matrix exponential function outputs NaN for matrices with large eigenvalues. (#2616)
+ - Added compiler flag `-D_BOOST_LGAMMA` to allow users to force use of Boost `lgamma` implementation. (#2618)
+ - Added more informative error messages for ODE solvers. (#2620)
+ - Forceed linker to respect rpath set at compile time. (#2627)
+ - Upgraded Sundials to 6.0.0. (#2629)
+ - Added `norm1()` and `norm2()`. (#2636)
+ - Added missing `von_mises_cdf_log` and `von_mises_ccdf_log` signatures. (#2640)
+ - Refactored the DAE solver.(#2644)
+ - Added the inverse of the complementary error function - `inv_erfc()`. (#2645)
+ - Updated member functions for accessing tangents in scalar `fvar` types. (#2652)
+ - Added support for the new matrix type for GLM functions. (#2655)
+
+======================================================================
 v4.2.1 (21 October 2021)
 ======================================================================
 

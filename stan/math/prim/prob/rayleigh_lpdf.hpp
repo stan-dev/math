@@ -56,10 +56,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   size_t N = max_size(y, sigma);
   T_partials_return logp = -0.5 * sum(square(y_over_sigma));
   if (include_summand<propto, T_scale>::value) {
-    logp -= 2.0 * sum(log(sigma_val)) * N / size(sigma);
+    logp -= 2.0 * sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_y>::value) {
-    logp += sum(log(y_val)) * N / size(y);
+    logp += sum(log(y_val)) * N / math::size(y);
   }
 
   if (!is_constant_all<T_y, T_scale>::value) {
