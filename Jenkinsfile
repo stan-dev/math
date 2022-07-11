@@ -416,7 +416,7 @@ pipeline {
                         unstash 'MathSetup'
                         script {
                             sh "echo O=0 > make/local"
-                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
+                            sh "echo CXX=${CLANG_CXX} -Werror -Wno-deprecated-declarations >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
