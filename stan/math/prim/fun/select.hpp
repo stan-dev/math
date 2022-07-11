@@ -61,7 +61,7 @@ template <typename T_true, typename T_false,
           require_eigen_t<T_true>* = nullptr,
           require_stan_scalar_t<T_false>* = nullptr>
 inline ReturnT select(const bool c, const T_true& y_true,
-                                   const T_false& y_false) {
+                      const T_false& y_false) {
   if (c) {
     return y_true;
   }
@@ -87,7 +87,7 @@ template <typename T_true, typename T_false,
           require_stan_scalar_t<T_true>* = nullptr,
           require_eigen_t<T_false>* = nullptr>
 inline ReturnT select(const bool c, const T_true y_true,
-                                    const T_false y_false) {
+                      const T_false y_false) {
   if (c) {
     return y_false.unaryExpr([&](auto&& y) { return y_true; });
   }
