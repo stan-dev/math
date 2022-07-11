@@ -35,6 +35,19 @@ TEST(RevFunctor, gradient) {
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
 }
 
+TEST(RevFunctor, gradient_input_rowvector) {
+  fun1 f;
+  Matrix<double, 1, Dynamic> x(2);
+  x << 5, 7;
+  double fx;
+  std::vector<double> grad_fx(2, 0);
+  stan::math::gradient(f, x, fx, std::begin(grad_fx), std::end(grad_fx));
+  EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx);
+  EXPECT_EQ(2, grad_fx.size());
+  EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad_fx[0]);
+  EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx[1]);
+}
+
 TEST(RevFunctor, gradient_array) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
