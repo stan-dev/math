@@ -55,9 +55,12 @@ inline auto select(const bool c, const T_true y_true, const T_false y_false) {
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
  */
-template <typename T_true, typename T_false, require_eigen_t<T_true>* = nullptr,
+template <typename T_true, typename T_false,
+          typename ReturnT = promote_scalar_t<return_type_t<T_true, T_false>,
+                                              plain_type_t<T_true>>,
+          require_eigen_t<T_true>* = nullptr,
           require_stan_scalar_t<T_false>* = nullptr>
-inline plain_type_t<T_true> select(const bool c, const T_true& y_true,
+inline ReturnT select(const bool c, const T_true& y_true,
                                    const T_false& y_false) {
   if (c) {
     return y_true;
@@ -79,9 +82,11 @@ inline plain_type_t<T_true> select(const bool c, const T_true& y_true,
  * @param y_false Value to return if condition is false.
  */
 template <typename T_true, typename T_false,
+          typename ReturnT = promote_scalar_t<return_type_t<T_true, T_false>,
+                                              plain_type_t<T_false>>,
           require_stan_scalar_t<T_true>* = nullptr,
           require_eigen_t<T_false>* = nullptr>
-inline plain_type_t<T_false> select(const bool c, const T_true y_true,
+inline ReturnT select(const bool c, const T_true y_true,
                                     const T_false y_false) {
   if (c) {
     return y_false.unaryExpr([&](auto&& y) { return y_true; });
