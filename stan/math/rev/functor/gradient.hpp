@@ -86,7 +86,8 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * argument, independently of dimension.
  *
  * @tparam F Type of function
- * @tparam InputIt must meet the requirements of [LegacyInputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator).
+ * @tparam InputIt must meet the requirements of
+ * [LegacyInputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator).
  * @param[in] f Function
  * @param[in] x Argument to function
  * @param[out] fx Function applied to argument
@@ -96,10 +97,9 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * to hold the gradients
  */
 template <typename F, typename EigVec, typename InputIt,
-require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
-void gradient(
-    const F& f, const EigVec& x,
-    double& fx, InputIt first_grad_fx, InputIt last_grad_fx) {
+          require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
+void gradient(const F& f, const EigVec& x, double& fx, InputIt first_grad_fx,
+              InputIt last_grad_fx) {
   nested_rev_autodiff nested;
 
   if (last_grad_fx - first_grad_fx != x.size()) {
