@@ -546,8 +546,8 @@ class matrix_cl : public matrix_cl_base {
     try {
       if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
         constexpr auto copy_or_share
-          = CL_MEM_COPY_HOST_PTR * INTEGRATED_OPENCL
-            | (CL_MEM_USE_HOST_PTR * !INTEGRATED_OPENCL);
+            = CL_MEM_COPY_HOST_PTR * INTEGRATED_OPENCL
+              | (CL_MEM_USE_HOST_PTR * !INTEGRATED_OPENCL);
         buffer_cl_
             = cl::Buffer(ctx, CL_MEM_READ_WRITE | copy_or_share,
                          sizeof(T) * size(), A);  // this is always synchronous
