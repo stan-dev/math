@@ -86,6 +86,7 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  * argument, independently of dimension.
  *
  * @tparam F Type of function
+ * @tparam EigVec Type of Eigen vector
  * @tparam InputIt must meet the requirements of [LegacyInputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator).
  * @param[in] f Function
  * @param[in] x Argument to function
