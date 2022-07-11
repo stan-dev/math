@@ -20,7 +20,8 @@ namespace math {
  */
 template <typename PromotionScalar, typename UnPromotedType,
           require_constructible_t<PromotionScalar, UnPromotedType>* = nullptr,
-          require_not_same_t<PromotionScalar, UnPromotedType>* = nullptr>
+          require_not_same_t<PromotionScalar, UnPromotedType>* = nullptr,
+          require_all_not_tuple_t<PromotionScalar, UnPromotedType>* = nullptr>
 inline constexpr auto promote_scalar(UnPromotedType&& x) {
   return PromotionScalar(std::forward<UnPromotedType>(x));
 }
