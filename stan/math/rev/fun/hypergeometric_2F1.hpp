@@ -57,7 +57,6 @@ return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
           forward_as<var>(z).adj() += vi.adj()
             * (a1_dbl * a2_dbl * hyper_2f1_dz) / b_dbl;
         }
-
       });
 }
 }  // namespace math

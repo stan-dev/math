@@ -54,10 +54,10 @@ return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     grad += forward_as<fvar_t>(b).d() * g_b;
   }
   if (!is_constant<Tz>::value) {
-  auto hyper_2f1_dz =
-    hypergeometric_2F1(a1_val + 1, a2_val + 1, b_val + 1, z_val);
-  grad += forward_as<fvar_t>(z).d()
-    * (a1_val * a2_val * hyper_2f1_dz) / b_val;
+    auto hyper_2f1_dz =
+      hypergeometric_2F1(a1_val + 1, a2_val + 1, b_val + 1, z_val);
+    grad += forward_as<fvar_t>(z).d()
+      * (a1_val * a2_val * hyper_2f1_dz) / b_val;
   }
 
   return fvar_t(
