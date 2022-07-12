@@ -14,11 +14,9 @@ TEST(mathMixScalFun, hypergeometric2F1_1) {
 
   fvar<double> res = stan::math::hypergeometric_2F1(a1, a2, b, z);
 
-  EXPECT_FLOAT_EQ(
-    -0.0488658806159776
-    - 0.193844936204681
-    + 0.0677809985598383
-    + 0.865295247272367, res.d_);
+  EXPECT_FLOAT_EQ(-0.0488658806159776 - 0.193844936204681 + 0.0677809985598383
+                      + 0.865295247272367,
+                  res.d_);
 }
 
 TEST(mathMixScalFun, hypergeometric2F1_2) {
