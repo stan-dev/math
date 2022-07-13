@@ -16,6 +16,10 @@ namespace math {
  *
  * See 'grad_2F1.hpp' for the derivatives wrt each parameter
  *
+ * @tparam Ta1 Type of scalar first 'a' argument
+ * @tparam Ta2 Type of scalar second 'a' argument
+ * @tparam Tb Type of scalar 'b' argument
+ * @tparam Tz Type of scalar 'z' argument
  * @param[in] a1 First of 'a' arguments to function
  * @param[in] a2 Second of 'a' arguments to function
  * @param[in] b 'b' argument to function
@@ -25,7 +29,7 @@ namespace math {
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
           require_any_fvar_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1, const Ta2& a2,
+inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1, const Ta2& a2,
                                                    const Tb& b, const Tz& z) {
   using fvar_t = return_type_t<Ta1, Ta1, Tb, Tz>;
 
