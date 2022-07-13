@@ -122,11 +122,11 @@ template <typename Mat1, typename Mat2,
 inline auto pow(const Mat1& base, const Mat2& exponent) {
   check_consistent_sizes("pow", "base", base, "exponent", exponent);
   using expr_type = decltype(as_array_or_scalar(value_of(base))
-                                .pow(as_array_or_scalar(value_of(exponent))));
+                                 .pow(as_array_or_scalar(value_of(exponent))));
   using val_type = std::conditional_t<
-    math::disjunction<is_eigen_array<Mat1>, is_eigen_array<Mat2>>::value,
-    decltype(std::declval<expr_type>().eval()),
-    decltype(std::declval<expr_type>().matrix().eval())>;
+      math::disjunction<is_eigen_array<Mat1>, is_eigen_array<Mat2>>::value,
+      decltype(std::declval<expr_type>().eval()),
+      decltype(std::declval<expr_type>().matrix().eval())>;
   using ret_type = return_var_matrix_t<val_type, Mat1, Mat2>;
   using base_t = decltype(as_array_or_scalar(base));
   using exp_t = decltype(as_array_or_scalar(exponent));
