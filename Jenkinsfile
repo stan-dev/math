@@ -387,10 +387,10 @@ pipeline {
                             echo N_TESTS=${N_TESTS} >> make/local
                             """
                         script {
-                            //if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                                 sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                            //}
+                            }
                         }
                         sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
                     }
