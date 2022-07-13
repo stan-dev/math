@@ -29,8 +29,10 @@ namespace math {
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
           require_any_var_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1, const Ta2& a2,
-                                                   const Tb& b, const Tz& z) {
+inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+                                                          const Ta2& a2,
+                                                          const Tb& b,
+                                                          const Tz& z) {
   double a1_dbl = value_of(a1);
   double a2_dbl = value_of(a2);
   double b_dbl = value_of(b);

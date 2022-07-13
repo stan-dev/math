@@ -27,8 +27,10 @@ namespace math {
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1, const Ta2& a2,
-                                                   const Tb& b, const Tz& z) {
+inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+                                                          const Ta2& a2,
+                                                          const Tb& b,
+                                                          const Tz& z) {
   check_finite("hypergeometric_2F1", "a1", a1);
   check_finite("hypergeometric_2F1", "a2", a2);
   check_finite("hypergeometric_2F1", "b", b);
