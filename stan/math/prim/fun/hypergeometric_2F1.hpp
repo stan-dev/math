@@ -44,7 +44,7 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
   check_2F1_converges("hypergeometric_2F1", a1, a2, b, z);
 
   return boost::math::hypergeometric_pFq(
-    std::vector<return_type_t<Ta1, Ta2>>{a1, a2}, {b}, z);
+      std::vector<return_type_t<Ta1, Ta2>>{a1, a2}, {b}, z);
 }
 }  // namespace math
 }  // namespace stan
