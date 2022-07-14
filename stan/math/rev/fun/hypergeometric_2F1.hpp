@@ -8,9 +8,7 @@
 
 namespace stan {
 namespace math {
-namespace internal {
 
-} // namespace internal
 /**
  * Returns the Gauss hypergeometric function applied to the
  * input arguments:

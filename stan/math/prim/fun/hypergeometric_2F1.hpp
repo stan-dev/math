@@ -6,10 +6,7 @@
 #include <stan/math/prim/fun/asin.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-<<<<<<< HEAD
 #include <stan/math/prim/fun/digamma.hpp>
-=======
->>>>>>> 6011bfa293 (Begin updating grad_2f1)
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/inv.hpp>

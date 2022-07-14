@@ -6,16 +6,20 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <cmath>
+#include <boost/optional.hpp>
 
 namespace stan {
 namespace math {
 
+namespace internal {
 /**
  * Gradients of the hypergeometric function, 2F1.
  *
@@ -44,11 +48,16 @@ namespace math {
  * @param[in] max_steps number of steps to take
  */
 template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename T1, typename T2, typename T3, typename T_z>
-void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
+          typename T1, typename T2, typename T3, typename T_z,
+          typename TupleT = std::tuple<T1, T2, T3, T_z>,
+          typename OptT = boost::optional<TupleT>>
+void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
-              double precision = 1e-14, int max_steps = 1e6) {
-  check_2F1_converges("grad_2F1", a1, a2, b1, z);
+              double precision = 1e-14, int max_steps = 1e6,
+              bool skip_convergence_check = false) {
+  if (!skip_convergence_check) {
+    check_2F1_converges("grad_2F1", a1, a2, b1, z);
+  }
 
   using stan::math::value_of_rec;
   using std::max;
@@ -150,6 +159,105 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
                       " iterations, hypergeometric function gradient "
                       "did not converge.");
   }
+  return;
+}
+
+template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
+          typename T1, typename T2, typename T3, typename T_z,
+          typename PartialsT = partials_return_t<T1, T2, T3, T_z>,
+          typename RtnTupleT = std::tuple<T1, T2, T3, T_z>,
+          typename RtnT = boost::optional<RtnTupleT>>
+RtnT grad_2F1_special_cases(const T1& a1,
+              const T2& a2, const T3& b1, const T_z& z) {
+  RtnTupleT grad_tuple = RtnTupleT(0.0, 0.0, 0.0, 0.0);
+  if (z == 0.0) {
+    return grad_tuple;
+  }
+  if (a1 == b1) {
+    if (calc_a2) {
+      std::get<1>(grad_tuple) = log1m(z) * -pow(1 - z, -a2);
+    }
+    if (calc_z) {
+      std::get<3>(grad_tuple) = a2 * pow(1 - z, -1 - a2);
+    }
+    if (calc_a1 || calc_b1) {
+      T1 g_a1;
+      T2 g_a2;
+      T3 g_b1;
+      T_z g_z;
+      internal::grad_2F1_impl<calc_a1, false, calc_b1, false>(
+        g_a1, g_a2, g_b1, g_z, a1, a2, b1, z,
+        1e-14, 1e6, true
+        );
+
+      std::get<0>(grad_tuple) = g_a1;
+      std::get<2>(grad_tuple) = g_b1;
+    }
+    return grad_tuple;
+  }
+  if (a1 == a2) {
+    if (a1 == 1.0 && b1 == 2.0 && z < 0) {
+      if (calc_z) {
+        auto abs_z = abs(z);
+        std::get<3>(grad_tuple) =
+          inv(z * (1 + abs_z))
+          - z * log1p(abs_z) / pow(square(z), 1.5);
+      }
+      if (calc_a1 || calc_a2 || calc_b1) {
+        T1 g_a1;
+        T2 g_a2;
+        T3 g_b1;
+        T_z g_z;
+
+        // Apply Pfaff transformation so that series
+        // can converge for gradients
+        auto a1_t = a2;
+        auto a2_t = b1 - a1;
+        auto b1_t = b1;
+        auto z_t = z / (z - 1);
+        auto pre_mult = pow(1 - z, -a2);
+
+        internal::grad_2F1_impl<true, true, true, false>(
+          g_a1, g_a2, g_b1, g_z, a1_t, a2_t, b1_t, z_t,
+          1e-14, 1e6, true
+          );
+
+        std::get<0>(grad_tuple) = -pre_mult * g_a2;
+        std::get<2>(grad_tuple) = pre_mult * (g_b1 + g_a2);
+        if (calc_a2) {
+          auto hyper = hypergeometric_2F1(a1_t, a2_t, b1_t, z_t);
+          std::get<1>(grad_tuple)
+            = -pre_mult * hyper * log1m(z) + pre_mult * g_a1;
+        }
+      }
+      return grad_tuple;
+    }
+  }
+  return {};
+}
+} // namespace internal
+
+template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
+          typename T1, typename T2, typename T3, typename T_z,
+          typename TupleT = std::tuple<T1, T2, T3, T_z>,
+          typename OptT = boost::optional<TupleT>>
+void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
+              const T2& a2, const T3& b1, const T_z& z,
+              double precision = 1e-14, int max_steps = 1e6) {
+    OptT special_case_grad
+      = internal::grad_2F1_special_cases<calc_a1, calc_a2, calc_b1, calc_z>(
+        a1, a2, b1, z
+      );
+    if (special_case_grad.is_initialized()) {
+      TupleT grads = special_case_grad.get();
+      g_a1 = std::get<0>(grads);
+      g_a2 = std::get<1>(grads);
+      g_b1 = std::get<2>(grads);
+      g_z = std::get<3>(grads);
+
+      return;
+    }
+  internal::grad_2F1_impl<calc_a1, calc_a2, calc_b1, calc_z>(g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
   return;
 }
 
