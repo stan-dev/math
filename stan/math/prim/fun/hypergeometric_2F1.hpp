@@ -46,24 +46,28 @@ template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
 inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
                                     const Tz& z) {
-  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/01/ // NOLINT
+  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/01/
+  // // NOLINT
   if (z == 0.0) {
     return 1.0;
   }
 
-  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/06/01/0001/ // NOLINT
+  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/06/01/0001/
+  // // NOLINT
   if (a1 == b) {
     return inv(pow(1.0 - z, a2));
   }
 
-  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/06/01/0003/ // NOLINT
+  // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/06/01/0003/
+  // // NOLINT
   if (b == (a2 - 1.0)) {
     return (pow((1.0 - z), -a1 - 1.0) * (a2 + z * (a1 - a2 + 1.0) - 1.0))
            / (a2 - 1);
   }
 
   if (a1 == a2) {
-    // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2C+1%2C+2%2C+-z%29 // NOLINT
+    // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2C+1%2C+2%2C+-z%29
+    // // NOLINT
     if (a1 == 1.0 && b == 2.0 && z < 0) {
       auto pos_z = abs(z);
       return log1p(pos_z) / pos_z;
@@ -72,14 +76,17 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
     if (a1 == 0.5 && b == 1.5 && z < 1.0) {
       auto sqrt_z = sqrt(abs(z));
       auto numerator = (z > 0.0)
-        // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+z%29 // NOLINT
-        ? asin(sqrt_z)
-        // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+-z%29 // NOLINT
-        : asinh(sqrt_z);
+                           // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+z%29
+                           // // NOLINT
+                           ? asin(sqrt_z)
+                           // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+-z%29
+                           // // NOLINT
+                           : asinh(sqrt_z);
       return numerator / sqrt_z;
     }
 
-    // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/04/03/ // NOLINT
+    // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/04/03/
+    // // NOLINT
     if (b == (a1 + 1) && z == 0.5) {
       return pow(2, a1 - 1) * a1
              * (digamma((a1 + 1) / 2.0) - digamma(a1 / 2.0));
@@ -87,11 +94,13 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
   }
 
   if (z == 1.0) {
-    // https://www.wolframalpha.com/input?i=Hypergeometric2F1%28a1%2C+a2%2C+a1+%2B+a2+%2B+2%2C+1%29 // NOLINT
+    // https://www.wolframalpha.com/input?i=Hypergeometric2F1%28a1%2C+a2%2C+a1+%2B+a2+%2B+2%2C+1%29
+    // // NOLINT
     if (b == (a1 + a2 + 2)) {
       auto log_2f1 = lgamma(b) - (lgamma(a1 + 2) + lgamma(a2 + 2));
       return exp(log_2f1);
-    // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/02/0001/ // NOLINT
+      // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/02/0001/
+      // // NOLINT
     } else if (b > (a1 + a2)) {
       auto log_2f1 = (lgamma(b) + lgamma(b - a1 - a2))
                      - (lgamma(b - a1) + lgamma(b - a2));
@@ -99,7 +108,8 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
     }
   }
 
-  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%283%2F2%2C+2%2C+3%2C+-z%29 // NOLINT
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%283%2F2%2C+2%2C+3%2C+-z%29
+  // // NOLINT
   if (a1 == 1.5 && a2 == 2.0 && b == 3.0 && z < 0.0) {
     auto abs_z = abs(z);
     auto sqrt_1pz = sqrt(1 + abs_z);
