@@ -8,7 +8,9 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
+} // namespace internal
 /**
  * Returns the Gauss hypergeometric function applied to the
  * input arguments:
@@ -44,7 +46,10 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
         double g_a1;
         double g_a2;
         double g_b;
-        grad_2F1(g_a1, g_a2, g_b, a1_dbl, a2_dbl, b_dbl, z_dbl);
+        double g_z;
+        grad_2F1<!is_constant<Ta1>::value, !is_constant<Ta2>::value,
+                 !is_constant<Tb>::value, !is_constant<Tz>::value>
+                 (g_a1, g_a2, g_b, g_z, a1_dbl, a2_dbl, b_dbl, z_dbl);
 
         if (!is_constant<Ta1>::value) {
           forward_as<var>(a1).adj() += vi.adj() * g_a1;
@@ -56,10 +61,7 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
           forward_as<var>(b).adj() += vi.adj() * g_b;
         }
         if (!is_constant<Tz>::value) {
-          double hyper_2f1_dz
-              = hypergeometric_2F1(a1_dbl + 1, a2_dbl + 1, b_dbl + 1, z_dbl);
-          forward_as<var>(z).adj()
-              += vi.adj() * (a1_dbl * a2_dbl * hyper_2f1_dz) / b_dbl;
+          forward_as<var>(z).adj() += vi.adj() * g_z;
         }
       });
 }

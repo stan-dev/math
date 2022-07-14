@@ -43,8 +43,11 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
   decltype(a1_val) g_a1;
   decltype(a2_val) g_a2;
   decltype(b_val) g_b;
+  decltype(z_val) g_z;
 
-  grad_2F1(g_a1, g_a2, g_b, a1_val, a2_val, b_val, z_val);
+  grad_2F1<!is_constant<Ta1>::value, !is_constant<Ta2>::value,
+            !is_constant<Tb>::value, !is_constant<Tz>::value>
+                 (g_a1, g_a2, g_b, g_z, a1_val, a2_val, b_val, z_val);
 
   typename fvar_t::Scalar grad = 0;
 
@@ -58,10 +61,7 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     grad += forward_as<fvar_t>(b).d() * g_b;
   }
   if (!is_constant<Tz>::value) {
-    auto hyper_2f1_dz
-        = hypergeometric_2F1(a1_val + 1, a2_val + 1, b_val + 1, z_val);
-    grad
-        += forward_as<fvar_t>(z).d() * (a1_val * a2_val * hyper_2f1_dz) / b_val;
+    grad += forward_as<fvar_t>(z).d() * g_z;
   }
 
   return fvar_t(hypergeometric_2F1(a1_val, a2_val, b_val, z_val), grad);
