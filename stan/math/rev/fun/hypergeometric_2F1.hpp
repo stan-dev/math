@@ -40,12 +40,12 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
 
   return make_callback_var(
       hypergeometric_2F1(a1_dbl, a2_dbl, b_dbl, z_dbl),
-      [a1, a2, b, z, a1_dbl, a2_dbl, b_dbl, z_dbl](auto& vi) mutable {
+      [a1, a2, b, z](auto& vi) mutable {
         double g_a1;
         double g_a2;
         double g_b;
         double g_z;
-        grad_2F1(g_a1, g_a2, g_b, g_z, a1_dbl, a2_dbl, b_dbl, z_dbl);
+        grad_2F1(g_a1, g_a2, g_b, g_z, a1, a2, b, z);
 
         if (!is_constant<Ta1>::value) {
           forward_as<var>(a1).adj() += vi.adj() * g_a1;

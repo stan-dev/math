@@ -21,7 +21,8 @@ namespace math {
 
 namespace internal {
 /**
- * Gradients of the hypergeometric function, 2F1.
+ * Implementation function to calculate the gradients of the hypergeometric
+ * function, 2F1.
  *
  * Calculate the gradients of the hypergeometric function (2F1)
  * as the power series stopping when the series converges
@@ -29,12 +30,22 @@ namespace internal {
  * function takes <code>max_steps</code> steps.
  *
  * This power-series representation converges for all gradients
- * under the same conditions as the 2F1 function itself.
+ * under the same conditions as the 2F1 function itself. As with the
+ * hypergeometric_2F1 function, if the parameters do not meet convergence
+ * criteria then the gradients are calculated using Euler's transformation.
  *
- * @tparam T1 scalar or `var_value`
- * @tparam T2 scalar or `var_value`
- * @tparam T3 scalar or `var_value`
- * @tparam T_z scalar type
+ * @tparam calc_a1 boolean for whether to calculate gradients w.r.t a1
+ * @tparam calc_a2 boolean for whether to calculate gradients w.r.t a2
+ * @tparam calc_b1 boolean for whether to calculate gradients w.r.t b1
+ * @tparam calc_z boolean for whether to calculate gradients w.r.t z
+ * @tparam Tg1 type of outcome variable to store a1 gradient
+ * @tparam Tg2 type of outcome variable to store a2 gradient
+ * @tparam Tg3 type of outcome variable to store b1 gradient
+ * @tparam T_gz type of outcome variable to store z gradient
+ * @tparam T1 scalar type of a1
+ * @tparam T2 scalar type of a2
+ * @tparam T3 scalar type of b1
+ * @tparam T_z scalar type of z
  * @param[out] g_a1 reference to gradient of 2F1 w.r.t. a1, result
  * @param[out] g_a2 reference to gradient of 2F1 w.r.t. a2, result
  * @param[out] g_b1 reference to gradient of 2F1 w.r.t. b1, result
@@ -48,11 +59,12 @@ namespace internal {
  * @param[in] max_steps number of steps to take
  */
 template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
+          typename Tg1, typename Tg2, typename Tg3, typename T_gz,
           typename T1, typename T2, typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<T1, T2, T3, T_z>,
           typename OptT = boost::optional<TupleT>>
-void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
+void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   bool euler_transform = false;
@@ -62,7 +74,6 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
     // Apply Euler's hypergeometric transformation if function
     // will not converge with current arguments
     check_2F1_converges("hypergeometric_2F1", b1 - a1, a2, b1, z / (z - 1));
-
     euler_transform = true;
   }
 
@@ -80,7 +91,8 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
       auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_t);
       auto pre_mult = a2 * pow(1 - z, -1 - a2);
       g_z = a2 * pow(1 - z, -1 - a2) * hyper1
-        + (a2 * (b1 - a1) * pow(1 - z, -a2)  * (inv(z - 1) - z / square(z - 1)) * hyper2) / b1;
+        + (a2 * (b1 - a1) * pow(1 - z, -a2)
+              * (inv(z - 1) - z / square(z - 1)) * hyper2) / b1;
     } else {
       auto hyper_2f1_dz = hypergeometric_2F1(a1 + 1.0, a2 + 1.0, b1 + 1.0, z);
       g_z = (a1 * a2 * hyper_2f1_dz) / b1;
@@ -114,7 +126,6 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
   Eigen::Array<ret_t, Eigen::Dynamic, 1> g(3);
   g << 0.0, 0.0, 0.0;
 
-
   Eigen::Array<ret_t, Eigen::Dynamic, 1> log_g_old(3);
   log_g_old << NEGATIVE_INFTY, NEGATIVE_INFTY, NEGATIVE_INFTY;
 
@@ -127,8 +138,8 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
   int log_t_new_sign = 1.0;
   int log_t_old_sign = 1.0;
 
-  Eigen::Array<ret_t, Eigen::Dynamic, 1> log_g_old_sign(3);
-  log_g_old_sign << 1., 1., 1.;
+  Eigen::ArrayXi log_g_old_sign(3);
+  log_g_old_sign << 1, 1, 1;
 
   int sign_zk = sign_z;
   int k = 0;
@@ -205,7 +216,8 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
   }
 
   if (k > max_steps) {
-    throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
+    throw_domain_error("grad_2F1", "k (internal counter)", max_steps,
+                       "exceeded ",
                       " iterations, hypergeometric function gradient "
                       "did not converge.");
   }
@@ -213,24 +225,79 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
 }
 } // namespace internal
 
-template <bool ForceCalc, typename T1, typename T2, typename T3, typename T_z>
-void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
+/**
+ * Calculate the gradients of the hypergeometric function (2F1)
+ * as the power series stopping when the series converges
+ * to within <code>precision</code> or throwing when the
+ * function takes <code>max_steps</code> steps.
+ *
+ * @tparam Tg1 type of outcome variable to store a1 gradient
+ * @tparam Tg2 type of outcome variable to store a2 gradient
+ * @tparam Tg3 type of outcome variable to store b1 gradient
+ * @tparam T_gz type of outcome variable to store z gradient
+ * @tparam T1 scalar type of a1
+ * @tparam T2 scalar type of a2
+ * @tparam T3 scalar type of b1
+ * @tparam T_z scalar type of z
+ * @param[out] g_a1 reference to gradient of 2F1 w.r.t. a1, result
+ * @param[out] g_a2 reference to gradient of 2F1 w.r.t. a2, result
+ * @param[out] g_b1 reference to gradient of 2F1 w.r.t. b1, result
+ * @param[out] g_z reference to gradient of 2F1 w.r.t. z, result
+ * @param[in] a1 see generalized hypergeometric function definition
+ * @param[in] a2 see generalized hypergeometric function definition
+ * @param[in] b1 see generalized hypergeometric function definition
+ * @param[in] z see generalized hypergeometric function definition
+ * @param[in] precision magnitude of the increment of the infinite sum
+ *   to truncate the sum
+ * @param[in] max_steps number of steps to take
+ */
+template <typename Tg1, typename Tg2, typename Tg3, typename T_gz,
+          typename T1, typename T2, typename T3, typename T_z>
+void grad_2F1(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_2F1_impl<
-    !is_constant<T1>::value || ForceCalc,
-    !is_constant<T2>::value || ForceCalc,
-    !is_constant<T3>::value || ForceCalc,
-    !is_constant<T_z>::value || ForceCalc>(
-      g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+    !is_constant<T1>::value,
+    !is_constant<T2>::value,
+    !is_constant<T3>::value,
+    !is_constant<T_z>::value>(
+      g_a1, g_a2, g_b1, g_z,
+      value_of(a1), value_of(a2), value_of(b1), value_of(z),
+      precision, max_steps);
   return;
 }
 
+/**
+ * Calculate the gradients of the hypergeometric function (2F1)
+ * as the power series stopping when the series converges
+ * to within <code>precision</code> or throwing when the
+ * function takes <code>max_steps</code> steps.
+ *
+ * Overload for use where the destination gradients should be the same type
+ * as the input variables (needed for the grad_inc_beta overloads)
+ *
+ * @tparam T1 scalar type of a1
+ * @tparam T2 scalar type of a2
+ * @tparam T3 scalar type of b1
+ * @tparam T_z scalar type of z
+ * @param[out] g_a1 reference to gradient of 2F1 w.r.t. a1, result
+ * @param[out] g_a2 reference to gradient of 2F1 w.r.t. a2, result
+ * @param[out] g_b1 reference to gradient of 2F1 w.r.t. b1, result
+ * @param[out] g_z reference to gradient of 2F1 w.r.t. z, result
+ * @param[in] a1 see generalized hypergeometric function definition
+ * @param[in] a2 see generalized hypergeometric function definition
+ * @param[in] b1 see generalized hypergeometric function definition
+ * @param[in] z see generalized hypergeometric function definition
+ * @param[in] precision magnitude of the increment of the infinite sum
+ *   to truncate the sum
+ * @param[in] max_steps number of steps to take
+ */
 template <typename T1, typename T2, typename T3, typename T_z>
 void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  grad_2F1<false>(g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+  internal::grad_2F1_impl<true, true, true, true>(
+      g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
   return;
 }
 

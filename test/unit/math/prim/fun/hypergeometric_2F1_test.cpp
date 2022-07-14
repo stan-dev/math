@@ -46,14 +46,16 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   a << 0.5, 0.5;
   b << 1.5;
   z = 0.8;
-  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B1%2F2%2C1%2F2%2C3%2F2%2C0.8%5D
+  // https://www.wolframalpha.com/input
+  //  ?i=Hypergeometric2F1%5B1%2F2%2C1%2F2%2C3%2F2%2C0.8%5D
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   1.2378298970946586875911981729041590167);
 
   a << 0.5, 0.5;
   b << 1.5;
   z = -0.8;
-  // https://www.wolframalpha.com/input?i=Hypergeometric2F1[1%2F2%2C1%2F2%2C3%2F2%2C-0.8]
+  // https://www.wolframalpha.com/input
+  //  ?i=Hypergeometric2F1[1%2F2%2C1%2F2%2C3%2F2%2C-0.8]
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   0.8997031444420006140233288415980043158);
 
@@ -75,7 +77,8 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   b << 3.0;
   z = -1.5;
 
-  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B3%2F2%2C+2%2C+3%2C+-1.5%5D
+  // https://www.wolframalpha.com/input
+  //  ?i=Hypergeometric2F1%5B3%2F2%2C+2%2C+3%2C+-1.5%5D
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   0.3797233104317609464875119664051608419);
 
@@ -83,7 +86,8 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   b << 5.5;
   z = 1.0;
 
-  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B1.5%2C+2.0%2C+5.5%2C+1.0%5D
+  // https://www.wolframalpha.com/input
+  //  ?i=Hypergeometric2F1%5B1.5%2C+2.0%2C+5.5%2C+1.0%5D
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   2.625);
 
@@ -112,24 +116,3 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   -0.0399473);
 }
-/*
-TEST(MathFunctions, hypergeometric_pFq_errors) {
-  using Eigen::VectorXd;
-  using stan::math::hypergeometric_pFq;
-  using stan::math::INFTY;
-  using stan::math::NOT_A_NUMBER;
-
-  VectorXd a(2);
-  VectorXd b(2);
-  a << 4, INFTY;
-  b << 5, 5;
-  double z = 2;
-
-  EXPECT_THROW(hypergeometric_pFq(a, b, z), std::domain_error);
-
-  a << 6, 4;
-  b << NOT_A_NUMBER, 1;
-
-  EXPECT_THROW(hypergeometric_pFq(a, b, z), std::domain_error);
-}
-*/
