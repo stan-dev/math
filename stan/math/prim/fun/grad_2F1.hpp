@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -223,7 +222,7 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
   }
   return;
 }
-} // namespace internal
+}  // namespace internal
 
 /**
  * Calculate the gradients of the hypergeometric function (2F1)

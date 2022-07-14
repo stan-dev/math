@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-// Several special case not able to be estimated by Boost's pFq for reference
+// Several special cases can't be estimated by Boost's pFq for reference
 // test values (as they fail convergence checks for the infinite sums) and are
 // taken from WolframAlpha instead
 TEST(MathFunctions, hypergeometric_2F1_special_cases) {
