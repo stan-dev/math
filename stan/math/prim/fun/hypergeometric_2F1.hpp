@@ -75,13 +75,14 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
 
     if (a1 == 0.5 && b == 1.5 && z < 1.0) {
       auto sqrt_z = sqrt(abs(z));
-      auto numerator = (z > 0.0)
-                           // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+z%29
-                           // // NOLINT
-                           ? asin(sqrt_z)
-                           // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+-z%29
-                           // // NOLINT
-                           : asinh(sqrt_z);
+      auto numerator
+          = (z > 0.0)
+                // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+z%29
+                // // NOLINT
+                ? asin(sqrt_z)
+                // https://www.wolframalpha.com/input?i=Hypergeometric2F1%281%2F2%2C+1%2F2%2C+3%2F2%2C+-z%29
+                // // NOLINT
+                : asinh(sqrt_z);
       return numerator / sqrt_z;
     }
 
