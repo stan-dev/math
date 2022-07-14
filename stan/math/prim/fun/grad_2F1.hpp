@@ -57,15 +57,15 @@ namespace internal {
  *   to truncate the sum
  * @param[in] max_steps number of steps to take
  */
-template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename Tg1, typename Tg2, typename Tg3, typename T_gz,
-          typename T1, typename T2, typename T3, typename T_z,
+template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z, typename Tg1,
+          typename Tg2, typename Tg3, typename T_gz, typename T1, typename T2,
+          typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<T1, T2, T3, T_z>,
           typename OptT = boost::optional<TupleT>>
 void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
-              const T2& a2, const T3& b1, const T_z& z,
-              double precision = 1e-14, int max_steps = 1e6) {
+                   const T2& a2, const T3& b1, const T_z& z,
+                   double precision = 1e-14, int max_steps = 1e6) {
   bool euler_transform = false;
   try {
     check_2F1_converges("hypergeometric_2F1", a1, a2, b1, z);
@@ -90,8 +90,9 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
       auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_t);
       auto pre_mult = a2 * pow(1 - z, -1 - a2);
       g_z = a2 * pow(1 - z, -1 - a2) * hyper1
-        + (a2 * (b1 - a1) * pow(1 - z, -a2)
-              * (inv(z - 1) - z / square(z - 1)) * hyper2) / b1;
+            + (a2 * (b1 - a1) * pow(1 - z, -a2)
+               * (inv(z - 1) - z / square(z - 1)) * hyper2)
+                  / b1;
     } else {
       auto hyper_2f1_dz = hypergeometric_2F1(a1 + 1.0, a2 + 1.0, b1 + 1.0, z);
       g_z = (a1 * a2 * hyper_2f1_dz) / b1;
@@ -155,10 +156,9 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
     log_t_new_sign = sign(value_of_rec(p)) * log_t_new_sign;
 
     if (calc_a1_euler) {
-      ret_t term_a1 = log_g_old_sign(0)
-                      * log_t_old_sign
-                      * exp(log_g_old(0) - log_t_old)
-                      + inv(a1_t + k);
+      ret_t term_a1
+          = log_g_old_sign(0) * log_t_old_sign * exp(log_g_old(0) - log_t_old)
+            + inv(a1_t + k);
       log_g_old(0) = log_t_new + log(abs(term_a1));
       log_g_old_sign(0) = sign(value_of_rec(term_a1)) * log_t_new_sign;
       g_current(0) = log_g_old_sign(0) * exp(log_g_old(0)) * sign_zk;
@@ -166,10 +166,9 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
     }
 
     if (calc_a2_euler) {
-      ret_t term_a2 = log_g_old_sign(1)
-                      * log_t_old_sign
-                      * exp(log_g_old(1) - log_t_old)
-                      + inv(a2_t + k);
+      ret_t term_a2
+          = log_g_old_sign(1) * log_t_old_sign * exp(log_g_old(1) - log_t_old)
+            + inv(a2_t + k);
       log_g_old(1) = log_t_new + log(abs(term_a2));
       log_g_old_sign(1) = sign(value_of_rec(term_a2)) * log_t_new_sign;
       g_current(1) = log_g_old_sign(1) * exp(log_g_old(1)) * sign_zk;
@@ -177,10 +176,9 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
     }
 
     if (calc_b1) {
-      ret_t term_b1 = log_g_old_sign(2)
-                      * log_t_old_sign
-                      * exp(log_g_old(2) - log_t_old)
-                      + inv(-(b1 + k));
+      ret_t term_b1
+          = log_g_old_sign(2) * log_t_old_sign * exp(log_g_old(2) - log_t_old)
+            + inv(-(b1 + k));
       log_g_old(2) = log_t_new + log(abs(term_b1));
       log_g_old_sign(2) = sign(value_of_rec(term_b1)) * log_t_new_sign;
       g_current(2) = log_g_old_sign(2) * exp(log_g_old(2)) * sign_zk;
@@ -217,8 +215,8 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
   if (k > max_steps) {
     throw_domain_error("grad_2F1", "k (internal counter)", max_steps,
                        "exceeded ",
-                      " iterations, hypergeometric function gradient "
-                      "did not converge.");
+                       " iterations, hypergeometric function gradient "
+                       "did not converge.");
   }
   return;
 }
@@ -250,19 +248,15 @@ void grad_2F1_impl(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
  *   to truncate the sum
  * @param[in] max_steps number of steps to take
  */
-template <typename Tg1, typename Tg2, typename Tg3, typename T_gz,
-          typename T1, typename T2, typename T3, typename T_z>
+template <typename Tg1, typename Tg2, typename Tg3, typename T_gz, typename T1,
+          typename T2, typename T3, typename T_z>
 void grad_2F1(Tg1& g_a1, Tg2& g_a2, Tg3& g_b1, T_gz& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_2F1_impl<
-    !is_constant<T1>::value,
-    !is_constant<T2>::value,
-    !is_constant<T3>::value,
-    !is_constant<T_z>::value>(
-      g_a1, g_a2, g_b1, g_z,
-      value_of(a1), value_of(a2), value_of(b1), value_of(z),
-      precision, max_steps);
+  internal::grad_2F1_impl<!is_constant<T1>::value, !is_constant<T2>::value,
+                          !is_constant<T3>::value, !is_constant<T_z>::value>(
+      g_a1, g_a2, g_b1, g_z, value_of(a1), value_of(a2), value_of(b1),
+      value_of(z), precision, max_steps);
   return;
 }
 
@@ -295,8 +289,8 @@ template <typename T1, typename T2, typename T3, typename T_z>
 void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_2F1_impl<true, true, true, true>(
-      g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+  internal::grad_2F1_impl<true, true, true, true>(g_a1, g_a2, g_b1, g_z, a1, a2,
+                                                  b1, z, precision, max_steps);
   return;
 }
 

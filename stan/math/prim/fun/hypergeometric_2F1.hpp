@@ -56,7 +56,7 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
 
   if (b == (a2 - 1.0)) {
     return (pow((1.0 - z), -a1 - 1.0) * (a2 + z * (a1 - a2 + 1.0) - 1.0))
-      / (a2 - 1);
+           / (a2 - 1);
   }
 
   if (a1 == a2) {
@@ -66,14 +66,14 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
     }
 
     if (a1 == 0.5 && b == 1.5 && z < 1.0) {
-        auto sqrt_z = sqrt(abs(z));
-        auto numerator = (z > 0.0) ? asin(sqrt_z) : asinh(sqrt_z);
-        return numerator / sqrt_z;
+      auto sqrt_z = sqrt(abs(z));
+      auto numerator = (z > 0.0) ? asin(sqrt_z) : asinh(sqrt_z);
+      return numerator / sqrt_z;
     }
 
     if (b == (a1 + 1) && z == 0.5) {
       return pow(2, a1 - 1) * a1
-        * (digamma((a1 + 1) / 2.0) - digamma(a1 / 2.0));
+             * (digamma((a1 + 1) / 2.0) - digamma(a1 / 2.0));
     }
   }
 
@@ -83,7 +83,7 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
       return exp(log_2f1);
     } else if (b > (a1 + a2)) {
       auto log_2f1 = (lgamma(b) + lgamma(b - a1 - a2))
-        - (lgamma(b - a1) + lgamma(b - a2));
+                     - (lgamma(b - a1) + lgamma(b - a2));
       return exp(log_2f1);
     }
   }
@@ -91,7 +91,7 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
   if (a1 == 1.5 && a2 == 2.0 && b == 3.0 && z < 0.0) {
     auto abs_z = abs(z);
     auto sqrt_1pz = sqrt(1 + abs_z);
-    return - 4 * (2 * sqrt_1pz + z - 2) / (sqrt_1pz * square(z));
+    return -4 * (2 * sqrt_1pz + z - 2) / (sqrt_1pz * square(z));
   }
 
   return {};

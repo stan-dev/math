@@ -6,9 +6,9 @@
 // taken from WolframAlpha instead
 TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   using Eigen::VectorXd;
-  using stan::math::inv;
-  using stan::math::hypergeometric_pFq;
   using stan::math::hypergeometric_2F1;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::inv;
 
   VectorXd a(2);
   VectorXd b(1);
@@ -17,8 +17,7 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   double z = -5;
 
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B1%2C1%2C2%2C-5%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  std::log(6) / 5);
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), std::log(6) / 5);
 
   a << 4, 4;
   b << 10;
@@ -32,16 +31,14 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   z = 8;
 
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B6%2C4%2C4%2C8%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  inv(117649));
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), inv(117649));
 
   a << 4, 6;
   b << 4;
   z = 8;
 
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B6%2C4%2C4%2C8%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  inv(117649));
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), inv(117649));
 
   a << 0.5, 0.5;
   b << 1.5;
@@ -88,8 +85,7 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
 
   // https://www.wolframalpha.com/input
   //  ?i=Hypergeometric2F1%5B1.5%2C+2.0%2C+5.5%2C+1.0%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  2.625);
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), 2.625);
 
   a << 4, 4;
   b << 5;
@@ -104,15 +100,12 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   z = 4;
 
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B4%2C6%2C5%2C4%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  -inv(1215));
-
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), -inv(1215));
 
   a << 4, 1;
   b << 0.5;
   z = -5;
 
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B4%2C6%2C5%2C4%5D
-  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
-                  -0.0399473);
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), -0.0399473);
 }
