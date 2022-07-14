@@ -93,8 +93,8 @@ TEST(MathPrimScalFun, grad2F1_4) {
   double grad_b1;
   double grad_z;
   EXPECT_THROW(
-    stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, grad_z, a1, a2, b1, z),
-    std::domain_error);
+      stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, grad_z, a1, a2, b1, z),
+      std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_5) {
@@ -108,8 +108,8 @@ TEST(MathPrimScalFun, grad2F1_5) {
   double grad_b1;
   double grad_z;
   EXPECT_THROW(
-    stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, grad_z, a1, a2, b1, z),
-    std::domain_error);
+      stan::math::grad_2F1(grad_a1, grad_a2, grad_b1, grad_z, a1, a2, b1, z),
+      std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_6) {
