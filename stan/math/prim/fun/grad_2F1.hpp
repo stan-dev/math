@@ -88,8 +88,11 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
 
   int sign_zk = sign_z;
   int k = 0;
-  ret_t inner_diff = precision;
-  while (!(inner_diff < precision) && k < max_steps) {
+  ret_t inner_diff = 1;
+  Eigen::Matrix<ret_t, -1, 1> g_current(3);
+  g_current << 0, 0, 0;
+
+  while (inner_diff > precision && k < max_steps) {
     ret_t p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
     if (p == 0) {
       return;
@@ -104,9 +107,8 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
                       + inv(a1 + k);
       log_g_old(0) = log_t_new + log(abs(term_a1));
       log_g_old_sign(0) = sign(value_of_rec(term_a1)) * log_t_new_sign;
-      ret_t g_a1 = log_g_old_sign(0) * exp(log_g_old(0)) * sign_zk;
-      g(0) += g_a1;
-      inner_diff = max(g_a1, inner_diff);
+      g_current(0) = log_g_old_sign(0) * exp(log_g_old(0)) * sign_zk;
+      g(0) += g_current(0);
     }
 
     if (calc_a2) {
@@ -116,9 +118,8 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
                       + inv(a2 + k);
       log_g_old(1) = log_t_new + log(abs(term_a2));
       log_g_old_sign(1) = sign(value_of_rec(term_a2)) * log_t_new_sign;
-      ret_t g_a2 = log_g_old_sign(1) * exp(log_g_old(1)) * sign_zk;
-      g(1) += g_a2;
-      inner_diff = max(g_a2, inner_diff);
+      g_current(1) = log_g_old_sign(1) * exp(log_g_old(1)) * sign_zk;
+      g(1) += g_current(1);
     }
 
     if (calc_b1) {
@@ -128,15 +129,15 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
                       + inv(-(b1 + k));
       log_g_old(2) = log_t_new + log(abs(term_b1));
       log_g_old_sign(2) = sign(value_of_rec(term_b1)) * log_t_new_sign;
-      ret_t g_b1 = log_g_old_sign(2) * exp(log_g_old(2)) * sign_zk;
-      g(2) += g_b1;
-      inner_diff = max(g_b1, inner_diff);
+      g_current(2) = log_g_old_sign(2) * exp(log_g_old(2)) * sign_zk;
+      g(2) += g_current(2);
     }
+
+    inner_diff = g_current.maxCoeff();
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
     sign_zk *= sign_z;
-    inner_diff = precision;
     ++k;
   }
 
