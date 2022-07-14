@@ -49,23 +49,42 @@ namespace internal {
  */
 template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
           typename T1, typename T2, typename T3, typename T_z,
+          typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<T1, T2, T3, T_z>,
           typename OptT = boost::optional<TupleT>>
 void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
-              double precision = 1e-14, int max_steps = 1e6,
-              bool skip_convergence_check = false) {
-  if (!skip_convergence_check) {
-    check_2F1_converges("grad_2F1", a1, a2, b1, z);
+              double precision = 1e-14, int max_steps = 1e6) {
+  bool euler_transform = false;
+  try {
+    check_2F1_converges("hypergeometric_2F1", a1, a2, b1, z);
+  } catch (...) {
+    // Apply Euler's hypergeometric transformation if function
+    // will not converge with current arguments
+    check_2F1_converges("hypergeometric_2F1", b1 - a1, a2, b1, z / (z - 1));
+
+    euler_transform = true;
   }
+
+  ScalarT a1_t = euler_transform ? a2 : a1;
+  ScalarT a2_t = euler_transform ? b1 - a1 : a2;
+  ScalarT z_t = euler_transform ? z / (z - 1) : z;
 
   using stan::math::value_of_rec;
   using std::max;
   using ret_t = return_type_t<T1, T2, T3, T_z>;
 
   if (calc_z) {
-    auto hyper_2f1_dz = hypergeometric_2F1(a1 + 1.0, a2 + 1.0, b1 + 1.0, z);
-    g_z = (a1 * a2 * hyper_2f1_dz) / b1;
+    if (euler_transform) {
+      auto hyper1 = hypergeometric_2F1(a1_t, a2_t, b1, z_t);
+      auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_t);
+      auto pre_mult = a2 * pow(1 - z, -1 - a2);
+      g_z = a2 * pow(1 - z, -1 - a2) * hyper1
+        + (a2 * (b1 - a1) * pow(1 - z, -a2)  * (inv(z - 1) - z / square(z - 1)) * hyper2) / b1;
+    } else {
+      auto hyper_2f1_dz = hypergeometric_2F1(a1 + 1.0, a2 + 1.0, b1 + 1.0, z);
+      g_z = (a1 * a2 * hyper_2f1_dz) / b1;
+    }
   }
 
   if (z == 0) {
@@ -74,6 +93,22 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
 
   if (!(calc_a1 || calc_a2 || calc_b1)) {
     return;
+  }
+
+  bool calc_a1_euler = calc_a1;
+  bool calc_a2_euler = calc_a2;
+
+  if (euler_transform) {
+    // 'a' gradients under Euler transform are constructed using the gradients
+    // of both elements, so need to compute both if any are required
+    if (calc_a1 || calc_a2) {
+      calc_a1_euler = true;
+      calc_a2_euler = true;
+    }
+    // 'b' gradients under Euler transform require gradients from 'a2'
+    if (calc_b1) {
+      calc_a2_euler = true;
+    }
   }
 
   Eigen::Array<ret_t, Eigen::Dynamic, 1> g(3);
@@ -85,8 +120,8 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
 
   ret_t log_t_old = 0.0;
   ret_t log_t_new = 0.0;
-  int sign_z = sign(z);
-  auto log_z = log(abs(z));
+  int sign_z = sign(z_t);
+  auto log_z = log(abs(z_t));
 
   double log_precision = log(precision);
   int log_t_new_sign = 1.0;
@@ -102,29 +137,29 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
   g_current << 0, 0, 0;
 
   while (inner_diff > precision && k < max_steps) {
-    ret_t p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1 + k)));
+    ret_t p = ((a1_t + k) * (a2_t + k) / ((b1 + k) * (1.0 + k)));
     if (p == 0) {
       return;
     }
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = sign(value_of_rec(p)) * log_t_new_sign;
 
-    if (calc_a1) {
+    if (calc_a1_euler) {
       ret_t term_a1 = log_g_old_sign(0)
                       * log_t_old_sign
                       * exp(log_g_old(0) - log_t_old)
-                      + inv(a1 + k);
+                      + inv(a1_t + k);
       log_g_old(0) = log_t_new + log(abs(term_a1));
       log_g_old_sign(0) = sign(value_of_rec(term_a1)) * log_t_new_sign;
       g_current(0) = log_g_old_sign(0) * exp(log_g_old(0)) * sign_zk;
       g(0) += g_current(0);
     }
 
-    if (calc_a2) {
+    if (calc_a2_euler) {
       ret_t term_a2 = log_g_old_sign(1)
                       * log_t_old_sign
                       * exp(log_g_old(1) - log_t_old)
-                      + inv(a2 + k);
+                      + inv(a2_t + k);
       log_g_old(1) = log_t_new + log(abs(term_a2));
       log_g_old_sign(1) = sign(value_of_rec(term_a2)) * log_t_new_sign;
       g_current(1) = log_g_old_sign(1) * exp(log_g_old(1)) * sign_zk;
@@ -142,7 +177,7 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
       g(2) += g_current(2);
     }
 
-    inner_diff = g_current.maxCoeff();
+    inner_diff = g_current.array().abs().maxCoeff();
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
@@ -150,9 +185,24 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
     ++k;
   }
 
-  g_a1 = g(0);
-  g_a2 = g(1);
-  g_b1 = g(2);
+  auto pre_mult_ab = inv(pow(1.0 - z, a2));
+
+  if (calc_a1) {
+    g_a1 = euler_transform ? -pre_mult_ab * g(1) : g(0);
+  }
+
+  if (calc_a2) {
+    if (euler_transform) {
+      auto hyper_da2 = hypergeometric_2F1(a1_t, a2, b1, z_t);
+      g_a2 = -pre_mult_ab * hyper_da2 * log1m(z) + pre_mult_ab * g(0);
+    } else {
+      g_a2 = g(1);
+    }
+  }
+
+  if (calc_b1) {
+    g_b1 = euler_transform ? pre_mult_ab * (g(1) + g(2)) : g(2);
+  }
 
   if (k > max_steps) {
     throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
@@ -161,103 +211,18 @@ void grad_2F1_impl(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
   }
   return;
 }
-
-template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename T1, typename T2, typename T3, typename T_z,
-          typename PartialsT = partials_return_t<T1, T2, T3, T_z>,
-          typename RtnTupleT = std::tuple<T1, T2, T3, T_z>,
-          typename RtnT = boost::optional<RtnTupleT>>
-RtnT grad_2F1_special_cases(const T1& a1,
-              const T2& a2, const T3& b1, const T_z& z) {
-  RtnTupleT grad_tuple = RtnTupleT(0.0, 0.0, 0.0, 0.0);
-  if (z == 0.0) {
-    return grad_tuple;
-  }
-  if (a1 == b1) {
-    if (calc_a2) {
-      std::get<1>(grad_tuple) = log1m(z) * -pow(1 - z, -a2);
-    }
-    if (calc_z) {
-      std::get<3>(grad_tuple) = a2 * pow(1 - z, -1 - a2);
-    }
-    if (calc_a1 || calc_b1) {
-      T1 g_a1;
-      T2 g_a2;
-      T3 g_b1;
-      T_z g_z;
-      internal::grad_2F1_impl<calc_a1, false, calc_b1, false>(
-        g_a1, g_a2, g_b1, g_z, a1, a2, b1, z,
-        1e-14, 1e6, true
-        );
-
-      std::get<0>(grad_tuple) = g_a1;
-      std::get<2>(grad_tuple) = g_b1;
-    }
-    return grad_tuple;
-  }
-  if (a1 == a2) {
-    if (a1 == 1.0 && b1 == 2.0 && z < 0) {
-      if (calc_z) {
-        auto abs_z = abs(z);
-        std::get<3>(grad_tuple) =
-          inv(z * (1 + abs_z))
-          - z * log1p(abs_z) / pow(square(z), 1.5);
-      }
-      if (calc_a1 || calc_a2 || calc_b1) {
-        T1 g_a1;
-        T2 g_a2;
-        T3 g_b1;
-        T_z g_z;
-
-        // Apply Pfaff transformation so that series
-        // can converge for gradients
-        auto a1_t = a2;
-        auto a2_t = b1 - a1;
-        auto b1_t = b1;
-        auto z_t = z / (z - 1);
-        auto pre_mult = pow(1 - z, -a2);
-
-        internal::grad_2F1_impl<true, true, true, false>(
-          g_a1, g_a2, g_b1, g_z, a1_t, a2_t, b1_t, z_t,
-          1e-14, 1e6, true
-          );
-
-        std::get<0>(grad_tuple) = -pre_mult * g_a2;
-        std::get<2>(grad_tuple) = pre_mult * (g_b1 + g_a2);
-        if (calc_a2) {
-          auto hyper = hypergeometric_2F1(a1_t, a2_t, b1_t, z_t);
-          std::get<1>(grad_tuple)
-            = -pre_mult * hyper * log1m(z) + pre_mult * g_a1;
-        }
-      }
-      return grad_tuple;
-    }
-  }
-  return {};
-}
 } // namespace internal
 
-template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename T1, typename T2, typename T3, typename T_z,
-          typename TupleT = std::tuple<T1, T2, T3, T_z>,
-          typename OptT = boost::optional<TupleT>>
+template <bool ForceCalc, typename T1, typename T2, typename T3, typename T_z>
 void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-    OptT special_case_grad
-      = internal::grad_2F1_special_cases<calc_a1, calc_a2, calc_b1, calc_z>(
-        a1, a2, b1, z
-      );
-    if (special_case_grad.is_initialized()) {
-      TupleT grads = special_case_grad.get();
-      g_a1 = std::get<0>(grads);
-      g_a2 = std::get<1>(grads);
-      g_b1 = std::get<2>(grads);
-      g_z = std::get<3>(grads);
-
-      return;
-    }
-  internal::grad_2F1_impl<calc_a1, calc_a2, calc_b1, calc_z>(g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+  internal::grad_2F1_impl<
+    !is_constant<T1>::value || ForceCalc,
+    !is_constant<T2>::value || ForceCalc,
+    !is_constant<T3>::value || ForceCalc,
+    !is_constant<T_z>::value || ForceCalc>(
+      g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
   return;
 }
 
@@ -265,7 +230,8 @@ template <typename T1, typename T2, typename T3, typename T_z>
 void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, T_z& g_z, const T1& a1,
               const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  grad_2F1<true, true, true, true>(g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+  grad_2F1<false>(g_a1, g_a2, g_b1, g_z, a1, a2, b1, z, precision, max_steps);
+  return;
 }
 
 }  // namespace math

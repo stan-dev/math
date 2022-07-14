@@ -45,9 +45,7 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
         double g_a2;
         double g_b;
         double g_z;
-        grad_2F1<!is_constant<Ta1>::value, !is_constant<Ta2>::value,
-                 !is_constant<Tb>::value, !is_constant<Tz>::value>
-                 (g_a1, g_a2, g_b, g_z, a1_dbl, a2_dbl, b_dbl, z_dbl);
+        grad_2F1(g_a1, g_a2, g_b, g_z, a1_dbl, a2_dbl, b_dbl, z_dbl);
 
         if (!is_constant<Ta1>::value) {
           forward_as<var>(a1).adj() += vi.adj() * g_a1;

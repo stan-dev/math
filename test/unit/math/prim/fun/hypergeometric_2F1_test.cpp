@@ -102,6 +102,15 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B4%2C6%2C5%2C4%5D
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   -inv(1215));
+
+
+  a << 4, 1;
+  b << 0.5;
+  z = -5;
+
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B4%2C6%2C5%2C4%5D
+  EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
+                  -0.0399473);
 }
 /*
 TEST(MathFunctions, hypergeometric_pFq_errors) {

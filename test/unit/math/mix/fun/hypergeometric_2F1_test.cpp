@@ -34,9 +34,25 @@ TEST(mathMixScalFun, hypergeometric2F1_11) {
 
   fvar<double> res = stan::math::hypergeometric_2F1(a1, a2, b, z);
 
-  EXPECT_FLOAT_EQ(-0.321040199556840 - 0.321040199556840 + 0.129536268190289
-                      + 0.0383370454357889,
+  EXPECT_FLOAT_EQ(-0.321040199556840
+                  - 0.321040199556840
+                  + 0.129536268190289
+                  + 0.0383370454357889,
                   res.d_);
+}
+
+TEST(mathMixScalFun, hypergeometric2F1_12) {
+  auto f = [](const auto& x1) {
+    using stan::math::hypergeometric_2F1;
+    return hypergeometric_2F1(x1[0], x1[1], x1[2], x1[3]);
+  };
+
+  Eigen::VectorXd in1(4);
+  in1 << 4, 6, 5, 0.5;
+  stan::test::expect_ad(f, in1);
+
+  //in1 << 3.70975, 1, 2.70975, -0.2;
+  //stan::test::expect_ad(f, in1);
 }
 
 TEST(mathMixScalFun, hypergeometric2F1_2) {
