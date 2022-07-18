@@ -58,12 +58,11 @@ namespace internal {
  * @param[in] max_steps number of steps to take
  */
 template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename TupleT, typename T1, typename T2,
-          typename T3, typename T_z,
+          typename TupleT, typename T1, typename T2, typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>>
 TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
-                      const T3& b1, const T_z& z, double precision = 1e-14,
-                      int max_steps = 1e6) {
+                     const T3& b1, const T_z& z, double precision = 1e-14,
+                     int max_steps = 1e6) {
   bool euler_transform = false;
   try {
     check_2F1_converges("hypergeometric_2F1", a1, a2, b1, z);
@@ -85,14 +84,14 @@ TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
   if (calc_z) {
     if (euler_transform) {
       auto hyper1 = hypergeometric_2F1(a1_transformed, a2_transformed, b1,
-                                        z_transformed);
-      auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1,
-                                        z_transformed);
+                                       z_transformed);
+      auto hyper2
+          = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_transformed);
       auto pre_mult = a2 * pow(1 - z, -1 - a2);
       std::get<3>(grad_tuple) = a2 * pow(1 - z, -1 - a2) * hyper1
-            + (a2 * (b1 - a1) * pow(1 - z, -a2)
-               * (inv(z - 1) - z / square(z - 1)) * hyper2)
-                  / b1;
+                                + (a2 * (b1 - a1) * pow(1 - z, -a2)
+                                   * (inv(z - 1) - z / square(z - 1)) * hyper2)
+                                      / b1;
     } else {
       auto hyper_2f1_dz = hypergeometric_2F1(a1 + 1.0, a2 + 1.0, b1 + 1.0, z);
       std::get<3>(grad_tuple) = (a1 * a2 * hyper_2f1_dz) / b1;
@@ -123,7 +122,7 @@ TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
     }
   }
 
-  using ret_array_t =  Eigen::Array<ret_t, 3, 1>;
+  using ret_array_t = Eigen::Array<ret_t, 3, 1>;
   ret_array_t g = ret_array_t::Zero(3);
 
   ret_array_t log_g_old = ret_array_t::Constant(3, 1, NEGATIVE_INFTY);
@@ -146,7 +145,7 @@ TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
 
   while (inner_diff > precision && k < max_steps) {
     ret_t p = ((a1_transformed + k) * (a2_transformed + k)
-                / ((b1 + k) * (1.0 + k)));
+               / ((b1 + k) * (1.0 + k)));
     if (p == 0) {
       return grad_tuple;
     }
@@ -199,18 +198,18 @@ TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
 
   if (calc_a2) {
     if (euler_transform) {
-      auto hyper_da2 = hypergeometric_2F1(a1_transformed, a2, b1,
-                                          z_transformed);
-      std::get<1>(grad_tuple) =
-        -pre_mult_ab * hyper_da2 * log1m(z) + pre_mult_ab * g(0);
+      auto hyper_da2
+          = hypergeometric_2F1(a1_transformed, a2, b1, z_transformed);
+      std::get<1>(grad_tuple)
+          = -pre_mult_ab * hyper_da2 * log1m(z) + pre_mult_ab * g(0);
     } else {
       std::get<1>(grad_tuple) = g(1);
     }
   }
 
   if (calc_b1) {
-    std::get<2>(grad_tuple) =
-      euler_transform ? pre_mult_ab * (g(1) + g(2)) : g(2);
+    std::get<2>(grad_tuple)
+        = euler_transform ? pre_mult_ab * (g(1) + g(2)) : g(2);
   }
 
   if (k > max_steps) {
@@ -253,21 +252,16 @@ TupleT grad_2F1_impl(TupleT&& grad_tuple, const T1& a1, const T2& a2,
  */
 template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
           require_not_t<std::integral_constant<bool, ReturnSameT>>* = nullptr>
-auto grad_2F1(const T1& a1,
-              const T2& a2, const T3& b1, const T_z& z,
+auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   using partials_t = partials_return_t<T1, T2, T3, T_z>;
-  std::tuple<partials_t, partials_t, partials_t, partials_t>
-      ret_tuple;
+  std::tuple<partials_t, partials_t, partials_t, partials_t> ret_tuple;
 
   return internal::grad_2F1_impl<
-  !is_constant<T1>::value,
-  !is_constant<T2>::value,
-  !is_constant<T3>::value,
-  !is_constant<T_z>::value>(
-    ret_tuple,
-      value_of(a1), value_of(a2), value_of(b1),
-      value_of(z), precision, max_steps);
+      !is_constant<T1>::value, !is_constant<T2>::value, !is_constant<T3>::value,
+      !is_constant<T_z>::value>(ret_tuple, value_of(a1), value_of(a2),
+                                value_of(b1), value_of(z), precision,
+                                max_steps);
 }
 
 /**
@@ -303,17 +297,13 @@ auto grad_2F1(const T1& a1,
  */
 template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
           require_t<std::integral_constant<bool, ReturnSameT>>* = nullptr>
-auto grad_2F1(const T1& a1,
-              const T2& a2, const T3& b1, const T_z& z,
+auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   using return_t = return_type_t<T1, T2, T3, T_z>;
-  std::tuple<return_t, return_t, return_t, return_t>
-      ret_tuple;
+  std::tuple<return_t, return_t, return_t, return_t> ret_tuple;
 
   return internal::grad_2F1_impl<true, true, true, true>(
-    ret_tuple,
-      a1, a2, b1,
-      z, precision, max_steps);
+      ret_tuple, a1, a2, b1, z, precision, max_steps);
 }
 
 /**
