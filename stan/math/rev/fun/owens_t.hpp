@@ -33,20 +33,20 @@ inline auto owens_t(const Var1& h, const Var2& a) {
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena.val(), a_arena.val())),
                             Var1, Var2>;
-  arena_t<return_type> vi = owens_t(h_arena.val(), a_arena.val());
-  reverse_pass_callback([h_arena, a_arena, vi]() mutable {
-    const auto& h_val = as_array_or_scalar(h_arena).val();
-    const auto& a_val = as_array_or_scalar(a_arena).val();
-    const auto neg_avi_sq_div_2 = -square(h_val) * 0.5;
-    const auto one_p_bvi_sq = 1.0 + square(a_val);
+  arena_t<return_type> ret = owens_t(h_arena.val(), a_arena.val());
+  reverse_pass_callback([h_arena, a_arena, ret]() mutable {
+    const auto& h_val = as_value_array_or_scalar(h_arena);
+    const auto& a_val = as_value_array_or_scalar(a_arena);
+    const auto neg_h_sq_div_2 = stan::math::eval(-square(h_val) * 0.5);
+    const auto one_p_a_sq = stan::math::eval(1.0 + square(a_val));
     as_array_or_scalar(h_arena).adj() += possibly_sum<is_stan_scalar<Var1>>(
-        as_array_or_scalar(vi.adj()) * erf(a_val * h_val * INV_SQRT_TWO)
-        * exp(neg_avi_sq_div_2) * INV_SQRT_TWO_PI * -0.5);
+        as_array_or_scalar(ret.adj()) * erf(a_val * h_val * INV_SQRT_TWO)
+        * exp(neg_h_sq_div_2) * INV_SQRT_TWO_PI * -0.5);
     as_array_or_scalar(a_arena).adj() += possibly_sum<is_stan_scalar<Var2>>(
-        as_array_or_scalar(vi.adj()) * exp(neg_avi_sq_div_2 * one_p_bvi_sq)
-        / (one_p_bvi_sq * TWO_PI));
+        as_array_or_scalar(ret.adj()) * exp(neg_h_sq_div_2 * one_p_a_sq)
+        / (one_p_a_sq * TWO_PI));
   });
-  return return_type(vi);
+  return return_type(ret);
 }
 
 /**
@@ -70,16 +70,12 @@ inline auto owens_t(const Var& h, const Arith& a) {
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena.val(), a_arena)), Var,
                             Arith>;
-  arena_t<return_type> vi = owens_t(h_arena.val(), a_arena);
-  reverse_pass_callback([h_arena, a_arena, vi]() mutable {
-    as_array_or_scalar(h_arena).adj() += possibly_sum<is_stan_scalar<Var>>(
-        as_array_or_scalar(vi.adj())
-        * erf(as_array_or_scalar(a_arena) * as_array_or_scalar(h_arena).val()
-              * INV_SQRT_TWO)
-        * exp(-square(as_array_or_scalar(h_arena).val()) * 0.5)
-        * INV_SQRT_TWO_PI * -0.5);
+  arena_t<return_type> ret = owens_t(h_arena.val(), a_arena);
+  reverse_pass_callback([h_arena, a_arena, ret]() mutable {
+    const auto& h_val = as_value_array_or_scalar(h_arena);
+    as_array_or_scalar(h_arena).adj() += possibly_sum<is_stan_scalar<Var>>(as_array_or_scalar(ret.adj()) * erf(as_array_or_scalar(a_arena) * h_val * INV_SQRT_TWO) * exp(-square(h_val) * 0.5) * INV_SQRT_TWO_PI * -0.5);
   });
-  return return_type(vi);
+  return return_type(ret);
 }
 
 /**
@@ -103,16 +99,16 @@ inline auto owens_t(const Arith& h, const Var& a) {
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena, a_arena.val())), Var,
                             Arith>;
-  arena_t<return_type> vi = owens_t(h_arena, a_arena.val());
-  reverse_pass_callback([h_arena, a_arena, vi]() mutable {
-    const auto one_p_bvi_sq
-        = eval(1.0 + square(as_array_or_scalar(a_arena.val())));
+  arena_t<return_type> ret = owens_t(h_arena, a_arena.val());
+  reverse_pass_callback([h_arena, a_arena, ret]() mutable {
+    const auto one_p_a_sq
+        = eval(1.0 + square(as_value_array_or_scalar(a_arena)));
     as_array_or_scalar(a_arena).adj() += possibly_sum<is_stan_scalar<Var>>(
-        as_array_or_scalar(vi.adj())
-        * exp(-0.5 * square(as_array_or_scalar(h_arena)) * one_p_bvi_sq)
-        / (one_p_bvi_sq * TWO_PI));
+        as_array_or_scalar(ret.adj())
+        * exp(-0.5 * square(as_array_or_scalar(h_arena)) * one_p_a_sq)
+        / (one_p_a_sq * TWO_PI));
   });
-  return return_type(vi);
+  return return_type(ret);
 }
 
 }  // namespace math

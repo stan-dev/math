@@ -10,8 +10,8 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Extends std::true_type when instantiated with one type that has a var
- * `scalar_type` and another that is a matrix. Extends std::false_type
+ * Extends std::true_type when instantiated with at least one type that has a var
+ * `scalar_type` and at least one type is a matrix. Extends std::false_type
  * otherwise.
  * @tparam Types Types to test
  */
