@@ -73,7 +73,10 @@ inline auto owens_t(const Var& h, const Arith& a) {
   arena_t<return_type> ret = owens_t(h_arena.val(), a_arena);
   reverse_pass_callback([h_arena, a_arena, ret]() mutable {
     const auto& h_val = as_value_array_or_scalar(h_arena);
-    as_array_or_scalar(h_arena).adj() += possibly_sum<is_stan_scalar<Var>>(as_array_or_scalar(ret.adj()) * erf(as_array_or_scalar(a_arena) * h_val * INV_SQRT_TWO) * exp(-square(h_val) * 0.5) * INV_SQRT_TWO_PI * -0.5);
+    as_array_or_scalar(h_arena).adj() += possibly_sum<is_stan_scalar<Var>>(
+        as_array_or_scalar(ret.adj())
+        * erf(as_array_or_scalar(a_arena) * h_val * INV_SQRT_TWO)
+        * exp(-square(h_val) * 0.5) * INV_SQRT_TWO_PI * -0.5);
   });
   return return_type(ret);
 }
