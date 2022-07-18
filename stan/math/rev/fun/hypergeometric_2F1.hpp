@@ -38,27 +38,24 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
   double b_dbl = value_of(b);
   double z_dbl = value_of(z);
 
-  return make_callback_var(hypergeometric_2F1(a1_dbl, a2_dbl, b_dbl, z_dbl),
-                           [a1, a2, b, z](auto& vi) mutable {
-                             double g_a1;
-                             double g_a2;
-                             double g_b;
-                             double g_z;
-                             grad_2F1(g_a1, g_a2, g_b, g_z, a1, a2, b, z);
+  return make_callback_var(
+    hypergeometric_2F1(a1_dbl, a2_dbl, b_dbl, z_dbl),
+    [a1, a2, b, z](auto& vi) mutable {
+      auto grad_tuple = grad_2F1(a1, a2, b, z);
 
-                             if (!is_constant<Ta1>::value) {
-                               forward_as<var>(a1).adj() += vi.adj() * g_a1;
-                             }
-                             if (!is_constant<Ta2>::value) {
-                               forward_as<var>(a2).adj() += vi.adj() * g_a2;
-                             }
-                             if (!is_constant<Tb>::value) {
-                               forward_as<var>(b).adj() += vi.adj() * g_b;
-                             }
-                             if (!is_constant<Tz>::value) {
-                               forward_as<var>(z).adj() += vi.adj() * g_z;
-                             }
-                           });
+      if (!is_constant<Ta1>::value) {
+        forward_as<var>(a1).adj() += vi.adj() * std::get<0>(grad_tuple);
+      }
+      if (!is_constant<Ta2>::value) {
+        forward_as<var>(a2).adj() += vi.adj() * std::get<1>(grad_tuple);
+      }
+      if (!is_constant<Tb>::value) {
+        forward_as<var>(b).adj() += vi.adj() * std::get<2>(grad_tuple);
+      }
+      if (!is_constant<Tz>::value) {
+        forward_as<var>(z).adj() += vi.adj() * std::get<3>(grad_tuple);
+      }
+    });
 }
 }  // namespace math
 }  // namespace stan

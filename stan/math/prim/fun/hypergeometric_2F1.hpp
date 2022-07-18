@@ -178,8 +178,8 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     return special_case_a2a1.get();
   }
 
-  Eigen::VectorXd a_args(2);
-  Eigen::VectorXd b_args(1);
+  Eigen::Matrix<double, 2, 1> a_args(2);
+  Eigen::Matrix<double, 1, 1> b_args(1);
 
   try {
     check_2F1_converges("hypergeometric_2F1", a1, a2, b, z);
@@ -187,7 +187,7 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     a_args << a1, a2;
     b_args << b;
     return hypergeometric_pFq(a_args, b_args, z);
-  } catch (...) {
+  } catch (const std::exception& e) {
     // Apply Euler's hypergeometric transformation if function
     // will not converge with current arguments
     ScalarT a1_t = b - a1;

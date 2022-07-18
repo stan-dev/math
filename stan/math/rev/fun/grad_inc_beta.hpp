@@ -45,7 +45,9 @@ inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
   var dF3 = 0;
   var dFz = 0;
   if (value_of(value_of(C))) {
-    grad_2F1(dF1, dF2, dF3, dFz, a + b, var(1.0), a + 1, z);
+    auto grad_tuple = grad_2F1<true>(a + b, var(1.0), a + 1, z);
+    dF1 = std::get<0>(grad_tuple);
+    dF3 = std::get<2>(grad_tuple);
   }
   g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF3);
   g2 = c2 * c3 + C * dF1;

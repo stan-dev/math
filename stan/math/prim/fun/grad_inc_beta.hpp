@@ -33,7 +33,9 @@ inline void grad_inc_beta(double& g1, double& g2, double a, double b,
   double dF3 = 0;
   double dFz = 0;
   if (C) {
-    grad_2F1(dF1, dF2, dF3, dFz, a + b, 1.0, a + 1, z);
+    auto grad_tuple = grad_2F1<true>(a + b, 1.0, a + 1, z);
+    dF1 = std::get<0>(grad_tuple);
+    dF3 = std::get<2>(grad_tuple);
   }
   g1 = fma((c1 - inv(a)), c3, C * (dF1 + dF3));
   g2 = fma(c2, c3, C * dF1);

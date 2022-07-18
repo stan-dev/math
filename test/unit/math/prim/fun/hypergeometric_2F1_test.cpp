@@ -43,16 +43,14 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   a << 0.5, 0.5;
   b << 1.5;
   z = 0.8;
-  // https://www.wolframalpha.com/input
-  //  ?i=Hypergeometric2F1%5B1%2F2%2C1%2F2%2C3%2F2%2C0.8%5D
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B1%2F2%2C1%2F2%2C3%2F2%2C0.8%5D // NOLINT
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   1.2378298970946586875911981729041590167);
 
   a << 0.5, 0.5;
   b << 1.5;
   z = -0.8;
-  // https://www.wolframalpha.com/input
-  //  ?i=Hypergeometric2F1[1%2F2%2C1%2F2%2C3%2F2%2C-0.8]
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1[1%2F2%2C1%2F2%2C3%2F2%2C-0.8] // NOLINT
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   0.8997031444420006140233288415980043158);
 
@@ -74,8 +72,7 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   b << 3.0;
   z = -1.5;
 
-  // https://www.wolframalpha.com/input
-  //  ?i=Hypergeometric2F1%5B3%2F2%2C+2%2C+3%2C+-1.5%5D
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B3%2F2%2C+2%2C+3%2C+-1.5%5D  // NOLINT
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z),
                   0.3797233104317609464875119664051608419);
 
@@ -83,8 +80,7 @@ TEST(MathFunctions, hypergeometric_2F1_special_cases) {
   b << 5.5;
   z = 1.0;
 
-  // https://www.wolframalpha.com/input
-  //  ?i=Hypergeometric2F1%5B1.5%2C+2.0%2C+5.5%2C+1.0%5D
+  // https://www.wolframalpha.com/input?i=Hypergeometric2F1%5B1.5%2C+2.0%2C+5.5%2C+1.0%5D  // NOLINT
   EXPECT_FLOAT_EQ(hypergeometric_2F1(a[0], a[1], b[0], z), 2.625);
 
   a << 4, 4;
