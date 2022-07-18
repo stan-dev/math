@@ -39,10 +39,11 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * @return the first argument raised to the power of the second
  * argument.
  */
-template <typename Scalar1, typename Scalar2,
-          require_all_t<
-              disjunction<is_complex<Scalar1>, std::is_arithmetic<Scalar1>>,
-              disjunction<is_complex<Scalar2>, std::is_arithmetic<Scalar2>>>* = nullptr>
+template <
+    typename Scalar1, typename Scalar2,
+    require_all_t<disjunction<is_complex<Scalar1>, std::is_arithmetic<Scalar1>>,
+                  disjunction<is_complex<Scalar2>,
+                              std::is_arithmetic<Scalar2>>>* = nullptr>
 inline auto pow(const Scalar1& a, const Scalar2& b) {
   return std::pow(a, b);
 }
