@@ -32,18 +32,18 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * Return the first argument raised to the power of the second
  * argument.
  *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
+ * @tparam Scalar1 type of first argument
+ * @tparam Scalar2 type of second argument
  * @param a first argument
  * @param b second argument
  * @return the first argument raised to the power of the second
  * argument.
  */
-template <typename T1, typename T2,
+template <typename Scalar1, typename Scalar2,
           require_all_t<
-              disjunction<is_complex<T1>, std::is_arithmetic<T1>>,
-              disjunction<is_complex<T2>, std::is_arithmetic<T2>>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
+              disjunction<is_complex<Scalar1>, std::is_arithmetic<Scalar1>>,
+              disjunction<is_complex<Scalar2>, std::is_arithmetic<Scalar2>>>* = nullptr>
+inline auto pow(const Scalar1& a, const Scalar2& b) {
   return std::pow(a, b);
 }
 
@@ -58,10 +58,10 @@ inline auto pow(const T1& a, const T2& b) {
  * @return the elementwise raising of the first argument to the power of the
  * second argument.
  */
-template <typename Container1, typename Container2,
-          require_any_container_t<Container1, Container2>* = nullptr>
-inline auto pow(const Container1& a, const Container2& b) {
-  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_matrix_st<is_var, T1, T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [](const auto& c, const auto& d) {
     using std::pow;
     return pow(c, d);
   });

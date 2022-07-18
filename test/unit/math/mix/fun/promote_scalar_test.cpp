@@ -65,6 +65,7 @@ void test_promote_scalar() {
                  inner_promo_type>>(tester);
   stan::math::test::expect_same_value_of_rec(tester, result);
 }
+
 TEST(mixFun, promote_scalar_tuple) {
   using stan::math::fvar;
   using stan::math::var;
@@ -82,4 +83,23 @@ TEST(mixFun, promote_scalar_tuple) {
   test_promote_scalar<std::complex<double>, double>();
   test_promote_scalar<std::complex<var>, double>();
   test_promote_scalar<std::complex<fvar<var>>, double>();
+}
+
+template <typename UnPromotedType>
+void test_promote_scalar_basic() {
+  std::tuple<UnPromotedType, UnPromotedType> x{UnPromotedType(3.5),
+                                               UnPromotedType(4.5)};
+  std::tuple<std::complex<UnPromotedType>, UnPromotedType> z
+      = stan::math::promote_scalar<
+          std::tuple<std::complex<UnPromotedType>, UnPromotedType>>(x);
+  stan::math::test::expect_same_value_of_rec(x, z);
+}
+
+TEST(mixFun, promote_scalar_tuple_basic) {
+  using stan::math::fvar;
+  using stan::math::var;
+  test_promote_scalar_basic<double>();
+  test_promote_scalar_basic<var>();
+  test_promote_scalar_basic<fvar<double>>();
+  test_promote_scalar_basic<fvar<var>>();
 }
