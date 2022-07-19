@@ -45,12 +45,12 @@ namespace internal {
  * @return Three-element tuple containing gradients w.r.t. a1, a2, and b1,
  *   as indicated by the calc_a1, calc_a2, and calc_b1 booleans
  */
-template <bool calc_a1, bool calc_a2, bool calc_b1,
-          typename T1, typename T2, typename T3, typename T_z,
+template <bool calc_a1, bool calc_a2, bool calc_b1, typename T1, typename T2,
+          typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<ScalarT, ScalarT, ScalarT>>
 TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
-                      double precision = 1e-14, int max_steps = 1e6) {
+                        double precision = 1e-14, int max_steps = 1e6) {
   TupleT grad_tuple = TupleT(0, 0, 0);
 
   if (z == 0) {
@@ -131,7 +131,6 @@ TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
   return grad_tuple;
 }
 
-
 /**
  * Implementation function to calculate the gradients of the hypergeometric
  * function, 2F1.
@@ -164,20 +163,20 @@ TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
  * @return Four-element tuple containing gradients w.r.t. to each parameter,
  *   as indicated by the calc_* booleans
  */
-template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z,
-          typename T1, typename T2, typename T3, typename T_z,
+template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z, typename T1,
+          typename T2, typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<ScalarT, ScalarT, ScalarT, ScalarT>>
 TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
-                    double precision = 1e-14, int max_steps = 1e6) {
+                     double precision = 1e-14, int max_steps = 1e6) {
   bool euler_transform = false;
   try {
     check_2F1_converges("hypergeometric_2F1", a1, a2, b1, z);
   } catch (const std::exception& e) {
     // Apply Euler's hypergeometric transformation if function
     // will not converge with current arguments
-    check_2F1_converges("hypergeometric_2F1 (euler transform)",
-                        b1 - a1, a2, b1, z / (z - 1));
+    check_2F1_converges("hypergeometric_2F1 (euler transform)", b1 - a1, a2, b1,
+                        z / (z - 1));
     euler_transform = true;
   }
 
@@ -191,10 +190,11 @@ TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
       auto hyper1 = hypergeometric_2F1(a1_euler, a2_euler, b1, z_euler);
       auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_euler);
       auto pre_mult = a2 * pow(1 - z, -1 - a2);
-      std::get<3>(grad_tuple_rtn) = a2 * pow(1 - z, -1 - a2) * hyper1
-                                + (a2 * (b1 - a1) * pow(1 - z, -a2)
-                                   * (inv(z - 1) - z / square(z - 1)) * hyper2)
-                                      / b1;
+      std::get<3>(grad_tuple_rtn)
+          = a2 * pow(1 - z, -1 - a2) * hyper1
+            + (a2 * (b1 - a1) * pow(1 - z, -a2)
+               * (inv(z - 1) - z / square(z - 1)) * hyper2)
+                  / b1;
     }
     if (calc_a1 || calc_a2 || calc_b1) {
       // 'a' gradients under Euler transform are constructed using the gradients
@@ -203,22 +203,22 @@ TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
       // 'b' gradients under Euler transform require gradients from 'a2'
       constexpr bool calc_a2_euler = calc_a1 || calc_a2 || calc_b1;
       grad_tuple_ab = grad_2F1_impl_ab<calc_a1_euler, calc_a2_euler, calc_b1>(
-        a1_euler, a2_euler, b1, z_euler);
+          a1_euler, a2_euler, b1, z_euler);
 
       auto pre_mult_ab = inv(pow(1.0 - z, a2));
       if (calc_a1) {
         std::get<0>(grad_tuple_rtn) = -pre_mult_ab * std::get<1>(grad_tuple_ab);
       }
       if (calc_a2) {
-        auto hyper_da2
-            = hypergeometric_2F1(a1_euler, a2, b1, z_euler);
+        auto hyper_da2 = hypergeometric_2F1(a1_euler, a2, b1, z_euler);
         std::get<1>(grad_tuple_rtn)
             = -pre_mult_ab * hyper_da2 * log1m(z)
               + pre_mult_ab * std::get<0>(grad_tuple_ab);
       }
       if (calc_b1) {
-        std::get<2>(grad_tuple_rtn) = pre_mult_ab
-          * (std::get<1>(grad_tuple_ab) + std::get<2>(grad_tuple_ab));
+        std::get<2>(grad_tuple_rtn)
+            = pre_mult_ab
+              * (std::get<1>(grad_tuple_ab) + std::get<2>(grad_tuple_ab));
       }
     }
   } else {
@@ -228,7 +228,7 @@ TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
     }
     if (calc_a1 || calc_a2 || calc_b1) {
       grad_tuple_ab
-        = grad_2F1_impl_ab<calc_a1, calc_a2, calc_b1>(a1, a2, b1, z);
+          = grad_2F1_impl_ab<calc_a1, calc_a2, calc_b1>(a1, a2, b1, z);
       if (calc_a1) {
         std::get<0>(grad_tuple_rtn) = std::get<0>(grad_tuple_ab);
       }
@@ -273,9 +273,8 @@ auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   return internal::grad_2F1_impl<
       !is_constant<T1>::value, !is_constant<T2>::value, !is_constant<T3>::value,
-      !is_constant<T_z>::value>(value_of(a1), value_of(a2),
-                                value_of(b1), value_of(z), precision,
-                                max_steps);
+      !is_constant<T_z>::value>(value_of(a1), value_of(a2), value_of(b1),
+                                value_of(z), precision, max_steps);
 }
 
 /**
@@ -305,8 +304,8 @@ template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
           require_t<std::integral_constant<bool, ReturnSameT>>* = nullptr>
 auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  return internal::grad_2F1_impl<true, true, true, true>(
-      a1, a2, b1, z, precision, max_steps);
+  return internal::grad_2F1_impl<true, true, true, true>(a1, a2, b1, z,
+                                                         precision, max_steps);
 }
 
 /**
