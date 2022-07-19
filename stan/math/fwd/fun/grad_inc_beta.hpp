@@ -43,10 +43,9 @@ void grad_inc_beta(fvar<T>& g1, fvar<T>& g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   fvar<T> dF3 = 0;
   fvar<T> dFz = 0;
 
-  if (value_of(value_of(C))) {
-    auto grad_tuple = grad_2F1<true>(a + b, fvar<T>(1.0), a + 1, z);
-    dF1 = std::get<0>(grad_tuple);
-    dF3 = std::get<2>(grad_tuple);
+  if (value_of_rec(C)) {
+    std::forward_as_tuple(dF1, dF2, dF3, dFz)
+       = grad_2F1<true>(a + b, fvar<T>(1.0), a + 1, z);
   }
 
   g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF3);
