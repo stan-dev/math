@@ -35,8 +35,8 @@ namespace math {
  *
  * This function does not have a closed form but will converge if:
  *   - <code>|z|</code> is less than 1
- *   - <code>|z|</code> is equal to one and <code>b[0] + b[1] < a[0] + a[1] + a[2]</code>
- * This function is a rational polynomial if
+ *   - <code>|z|</code> is equal to one and <code>b[0] + b[1] < a[0] + a[1] +
+ * a[2]</code> This function is a rational polynomial if
  *   - <code>a[0]</code>, <code>a[1]</code>, or <code>a[2]</code> is a
  *     non-positive integer
  * This function can be treated as a rational polynomial if
@@ -60,8 +60,7 @@ template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
-                            double precision = 1e-6,
-                            int max_steps = 1e5) {
+                            double precision = 1e-6, int max_steps = 1e5) {
   ArrayAT a_array = as_array_or_scalar(a);
   ArrayBT b_array = append_row(as_array_or_scalar(b), 1.0);
   check_3F2_converges("hypergeometric_3F2", a_array[0], a_array[1], a_array[2],
@@ -93,7 +92,7 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
 
     if (is_inf(t_acc)) {
       throw_domain_error("hypergeometric_3F2", "sum (output)", t_acc,
-                          "overflow hypergeometric function did not converge.");
+                         "overflow hypergeometric function did not converge.");
     }
     k++;
     apk.array() += 1.0;
@@ -104,8 +103,8 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
   }
   if (k == max_steps) {
     throw_domain_error("hypergeometric_3F2", "k (internal counter)", max_steps,
-                      "exceeded  iterations, hypergeometric function did not ",
-                      "converge.");
+                       "exceeded  iterations, hypergeometric function did not ",
+                       "converge.");
   }
   return t_acc;
 }
@@ -127,8 +126,7 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
  */
 template <typename Ta, typename Tb, typename Tz>
 auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
-                        const std::initializer_list<Tb>& b,
-                        const Tz& z,
+                        const std::initializer_list<Tb>& b, const Tz& z,
                         double precision = 1e-6, int max_steps = 1e5) {
   return hypergeometric_3F2(std::vector<Ta>(a), std::vector<Tb>(b), z,
                             precision, max_steps);

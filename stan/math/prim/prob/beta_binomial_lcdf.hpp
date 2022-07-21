@@ -104,7 +104,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
     const T_partials_return one = 1;
 
     const T_partials_return F = hypergeometric_3F2({one, mu, 1 - N_minus_n},
-                                                    {n_dbl + 2, 1 - nu}, one);
+                                                   {n_dbl + 2, 1 - nu}, one);
     T_partials_return C = lbeta(nu, mu) - lbeta(alpha_dbl, beta_dbl)
                           - lbeta(N_minus_n, n_dbl + 2);
     C = F * exp(C) / (N_dbl + 1);
