@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
@@ -83,7 +84,7 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
     const auto& abs_apk = fabs((apk == 0).select(1.0, apk));
     const auto& abs_bpk = fabs((bpk == 0).select(1.0, bpk));
     T_return p = sum(log(abs_apk)) - sum(log(abs_bpk));
-    if (p == 0.0) {
+    if (p == NEGATIVE_INFTY) {
       return t_acc;
     }
 
