@@ -10,14 +10,6 @@ TEST(MathFunctions, log_inv_logit_diff) {
   EXPECT_FLOAT_EQ(-7.703540544, log_inv_logit_diff(-7.62, -10.15));
 }
 
-TEST(MathFunctions, log_inv_logit_diff) {
-  using stan::math::log_inv_logit_diff;
-  using stan::math::inv_logit;
-  using stan::math::INFTY;
-
-  EXPECT_FLOAT_EQ(log(), log_inv_logit_diff(2.15, 1.71));
-}
-
 TEST(MathFunctions, log_inv_logit_diff_nan) {
   using stan::math::log_inv_logit_diff;
   using stan::math::NOT_A_NUMBER;
