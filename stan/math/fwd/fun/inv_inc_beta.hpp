@@ -56,7 +56,10 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
     auto da2
         = exp(a_val * log_w + 2 * lgamma(a_val)
-              + log(hypergeometric_3F2(a_val, a_val, one_m_b, ap1, ap1, w))
+              + log(
+                hypergeometric_3F2(
+                  std::vector<T_return>{a_val, a_val, one_m_b},
+                  std::vector<T_return>{ap1, ap1}, w))
               - 2 * lgamma(ap1));
     auto da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                * (log_w - digamma(a_val) + digamma_apb);
@@ -66,8 +69,10 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
   if (is_fvar<T2>::value) {
     auto db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
     auto db2 = 2 * lgamma(b_val)
-               + log(hypergeometric_3F2(b_val, b_val, one_m_a, bp1, bp1,
-                      one_m_w))
+               + log(
+                hypergeometric_3F2(
+                  std::vector<T_return>{b_val, b_val, one_m_a},
+                  std::vector<T_return>{bp1, bp1}, one_m_w))
                - 2 * lgamma(bp1) + b_val * log1m_w;
 
     auto db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)

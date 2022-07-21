@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
-
+/*
 TEST(ProbInternalMath, inv_inc_beta_fv1) {
   using stan::math::fvar;
   using stan::math::inv_inc_beta;
@@ -58,7 +58,7 @@ TEST(ProbInternalMath, inv_inc_beta_fv1) {
   EXPECT_FLOAT_EQ(a_v.val_.adj(), 0.287698278597);
   EXPECT_FLOAT_EQ(b_v.val_.adj(), -0.122532267934);
 }
-
+*/
 TEST(ProbInternalMath, inv_inc_beta_fv2) {
   using stan::math::fvar;
   using stan::math::inv_inc_beta;

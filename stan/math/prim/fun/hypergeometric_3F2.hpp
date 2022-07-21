@@ -54,29 +54,35 @@ namespace math {
  */
 template <typename Ta, typename Tb, typename Tz,
           typename T_return = return_type_t<Ta, Tb, Tz>,
+          typename ArrayAT = Eigen::Array<scalar_type_t<Ta>, 3, 1>,
+          typename ArrayBT = Eigen::Array<scalar_type_t<Ta>, 3, 1>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
                             double precision = 1e-6,
                             int max_steps = 1e5) {
-  const auto& a_ref = to_ref(as_array_or_scalar(a));
-  const auto& b_ref = to_ref(append_row(as_array_or_scalar(b), 1.0));
-  check_3F2_converges("hypergeometric_3F2", a_ref[0], a_ref[1], a_ref[2],
-                      b_ref[0], b_ref[1], z);
+  ArrayAT a_array = as_array_or_scalar(a);
+  ArrayBT b_array = append_row(as_array_or_scalar(b), 1.0);
+  check_3F2_converges("hypergeometric_3F2", a_array[0], a_array[1], a_array[2],
+                      b_array[0], b_array[1], z);
 
   T_return t_acc = 1.0;
   T_return log_t = 0.0;
   T_return log_z = log(fabs(z));
-  Eigen::ArrayXi a_signs = sign(value_of_rec(a_ref));
-  Eigen::ArrayXi b_signs = sign(value_of_rec(b_ref));
-  plain_type_t<decltype(a_ref)> apk = a_ref;
-  plain_type_t<decltype(b_ref)> bpk = b_ref;
+  Eigen::ArrayXi a_signs = sign(value_of_rec(a_array));
+  Eigen::ArrayXi b_signs = sign(value_of_rec(b_array));
+  plain_type_t<decltype(a_array)> apk = a_array;
+  plain_type_t<decltype(b_array)> bpk = b_array;
   int z_sign = sign(value_of_rec(z));
   int t_sign = z_sign * a_signs.prod() * b_signs.prod();
-  int k = 0;
 
+  int k = 0;
   while (k <= max_steps && log_t >= log(precision)) {
-    T_return p = sum(log(fabs(apk))) - sum(log(fabs(bpk)));
+    // Replace zero values with 1 prior to taking the log so that we accumulate
+    // 0.0 rather than -inf
+    const auto& abs_apk = fabs((apk == 0).select(1.0, apk));
+    const auto& abs_bpk = fabs((bpk == 0).select(1.0, bpk));
+    T_return p = sum(log(abs_apk)) - sum(log(abs_bpk));
     if (p == 0.0) {
       return t_acc;
     }
@@ -106,7 +112,7 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
 /**
  * Hypergeometric function (3F2).
  *
- * Overload for all scalars as inputs.
+ * Overload for initializer_list inputs
  *
  * @tparam Ta type of scalar 'a' arguments
  * @tparam Tb type of scalar 'b' arguments
@@ -118,15 +124,13 @@ T_return hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z,
  * @param[in] max_steps number of steps to take. defaults to 1e5
  * @return Generalized hypergeometric function applied to the inputs
  */
-template <typename Ta, typename Tb, typename Tz,
-          typename T_return = return_type_t<Ta, Tb, Tz>,
-          require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
-T_return hypergeometric_3F2(const Ta& a1, const Ta& a2, const Ta& a3,
-                            const Tb& b1, const Tb& b2, const Tz& z,
-                            double precision = 1e-6,
-                            int max_steps = 1e5) {
-  return hypergeometric_3F2(std::vector<Ta>{a1, a2, a3},
-                            std::vector<Tb>{b1, b2}, z);
+template <typename Ta, typename Tb, typename Tz>
+auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
+                        const std::initializer_list<Tb>& b,
+                        const Tz& z,
+                        double precision = 1e-6, int max_steps = 1e5) {
+  return hypergeometric_3F2(std::vector<Ta>(a), std::vector<Tb>(b), z,
+                            precision, max_steps);
 }
 
 }  // namespace math
