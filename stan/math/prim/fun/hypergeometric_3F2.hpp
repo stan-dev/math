@@ -68,6 +68,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
 }
 } // namespace internal
 
+
 /**
  * Hypergeometric function (3F2).
  *
@@ -75,7 +76,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
  *
  * \f[
  *   _3F_2 \left(
- *     \begin{matrix}a_1 a_2 a3 \\ b_1 b_2\end{matrix}; z
+ *     \begin{matrix}a_1 a_2 a[2] \\ b_1 b_2\end{matrix}; z
  *     \right) = \sum_k=0^\infty
  * \frac{(a_1)_k(a_2)_k(a_3)_k}{(b_1)_k(b_2)_k}\frac{z^k}{k!} \f]
  *
@@ -87,23 +88,23 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
  *
  * This function does not have a closed form but will converge if:
  *   - <code>|z|</code> is less than 1
- *   - <code>|z|</code> is equal to one and <code>b1 + b2 < a1 + a2 + a3</code>
- * This function is a rational polynomial if
- *   - <code>a1</code>, <code>a2</code>, or <code>a3</code> is a
+ *   - <code>|z|</code> is equal to one and <code>b[0] + b[1] < a[0] + a[1] +
+ * a[2]</code> This function is a rational polynomial if
+ *   - <code>a[0]</code>, <code>a[1]</code>, or <code>a[2]</code> is a
  *     non-positive integer
  * This function can be treated as a rational polynomial if
- *   - <code>b1</code> or <code>b2</code> is a non-positive integer
+ *   - <code>b[0]</code> or <code>b[1]</code> is a non-positive integer
  *     and the series is terminated prior to the final term.
  *
- * @tparam T type of arguments and result
- * @param[in] a1 a1 (always called with 1 from beta binomial cdfs)
- * @param[in] a2 a2 (always called with a2 > 1)
- * @param[in] a3 a3 (always called with int a3 <= 0)
- * @param[in] b1 b1 (always called with int b1 < |a3|)
- * @param[in] b2 b2 (always <= 1)
+ * @tparam Ta type of Eigen/Std vector 'a' arguments
+ * @tparam Tb type of Eigen/Std vector 'b' arguments
+ * @tparam Tz type of z argument
+ * @param[in] a Always called with a[1] > 1, a[2] <= 0
+ * @param[in] b Always called with int b[0] < |a[2]|,  <= 1)
  * @param[in] z z (is always called with 1 from beta binomial cdfs)
  * @param[in] precision precision of the infinite sum. defaults to 1e-6
  * @param[in] max_steps number of steps to take. defaults to 1e5
+ * @return Generalized hypergeometric function applied to the inputs
  */
 template <typename Ta, typename Tb, typename Tz,
           typename ScalarT = return_type_t<Ta, Tb, Tz>,
@@ -120,6 +121,21 @@ auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   return hypergeometric_pFq(a, b, z);
 }
 
+/**
+ * Hypergeometric function (3F2).
+ *
+ * Overload for initializer_list inputs
+ *
+ * @tparam Ta type of scalar 'a' arguments
+ * @tparam Tb type of scalar 'b' arguments
+ * @tparam Tz type of z argument
+ * @param[in] a Always called with a[1] > 1, a[2] <= 0
+ * @param[in] b Always called with int b[0] < |a[2]|,  <= 1)
+ * @param[in] z z (is always called with 1 from beta binomial cdfs)
+ * @param[in] precision precision of the infinite sum. defaults to 1e-6
+ * @param[in] max_steps number of steps to take. defaults to 1e5
+ * @return Generalized hypergeometric function applied to the inputs
+ */
 template <typename Ta, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
 auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
