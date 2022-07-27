@@ -36,13 +36,13 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
 
   if (!is_constant<Ta>::value) {
     grad += dot_product(
-      forward_as<promote_scalar_t<fvar_t, decltype(a_ref)>>(a_ref).d(),
-                        std::get<0>(grad_tuple));
+        forward_as<promote_scalar_t<fvar_t, decltype(a_ref)>>(a_ref).d(),
+        std::get<0>(grad_tuple));
   }
   if (!is_constant<Tb>::value) {
     grad += dot_product(
-      forward_as<promote_scalar_t<fvar_t, decltype(b_ref)>>(b_ref).d(),
-                        std::get<1>(grad_tuple));
+        forward_as<promote_scalar_t<fvar_t, decltype(b_ref)>>(b_ref).d(),
+        std::get<1>(grad_tuple));
   }
   if (!is_constant<Tz>::value) {
     grad += forward_as<promote_scalar_t<fvar_t, Tz>>(z).d_

@@ -53,8 +53,8 @@ return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
     throw std::domain_error(msg.str());
   }
 
-  return boost::math::hypergeometric_pFq(
-    to_array_1d(a_ref), to_array_1d(b_ref), z);
+  return boost::math::hypergeometric_pFq(to_array_1d(a_ref), to_array_1d(b_ref),
+                                         z);
 }
 }  // namespace math
 }  // namespace stan

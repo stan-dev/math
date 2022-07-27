@@ -33,11 +33,15 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
       [arena_a, arena_b, z](auto& vi) mutable {
         auto grad_tuple = grad_pFq(arena_a, arena_b, z);
         if (!is_constant<Ta>::value) {
-          as_column_vector_or_scalar(forward_as<promote_scalar_t<var, Ta>>(arena_a)).adj()
+          as_column_vector_or_scalar(
+              forward_as<promote_scalar_t<var, Ta>>(arena_a))
+              .adj()
               += vi.adj() * std::get<0>(grad_tuple);
         }
         if (!is_constant<Tb>::value) {
-          as_column_vector_or_scalar(forward_as<promote_scalar_t<var, Tb>>(arena_b)).adj()
+          as_column_vector_or_scalar(
+              forward_as<promote_scalar_t<var, Tb>>(arena_b))
+              .adj()
               += vi.adj() * std::get<1>(grad_tuple);
         }
         if (!is_constant<Tz>::value) {

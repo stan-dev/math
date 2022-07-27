@@ -18,7 +18,8 @@ template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
-                            double precision = 1e-6, int max_steps = 1e5) {
+                                   double precision = 1e-6,
+                                   int max_steps = 1e5) {
   ArrayAT a_array = as_array_or_scalar(a);
   ArrayBT b_array = append_row(as_array_or_scalar(b), 1.0);
   check_3F2_converges("hypergeometric_3F2", a_array[0], a_array[1], a_array[2],
@@ -66,8 +67,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
   }
   return t_acc;
 }
-} // namespace internal
-
+}  // namespace internal
 
 /**
  * Hypergeometric function (3F2).
@@ -139,8 +139,7 @@ auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
 template <typename Ta, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
 auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
-                        const std::initializer_list<Tb>& b,
-                        const Tz& z) {
+                        const std::initializer_list<Tb>& b, const Tz& z) {
   return hypergeometric_3F2(std::vector<Ta>(a), std::vector<Tb>(b), z);
 }
 
