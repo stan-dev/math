@@ -23,24 +23,26 @@ namespace math {
  * @return Generalised hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
+          typename EigenTa = decltype(to_vector(std::declval<Ta>()).eval()),
+          typename EigenTb = decltype(to_vector(std::declval<Tb>()).eval()),
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
-  arena_t<Ta> arena_a = a;
-  arena_t<Tb> arena_b = b;
+  arena_t<EigenTa> arena_a = to_vector(a);
+  arena_t<EigenTb> arena_b = to_vector(b);
   return make_callback_var(
       hypergeometric_pFq(value_of(arena_a), value_of(arena_b), value_of(z)),
       [arena_a, arena_b, z](auto& vi) mutable {
         auto grad_tuple = grad_pFq(arena_a, arena_b, z);
         if (!is_constant<Ta>::value) {
           as_column_vector_or_scalar(
-              forward_as<promote_scalar_t<var, Ta>>(arena_a))
+              forward_as<promote_scalar_t<var, EigenTa>>(arena_a))
               .adj()
               += vi.adj() * std::get<0>(grad_tuple);
         }
         if (!is_constant<Tb>::value) {
           as_column_vector_or_scalar(
-              forward_as<promote_scalar_t<var, Tb>>(arena_b))
+              forward_as<promote_scalar_t<var, EigenTb>>(arena_b))
               .adj()
               += vi.adj() * std::get<1>(grad_tuple);
         }

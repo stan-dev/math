@@ -56,16 +56,8 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
     std::vector<T_return> da_a{a_val, a_val, one_m_b};
     std::vector<T_return> da_b{ap1, ap1};
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
-<<<<<<< HEAD
-    auto da2 = exp(
-        a_val * log_w + 2 * lgamma(a_val)
-        + log(hypergeometric_3F2(std::vector<T_return>{a_val, a_val, one_m_b},
-                                 std::vector<T_return>{ap1, ap1}, w))
-        - 2 * lgamma(ap1));
-=======
     auto da2 = exp(a_val * log_w + 2 * lgamma(a_val)
                    + log(hypergeometric_3F2(da_a, da_b, w)) - 2 * lgamma(ap1));
->>>>>>> add-hyper-3f2-2
     auto da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                * (log_w - digamma(a_val) + digamma_apb);
     inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);

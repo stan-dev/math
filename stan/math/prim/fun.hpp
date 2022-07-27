@@ -93,10 +93,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
-<<<<<<< HEAD
-=======
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
->>>>>>> add-hyper-3f2-2
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/factor_U.hpp>
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
