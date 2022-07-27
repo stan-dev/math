@@ -5,8 +5,11 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {
@@ -107,8 +110,6 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
  * @return Generalized hypergeometric function applied to the inputs
  */
 template <typename Ta, typename Tb, typename Tz,
-          typename ScalarT = return_type_t<Ta, Tb, Tz>,
-          typename OptT = boost::optional<ScalarT>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
