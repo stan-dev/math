@@ -124,17 +124,13 @@ TEST(RevMath, grad_2F1_derivs_match) {
   b_v << 1;
   var z_v = 0.6;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_2) {
@@ -149,17 +145,13 @@ TEST(RevMath, grad2F1_2) {
   b_v << 41;
   var z_v = 1;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_3) {
@@ -174,17 +166,13 @@ TEST(RevMath, grad2F1_3) {
   b_v << 41.0;
   var z_v = 1.0;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_6) {
@@ -199,17 +187,13 @@ TEST(RevMath, grad2F1_6) {
   b_v << 10.6;
   var z_v = 0.3;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_7) {
@@ -224,17 +208,13 @@ TEST(RevMath, grad2F1_7) {
   b_v << 10;
   var z_v = 0.3;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_8) {
@@ -249,17 +229,13 @@ TEST(RevMath, grad2F1_8) {
   b_v << 11;
   var z_v = 0.3;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_9) {
@@ -274,17 +250,13 @@ TEST(RevMath, grad2F1_9) {
   b_v << -3.2;
   var z_v = 0.9;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
 TEST(RevMath, grad2F1_10) {
@@ -299,17 +271,13 @@ TEST(RevMath, grad2F1_10) {
   b_v << 2;
   var z_v = 0.4;
 
-  double g_a1;
-  double g_a2;
-  double g_b1;
-
-  grad_2F1(g_a1, g_a2, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(),
-           z_v.val());
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_a2, std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 /*
 TEST(RevMath, grad2F1_11) {
@@ -324,14 +292,14 @@ TEST(RevMath, grad2F1_11) {
   b_v << 2.70975;
   var z_v = 0.999696;
 
-  double g_a1;
-  double g_b1;
+  double std::get<0>(grad_2F1_tuple);
+  double std::get<2>(grad_2F1_tuple);
 
-  grad_2F1(g_a1, g_b1, a_v[0].val(), a_v[1].val(), b_v[0].val(), z_v.val());
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  grad_2F1(std::get<0>(grad_2F1_tuple), std::get<2>(grad_2F1_tuple), a_v[0],
+a_v[1], b_v[0], z_v); auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  EXPECT_FLOAT_EQ(g_a1, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_b1, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
 }*/
 
 TEST(RevMath, F32_converges_by_z) {

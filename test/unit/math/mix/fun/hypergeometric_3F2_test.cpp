@@ -16,6 +16,7 @@ TEST(ProbInternalMath, F32_fd) {
       11.28915378492300834453857665243661995978358572684678329916652,
       stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z).val_);
 }
+
 TEST(ProbInternalMath, F32_ffd) {
   using stan::math::fvar;
 
@@ -295,6 +296,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv6) {
   fvar<var> a = 1.0;
   fvar<var> b = 31.0;
   fvar<var> c = -27.0;
+
   fvar<var> d = 19.0;
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;

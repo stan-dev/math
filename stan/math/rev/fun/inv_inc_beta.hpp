@@ -72,10 +72,10 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
 
     if (!is_constant_all<T1>::value) {
       double da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
-      double da2
-          = a_val * log_w + 2 * lgamma(a_val)
-            + log(hypergeometric_3F2({a_val, a_val, one_m_b}, {ap1, ap1}, w))
-            - 2 * lgamma(ap1);
+      double da2 = a_val * log_w + 2 * lgamma(a_val)
+                   + log(hypergeometric_3F2({a_val, a_val, one_m_b},
+                                            {ap1, ap1}, w))
+                   - 2 * lgamma(ap1);
       double da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                    * (log_w - digamma(a_val) + digamma_apb);
 
