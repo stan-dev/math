@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
 
@@ -22,7 +23,7 @@ namespace math {
  * @return Generalised hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          require_all_matrix_t<Ta, Tb>* = nullptr,
+          require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<Ta> arena_a = a;
@@ -32,11 +33,11 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
       [arena_a, arena_b, z](auto& vi) mutable {
         auto grad_tuple = grad_pFq(arena_a, arena_b, z);
         if (!is_constant<Ta>::value) {
-          forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
+          as_column_vector_or_scalar(forward_as<promote_scalar_t<var, Ta>>(arena_a)).adj()
               += vi.adj() * std::get<0>(grad_tuple);
         }
         if (!is_constant<Tb>::value) {
-          forward_as<promote_scalar_t<var, Tb>>(arena_b).adj()
+          as_column_vector_or_scalar(forward_as<promote_scalar_t<var, Tb>>(arena_b)).adj()
               += vi.adj() * std::get<1>(grad_tuple);
         }
         if (!is_constant<Tz>::value) {

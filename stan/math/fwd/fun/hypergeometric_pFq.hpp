@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
 
@@ -22,23 +23,25 @@ namespace math {
  * @return Generalised hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          require_all_matrix_t<Ta, Tb>* = nullptr,
+          require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_fvar, Ta, Tb, Tz>* = nullptr>
 inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                                     const Tz& z) {
   using fvar_t = return_type_t<Ta, Tb, Tz>;
-  ref_type_t<Ta> a_ref = a;
-  ref_type_t<Tb> b_ref = b;
+  const auto& a_ref = as_column_vector_or_scalar(a);
+  const auto& b_ref = as_column_vector_or_scalar(b);
   auto grad_tuple = grad_pFq(a_ref, b_ref, z);
 
   typename fvar_t::Scalar grad = 0;
 
   if (!is_constant<Ta>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, Ta>>(a_ref).d(),
+    grad += dot_product(
+      forward_as<promote_scalar_t<fvar_t, decltype(a_ref)>>(a_ref).d(),
                         std::get<0>(grad_tuple));
   }
   if (!is_constant<Tb>::value) {
-    grad += dot_product(forward_as<promote_scalar_t<fvar_t, Tb>>(b_ref).d(),
+    grad += dot_product(
+      forward_as<promote_scalar_t<fvar_t, decltype(b_ref)>>(b_ref).d(),
                         std::get<1>(grad_tuple));
   }
   if (!is_constant<Tz>::value) {

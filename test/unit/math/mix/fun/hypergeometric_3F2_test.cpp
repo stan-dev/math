@@ -14,8 +14,9 @@ TEST(ProbInternalMath, F32_fd) {
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
-      stan::math::F32(a, b, c, d, e, z).val_);
+      stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z).val_);
 }
+
 TEST(ProbInternalMath, F32_ffd) {
   using stan::math::fvar;
 
@@ -28,7 +29,7 @@ TEST(ProbInternalMath, F32_ffd) {
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
-      stan::math::F32(a, b, c, d, e, z).val_.val_);
+      stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z).val_.val_);
 }
 TEST(ProbInternalMath, F32_fv_1stderiv1) {
   using stan::math::fvar;
@@ -42,7 +43,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv1) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -66,7 +67,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv2) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -90,7 +91,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv3) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -113,7 +114,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv4) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -137,7 +138,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv5) {
   e.d_ = 1.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -162,7 +163,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv6) {
   fvar<var> z = 1.0;
   z.d_ = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -187,7 +188,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv1) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -212,7 +213,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv2) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -236,7 +237,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv3) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
@@ -259,7 +260,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv4) {
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   std::vector<stan::math::var> y1{d.val_};
   std::vector<double> grad1;
@@ -279,7 +280,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv5) {
   e.d_ = 1.0;
   fvar<var> z = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   std::vector<stan::math::var> y1{e.val_};
   std::vector<double> grad1;
@@ -295,12 +296,13 @@ TEST(ProbInternalMath, F32_fv_2ndderiv6) {
   fvar<var> a = 1.0;
   fvar<var> b = 31.0;
   fvar<var> c = -27.0;
+
   fvar<var> d = 19.0;
   fvar<var> e = -41.0;
   fvar<var> z = 1.0;
   z.d_ = 1.0;
 
-  fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
+  fvar<var> z1 = stan::math::hypergeometric_3F2({a, b, c}, {d, e}, z);
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,
