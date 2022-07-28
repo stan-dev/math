@@ -4,12 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
-#include <stan/math/prim/fun/to_vector.hpp>
-#include <stan/math/prim/fun/to_array_1d.hpp>
 #include <boost/math/special_functions/hypergeometric_pFq.hpp>
 
 namespace stan {
 namespace math {
+
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments:
@@ -27,7 +26,7 @@ namespace math {
  * @return Generalised hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          require_all_vector_st<std::is_arithmetic, Ta, Tb>* = nullptr,
+          require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
 return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                              const Tz& z) {
@@ -48,13 +47,14 @@ return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
     std::stringstream msg;
     msg << "hypergeometric function pFq does not meet convergence "
         << "conditions with given arguments. "
-        << "a: " << to_vector(a_ref) << ", b: " << to_vector(b_ref) << ", "
+        << "a: " << a_ref << ", b: " << b_ref << ", "
         << ", z: " << z;
     throw std::domain_error(msg.str());
   }
 
-  return boost::math::hypergeometric_pFq(to_array_1d(a_ref), to_array_1d(b_ref),
-                                         z);
+  return boost::math::hypergeometric_pFq(
+      std::vector<double>(a_ref.data(), a_ref.data() + a_ref.size()),
+      std::vector<double>(b_ref.data(), b_ref.data() + b_ref.size()), z);
 }
 }  // namespace math
 }  // namespace stan

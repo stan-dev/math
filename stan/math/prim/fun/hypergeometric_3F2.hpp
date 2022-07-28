@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
@@ -31,7 +32,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
 
   T_return t_acc = 1.0;
   T_return log_t = 0.0;
-  T_return log_z = log(math::fabs(z));
+  T_return log_z = log(fabs(z));
   Eigen::ArrayXi a_signs = sign(value_of_rec(a_array));
   Eigen::ArrayXi b_signs = sign(value_of_rec(b_array));
   plain_type_t<decltype(a_array)> apk = a_array;
@@ -120,7 +121,7 @@ auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   if (z == 1.0 && (sum(b) - sum(a)) < 0.0) {
     return internal::hypergeometric_3F2_infsum(a, b, z);
   }
-  return hypergeometric_pFq(a, b, z);
+  return hypergeometric_pFq(to_vector(a), to_vector(b), z);
 }
 
 /**
