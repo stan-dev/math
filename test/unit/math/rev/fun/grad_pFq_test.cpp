@@ -397,12 +397,12 @@ TEST(RevMath, grad_2F1_negative_z) {
 }
 
 TEST(RevMath, grad_3F2_cross_zero) {
+  using stan::math::grad_F32;
   using stan::math::grad_pFq;
   using stan::math::hypergeometric_3F2;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
-  using stan::math::grad_F32;
 
   vector_v a_v(3);
   a_v << 1, 1, -1;

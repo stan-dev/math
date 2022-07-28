@@ -235,17 +235,17 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         log_phammer_2_mpn += log(2 + m + n);
 
         log_phammer_ap1_n.array()
-          += log(math::fabs((ap1n.array() == 0).select(1.0, ap1n.array())));
+            += log(math::fabs((ap1n.array() == 0).select(1.0, ap1n.array())));
         log_phammer_bp1_n.array()
-          += log(math::fabs((bp1n.array() == 0).select(1.0, bp1n.array())));
+            += log(math::fabs((bp1n.array() == 0).select(1.0, bp1n.array())));
         log_phammer_an.array()
-          += log(math::fabs((an.array() == 0).select(1.0, an.array())));
+            += log(math::fabs((an.array() == 0).select(1.0, an.array())));
         log_phammer_bn.array()
-          += log(math::fabs((bn.array() == 0).select(1.0, bn.array())));
+            += log(math::fabs((bn.array() == 0).select(1.0, bn.array())));
         log_phammer_ap1_mpn.array()
-          += log(math::fabs((ap1mn.array() == 0).select(1.0, ap1mn.array())));
+            += log(math::fabs((ap1mn.array() == 0).select(1.0, ap1mn.array())));
         log_phammer_bp1_mpn.array()
-          += log(math::fabs((bp1mn.array() == 0).select(1.0, bp1mn.array())));
+            += log(math::fabs((bp1mn.array() == 0).select(1.0, bp1mn.array())));
 
         z_pow_mn_sign *= z_sign;
         log_phammer_ap1n_sign.array() *= sign(value_of_rec(ap1n)).array();
