@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/append_row.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/sign.hpp>
@@ -30,7 +31,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
 
   T_return t_acc = 1.0;
   T_return log_t = 0.0;
-  T_return log_z = log(fabs(z));
+  T_return log_z = log(math::fabs(z));
   Eigen::ArrayXi a_signs = sign(value_of_rec(a_array));
   Eigen::ArrayXi b_signs = sign(value_of_rec(b_array));
   plain_type_t<decltype(a_array)> apk = a_array;
@@ -42,8 +43,8 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
   while (k <= max_steps && log_t >= log(precision)) {
     // Replace zero values with 1 prior to taking the log so that we accumulate
     // 0.0 rather than -inf
-    const auto& abs_apk = fabs((apk == 0).select(1.0, apk));
-    const auto& abs_bpk = fabs((bpk == 0).select(1.0, bpk));
+    const auto& abs_apk = math::fabs((apk == 0).select(1.0, apk));
+    const auto& abs_bpk = math::fabs((bpk == 0).select(1.0, bpk));
     T_return p = sum(log(abs_apk)) - sum(log(abs_bpk));
     if (p == NEGATIVE_INFTY) {
       return t_acc;
