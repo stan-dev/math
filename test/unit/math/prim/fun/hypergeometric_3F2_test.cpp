@@ -5,14 +5,14 @@
 TEST(MathPrimScalFun, F32_converges_by_z) {
   EXPECT_NEAR(
       2.5,
-      stan::math::hypergeometric_3F2({1.0, 1.0, 1.0}, {1.0, 1.0}, 0.6, 1e-10),
+      stan::math::hypergeometric_3F2({1.0, 1.0, 1.0}, {1.0, 1.0}, 0.6),
       1e-8);
 }
 // terminate by zero numerator, no sign-flip
 TEST(MathPrimScalFun, F32_polynomial) {
   EXPECT_NEAR(11.28855722705942,
               stan::math::hypergeometric_3F2({1.0, 31.0, -27.0}, {19.0, -41.0},
-                                             .99999, 1e-10),
+                                             .99999),
               1e-8);
 }
 // terminate by zero numerator, single-step, no sign-flip
@@ -31,7 +31,7 @@ TEST(MathPrimScalFun, F32_short_polynomial_undef) {
 TEST(MathPrimScalFun, F32_sign_flip_numerator) {
   EXPECT_NEAR(
       0.96935324630667443905,
-      stan::math::hypergeometric_3F2({1.0, -.5, 2.0}, {10.0, 1.0}, 0.3, 1e-10),
+      stan::math::hypergeometric_3F2({1.0, -.5, 2.0}, {10.0, 1.0}, 0.3),
       1e-8);
 }
 
@@ -45,10 +45,10 @@ TEST(MathPrimScalFun, F32_diverge_by_z) {
 TEST(MathPrimScalFun, F32_double_sign_flip) {
   EXPECT_NEAR(
       1.03711889198028226149,
-      stan::math::hypergeometric_3F2({1.0, -.5, -2.5}, {10.0, 1.0}, 0.3, 1e-10),
+      stan::math::hypergeometric_3F2({1.0, -.5, -2.5}, {10.0, 1.0}, 0.3),
       1e-8);
   EXPECT_NEAR(
       1.06593846110441323674,
-      stan::math::hypergeometric_3F2({1.0, -.5, -4.5}, {10.0, 1.0}, 0.3, 1e-10),
+      stan::math::hypergeometric_3F2({1.0, -.5, -4.5}, {10.0, 1.0}, 0.3),
       1e-8);
 }
