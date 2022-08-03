@@ -82,7 +82,8 @@ inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
  * @param[in] x matrix to transform
  * @return discrete 2D Fourier transform of `x`
  */
-template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr>
+template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,
+          require_not_var_t<base_type_t<value_type_t<M>>>* = nullptr>
 inline Eigen::Matrix<scalar_type_t<M>, -1, -1> fft2(const M& x) {
   Eigen::Matrix<scalar_type_t<M>, -1, -1> y(x.rows(), x.cols());
   for (int i = 0; i < y.rows(); ++i)
@@ -103,7 +104,8 @@ inline Eigen::Matrix<scalar_type_t<M>, -1, -1> fft2(const M& x) {
  * @param[in] y matrix to inverse trnasform
  * @return inverse discrete 2D Fourier transform of `y`
  */
-template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr>
+template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,
+          require_not_var_t<base_type_t<value_type_t<M>>>* = nullptr>
 inline Eigen::Matrix<scalar_type_t<M>, -1, -1> inv_fft2(const M& y) {
   Eigen::Matrix<scalar_type_t<M>, -1, -1> x(y.rows(), y.cols());
   for (int j = 0; j < x.cols(); ++j)
