@@ -111,7 +111,7 @@ inline plain_type_t<V> inv_fft(const V& y) {
  *
  * The adjoint computation is given by
  * ```
- * adjoint(x) += size(y) * inv_fft(adjoint(y))
+ * adjoint(x) += size(y) * inv_fft2(adjoint(y))
  * ```
  *
  * @tparam M type of complex matrix argument
@@ -143,7 +143,7 @@ inline plain_type_t<M> fft2(const M& x) {
  *
  * The adjoint computation is given by
  * ```
- * adjoint(y) += (1 / size(x)) * fft(adjoint(x))
+ * adjoint(y) += (1 / size(x)) * fft2(adjoint(x))
  * ```
  *
  * @tparam M type of complex matrix argument
