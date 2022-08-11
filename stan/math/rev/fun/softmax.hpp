@@ -34,13 +34,12 @@ inline auto softmax(const Mat& alpha) {
   arena_t<mat_plain> alpha_arena = alpha;
   arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
   arena_t<ret_type> res = res_val;
-
-  reverse_pass_callback([res_val, res, alpha_arena]() mutable {
-    const auto& res_adj = to_ref(res.adj());
-    alpha_arena.adj()
-        += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+  reverse_pass_callback([res, alpha_arena]() mutable {
+      const auto& res_val = to_ref(res.val());
+      const auto& res_adj = to_ref(res.adj());
+      alpha_arena.adj()
+        +=  res_val.cwiseProduct(res_adj) - res_val * res_adj.dot(res_val);
   });
-
   return ret_type(res);
 }
 

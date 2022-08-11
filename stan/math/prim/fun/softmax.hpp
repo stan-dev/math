@@ -39,14 +39,13 @@ namespace math {
  * \f$
  *
  * @tparam ColVec type of elements in the vector
- * @param[in] v Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @param[in] v argument vector
+ * @return simplex resulting from softmax applied to argument
  */
 template <typename ColVec,
           require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
 inline plain_type_t<ColVec> softmax(const ColVec& v) {
-  using std::exp;
-  if (v.size() == 0) {
+  if (unlikely(v.size() == 0)) {
     return v;
   }
   const auto& v_ref = to_ref(v);

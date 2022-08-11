@@ -71,6 +71,8 @@ TEST(MathFunctions, log_sum_exp_nan) {
   EXPECT_TRUE(std::isnan(stan::math::log_sum_exp(nan, nan)));
 }
 
+
+
 template <int R, int C>
 void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
   using stan::math::log_sum_exp;
@@ -80,6 +82,12 @@ void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
   for (int n = 0; n < as.size(); ++n)
     sum_exp += exp(as(n));
   EXPECT_FLOAT_EQ(log(sum_exp), log_sum_exp(as));
+}
+
+TEST(MathFunctions, log_sum_exp_empty) {
+  Eigen::VectorXd x(0);
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY,
+	    stan::math::log_sum_exp(x));
 }
 
 TEST(MathFunctions, log_sum_exp_mat) {
