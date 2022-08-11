@@ -14,89 +14,87 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-class log_sum_exp_vv_vari : public op_vv_vari {
- public:
-  log_sum_exp_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(log_sum_exp(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    avi_->adj_ += adj_ * inv_logit(avi_->val_ - bvi_->val_);
-    bvi_->adj_ += adj_ * inv_logit(bvi_->val_ - avi_->val_);
-  }
-};
-class log_sum_exp_vd_vari : public op_vd_vari {
- public:
-  log_sum_exp_vd_vari(vari* avi, double b)
-      : op_vd_vari(log_sum_exp(avi->val_, b), avi, b) {}
-  void chain() {
-    if (val_ == NEGATIVE_INFTY) {
-      avi_->adj_ += adj_;
-    } else {
-      avi_->adj_ += adj_ * inv_logit(avi_->val_ - bd_);
-    }
-  }
-};
-}  // namespace internal
 
 /**
- * Returns the log sum of exponentials.
+ * Returns the log of the sum of the exponentiation of the arguments.
+ *
+ * @param[in] a first argument
+ * @param[in] b second argument
+ * @return log-sum-exp of arguments
  */
 inline var log_sum_exp(const var& a, const var& b) {
-  return var(new internal::log_sum_exp_vv_vari(a.vi_, b.vi_));
-}
-/**
- * Returns the log sum of exponentials.
- */
-inline var log_sum_exp(const var& a, double b) {
-  return var(new internal::log_sum_exp_vd_vari(a.vi_, b));
-}
-/**
- * Returns the log sum of exponentials.
- */
-inline var log_sum_exp(double a, const var& b) {
-  return var(new internal::log_sum_exp_vd_vari(b.vi_, a));
+  return make_callback_var(log_sum_exp(a.val(), b.val()),
+			   [a, b](const auto& y) mutable {
+			     a.adj() += y.adj() * inv_logit(a.val() - b.val());
+			     b.adj() += y.adj() * inv_logit(b.val() - a.val());
+			   });
 }
 
 /**
- * Returns the log sum of exponentials of the input.
+ * Returns the log of the sum of the exponentiation of the arguments.
  *
- * @tparam T A type inheriting from EigenBase with scalar type var
- * @param v input
+ * @param[in] a first argument
+ * @param[in] b second argument
+ * @return log-sum-exp of arguments
+ */
+inline var log_sum_exp(const var& a, double b) {
+  return make_callback_var(log_sum_exp(a.val(), b),
+			   [a, b](const auto& y) mutable {
+			     a.adj() += a.val() == NEGATIVE_INFTY
+			       ? y.adj()
+			       : y.adj() * inv_logit(a.val() - b);
+			   });
+}
+
+/**
+ * Returns the log of the sum of the exponentiation of the arguments.
+ *
+ * @param[in] a first argument
+ * @param[in] b second argument
+ * @return log-sum-exp of arguments
+ */
+inline var log_sum_exp(double a, const var& b) {
+  return log_sum_exp(b, a);
+}
+
+/**
+ * Returns the log of the sum of the input exponentiated.
+ *
+ * @tparam T container type inheriting from `EigenBase` with scalar type `var`
+ * @param v argument container
+ * @return log-sum-exp of container elements
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp(const T& v) {
   arena_t<decltype(v)> arena_v = v;
-  arena_t<decltype(v.val())> arena_v_val = arena_v.val();
-  var res = log_sum_exp(arena_v_val);
-
-  reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
-    arena_v.adj()
-        += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
-  });
-
-  return res;
+  return make_callback_var(log_sum_exp(v.val()),
+			   [arena_v](const auto& res) mutable {
+			     arena_v.adj()
+			       += res.adj() * (arena_v.val().array().val() - res.val()).exp().matrix();
+  });		   
 }
 
 /**
- * Returns the log sum of exponentials of the input.
+ * Returns the log of the sum of the exponentiated argument.
  *
- * @tparam T A `var_value` with an input vector or matrix
- * @param x input
+ * @tparam T matrix or vector type of argument
+ * @param x argument
+ * @return log-sum-exp of argument
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp(const T& x) {
-  return make_callback_vari(log_sum_exp(x.val()), [x](const auto& res) mutable {
+  return make_callback_var(log_sum_exp(x.val()), [x](const auto& res) mutable {
     x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
   });
 }
 
 /**
- * Returns the log sum of exponentials.
+ * Returns the log of the sum of the exponentiated argument.
  *
- * @tparam T Type of input vector or matrix.
- * @param x matrix
+ * @tparam T type of container (standard vector)
+ * @param x argument container
+ * @return log-sum-exp of elements of argument
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
