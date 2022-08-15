@@ -99,15 +99,12 @@ auto log_softmax(const T& x) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log_softmax(const T& x) {
   check_nonzero_size("log_softmax", "x", x);
-
-  const auto& theta = (x.val().array() - x.val().maxCoeff()).eval();
-
-  return make_callback_var(
-      (theta.array() - log(theta.exp().sum())).matrix(),
-      [x](const auto& res) mutable {
-        x.adj().noalias()
-            += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
-      });
+  return make_callback_var(log_softmax(x),
+		   [x](const auto& res) mutable {
+		     x.adj().noalias()
+		       += res.adj() - (res.adj().sum()
+				       * res.val().array().exp()).matrix();
+			   });
 }
 
 /**

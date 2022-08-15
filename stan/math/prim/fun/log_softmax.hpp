@@ -3,10 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log_sum_exp.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/softmax.hpp>
 
 namespace stan {
 namespace math {
@@ -21,34 +19,19 @@ namespace math {
  * \ = \ y - \mbox{log\_sum\_exp}(y).
  * \f$
  *
- * For the log softmax function, the entries in the Jacobian are
- * \f$
- * \frac{\partial}{\partial y_m} \mbox{softmax}(y)[k]
- * = \left\{
- * \begin{array}{ll}
- * 1 - \mbox{softmax}(y)[m]
- * & \mbox{ if } m = k, \mbox{ and}
- * \\[6pt]
- * \mbox{softmax}(y)[m]
- * & \mbox{ if } m \neq k.
- * \end{array}
- * \right.
- * \f$
- *
  * @tparam Container type of input vector to transform
  * @param[in] x vector to transform
  * @return log unit simplex result of the softmax transform of the vector.
  */
-template <typename Container, require_st_arithmetic<Container>* = nullptr,
-          require_container_t<Container>* = nullptr>
-inline auto log_softmax(const Container& x) {
-  check_nonzero_size("log_softmax", "v", x);
-  return make_holder(
-      [](const auto& a) {
-        return apply_vector_unary<ref_type_t<Container>>::apply(
-            a, [](const auto& v) { return v.array() - log_sum_exp(v); });
-      },
-      to_ref(x));
+template <typename V,
+          require_eigen_col_vector_vt<std::is_arithmetic, V>* = nullptr>
+inline auto log_softmax(const V& v) {
+  using stan::math::log;
+  using stan::math::softmax;
+  check_nonzero_size("log_softmax", "v", v);
+  auto z = softmax(v);
+  auto y = log(z);
+  return y.eval();
 }
 
 }  // namespace math

@@ -38,13 +38,13 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam ColVec type of elements in the vector
+ * @tparam V type of argument vector
  * @param[in] v argument vector
  * @return simplex resulting from softmax applied to argument
  */
-template <typename ColVec,
-          require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
-inline plain_type_t<ColVec> softmax(const ColVec& v) {
+template <typename V,
+          require_eigen_col_vector_vt<std::is_arithmetic, V>* = nullptr>
+inline plain_type_t<V> softmax(const V& v) {
   if (unlikely(v.size() == 0)) {
     return v;
   }
