@@ -6,7 +6,6 @@ TEST(mathMixMatFun, logInvLogit) {
   stan::test::expect_unary_vectorized(f, -1.0, -0.5, 0.5, 1.3, 5);
 }
 
-
 TEST(mathMixMatFun, logInvLogitVarMat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
