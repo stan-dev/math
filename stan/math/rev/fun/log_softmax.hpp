@@ -99,7 +99,7 @@ auto log_softmax(const T& x) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log_softmax(const T& x) {
   check_nonzero_size("log_softmax", "x", x);
-  return make_callback_var(log_softmax(x),
+  return make_callback_var(log_softmax(x.val()),
 		   [x](const auto& res) mutable {
 		     x.adj().noalias()
 		       += res.adj() - (res.adj().sum()
