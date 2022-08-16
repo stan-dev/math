@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_META_HPP
 #define STAN_MATH_PRIM_META_HPP
 
-
 /**
  * \defgroup type_trait Type Traits
  * The type traits in Stan math are a mix of custom traits for detecting
