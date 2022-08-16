@@ -1,47 +1,36 @@
 <doxygenlayout version="1.0">
 <navindex>
+  <tab type="user" url="index.html" title="Overview" />
+  <tab type="usergroup" visible="yes" title="Contributor Guides" url="@ref contributing" intro="">
+      <tab type="usergroup" visible="yes" title="Adding New Functions" url="@ref getting_started" intro=""/>
+      <tab type="usergroup" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
+      <tab type="usergroup" visible="yes" title="Using requires for general overloads" url="@ref require_meta_doc" intro=""/>
+      <tab type="usergroup" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
+      <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
+      <tab type="usergroup" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
+      <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
+      <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
+      <tab type="usergroup" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
+      <tab type="usergroup" visible="yes" title="Adding New OpenCL Functions" url="@ref opencl_guide" intro=""/>
+      <tab type="usergroup" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
+  </tab>
+  <tab type="modules" visible="yes" title="Internal Docs" intro=""/>
+  <tab type="usergroup" visible="yes" title="Parallelism" intro="">
+    <tab type="usergroup" visible="yes" title="Threading" url="@ref tbb_threading" intro=""/>
+    <tab type="usergroup" visible="yes" title="OpenCL for GPU Computing" url="@ref opencl_support" intro=""/>
+    <tab type="usergroup" visible="yes" title="MPI Support" url="@ref mpi" intro=""/>
+  </tab>
+  <tab type="usergroup" visible="yes" title="(External Link) Stan Language Docs" url="https://mc-stan.org/users/documentation/" intro=""/>
+  <tab type="usergroup" visible="yes" title="(External Link) Stan Discourse" url="https://discourse.mc-stan.org/" intro=""/>
   <tab type="mainpage" visible="yes" title=""/>
-    <tab type="modules" visible="yes" title="" intro=""/>
-    <tab type="namespaces" visible="yes" title="">
-      <tab type="namespacelist" visible="yes" title="" intro=""/>
-      <tab type="namespacemembers" visible="yes" title="" intro=""/>
-    </tab>
-    <tab type="classes" visible="yes" title="">
-      <tab type="classlist" visible="yes" title="" intro=""/>
-      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
-      <tab type="hierarchy" visible="yes" title="" intro=""/>
-      <tab type="classmembers" visible="yes" title="" intro=""/>
-    </tab>
-    <tab type="files" visible="yes" title="">
-      <tab type="filelist" visible="yes" title="" intro=""/>
-      <tab type="globals" visible="yes" title="" intro=""/>
-    </tab>
-    <tab type="examples" visible="yes" title="" intro=""/>
-    <tab type="usergroup" visible="yes" title="Contributor Guide" url="@ref contributing" intro="">
-        <tab type="usergroup" visible="yes" title="Getting Started Guide" url="@ref getting_started" intro=""/>
-        <tab type="usergroup" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
-        <tab type="usergroup" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
-        <tab type="usergroup" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
-        <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
-        <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
-        <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
-        <tab type="usergroup" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
-        <tab type="usergroup" visible="yes" title="Adding New OpenCL Functions" url="@ref opencl_guide" intro=""/>
-        <tab type="usergroup" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
-    </tab>
-    <tab type="usergroup" visible="yes" title="Parallelism" intro="">
-      <tab type="usergroup" visible="yes" title="Threading" url="@ref tbb_threading" intro=""/>
-      <tab type="usergroup" visible="yes" title="OpenCL for GPU Computing" url="@ref opencl_support" intro=""/>
-      <tab type="usergroup" visible="yes" title="MPI Support" url="@ref mpi" intro=""/>
-    </tab>
-    <tab type="usergroup" visible="yes" title="(External Link) Stan Language Docs" url="https://mc-stan.org/users/documentation/" intro=""/>
-    <tab type="usergroup" visible="yes" title="(External Link) Stan Discourse" url="https://discourse.mc-stan.org/" intro=""/>
+  <tab type="classlist" visible="yes" title="" intro=""/>
+<!--     <tab type="classmembers" visible="yes" title="" intro=""/> -->
 </navindex>
 
 <group>
   <briefdescription visible="no"/>
   <detaileddescription title=""/>
-  <groupgraph visible="$GROUP_GRAPHS"/>
+  <groupgraph visible="yes"/>
   <memberdecl>
     <nestedgroups visible="yes" title=""/>
     <dirs visible="yes" title=""/>
@@ -87,9 +76,9 @@
   <class>
     <briefdescription visible="no"/>
     <detaileddescription title=""/>
-    <includes visible="$SHOW_INCLUDE_FILES"/>
-    <inheritancegraph visible="$CLASS_GRAPH"/>
-    <collaborationgraph visible="$COLLABORATION_GRAPH"/>
+    <includes visible="yes"/>
+    <inheritancegraph visible="yes"/>
+    <collaborationgraph visible="yes"/>
     <memberdecl>
       <nestedclasses visible="yes" title=""/>
       <publictypes title=""/>
@@ -138,7 +127,7 @@
       <events title=""/>
     </memberdef>
     <allmemberslink visible="yes"/>
-    <usedfiles visible="$SHOW_USED_FILES"/>
+    <usedfiles visible="yes"/>
     <authorsection visible="yes"/>
   </class>
 
@@ -170,9 +159,9 @@
   <file>
     <briefdescription visible="no"/>
     <detaileddescription title=""/>
-    <includes visible="$SHOW_INCLUDE_FILES"/>
-    <includegraph visible="$INCLUDE_GRAPH"/>
-    <includedbygraph visible="$INCLUDED_BY_GRAPH"/>
+    <includes visible="yes"/>
+    <includegraph visible="yes"/>
+    <includedbygraph visible="yes"/>
     <sourcelink visible="yes"/>
     <memberdecl>
       <classes visible="yes" title=""/>
@@ -200,7 +189,7 @@
   <group>
     <briefdescription visible="no"/>
     <detaileddescription title=""/>
-    <groupgraph visible="$GROUP_GRAPHS"/>
+    <groupgraph visible="yes"/>
     <memberdecl>
       <nestedgroups visible="yes" title=""/>
       <dirs visible="yes" title=""/>
