@@ -15,6 +15,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/rev/fun/hypergeometric_2F1.hpp>
 #include <cmath>
 
 namespace stan {
@@ -42,8 +43,10 @@ inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
   var dF1 = 0;
   var dF2 = 0;
   var dF3 = 0;
-  if (value_of(value_of(C))) {
-    grad_2F1(dF1, dF2, dF3, a + b, var(1.0), a + 1, z);
+  var dFz = 0;
+  if (value_of_rec(C)) {
+    std::forward_as_tuple(dF1, dF2, dF3, dFz)
+        = grad_2F1<true>(a + b, var(1.0), a + 1, z);
   }
   g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF3);
   g2 = c2 * c3 + C * dF1;
