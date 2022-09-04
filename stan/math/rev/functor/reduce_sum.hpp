@@ -66,7 +66,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
-          local_args_tuple_scope_(),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
     /*
@@ -80,7 +79,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
-          local_args_tuple_scope_(),
           args_tuple_(other.args_tuple_) {}
 
     /**
