@@ -23,8 +23,8 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
       if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
 
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '2.x'
     - uses: r-lib/actions/setup-r@v2
@@ -60,7 +60,7 @@ jobs:
         python.exe runTests.py -j2 test/unit/math/memory
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -70,8 +70,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '2.x'
     - uses: r-lib/actions/setup-r@v2
@@ -111,7 +111,7 @@ jobs:
         python.exe runTests.py test/unit/math/mix/*_test.cpp
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -121,8 +121,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '2.x'
     - uses: r-lib/actions/setup-r@v2
@@ -157,7 +157,7 @@ jobs:
         python.exe runTests.py $MixFunTests[0..$HalfNumberTests]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -167,8 +167,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '2.x'
     - uses: r-lib/actions/setup-r@v2
@@ -203,7 +203,7 @@ jobs:
         python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: gtest_outputs_xml
