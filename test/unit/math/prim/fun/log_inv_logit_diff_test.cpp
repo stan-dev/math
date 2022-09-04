@@ -3,6 +3,14 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
+TEST(MathFunctions, log_inv_logit_diff_inf) {
+  using stan::math::INFTY;
+  using stan::math::log_inv_logit_diff;
+
+  EXPECT_FLOAT_EQ(-0.0916494, log_inv_logit_diff(INFTY, -2.34361));
+  EXPECT_TRUE(std::isnan(log_inv_logit_diff(-INFTY, -2.34361)));
+}
+
 TEST(MathFunctions, log_inv_logit_diff) {
   using stan::math::log_inv_logit_diff;
 
