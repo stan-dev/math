@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -68,9 +69,10 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
   const auto& pow_n = to_ref_if<any_derivs>(pow(y_val / sigma_val, alpha_val));
   const auto& exp_n = to_ref_if<any_derivs>(exp(-pow_n));
-  const auto& cdf_n = to_ref_if<any_derivs>(1 - exp_n);
+  const auto& log_cdf_n = to_ref_if<any_derivs>(log1m_exp(-pow_n));
+  const auto& cdf_n = to_ref_if<any_derivs>(exp(log_cdf_n));
 
-  T_partials_return cdf = prod(cdf_n);
+  T_partials_return cdf = exp(sum(cdf_n));
 
   if (any_derivs) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
