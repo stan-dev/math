@@ -70,13 +70,17 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   const auto& exp_n = to_ref_if<any_derivs>(exp(-pow_n));
   const auto& cdf_n = to_ref_if<any_derivs>(1 - exp_n);
 
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  if (y_val == 0) {
-    return ops_partials.build(0.0);
+  for (size_t i = 0; i < stan::math::size(y); i++) {
+    if (y_vec.val(i) < 0) {
+      return ops_partials.build(0.0);
+    }
   }
 
-  T_partials_return cdf = cdf_n;
+  T_partials_return cdf = prod(cdf_n);
 
   if (any_derivs) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value

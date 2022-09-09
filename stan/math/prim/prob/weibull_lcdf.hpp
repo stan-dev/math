@@ -61,12 +61,19 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
   }
-  if (y_ref == 0) {
-    return NEGATIVE_INFTY;
-  }
 
   operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
       y_ref, alpha_ref, sigma_ref);
+
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+
+  // Explicit return for extreme values
+  // The gradients are technically ill-defined, but treated as zero
+  for (size_t i = 0; i < stan::math::size(y); i++) {
+    if (y_vec.val(i) < 0) {
+      return ops_partials.build(0.0);
+    }
+  }
 
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
   const auto& pow_n = to_ref_if<any_derivs>(pow(y_val / sigma_val, alpha_val));
