@@ -72,16 +72,16 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-    if (y_val == 0) {
-      return ops_partials.build(0.0);
-    }
-  
+  if (y_val == 0) {
+    return ops_partials.build(0.0);
+  }
+
   T_partials_return cdf = cdf_n;
 
   if (any_derivs) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
                                        && !is_constant_all<T_shape>::value)>(
-        exp_n * pow_n * cdf / cdf_n );
+        exp_n * pow_n * cdf / cdf_n);
     if (!is_constant_all<T_y, T_scale>::value) {
       const auto& deriv_y_sigma = to_ref_if<(
           !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
@@ -94,9 +94,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      if (value_of(y_val) != 0.0){
-	ops_partials.edge2_.partials_ = rep_deriv * log(y_val / sigma_val);
-      }
+      ops_partials.edge2_.partials_ = rep_deriv * log(y_val / sigma_val);
     }
   }
   return ops_partials.build(cdf);
