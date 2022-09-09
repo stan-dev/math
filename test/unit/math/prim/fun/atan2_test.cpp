@@ -23,8 +23,9 @@ TEST(MathFunctions, atan2_nan) {
 }
 
 TEST(MathFunctions, atan2_vec) {
-  auto f
-      = [](const auto& x1, const auto& x2) { return stan::math::atan2(x1, x2); };
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::atan2(x1, x2);
+  };
 
   Eigen::VectorXd in1 = Eigen::VectorXd::Random(6);
   Eigen::VectorXd in2 = Eigen::VectorXd::Random(6);
