@@ -57,7 +57,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
   }
-  
+
   T_partials_return cdf_log(0);
   operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
       y_ref, alpha_ref, sigma_ref);
@@ -69,36 +69,37 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   size_t max_size_seq_view = max_size(y, alpha, sigma);
   size_t size_y = stan::math::size(y);
 
-   for (size_t i = 0; i < size_y; i++) {
+  for (size_t i = 0; i < size_y; i++) {
     if (y_vec[i] == 0) {
       return LOG_ZERO;
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
+    const T_partials_return pow_n
+        = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
+    const T_partials_return exp_n = exp(-pow_n);
+    const T_partials_return log1m_exp_n = log1m_exp(-pow_n);
+    const T_partials_return rep_deriv = exp_n * pow_n / exp(log1m_exp_n);
 
-  const T_partials_return pow_n = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
-  const T_partials_return exp_n = exp(-pow_n);
-  const T_partials_return log1m_exp_n = log1m_exp(-pow_n);
-  const T_partials_return rep_deriv = exp_n * pow_n / exp(log1m_exp_n);
+    cdf_log += log1m_exp_n;
 
-  cdf_log += log1m_exp_n;
-  
-  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
-    const T_partials_return deriv_y_sigma = rep_deriv * alpha_vec.val(i);
+    if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+      const T_partials_return deriv_y_sigma = rep_deriv * alpha_vec.val(i);
 
-    if (!is_constant_all<T_y>::value) {
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] += deriv_y_sigma / y_vec.val(i);
-    }
-    if (!is_constant_all<T_scale>::value) {
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[i] += -deriv_y_sigma / sigma_vec.val(i);
+      }
     }
-  }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[i] += rep_deriv * log(y_vec.val(i) / sigma_vec.val(i));
+      ops_partials.edge2_.partials_[i]
+          += rep_deriv * log(y_vec.val(i) / sigma_vec.val(i));
     }
   }
-   return ops_partials.build(cdf_log);
+  return ops_partials.build(cdf_log);
 }
 }  // namespace math
 }  // namespace stan
