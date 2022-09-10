@@ -69,11 +69,9 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   size_t max_size_seq_view = max_size(y, alpha, sigma);
   size_t size_y = stan::math::size(y);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
    for (size_t i = 0; i < size_y; i++) {
     if (y_vec[i] == 0) {
-      return ops_partials.build(0);
+      return LOG_ZERO;
     }
   }
 
