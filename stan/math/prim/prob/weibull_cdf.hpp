@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -22,9 +21,9 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the Weibull log cumulative distribution function for the given
+ * Returns the Weibull cumulative distribution function for the given
  * location and scale. Given containers of matching sizes, returns the
- * log sum of probabilities.
+ * product of probabilities.
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
@@ -32,13 +31,13 @@ namespace math {
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter
- * @return log probability or log sum of probabilities
+ * @return probability or product of probabilities
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
-                                                 const T_shape& alpha,
-                                                 const T_scale& sigma) {
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
@@ -57,7 +56,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   if (size_zero(y, alpha, sigma)) {
     return 1.0;
   }
-
+  
   T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
       y_ref, alpha_ref, sigma_ref);
@@ -71,38 +70,37 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size_y; i++) {
+   for (size_t i = 0; i < size_y; i++) {
     if (y_vec[i] <= 0) {
       return ops_partials.build(0);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return pow_n
-        = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
-    const T_partials_return exp_n = exp(-pow_n);
-    const T_partials_return cdf_n = 1 - exp_n;
 
-    cdf *= cdf_n;
+  const T_partials_return pow_n = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
+  const T_partials_return exp_n = exp(-pow_n);
+  const T_partials_return cdf_n = 1 - exp_n;
 
-    const T_partials_return rep_deriv = exp_n * pow_n * cdf / cdf_n;
+  cdf *= cdf_n;
 
-    if (!is_constant_all<T_y, T_scale, T_shape>::value) {
-      const T_partials_return deriv_y_sigma = rep_deriv * alpha_vec.val(i);
+const T_partials_return rep_deriv = exp_n * pow_n * cdf / cdf_n;
+  
+  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+    const T_partials_return deriv_y_sigma = rep_deriv * alpha_vec.val(i);
 
-      if (!is_constant_all<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] += deriv_y_sigma / y_vec.val(i);
-      }
-      if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_[i] += -deriv_y_sigma / sigma_vec.val(i);
-      }
     }
-    if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[i]
-          += rep_deriv * log(y_vec.val(i) / sigma_vec.val(i));
+    if (!is_constant_all<T_scale>::value) {
+        ops_partials.edge3_.partials_[i] += -deriv_y_sigma / sigma_vec.val(i);
     }
   }
-  return ops_partials.build(cdf);
+    if (!is_constant_all<T_shape>::value) {
+      ops_partials.edge2_.partials_[i] += rep_deriv * log(y_vec.val(i) / sigma_vec.val(i));
+    }
+  }
+   return ops_partials.build(cdf);
 }
 }  // namespace math
 }  // namespace stan
