@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
@@ -20,9 +22,9 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the Weibull cumulative distribution function for the given
+ * Returns the Weibull log cumulative distribution function for the given
  * location and scale. Given containers of matching sizes, returns the
- * product of probabilities.
+ * log sum of probabilities.
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
@@ -30,19 +32,17 @@ namespace math {
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter
- * @return probability or product of probabilities
+ * @return log probability or log sum of probabilities
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
-template <typename T_y, typename T_shape, typename T_scale,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_y, T_shape, T_scale>* = nullptr>
+template <typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
-                                                 const T_shape& alpha,
-                                                 const T_scale& sigma) {
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   using std::pow;
   static const char* function = "weibull_cdf";
 
@@ -50,60 +50,59 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
 
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
-  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-
-  check_nonnegative(function, "Random variable", y_val);
-  check_positive_finite(function, "Shape parameter", alpha_val);
-  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_nonnegative(function, "Random variable", y_ref);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
   if (size_zero(y, alpha, sigma)) {
     return 1.0;
   }
-
+  
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
       y_ref, alpha_ref, sigma_ref);
 
-  constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
-  const auto& pow_n = to_ref_if<any_derivs>(pow(y_val / sigma_val, alpha_val));
-  const auto& exp_n = to_ref_if<any_derivs>(exp(-pow_n));
-  const auto& cdf_n = to_ref_if<any_derivs>(1 - exp_n);
-
   scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
+
+  size_t max_size_seq_view = max_size(y, alpha, sigma);
+  size_t size_y = stan::math::size(y);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (y_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
+   for (size_t i = 0; i < size_y; i++) {
+    if (y_vec[i] <= 0) {
+      return ops_partials.build(0);
     }
   }
 
-  T_partials_return cdf = prod(cdf_n);
+  for (size_t i = 0; i < max_size_seq_view; i++) {
 
-  if (any_derivs) {
-    const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
-                                       && !is_constant_all<T_shape>::value)>(
-        exp_n * pow_n * cdf / cdf_n);
-    if (!is_constant_all<T_y, T_scale>::value) {
-      const auto& deriv_y_sigma = to_ref_if<(
-          !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
-          rep_deriv * alpha_val);
-      if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = deriv_y_sigma / y_val;
-      }
-      if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_ = -deriv_y_sigma / sigma_val;
-      }
+  const T_partials_return pow_n = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
+  const T_partials_return exp_n = exp(-pow_n);
+  const T_partials_return cdf_n = 1 - exp_n;
+
+  cdf *= cdf_n;
+
+const T_partials_return rep_deriv = exp_n * pow_n * cdf / cdf_n;
+  
+  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+    const T_partials_return deriv_y_sigma = rep_deriv * alpha_vec.val(i);
+
+    if (!is_constant_all<T_y>::value) {
+        ops_partials.edge1_.partials_[i] += deriv_y_sigma / y_vec.val(i);
     }
+    if (!is_constant_all<T_scale>::value) {
+        ops_partials.edge3_.partials_[i] += -deriv_y_sigma / sigma_vec.val(i);
+    }
+  }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_ = rep_deriv * log(y_val / sigma_val);
+      ops_partials.edge2_.partials_[i] += rep_deriv * log(y_vec.val(i) / sigma_vec.val(i));
     }
   }
-  return ops_partials.build(cdf);
+   return ops_partials.build(cdf);
 }
-
 }  // namespace math
 }  // namespace stan
 #endif
