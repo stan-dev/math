@@ -35,7 +35,7 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale,
-require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
                                                  const T_shape& alpha,
