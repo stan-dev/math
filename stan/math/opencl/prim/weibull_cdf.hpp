@@ -63,10 +63,10 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
- if (y_val == 0) {
-  return ops_partials.build(0);
- }
- 
+  if (y_val == 0) {
+    return ops_partials.build(0);
+  }
+
   auto pow_n = pow(elt_divide(y_val, sigma_val), alpha_val);
   auto exp_n = exp(-pow_n);
   auto cdf_n = 1.0 - exp_n;
