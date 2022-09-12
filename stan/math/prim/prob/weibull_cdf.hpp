@@ -83,7 +83,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
         = pow(y_vec.val(i) / sigma_vec.val(i), alpha_vec.val(i));
     const T_partials_return exp_n = exp(-pow_n);
     const T_partials_return cdf_n = 1 - exp_n;
-    const T_partials_return rep_deriv = exp_n * pow_n * cdf / cdf_n;
+    const T_partials_return rep_deriv = exp_n * pow_n / cdf_n;
 
     cdf *= cdf_n;
 
