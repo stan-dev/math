@@ -432,7 +432,7 @@ pipeline {
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try {
                                     sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
-				                }
+                                }
                                 finally { junit 'test/**/*.xml' }
                             }
                         }
