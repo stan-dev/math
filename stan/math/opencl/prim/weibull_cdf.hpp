@@ -68,7 +68,7 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
   auto cdf_n = 1.0 - exp_n;
   auto cdf_expr = colwise_prod(cdf_n);
 
-  auto rep_deriv = elt_multiply(exp_n, elt_divide(pow_n, cdf_n));
+  auto rep_deriv = elt_multiply(exp_n, pow_n);
   auto deriv_y_sigma = elt_multiply(rep_deriv, alpha_val);
   auto y_deriv_tmp = elt_divide(deriv_y_sigma, y_val);
   auto sigma_deriv_tmp = elt_divide(deriv_y_sigma, -sigma_val);
