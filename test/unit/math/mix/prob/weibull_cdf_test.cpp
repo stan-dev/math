@@ -3,7 +3,8 @@
 
 TEST(mathMixScalFun, weibull_cdf) {
   auto f = [](const double alpha, const double sigma) {
-    return [=](const auto& y) { return stan::math::weibull_cdf(y, alpha, sigma); };
+    return
+        [=](const auto& y) { return stan::math::weibull_cdf(y, alpha, sigma); };
   };
 
   stan::test::expect_ad(f(0.1, 1.0), 0.1);
