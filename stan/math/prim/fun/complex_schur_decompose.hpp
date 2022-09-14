@@ -27,7 +27,8 @@ namespace math {
 template <typename M, require_eigen_dense_dynamic_t<M>* = nullptr>
 inline Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>
 complex_schur_decompose_u(const M& m) {
-  check_nonzero_size("complex_schur_decompose_u", "m", m);
+  if (m.size() == 0)
+    return m;
   check_square("complex_schur_decompose_u", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type
@@ -50,7 +51,8 @@ complex_schur_decompose_u(const M& m) {
 template <typename M, require_eigen_dense_dynamic_t<M>* = nullptr>
 inline Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>
 complex_schur_decompose_t(const M& m) {
-  check_nonzero_size("complex_schur_decompose_t", "m", m);
+  if (m.size() == 0)
+    return m;
   check_square("complex_schur_decompose_t", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type

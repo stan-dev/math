@@ -66,7 +66,7 @@ TEST(mathMixFun, complexSchurDecompose) {
   using ffd_t = stan::math::fvar<fd_t>;
   using fv_t = stan::math::fvar<v_t>;
   using ffv_t = stan::math::fvar<fv_t>;
-  for (const auto& x : stan::test::square_test_matrices(1, 3)) {
+  for (const auto& x : stan::test::square_test_matrices(0, 3)) {
     test_complex_schur_decompose<d_t>(x);
     test_complex_schur_decompose<v_t>(x);
     test_complex_schur_decompose<fd_t>(x);
@@ -74,7 +74,7 @@ TEST(mathMixFun, complexSchurDecompose) {
     test_complex_schur_decompose<fv_t>(x);
     test_complex_schur_decompose<ffv_t>(x);
   }
-  for (const auto& x : stan::test::square_test_matrices(1, 3)) {
+  for (const auto& x : stan::test::square_test_matrices(0, 3)) {
     test_complex_schur_decompose_complex<d_t>(x);
     test_complex_schur_decompose_complex<v_t>(x);
     test_complex_schur_decompose_complex<fd_t>(x);
