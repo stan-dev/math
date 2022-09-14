@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 TEST(mathMixCore, atan2) {
   auto f = [](const auto& x1, const auto& x2) {
