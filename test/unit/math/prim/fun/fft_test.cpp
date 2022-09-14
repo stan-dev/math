@@ -45,7 +45,6 @@ TEST(primFun, fft) {
   EXPECT_NEAR(imag(yb[2]), 2 * -6.53589838, 1e-6);
 }
 
-
 TEST(primFun, inv_fft) {
   using c_t = std::complex<double>;
   using cv_t = Eigen::Matrix<std::complex<double>, -1, 1>;
