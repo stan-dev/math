@@ -18,7 +18,7 @@ namespace math {
  * unitary matrix's inverse is equal to its conjugate transpose,
  * `inv(U) = U*`, where `U*(i, j) = conj(U(j, i))`
  *
- * @tparam value type of matrix
+ * @tparam M type of matrix
  * @param m real matrix to decompose
  * @return complex unitary matrix of the complex Schur decomposition of the
  * specified matrix
@@ -40,7 +40,7 @@ complex_schur_decompose_u(const M& m) {
  * Return the Schur form matrix of the complex Schur decomposition of the
  * specified square matrix.
  *
- * @tparam value type of matrix
+ * @tparam M type of matrix
  * @param m real matrix to decompose
  * @return Schur form matrix of the complex Schur decomposition of the
  * specified matrix
@@ -55,7 +55,7 @@ complex_schur_decompose_t(const M& m) {
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type
   MatType mv = m;
-  Eigen::ComplexSchur<MatType> cs(mv);
+  Eigen::ComplexSchur<MatType> cs(mv, false);
   return cs.matrixT();
 }
 
