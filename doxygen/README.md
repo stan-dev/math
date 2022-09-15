@@ -19,8 +19,8 @@ versions of the dependent libraries have been tested with Stan Math.
 Contributing
 ------------
 
-We love contributions from everyone in the form of good discussion, issues, and pull requests.
-If you are interested in contributing to Stan math please check the Contributor Guide at [mc-stan.org/math](https://mc-stan.org/math/).
+We love contributions from everyone in the form of good discussions, issues, and pull requests.
+If you are interested in contributing to Stan Math please check the Contributor Guide at [mc-stan.org/math](https://mc-stan.org/math/).
 
 Installation
 ------------
