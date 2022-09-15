@@ -55,9 +55,9 @@ log normal(1 | 2, 3)=-2.07311
 
 The first make command with the `math-libs` target ensures that all
 binary dependencies of Stan Math are built and ready to use. The `-j4`
-instructs `make` to use 4 cores concurrently which should be adapted
-to your needs. The second make command ensures that the Stan Math
-sources and all of the dependencies are available to the compiler when
+instructs `make` to use 4 cores concurrently, which should be adapted
+to your needs. The second `make` command ensures that the Stan Math
+sources and all dependencies are available to the compiler when
 building `foo`.
 
 An example of a real instantiation whenever the path to Stan Math is
