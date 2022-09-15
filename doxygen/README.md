@@ -71,7 +71,7 @@ The `math-libs` target has to be called only once, and can be omitted
 for subsequent compilations.
 
 The standalone makefile ensures that all the required `-I` include
-statements are given to the compiler and the necessary libraries are
+statements are given to the compiler, and the necessary libraries are
 linked: `~/stan-dev/math` and `~/stan-dev/math/lib/eigen_3.3.9` and
 `~/stan-dev/math/lib/boost_1.78.0` and
 `~/stan-dev/math/lib/sundials_6.1.1/include` and
