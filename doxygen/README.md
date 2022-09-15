@@ -133,9 +133,9 @@ Compilers
 ---------
 
 The above example will use the default compiler of the system as
-determined by `make`. On Linux this is usually `g++`, on MacOS
-`clang++`, and for Windows this is `g++` if the RTools for Windows are
-used. There's nothing special about any of these and they can be
+determined by `make`. On Linux this is usually `g++` while on MacOS
+it is typically `clang++`. On Windows, if the recommended RTools for Windows are
+used, it is `g++` as well. There's nothing special about any of these, and they can be
 changed through the `CXX` variable of `make`. The recommended way to
 set this variable for the Stan Math library is by creating a
 `make/local` file within the Stan Math library directory. Defining
