@@ -85,10 +85,10 @@ is found when executing the program.
 
 Note for Windows users: On Windows the `-rpath` feature as used by
 Stan Math to hardcode an absolute path to a dynamically loaded library
-does not work. On Windows the Intel TBB dynamic library `tbb.dll` is
+does not work. On Windows, the Intel TBB dynamic library `tbb.dll` is
 located in the `math/lib/tbb` directory. The user can choose to copy
 this file to the same directory of the executable or to add the
-directory `/path/to/math/lib/tbb` as absolute path to the system-wide
+directory `/path/to/math/lib/tbb` as an absolute path to the system-wide
 `PATH` variable.
 
 Intel TBB
