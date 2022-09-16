@@ -105,21 +105,21 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
       ops_partials(y_col, alpha_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
-    if (y_val == 0) {
+    if (cdf_expr == 0) {
       ops_partials.edge1_.partials_ = 0;
     } else {
       ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
     }
   }
   if (!is_constant<T_shape_cl>::value) {
-    if (y_val == 0) {
+    if (cdf_expr == 0) {
       ops_partials.edge2_.partials_ = 0;
     } else {
       ops_partials.edge2_.partials_ = std::move(alpha_deriv_cl);
     }
   }
   if (!is_constant<T_scale_cl>::value) {
-    if (y_val == 0) {
+    if (cdf_expr == 0) {
       ops_partials.edge3_.partials_ = 0;
     } else {
       ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
