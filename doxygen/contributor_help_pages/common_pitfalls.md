@@ -4,9 +4,9 @@
 
 ### Eigen expressions (and handling argument types with SFINAE)
 
-An additional complexity of the Math library is that `vector`, `row_vector`, and `matrix` do not map to just templated `Eigen::Matrix` types, they can also map to a variety of Eigen expressions.
+The additional complexity of the Math library is that `vector`, `row_vector`, and `matrix` do not map to just templated `Eigen::Matrix` types, they can also map to a variety of Eigen expressions.
 
-For instance, in the following code, the result `c` is not a vector, but a vector-like type representing the not-yet-calculated sum of `a` and `b`:
+For instance, in the following code, the result `c` is not a vector but a vector-like type representing the not-yet-calculated sum of `a` and `b`:
 
 ```cpp
 Eigen::VectorXd a(5);
@@ -17,7 +17,7 @@ auto c = a + b;
 ```
 
 Similarly, there are other representations of vectors and matrices yet discussed, in particular matrices stored in Math's special arena memory or matrices stored on a GPU.
-In either case, it is expedient to not write explicit overloads for all the different types that a function might accept, but limit them with template metaprograms.
+In either case, it is expedient to not write explicit overloads for all the different types that a function might accept but limit them with template metaprograms.
 
 For instance, if only base Eigen types are allowed, then a function that takes column vector types could be defined as follows:
 
@@ -48,7 +48,7 @@ The most common situation is when there is one template overload that works with
 
 There can easily be ambiguities between the two function signatures.
 The previous examples took advantage of simple overloads.
-The more general solution are template metaprograms that additionally make use of C++ substitution failure
+The more general solution is template metaprograms that additionally make use of C++ substitution failure
 is not an error (SFINAE) semantics.
 For the norm function above, SFINAE could be used to limit one signature to work with reverse
 mode autodiff types and one to work with anything else:
@@ -65,7 +65,7 @@ template <typename T,
 return_type_t<T> norm(const T&);
 ```
 
-SFINAE should be thought of as filters on what functions are visible to the compiler when it does name lookup for a specific function.
+SFINAE should be thought of as a filter on what functions are visible to the compiler when it does a name lookup for a specific function.
 The type trait `require_st_var` should be read "require the @ref stan::scalar_type of the argument to be a @ref stan::math::var".
 The metaprogram `require_st_var<T>` will evaluate to a valid type if the scalar type of `T` is a @ref stan::math::var.
 If the scalar type of `T` is not a @ref stan::math::var, then `require_st_var<T>` does not evaluate to a valid type and the compiler treats it as if the signature does not exist.
@@ -89,7 +89,7 @@ If the results of an expression is needed in multiple places, they should be sav
 Eigen expressions can result from many places, including arithmetic operations,
 a matrix multiply, a sum, or a variety of other things.
 Some expressions are cheap to evaluate, any of the Eigen views qualify here (transpose, block access, segment, etc).
-In this case, evaluating the expression is not necessary -- it would only lead to another allocate and copy.
+In this case, evaluating the expression is not necessary -- it would only lead to another allocation and copy.
 
 The Math function @ref stan::math::to_ref is a solution for this.
 For a vector or matrix variable `x`, `to_ref(x)` returns an Eigen reference to the input variable `x`.
@@ -143,18 +143,18 @@ auto add_zero(T&& a) {
 }
 ```
 
-Returning expressions is an advanced feature and it is easy to make mistakes.
-In this regard, it is simplest to start development not returning expressions (in this case holders are unnecessary), and only add expression return types later.
+Returning expressions is an advanced feature, and it is easy to make mistakes.
+In this regard, it is simplest to start development not returning expressions (in this case holders are unnecessary) and only add expression return types later.
 
 It is always possible to return a non-expression type by evaluating the Eigen expression.
 For convenience, there is an `eval` function in Math that will evaluate Eigen expressions and forward anything else.
-This is convenient because it works on non-Eigen types as well (as compared to the built in `.eval()` member function on Eigen types).
+This is convenient because it works on non-Eigen types as well (as compared to the built-in `.eval()` member function on Eigen types).
 
 The implementation of @ref stan::math::make_holder is [here](https://github.com/stan-dev/math/blob/develop/stan/math/prim/meta/holder.hpp).
 
 ### Move Semantics
 
-In general, Stan math does not use move semantics very often.
+In general, Stan Math does not use move semantics very often.
 This is because of our arena allocator.
 Move semantics generally work as
 
@@ -176,13 +176,13 @@ class my_big_type {
 ```
 
 We can see in the above that the standard style of a move (the constructor taking an rvalue reference) is to copy the pointer and then null out the original pointer.
-But in Stan, particularly for reverse mode, we need to keep memory around even if  it's only a temporary for when we call the gradient calculations in the reverse pass.
+But in Stan, particularly for reverse mode, we need to keep memory around even if it's only temporary for when we call the gradient calculations in the reverse pass.
 And since memory for reverse mode is stored in our arena allocator no copying happens in the first place.
 
 When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy.
 For instance, Stan's `var` type uses the pointer to implementation (PIMPL) pattern, so it simply holds a pointer of size 8 bytes.
-A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs with at least 64 byte cache lines.
-While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into cache, then go fetch the value that is being referenced which now takes up two words instead of one!
+A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs with at least 64-byte cache lines.
+While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into a cache, then go fetch the value that is being referenced which now takes up two words instead of one!
 
 The general rules to follow for passing values to a function are:
 
@@ -256,14 +256,14 @@ inline var cool_fun(const EigVec& v) {
 }
 ```
 
-we make a deep copy of the return whose inner `vari` will not be the same but the `var` will produce a new copy of the pointer to the `vari`.
-Now the user code above will be protected and it is safe for them to assign to individual elements of the `auto` returned matrix.
+we make a deep copy of the return whose inner `vari` will not be the same, but the `var` will produce a new copy of the pointer to the `vari`.
+Now the user code above will be protected, and it is safe for them to assign to individual elements of the `auto` returned matrix.
 
 ### Const correctness, reverse mode autodiff, and arena types
 
 In general, it's good to have arithmetic and integral types as `const`, for instance pulling out the size of a vector to reuse later such as `const size_t x_size = x.size();`.
-However vars, and anything that can contain a var should not be `const`.
-This is because in reverse mode we want to update the value of the `adj_` inside of the var, which requires that it is non-const.
+However, vars and anything that can contain a var should not be `const`.
+This is because in the reverse mode we want to update the value of the `adj_` inside of the var, which requires that it is non-const.
 
 ## Handy tricks
 

@@ -67,8 +67,8 @@ Within each of those folders you will find any one of the following folders
 - meta: Type traits and helper functions used internally.
 
 Any function callable from the math library, excluding those in the `internal` namespace, should be compatible with Stan's reverse and forward mode autodiff types.
-Any new function introduced to the Math library is expected to support higher order automatic differentiation.
-Though exceptions to supporting higher order autodiff have been made in the past such as the differential equations solvers only supporting reverse mode autodiff.
+Any new function introduced to the Math library is expected to support higher-order automatic differentiation.
+Though exceptions to supporting higher-order autodiff have been made in the past such as the differential equations solvers only supporting reverse mode autodiff.
 
 You can contribute a new function by writing the function in the `prim/fun` folder.
 The function will need to accept arithmetic, reverse mode (@ref stan::math::var  ), and forward mode (`fvar<T>`) scalar types and should be tested using the `expect_ad()` testing framework.
@@ -96,41 +96,41 @@ inline value_type_t<EigVec> dot_self(const EigVec& x) {
 }
 ```
 
-For a real implementation of this function we would want to return `x.squaredNorm()` on the input vector `x`.
+For a real implementation of this function, we would want to return `x.squaredNorm()` on the input vector `x`.
 But unrolling this `dot_self()` example gives us a nice example with a few subtleties we need to take into account.
 
-There are several odd parts to this function labeled (1), (2), (3), and (4) which I'll go over below.
+There are several odd parts to this function labelled (1), (2), (3), and (4) which I'll go over below.
 
 #### (1) Using Stan's require type traits to specialize overloads
 
 The Stan math library requires that all functions are able to accept Eigen expression templates, hence the general `EigVec` template above.
-Though we want general templates parameters to the functions, we also want to ensure that only a restricted subset of types are able to be accepted for a particular function.
-For example, without the require in the above function it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good!
-In order to restrict the types that can go into a function the math library uses the `require` type traits to detecting which function a particular type should use.
+Though we want general template parameters for the functions, we also want to ensure that only a restricted subset of types is able to be accepted for a particular function.
+For example, without the `require` in the above function, it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good!
+In order to restrict the types that can go into a function, the math library uses the `require` type traits to detect which function a particular type should use.
 This is very similar conceptually to [C++20 requires](https://en.cppreference.com/w/cpp/language/constraints#Constraints).
 
 To avoid document duplication I recommend you skim over @ref require_meta_doc .
-The guide there explains the different styles and patterns of requires that we use throughout the math library as well as in this example.
-At the bottom of that page you will see subsections which will show you the `requires` we have already setup for types we commonly see.
+The guide there explains the different styles and patterns of `require`s that we use throughout the math library as well as in this example.
+At the bottom of that page, you will see subsections which will show you the `requires` we have already set up for types we commonly see.
 
 We want to restrict `self_dot()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`.
-The C++ convention for require types looks odd at first, as it sets the require template parameter to be a pointer with a default value of nullptr.
+The C++ convention for require types looks odd at first, as it sets the `require` template parameter to be a pointer with a default value of `nullptr`.
 
 ```cpp
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 ```
 
 One C++ trick is that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler.
-Under the hood, if any of the `requires` are successful they will return back a type `void`.
-So in the case we are passing a type that our requires accepts we get back a `void* = nullptr` which is safely ignored by the compiler.
+Under the hood, if any of the `require`s are successful they will return back a type `void`.
+So in the case we are passing a type that our `require`s accepts we get back a `void* = nullptr` which is safely ignored by the compiler.
 In the case that the type does not satisfy the `require` then the function is removed from the set of possible functions the caller could use via SFINAE.
-So with this scheme we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
+So with this scheme, we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
 
 #### (2) Ensure Eigen matrices are only evaluated once
 
-Before accessing individual coefficients of an Eigen type, use @ref stan::math::to_ref to make sure accessing the coefficients will not cause a compiler error or forcing the coefficient to be computed multiple times.
+Before accessing individual coefficients of an Eigen type, use @ref stan::math::to_ref to make sure accessing the coefficients will not cause a compiler error or force the coefficient to be computed multiple times.
 
-In the Stan math library we allow functions to accept Eigen expressions as composing expressions together can often give much more optimized code.
+In the Stan Math library, we allow functions to accept Eigen expressions as composing expressions together can often give much more optimized code.
 For instance, in the example below the additions that go into `subtract()` will be combined together to form one large computation instead of many smaller ones.
 
 ```cpp
@@ -153,11 +153,11 @@ for (Eigen::Index i = 0; i < x.size(); ++i) {
 }
 ```
 
-Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data.
+Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads and writes to our data.
 However, this comes at the cost of more complicated template traits and patterns as well as being careful around handling inputs to functions.
 
-In (3), when we access the coefficients of `x`, if its type is similar to the expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs.
-So @ref stan::math::to_ref  looks at its input type, and if the input type is an Eigen expression that performs a calculation then it returns as if we called `.eval()` on our input, otherwise it returns the same type as `x`.
+In (3), when we access the coefficients of `x`, if its type is similar to the expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on an expression type that transforms its inputs.
+So @ref stan::math::to_ref  looks at its input type, and if the input type is an Eigen expression that performs a calculation then it returns as if we called `.eval()` on our input, otherwise, it returns the same type as `x`.
 
 Another example where @ref stan::math::to_ref is required is the example below, which you can copy and paste into godbolt.org to try yourself.
 
@@ -186,9 +186,9 @@ int main() {
 }
 ```
 
-Pasting the above into godbolt will show a compilation error!
+Pasting the above into [Godbolt](https://godbolt.org/) will show a compilation error!
 That's because Eigen does not allow coefficient levels access to product functions.
-Instead that expression needs to be evaluated before it is accessed elementwise.
+Instead, that expression needs to be evaluated before it is accessed elementwise.
 Alternatively, consider the following example, where we pass in an expression for elementwise multiplication.
 
 ```cpp
@@ -211,8 +211,8 @@ var b = dot_self(A.segment(1, 5));
 ```
 
 Here, we have an expression `Eigen::Block<Eigen::MatrixXd>` as the input type.
-An expression that is only a view into an object is safe to read coefficent-wise.
-In this case @ref stan::math::to_ref  knows this and, as long as you used `const auto&` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` instead of casting to an evaluated vector.
+An expression that is only a view into an object is safe to read coefficient-wise.
+In this case, @ref stan::math::to_ref  knows this and as long as you used `const auto&` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` instead of casting to an evaluated vector.
 We use `const auto&` here even when the output will store an object as [C++'s lifetime rules](https://en.cppreference.com/w/cpp/language/lifetime) allow for this.
 
 > The lifetime of a temporary object may be extended by binding to a const lvalue reference or to an rvalue reference (since C++11), see reference initialization for details.
@@ -264,7 +264,7 @@ Make a PR, add some docs, have a cup of tea all is well.
 But, while your function will work for all of our types, it probably won't be as fast as it could be.
 Indeed, since the above is using Stan's basic scalar reverse mode, for a vector of size N there will be N individual callback functions on the reverse pass callback stack.
 This is not the worst, Stan's base scalar operations are as efficient as they can be, but by writing a specialization for reverse mode we can have one callback with much more efficient memory access.
-The next section may seem a bit advanced, but those who enjoy adventure, let's talk about how to make this function go faster.
+The next section may seem a bit advanced, but for those who enjoy adventure, let's talk about how to make this function go faster.
 
 ## Specializing for reverse mode
 
@@ -289,7 +289,7 @@ inline double dot_self(const EigVec& x) {
 }
 ```
 
-The require type trait in the above stops the function from working specifically with Eigen vectors whose inner `Scalar` type is a @ref stan::math::var type.
+The `require` type trait in the above stops the function from working specifically with Eigen vectors whose inner `Scalar` type is a @ref stan::math::var type.
 Now we can write the signature of our function that will go into the `stan/math/rev/fun/` folder
 
 ```cpp
@@ -356,7 +356,7 @@ The assumptions of the Math arena are:
 
 The arena memory pattern fits nicely into automatic differentiation for MCMC as we will most commonly be calling gradients with data of the same size over and over again.
 
-Functions that use reverse mode autodiff are allowed to save what they need to the arena and then the objects saved here will be available during the reverse pass.
+Functions that use reverse mode autodiff are allowed to save what they need to the arena, and then the objects saved here will be available during the reverse pass.
 
 There is a utility for saving objects into the arena that do need their destructors called.
 This is discussed under @ref stan::math::make_chainable_ptr .
@@ -388,18 +388,18 @@ auto myfunc(const T& x) {
 
 ### (2) Calculating the forward pass
 
-Because of our previous requires template we can now call `dot_self()` with the values of the matrix.
+Because of our previous `require`s template we can now call `dot_self()` with the values of the matrix.
 The compiler will then know to call the previous definition of `dot_self` written to work with `double` scalar types.
 
 ### (3) Accessing the values and adjoints of matrices.
 
-The calculations for the forward and reverse passes of reverse mode autodiff often uses custom Eigen methods for matrices, vectors, and arrays.
+The calculations for the forward and reverse passes of reverse mode autodiff often use custom Eigen methods for matrices, vectors, and arrays.
 In the above, `.val()` will return a view of all of the values of the @ref stan::math::var scalars in the matrix while `.adj()` will return a view for all of the adjoints of the matrices @ref stan::math::var scalars.
 You can think of `.val()` and `.adj()` as returning an Eigen matrix of doubles such as `Eigen::Matrix<double, Rows, Cols>` where both functions scalars are references to the values or adjoints of the original matrix with @ref stan::math::var scalars.
 
 ### (4) Setting up the reverse pass
 
-Once the forward pass is complete and the data for the reverse pass is in the arena the adjoint calculation for the portion of the reverse pass for this function needs to be written.
+Once the forward pass is complete, and the data for the reverse pass is in the arena the adjoint calculation for the portion of the reverse pass for this function needs to be written.
 The reverse pass consists of an adjoint calculation which is placed onto the callback stack.
 When a user calls @ref stan::math::grad this adjoint calculation will be called so that adjoints are accumulated from the final output to the starting inputs.
 
@@ -444,7 +444,7 @@ The function `f` is called on the reverse pass similarly to @ref stan::math::rev
 
 The functions in Stan Math are used in the C++ code generated by the Stan compiler.
 This means that all types in the Stan language map to `C++` types.
-The map between Stan types and types in `C++` is a one to many relationship because of the different blocks in a Stan program.
+The map between Stan types and types in `C++` is a one-to-many relationship because of the different blocks in a Stan program.
 Objects created in `data`, `transformed data`, and `generated quantities` will hold arithmetic types while objects created in `parameters`, `transformed parameters`, and the `model` block will hold autodiff types.
 The basic Stan types are listed in the table below as well as arrays of any of these types.
 
@@ -583,8 +583,8 @@ The forward mode autodiff type itself takes a template argument to represent the
 value and gradient and allows recursive templating.
 This technically defines an infinite number of new types, but the ones of interest in Math (and the
 ones that should be tested are) `fvar<double>`, `fvar<fvar<double>>`, `fvar<var>` and `fvar<fvar<var>>`.
-These are useful for computing various high order derivatives.
-Going back to the `real sin(real)` function, Stan Math is now expected to implement the following, rather expanded list of functions:
+These are useful for computing various high-order derivatives.
+Going back to the `real sin(real)` function, Stan Math is now expected to implement the following rather expanded list of functions:
 
 ```cpp
 double sin(double);
@@ -616,7 +616,7 @@ Error checks should be done with the functions in [stan/math/prim/err](https://g
 ### Tests
 
 Tests in Math are written with the Google test framework.
-At this point there are enough functions in Math that the way to get started is by copying the tests of a similar Function and editing them to suit the new function.
+At this point, there are enough functions in Math that the way to get started is by copying the tests of a similar Function and editing them to suit the new function.
 There are two basic sets of functions that every Stan function should have.
 First, for a function named `foo`, there should be a file in `test/unit/math/prim/fun` named `foo_test.cpp`.
 
@@ -629,7 +629,7 @@ and that all edge cases are handled correctly.
 
 2. Check that the function returns the expect values for a couple
 suitable inputs.
-  - For some functions these checks should be more extensive that others, but there should at least be a two or three even in simple cases.
+  - For some functions, these checks should be more extensive than others, but there should at least be two or three even in simple cases.
 
 The `prim` tests should only have arithmetic types.
 No autodiff is tested here.
@@ -679,7 +679,7 @@ versions.
 This can happen when multiplying the values/adjoints of an autodiff type against other matrices.
 
 It is not safe to use `.noalias()` with the `var<Matrix>` value/adjoint expressions.
-In Eigen, `.noalias()` is similar to the keyworld [`restrict`](https://en.cppreference.com/w/c/language/restrict) which assumes that a pointer is unique within a given function.
-But when performing operations on Eigen matrices of @ref stan::math::var   while using `.val()` and `.adj()` on the left and right hand side of an operation, the pointer holding the underlying @ref stan::math::var   types will be used on both sides.
-Since the pointer is used on both sides it will not be unique in the operation and so using `.noalias()` will lead to undefined behavior.
+In Eigen, `.noalias()` is similar to the keyword [`restrict`](https://en.cppreference.com/w/c/language/restrict) which assumes that a pointer is unique within a given function.
+But when performing operations on Eigen matrices of @ref stan::math::var   while using `.val()` and `.adj()` on the left and right-hand side of an operation, the pointer holding the underlying @ref stan::math::var   types will be used on both sides.
+Since the pointer is used on both sides it will not be unique in the operation and so using `.noalias()` will lead to undefined behaviour.
 See the [Aliasing](https://eigen.tuxfamily.org/dox/group__TopicAliasing.html) and [Writing Efficient Matrix Product Expressions](https://eigen.tuxfamily.org/dox/TopicWritingEfficientProductExpression.html) Eigen docs for more info.

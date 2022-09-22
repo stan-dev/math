@@ -43,7 +43,7 @@ We're committed to having a permissive open-source license. The Math library is 
 
 # Contributing {#contribution}
 
-Thanks for reading! We love contributions from everyone in the form of discussion, issues, and pull requests.
+Thanks for reading! We love contributions from everyone in the form of discussions, issues, and pull requests.
 
 This is the short version. There's more information on the [wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
 
