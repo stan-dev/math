@@ -6,7 +6,17 @@
 namespace stan {
 namespace math {
 
-
+/**
+ * Return the complex conjugate the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return complex conjugate of the argument
+ */
+template <typename V>
+inline std::complex<V> conj(const std::complex<V>& z) {
+  return std::conj(z);
+}
 
 /**
  * Return the complex conjugate the Eigen object.
@@ -29,9 +39,9 @@ inline auto conj(const Eig& z) {
  */
 template <typename StdVec, require_std_vector_st<is_complex, StdVec>* = nullptr>
 inline auto conj(const StdVec& z) {
-  promote_scalar_t<base_type_t<StdVec>, StdVec> result(z.size());
+  promote_scalar_t<scalar_type_t<StdVec>, StdVec> result(z.size());
   std::transform(z.begin(), z.end(), result.begin(),
-                 [](auto&& x) { return conj(x); });
+                 [](auto&& x) { return stan::math::conj(x); });
   return result;
 }
 
