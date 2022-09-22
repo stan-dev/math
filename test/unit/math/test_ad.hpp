@@ -1259,9 +1259,8 @@ enum class ScalarSupport { Real, RealAndComplex, ComplexOnly };
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for real numbers only.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for real numbers only.
  * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
@@ -1312,9 +1311,9 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when complex and real numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
@@ -1397,9 +1396,9 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when only complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
  * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
@@ -1462,8 +1461,8 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * 3rd-order derivatives consistent with primitive values and finite
  * differences using default tolerances.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function
  * @tparam T type of argument
  * @param f function to test
@@ -1867,9 +1866,9 @@ void expect_complex_common_comparison(const F& f) {
  * input type.  The value for containers must be the same as applying
  * the scalar function elementwise.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for whenever complex numbers are not supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for whenever complex numbers are not
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
@@ -1898,9 +1897,9 @@ void expect_common_unary_vectorized(const F& f) {
  * input type.  The value for containers must be the same as applying
  * the scalar function elementwise.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when complex and real numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
@@ -1919,8 +1918,6 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
-
-
 /**
  * Test that the specified vectorized unary function produces the same
  * results and exceptions, and has 1st-, 2nd-, and 3rd-order
@@ -1933,9 +1930,9 @@ void expect_common_unary_vectorized(const F& f) {
  * input type.  The value for containers must be the same as applying
  * the scalar function elementwise.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when only complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
@@ -1957,8 +1954,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
  * differences.  Tests both scalar and container behavior.  Integer
  * arguments will be preserved through to function calls.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function
  * @tparam Ts types of arguments
  * @param tols test relative tolerances
@@ -1978,8 +1975,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
  * values for the specified values that are consistent with primitive
  * values and finite differences.  Tests both scalars and containers.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function to test
  * @tparam Ts type of remaining arguments to test
  * @param f function to test
@@ -1999,9 +1996,9 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
  * when applied to all common non-zero integer and double arguments.
  * This includes tests for standard vector and Eigen vector containers.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when complex numbers are not supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex numbers are not
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
@@ -2023,9 +2020,9 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * when applied to all common non-zero integer and double arguments.
  * This includes tests for standard vector and Eigen vector containers.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when complex and real numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
@@ -2042,7 +2039,6 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
-
 /**
  * Test that the specified vectorized unary function produces the same
  * results and exceptions, and has derivatives consistent with finite
@@ -2050,9 +2046,9 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * when applied to all common non-zero integer and double arguments.
  * This includes tests for standard vector and Eigen vector containers.
  *
- * @tparam ScalarSupport whether the input supports real numbers, complex numbers,
- *  or both.
- *  This specialization is for when only complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
