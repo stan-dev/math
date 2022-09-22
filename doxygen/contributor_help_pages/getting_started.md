@@ -71,7 +71,7 @@ Any new function introduced to the Math library is expected to support higher-or
 Though exceptions to supporting higher-order autodiff have been made in the past such as the differential equations solvers only supporting reverse mode autodiff.
 
 You can contribute a new function by writing the function in the `prim/fun` folder.
-The function will need to accept arithmetic, reverse mode (@ref stan::math::var  ), and forward mode (`fvar<T>`) scalar types and should be tested using the `expect_ad()` testing framework.
+The function will need to accept arithmetic, reverse mode (@ref stan::math::var  ), and forward mode (@ref stan::math::fvar) scalar types and should be tested using the `expect_ad()` testing framework.
 The `rev`, `fwd`, `mix`, and `opencl` folders are used for adding specialization for:
 
 1. rev: reverse-mode autodiff specializations
@@ -81,7 +81,7 @@ The `rev`, `fwd`, `mix`, and `opencl` folders are used for adding specialization
 
 ## Adding a simple example function
 
-A generic function that takes in an Eigen vector and performs a dot product on itself could be written in `prim/fun` as
+A generic function that takes in an Eigen vector and performs a dot product on itself could be written in `prim/fun` as a for loop accumulating squared values of the original vector. In the example directly below, the lines with comments (1), (2), (3), and (4) are explained in more detail as they are Stan Math specific components of the function required to allow the function to work inside of the math library.   
 
 ```cpp
 // stan/math/prim/fun/dot_self.hpp
@@ -96,24 +96,21 @@ inline value_type_t<EigVec> dot_self(const EigVec& x) {
 }
 ```
 
-For a real implementation of this function, we would want to return `x.squaredNorm()` on the input vector `x`.
-But unrolling this `dot_self()` example gives us a nice example with a few subtleties we need to take into account.
-
-There are several odd parts to this function labelled (1), (2), (3), and (4) which I'll go over below.
+For a real implementation of this function, we would want to use the member method of the input Eigen matrix `x.squaredNorm()`, but unrolling `dot_self()` gives a nice example with a few subtleties we need to take into account.
 
 #### (1) Using Stan's require type traits to specialize overloads
 
 The Stan math library requires that all functions are able to accept Eigen expression templates, hence the general `EigVec` template above.
-Though we want general template parameters for the functions, we also want to ensure that only a restricted subset of types is able to be accepted for a particular function.
+Though the math library wants general template parameters for the functions in `prim`, functions should be restricted to a subset of types.
 For example, without the `require` in the above function, it would be perfectly valid to pass in an `Eigen::MatrixXd`, but that would not be good!
 In order to restrict the types that can go into a function, the math library uses the `require` type traits to detect which function a particular type should use.
 This is very similar conceptually to [C++20 requires](https://en.cppreference.com/w/cpp/language/constraints#Constraints).
 
-To avoid document duplication I recommend you skim over @ref require_meta_doc .
+To avoid document duplication please see the @ref require_meta_doc for a lengthier discussion on the requires template types.
 The guide there explains the different styles and patterns of `require`s that we use throughout the math library as well as in this example.
-At the bottom of that page, you will see subsections which will show you the `requires` we have already set up for types we commonly see.
+@ref require_meta_doc has subsections which will show you the `requires` we have already set up for types we commonly see.
 
-We want to restrict `self_dot()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`.
+We want to restrict `dot_self()` to only accept Eigen types which have one row or one column at compile time, which for us is `require_eigen_vector_t`.
 The C++ convention for require types looks odd at first, as it sets the `require` template parameter to be a pointer with a default value of `nullptr`.
 
 ```cpp
@@ -124,20 +121,20 @@ One C++ trick is that any non-type template parameter of type `void*` with a def
 Under the hood, if any of the `require`s are successful they will return back a type `void`.
 So in the case we are passing a type that our `require`s accepts we get back a `void* = nullptr` which is safely ignored by the compiler.
 In the case that the type does not satisfy the `require` then the function is removed from the set of possible functions the caller could use via SFINAE.
-So with this scheme, we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for
+This scheme leads to a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for.
 
 #### (2) Ensure Eigen matrices are only evaluated once
 
-Before accessing individual coefficients of an Eigen type, use @ref stan::math::to_ref to make sure accessing the coefficients will not cause a compiler error or force the coefficient to be computed multiple times.
+Before accessing individual coefficients of an Eigen type, use @ref stan::math::to_ref to make sure accessing the coefficients will not cause a compiler error or force the coefficient to be computed multiple times. The function @ref stan::math::to_ref is a smart helper function that will evaluate expressions that perform computations, but will not evaluate expressions that are only a view or slice of a matrix or vector.
 
-In the Stan Math library, we allow functions to accept Eigen expressions as composing expressions together can often give much more optimized code.
+In the Stan Math library, we allow functions to accept Eigen expressions. This allows expressions to be accumulated across multiple function calls and can often give much more optimized code.
 For instance, in the example below the additions that go into `subtract()` will be combined together to form one large computation instead of many smaller ones.
 
 ```cpp
 Eigen::MatrixXd x = subtract(add(A, multiply(B, C)), add(D, E));
 ```
 
-The type created on the RHS of the above is an Eigen expression that looks like the following pseudotype of the real generated expression.
+The type created on the right hand side of the equals is an Eigen expression that looks like the following pseudotype of the real generated expression.
 
 ```cpp
 Eigen::Subtract<Eigen::Add<MatrixXd, Eigen::Product<MatrixXd, MatrixXd>>, Eigen::Add<MatrixXd, MatrixXd>>
@@ -156,7 +153,7 @@ for (Eigen::Index i = 0; i < x.size(); ++i) {
 Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads and writes to our data.
 However, this comes at the cost of more complicated template traits and patterns as well as being careful around handling inputs to functions.
 
-In (3), when we access the coefficients of `x`, if its type is similar to the expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on an expression type that transforms its inputs.
+In (3), when we access the coefficients of `x` in the loop, if its type is similar to the expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on an expression type that transforms its inputs.
 So @ref stan::math::to_ref  looks at its input type, and if the input type is an Eigen expression that performs a calculation then it returns as if we called `.eval()` on our input, otherwise, it returns the same type as `x`.
 
 Another example where @ref stan::math::to_ref is required is the example below, which you can copy and paste into godbolt.org to try yourself.
@@ -210,15 +207,15 @@ Eigen::Matrix<var, Dynamic, 1> A = Eigen::VectorXd::Random(20);
 var b = dot_self(A.segment(1, 5));
 ```
 
-Here, we have an expression `Eigen::Block<Eigen::MatrixXd>` as the input type.
+When calling `A.segment(1, 5)` Eigen will create an instance of an expression class called `Eigen::Block<Eigen::VectorXd>` that holds a view into the original vector.
 An expression that is only a view into an object is safe to read coefficient-wise.
-In this case, @ref stan::math::to_ref  knows this and as long as you used `const auto&` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` instead of casting to an evaluated vector.
+In this case, @ref stan::math::to_ref  knows this and as long as you use `const auto&` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` instead of casting to an evaluated vector.
 We use `const auto&` here even when the output will store an object as [C++'s lifetime rules](https://en.cppreference.com/w/cpp/language/lifetime) allow for this.
 
 > The lifetime of a temporary object may be extended by binding to a const lvalue reference or to an rvalue reference (since C++11), see reference initialization for details.
 
 If we used `auto` here and if the return type of @ref stan::math::to_ref is an `Eigen::MatrixXd` then it would make a copy.
-But with `const auto&` we do not make a copy as the lifetime of the object referenced by the `const auto&` will be the same as if we had done `auto`
+But with `const auto&` we do not make a copy as the lifetime of the object referenced by the `const auto&` will be the same as if we had done `auto`.
 
 
 #### (3) Using value_type_t and other type querying type traits
