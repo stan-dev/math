@@ -5,10 +5,11 @@ TEST(mathMixMatFun, exp) {
     using stan::math::exp;
     return exp(x);
   };
-  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::Yes>(
-      f);
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::Yes>(
-      f, -15.2, -10, -0.5, 0.5, 1, 1.0, 1.3, 5, 10);
+  stan::test::expect_common_unary_vectorized<
+      stan::test::ScalarSupport::RealAndComplex>(f);
+  stan::test::expect_unary_vectorized<
+      stan::test::ScalarSupport::RealAndComplex>(f, -15.2, -10, -0.5, 0.5, 1,
+                                                 1.0, 1.3, 5, 10);
   stan::test::expect_complex_common(f);
 
   std::vector<double> com_args = stan::test::internal::common_nonzero_args();

@@ -3,23 +3,11 @@
 #include <complex>
 #include <vector>
 
-namespace stan {
-namespace math {
-/**
- *  Dummy overload to allow expect_unary_vectorized. It requires real-valued
- * overloads.
- */
-template <typename V, require_not_st_complex<V>* = nullptr>
-inline auto conj(const V& z) {
-  return z;
-}
-}  // namespace math
-}  // namespace stan
-
 TEST(mathMixMatFun, conj) {
   auto f = [](const auto& x) { return stan::math::conj(x); };
   stan::test::expect_complex_common(f);
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::Yes>(f);
+  stan::test::expect_unary_vectorized<stan::test::ScalarSupport::ComplexOnly>(
+      f);
 }
 
 template <typename T>
