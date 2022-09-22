@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_CONJ_HPP
 
 #include <complex>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
