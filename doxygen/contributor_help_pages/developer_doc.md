@@ -19,7 +19,7 @@ This wiki is a work in progress. If you have suggestions, please update the wiki
 
 -----------------
 
-# Overview
+# Overview {#overview}
 
 
 The Stan Math library, referred to as Math or the Math library, is a C++ library for automatic differentiation. It's designed to be usable, extensive and extensible, efficient, scalable, stable, portable, and redistributable in order to facilitate the construction and utilization of algorithms that utilize derivatives.
@@ -37,13 +37,13 @@ Some key features of the Math library's reverse mode automatic differentiation:
 For implementation details of the Math library's automatic differentiation, please read the arXiv paper "[The Stan Math Library: Reverse-Mode Automatic Differentiation in C++](https://arxiv.org/abs/1509.07164)."
 
 
-# Licensing
+# Licensing {#licensing}
 
 We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd) and we only accept changes to the code base that compatible with this license.
 
-# Contributing
+# Contributing {#contribution}
 
-Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
+Thanks for reading! We love contributions from everyone in the form of discussions, issues, and pull requests.
 
 This is the short version. There's more information on the [wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
 
@@ -92,13 +92,13 @@ Pull requests are code reviewed after they pass our continuous integration tests
 See the [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer-Doc#code-review-guidelines) on the Math wiki.
 
 
-## Discussion
+## Discussion {#discussion}
 
 For general questions, please ask on the forums with the ["Developers" tag](https://discourse.mc-stan.org/c/stan-dev).
 
 
 
-# Code Review Guidelines
+# Code Review Guidelines {#code-review-guidelines}
 
 All pull requests must have these things:
 
@@ -150,7 +150,7 @@ Feel free to review a narrow part of the pull request. By that, I mean one of th
     3. **Approve**. Finalize the pull request with "Approve" when the pull request is ready to be merged. If you're looking at the whole pull request, then feel free to approve when it's ready. If you're only looking at a part of the pull request, please do not approve. One of the core Math developers will coordinate the different reviewers and approve based on the feedback.
 
 
-# Building and Running Tests
+# Building and Running Tests {#building-and-running-tests}
 
 **Nota bene:** these build instructions are not in the released version yet. This is for the `develop` branch (post v2.18.0. Prior to this, the build instructions are similar, but not identical.
 
@@ -352,7 +352,7 @@ To test headers,
 ```
 
 --------
-# Questions
+# Questions {#questions}
 
 This would have been an "faq," but nothing really gets asked frequently. We'll just collect thoughts on the Math library here.
 
