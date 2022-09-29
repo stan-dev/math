@@ -13,7 +13,7 @@ Documentation, Installation, and Examples
 All of Stan math's documentation is hosted on our website below. Please do not
 reference articles in the wiki as they are outdated and not maintained.
 
-mc-stan.org/math
+[mc-stan.org/math](https://mc-stan.org/math/)
 
 
 Licensing
