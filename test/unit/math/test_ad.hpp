@@ -1247,11 +1247,11 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
 /**
  * Promote to Complex is used by the `expect_ad_vectorized` framework
  *  to specify at compile time whether a function should check
- *  for complex support. By default the value is `No`, meaning that
+ *  for complex support. By default the value is `Real`, meaning that
  *  the test does not promote the input to a complex double when it is running
  *  the test suite.
  */
-enum class PromoteToComplex { No, Yes };
+enum class ScalarSupport { Real, RealAndComplex, ComplexOnly };
 
 /**
  * Test that the specified vectorized polymorphic unary function
@@ -1259,19 +1259,18 @@ enum class PromoteToComplex { No, Yes };
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex support is turned off.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for real numbers only.
  * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
  * @param f functor to test
  * @param x1 value to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
-          typename T1,
-          stan::require_t<stan::bool_constant<
-              ComplexSupport == PromoteToComplex::No>>* = nullptr>
+template <
+    ScalarSupport ComplexSupport = ScalarSupport::Real, typename F, typename T1,
+    stan::require_t<
+        stan::bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
@@ -1312,18 +1311,18 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
  * @param f functor to test
  * @param x1 value to test
  */
-template <PromoteToComplex ComplexSupport, typename F, typename T1,
+template <ScalarSupport ComplexSupport, typename F, typename T1,
           stan::require_t<stan::bool_constant<
-              ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
+              ComplexSupport == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
@@ -1392,18 +1391,84 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
 }
 
 /**
+ * Test that the specified vectorized polymorphic unary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
+ * @tparam F type of polymorphic, vectorized functor to test
+ * @tparam T1 type of first argument (integer or double)
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x1 value to test
+ */
+template <ScalarSupport ComplexSupport, typename F, typename T1,
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
+void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
+  using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
+  using complex_t = std::complex<double>;
+  using complex_matrix_t = Eigen::Matrix<complex_t, -1, -1>;
+  using complex_vector_t = Eigen::Matrix<complex_t, -1, 1>;
+  using complex_row_vector_t = Eigen::Matrix<complex_t, 1, -1>;
+  using std::vector;
+  using vector_complex = vector<complex_t>;
+  using vector2_complex = vector<vector_complex>;
+  using vector3_complex = vector<vector2_complex>;
+
+  expect_ad(tols, f, std::complex<double>(static_cast<Scalar>(x1)));
+  for (int i = 0; i < 2; ++i) {
+    expect_ad(tols, f, complex_vector_t::Constant(i, x1).eval());
+  }
+  for (int i = 0; i < 2; ++i) {
+    expect_ad(tols, f, complex_row_vector_t::Constant(i, x1).eval());
+  }
+  for (int i = 0; i < 2; ++i) {
+    expect_ad(tols, f, complex_matrix_t::Constant(i, i, x1).eval());
+  }
+  for (size_t i = 0; i < 2; ++i) {
+    expect_ad(tols, f, vector_complex(i, x1));
+  }
+  for (size_t i = 0; i < 2; ++i) {
+    expect_ad(
+        tols, f,
+        vector<complex_vector_t>(i, complex_vector_t::Constant(i, x1).eval()));
+  }
+  for (size_t i = 0; i < 2; ++i) {
+    expect_ad(tols, f,
+              vector<complex_row_vector_t>(
+                  i, complex_row_vector_t::Constant(i, x1).eval()));
+  }
+  for (size_t i = 0; i < 2; ++i) {
+    expect_ad(tols, f,
+              vector<complex_matrix_t>(
+                  i, complex_matrix_t::Constant(i, i, x1).eval()));
+  }
+  for (int i = 0; i < 2; ++i) {
+    expect_ad(tols, f, vector2_complex(i, vector_complex(i, x1)));
+  }
+  for (int i = 0; i < 2; ++i) {
+    expect_ad(tols, f,
+              vector3_complex(i, vector2_complex(i, vector_complex(i, x1))));
+  }
+}
+
+/**
  * Test that the specified function has value and 1st-, 2nd-, and
  * 3rd-order derivatives consistent with primitive values and finite
  * differences using default tolerances.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function
  * @tparam T type of argument
  * @param f function to test
  * @param x argument to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           typename T>
 void expect_ad_vectorized(const F& f, const T& x) {
   ad_tolerances tols;
@@ -1801,15 +1866,15 @@ void expect_complex_common_comparison(const F& f) {
  * input type.  The value for containers must be the same as applying
  * the scalar function elementwise.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for whenever complex numbers are not supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for whenever complex numbers are not
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
 template <
-    PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
-    require_t<bool_constant<ComplexSupport == PromoteToComplex::No>>* = nullptr>
+    ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
+    require_t<bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
@@ -1832,15 +1897,15 @@ void expect_common_unary_vectorized(const F& f) {
  * input type.  The value for containers must be the same as applying
  * the scalar function elementwise.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
-template <PromoteToComplex ComplexSupport, typename F,
+template <ScalarSupport ComplexSupport, typename F,
           require_t<bool_constant<ComplexSupport
-                                  == PromoteToComplex::Yes>>* = nullptr>
+                                  == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
@@ -1853,7 +1918,34 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F>
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function when applied to all common
+ * arguments.  Uses default tolerances.
+ *
+ * <p>The function must be defined from scalars to scalars and from
+ * containers to containers, always producing the same output type as
+ * input type.  The value for containers must be the same as applying
+ * the scalar function elementwise.
+ *
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
+template <ScalarSupport ComplexSupport, typename F,
+          require_t<bool_constant<ComplexSupport
+                                  == ScalarSupport::ComplexOnly>>* = nullptr>
+void expect_common_unary_vectorized(const F& f) {
+  ad_tolerances tols;
+  for (auto x1 : common_complex())
+    stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
+}
+
+template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F>
 void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
 
 /**
@@ -1862,16 +1954,15 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
  * differences.  Tests both scalar and container behavior.  Integer
  * arguments will be preserved through to function calls.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function
  * @tparam Ts types of arguments
  * @param tols test relative tolerances
  * @param f function to test
  * @param xs arguments to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           typename T, typename... Ts>
 void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
                              Ts... xs) {
@@ -1884,14 +1975,14 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
  * values for the specified values that are consistent with primitive
  * values and finite differences.  Tests both scalars and containers.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both.
  * @tparam F type of function to test
  * @tparam Ts type of remaining arguments to test
  * @param f function to test
  * @param xs arguments to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           require_not_same_t<F, ad_tolerances>* = nullptr, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
@@ -1905,15 +1996,15 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
  * when applied to all common non-zero integer and double arguments.
  * This includes tests for standard vector and Eigen vector containers.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex numbers are not supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex numbers are not
+ * supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           stan::require_t<stan::bool_constant<
-              ComplexSupport == PromoteToComplex::No>>* = nullptr>
+              ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
@@ -1929,21 +2020,43 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * when applied to all common non-zero integer and double arguments.
  * This includes tests for standard vector and Eigen vector containers.
  *
- * @tparam PromoteToComplex whether the input should be promoted to a
- * complex<double> for the ad test suite to check whether complex is supported.
- *  This specialization is for when complex numbers are supported.
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when complex and real numbers
+ * are supported.
  * @tparam F type of functor to test
  * @param f functor to test
  */
-template <PromoteToComplex ComplexSupport, typename F,
+template <ScalarSupport ComplexSupport, typename F,
           stan::require_t<stan::bool_constant<
-              ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
+              ComplexSupport == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
   for (int x : internal::common_nonzero_int_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
+  for (auto x1 : common_complex())
+    stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
+}
+
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has derivatives consistent with finite
+ * differences as returned by the primitive version of the function
+ * when applied to all common non-zero integer and double arguments.
+ * This includes tests for standard vector and Eigen vector containers.
+ *
+ * @tparam ScalarSupport whether the input supports real numbers, complex
+ * numbers, or both. This specialization is for when only complex numbers are
+ * supported.
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
+template <ScalarSupport ComplexSupport, typename F,
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
+void expect_common_nonzero_unary_vectorized(const F& f) {
+  ad_tolerances tols;
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }

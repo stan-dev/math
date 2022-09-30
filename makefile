@@ -88,8 +88,9 @@ help:
 .PHONY: doxygen
 doxygen:
 	mkdir -p doc/api
+	doxygen -v
 	doxygen doxygen/doxygen.cfg
-
+	cp ./doxygen/pretty_stuff/eigen_navtree_hacks.js ./doc/api/html
 ##
 # Clean up.
 ##
