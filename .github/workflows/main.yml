@@ -12,8 +12,14 @@ on:
       - 'LICENSE.md'
       - 'README.md'
       - 'RELEASE-NOTES.txt'
+permissions:
+  contents: read
+
 jobs:
   prim-rev:
+    permissions:
+      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
+      contents: read  # for actions/checkout to fetch code
     name: prim and rev tests
     runs-on: windows-latest
 
