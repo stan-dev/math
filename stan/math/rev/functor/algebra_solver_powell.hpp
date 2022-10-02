@@ -217,8 +217,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
     args_ref_tuple);
   }
 
-
-  // Does this also need to doxygen code?
+  // Does this also need the doxygen code?
   template <typename F, typename T, typename... T_Args,
             require_eigen_vector_t<T>* = nullptr,
             require_any_st_var<T_Args...>* = nullptr>

@@ -16,7 +16,7 @@
 //   bool is_newton = false;
 //   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
 // }
-//
+
 // TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
 //   bool is_newton = false;
 //   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
@@ -113,6 +113,7 @@ TEST_F(degenerate_eq_test, powell_guess_saddle_point_dbl) {
   EXPECT_FLOAT_EQ(100, theta(0));
   EXPECT_FLOAT_EQ(100, theta(1));
 }
+*/
 
 TEST_F(algebra_solver_simple_eq_test, powell) {
   using stan::math::var;
@@ -136,11 +137,12 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
 TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   using stan::math::var;
   bool is_newton = false;
+  bool use_tol = true;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
+        = simple_eq_test(simple_eq_functor(), y, is_newton, use_tol, scale_step,
                          xtol, ftol, maxfev);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
@@ -152,6 +154,7 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   }
 }
 
+/*
 TEST_F(algebra_solver_simple_eq_test, powell_init_is_para) {
   using stan::math::algebra_solver_powell;
   Eigen::VectorXd theta
@@ -159,6 +162,7 @@ TEST_F(algebra_solver_simple_eq_test, powell_init_is_para) {
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
 }
+*/
 
 TEST_F(algebra_solver_non_linear_eq_test, powell) {
   using stan::math::var;
@@ -181,6 +185,7 @@ TEST_F(algebra_solver_non_linear_eq_test, powell) {
   }
 }
 
+/*
 TEST_F(error_message_test, powell) {
   using stan::math::var;
   bool is_newton = false;
@@ -199,6 +204,7 @@ TEST_F(max_steps_test, powell) {
   bool is_newton = false;
   max_num_steps_test(y_var, is_newton);
 }
+*/
 
 TEST_F(degenerate_eq_test, powell_guess1) {
   using stan::math::algebra_solver_powell;
@@ -209,7 +215,9 @@ TEST_F(degenerate_eq_test, powell_guess1) {
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
-        degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
+      degenerate_eq_functor(), x_guess_1, &std::cout, y, dat, dat_int);
+    // algebra_solver_powell(
+    //     degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
@@ -230,7 +238,7 @@ TEST_F(degenerate_eq_test, powell_guess2) {
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
-        degenerate_eq_functor(), x_guess_2, y, dat, dat_int);
+        degenerate_eq_functor(), x_guess_2, &std::cout, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -242,7 +250,6 @@ TEST_F(degenerate_eq_test, powell_guess2) {
       EXPECT_NEAR(J2(k, l), g[l], tolerance);
   }
 }
-*/
 
 // TODO -- do test for Powell's method
 TEST_F(variadic_test, powell) {
