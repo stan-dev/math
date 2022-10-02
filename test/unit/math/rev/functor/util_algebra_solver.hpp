@@ -276,7 +276,7 @@ struct degenerate_eq_functor {
   }
 };
 
-struct variadic_eq_functor {
+struct variadic_eq_impl_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4>, Eigen::Dynamic, 1>
   operator()(const T1& x, std::ostream* pstream__, const T2& A, const T3& y_1,
@@ -284,8 +284,20 @@ struct variadic_eq_functor {
     Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - y_1 * y_2;
     z(1) = x(1) - y_3;
-    for (int j = 0; j < i; ++j)
-      z = A * z;
+    for (int j = 0; j < i; ++j) z = A * z;
+    return z;
+  }
+};
+
+struct variadic_eq_functor {
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4>, Eigen::Dynamic, 1>
+  operator()(const T1& x, const T2& A, const T3& y_1, const T3& y_2,
+             const T3& y_3, const T4& i, std::ostream* pstream__) const {
+    Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4>, Eigen::Dynamic, 1> z(2);
+    z(0) = x(0) - y_1 * y_2;
+    z(1) = x(1) - y_3;
+    for (int j = 0; j < i; ++j) z = A * z;
     return z;
   }
 };
@@ -453,16 +465,16 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       std::domain_error);
 }
 
-template <typename F>
-Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
-    const F& f,
+Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
     const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
     const stan::math::var& y_1, const stan::math::var& y_2,
-    const stan::math::var& y_3, const int i, bool is_newton = false,
+    const stan::math::var& y_3, const int i,
+    bool is_newton = false, bool is_impl = false, bool use_tol = false,
     double scaling_step_size = 1e-3, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6, int32_t max_num_steps = 1e+3) {
   using stan::math::algebra_solver_newton;
   using stan::math::algebra_solver_powell;
+  using stan::math::algebra_solver_powell_tol;
   using stan::math::var;
 
   int n_x = 2;
@@ -471,13 +483,24 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
-  theta = is_newton
+  if (is_impl) {
+    theta = is_newton
               ? algebra_solver_newton_impl(
-                  variadic_eq_functor(), x, &std::cout, scaling_step_size,
+                  variadic_eq_impl_functor(), x, &std::cout, scaling_step_size,
                   function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
               : algebra_solver_powell_impl(
-                  variadic_eq_functor(), x, &std::cout, relative_tolerance,
+                  variadic_eq_impl_functor(), x, &std::cout, relative_tolerance,
                   function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
+  } else {
+    // TO DO: add Newton solver case.
+    theta = use_tol
+            ? algebra_solver_powell_tol(
+                variadic_eq_functor(), x, relative_tolerance,
+                function_tolerance, max_num_steps, &std::cout,
+                A, y_1, y_2, y_3, i)
+            : algebra_solver_powell(
+                variadic_eq_functor(), x, &std::cout, A, y_1, y_2, y_3, i);
+  }
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);
   EXPECT_NEAR(2, value_of(theta(1)), 1e-6);

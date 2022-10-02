@@ -197,18 +197,60 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  * @throw <code>std::domain_error</code> if the norm of the solution exceeds
  * the function tolerance.
  */
-template <typename F, typename T1, typename T2,
-          require_all_eigen_vector_t<T1, T2>* = nullptr>
-Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
-    const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* const msgs = nullptr,
-    const double relative_tolerance = 1e-10,
-    const double function_tolerance = 1e-6,
-    const int64_t max_num_steps = 1e+3) {
-  return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
-                                    relative_tolerance, function_tolerance,
-                                    max_num_steps, y, dat, dat_int);
-}
+ template <typename F, typename T, typename... T_Args,
+          require_eigen_vector_t<T>* = nullptr,
+          require_any_st_var<T_Args...>* = nullptr>
+  Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
+  algebra_solver_powell_tol(
+    const F& f, const T& x,
+    const double relative_tolerance, const double function_tolerance,
+    const int64_t max_num_steps, std::ostream* const msgs,
+    const T_Args&... args) {
+    const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
+    return math::apply(
+      [&](const auto&... args_refs) {
+        return algebra_solver_powell_impl(algebra_solver_adapter<F>(f),
+                                         x, msgs,
+                                         relative_tolerance, function_tolerance,
+                                         max_num_steps, args_refs...);
+      },
+    args_ref_tuple);
+  }
+
+
+  // Does this also need to doxygen code?
+  template <typename F, typename T, typename... T_Args,
+            require_eigen_vector_t<T>* = nullptr,
+            require_any_st_var<T_Args...>* = nullptr>
+  Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
+  algebra_solver_powell(
+      const F& f, const T& x, std::ostream* const msgs,
+      const T_Args&... args) {
+      double relative_tolerance = 1e-10;
+      double function_tolerance = 1e-6;
+      int64_t max_num_steps = 1e+3;
+      const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
+      return math::apply(
+        [&](const auto&... args_refs) {
+          return algebra_solver_powell_tol(f, x, relative_tolerance,
+                                           function_tolerance, max_num_steps,
+                                           msgs, args_refs...);
+        },
+    args_ref_tuple);
+  }
+
+// template <typename F, typename T1, typename T2,
+//           require_all_eigen_vector_t<T1, T2>* = nullptr>
+// Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
+//     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
+//     const std::vector<int>& dat_int, std::ostream* const msgs = nullptr,
+//     const double relative_tolerance = 1e-10,
+//     const double function_tolerance = 1e-6,
+//     const int64_t max_num_steps = 1e+3) {
+//   return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
+//                                     relative_tolerance, function_tolerance,
+//                                     max_num_steps, y, dat, dat_int);
+// }
 
 /**
  * Return the solution to the specified system of algebraic
