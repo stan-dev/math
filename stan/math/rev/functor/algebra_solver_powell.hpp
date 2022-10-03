@@ -192,7 +192,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  * the function tolerance.
  */
  template <typename F, typename T, typename... T_Args,
-          require_eigen_vector_t<T>* = nullptr> //,
+          require_eigen_vector_t<T>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
   algebra_solver_powell_tol(
     const F& f, const T& x,
@@ -225,10 +225,6 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
    *
    * @param[in] f Functor that evaluates the system of equations.
    * @param[in] x Vector of starting values (initial guess).
-   * @param[in] relative_tolerance determines the convergence criteria
-   *            for the solution.
-   * @param[in] function_tolerance determines whether roots are acceptable.
-   * @param[in] max_num_steps  maximum number of function evaluations.
    * @param[in, out] msgs the print stream for warning messages.
    * @param[in] args Additional parameters to the equation system functor.
    * @return theta Vector of solutions to the system of equations.
@@ -243,14 +239,14 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
    * @throw <code>std::domain_error</code> if the norm of the solution exceeds
    * the function tolerance.
    */  template <typename F, typename T, typename... T_Args,
-            require_eigen_vector_t<T>* = nullptr>  // ,
+            require_eigen_vector_t<T>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
   algebra_solver_powell(
       const F& f, const T& x, std::ostream* const msgs,
       const T_Args&... args) {
       double relative_tolerance = 1e-10;
       double function_tolerance = 1e-6;
-      int64_t max_num_steps = 1e+3;
+      int64_t max_num_steps = 200;
       const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
       return math::apply(
         [&](const auto&... args_refs) {

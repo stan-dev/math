@@ -178,7 +178,7 @@ class variadic_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
-/* wrapper function that either calls the dogleg or the newton solver. */
+/* wrapper function that either calls the Newton or the Powell solver. */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     bool is_newton, bool use_tol,
@@ -189,16 +189,18 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   using stan::math::algebra_solver_newton;
+  using stan::math::algebra_solver_newton_tol;
   using stan::math::algebra_solver_powell;
   using stan::math::algebra_solver_powell_tol;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1> theta
       = is_newton
-        ? algebra_solver_newton(f, x, y, dat, dat_int, msgs,
-                                scaling_step_size,
-                                function_tolerance, max_num_steps)
-        : // algebra_solver_powell(f, x, msgs, y, dat, dat_int);
-        use_tol
+        ? use_tol
+          ? algebra_solver_newton_tol(f, x, scaling_step_size,
+                                      function_tolerance, max_num_steps,
+                                      msgs, y, dat, dat_int)
+          : algebra_solver_newton(f, x, msgs, y, dat, dat_int)
+        : use_tol
           ? algebra_solver_powell_tol(f, x, relative_tolerance,
                                       function_tolerance, max_num_steps,
                                       msgs, y, dat, dat_int)
@@ -343,8 +345,6 @@ inline void error_conditions_test(const F& f,
                                   const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                                   bool is_newton = false,
                                   bool use_tol = true) {
-  using stan::math::algebra_solver_powell;
-
   int n_x = 3;
   Eigen::VectorXd x(n_x);
   x << 1, 1, 1;
@@ -487,7 +487,14 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
             function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
   } else {
     // TO DO: add Newton solver case.
-    theta = use_tol
+    theta = is_newton
+        ? use_tol
+          ? algebra_solver_newton_tol(variadic_eq_functor(), x,
+            relative_tolerance, function_tolerance, max_num_steps, &std::cout,
+            A, y_1, y_2, y_3, i)
+          : algebra_solver_newton(variadic_eq_functor(), x, &std::cout,
+            A, y_1, y_2, y_3, i)
+        : use_tol
             ? algebra_solver_powell_tol(
                 variadic_eq_functor(), x, relative_tolerance,
                 function_tolerance, max_num_steps, &std::cout,

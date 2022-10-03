@@ -23,9 +23,11 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
                                          true, scale_step, xtol, ftol, maxfev);
 }
 
+
 TEST_F(algebra_solver_simple_eq_nopara_test, newton_dbl) {
   using stan::math::algebra_solver_newton;
   Eigen::VectorXd theta = algebra_solver_newton(simple_eq_functor_nopara(), x,
+                                                &std::cout,
                                                 y_dummy, dat, dummy_dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -64,7 +66,8 @@ TEST_F(degenerate_eq_test, newton_guess1_dbl) {
   // solution x = {8, 8}
 
   Eigen::VectorXd theta = algebra_solver_newton(degenerate_eq_functor(),
-                                                x_guess_1, y_dbl, dat, dat_int);
+                                                x_guess_1, &std::cout,
+                                                y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(8, theta(0));
   EXPECT_FLOAT_EQ(8, theta(1));
 }
@@ -75,7 +78,8 @@ TEST_F(degenerate_eq_test, newton_guess2_dbl) {
   // solution x = {5, 5}
 
   Eigen::VectorXd theta = algebra_solver_newton(degenerate_eq_functor(),
-                                                x_guess_2, y_dbl, dat, dat_int);
+                                                x_guess_2, &std::cout, y_dbl,
+                                                dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -89,7 +93,7 @@ TEST_F(degenerate_eq_test, newton_guess2_scale_dbl) {
   using stan::math::algebra_solver_newton;
 
   Eigen::VectorXd theta = algebra_solver_newton(
-      degenerate_eq_functor(), x_guess_2, y_scale, dat, dat_int);
+      degenerate_eq_functor(), x_guess_2, &std::cout, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -104,7 +108,7 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
   std::string msg = err_msg.str();
 
   EXPECT_THROW_MSG(algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
-                                         y_scale, dat, dat_int),
+                                         &std::cout, y_scale, dat, dat_int),
                    std::runtime_error, msg);
 }
 
@@ -148,7 +152,8 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
 TEST_F(algebra_solver_simple_eq_test, newton_init_is_para) {
   using stan::math::algebra_solver_newton;
   Eigen::VectorXd theta
-      = algebra_solver_newton(simple_eq_functor(), x_var, y_dbl, dat, dat_int);
+      = algebra_solver_newton(simple_eq_functor(), x_var, &std::cout,
+                              y_dbl, dat, dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
 }
@@ -203,7 +208,7 @@ TEST_F(degenerate_eq_test, newton_guess1) {
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_newton(
-        degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
+        degenerate_eq_functor(), x_guess_1, &std::cout, y, dat, dat_int);
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
@@ -224,7 +229,7 @@ TEST_F(degenerate_eq_test, newton_guess2) {
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_newton(
-        degenerate_eq_functor(), x_guess_2, y, dat, dat_int);
+        degenerate_eq_functor(), x_guess_2, &std::cout, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -237,20 +242,22 @@ TEST_F(degenerate_eq_test, newton_guess2) {
   }
 }
 
-TEST_F(variadic_test, newton) {
+TEST_F(variadic_test, powell) {
   using stan::math::var;
   bool is_newton = true;
+  bool is_impl = false;
+  bool use_tol = false;
   for (int k = 0; k < n_x; k++) {
     var y_1 = y_1_dbl;
     var y_2 = y_2_dbl;
     var y_3 = y_3_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = variadic_eq_test(variadic_eq_functor(), A, y_1, y_2, y_3, i,
-                           is_newton, scaling_step_size, relative_tolerance,
-                           function_tolerance, max_num_steps);
-
-    std::vector<stan::math::var> y_vec{y_1, y_2, y_3};
+        = variadic_eq_impl_test(A, y_1, y_2, y_3, i,
+                                is_newton, is_impl, use_tol, scaling_step_size,
+                                relative_tolerance, function_tolerance,
+                                max_num_steps);
+    std::vector<var> y_vec{y_1, y_2, y_3};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 

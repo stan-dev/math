@@ -249,7 +249,6 @@ TEST_F(degenerate_eq_test, powell_guess2) {
   }
 }
 
-// TODO -- do test for Powell's method
 TEST_F(variadic_test, powell) {
   using stan::math::var;
   bool is_newton = false;
