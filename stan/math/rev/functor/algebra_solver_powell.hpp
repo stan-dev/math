@@ -168,26 +168,20 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  * and the maximum number of steps (maxfev in Eigen's code).
  *
  * @tparam F type of equation system function
- * @tparam T1 type of elements in the x vector
- * @tparam T2 type of elements in the y vector
+ * @tparam T type of elements in the x vector
+* @tparam Args types of additional input to the equation system functor
  *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
- * @param[in] y parameter vector for the equation system.
- * @param[in] dat continuous data vector for the equation system.
- * @param[in] dat_int integer data vector for the equation system.
- * @param[in, out] msgs the print stream for warning messages.
  * @param[in] relative_tolerance determines the convergence criteria
  *            for the solution.
  * @param[in] function_tolerance determines whether roots are acceptable.
  * @param[in] max_num_steps  maximum number of function evaluations.
+ * @param[in, out] msgs the print stream for warning messages.
+ * @param[in] args Additional parameters to the equation system functor.
  * @return theta Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if x has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
- * @throw <code>std::invalid_argument</code> if y has non-finite elements.
- * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
- * @throw <code>std::invalid_argument</code> if dat_int has non-finite
- * elements.
  * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
  * negative.
  * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
@@ -199,7 +193,6 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  */
  template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr> //,
-          // require_any_st_var<T_Args...>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
   algebra_solver_powell_tol(
     const F& f, const T& x,
@@ -217,10 +210,40 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
     args_ref_tuple);
   }
 
-  // Does this also need the doxygen code?
-  template <typename F, typename T, typename... T_Args,
+  /**
+   * Return the solution to the specified system of algebraic
+   * equations given an initial guess, and parameters and data,
+   * which get passed into the algebraic system.
+   * Use Powell's dogleg solver.
+   *
+   * This signature does not let the user specify the tuning parameters of the
+   * solver (instead default values are used).
+   *
+   * @tparam F type of equation system function
+   * @tparam T type of elements in the x vector
+  * @tparam Args types of additional input to the equation system functor
+   *
+   * @param[in] f Functor that evaluates the system of equations.
+   * @param[in] x Vector of starting values (initial guess).
+   * @param[in] relative_tolerance determines the convergence criteria
+   *            for the solution.
+   * @param[in] function_tolerance determines whether roots are acceptable.
+   * @param[in] max_num_steps  maximum number of function evaluations.
+   * @param[in, out] msgs the print stream for warning messages.
+   * @param[in] args Additional parameters to the equation system functor.
+   * @return theta Vector of solutions to the system of equations.
+   * @throw <code>std::invalid_argument</code> if x has size zero.
+   * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+   * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
+   * negative.
+   * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+   * negative.
+   * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+   * @throw <code>std::domain_error</code> solver exceeds max_num_steps.
+   * @throw <code>std::domain_error</code> if the norm of the solution exceeds
+   * the function tolerance.
+   */  template <typename F, typename T, typename... T_Args,
             require_eigen_vector_t<T>* = nullptr>  // ,
-            // require_any_st_var<T_Args...>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
   algebra_solver_powell(
       const F& f, const T& x, std::ostream* const msgs,
@@ -237,19 +260,6 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
         },
     args_ref_tuple);
   }
-
-// template <typename F, typename T1, typename T2,
-//           require_all_eigen_vector_t<T1, T2>* = nullptr>
-// Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
-//     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
-//     const std::vector<int>& dat_int, std::ostream* const msgs = nullptr,
-//     const double relative_tolerance = 1e-10,
-//     const double function_tolerance = 1e-6,
-//     const int64_t max_num_steps = 1e+3) {
-//   return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
-//                                     relative_tolerance, function_tolerance,
-//                                     max_num_steps, y, dat, dat_int);
-// }
 
 /**
  * Return the solution to the specified system of algebraic
