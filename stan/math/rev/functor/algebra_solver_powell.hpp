@@ -169,7 +169,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  *
  * @tparam F type of equation system function
  * @tparam T type of elements in the x vector
-* @tparam Args types of additional input to the equation system functor
+ * @tparam Args types of additional input to the equation system functor
  *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
@@ -221,7 +221,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
    *
    * @tparam F type of equation system function
    * @tparam T type of elements in the x vector
-  * @tparam Args types of additional input to the equation system functor
+   * @tparam Args types of additional input to the equation system functor
    *
    * @param[in] f Functor that evaluates the system of equations.
    * @param[in] x Vector of starting values (initial guess).

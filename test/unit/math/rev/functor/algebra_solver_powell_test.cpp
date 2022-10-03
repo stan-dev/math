@@ -28,8 +28,6 @@ TEST_F(algebra_solver_simple_eq_nopara_test, powell) {
   Eigen::VectorXd theta = algebra_solver_powell(simple_eq_functor_nopara(), x,
                                                 0,
                                                 y_dummy, dat, dummy_dat_int);
-  // Eigen::VectorXd theta = algebra_solver_powell(simple_eq_functor_nopara(), x,
-  //                                               y_dummy, dat, dummy_dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
 }
