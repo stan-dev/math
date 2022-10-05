@@ -242,7 +242,7 @@ TEST_F(degenerate_eq_test, newton_guess2) {
   }
 }
 
-TEST_F(variadic_test, powell) {
+TEST_F(variadic_test, newton) {
   using stan::math::var;
   bool is_newton = true;
   bool is_impl = false;
