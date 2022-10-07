@@ -1,6 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
 
-
 void expect_fft(const Eigen::VectorXcd& x) {
   for (int m = 0; m < x.rows(); ++m) {
     auto g = [m](const auto& x) {
