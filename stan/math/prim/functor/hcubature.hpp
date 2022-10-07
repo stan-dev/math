@@ -137,7 +137,7 @@ void signcombos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
     combination(c, n, k, i);
     std::vector<bool> index;
     index.clear();
-    for (size_t j = 0; j != pow(2, k); j++) {
+    for (size_t j = 0; j != std::pow(2, k); j++) {
       increment(index, k, lambda, n, c, temp);
       T_lambda* next
           = reinterpret_cast<T_lambda*>(malloc(n * sizeof(T_lambda)));
@@ -186,12 +186,12 @@ void gauss_kronrod(const F& integrand, const T_a& a, const T_b& b, T_oned& out,
 template <typename T_n, typename T_GenzMalik>
 void make_GenzMalik(const T_n& n, T_GenzMalik& g) {
   using T_return_type = return_type_t<T_n, T_GenzMalik>;
-  T_return_type l4 = sqrt(9 * 1.0 / 10);
-  T_return_type l2 = sqrt(9 * 1.0 / 70);
+  T_return_type l4 = std::sqrt(9 * 1.0 / 10);
+  T_return_type l2 = std::sqrt(9 * 1.0 / 70);
   T_return_type l3 = l4;
-  T_return_type l5 = sqrt(9 * 1.0 / 19);
+  T_return_type l5 = std::sqrt(9 * 1.0 / 19);
 
-  T_return_type twopn = pow(2, n);
+  T_return_type twopn = std::pow(2, n);
 
   g.w[0] = twopn * ((12824 - 9120 * n + 400 * n * n) * 1.0 / 19683);
   g.w[1] = twopn * (980.0 / 6561);
@@ -318,7 +318,7 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   T_return_type E = fabs(I - Idash);
 
   int kdivide = 0;
-  T_return_type deltaf = E / (pow(10, n) * v);
+  T_return_type deltaf = E / (std::pow(10, n) * v);
   for (size_t i = 0; i != n; i++) {
     T_return_type delta = divdiff[i] - maxdivdiff;
     if (delta > deltaf) {
@@ -388,7 +388,7 @@ return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
     internal::integrate_GenzMalik(integrand, g, n, a, b, out, pars);
   }
   T_return_type numevals
-      = (n == 1) ? 15 : 1 + 4 * n + 2 * n * (n - 1) + pow(2, n);
+      = (n == 1) ? 15 : 1 + 4 * n + 2 * n * (n - 1) + std::pow(2, n);
   T_return_type evals_per_box = numevals;
   T_return_type kdiv = out.kdivide;
   T_return_type err = out.err;
