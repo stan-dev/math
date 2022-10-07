@@ -71,7 +71,7 @@ class ops_partials_edge<Dx, fvar<Dx>> {
  *   Op1 -- Op8
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-         typename Op6, typename Op7, typename Op8, typename Dx>
+          typename Op6, typename Op7, typename Op8, typename Dx>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, fvar<Dx>> {
  public:
   internal::ops_partials_edge<Dx, std::decay_t<Op1>> edge1_;
@@ -96,18 +96,33 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, fvar<Dx>> {
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
   operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
                         const Op4& o4, const Op5& o5, const Op6& o6)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5),
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
         edge6_(o6) {}
   operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
                         const Op4& o4, const Op5& o5, const Op6& o6,
                         const Op7& o7)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5),
-        edge6_(o6), edge7_(o7) {}
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
+        edge6_(o6),
+        edge7_(o7) {}
   operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
                         const Op4& o4, const Op5& o5, const Op6& o6,
                         const Op7& o7, const Op8& o8)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5),
-        edge6_(o6), edge7_(o7), edge8_(o8) {}
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
+        edge6_(o6),
+        edge7_(o7),
+        edge8_(o8) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -123,9 +138,8 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, fvar<Dx>> {
    * @return the value with its derivative
    */
   T_return_type build(Dx value) {
-    Dx deriv
-        = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx()
-          + edge6_.dx() + edge7_.dx() + edge8_.dx();
+    Dx deriv = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx()
+               + edge5_.dx() + edge6_.dx() + edge7_.dx() + edge8_.dx();
     return T_return_type(value, deriv);
   }
 };

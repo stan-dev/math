@@ -182,41 +182,41 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    return make_callback_var(value, [
-      operand1 = edge1_.operand(), partial1 = edge1_.partial(),
-      operand2 = edge2_.operand(), partial2 = edge2_.partial(),
-      operand3 = edge3_.operand(), partial3 = edge3_.partial(),
-      operand4 = edge4_.operand(), partial4 = edge4_.partial(),
-      operand5 = edge5_.operand(), partial5 = edge5_.partial(),
-      operand6 = edge6_.operand(), partial6 = edge6_.partial(),
-      operand7 = edge7_.operand(), partial7 = edge7_.partial(),
-      operand8 = edge8_.operand(), partial8 = edge8_.partial()
-    ](const auto& vi) mutable {
-      if (!is_constant<Op1>::value) {
-        internal::update_adjoints(operand1, partial1, vi);
-      }
-      if (!is_constant<Op2>::value) {
-        internal::update_adjoints(operand2, partial2, vi);
-      }
-      if (!is_constant<Op3>::value) {
-        internal::update_adjoints(operand3, partial3, vi);
-      }
-      if (!is_constant<Op4>::value) {
-        internal::update_adjoints(operand4, partial4, vi);
-      }
-      if (!is_constant<Op5>::value) {
-        internal::update_adjoints(operand5, partial5, vi);
-      }
-      if (!is_constant<Op6>::value) {
-        internal::update_adjoints(operand6, partial6, vi);
-      }
-      if (!is_constant<Op7>::value) {
-        internal::update_adjoints(operand7, partial7, vi);
-      }
-      if (!is_constant<Op8>::value) {
-        internal::update_adjoints(operand8, partial8, vi);
-      }
-    });
+    return make_callback_var(
+        value, [operand1 = edge1_.operand(), partial1 = edge1_.partial(),
+                operand2 = edge2_.operand(), partial2 = edge2_.partial(),
+                operand3 = edge3_.operand(), partial3 = edge3_.partial(),
+                operand4 = edge4_.operand(), partial4 = edge4_.partial(),
+                operand5 = edge5_.operand(), partial5 = edge5_.partial(),
+                operand6 = edge6_.operand(), partial6 = edge6_.partial(),
+                operand7 = edge7_.operand(), partial7 = edge7_.partial(),
+                operand8 = edge8_.operand(),
+                partial8 = edge8_.partial()](const auto& vi) mutable {
+          if (!is_constant<Op1>::value) {
+            internal::update_adjoints(operand1, partial1, vi);
+          }
+          if (!is_constant<Op2>::value) {
+            internal::update_adjoints(operand2, partial2, vi);
+          }
+          if (!is_constant<Op3>::value) {
+            internal::update_adjoints(operand3, partial3, vi);
+          }
+          if (!is_constant<Op4>::value) {
+            internal::update_adjoints(operand4, partial4, vi);
+          }
+          if (!is_constant<Op5>::value) {
+            internal::update_adjoints(operand5, partial5, vi);
+          }
+          if (!is_constant<Op6>::value) {
+            internal::update_adjoints(operand6, partial6, vi);
+          }
+          if (!is_constant<Op7>::value) {
+            internal::update_adjoints(operand7, partial7, vi);
+          }
+          if (!is_constant<Op8>::value) {
+            internal::update_adjoints(operand8, partial8, vi);
+          }
+        });
   }
 };
 
@@ -274,7 +274,7 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(
-            plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
+          plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
 

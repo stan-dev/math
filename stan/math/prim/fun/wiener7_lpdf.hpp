@@ -166,7 +166,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dtdwiener5_for_7(
           + newsign
                 * exp(factor - 1.5 * LOG_TWO - LOG_SQRT_PI - 3.5 * log(q_asq)
                       + erg - ld);
-  // if large y is better
+    // if large y is better
   } else {
     // calculate terms of the sum for large y
     T_return_type halfq = q_asq / 2.0;

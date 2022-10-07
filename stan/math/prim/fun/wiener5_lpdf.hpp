@@ -99,7 +99,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwiener5(
     ans = lg1
           + (-0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log(q_asq)
              + log_diff_exp(fplus, fminus));
-  // if large t is better
+    // if large t is better
   } else {
     T_return_type fplus = NEGATIVE_INFTY;
     T_return_type fminus = NEGATIVE_INFTY;
@@ -218,7 +218,7 @@ return_type_t<T_y, T_alpha, T_delta, T_sv, T_beta> dtdwiener5(
           + newsign
                 * exp(factor - 1.5 * LOG_TWO - LOG_SQRT_PI - 3.5 * log(q_asq)
                       + erg - ld);
-  // if large t is better
+    // if large t is better
   } else {
     // calculate terms of the sum for large t
     T_return_type halfq = q_asq / 2.0;
@@ -343,7 +343,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dadwiener5(
           - newsign
                 * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * lq + 4.0 * la + lg1
                       + erg - ld);
-  // if large t is better
+    // if large t is better
   } else {
     // calculate terms of the sum for large t
     T_return_type halfq = q_asq / 2.0;
@@ -497,7 +497,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
           - newsign
                 * exp(erg - ls - 2.5 * log(q_asq) - 0.5 * LOG_TWO
                       - 0.5 * LOG_PI);
-  // if large t is better
+    // if large t is better
   } else {
     // calculate terms of the sum for large t
     T_return_type halfq = q_asq / 2.0;

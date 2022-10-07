@@ -139,8 +139,8 @@ void signcombos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
     index.clear();
     for (size_t j = 0; j != pow(2, k); j++) {
       increment(index, k, lambda, n, c, temp);
-      T_lambda* next =
-            reinterpret_cast<T_lambda*>(malloc(n * sizeof(T_lambda)));
+      T_lambda* next
+          = reinterpret_cast<T_lambda*>(malloc(n * sizeof(T_lambda)));
       memcpy(next, temp, n * sizeof(T_lambda));
       p.push_back(next);
     }
@@ -249,12 +249,12 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   T_return_type twelvef1 = 12 * f1;
 
   T_return_type maxdivdiff = 0.0;
-  T_return_type* divdiff =
-        reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  T_return_type* p2 =
-        reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  T_return_type* p3 =
-        reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  T_return_type* divdiff
+      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  T_return_type* p2
+      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  T_return_type* p3
+      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
   std::vector<T_return_type> cc(n, 0);
 
   for (size_t i = 0; i != n; i++) {
@@ -284,8 +284,8 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   }
   free(p2);
   free(p3);
-  T_return_type* p4 =
-        reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  T_return_type* p4
+      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
   T_return_type f4 = 0.0;
   for (size_t i = 0; i != g.p[2].size(); i++) {
     for (size_t j = 0; j != n; j++)
@@ -297,8 +297,8 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   }
   free(p4);
   T_return_type f5 = 0.0;
-  T_return_type* p5 =
-        reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  T_return_type* p5
+      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
   for (size_t i = 0; i != g.p[3].size(); i++) {
     for (size_t j = 0; j != n; j++)
       p5[j] = deltac[j] * g.p[3][i][j];

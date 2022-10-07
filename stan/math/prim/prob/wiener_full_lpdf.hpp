@@ -78,14 +78,17 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   check_bounded(function_name, "Inter-trial variability in A-priori bias",
                 value_of(sw_ref), 0, 1);
   check_nonnegative(function_name,
-        "Inter-trial variability in Nondecision time", value_of(st0_ref));
+                    "Inter-trial variability in Nondecision time",
+                    value_of(st0_ref));
   check_finite(function_name, "Inter-trial variability in Nondecision time",
                value_of(st0_ref));
 
-  if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0)) return 0;
+  if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0))
+    return 0;
 
   size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
-  if (!N) return 0;
+  if (!N)
+    return 0;
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -129,7 +132,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   }
 
   if (!include_summand<propto, T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw,
-                       T_st0>::value) return 0;
+                       T_st0>::value)
+    return 0;
 
   // abstol_wiener5 z.B. 1e-12 on normal scale
   // T_partials_return error_bound = 1e-6;
@@ -170,16 +174,19 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                                 sv_val, labstol_wiener5);
       if (labstol_wiener5 > fabs(dens) + lerror_bound_dens - log(2))
         dens = internal::dwiener5(y_val - t0_val, alpha_val, delta_val,
-                beta_val, sv_val, fabs(dens) + lerror_bound_dens - log(2));
+                                  beta_val, sv_val,
+                                  fabs(dens) + lerror_bound_dens - log(2));
       ld += dens;
 
       // computation of derivative for t and precision check in order to give
       // the value as deriv_t to edge1 and as -deriv_t to edge5
-      T_partials_return deriv_t = internal::dtdwiener5(y_val - t0_val,
-            alpha_val, delta_val, beta_val, sv_val, labstol_wiener5);
+      T_partials_return deriv_t
+          = internal::dtdwiener5(y_val - t0_val, alpha_val, delta_val, beta_val,
+                                 sv_val, labstol_wiener5);
       if (labstol_wiener5 > log(fabs(deriv_t)) + dens + lerror_bound - log(2))
-        deriv_t = internal::dtdwiener5(y_val - t0_val, alpha_val, delta_val,
-        beta_val, sv_val, log(fabs(deriv_t)) + dens + lerror_bound - log(4));
+        deriv_t = internal::dtdwiener5(
+            y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
+            log(fabs(deriv_t)) + dens + lerror_bound - log(4));
 
       // computation of derivatives and precision checks
       if (!is_constant_all<T_y>::value) {
@@ -222,7 +229,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       if (!is_constant_all<T_st0>::value) {
         ops_partials.edge8_.partials_[i] = 0;
       }
-    // Calculate 6-, or 7-parameter model
+      // Calculate 6-, or 7-parameter model
     } else {
       const T_partials_return y_val = y_vec.val(i);
       const T_partials_return alpha_val = alpha_vec.val(i);
@@ -236,7 +243,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
           T_partials_return, T_partials_return, T_partials_return,
           T_partials_return, T_partials_return, T_partials_return,
           T_partials_return, T_partials_return, T_partials_return>
-          params = {y_val, alpha_val, delta_val, beta_val, t0_val, sv_val,
+          params = {y_val,    alpha_val, delta_val,
+                    beta_val, t0_val,    sv_val,
                     sw_val,   st0_val,   labstol_wiener5 - log(2)};
       int dim = (sw_val != 0) + (st0_val != 0);
       check_positive(function_name,
@@ -247,7 +255,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       std::vector<T_partials_return> xmin(dim, 0);
       std::vector<T_partials_return> xmax(dim, 1);
 
-      if (st0_val) xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
+      if (st0_val)
+        xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
 
       dens = hcubature(internal::int_ddiff<std::vector<double>, void*>, &params,
                        dim, xmin, xmax, Meval, abstol, reltol / 2);
@@ -268,7 +277,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                st0_val,
                log(.1) + lerror_bound_dens - log(2) + log(fabs(dens))};
         dens = hcubature(internal::int_ddiff<std::vector<double>, void*>,
-                &params_new_error, dim, xmin, xmax, Meval, abstol, reltol);
+                         &params_new_error, dim, xmin, xmax, Meval, abstol,
+                         reltol);
       }
       ld += log(dens);
 
@@ -276,7 +286,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       // the value as deriv_t to edge1 and as -deriv_t to edge5
       T_partials_return deriv_t_7;
       deriv_t_7
-         = 1/dens*hcubature(internal::int_dtddiff<std::vector<double>, void*>,
+          = 1 / dens
+            * hcubature(internal::int_dtddiff<std::vector<double>, void*>,
                         &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
       if (labstol_wiener5
           > log(fabs(deriv_t_7)) + log(.1) + lerror_bound - log(2)) {
@@ -295,8 +306,10 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                st0_val,
                log(.1) + lerror_bound - log(4) + log(fabs(deriv_t_7))};
         deriv_t_7
-         = 1/dens*hcubature(internal::int_dtddiff<std::vector<double>, void*>,
-            &params_new_error, dim, xmin, xmax, Meval, abstol, reltol / 2);
+            = 1 / dens
+              * hcubature(internal::int_dtddiff<std::vector<double>, void*>,
+                          &params_new_error, dim, xmin, xmax, Meval, abstol,
+                          reltol / 2);
       }
 
       // computation of derivatives and precision checks
@@ -306,7 +319,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       }
       if (!is_constant_all<T_alpha>::value) {
         deriv
-         = 1/dens*hcubature(internal::int_daddiff<std::vector<double>, void*>,
+            = 1 / dens
+              * hcubature(internal::int_daddiff<std::vector<double>, void*>,
                           &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
         if (labstol_wiener5
             > log(fabs(deriv)) + log(.1) + lerror_bound - log(2)) {
@@ -325,8 +339,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                  st0_val,
                  log(.1) + lerror_bound - log(4) + log(fabs(deriv))};
           deriv = 1 / dens
-                * hcubature(internal::int_daddiff<std::vector<double>, void*>,
-                &params_new_error, dim, xmin, xmax, Meval, abstol, reltol / 2);
+                  * hcubature(internal::int_daddiff<std::vector<double>, void*>,
+                              &params_new_error, dim, xmin, xmax, Meval, abstol,
+                              reltol / 2);
         }
         ops_partials.edge2_.partials_[i] = deriv;
       }
@@ -352,8 +367,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                  st0_val,
                  log(.1) + lerror_bound - log(2) + log(fabs(deriv))};
           deriv = 1 / dens
-                * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
-                &params_new_error, dim, xmin, xmax, Meval, abstol, reltol / 2);
+                  * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
+                              &params_new_error, dim, xmin, xmax, Meval, abstol,
+                              reltol / 2);
         }
         ops_partials.edge3_.partials_[i] = deriv;
       }
@@ -379,8 +395,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                  st0_val,
                  log(.1) + lerror_bound - log(4) + log(fabs(deriv))};
           deriv = 1 / dens
-                * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
-                &params_new_error, dim, xmin, xmax, Meval, abstol, reltol / 2);
+                  * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
+                              &params_new_error, dim, xmin, xmax, Meval, abstol,
+                              reltol / 2);
         }
         ops_partials.edge4_.partials_[i] = deriv;
       }
@@ -411,7 +428,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
           deriv
               = 1 / dens
                 * hcubature(internal::int_dsvddiff<std::vector<double>, void*>,
-                &params_new_error, dim, xmin, xmax, Meval, abstol, reltol / 2);
+                            &params_new_error, dim, xmin, xmax, Meval, abstol,
+                            reltol / 2);
         }
         ops_partials.edge6_.partials_[i] = deriv;
       }
@@ -563,13 +581,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
 }
 //-----------------------------------------------
 
-
 }  // namespace internal
-
-
-
-
-
 
 /** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)
@@ -580,7 +592,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * \f$t_0 \in \mathbb{R}_{\geq 0}\f$ the non-decision time, \f$s_v \in
  * \mathbb{R}_{\geq 0}\f$ the inter-trial variability of the drift rate,
  * \f$s_w \in [0, 1)\f$ the inter-trial  variability of the relative starting
- * point, and  \f$s_{t_0} \in \mathbb{R}_{\geq 0}\f$ the inter-trial variability of
+ * point, and  \f$s_{t_0} \in \mathbb{R}_{\geq 0}\f$ the inter-trial variability
+ of
  * the non-decision time.
  *
  *
@@ -597,20 +610,21 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  \f}
  * where \f$M\f$ and \f$p_3()\f$ are defined, by using \f$t:=y-\tau_0\f$, as
  \f{eqnarray*}{
- M &:=& \frac{1}{\sqrt{1+s^2_v t}} \mathbb{e}^{av\omega+\frac{v^2t}{2}+\frac{s^2_v a^2 \omega^2-2av\omega-v^2t}{2(1+s^2_vt)}} \text{ and} \\
- p_3(t|a,v,w) &:=& \frac{1}{a^2} \mathbb{e}^{-a v w -\frac{v^2t}{2}} f(\frac{t}{a^2}|0,1,w),
- \f}
+ M &:=& \frac{1}{\sqrt{1+s^2_v t}}
+ \mathbb{e}^{av\omega+\frac{v^2t}{2}+\frac{s^2_v a^2
+ \omega^2-2av\omega-v^2t}{2(1+s^2_vt)}} \text{ and} \\ p_3(t|a,v,w) &:=&
+ \frac{1}{a^2} \mathbb{e}^{-a v w -\frac{v^2t}{2}} f(\frac{t}{a^2}|0,1,w), \f}
  * where  \f$f(t^*=\frac{t}{a^2}|0,1,w)\f$ has two forms
  \f{eqnarray*}{
  f_l(t^*|0,1,w) &=& \sum_{k=1}^{\infty} k\pi \mathbb{e}^{-\frac{k^2\pi^2t^*}{2}}
  \sin{(k \pi w)}\text{ and} \\
- f_s(t^*|0,1,w) &=& \sum_{k=-\infty}^{\infty} \frac{1}{\sqrt{2\pi (t^*)^3}} (w+2k)
- \mathbb{e}^{-\frac{(w+2k)^2}{2t^*}},
- \f}
+ f_s(t^*|0,1,w) &=& \sum_{k=-\infty}^{\infty} \frac{1}{\sqrt{2\pi (t^*)^3}}
+ (w+2k) \mathbb{e}^{-\frac{(w+2k)^2}{2t^*}}, \f}
  * which are selected depending on the number of components \f$k\f$, needed to
  * guarantee a certain precision.
  *
- * Note that the parametrization for non-decision time and relative starting point is as follows: 
+ * Note that the parametrization for non-decision time and relative starting
+ point is as follows:
  * \c t0 is the lower bound of the variability interval;
  * \c w is the mean of the variability interval.
  *
@@ -635,7 +649,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * @param st0 The inter-trial variability of the non-decision time
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
- * @throw std::domain_error if non-decision time \c t0 is greater than reaction time \c y.
+ * @throw std::domain_error if non-decision time \c t0 is greater than reaction
+ time \c y.
  * @throw std::domain_error if \c 1-sw/2 is smaller than or equal to \c w.
  * @throw std::domain_error if \c sw/2 is larger than or equal to \c w.
  *
@@ -653,15 +668,19 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  @endcode
  *
  * By default \c wiener_full_lpdf() gives the log of the
- * Wiener first-passage time probability density function for the \e upper response
- * boundary. To use the \e lower response boundary \c v and \c w must be changed to
+ * Wiener first-passage time probability density function for the \e upper
+ response
+ * boundary. To use the \e lower response boundary \c v and \c w must be changed
+ to
  * \c -v and \c (1-w), respectively.
  *
  * \c sv, \c sw, \c st0, and \c t0 can be set to zero, indicating no inter-trial
  * variability in \f$v\f$, no inter-trial variability in \f$w\f$, no
  * inter-trial variability in \f$t_0\f$, and no non-decision time, respectively.
- * If \c t0 is zero, \c st0 must be zero as well. For example, when no inter-trial
- * variability for the relative starting point is needed one can write something like:
+ * If \c t0 is zero, \c st0 must be zero as well. For example, when no
+ inter-trial
+ * variability for the relative starting point is needed one can write something
+ like:
  @code
  target += wiener_full_lpdf(y, a, v, w, t0, sv, 0, st0)
  @endcode
@@ -669,12 +688,13 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  @code
  target += wiener_full_lpdf(y, a, v, w, t0, 0, 0, 0)
  @endcode
- * If for some reason no non-decision time is assumed one can write something like:
+ * If for some reason no non-decision time is assumed one can write something
+ like:
  @code
  target += wiener_full_lpdf(y, a, v, w, 0, sv, sw, 0)
  @endcode
  *
- * To also control the precision in the estimation of the partial derivatives, 
+ * To also control the precision in the estimation of the partial derivatives,
  * call the function \c wiener_full_prec_lpdf(), analogously:
  @code
  target += wiener_full__prec_lpdf(y, a, v, w, t0, sv, sw, st0, precision);
@@ -686,7 +706,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * time distribution for the diffusion model with variable drift.
  * *Journal of Mathematical Psychology, 76*, 7–12.
  * https://doi.org/10.1016/j.jmp.2016.11.003
- * - Foster, K., & Singmann, H. (2021). Another Approximation of the First-Passage
+ * - Foster, K., & Singmann, H. (2021). Another Approximation of the
+ First-Passage
  * Time Densities for the Ratcliff Diffusion Decision Model.
  * *arXiv preprint arXiv:2104.01902*
  * - Gondan, M., Blurton, S. P., & Kesselmeier, M. (2014). Even faster and even
@@ -713,7 +734,7 @@ wiener_full_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
   double precision = 1e-4;
 
   return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_alpha, T_delta,
-                                    T_beta, T_t0, T_sv, T_sw, T_st0>(
+                                              T_beta, T_t0, T_sv, T_sw, T_st0>(
       "wiener_full_lpdf", y, a, v, w, t0, sv, sw, st0, precision);
 }
 
@@ -725,13 +746,11 @@ wiener_full_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
                  const T_sw& sw, const T_st0& st0) {
   double precision = 1e-4;
 
-  return internal::wiener_full_prec_impl_lpdf<false>("wiener_full_lpdf",
-                                    y, a, v, w, t0, sv, sw, st0, precision);
+  return internal::wiener_full_prec_impl_lpdf<false>(
+      "wiener_full_lpdf", y, a, v, w, t0, sv, sw, st0, precision);
 }
 
-
-
- /** \ingroup prob_dists
+/** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)
  * drift diffusion model with up to 7 parameters with the option
  * to control for the precision in the estimation of the partial derivatives.
@@ -748,7 +767,7 @@ wiener_full_prec_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
                       const T_beta& w, const T_t0& t0, const T_sv& sv,
                       const T_sw& sw, const T_st0& st0, const double& prec) {
   return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_alpha, T_delta,
-                                    T_beta, T_t0, T_sv, T_sw, T_st0>(
+                                              T_beta, T_t0, T_sv, T_sw, T_st0>(
       "wiener_full_prec_lpdf", y, a, v, w, t0, sv, sw, st0, prec);
 }
 
@@ -758,11 +777,9 @@ inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
 wiener_full_prec_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
                       const T_beta& w, const T_t0& t0, const T_sv& sv,
                       const T_sw& sw, const T_st0& st0, const double& prec) {
-  return internal::wiener_full_prec_impl_lpdf<false>("wiener_full_prec_lpdf",
-                                    y, a, v, w, t0, sv, sw, st0, prec);
+  return internal::wiener_full_prec_impl_lpdf<false>(
+      "wiener_full_prec_lpdf", y, a, v, w, t0, sv, sw, st0, prec);
 }
-
-
 
 }  // namespace math
 }  // namespace stan
