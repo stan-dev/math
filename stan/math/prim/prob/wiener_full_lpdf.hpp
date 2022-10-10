@@ -262,20 +262,14 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                        dim, xmin, xmax, Meval, abstol, reltol / 2);
       if (labstol_wiener5
           > fabs(log(dens)) + log(.1) + lerror_bound_dens - log(2)) {
+        T_partials_return new_error
+            = log(.1) + lerror_bound_dens - log(2) + log(fabs(dens));
         internal::my_params<
             T_partials_return, T_partials_return, T_partials_return,
             T_partials_return, T_partials_return, T_partials_return,
             T_partials_return, T_partials_return, T_partials_return>
-            params_new_error
-            = {y_val,
-               alpha_val,
-               delta_val,
-               beta_val,
-               t0_val,
-               sv_val,
-               sw_val,
-               st0_val,
-               log(.1) + lerror_bound_dens - log(2) + log(fabs(dens))};
+            params_new_error = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                                sv_val, sw_val,    st0_val,   new_error};
         dens = hcubature(internal::int_ddiff<std::vector<double>, void*>,
                          &params_new_error, dim, xmin, xmax, Meval, abstol,
                          reltol);
@@ -291,20 +285,14 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                         &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
       if (labstol_wiener5
           > log(fabs(deriv_t_7)) + log(.1) + lerror_bound - log(2)) {
+        T_partials_return new_error
+            = log(.1) + lerror_bound - log(4) + log(fabs(deriv_t_7));
         internal::my_params<
             T_partials_return, T_partials_return, T_partials_return,
             T_partials_return, T_partials_return, T_partials_return,
             T_partials_return, T_partials_return, T_partials_return>
-            params_new_error
-            = {y_val,
-               alpha_val,
-               delta_val,
-               beta_val,
-               t0_val,
-               sv_val,
-               sw_val,
-               st0_val,
-               log(.1) + lerror_bound - log(4) + log(fabs(deriv_t_7))};
+            params_new_error = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                                sv_val, sw_val,    st0_val,   new_error};
         deriv_t_7
             = 1 / dens
               * hcubature(internal::int_dtddiff<std::vector<double>, void*>,
@@ -324,20 +312,15 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                           &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
         if (labstol_wiener5
             > log(fabs(deriv)) + log(.1) + lerror_bound - log(2)) {
+          T_partials_return new_error
+              = log(.1) + lerror_bound - log(4) + log(fabs(deriv));
           internal::my_params<
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return>
               params_new_error
-              = {y_val,
-                 alpha_val,
-                 delta_val,
-                 beta_val,
-                 t0_val,
-                 sv_val,
-                 sw_val,
-                 st0_val,
-                 log(.1) + lerror_bound - log(4) + log(fabs(deriv))};
+              = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                 sv_val, sw_val,    st0_val,   new_error};
           deriv = 1 / dens
                   * hcubature(internal::int_daddiff<std::vector<double>, void*>,
                               &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -352,20 +335,15 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                           &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
         if (labstol_wiener5
             > log(fabs(deriv)) + log(.1) + lerror_bound - log(2)) {
+          T_partials_return new_error
+              = log(.1) + lerror_bound - log(2) + log(fabs(deriv));
           internal::my_params<
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return>
               params_new_error
-              = {y_val,
-                 alpha_val,
-                 delta_val,
-                 beta_val,
-                 t0_val,
-                 sv_val,
-                 sw_val,
-                 st0_val,
-                 log(.1) + lerror_bound - log(2) + log(fabs(deriv))};
+              = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                 sv_val, sw_val,    st0_val,   new_error};
           deriv = 1 / dens
                   * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
                               &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -380,20 +358,15 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                           &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
         if (labstol_wiener5
             > log(fabs(deriv)) + log(.1) + lerror_bound - log(2)) {
+          T_partials_return new_error
+              = log(.1) + lerror_bound - log(4) + log(fabs(deriv));
           internal::my_params<
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return>
               params_new_error
-              = {y_val,
-                 alpha_val,
-                 delta_val,
-                 beta_val,
-                 t0_val,
-                 sv_val,
-                 sw_val,
-                 st0_val,
-                 log(.1) + lerror_bound - log(4) + log(fabs(deriv))};
+              = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                 sv_val, sw_val,    st0_val,   new_error};
           deriv = 1 / dens
                   * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
                               &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -411,20 +384,15 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                           &params, dim, xmin, xmax, Meval, abstol, reltol / 2);
         if (labstol_wiener5
             > log(fabs(deriv)) + log(.1) + lerror_bound - log(2)) {
+          T_partials_return new_error
+              = log(.1) + lerror_bound - log(2) + log(fabs(deriv));
           internal::my_params<
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return,
               T_partials_return, T_partials_return, T_partials_return>
               params_new_error
-              = {y_val,
-                 alpha_val,
-                 delta_val,
-                 beta_val,
-                 t0_val,
-                 sv_val,
-                 sw_val,
-                 st0_val,
-                 log(.1) + lerror_bound - log(2) + log(fabs(deriv))};
+              = {y_val,  alpha_val, delta_val, beta_val, t0_val,
+                 sv_val, sw_val,    st0_val,   new_error};
           deriv
               = 1 / dens
                 * hcubature(internal::int_dsvddiff<std::vector<double>, void*>,
@@ -478,24 +446,17 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                 dim_, xmin, xmax, Meval, abstol, reltol / 2);
             if (labstol_wiener5
                 > log(fabs(deriv) + log(.1) + lerror_bound - log(2))) {
+              T_partials_return new_error
+                  = log(fabs(deriv)) + log(.1) + lerror_bound - log(2);
               internal::my_params2<
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return, T_partials_return>
                   params_new_error_sw
-                  = {y_val,
-                     alpha_val,
-                     delta_val,
-                     beta_val,
-                     lower,
-                     upper,
-                     t0_val,
-                     sv_val,
-                     0,
-                     sw_val,
-                     st0_val,
-                     log(fabs(deriv)) + log(.1) + lerror_bound - log(2)};
+                  = {y_val, alpha_val, delta_val, beta_val,
+                     lower, upper,     t0_val,    sv_val,
+                     0,     sw_val,    st0_val,   new_error};
               deriv = hcubature(
                   internal::int_dswddiff<std::vector<double>, void*>,
                   &params_new_error_sw, dim_, xmin, xmax, Meval, abstol,
@@ -525,44 +486,32 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                                              - log(2) + log(fabs(f))));
             deriv = 1 / st0_val * f;
           } else {
+            T_partials_return new_error = labstol_wiener5 - log(2);
             internal::my_params3<
                 T_partials_return, T_partials_return, T_partials_return,
                 T_partials_return, T_partials_return, T_partials_return,
                 T_partials_return, T_partials_return, T_partials_return,
                 T_partials_return, T_partials_return>
-                params_st = {y_val,
-                             alpha_val,
-                             delta_val,
-                             beta_val,
-                             t0_val,
-                             t0_val + st0_val,
-                             sv_val,
-                             sw_val,
-                             st0_val,
-                             0,
-                             labstol_wiener5 - log(2)};
+                params_st = {y_val,    alpha_val, delta_val,
+                             beta_val, t0_val,    t0_val + st0_val,
+                             sv_val,   sw_val,    st0_val,
+                             0,        new_error};
             deriv = hcubature(
                 internal::int_dst0ddiff<std::vector<double>, void*>, &params_st,
                 dim_, xmin, xmax, Meval, abstol, reltol / 2);
             if (labstol_wiener5
                 > log(fabs(deriv) + log(.1) + lerror_bound - log(2))) {
+              T_partials_return new_error
+                  = log(fabs(deriv)) + log(.1) + lerror_bound - log(2);
               internal::my_params3<
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return, T_partials_return,
                   T_partials_return, T_partials_return>
-                  params_new_error_st
-                  = {y_val,
-                     alpha_val,
-                     delta_val,
-                     beta_val,
-                     t0_val,
-                     t0_val + st0_val,
-                     sv_val,
-                     sw_val,
-                     st0_val,
-                     0,
-                     log(fabs(deriv)) + log(.1) + lerror_bound - log(2)};
+                  params_new_error_st = {y_val,    alpha_val, delta_val,
+                                         beta_val, t0_val,    t0_val + st0_val,
+                                         sv_val,   sw_val,    st0_val,
+                                         0,        new_error};
               deriv = hcubature(
                   internal::int_dst0ddiff<std::vector<double>, void*>,
                   &params_new_error_st, dim_, xmin, xmax, Meval, abstol,
@@ -593,7 +542,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * \mathbb{R}_{\geq 0}\f$ the inter-trial variability of the drift rate,
  * \f$s_w \in [0, 1)\f$ the inter-trial  variability of the relative starting
  * point, and  \f$s_{t_0} \in \mathbb{R}_{\geq 0}\f$ the inter-trial variability
- of
+ * of
  * the non-decision time.
  *
  *
