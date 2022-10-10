@@ -35,7 +35,7 @@ class ops_partials_edge<double, var> {
 
  private:
   template <typename, typename, typename, typename, typename, typename,
-            typename, typename>
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   var operand_;
   static constexpr int size() noexcept { return 1; }
