@@ -2,11 +2,11 @@
 <navindex>
   <tab type="user" url="index.html" title="Overview" />
   <tab type="usergroup" visible="yes" title="Contributor Guides" url="@ref contributing" intro="">
+      <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
       <tab type="usergroup" visible="yes" title="Adding New Functions" url="@ref getting_started" intro=""/>
       <tab type="usergroup" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
-      <tab type="usergroup" visible="yes" title="Using requires for general overloads" url="@ref require_meta_doc" intro=""/>
       <tab type="usergroup" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
-      <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
+      <tab type="usergroup" visible="yes" title="Using requires for general overloads" url="@ref require_meta_doc" intro=""/>
       <tab type="usergroup" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
       <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
       <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
