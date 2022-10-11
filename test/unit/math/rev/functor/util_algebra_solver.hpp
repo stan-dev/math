@@ -482,7 +482,6 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
                           x, &std::cout, relative_tolerance, function_tolerance,
                           max_num_steps, A, y_1, y_2, y_3, i);
   } else {
-    // TO DO: add Newton solver case.
     theta = is_newton
                 ? use_tol
                       ? algebra_solver_newton_tol(

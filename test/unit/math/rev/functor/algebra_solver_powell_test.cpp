@@ -207,8 +207,7 @@ TEST_F(degenerate_eq_test, powell_guess1) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
         degenerate_eq_functor(), x_guess_1, &std::cout, y, dat, dat_int);
-    // algebra_solver_powell(
-    //     degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
+
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
