@@ -146,14 +146,9 @@ special_arg_values = {
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
-    "lchoose",
-    "lmultiply",
-    "assign_add",
-    "assign_divide",
-    "assign_elt_divide",
-    "assign_elt_times",
-    "assign_multiply",
-    "assign_subtract",
+    "lchoose", # synonym for binomial_coefficient_log
+    "lmultiply", # synonym for multiply_log
+    "std_normal_qf", # synonym for inv_Phi
     "if_else",
 ]
 
