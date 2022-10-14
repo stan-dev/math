@@ -124,6 +124,7 @@ special_arg_values = {
     "ordered_free": [1.0],
     "simplex_constrain": [None, scalar_return_type],
     "simplex_free": [simplex],
+    "std_normal_log_qf": [-0.1],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
