@@ -400,13 +400,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
-            failFast true
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
+            agent { label 'linux' }
             steps {
                 script {
                     unstash 'MathSetup'
@@ -432,6 +426,7 @@ pipeline {
                             }
                         } }
                     }
+                    tests.failFast = true
                     parallel tests
                 }
             }
