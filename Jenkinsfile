@@ -414,8 +414,11 @@ pipeline {
                     def files = sh(script:"find test/prob/* -name . -o -prune -type d", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node {
-
+                        tests["Distribution Tests: ${names}"] = { agent {
+                            docker {
+                                image 'stanorg/ci:gpu-cpp17'
+                                label 'linux'
+                            }
                             unstash 'MathSetup'
                             sh """
                                 echo CXX=${CLANG_CXX} > make/local
