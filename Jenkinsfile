@@ -414,7 +414,7 @@ pipeline {
                     def files = sh(script:"find test/prob/* -name . -o -prune -type d", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { agent {
+                        tests["Distribution Tests: ${names}"] = { node {
                             docker {
                                 image 'stanorg/ci:gpu-cpp17'
                                 label 'linux'
