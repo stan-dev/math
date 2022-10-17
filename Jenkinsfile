@@ -134,15 +134,15 @@ pipeline {
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh "echo CXX=${CLANG_CXX} > make/local"
-                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
-                    parallel(
-                        CppLint: { sh "make cpplint" },
-                        Dependencies: { sh """#!/bin/bash
-                            set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
-                    )
+                    // sh "echo CXX=${CLANG_CXX} > make/local"
+                    // sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
+                    // parallel(
+                    //     CppLint: { sh "make cpplint" },
+                    //     Dependencies: { sh """#!/bin/bash
+                    //         set -o pipefail
+                    //         make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                    //     Documentation: { sh "make doxygen" },
+                    // )
                 }
             }
             post {
@@ -411,7 +411,7 @@ pipeline {
 
                 script {
                     def tests = [:]
-                    for (f in findFiles(glob: 'test/prob/*/').collate(6)) {
+                    for (f in findFiles(glob: 'test/prob/*/').toList().collate(6)) {
                         // Create temp variable, otherwise the name will be the last value of the for loop
                         def names = f
                         tests["${names}"] = {
