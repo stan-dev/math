@@ -197,27 +197,27 @@ def generateJumboTests(paths, debug=False):
         tests_in_subfolder = sorted(os.path.join(jf, x) for x in os.listdir(jf) if x.endswith(testsfx))
         for i, tests in enumerate(divide_chunks(tests_in_subfolder, jumboSize)):
 
-            includes = set()
-            jumbo_contents = ["namespace {"]
+            includes = []
+            jumbo_contents = []
             for t in tests:
                 with open(t, "r") as test_file:
-                    contents = test_file.readlines()
-                test_contents = ["namespace stan_math_tests_" +  os.path.split(t)[1].replace('.', '_') + " {"]
-                for l in contents:
+                    contents_raw = test_file.read()
+
+                test_contents = []
+                for l in contents_raw.splitlines():
                     if include_pattern.fullmatch(l.strip()):
-                        includes.add(l.strip())
+                        includes.append(l.strip())
                         continue
                     test_contents.append(l)
-                test_contents.append("}")
-                jumbo_contents.append(''.join(test_contents))
 
-            jumbo_contents.append("}")
+                jumbo_contents.append('\n'.join(test_contents))
+
             jumbo_file_path = jf + "_" + str(i) + testsfx
             jumbo_files.append(jumbo_file_path)
             if debug:
                 print("Generating jumbo test file '{}' with tests: {}".format( jumbo_file_path, ', '.join(tests)))
             with open(jumbo_file_path, "w") as jumbo_file:
-                jumbo_file.write('\n'.join(includes))
+                jumbo_file.write('\n'.join(list(dict.fromkeys(includes))))
                 jumbo_file.write('\n')
                 jumbo_file.write('\n'.join(jumbo_contents))
     return jumbo_files
@@ -397,7 +397,7 @@ def main():
        sys.exit(1)
     finally:
         cleanupJumboTests(jumboFiles)
-
+        pass
 
 if __name__ == "__main__":
     main()
