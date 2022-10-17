@@ -401,19 +401,13 @@ pipeline {
                 }
             }
             failFast true
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
             steps {
-
                 script {
                     def tests = [:]
                     for (f in findFiles(glob: 'test/prob/*/').toList().collate(6)) {
                         // Create temp variable, otherwise the name will be the last value of the for loop
                         def names = f
+                        sh "echo ${names}"
                         tests["${names}"] = {
                             agent {
                                 docker {
