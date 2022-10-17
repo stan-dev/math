@@ -422,7 +422,7 @@ pipeline {
                         }
                     }
                     def tests = [:]
-                    def files = sh(script:"find ./test/prob/* -name . -o -prune -type d", returnStdout:true).trim().split('\n')
+                    def files = sh(script:"find test/prob/* -name . -o -prune -type d", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(8)) {
                         // Create temp variable, otherwise the name will be the last value of the for loop
                         def names = f.join(" ")
