@@ -394,9 +394,9 @@ def main():
                 runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
     except BaseException as e:
        print(e, file=sys.stderr)
+       sys.exit(1)
     finally:
         cleanupJumboTests(jumboFiles)
-        sys.exit(1)
 
 
 if __name__ == "__main__":
