@@ -37,6 +37,7 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
     }
     options {
         skipDefaultCheckout()
@@ -58,17 +59,17 @@ pipeline {
     }
     stages {
 
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
+        // stage('Kill previous builds') {
+        //     when {
+        //         not { branch 'develop' }
+        //         not { branch 'master' }
+        //     }
+        //     steps {
+        //         script {
+        //             utils.killOldBuilds()
+        //         }
+        //     }
+        // }
 
         stage("Clang-format") {
             agent {
@@ -246,7 +247,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", true)
+                            runTests("test/unit/math/mix", true && !params.disableJumbo)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -270,7 +271,7 @@ pipeline {
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
+                            runTests("test/unit/math/prim", true && !params.disableJumbo)
                             runTests("test/unit/math/memory", false)
                         }
                     }
@@ -323,7 +324,7 @@ pipeline {
                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
                             """
-                            runTests("test/unit/math/opencl", true)
+                            runTests("test/unit/math/opencl", true && !params.disableJumbo)
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
