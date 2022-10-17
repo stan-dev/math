@@ -5,7 +5,7 @@ import org.stan.Utils
 def runTests(String testPath, boolean jumbo = false) {
     try {
         if (jumbo) {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath}"
         }
@@ -90,14 +90,14 @@ pipeline {
         CLANG_CXX = 'clang++-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
-        N_TESTS = 150
+        N_TESTS = 100
         OPENCL_DEVICE_ID = 0
         OPENCL_DEVICE_ID_CPU = 0
         OPENCL_DEVICE_ID_GPU = 0
         OPENCL_PLATFORM_ID = 1
         OPENCL_PLATFORM_ID_CPU = 0
         OPENCL_PLATFORM_ID_GPU = 0
-        PARALLEL = 8
+        PARALLEL = 4
     }
     stages {
 
@@ -289,7 +289,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", false)
+                            runTests("test/unit/math/mix", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -313,7 +313,7 @@ pipeline {
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", false)
+                            runTests("test/unit/math/prim", true)
                             runTests("test/unit/math/memory", false)
                         }
                     }
@@ -366,7 +366,7 @@ pipeline {
                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
                             """
-                            runTests("test/unit/math/opencl")
+                            runTests("test/unit/math/opencl", true)
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
