@@ -122,40 +122,40 @@ pipeline {
         //     }
         //  }
 
-        // stage('Linting & Doc checks') {
-        //     agent {
-        //         docker {
-        //             image 'stanorg/ci:gpu-cpp17'
-        //             label 'linux'
-        //         }
-        //     }
-        //     steps {
-        //         script {
-        //             retry(3) { checkout scm }
-        //             sh "git clean -xffd"
-        //             stash 'MathSetup'
-        //             sh "echo CXX=${CLANG_CXX} > make/local"
-        //             sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
-        //             parallel(
-        //                 CppLint: { sh "make cpplint" },
-        //                 Dependencies: { sh """#!/bin/bash
-        //                     set -o pipefail
-        //                     make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-        //                 Documentation: { sh "make doxygen" },
-        //             )
-        //         }
-        //     }
-        //     post {
-        //         always {
-        //             recordIssues enabledForFailure: true, tools:
-        //                 [cppLint(),
-        //                  groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-        //         }
-        //         success {
-        //             deleteDir()
-        //         }
-        //     }
-        // }
+        stage('Linting & Doc checks') {
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu-cpp17'
+                    label 'linux'
+                }
+            }
+            steps {
+                script {
+                    retry(3) { checkout scm }
+                    sh "git clean -xffd"
+                    stash 'MathSetup'
+                    sh "echo CXX=${CLANG_CXX} > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
+                    parallel(
+                        CppLint: { sh "make cpplint" },
+                        Dependencies: { sh """#!/bin/bash
+                            set -o pipefail
+                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                        Documentation: { sh "make doxygen" },
+                    )
+                }
+            }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools:
+                        [cppLint(),
+                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                }
+                success {
+                    deleteDir()
+                }
+            }
+        }
 
         // stage('Verify changes') {
         //     agent {
