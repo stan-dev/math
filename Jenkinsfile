@@ -13,49 +13,6 @@ def runTests(String testPath, boolean jumbo = false) {
         finally { junit 'test/**/*.xml' }
 }
 
-// We're using Anaconda3 Python on win-10
-def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
-    withEnv(['PATH+TBB=./lib/tbb']) {
-        if (buildLibs){
-            bat """
-                SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                mingw32-make.exe -f make/standalone math-libs
-            """
-        }
-        try {
-            if (jumbo) {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath} --jumbo
-                """
-             } else {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath}
-                """
-             }
-        }
-        finally { junit 'test/**/*.xml' }
-    }
-}
-
-
-def deleteDirWin() {
-    bat "attrib -r -s /s /d"
-    deleteDir()
-}
-
 def skipRemainingStages = false
 def skipOpenCL = false
 
