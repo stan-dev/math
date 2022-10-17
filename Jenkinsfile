@@ -401,13 +401,30 @@ pipeline {
                 }
             }
             failFast true
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu-cpp17'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
+                    unstash 'MathSetup'
+                    sh """
+                        echo CXX=${CLANG_CXX} > make/local
+                        echo O=0 >> make/local
+                        echo N_TESTS=${N_TESTS} >> make/local
+                        """
+                    script {
+                        if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                            sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                            sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                        }
+                    }
                     def tests = [:]
                     for (f in findFiles(glob: 'test/prob/*/').toList().collate(6)) {
                         // Create temp variable, otherwise the name will be the last value of the for loop
                         def names = f
-                        sh "echo ${names}"
                         tests["${names}"] = {
                             agent {
                                 docker {
@@ -415,20 +432,6 @@ pipeline {
                                     label 'linux'
                                 }
                             }
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} > make/local
-                                echo O=0 >> make/local
-                                echo N_TESTS=${N_TESTS} >> make/local
-                                """
-                            script {
-                                if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                    sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                    sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                                }
-                            }
-
-
                             sh "./runTests.py -j${PARALLEL} ${names}"
                         }
                     }
@@ -442,24 +445,24 @@ pipeline {
             }
         }
 
-        stage('Upstream tests') {
-            agent { label 'linux' }
-            when {
-                allOf {
-                    expression {
-                        env.BRANCH_NAME ==~ /PR-\d+/
-                    }
-                    expression {
-                        !skipRemainingStages
-                    }
-                }
-            }
-            steps {
-                build(job: "Stan/Stan/${stan_pr()}",
-                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
-            }
-        }
+        // stage('Upstream tests') {
+        //     agent { label 'linux' }
+        //     when {
+        //         allOf {
+        //             expression {
+        //                 env.BRANCH_NAME ==~ /PR-\d+/
+        //             }
+        //             expression {
+        //                 !skipRemainingStages
+        //             }
+        //         }
+        //     }
+        //     steps {
+        //         build(job: "Stan/Stan/${stan_pr()}",
+        //                 parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+        //                             string(name: 'cmdstan_pr', value: cmdstan_pr())])
+        //     }
+        // }
 
         stage('Upload doxygen') {
             agent {
