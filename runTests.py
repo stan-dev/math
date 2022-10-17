@@ -390,7 +390,7 @@ def main():
             # pass 2: run test targets
             for t in tests:
                 if inputs.debug:
-                    print("run single test: %s" % testname)
+                    print("run single test: %s" % t)
                 runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
     except BaseException as e:
        print(e, file=sys.stderr)
