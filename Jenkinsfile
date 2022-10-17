@@ -415,23 +415,21 @@ pipeline {
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node {
-                            docker {
-                                image 'stanorg/ci:gpu-cpp17'
-                                label 'linux'
-                            }
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} > make/local
-                                echo O=0 >> make/local
-                                echo N_TESTS=${N_TESTS} >> make/local
-                                """
-                            script {
-                                if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                    sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                    sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                            docker.image('stanorg/ci:gpu-cpp17').inside {
+                                unstash 'MathSetup'
+                                sh """
+                                    echo CXX=${CLANG_CXX} > make/local
+                                    echo O=0 >> make/local
+                                    echo N_TESTS=${N_TESTS} >> make/local
+                                    """
+                                script {
+                                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                                    }
                                 }
+                                sh "./runTests.py -j${PARALLEL} ${names}"
                             }
-                            sh "./runTests.py -j${PARALLEL} ${names}"
                         } }
                     }
                     parallel tests
