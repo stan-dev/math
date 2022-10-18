@@ -247,7 +247,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=0 >> make/local"
+                        sh "echo O=1 >> make/local"
                         script {
                             runTests("test/unit/math/mix", true)
                         }
