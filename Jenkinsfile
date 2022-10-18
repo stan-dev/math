@@ -73,7 +73,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-mold'
+                    image 'stanorg/ci:gpu-mold-gcc-12'
                     label 'linux'
                 }
             }
@@ -124,7 +124,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-mold'
+                    image 'stanorg/ci:gpu-mold-gcc-12'
                     label 'linux'
                 }
             }
@@ -159,7 +159,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-mold'
+                    image 'stanorg/ci:gpu-mold-gcc-12'
                     label 'linux'
                 }
             }
@@ -181,7 +181,7 @@ pipeline {
         stage('Headers check') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-mold'
+                    image 'stanorg/ci:gpu-mold-gcc-12'
                     label 'linux'
                 }
             }
@@ -209,7 +209,7 @@ pipeline {
                 stage('Rev/Fwd Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -232,7 +232,7 @@ pipeline {
                 stage('Mix Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -254,7 +254,7 @@ pipeline {
                 stage('Prim Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -289,7 +289,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                         }
                     }
@@ -309,7 +309,7 @@ pipeline {
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'v100'
                             args '--gpus 1'
                         }
@@ -332,7 +332,7 @@ pipeline {
                 stage('Distribution tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                         }
                     }
@@ -366,7 +366,7 @@ pipeline {
                 stage('Expressions test') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                         }
                     }
@@ -402,7 +402,7 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-mold'
+                            image 'stanorg/ci:gpu-mold-gcc-12'
                             label 'linux'
                         }
                     }
@@ -451,7 +451,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-mold'
+                    image 'stanorg/ci:gpu-mold-gcc-12'
                     label 'linux'
                 }
             }
