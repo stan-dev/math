@@ -53,7 +53,7 @@ jobs:
     - name: Run prim and rev unit tests
       shell: powershell
       run: |
-        echo O=0 >> make/local
+        Add-Content make\local "O=0`n"
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/prim
@@ -104,7 +104,7 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
-        echo O=0 >> make/local
+        Add-Content make\local "O=0`n"
         python.exe runTests.py test/unit/math/fwd
         python.exe runTests.py test/unit/math/mix/core
         python.exe runTests.py test/unit/math/mix/functor
@@ -153,7 +153,7 @@ jobs:
     - name: Run mix/fun unit tests
       shell: powershell
       run: |
-        echo O=1 >> make/local
+        Add-Content make\local "O=1`n"
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
@@ -200,7 +200,7 @@ jobs:
     - name: Run mix/fun unit tests
       shell: powershell
       run: |
-        echo O=1 >> make/local
+        Add-Content make\local "O=1`n"
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
