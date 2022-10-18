@@ -2,6 +2,7 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/functor/idas_integrator.hpp>
+#include <stan/math/rev/functor/dae_system.hpp>
 #include <nvector/nvector_serial.h>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
