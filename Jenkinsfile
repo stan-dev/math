@@ -13,49 +13,6 @@ def runTests(String testPath, boolean jumbo = false) {
         finally { junit 'test/**/*.xml' }
 }
 
-// We're using Anaconda3 Python on win-10
-def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
-    withEnv(['PATH+TBB=./lib/tbb']) {
-        if (buildLibs){
-            bat """
-                SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                mingw32-make.exe -f make/standalone math-libs
-            """
-        }
-        try {
-            if (jumbo) {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath} --jumbo
-                """
-             } else {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath}
-                """
-             }
-        }
-        finally { junit 'test/**/*.xml' }
-    }
-}
-
-
-def deleteDirWin() {
-    bat "attrib -r -s /s /d"
-    deleteDir()
-}
-
 def skipRemainingStages = false
 def skipOpenCL = false
 
@@ -116,7 +73,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-mold'
                     label 'linux'
                 }
             }
@@ -167,7 +124,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-mold'
                     label 'linux'
                 }
             }
@@ -202,7 +159,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-mold'
                     label 'linux'
                 }
             }
@@ -224,7 +181,7 @@ pipeline {
         stage('Headers check') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-mold'
                     label 'linux'
                 }
             }
@@ -252,7 +209,7 @@ pipeline {
                 stage('Rev/Fwd Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -264,7 +221,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
                         script {
                             runTests("test/unit/math/rev", false)
                             runTests("test/unit/math/fwd", false)
@@ -275,7 +232,7 @@ pipeline {
                 stage('Mix Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -287,7 +244,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
                         script {
                             runTests("test/unit/math/mix", false)
                         }
@@ -297,7 +254,7 @@ pipeline {
                 stage('Prim Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -309,7 +266,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
@@ -332,7 +289,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                         }
                     }
@@ -352,7 +309,7 @@ pipeline {
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'v100'
                             args '--gpus 1'
                         }
@@ -375,7 +332,7 @@ pipeline {
                 stage('Distribution tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                         }
                     }
@@ -383,6 +340,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh """
                             echo CXX=${CLANG_CXX} > make/local
+                            echo CXXFLAGS += -fuse-ld=mold >> make/local
                             echo O=0 >> make/local
                             echo N_TESTS=${N_TESTS} >> make/local
                             """
@@ -408,7 +366,7 @@ pipeline {
                 stage('Expressions test') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                         }
                     }
@@ -417,6 +375,7 @@ pipeline {
                         script {
                             sh "echo O=0 > make/local"
                             sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
+                            sh "echo CXXFLAGS += -fuse-ld=mold >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
@@ -443,7 +402,7 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-mold'
                             label 'linux'
                         }
                     }
@@ -492,7 +451,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-mold'
                     label 'linux'
                 }
             }
