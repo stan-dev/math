@@ -59,17 +59,17 @@ pipeline {
     }
     stages {
 
-        // stage('Kill previous builds') {
-        //     when {
-        //         not { branch 'develop' }
-        //         not { branch 'master' }
-        //     }
-        //     steps {
-        //         script {
-        //             utils.killOldBuilds()
-        //         }
-        //     }
-        // }
+        stage('Kill previous builds') {
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
+            steps {
+                script {
+                    utils.killOldBuilds()
+                }
+            }
+        }
 
         stage("Clang-format") {
             agent {
@@ -409,7 +409,7 @@ pipeline {
                 script {
                     unstash 'MathSetup'
                     def tests = [:]
-                    def files = sh(script:"find test/prob/* -name . -o -prune -type d", returnStdout:true).trim().split('\n')
+                    def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node {
