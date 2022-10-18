@@ -7,7 +7,7 @@
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-
+namespace autodiff_test {
 struct fun0 {
   template <typename T>
   inline T operator()(const T& x) const {
@@ -278,3 +278,4 @@ TEST(MixFunctor, GradientHessian) {
                         poly_grad_hess_agrad[i](j, k));
       }
 }
+}  // namespace autodiff_test
