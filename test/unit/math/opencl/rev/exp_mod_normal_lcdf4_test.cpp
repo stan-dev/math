@@ -29,5 +29,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_broadcast_lambda) {
       exp_mod_normal_lcdf_functor, y.transpose().eval(), mu,
       sigma.transpose().eval(), lambda_scal);
 }
+}  // namespace exp_mod_normal_lcdf4_test
 
 #endif
