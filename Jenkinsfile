@@ -47,6 +47,7 @@ pipeline {
         CLANG_CXX = 'clang++-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
+        MAKE = 'mold -run make'
         N_TESTS = 150
         OPENCL_DEVICE_ID = 0
         OPENCL_DEVICE_ID_CPU = 0
@@ -221,7 +222,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             runTests("test/unit/math/rev", false)
                             runTests("test/unit/math/fwd", false)
@@ -244,7 +245,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             runTests("test/unit/math/mix", false)
                         }
@@ -266,7 +267,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
