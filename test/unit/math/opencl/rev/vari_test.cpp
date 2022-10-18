@@ -20,6 +20,7 @@ TEST(AgradRev, matrix_cl_vari_block) {
                    stan::math::from_matrix_cl(B.block(0, 1, 2, 2).val_));
   EXPECT_MATRIX_EQ(b.block(0, 1, 2, 2),
                    stan::math::from_matrix_cl(B.block(0, 1, 2, 2).adj_));
+  stan::math::recover_memory();
 }
 
 #endif
