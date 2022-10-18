@@ -221,7 +221,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold -Wno-deprecated-declarations >> make/local"
                         script {
                             runTests("test/unit/math/rev", false)
                             runTests("test/unit/math/fwd", false)
@@ -244,7 +244,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold -Wno-deprecated-declarations >> make/local"
                         script {
                             runTests("test/unit/math/mix", false)
                         }
@@ -266,7 +266,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold >> make/local"
+                        sh "echo CXXFLAGS += -fsanitize=address -fuse-ld=mold -Wno-deprecated-declarations >> make/local"
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
@@ -340,7 +340,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh """
                             echo CXX=${CLANG_CXX} > make/local
-                            echo CXXFLAGS += -fuse-ld=mold >> make/local
+                            echo CXXFLAGS += -fuse-ld=mold -Wno-deprecated-declarations >> make/local
                             echo O=0 >> make/local
                             echo N_TESTS=${N_TESTS} >> make/local
                             """
@@ -375,7 +375,7 @@ pipeline {
                         script {
                             sh "echo O=0 > make/local"
                             sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
-                            sh "echo CXXFLAGS += -fuse-ld=mold >> make/local"
+                            sh "echo CXXFLAGS += -fuse-ld=mold -Wno-deprecated-declarations >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
