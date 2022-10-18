@@ -136,7 +136,7 @@ pipeline {
                     sh "echo CXX=${CLANG_CXX} > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
                     parallel(
-                        // CppLint: { sh "make cpplint" },
+                        CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
                             make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
@@ -149,9 +149,8 @@ pipeline {
                     recordIssues enabledForFailure: true, tools:
                         [cppLint(),
                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-                }
-                success {
                     deleteDir()
+
                 }
             }
         }
@@ -322,7 +321,7 @@ pipeline {
                             sh """
                                 echo CXX=${CLANG_CXX} -Werror > make/local
                                 echo STAN_OPENCL=true >> make/local
-                                echo O=0 >> make/local
+                                echo O=1 >> make/local
                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
                             """
