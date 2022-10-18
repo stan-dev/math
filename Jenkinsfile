@@ -14,7 +14,6 @@ def runTests(String testPath, boolean jumbo = false) {
 }
 
 def skipRemainingStages = false
-def skipOpenCL = false
 
 def utils = new org.stan.Utils()
 
@@ -173,8 +172,6 @@ pipeline {
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
 
-                    def openCLPaths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
-                    skipOpenCL = utils.verifyChanges(openCLPaths)
                 }
             }
         }
@@ -194,6 +191,7 @@ pipeline {
             steps {
                 unstash 'MathSetup'
                 sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                sh "echo O=0 >> make/local"
                 sh "make -j${PARALLEL} test-headers"
             }
             post { always { deleteDir() } }
