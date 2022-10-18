@@ -197,89 +197,89 @@ pipeline {
             post { always { deleteDir() } }
         }
 
-        stage('Full Unit Tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            failFast true
-            parallel {
-                stage('Rev/Fwd Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=0 >> make/local"
-                        script {
-                            runTests("test/unit/math/rev", false)
-                            runTests("test/unit/math/fwd", false)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mix Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=1 >> make/local"
-                        script {
-                            runTests("test/unit/math/mix", true)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Prim Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=0 >> make/local"
-                        script {
-                            runTests("test/unit/*_test.cpp", false)
-                            runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
-                            runTests("test/unit/math/memory", false)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-            }
-        }
+        // stage('Full Unit Tests') {
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     failFast true
+        //     parallel {
+        //         stage('Rev/Fwd Unit Tests') {
+        //             agent {
+        //                 docker {
+        //                     image 'stanorg/ci:gpu-cpp17'
+        //                     label 'linux'
+        //                     args '--cap-add SYS_PTRACE'
+        //                 }
+        //             }
+        //             when {
+        //                 expression {
+        //                     !skipRemainingStages
+        //                 }
+        //             }
+        //             steps {
+        //                 unstash 'MathSetup'
+        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+        //                 sh "echo O=0 >> make/local"
+        //                 script {
+        //                     runTests("test/unit/math/rev", false)
+        //                     runTests("test/unit/math/fwd", false)
+        //                 }
+        //             }
+        //             post { always { retry(3) { deleteDir() } } }
+        //         }
+        //         stage('Mix Unit Tests') {
+        //             agent {
+        //                 docker {
+        //                     image 'stanorg/ci:gpu-cpp17'
+        //                     label 'linux'
+        //                     args '--cap-add SYS_PTRACE'
+        //                 }
+        //             }
+        //             when {
+        //                 expression {
+        //                     !skipRemainingStages
+        //                 }
+        //             }
+        //             steps {
+        //                 unstash 'MathSetup'
+        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+        //                 sh "echo O=1 >> make/local"
+        //                 script {
+        //                     runTests("test/unit/math/mix", true)
+        //                 }
+        //             }
+        //             post { always { retry(3) { deleteDir() } } }
+        //         }
+        //         stage('Prim Unit Tests') {
+        //             agent {
+        //                 docker {
+        //                     image 'stanorg/ci:gpu-cpp17'
+        //                     label 'linux'
+        //                     args '--cap-add SYS_PTRACE'
+        //                 }
+        //             }
+        //             when {
+        //                 expression {
+        //                     !skipRemainingStages
+        //                 }
+        //             }
+        //             steps {
+        //                 unstash 'MathSetup'
+        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+        //                 sh "echo O=0 >> make/local"
+        //                 script {
+        //                     runTests("test/unit/*_test.cpp", false)
+        //                     runTests("test/unit/math/*_test.cpp", false)
+        //                     runTests("test/unit/math/prim", true)
+        //                     runTests("test/unit/math/memory", false)
+        //                 }
+        //             }
+        //             post { always { retry(3) { deleteDir() } } }
+        //         }
+        //     }
+        // }
         stage('Always-run tests') {
             when {
                 expression {
