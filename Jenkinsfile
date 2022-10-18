@@ -136,7 +136,7 @@ pipeline {
                     sh "echo CXX=${CLANG_CXX} > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
                     parallel(
-                        CppLint: { sh "make cpplint" },
+                        // CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
                             make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
@@ -176,26 +176,26 @@ pipeline {
             }
         }
 
-        stage('Headers check') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            steps {
-                unstash 'MathSetup'
-                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                sh "echo O=0 >> make/local"
-                sh "make -j${PARALLEL} test-headers"
-            }
-            post { always { deleteDir() } }
-        }
+        // stage('Headers check') {
+        //     agent {
+        //         docker {
+        //             image 'stanorg/ci:gpu-cpp17'
+        //             label 'linux'
+        //         }
+        //     }
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     steps {
+        //         unstash 'MathSetup'
+        //         sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+        //         sh "echo O=0 >> make/local"
+        //         sh "make -j${PARALLEL} test-headers"
+        //     }
+        //     post { always { deleteDir() } }
+        // }
 
         // stage('Full Unit Tests') {
         //     when {
