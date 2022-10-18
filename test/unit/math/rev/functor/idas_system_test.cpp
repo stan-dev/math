@@ -94,9 +94,10 @@ TEST_F(StanIntegrateDAETest, dae_system_test) {
              std::vector<double>, std::vector<double>, std::vector<int>>
       dae1(f, yy0, yp0, msgs, theta, x_r, x_i);
 
-  // auxiliary variables required due to static member restriction on addressing:
-  // "You can take the address of a static member if (and only if) it has an out-of-class definition"
-  // For some reason _not_ doing this works at O3, but not O0.
+  // auxiliary variables required due to static member restriction on
+  // addressing: "You can take the address of a static member if (and only if)
+  // it has an out-of-class definition" For some reason _not_ doing this works
+  // at O3, but not O0.
   auto d1_yy0 = dae1.is_var_yy0;
   EXPECT_FALSE(d1_yy0);
   auto d1_yp0 = dae1.is_var_yp0;
