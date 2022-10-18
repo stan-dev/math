@@ -358,7 +358,7 @@ def main():
     except IOError:
         stan_mpi = False
     # pass 0: generate all auto-generated tests
-    if any(arg.startswith("test/prob") for arg in inputs.tests):
+    if any("test/prob" in arg for arg in inputs.tests):
         generateTests(inputs.j)
     tests = inputs.tests
 

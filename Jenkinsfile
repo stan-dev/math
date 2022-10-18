@@ -58,17 +58,17 @@ pipeline {
     }
     stages {
 
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
+        // stage('Kill previous builds') {
+        //     when {
+        //         not { branch 'develop' }
+        //         not { branch 'master' }
+        //     }
+        //     steps {
+        //         script {
+        //             utils.killOldBuilds()
+        //         }
+        //     }
+        // }
 
         stage("Clang-format") {
             agent {
@@ -175,110 +175,110 @@ pipeline {
             }
         }
 
-        // stage('Headers check') {
-        //     agent {
-        //         docker {
-        //             image 'stanorg/ci:gpu-cpp17'
-        //             label 'linux'
-        //         }
-        //     }
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     steps {
-        //         unstash 'MathSetup'
-        //         sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-        //         sh "echo O=0 >> make/local"
-        //         sh "make -j${PARALLEL} test-headers"
-        //     }
-        //     post { always { deleteDir() } }
-        // }
+        stage('Headers check') {
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu-cpp17'
+                    label 'linux'
+                }
+            }
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            steps {
+                unstash 'MathSetup'
+                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                sh "echo O=0 >> make/local"
+                sh "make -j${PARALLEL} test-headers"
+            }
+            post { always { deleteDir() } }
+        }
 
-        // stage('Full Unit Tests') {
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     failFast true
-        //     parallel {
-        //         stage('Rev/Fwd Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 sh "echo O=0 >> make/local"
-        //                 script {
-        //                     runTests("test/unit/math/rev", false)
-        //                     runTests("test/unit/math/fwd", false)
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('Mix Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 sh "echo O=1 >> make/local"
-        //                 script {
-        //                     runTests("test/unit/math/mix", true)
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('Prim Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 sh "echo O=0 >> make/local"
-        //                 script {
-        //                     runTests("test/unit/*_test.cpp", false)
-        //                     runTests("test/unit/math/*_test.cpp", false)
-        //                     runTests("test/unit/math/prim", true)
-        //                     runTests("test/unit/math/memory", false)
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //     }
-        // }
+        stage('Full Unit Tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            failFast true
+            parallel {
+                stage('Rev/Fwd Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo O=0 >> make/local"
+                        script {
+                            runTests("test/unit/math/rev", false)
+                            runTests("test/unit/math/fwd", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mix Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo O=1 >> make/local"
+                        script {
+                            runTests("test/unit/math/mix", true)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Prim Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo O=0 >> make/local"
+                        script {
+                            runTests("test/unit/*_test.cpp", false)
+                            runTests("test/unit/math/*_test.cpp", false)
+                            runTests("test/unit/math/prim", true)
+                            runTests("test/unit/math/memory", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
         stage('Always-run tests') {
             when {
                 expression {
@@ -325,7 +325,7 @@ pipeline {
                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
                             """
-                            runTests("test/unit/math/opencl", true)
+                            runTests("test/unit/math/opencl", false) // todo: investigate
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
