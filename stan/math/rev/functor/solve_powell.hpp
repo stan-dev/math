@@ -311,8 +311,8 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     const double relative_tolerance = 1e-10,
     const double function_tolerance = 1e-6,
     const int64_t max_num_steps = 1e+3) {
-  return solve_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
-                      function_tolerance, max_num_steps);
+  return solve_powell_tol(f, x, relative_tolerance, function_tolerance,
+                          max_num_steps, msgs, y, dat, dat_int);
 }
 
 /**
