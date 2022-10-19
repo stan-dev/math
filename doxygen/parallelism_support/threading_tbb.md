@@ -33,7 +33,7 @@ Threading support requires a fully C++11 compliant compiler which has a working 
 The compiler support for the C++11 `thread_local` keyword for the major open-source compilers is available since these versions:
 
 - GNU g++ 4.8.1, [see here](https://gcc.gnu.org/projects/cxx-status.html); please also add `-pthread` to the `CXXFLAGS` variable
-- clang++ 3.3, [see here](https://clang.llvm.org/cxx_status.html)  
+- clang++ 3.3, [see here](https://clang.llvm.org/cxx_status.html)
   Note: clang + linux long had issues with `thread_local` which should be fixed with clang >=4.0
 
 ## Mac OS X
@@ -58,4 +58,4 @@ With `clang` on linux there are issues during the linking step of programs which
 
 Known to work:
 - RTools 3.5 for Windows which uses mingw g++ 4.9.1 (since stan-math 2.20.0)
-- RTools 4.0 for Windows with a port of GNU g++ 8.2 see [here](https://github.com/stan-dev/rstan/wiki/Using-RStan-with-the-R-3.6.0-Prerelease-on-Windows) but that compiler can also be used with CmdStan
+- RTools 4.0 for Windows with a port of GNU g++ 8.2, that compiler can also be used with CmdStan
