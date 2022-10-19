@@ -14,15 +14,15 @@
 
 TEST_F(algebra_solver_simple_eq_test, powell_dbl) {
   int solver_type = 0;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl,
-                                         solver_type);
+  Eigen::VectorXd theta
+      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type);
 }
 
 TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
   int solver_type = 0;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl,
-                                         solver_type, true, scale_step, xtol,
-                                         ftol, maxfev);
+  Eigen::VectorXd theta
+      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type, true,
+                       scale_step, xtol, ftol, maxfev);
 }
 
 TEST_F(algebra_solver_simple_eq_nopara_test, powell) {

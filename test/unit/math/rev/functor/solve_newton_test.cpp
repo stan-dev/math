@@ -14,21 +14,21 @@
 
 TEST_F(algebra_solver_simple_eq_test, newton_dbl) {
   int solver_type = 1;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl,
-                                         solver_type);
+  Eigen::VectorXd theta
+      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type);
 }
 
 TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
   int solver_type = 1;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl,
-                                         solver_type, true, scale_step, xtol,
-                                         ftol, maxfev);
+  Eigen::VectorXd theta
+      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type, true,
+                       scale_step, xtol, ftol, maxfev);
 }
 
 TEST_F(algebra_solver_simple_eq_nopara_test, newton_dbl) {
   using stan::math::solve_newton;
-  Eigen::VectorXd theta = solve_newton(
-      simple_eq_functor_nopara(), x, &std::cout, y_dummy, dat, dummy_dat_int);
+  Eigen::VectorXd theta = solve_newton(simple_eq_functor_nopara(), x,
+                                       &std::cout, y_dummy, dat, dummy_dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
 }
@@ -65,8 +65,8 @@ TEST_F(degenerate_eq_test, newton_guess1_dbl) {
   // This first initial guess produces the
   // solution x = {8, 8}
 
-  Eigen::VectorXd theta = solve_newton(
-      degenerate_eq_functor(), x_guess_1, &std::cout, y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = solve_newton(degenerate_eq_functor(), x_guess_1,
+                                       &std::cout, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(8, theta(0));
   EXPECT_FLOAT_EQ(8, theta(1));
 }
@@ -76,8 +76,8 @@ TEST_F(degenerate_eq_test, newton_guess2_dbl) {
   // This next initial guess produces the
   // solution x = {5, 5}
 
-  Eigen::VectorXd theta = solve_newton(
-      degenerate_eq_functor(), x_guess_2, &std::cout, y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = solve_newton(degenerate_eq_functor(), x_guess_2,
+                                       &std::cout, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -90,8 +90,8 @@ TEST_F(degenerate_eq_test, newton_guess2_dbl) {
 TEST_F(degenerate_eq_test, newton_guess2_scale_dbl) {
   using stan::math::solve_newton;
 
-  Eigen::VectorXd theta = solve_newton(
-      degenerate_eq_functor(), x_guess_2, &std::cout, y_scale, dat, dat_int);
+  Eigen::VectorXd theta = solve_newton(degenerate_eq_functor(), x_guess_2,
+                                       &std::cout, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -105,8 +105,8 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
              "manner";  // NOLINT
   std::string msg = err_msg.str();
 
-  EXPECT_THROW_MSG(solve_newton(degenerate_eq_functor(), x_guess_3,
-                                         &std::cout, y_scale, dat, dat_int),
+  EXPECT_THROW_MSG(solve_newton(degenerate_eq_functor(), x_guess_3, &std::cout,
+                                y_scale, dat, dat_int),
                    std::runtime_error, msg);
 }
 
@@ -149,8 +149,8 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
 
 TEST_F(algebra_solver_simple_eq_test, newton_init_is_para) {
   using stan::math::solve_newton;
-  Eigen::VectorXd theta = solve_newton(
-      simple_eq_functor(), x_var, &std::cout, y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = solve_newton(simple_eq_functor(), x_var, &std::cout,
+                                       y_dbl, dat, dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
 }
