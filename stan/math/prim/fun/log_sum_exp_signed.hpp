@@ -18,7 +18,7 @@ inline std::tuple<return_type_t<T1, T2>, int>
   if (a_sign == b_sign) {
     return std::make_tuple(log_sum_exp(a, b), a_sign);
   }
-  bool a_larger = (a > b);
+  bool a_larger = (value_of_rec(a) > value_of_rec(b));
   return std::make_tuple(
     a_larger ? log_diff_exp(a, b) : log_diff_exp(b, a),
     a_larger ? a_sign : b_sign);
