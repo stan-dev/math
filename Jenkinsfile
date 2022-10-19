@@ -58,17 +58,17 @@ pipeline {
     }
     stages {
 
-        // stage('Kill previous builds') {
-        //     when {
-        //         not { branch 'develop' }
-        //         not { branch 'master' }
-        //     }
-        //     steps {
-        //         script {
-        //             utils.killOldBuilds()
-        //         }
-        //     }
-        // }
+        stage('Kill previous builds') {
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
+            steps {
+                script {
+                    utils.killOldBuilds()
+                }
+            }
+        }
 
         stage("Clang-format") {
             agent {
@@ -277,6 +277,29 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('OpenCL GPU tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'v100'
+                            args '--gpus 1'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true >> make/local
+                                echo O=1 >> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+                            """
+                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
+                            runTests("test/unit/multiple_translation_units_test.cpp")
+                        }
+                    }
+                }
             }
         }
         stage('Always-run tests') {
@@ -305,30 +328,6 @@ pipeline {
                         runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-
-                stage('OpenCL GPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'v100'
-                            args '--gpus 1'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo O=1 >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
-                            runTests("test/unit/math/opencl", false) // todo: investigate
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
                 }
                 stage('Expressions test') {
                     agent {
