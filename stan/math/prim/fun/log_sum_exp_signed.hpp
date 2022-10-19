@@ -11,6 +11,17 @@
 namespace stan {
 namespace math {
 
+/**
+ * Calculates the log sum of exponentials without overflow,
+ * accounting for the signs of the inputs
+ *
+ * @tparam T1 type of the first variable
+ * @tparam T2 type of the second variable
+ * @param a the first variable
+ * @param a_sign sign of the first variable
+ * @param b the second variable
+ * @param b_sign sign of the second variable
+ */
 template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline std::tuple<return_type_t<T1, T2>, int>
@@ -18,7 +29,7 @@ inline std::tuple<return_type_t<T1, T2>, int>
   if (a_sign == b_sign) {
     return std::make_tuple(log_sum_exp(a, b), a_sign);
   }
-  bool a_larger = (value_of_rec(a) > value_of_rec(b));
+  bool a_larger = (a > b);
   return std::make_tuple(
     a_larger ? log_diff_exp(a, b) : log_diff_exp(b, a),
     a_larger ? a_sign : b_sign);
