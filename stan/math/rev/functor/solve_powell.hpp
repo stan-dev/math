@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
-#define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_SOLVE_POWELL_HPP
+#define STAN_MATH_REV_FUNCTOR_SOLVE_POWELL_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -45,11 +45,11 @@ namespace math {
  */
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
-T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
-                                     const double relative_tolerance,
-                                     const double function_tolerance,
-                                     const int64_t max_num_steps,
-                                     const Args&... args) {
+T& solve_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
+                            const double relative_tolerance,
+                            const double function_tolerance,
+                            const int64_t max_num_steps,
+                            const Args&... args) {
   // Construct the solver
   hybrj_functor_solver<F> hfs(f);
   Eigen::HybridNonLinearSolver<hybrj_functor_solver<F>> solver(hfs);
@@ -126,12 +126,12 @@ T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
-                                           std::ostream* const msgs,
-                                           const double relative_tolerance,
-                                           const double function_tolerance,
-                                           const int64_t max_num_steps,
-                                           const Args&... args) {
+Eigen::VectorXd solve_powell_impl(const F& f, const T& x,
+                                  std::ostream* const msgs,
+                                  const double relative_tolerance,
+                                  const double function_tolerance,
+                                  const int64_t max_num_steps,
+                                  const Args&... args) {
   auto x_ref = eval(value_of(x));
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
@@ -141,20 +141,20 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
         args_vals_tuple);
   };
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x_ref);
-  check_finite("algebra_solver_powell", "initial guess", x_ref);
+  check_nonzero_size("solve_powell", "initial guess", x_ref);
+  check_finite("solve_powell", "initial guess", x_ref);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance",
                     relative_tolerance);
-  check_nonnegative("algebra_solver_powell", "function_tolerance",
+  check_nonnegative("solve_powell", "function_tolerance",
                     function_tolerance);
-  check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
-  check_matching_sizes("algebra_solver", "the algebraic system's output",
+  check_positive("solve_powell", "max_num_steps", max_num_steps);
+  check_matching_sizes("solve_powell", "the algebraic system's output",
                        f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
 
   // Solve the system
-  return algebra_solver_powell_call_solver(f_wrt_x, x_ref, msgs,
-                                           relative_tolerance,
-                                           function_tolerance, max_num_steps);
+  return solve_powell_call_solver(f_wrt_x, x_ref, msgs,
+                                  relative_tolerance,
+                                  function_tolerance, max_num_steps);
 }
 
 /**
@@ -194,15 +194,15 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
-algebra_solver_powell_tol(const F& f, const T& x,
-                          const double relative_tolerance,
-                          const double function_tolerance,
-                          const int64_t max_num_steps, std::ostream* const msgs,
-                          const T_Args&... args) {
+solve_powell_tol(const F& f, const T& x,
+                 const double relative_tolerance,
+                 const double function_tolerance,
+                 const int64_t max_num_steps, std::ostream* const msgs,
+                 const T_Args&... args) {
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return math::apply(
       [&](const auto&... args_refs) {
-        return algebra_solver_powell_impl(
+        return solve_powell_impl(
             algebra_solver_adapter<F>(f), x, msgs, relative_tolerance,
             function_tolerance, max_num_steps, args_refs...);
       },
@@ -241,17 +241,17 @@ algebra_solver_powell_tol(const F& f, const T& x,
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
-algebra_solver_powell(const F& f, const T& x, std::ostream* const msgs,
-                      const T_Args&... args) {
+solve_powell(const F& f, const T& x, std::ostream* const msgs,
+             const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double function_tolerance = 1e-6;
   int64_t max_num_steps = 200;
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return math::apply(
       [&](const auto&... args_refs) {
-        return algebra_solver_powell_tol(f, x, relative_tolerance,
-                                         function_tolerance, max_num_steps,
-                                         msgs, args_refs...);
+        return solve_powell_tol(f, x, relative_tolerance,
+                                function_tolerance, max_num_steps,
+                                msgs, args_refs...);
       },
       args_ref_tuple);
 }
@@ -311,8 +311,8 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     const double relative_tolerance = 1e-10,
     const double function_tolerance = 1e-6,
     const int64_t max_num_steps = 1e+3) {
-  return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
-                               function_tolerance, max_num_steps);
+  return solve_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
+                      function_tolerance, max_num_steps);
 }
 
 /**
@@ -378,7 +378,7 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
-Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
+Eigen::Matrix<var, Eigen::Dynamic, 1> solve_powell_impl(
     const F& f, const T& x, std::ostream* const msgs,
     const double relative_tolerance, const double function_tolerance,
     const int64_t max_num_steps, const T_Args&... args) {
@@ -396,19 +396,19 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
         args_vals_tuple);
   };
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x_ref);
-  check_finite("algebra_solver_powell", "initial guess", x_ref);
+  check_nonzero_size("solve_powell", "initial guess", x_ref);
+  check_finite("solve_powell", "initial guess", x_ref);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance",
                     relative_tolerance);
-  check_nonnegative("algebra_solver_powell", "function_tolerance",
+  check_nonnegative("solve_powell", "function_tolerance",
                     function_tolerance);
-  check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
-  check_matching_sizes("algebra_solver", "the algebraic system's output",
+  check_positive("solve_powell", "max_num_steps", max_num_steps);
+  check_matching_sizes("solve_powell", "the algebraic system's output",
                        f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
 
   // Solve the system
-  algebra_solver_powell_call_solver(f_wrt_x, x_ref, msgs, relative_tolerance,
-                                    function_tolerance, max_num_steps);
+  solve_powell_call_solver(f_wrt_x, x_ref, msgs, relative_tolerance,
+                           function_tolerance, max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;

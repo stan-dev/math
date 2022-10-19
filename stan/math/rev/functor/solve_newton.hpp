@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
-#define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_SOLVE_NEWTON_HPP
+#define STAN_MATH_REV_FUNCTOR_SOLVE_NEWTON_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>

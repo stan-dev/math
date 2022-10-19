@@ -1,5 +1,5 @@
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/algebra_solver_powell.hpp>
+#include <stan/math/rev/functor/solve_powell.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
@@ -24,8 +24,8 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
 }
 
 TEST_F(algebra_solver_simple_eq_nopara_test, powell) {
-  using stan::math::algebra_solver_powell;
-  Eigen::VectorXd theta = algebra_solver_powell(simple_eq_functor_nopara(), x,
+  using stan::math::solve_powell;
+  Eigen::VectorXd theta = solve_powell(simple_eq_functor_nopara(), x,
                                                 0, y_dummy, dat, dummy_dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -41,8 +41,8 @@ TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
 }
 
 TEST_F(algebra_solver_simple_eq_nopara_test, powell_double) {
-  using stan::math::algebra_solver_powell;
-  Eigen::VectorXd theta = algebra_solver_powell(
+  using stan::math::solve_powell;
+  Eigen::VectorXd theta = solve_powell(
       simple_eq_functor_nopara(), x, &std::cout, y_dummy, dat, dummy_dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -65,23 +65,23 @@ TEST_F(max_steps_test, powell_dbl) {
 }
 
 TEST_F(degenerate_eq_test, powell_guess1_dbl) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
 
   // This first initial guess produces the
   // solution x = {8, 8}
 
-  Eigen::VectorXd theta = algebra_solver_powell(
+  Eigen::VectorXd theta = solve_powell(
       degenerate_eq_functor(), x_guess_1, &std::cout, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(8, theta(0));
   EXPECT_FLOAT_EQ(8, theta(1));
 }
 
 TEST_F(degenerate_eq_test, powell_guess2_dbl) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
   // This next initial guess produces the
   // solution x = {5, 5}
 
-  Eigen::VectorXd theta = algebra_solver_powell(
+  Eigen::VectorXd theta = solve_powell(
       degenerate_eq_functor(), x_guess_2, &std::cout, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
@@ -93,18 +93,18 @@ TEST_F(degenerate_eq_test, powell_guess2_dbl) {
 // using y_scale.
 
 TEST_F(degenerate_eq_test, powell_guess2_scale_dbl) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
 
-  Eigen::VectorXd theta = algebra_solver_powell(
+  Eigen::VectorXd theta = solve_powell(
       degenerate_eq_functor(), x_guess_2, &std::cout, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
 
 TEST_F(degenerate_eq_test, powell_guess_saddle_point_dbl) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
 
-  Eigen::VectorXd theta = algebra_solver_powell(
+  Eigen::VectorXd theta = solve_powell(
       degenerate_eq_functor(), x_guess_3, &std::cout, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(100, theta(0));
   EXPECT_FLOAT_EQ(100, theta(1));
@@ -150,8 +150,8 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
 }
 
 TEST_F(algebra_solver_simple_eq_test, powell_init_is_para) {
-  using stan::math::algebra_solver_powell;
-  Eigen::VectorXd theta = algebra_solver_powell(
+  using stan::math::solve_powell;
+  Eigen::VectorXd theta = solve_powell(
       simple_eq_functor(), x_var, &std::cout, y_dbl, dat, dat_int);
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -198,14 +198,14 @@ TEST_F(max_steps_test, powell) {
 }
 
 TEST_F(degenerate_eq_test, powell_guess1) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
   using stan::math::var;
 
   // This first initial guess produces the
   // solution x = {8, 8}
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = solve_powell(
         degenerate_eq_functor(), x_guess_1, &std::cout, y, dat, dat_int);
 
     EXPECT_FLOAT_EQ(8, theta(0).val());
@@ -221,13 +221,13 @@ TEST_F(degenerate_eq_test, powell_guess1) {
 }
 
 TEST_F(degenerate_eq_test, powell_guess2) {
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_powell;
   using stan::math::var;
   // This next initial guess produces the
   // solution x = {5, 5}
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = solve_powell(
         degenerate_eq_functor(), x_guess_2, &std::cout, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());

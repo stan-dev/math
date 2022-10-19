@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/functor/solve_powell.hpp>
+#include <stan/math/rev/functor/solve_newton.hpp>
 #include <test/unit/util.hpp>
 #include <sstream>
 #include <vector>
@@ -190,8 +190,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   using stan::math::algebra_solver_newton;
   using stan::math::algebra_solver_newton_tol;
-  using stan::math::algebra_solver_powell;
-  using stan::math::algebra_solver_powell_tol;
+  using stan::math::solve_powell;
+  using stan::math::solve_powell_tol;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1> theta
       = is_newton
@@ -199,10 +199,10 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
                   f, x, scaling_step_size, function_tolerance, max_num_steps,
                   msgs, y, dat, dat_int)
                       : algebra_solver_newton(f, x, msgs, y, dat, dat_int)
-            : use_tol ? algebra_solver_powell_tol(
+            : use_tol ? solve_powell_tol(
                   f, x, relative_tolerance, function_tolerance, max_num_steps,
                   msgs, y, dat, dat_int)
-                      : algebra_solver_powell(f, x, msgs, y, dat, dat_int);
+                      : solve_powell(f, x, msgs, y, dat, dat_int);
   return theta;
 }
 
@@ -460,8 +460,8 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     int32_t max_num_steps = 1e+3) {
   using stan::math::algebra_solver_newton;
-  using stan::math::algebra_solver_powell;
-  using stan::math::algebra_solver_powell_tol;
+  using stan::math::solve_powell;
+  using stan::math::solve_powell_tol;
   using stan::math::var;
 
   int n_x = 2;
@@ -476,7 +476,7 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
                     variadic_eq_functor()),
                 x, &std::cout, scaling_step_size, function_tolerance,
                 max_num_steps, A, y_1, y_2, y_3, i)
-                      : algebra_solver_powell_impl(
+                      : solve_powell_impl(
                           algebra_solver_adapter<variadic_eq_functor>(
                               variadic_eq_functor()),
                           x, &std::cout, relative_tolerance, function_tolerance,
@@ -491,11 +491,11 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
                       : algebra_solver_newton(variadic_eq_functor(), x,
                                               &std::cout, A, y_1, y_2, y_3, i)
                 : use_tol
-                      ? algebra_solver_powell_tol(
+                      ? solve_powell_tol(
                           variadic_eq_functor(), x, relative_tolerance,
                           function_tolerance, max_num_steps, &std::cout, A, y_1,
                           y_2, y_3, i)
-                      : algebra_solver_powell(variadic_eq_functor(), x,
+                      : solve_powell(variadic_eq_functor(), x,
                                               &std::cout, A, y_1, y_2, y_3, i);
   }
 
