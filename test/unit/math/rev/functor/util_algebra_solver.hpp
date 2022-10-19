@@ -194,32 +194,32 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
   using stan::math::solve_newton;
   using stan::math::solve_newton_tol;
   using stan::math::solve_powell;
   using stan::math::solve_powell_tol;
-  using stan::math::algebra_solver;
-  using stan::math::algebra_solver_newton;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1> theta;
 
   if (solver_type == 0) {
-    theta = use_tol ? solve_powell_tol(
-                f, x, relative_tolerance, function_tolerance, max_num_steps,
-                msgs, y, dat, dat_int)
-                    : solve_powell(f, x, msgs, y, dat, dat_int);
+    theta = use_tol
+                ? solve_powell_tol(f, x, relative_tolerance, function_tolerance,
+                                   max_num_steps, msgs, y, dat, dat_int)
+                : solve_powell(f, x, msgs, y, dat, dat_int);
   } else if (solver_type == 1) {
-    theta = use_tol ? solve_newton_tol(
-                f, x, scaling_step_size, function_tolerance, max_num_steps,
-                msgs, y, dat, dat_int)
-                    : solve_newton(f, x, msgs, y, dat, dat_int);
+    theta = use_tol
+                ? solve_newton_tol(f, x, scaling_step_size, function_tolerance,
+                                   max_num_steps, msgs, y, dat, dat_int)
+                : solve_newton(f, x, msgs, y, dat, dat_int);
   } else if (solver_type == 2) {
     theta = algebra_solver(f, x, y, dat, dat_int, msgs, relative_tolerance,
                            function_tolerance, max_num_steps);
   } else if (solver_type == 3) {
-    theta = algebra_solver_newton(f, x, y, dat, dat_int, msgs,
-                                  scaling_step_size, function_tolerance,
-                                  max_num_steps);
+    theta
+        = algebra_solver_newton(f, x, y, dat, dat_int, msgs, scaling_step_size,
+                                function_tolerance, max_num_steps);
   }
   return theta;
 }
@@ -385,9 +385,10 @@ inline void error_conditions_test(const F& f,
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd x_bad_inf(n_x);
   x_bad_inf << inf, 1, 1;
-  EXPECT_THROW_MSG(
-      general_algebra_solver(solver_type, use_tol, f, x_bad_inf, y, dat, dat_int),
-      std::domain_error, "initial guess[1] is inf, but must be finite!");
+  EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x_bad_inf, y,
+                                          dat, dat_int),
+                   std::domain_error,
+                   "initial guess[1] is inf, but must be finite!");
 
   if (solver_type == 0) {
     EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x, y, dat,
@@ -463,9 +464,9 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   int max_num_steps = 2;  // very low for test
 
   EXPECT_THROW(
-      general_algebra_solver(solver_type, use_tol, non_linear_eq_functor(), x, y,
-                             dat, dat_int, 0, scaling_step, relative_tolerance,
-                             function_tolerance, max_num_steps),
+      general_algebra_solver(
+          solver_type, use_tol, non_linear_eq_functor(), x, y, dat, dat_int, 0,
+          scaling_step, relative_tolerance, function_tolerance, max_num_steps),
       std::domain_error);
 }
 
@@ -488,25 +489,25 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
   if (is_impl) {
-    theta = is_newton ? solve_newton_impl(
-                algebra_solver_adapter<variadic_eq_functor>(
-                    variadic_eq_functor()),
-                x, &std::cout, scaling_step_size, function_tolerance,
-                max_num_steps, A, y_1, y_2, y_3, i)
-                      : solve_powell_impl(
-                          algebra_solver_adapter<variadic_eq_functor>(
-                              variadic_eq_functor()),
-                          x, &std::cout, relative_tolerance, function_tolerance,
-                          max_num_steps, A, y_1, y_2, y_3, i);
+    theta = is_newton
+                ? solve_newton_impl(algebra_solver_adapter<variadic_eq_functor>(
+                                        variadic_eq_functor()),
+                                    x, &std::cout, scaling_step_size,
+                                    function_tolerance, max_num_steps, A, y_1,
+                                    y_2, y_3, i)
+                : solve_powell_impl(algebra_solver_adapter<variadic_eq_functor>(
+                                        variadic_eq_functor()),
+                                    x, &std::cout, relative_tolerance,
+                                    function_tolerance, max_num_steps, A, y_1,
+                                    y_2, y_3, i);
   } else {
     theta = is_newton
-                ? use_tol
-                      ? solve_newton_tol(
-                          variadic_eq_functor(), x, relative_tolerance,
-                          function_tolerance, max_num_steps, &std::cout, A, y_1,
-                          y_2, y_3, i)
-                      : solve_newton(variadic_eq_functor(), x,
-                                              &std::cout, A, y_1, y_2, y_3, i)
+                ? use_tol ? solve_newton_tol(variadic_eq_functor(), x,
+                                             relative_tolerance,
+                                             function_tolerance, max_num_steps,
+                                             &std::cout, A, y_1, y_2, y_3, i)
+                          : solve_newton(variadic_eq_functor(), x, &std::cout,
+                                         A, y_1, y_2, y_3, i)
                 : use_tol ? solve_powell_tol(variadic_eq_functor(), x,
                                              relative_tolerance,
                                              function_tolerance, max_num_steps,

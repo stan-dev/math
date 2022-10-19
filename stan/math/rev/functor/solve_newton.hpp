@@ -66,10 +66,8 @@ Eigen::VectorXd solve_newton_impl(const F& f, const T& x,
 
   check_nonzero_size("solve_newton", "initial guess", x_ref);
   check_finite("solve_newton", "initial guess", x_ref);
-  check_nonnegative("solve_newton", "scaling_step_size",
-                    scaling_step_size);
-  check_nonnegative("solve_newton", "function_tolerance",
-                    function_tolerance);
+  check_nonnegative("solve_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("solve_newton", "function_tolerance", function_tolerance);
   check_positive("solve_newton", "max_num_steps", max_num_steps);
 
   return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
@@ -151,10 +149,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> solve_newton_impl(
 
   check_nonzero_size("solve_newton", "initial guess", x_ref);
   check_finite("solve_newton", "initial guess", x_ref);
-  check_nonnegative("solve_newton", "scaling_step_size",
-                    scaling_step_size);
-  check_nonnegative("solve_newton", "function_tolerance",
-                    function_tolerance);
+  check_nonnegative("solve_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("solve_newton", "function_tolerance", function_tolerance);
   check_positive("solve_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
@@ -241,17 +237,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> solve_newton_impl(
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
-solve_newton_tol(const F& f, const T& x,
-                  const double scaling_step_size,
-                  const double function_tolerance,
-                  const int64_t max_num_steps, std::ostream* const msgs,
-                  const T_Args&... args) {
+solve_newton_tol(const F& f, const T& x, const double scaling_step_size,
+                 const double function_tolerance, const int64_t max_num_steps,
+                 std::ostream* const msgs, const T_Args&... args) {
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return math::apply(
       [&](const auto&... args_refs) {
         return solve_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
-                                          scaling_step_size, function_tolerance,
-                                          max_num_steps, args_refs...);
+                                 scaling_step_size, function_tolerance,
+                                 max_num_steps, args_refs...);
       },
       args_ref_tuple);
 }
@@ -292,18 +286,16 @@ solve_newton_tol(const F& f, const T& x,
  */
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
-solve_newton(const F& f, const T& x, std::ostream* const msgs,
-             const T_Args&... args) {
+Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_newton(
+    const F& f, const T& x, std::ostream* const msgs, const T_Args&... args) {
   double scaling_step_size = 1e-3;
   double function_tolerance = 1e-6;
   int64_t max_num_steps = 200;
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return math::apply(
       [&](const auto&... args_refs) {
-        return solve_newton_tol(f, x, scaling_step_size,
-                                         function_tolerance, max_num_steps,
-                                         msgs, args_refs...);
+        return solve_newton_tol(f, x, scaling_step_size, function_tolerance,
+                                max_num_steps, msgs, args_refs...);
       },
       args_ref_tuple);
 }
@@ -357,8 +349,8 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const double function_tolerance = 1e-6,
     const long int max_num_steps = 200) {  // NOLINT(runtime/int)
   return solve_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
-                           scaling_step_size, function_tolerance,
-                           max_num_steps, y, dat, dat_int);
+                           scaling_step_size, function_tolerance, max_num_steps,
+                           y, dat, dat_int);
 }
 
 }  // namespace math
