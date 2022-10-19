@@ -194,15 +194,14 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
   using stan::math::solve_powell_tol;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1> theta
-      = is_newton
-            ? use_tol ? algebra_solver_newton_tol(
-                  f, x, scaling_step_size, function_tolerance, max_num_steps,
-                  msgs, y, dat, dat_int)
-                      : algebra_solver_newton(f, x, msgs, y, dat, dat_int)
-            : use_tol ? solve_powell_tol(
-                  f, x, relative_tolerance, function_tolerance, max_num_steps,
-                  msgs, y, dat, dat_int)
-                      : solve_powell(f, x, msgs, y, dat, dat_int);
+      = is_newton ? use_tol ? algebra_solver_newton_tol(
+                        f, x, scaling_step_size, function_tolerance,
+                        max_num_steps, msgs, y, dat, dat_int)
+                            : algebra_solver_newton(f, x, msgs, y, dat, dat_int)
+                  : use_tol ? solve_powell_tol(
+                        f, x, relative_tolerance, function_tolerance,
+                        max_num_steps, msgs, y, dat, dat_int)
+                            : solve_powell(f, x, msgs, y, dat, dat_int);
   return theta;
 }
 
@@ -490,13 +489,12 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
                           y_2, y_3, i)
                       : algebra_solver_newton(variadic_eq_functor(), x,
                                               &std::cout, A, y_1, y_2, y_3, i)
-                : use_tol
-                      ? solve_powell_tol(
-                          variadic_eq_functor(), x, relative_tolerance,
-                          function_tolerance, max_num_steps, &std::cout, A, y_1,
-                          y_2, y_3, i)
-                      : solve_powell(variadic_eq_functor(), x,
-                                              &std::cout, A, y_1, y_2, y_3, i);
+                : use_tol ? solve_powell_tol(variadic_eq_functor(), x,
+                                             relative_tolerance,
+                                             function_tolerance, max_num_steps,
+                                             &std::cout, A, y_1, y_2, y_3, i)
+                          : solve_powell(variadic_eq_functor(), x, &std::cout,
+                                         A, y_1, y_2, y_3, i);
   }
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);
