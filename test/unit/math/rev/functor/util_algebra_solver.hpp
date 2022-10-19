@@ -507,13 +507,12 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
                           y_2, y_3, i)
                       : solve_newton(variadic_eq_functor(), x,
                                               &std::cout, A, y_1, y_2, y_3, i)
-                : use_tol
-                      ? solve_powell_tol(
-                          variadic_eq_functor(), x, relative_tolerance,
-                          function_tolerance, max_num_steps, &std::cout, A, y_1,
-                          y_2, y_3, i)
-                      : solve_powell(variadic_eq_functor(), x,
-                                              &std::cout, A, y_1, y_2, y_3, i);
+                : use_tol ? solve_powell_tol(variadic_eq_functor(), x,
+                                             relative_tolerance,
+                                             function_tolerance, max_num_steps,
+                                             &std::cout, A, y_1, y_2, y_3, i)
+                          : solve_powell(variadic_eq_functor(), x, &std::cout,
+                                         A, y_1, y_2, y_3, i);
   }
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);

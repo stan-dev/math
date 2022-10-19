@@ -31,7 +31,8 @@ struct kiss_cpx_fft
       using std::acos;
       m_inverse = inverse;
       m_twiddles.resize(nfft);
-      Scalar phinc =  (inverse?2:-2)* acos( (Scalar) -1)  / nfft;
+      // STAN CHANGE: The next line originally cast -1 to Scalar, which breaks derivatives
+      Scalar phinc =  (inverse?2:-2)* acos(-1.0)  / nfft;
       for (int i=0;i<nfft;++i)
         m_twiddles[i] = exp( Complex(0,i*phinc) );
     }
