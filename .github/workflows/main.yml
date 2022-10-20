@@ -46,7 +46,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -94,7 +94,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -105,12 +105,12 @@ jobs:
       shell: powershell
       run: |
         Add-Content make\local "O=1`n"
-        python.exe runTests.py test/unit/math/fwd
-        python.exe runTests.py test/unit/math/mix/core
-        python.exe runTests.py test/unit/math/mix/functor
-        python.exe runTests.py test/unit/math/mix/meta
-        python.exe runTests.py test/unit/math/mix/prob
-        python.exe runTests.py test/unit/math/mix/*_test.cpp
+        python.exe runTests.py test/unit/math/fwd -j2
+        python.exe runTests.py test/unit/math/mix/core -j2
+        python.exe runTests.py test/unit/math/mix/functor -j2
+        python.exe runTests.py test/unit/math/mix/meta -j2
+        python.exe runTests.py test/unit/math/mix/prob -j2
+        python.exe runTests.py test/unit/math/mix/*_test.cpp -j2
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
@@ -146,7 +146,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -157,7 +157,7 @@ jobs:
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python.exe runTests.py $MixFunTests[0..$HalfNumberTests]
+        python.exe runTests.py $MixFunTests[0..$HalfNumberTests] -j2
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
@@ -193,7 +193,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -204,7 +204,7 @@ jobs:
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)]
+        python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)] -j2
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3

@@ -40,7 +40,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
 
     - name: Run header tests
       shell: powershell
