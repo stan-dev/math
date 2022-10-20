@@ -14,6 +14,8 @@
 #include <iostream>
 #include <vector>
 
+namespace map_rect_con_prim_test {
+
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
@@ -66,3 +68,4 @@ TEST_F(map_rect, concurrent_eval_ok_dd) {
                         + 2 * shared_params_d(0) + shared_params_d(1));
   }
 }
+}  // namespace map_rect_con_prim_test

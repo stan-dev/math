@@ -18,6 +18,8 @@
 #include <vector>
 #include <string>
 
+namespace map_rect_con_threads_test {
+
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
@@ -116,5 +118,5 @@ TEST_F(map_rect, concurrent_varying_num_threads_eval_ok_dd) {
     set_n_threads(i);
   }
 }
-
+}  // namespace map_rect_con_threads_test
 #endif

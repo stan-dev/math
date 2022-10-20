@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 
+namespace map_rect_prim_test {
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not
 
@@ -94,3 +95,4 @@ TEST_F(map_rect, wrong_size_int_data_dd) {
                                                    job_params_d, x_r, x_i)),
                std::invalid_argument);
 }
+}  // namespace map_rect_prim_test

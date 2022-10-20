@@ -14,6 +14,8 @@
 #include <iostream>
 #include <vector>
 
+namespace map_rect_con_test {
+
 STAN_REGISTER_MAP_RECT(0, hard_work)
 
 struct map_rect : public ::testing::Test {
@@ -163,3 +165,4 @@ TEST_F(map_rect, concurrent_eval_ok_vv) {
     }
   }
 }
+}  // namespace map_rect_con_test
