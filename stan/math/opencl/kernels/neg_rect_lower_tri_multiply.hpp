@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static constexpr std::string neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
+static constexpr const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates C = -B * A where B is rectangular and A is a lower

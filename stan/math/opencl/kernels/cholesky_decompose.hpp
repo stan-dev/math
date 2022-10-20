@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static constexpr std::string cholesky_decompose_kernel_code = STRINGIFY(
+static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates the Cholesky Decomposition of a matrix on an OpenCL
