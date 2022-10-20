@@ -31,7 +31,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   using T_sigma_ref = ref_type_t<T_scale>;
   using std::exp;
   using std::pow;
-  static const char* function = "student_t_cdf";
+  static constexpr const char* function = "student_t_cdf";
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
   T_mu_ref mu_ref = mu;

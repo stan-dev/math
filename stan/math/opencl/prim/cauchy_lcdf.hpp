@@ -33,7 +33,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lcdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static const char* function = "cauchy_lcdf(OpenCL)";
+  static constexpr const char* function = "cauchy_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;

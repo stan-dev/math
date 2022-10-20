@@ -42,7 +42,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
     const T_shape_cl& alpha) {
-  static const char* function = "skew_normal_lpdf(OpenCL)";
+  static constexpr const char* function = "skew_normal_lpdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;

@@ -13,7 +13,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string indexing_rev_global_atomic_kernel_code = STRINGIFY(
+static constexpr std::string indexing_rev_global_atomic_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *
@@ -51,7 +51,7 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, int>
                                 indexing_rev_global_atomic_kernel_code});
 
 // \cond
-static const std::string indexing_rev_local_atomic_kernel_code = STRINGIFY(
+static constexpr std::string indexing_rev_local_atomic_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *
@@ -102,7 +102,7 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
                                indexing_rev_local_atomic_kernel_code});
 
 // \cond
-static const std::string indexing_rev_local_independent_kernel_code = STRINGIFY(
+static constexpr std::string indexing_rev_local_independent_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *

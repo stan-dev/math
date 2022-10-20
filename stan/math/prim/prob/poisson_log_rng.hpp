@@ -32,8 +32,8 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
     const T_rate& alpha, RNG& rng) {
   using boost::variate_generator;
   using boost::random::poisson_distribution;
-  static const char* function = "poisson_log_rng";
-  static const double POISSON_MAX_LOG_RATE = 30 * LOG_TWO;
+  static constexpr const char* function = "poisson_log_rng";
+  static constexpr double POISSON_MAX_LOG_RATE = 30 * LOG_TWO;
   const auto& alpha_ref = to_ref(alpha);
   check_finite(function, "Log rate parameter", alpha_ref);
   check_less(function, "Log rate parameter", alpha_ref, POISSON_MAX_LOG_RATE);

@@ -30,7 +30,7 @@ template <bool propto, typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
 inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
-  static const char* function = "std_normal_lpdf(OpenCL)";
+  static constexpr const char* function = "std_normal_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
   using std::isnan;

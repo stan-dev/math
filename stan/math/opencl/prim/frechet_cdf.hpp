@@ -33,7 +33,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_cdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
-  static const char* function = "frechet_cdf(OpenCL)";
+  static constexpr const char* function = "frechet_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;

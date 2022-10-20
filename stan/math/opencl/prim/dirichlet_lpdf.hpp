@@ -60,7 +60,7 @@ template <bool propto, typename T_prob_cl, typename T_prior_size_cl,
           require_any_not_stan_scalar_t<T_prob_cl, T_prior_size_cl>* = nullptr>
 inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     const T_prob_cl& theta, const T_prior_size_cl& alpha) {
-  static const char* function = "dirichlet_lpdf(OpenCL)";
+  static constexpr const char* function = "dirichlet_lpdf(OpenCL)";
 
   check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",
                          alpha);

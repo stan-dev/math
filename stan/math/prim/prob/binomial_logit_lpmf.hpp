@@ -43,7 +43,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
   using T_N_ref = ref_type_if_t<!is_constant<T_N>::value, T_N>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
-  static const char* function = "binomial_logit_lpmf";
+  static constexpr const char* function = "binomial_logit_lpmf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", alpha);

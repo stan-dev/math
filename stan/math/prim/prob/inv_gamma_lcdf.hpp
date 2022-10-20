@@ -32,7 +32,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
   using std::exp;
   using std::log;
   using std::pow;
-  static const char* function = "inv_gamma_lcdf";
+  static constexpr const char* function = "inv_gamma_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale Parameter", beta);
 

@@ -18,7 +18,7 @@ namespace math {
  * greater than K.
  */
 inline Eigen::VectorXd one_hot_vector(int K, int k) {
-  static const char* function = "one_hot_vector";
+  static constexpr const char* function = "one_hot_vector";
   check_positive(function, "size", K);
   check_bounded(function, "k", k, 1, K);
 

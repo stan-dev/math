@@ -32,7 +32,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   using std::isinf;
-  static const char* function = "pareto_lcdf";
+  static constexpr const char* function = "pareto_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
 

@@ -36,7 +36,7 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
 return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_cdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& lambda,
     const T_shape_cl& alpha) {
-  static const char* function = "pareto_type_2_cdf(OpenCL)";
+  static constexpr const char* function = "pareto_type_2_cdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;

@@ -69,7 +69,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
 neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                             const T_alpha_cl& alpha, const T_beta_cl& beta,
                             const T_phi_cl& phi) {
-  static const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
+  static constexpr const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;

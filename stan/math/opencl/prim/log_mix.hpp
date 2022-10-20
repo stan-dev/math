@@ -37,7 +37,7 @@ template <typename T_theta_cl, typename T_lambda_cl,
           require_all_prim_or_rev_kernel_expression_t<T_theta_cl,
                                                       T_lambda_cl>* = nullptr>
 inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
-  static const char* function = "log_mix(OpenCL)";
+  static constexpr const char* function = "log_mix(OpenCL)";
   using T_return = return_type_t<T_theta_cl, T_lambda_cl>;
   using std::isfinite;
   using std::isnan;

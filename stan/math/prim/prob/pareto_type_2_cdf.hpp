@@ -30,7 +30,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   using T_lambda_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   using std::pow;
-  static const char* function = "pareto_type_2_cdf";
+  static constexpr const char* function = "pareto_type_2_cdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", lambda, "Shape parameter",
                          alpha);

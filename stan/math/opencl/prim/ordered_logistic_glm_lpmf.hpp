@@ -59,7 +59,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using T_partials_return = partials_return_t<T_beta, T_cuts>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
 
-  static const char* function = "ordered_logistic_glm_lpmf";
+  static constexpr const char* function = "ordered_logistic_glm_lpmf";
 
   const size_t N_instances = x.rows();
   const size_t N_attributes = x.cols();

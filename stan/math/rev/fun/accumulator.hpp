@@ -24,7 +24,7 @@ namespace math {
 template <typename T>
 class accumulator<T, require_var_t<T>> {
  private:
-  static const int max_size_ = 128;
+  static constexpr int max_size_ = 128;
   std::vector<var, arena_allocator<var>> buf_;
 
   /**

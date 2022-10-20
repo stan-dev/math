@@ -33,7 +33,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   using T_alpha_ref
       = ref_type_if_t<!is_constant<T_log_rate>::value, T_log_rate>;
   using std::isinf;
-  static const char* function = "poisson_log_lpmf";
+  static constexpr const char* function = "poisson_log_lpmf";
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 

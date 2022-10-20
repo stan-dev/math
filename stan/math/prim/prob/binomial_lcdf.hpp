@@ -44,7 +44,7 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
   using std::exp;
   using std::log;
   using std::pow;
-  static const char* function = "binomial_lcdf";
+  static constexpr const char* function = "binomial_lcdf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", theta);

@@ -42,7 +42,7 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using std::pow;
   using T_y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
-  static const char* function = "chi_square_lcdf";
+  static constexpr const char* function = "chi_square_lcdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
   T_y_ref y_ref = y;

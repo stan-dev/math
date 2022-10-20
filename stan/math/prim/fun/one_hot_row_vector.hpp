@@ -18,7 +18,7 @@ namespace math {
  * greater than K.
  */
 inline Eigen::RowVectorXd one_hot_row_vector(int K, int k) {
-  static const char* function = "one_hot_row_vector";
+  static constexpr const char* function = "one_hot_row_vector";
   check_positive(function, "size", K);
   check_bounded(function, "k", k, 1, K);
 

@@ -35,7 +35,7 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
               T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
                                        const T_prob_cl& theta) {
-  static const char* function = "binomial_lpmf(OpenCL)";
+  static constexpr const char* function = "binomial_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
 

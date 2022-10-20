@@ -82,7 +82,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   using T_cut_ref = ref_type_if_t<!is_constant<T_cut>::value, T_cut>;
   using Eigen::Array;
   using Eigen::Dynamic;
-  static const char* function = "ordered_logistic";
+  static constexpr const char* function = "ordered_logistic";
 
   T_cut_ref c_ref = c;
   vector_seq_view<T_cut_ref> c_vec(c_ref);

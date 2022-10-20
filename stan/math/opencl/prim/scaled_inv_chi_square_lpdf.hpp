@@ -42,7 +42,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl, T_scale_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
     const T_y_cl& y, const T_dof_cl& nu, const T_scale_cl& s) {
-  static const char* function = "scaled_inv_chi_square_lpdf(OpenCL)";
+  static constexpr const char* function = "scaled_inv_chi_square_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;

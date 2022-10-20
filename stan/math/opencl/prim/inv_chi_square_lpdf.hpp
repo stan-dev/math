@@ -45,7 +45,7 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
                                                     const T_dof_cl& nu) {
   using std::isfinite;
   using std::isnan;
-  static const char* function = "inv_chi_square_lpdf(OpenCL)";
+  static constexpr const char* function = "inv_chi_square_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl>;
 
   check_consistent_sizes(function, "Random variable", y,

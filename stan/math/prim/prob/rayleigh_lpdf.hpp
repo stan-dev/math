@@ -26,7 +26,7 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "rayleigh_lpdf";
+  static constexpr const char* function = "rayleigh_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 

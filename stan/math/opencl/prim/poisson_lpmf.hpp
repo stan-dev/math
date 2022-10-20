@@ -30,7 +30,7 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_rate_cl>* = nullptr>
 return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
                                       const T_rate_cl& lambda) {
-  static const char* function = "poisson_lpmf(OpenCL)";
+  static constexpr const char* function = "poisson_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_rate_cl>;
   using std::isinf;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;

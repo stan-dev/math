@@ -29,7 +29,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
   using T_alpha_ref = ref_type_t<T_shape>;
   using std::exp;
   using std::log;
-  static const char* function = "pareto_cdf";
+  static constexpr const char* function = "pareto_cdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
   if (size_zero(y, y_min, alpha)) {

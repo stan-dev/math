@@ -42,7 +42,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   using T_n_ref = ref_type_t<T_n>;
   using T_N_ref = ref_type_t<T_N>;
   using T_theta_ref = ref_type_t<T_prob>;
-  static const char* function = "binomial_lpmf";
+  static constexpr const char* function = "binomial_lpmf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", theta);

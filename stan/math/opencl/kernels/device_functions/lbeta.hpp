@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* lbeta_device_function
+static constexpr const char* lbeta_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LBETA\n"
       "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LBETA\n" STRINGIFY(

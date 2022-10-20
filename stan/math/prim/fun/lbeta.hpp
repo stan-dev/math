@@ -69,7 +69,7 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
     return NOT_A_NUMBER;
   }
 
-  static const char* function = "lbeta";
+  static constexpr const char* function = "lbeta";
   check_nonnegative(function, "first argument", a);
   check_nonnegative(function, "second argument", b);
   T_ret x;  // x is the smaller of the two

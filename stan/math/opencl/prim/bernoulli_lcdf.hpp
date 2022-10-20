@@ -30,7 +30,7 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
                                         const T_prob_cl& theta) {
-  static const char* function = "bernoulli_lcdf(OpenCL)";
+  static constexpr const char* function = "bernoulli_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;

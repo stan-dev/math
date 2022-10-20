@@ -41,7 +41,7 @@ template <bool propto, typename T_y_cl, typename T_low_cl, typename T_high_cl,
           require_any_not_stan_scalar_t<T_y_cl, T_low_cl, T_high_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
     const T_y_cl& y, const T_low_cl& alpha, const T_high_cl& beta) {
-  static const char* function = "uniform_lpdf(OpenCL)";
+  static constexpr const char* function = "uniform_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;
   using std::isnan;

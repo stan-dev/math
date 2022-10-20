@@ -33,7 +33,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   using T_n_ref = ref_type_t<T_n>;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv_scale>;
-  static const char* function = "neg_binomial_lcdf";
+  static constexpr const char* function = "neg_binomial_lcdf";
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta_param);
   T_n_ref n_ref = n;

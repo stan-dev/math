@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
   using T_nu_ref = ref_type_t<T_dof>;
   using T_L_S_ref = ref_type_t<T_scale>;
   using T_return = return_type_t<T_y, T_dof, T_scale>;
-  static const char* function = "inv_wishart_cholesky_lpdf";
+  static constexpr const char* function = "inv_wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
   check_size_match(function, "Rows of Random variable", L_Y.rows(),
                    "columns of scale parameter", L_S.rows());

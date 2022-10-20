@@ -46,7 +46,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv_scale>;
   using std::exp;
-  static const char* function = "gamma_cdf";
+  static constexpr const char* function = "gamma_cdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
   T_y_ref y_ref = y;

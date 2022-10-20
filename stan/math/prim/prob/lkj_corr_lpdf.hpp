@@ -47,7 +47,7 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
 return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
-  static const char* function = "lkj_corr_lpdf";
+  static constexpr const char* function = "lkj_corr_lpdf";
 
   return_type_t<T_y, T_shape> lp(0.0);
   const auto& y_ref = to_ref(y);

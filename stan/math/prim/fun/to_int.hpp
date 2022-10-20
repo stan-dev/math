@@ -40,7 +40,7 @@ inline T to_int(T x) {
  */
 template <typename T, require_floating_point_t<T>* = nullptr>
 inline int to_int(T x) {
-  static const char* function = "to_int";
+  static constexpr const char* function = "to_int";
   check_bounded(function, "x", x, std::numeric_limits<int>::min(),
                 std::numeric_limits<int>::max());
   return static_cast<int>(x);

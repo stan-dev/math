@@ -62,7 +62,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   using T_partials_array = typename Eigen::Array<T_partials_return, -1, -1>;
   using T_theta_ref = ref_type_t<T_prob>;
   using T_alpha_ref = ref_type_t<T_prior_size>;
-  static const char* function = "dirichlet_lpdf";
+  static constexpr const char* function = "dirichlet_lpdf";
 
   T_theta_ref theta_ref = theta;
   T_alpha_ref alpha_ref = alpha;

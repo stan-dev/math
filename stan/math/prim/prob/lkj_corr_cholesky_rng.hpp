@@ -11,7 +11,7 @@ namespace math {
 
 template <class RNG>
 inline Eigen::MatrixXd lkj_corr_cholesky_rng(size_t K, double eta, RNG& rng) {
-  static const char* function = "lkj_corr_cholesky_rng";
+  static constexpr const char* function = "lkj_corr_cholesky_rng";
   check_positive(function, "Shape parameter", eta);
 
   Eigen::ArrayXd CPCs((K * (K - 1)) / 2);

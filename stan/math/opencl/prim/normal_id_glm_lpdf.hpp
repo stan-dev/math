@@ -68,7 +68,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   constexpr bool is_sigma_vector = !is_stan_scalar<T_sigma_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
   using std::isfinite;
-  static const char* function = "normal_id_glm_lpdf(OpenCL)";
+  static constexpr const char* function = "normal_id_glm_lpdf(OpenCL)";
 
   const size_t N = x.rows();
   const size_t M = x.cols();

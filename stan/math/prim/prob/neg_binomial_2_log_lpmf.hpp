@@ -33,7 +33,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   using T_n_ref = ref_type_t<T_n>;
   using T_eta_ref = ref_type_t<T_log_location>;
   using T_phi_ref = ref_type_t<T_precision>;
-  static const char* function = "neg_binomial_2_log_lpmf";
+  static constexpr const char* function = "neg_binomial_2_log_lpmf";
   check_consistent_sizes(function, "Failures variable", n,
                          "Log location parameter", eta, "Precision parameter",
                          phi);
