@@ -122,7 +122,7 @@ static constexpr const char* neg_rect_lower_tri_multiply_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 /** \ingroup opencl_kernels

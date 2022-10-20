@@ -97,7 +97,7 @@ static constexpr const char* tridiagonalization_householder_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 // \cond
@@ -165,7 +165,7 @@ static constexpr const char* tridiagonalization_v_step_1_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 // \cond
@@ -245,7 +245,7 @@ static constexpr const char* tridiagonalization_v_step_2_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 // \cond
@@ -303,7 +303,7 @@ static constexpr const char* tridiagonalization_v_step_3_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
