@@ -37,6 +37,7 @@ pipeline {
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
         booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
+        booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)')
     }
     options {
         skipDefaultCheckout()
@@ -220,10 +221,14 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=0 >> make/local"
+
                         script {
-                            runTests("test/unit/math/rev", false)
-                            runTests("test/unit/math/fwd", false)
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
+
+                            runTests("test/unit/math/rev", true)
+                            runTests("test/unit/math/fwd", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -244,8 +249,10 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=1 >> make/local"
                         script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
                             runTests("test/unit/math/mix", true)
                         }
                     }
@@ -267,8 +274,10 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "echo O=0 >> make/local"
                         script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
                             runTests("test/unit/math/prim", true)
@@ -291,10 +300,12 @@ pipeline {
                             sh """
                                 echo CXX=${CLANG_CXX} -Werror > make/local
                                 echo STAN_OPENCL=true >> make/local
-                                echo O=1 >> make/local
                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
                             """
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
                             runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
