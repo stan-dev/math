@@ -67,6 +67,7 @@ TYPED_TEST_P(harmonic_oscillator_bad_ode_test, bad_ode_error) {
   this->test_bad_ode();
 }
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_bad_ode_test, bad_ode_error);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanShoOdeError, harmonic_oscillator_bad_ode_test,
+INSTANTIATE_TYPED_TEST_SUITE_P(StanShoOdeError,
+                               harmonic_oscillator_bad_ode_test,
                                harmonic_oscillator_integrate_ode_test_types);
 }  // namespace sho_ode_typed_error_test
