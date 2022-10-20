@@ -46,14 +46,15 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs -j2
+      run: |
+        Add-Content make\local "O=1`n"
+        mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run prim and rev unit tests
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/prim
@@ -94,7 +95,9 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs -j2
+      run: |
+        Add-Content make\local "O=1`n"
+        mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -104,7 +107,6 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         python.exe runTests.py test/unit/math/fwd -j2
         python.exe runTests.py test/unit/math/mix/core -j2
         python.exe runTests.py test/unit/math/mix/functor -j2
@@ -146,14 +148,15 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs -j2
+      run: |
+        Add-Content make\local "O=1`n"
+        mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run mix/fun unit tests
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
@@ -193,14 +196,15 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs -j2
+      run: |
+        Add-Content make\local "O=1`n"
+        mingw32-make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run mix/fun unit tests
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
