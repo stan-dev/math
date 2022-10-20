@@ -160,7 +160,7 @@ jobs:
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python.exe runTests.py $MixFunTests[0..$HalfNumberTests] -j2
+        python.exe runTests.py $MixFunTests[0..$HalfNumberTests]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
@@ -208,7 +208,7 @@ jobs:
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
         $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)] -j2
+        python.exe runTests.py $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
