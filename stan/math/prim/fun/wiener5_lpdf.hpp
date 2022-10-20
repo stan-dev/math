@@ -415,8 +415,8 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
   using std::log;
   using std::pow;
   using std::sqrt;
-  
-  static const double TWO_LOG_PI = 2.0 * LOG_PI; 
+
+  static const double TWO_LOG_PI = 2.0 * LOG_PI;
 
   T_return_type kll, kss, ans, v, w;
   T_return_type sign = -1;
@@ -452,8 +452,8 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
 
   // calculate number of terms kll needed for large t
   K1 = sqrt(2.0 / q_asq) / pi();
-  u_eps = fmin(-1.0, log(4.0 / 9.0) + TWO_LOG_PI + 3.0 * log(q_asq)
-                         + 2.0 * (err - lg1));
+  u_eps = fmin(
+      -1.0, log(4.0 / 9.0) + TWO_LOG_PI + 3.0 * log(q_asq) + 2.0 * (err - lg1));
   arg = -(u_eps - sqrt(-2.0 * u_eps - 2.0));
   K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / q_asq) : K1;
   kll = ceil(fmax(K1, K2));

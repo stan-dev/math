@@ -34,9 +34,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   using T_sv_ref = ref_type_t<T_sv>;
   using T_sw_ref = ref_type_t<T_sw>;
   using T_st0_ref = ref_type_t<T_st0>;
-  
-  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO; 
-  static constexpr double LOG_POINT1 = -1; 
+
+  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
+  static constexpr double LOG_POINT1 = -1;
 
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
@@ -199,7 +199,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
         T_partials_return deriv_a
             = internal::dadwiener5(y_val - t0_val, alpha_val, delta_val,
                                    beta_val, sv_val, labstol_wiener5, 0);
-        if (labstol_wiener5 > log(fabs(deriv_a)) + dens + lerror_bound - LOG_TWO)
+        if (labstol_wiener5
+            > log(fabs(deriv_a)) + dens + lerror_bound - LOG_TWO)
           deriv_a = internal::dadwiener5(
               y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
               log(fabs(deriv_a)) + dens + lerror_bound - LOG_FOUR, 0);
@@ -213,7 +214,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
         T_partials_return deriv_w
             = internal::dwdwiener5(y_val - t0_val, alpha_val, delta_val,
                                    beta_val, sv_val, labstol_wiener5, 0);
-        if (labstol_wiener5 > log(fabs(deriv_w)) + dens + lerror_bound - LOG_TWO)
+        if (labstol_wiener5
+            > log(fabs(deriv_w)) + dens + lerror_bound - LOG_TWO)
           deriv_w = internal::dwdwiener5(
               y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
               log(fabs(deriv_w)) + dens + lerror_bound - LOG_FOUR, 0);
@@ -481,8 +483,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
             f = exp(internal::dwiener5(y_val - (t0_val + st0_val), alpha_val,
                                        delta_val, beta_val, sv_val,
                                        labstol_wiener5));
-            if (labstol_wiener5
-                > log(fabs(f) + log(st0_val) - LOG_TWO + lerror_bound - LOG_TWO))
+            if (labstol_wiener5 > log(fabs(f) + log(st0_val) - LOG_TWO
+                                      + lerror_bound - LOG_TWO))
               f = exp(internal::dwiener5(y_val - (t0_val + st0_val), alpha_val,
                                          delta_val, beta_val, sv_val,
                                          lerror_bound - LOG_TWO + log(st0_val)
