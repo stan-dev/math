@@ -21,7 +21,7 @@ namespace internal {
 using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
 using MatrixXdd = Eigen::Matrix<double_d, -1, -1>;
 
-static constexpr double_d perturbation_range = 1e-20;
+static const double_d perturbation_range = 1e-20;
 
 /**
  * Generates a random number for perturbing a relatively robust representation
@@ -29,8 +29,8 @@ static constexpr double_d perturbation_range = 1e-20;
  * / 2` and `1 + perturbation_range / 2`.
  */
 inline double_d get_random_perturbation_multiplier() {
-  static constexpr double_d rand_norm = perturbation_range / RAND_MAX;
-  static constexpr double_d almost_one = 1 - perturbation_range * 0.5;
+  static const double_d rand_norm = perturbation_range / RAND_MAX;
+  static const double_d almost_one = 1 - perturbation_range * 0.5;
   return almost_one + std::rand() * rand_norm;
 }
 
