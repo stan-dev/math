@@ -123,9 +123,10 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
     }
     // Max error in interpolated form : 2.437e-18
     // Max Error found at double precision = Poly : 1.216719e-16
-    static constexpr double P[5] = {3.98942280401432905e-01, 4.98677850491434560e-02,
-                               2.80506308916506102e-02, 2.92179096853915176e-02,
-                               4.53371208762579442e-02};
+    static constexpr double P[5]
+        = {3.98942280401432905e-01, 4.98677850491434560e-02,
+           2.80506308916506102e-02, 2.92179096853915176e-02,
+           4.53371208762579442e-02};
     return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
   }
   if (v == 1) {  // WARNING: will not autodiff for v = 1 correctly
