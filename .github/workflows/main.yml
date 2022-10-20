@@ -53,7 +53,7 @@ jobs:
     - name: Run prim and rev unit tests
       shell: powershell
       run: |
-        Add-Content make\local "O=0`n"
+        Add-Content make\local "O=1`n"
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/prim
@@ -104,7 +104,7 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
-        Add-Content make\local "O=0`n"
+        Add-Content make\local "O=1`n"
         python.exe runTests.py test/unit/math/fwd
         python.exe runTests.py test/unit/math/mix/core
         python.exe runTests.py test/unit/math/mix/functor
