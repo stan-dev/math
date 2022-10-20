@@ -141,15 +141,8 @@ static constexpr const char* indexing_rev_local_independent_kernel_code = STRING
         for (int j = 2; j < lsize; j++) {
           p += adj_loc[i + j * adj_size];
         }
-        adj_loc[i] += p;
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      for (int i = lid; i < adj_size; i += lsize) {
-        atomic_add_double(adj + i, adj_loc[i]);
-      }
-    }
-    // \cond
-);
+        // \cond
+    );
 // \endcond
 
 /** \ingroup opencl_kernels

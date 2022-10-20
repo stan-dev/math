@@ -376,7 +376,9 @@ class results_cl {
     using impl = typename internal::multi_result_kernel_internal<
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
-    static constexpr bool require_specific_local_size = stan::math::disjunction<std::decay_t<T_expressions>::Deriv::require_specific_local_size...>::value;
+    static constexpr bool require_specific_local_size
+        = stan::math::disjunction<std::decay_t<
+            T_expressions>::Deriv::require_specific_local_size...>::value;
 
     name_generator ng;
     std::map<const void*, const char*> generated;
@@ -441,12 +443,15 @@ class results_cl {
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
 
-    static constexpr bool any_output = stan::math::disjunction<!is_without_output<std::decay_t<T_expressions>>::value...>::value;
+    static constexpr bool any_output = stan::math::disjunction<
+        !is_without_output<std::decay_t<T_expressions>>::value...>::value;
     if (!any_output) {
       return;
     }
 
-    static constexpr bool require_specific_local_size = stan::math::disjunction<std::decay_t<T_expressions>::Deriv::require_specific_local_size...>::value;
+    static constexpr bool require_specific_local_size
+        = stan::math::disjunction<std::decay_t<
+            T_expressions>::Deriv::require_specific_local_size...>::value;
 
     int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
     int n_cols = std::get<0>(assignment_pairs).second.thread_cols();
