@@ -102,7 +102,8 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
                                indexing_rev_local_atomic_kernel_code});
 
 // \cond
-static constexpr const char* indexing_rev_local_independent_kernel_code = STRINGIFY(
+static constexpr const char* indexing_rev_local_independent_kernel_code =
+ STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *
@@ -142,7 +143,7 @@ static constexpr const char* indexing_rev_local_independent_kernel_code = STRING
       p += adj_loc[i + j * adj_size];
     }
     // \cond
-    );
+    );  // NOLINT(whitespace/parens)
     // \endcond
 
     /** \ingroup opencl_kernels
