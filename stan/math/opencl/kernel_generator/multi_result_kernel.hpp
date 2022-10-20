@@ -377,7 +377,7 @@ class results_cl {
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
     static constexpr bool require_specific_local_size
-        = stan::math::disjunction<stan::math::bool_constant<std::decay_t<
+        = stan::math::disjunction<stan::bool_constant<std::decay_t<
             T_expressions>::Deriv::require_specific_local_size>...>::value;
 
     name_generator ng;
@@ -444,13 +444,13 @@ class results_cl {
         T_res...>::template inner<T_expressions...>;
 
     static constexpr bool any_output = stan::math::disjunction<
-        stan::math::bool_constant<!is_without_output<std::decay_t<T_expressions>>::value>...>::value;
+        stan::bool_constant<!is_without_output<std::decay_t<T_expressions>>::value>...>::value;
     if (!any_output) {
       return;
     }
 
     static constexpr bool require_specific_local_size
-        = stan::math::disjunction<stan::math::bool_constant<std::decay_t<
+        = stan::math::disjunction<stan::bool_constant<std::decay_t<
             T_expressions>::Deriv::require_specific_local_size>...>::value;
 
     int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
