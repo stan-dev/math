@@ -17,7 +17,7 @@ STAN_REGISTER_MAP_RECT(3, hard_work)
 STAN_REGISTER_MAP_RECT(4, hard_work)
 STAN_REGISTER_MAP_RECT(5, hard_work)
 
-struct map_rect : public ::testing::Test {
+struct map_rect4 : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
@@ -39,7 +39,7 @@ struct map_rect : public ::testing::Test {
   }
 };
 
-TEST_F(map_rect, no_job_input_ok_dd) {
+TEST_F(map_rect4, no_job_input_ok_dd) {
   job_params_d.resize(0);
   x_i.resize(0);
   x_r.resize(0);
@@ -48,7 +48,7 @@ TEST_F(map_rect, no_job_input_ok_dd) {
                                                       job_params_d, x_r, x_i)));
 }
 
-TEST_F(map_rect, size_mismatch_job_params_dd) {
+TEST_F(map_rect4, size_mismatch_job_params_dd) {
   job_params_d.pop_back();
 
   EXPECT_THROW((stan::math::map_rect<1, hard_work>(shared_params_d,
@@ -56,7 +56,7 @@ TEST_F(map_rect, size_mismatch_job_params_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect, size_mismatch_real_data_dd) {
+TEST_F(map_rect4, size_mismatch_real_data_dd) {
   x_r.pop_back();
 
   EXPECT_THROW((stan::math::map_rect<2, hard_work>(shared_params_d,
@@ -64,7 +64,7 @@ TEST_F(map_rect, size_mismatch_real_data_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect, size_mismatch_int_data_dd) {
+TEST_F(map_rect4, size_mismatch_int_data_dd) {
   x_i.pop_back();
 
   EXPECT_THROW((stan::math::map_rect<3, hard_work>(shared_params_d,
@@ -72,7 +72,7 @@ TEST_F(map_rect, size_mismatch_int_data_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect, wrong_size_job_params_dd) {
+TEST_F(map_rect4, wrong_size_job_params_dd) {
   job_params_d[1].resize(5);
 
   EXPECT_THROW((stan::math::map_rect<1, hard_work>(shared_params_d,
@@ -80,7 +80,7 @@ TEST_F(map_rect, wrong_size_job_params_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect, wrong_size_real_data_dd) {
+TEST_F(map_rect4, wrong_size_real_data_dd) {
   x_r[1] = std::vector<double>(5, 1);
 
   EXPECT_THROW((stan::math::map_rect<4, hard_work>(shared_params_d,
@@ -88,7 +88,7 @@ TEST_F(map_rect, wrong_size_real_data_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect, wrong_size_int_data_dd) {
+TEST_F(map_rect4, wrong_size_int_data_dd) {
   x_i[1] = std::vector<int>(5, 1);
 
   EXPECT_THROW((stan::math::map_rect<5, hard_work>(shared_params_d,

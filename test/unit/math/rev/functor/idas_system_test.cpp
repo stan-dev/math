@@ -13,6 +13,8 @@
 #include <vector>
 #include <limits>
 
+namespace idas_system_test {
+
 static sundials::Context sundials_context;
 
 struct chemical_kinetics {
@@ -133,3 +135,4 @@ TEST_F(StanIntegrateDAETest, dae_system_test) {
   auto d3_fwd = dae3.use_fwd_sens;
   EXPECT_TRUE(d3_fwd);
 }
+}  // namespace idas_system_test
