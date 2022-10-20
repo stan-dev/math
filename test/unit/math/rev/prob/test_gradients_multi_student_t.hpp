@@ -80,10 +80,10 @@ std::vector<double> finite_diffs_multi_normal3(
 template <typename F, typename T_y, typename T_mu, typename T_sigma,
           typename T_nu>
 std::vector<double> grad_multi_normal3(const F& fun,
-                                      const std::vector<T_y>& vec_y,
-                                      const std::vector<T_mu>& vec_mu,
-                                      const std::vector<T_sigma>& vec_sigma,
-                                      const T_nu& nu) {
+                                       const std::vector<T_y>& vec_y,
+                                       const std::vector<T_mu>& vec_mu,
+                                       const std::vector<T_sigma>& vec_sigma,
+                                       const T_nu& nu) {
   stan::math::var fx = fun(vec_y, vec_mu, vec_sigma, nu);
   std::vector<double> grad;
   std::vector<stan::math::var> vec_vars;
