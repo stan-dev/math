@@ -1,6 +1,6 @@
 Thanks for submitting a pull request! Please remove this text when submitting.
 
-Start by filling in the Summary, Tests, and Side Effects sections of this pull request and then work through the handy checklist at the bottom. If anything significant is missing, the pull request may be closed until it's ready. The full guidebook on how pull requests are reviewed is here: [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer-Doc#code-review-guidelines).
+Start by filling in the Summary, Tests, and Side Effects sections of this pull request and then work through the handy checklist at the bottom. If anything significant is missing, the pull request may be closed until it's ready. The full guidebook on how pull requests are reviewed is here: [Code Review Guidelines](https://github.com/stan-dev/stan/wiki/Developer-process-overview#code-review-guidelines).
 
 ## Summary
 
@@ -40,7 +40,7 @@ Replace this text with a short note on what will change if this pull request is 
     - header checks pass, (`make test-headers`)
     - dependencies checks pass, (`make test-math-dependencies`)
     - docs build, (`make doxygen`)
-    - code passes the built in [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality) checks (`make cpplint`)
+    - code passes the built in [C++ standards](https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms) checks (`make cpplint`)
 
 - [ ] the code is written in idiomatic C++ and changes are documented in the doxygen
 

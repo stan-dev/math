@@ -236,8 +236,7 @@ def runTest(name, run_all=False, mpi=False, j=1):
     if mpi:
         if not commandExists("mpirun"):
             stopErr(
-                "Error: need to have mpi (and mpirun) installed to run mpi tests"
-                + "\nCheck https://github.com/stan-dev/stan/wiki/Parallelism-using-MPI-in-Stan for more details.",
+                "Error: need to have mpi (and mpirun) installed to run mpi tests",
                 -1,
             )
         if "mpi_" in name:
