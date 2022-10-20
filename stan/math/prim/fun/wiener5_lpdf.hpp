@@ -78,7 +78,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwiener5(
   K2 = 0.0;
   T_return_type temp_ = -2.0 * (log(pi() * q_asq) + el);
   if (temp_ >= 0)
-    K2 = sqrt(temp_ / (pow(pi(), 2) * q_asq));
+    K2 = sqrt(temp_ / (PISQ * q_asq));
   kll = ceil(fmax(K1, K2));
 
   // if small t is better
@@ -415,6 +415,8 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
   using std::log;
   using std::pow;
   using std::sqrt;
+  
+  static const double TWO_LOG_PI = 2.0 * LOG_PI; 
 
   T_return_type kll, kss, ans, v, w;
   T_return_type sign = -1;
@@ -450,7 +452,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
 
   // calculate number of terms kll needed for large t
   K1 = sqrt(2.0 / q_asq) / pi();
-  u_eps = fmin(-1.0, log(4.0 / 9.0) + 2.0 * LOG_PI + 3.0 * log(q_asq)
+  u_eps = fmin(-1.0, log(4.0 / 9.0) + TWO_LOG_PI + 3.0 * log(q_asq)
                          + 2.0 * (err - lg1));
   arg = -(u_eps - sqrt(-2.0 * u_eps - 2.0));
   K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / q_asq) : K1;
@@ -520,7 +522,7 @@ return_type_t<T_y, T_alpha, T_delta, T_beta, T_sv> dwdwiener5(
       erg = log_diff_exp(fplus, fminus);
     }
 
-    ans = ans0 + newsign * exp(erg - ll + 2.0 * LOG_PI);
+    ans = ans0 + newsign * exp(erg - ll + TWO_LOG_PI);
   }
   if (normal_or_log == 1)
     return ans * sign * exp(ld);  // derivative of f for hcubature
