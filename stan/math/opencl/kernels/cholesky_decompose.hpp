@@ -30,7 +30,7 @@ static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      *
      */
-    __kernel void cholesky_decompose(__global double *A, int rows) {
+    __kernel void cholesky_decompose(__global double* A, int rows) {
       const int local_index = get_local_id(0);
       // The following code is the sequential version of the inplace
       // cholesky decomposition. Only the innermost loops are parallelized. The

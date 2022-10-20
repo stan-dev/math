@@ -10,33 +10,36 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static constexpr const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Calculates C = -B * A where B is rectangular and A is a lower
-     * triangular.
-     *  For a full guide to the inverse lower triangular kernels see the link
-     * <a
-     href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
-     *
-     * ![Inverse Calculation](https://goo.gl/6jBjEG)
-     *
-     * Graphically, this kernel calculates `-temp * C1` where temp is the
-     *   C2 * A3 calculation from
-     *  \link kernels/inv_lower_tri_multiply.hpp inv_lower_tri_multiply()
-     \endlink
-     * The kernel is executed using (N, N, m) threads, where N is the size of
-     *  the input matrices.
+static constexpr const char* neg_rect_lower_tri_multiply_kernel_code
+    = STRINGIFY(
+        // \endcond
+        /** \ingroup opencl_kernels
+         * Calculates C = -B * A where B is rectangular and A is a lower
+         * triangular.
+         *  For a full guide to the inverse lower triangular kernels see the
+         link
+         * <a
+         href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
+         *
+         * ![Inverse Calculation](https://goo.gl/6jBjEG)
+         *
+         * Graphically, this kernel calculates `-temp * C1` where temp is the
+         *   C2 * A3 calculation from
+         *  \link kernels/inv_lower_tri_multiply.hpp inv_lower_tri_multiply()
+         \endlink
+         * The kernel is executed using (N, N, m) threads, where N is the size
+         of
+         *  the input matrices.
 
-         * @param[in, out] A Input matrix that is being inverted.
-         * @param[in] temp Temporary matrix with the intermediate results.
-         * @param A_rows Number of rows for A.
-         * @param rows The number of rows in a single matrix of the batch
-         * @note Code is a <code>const char*</code> held in
-         *  neg_rect_lower_tri_multiply_kernel_code
-         *  Used in math/opencl/tri_inverse.hpp.
-         *  This kernel uses the helper macros available in helpers.cl.
-         */
+             * @param[in, out] A Input matrix that is being inverted.
+             * @param[in] temp Temporary matrix with the intermediate results.
+             * @param A_rows Number of rows for A.
+             * @param rows The number of rows in a single matrix of the batch
+             * @note Code is a <code>const char*</code> held in
+             *  neg_rect_lower_tri_multiply_kernel_code
+             *  Used in math/opencl/tri_inverse.hpp.
+             *  This kernel uses the helper macros available in helpers.cl.
+             */
         __kernel void neg_rect_lower_tri_multiply(
             __global double* A, const __global double* temp, const int A_rows,
             const int rows) {
