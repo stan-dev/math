@@ -443,8 +443,9 @@ class results_cl {
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
 
-    static constexpr bool any_output = stan::math::disjunction<
-        stan::bool_constant<!is_without_output<std::decay_t<T_expressions>>::value>...>::value;
+    static constexpr bool any_output
+        = stan::math::disjunction<stan::bool_constant<
+            !is_without_output<std::decay_t<T_expressions>>::value>...>::value;
     if (!any_output) {
       return;
     }
