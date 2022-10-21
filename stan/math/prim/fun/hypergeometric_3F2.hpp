@@ -54,7 +54,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
 
     log_t += p + log_z;
     std::forward_as_tuple(t_acc, acc_sign)
-      = log_sum_exp_signed(t_acc, acc_sign, log_t, t_sign);
+        = log_sum_exp_signed(t_acc, acc_sign, log_t, t_sign);
 
     if (is_inf(t_acc)) {
       throw_domain_error("hypergeometric_3F2", "sum (output)", t_acc,
