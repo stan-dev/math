@@ -140,7 +140,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   static constexpr double WIENER_ERR = 0.000001;
   static constexpr double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
-  static constexpr double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
+  static constexpr double LOG_PI_LOG_WIENER_ERR = LOG_PI + -13.81551055796427410410794872810618524;
   static constexpr double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
       = 2.0 * SQRT_TWO_PI * WIENER_ERR;
   static constexpr double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
