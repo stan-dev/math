@@ -227,8 +227,8 @@ pipeline {
                                 sh "echo O=0 >> make/local"
                             }
 
-                            runTests("test/unit/math/rev", false) // TODO(bward): try to enable
-                            runTests("test/unit/math/fwd", false)
+                            runTests("test/unit/math/rev")
+                            runTests("test/unit/math/fwd")
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }

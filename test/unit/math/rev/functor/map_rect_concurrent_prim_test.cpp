@@ -14,12 +14,10 @@
 #include <iostream>
 #include <vector>
 
-namespace map_rect_con_prim_test {
-
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
-struct map_rect : public ::testing::Test {
+struct map_rect_con_prim : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
@@ -42,7 +40,7 @@ struct map_rect : public ::testing::Test {
   }
 };
 
-TEST_F(map_rect, concurrent_ragged_return_size_dd) {
+TEST_F(map_rect_con_prim, concurrent_ragged_return_size_dd) {
   Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
 
@@ -56,7 +54,7 @@ TEST_F(map_rect, concurrent_ragged_return_size_dd) {
   EXPECT_EQ(res2.size(), 2 * N + 1);
 }
 
-TEST_F(map_rect, concurrent_eval_ok_dd) {
+TEST_F(map_rect_con_prim, concurrent_eval_ok_dd) {
   Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   for (int i = 0, j = 0; i < N; i++) {
@@ -68,4 +66,3 @@ TEST_F(map_rect, concurrent_eval_ok_dd) {
                         + 2 * shared_params_d(0) + shared_params_d(1));
   }
 }
-}  // namespace map_rect_con_prim_test
