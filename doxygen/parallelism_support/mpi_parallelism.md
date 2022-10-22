@@ -4,7 +4,7 @@ The [message passing interface (MPI)](https://en.wikipedia.org/wiki/Message_Pass
 
 The target audience for MPI are those with large computer clusters. For users looking for parallel computation on a single computer, please turn to a [[threading based approach|Threading Support]], which is easier to use and provides similar performance gains.
 
-# Requirements
+# Requirements {#mpi-requirements}
 
 A base MPI installation must be installed on the system. See the [instructions from `boost.mpi`](http://www.boost.org/doc/libs/1_66_0/doc/html/mpi/getting_started.html#mpi.mpi_impl) to verify that there is a working MPI system.
 
@@ -48,7 +48,7 @@ We strongly recommend to use the `mpicxx` command to build any program using MPI
 
 Stan uses the `boost.mpi` library to interface with the installed MPI implementation. `boost.mpi` is built automatically by the Math library when the Math library is configured for MPI. To configure MPI for the Math library, please proceed ass follows:
 
-0. Ensure that a base MPI installation is available and accessible on the system. See [Requirements](#requirements).
+0. Ensure that a base MPI installation is available and accessible on the system. See [Requirements](#mpi-requirements).
 1. Open a text file called `make/local`; if it does not exist, create one.
 2. Add these lines to the `make/local` file:
 ```
