@@ -24,7 +24,7 @@ TEST(mathMixScalFun, atan2) {
   };
 
   // finite differences fails for
-  // infinite inputs 
+  // infinite inputs
   // stan::test::expect_common_nonzero_binary(f);
 
   stan::test::expect_ad(f, 1.0, 1.0);
