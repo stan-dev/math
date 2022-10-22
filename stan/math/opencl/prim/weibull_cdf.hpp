@@ -67,6 +67,7 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
   auto exp_n = exp(-pow_n);
   auto cdf_n = 1.0 - exp_n;
   auto cdf_expr = colwise_prod(cdf_n);
+  auto cdf_zero_expr = colwise_max(cast<char>(cdf_expr == 0));
 
   auto rep_deriv = elt_multiply(exp_n, pow_n);
   auto deriv_y_sigma = elt_multiply(rep_deriv, alpha_val);
@@ -75,19 +76,26 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
   auto alpha_deriv_tmp
       = elt_multiply(rep_deriv, log(elt_divide(y_val, sigma_val)));
 
+  matrix_cl<char> cdf_zero_expr_cl;
   matrix_cl<double> cdf_cl;
   matrix_cl<double> alpha_deriv_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
   results(check_y_nonnegative, check_alpha_positive_finite,
-          check_sigma_positive_finite, cdf_cl, y_deriv_cl, alpha_deriv_cl,
+          check_sigma_positive_finite, cdf_zero_expr_cl,
+          cdf_cl, y_deriv_cl, alpha_deriv_cl,
           sigma_deriv_cl)
       = expressions(y_nonnegative, alpha_positive_finite_expr,
+                    cdf_zero_expr,
                     sigma_positive_finite_expr, cdf_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
+
+ if (from_matrix_cl(cdf_zero_expr).any()) {
+    return LOG_ZERO;
+  }
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
@@ -105,25 +113,13 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
       ops_partials(y_col, alpha_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
-    if (cdf_expr == 0) {
-      ops_partials.edge1_.partials_ = 0;
-    } else {
       ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
-    }
   }
   if (!is_constant<T_shape_cl>::value) {
-    if (cdf_expr == 0) {
-      ops_partials.edge2_.partials_ = 0;
-    } else {
       ops_partials.edge2_.partials_ = std::move(alpha_deriv_cl);
-    }
   }
   if (!is_constant<T_scale_cl>::value) {
-    if (cdf_expr == 0) {
-      ops_partials.edge3_.partials_ = 0;
-    } else {
       ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
-    }
   }
   return ops_partials.build(cdf);
 }
