@@ -42,6 +42,7 @@ pipeline {
     options {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
+	parallelsAlwaysFailFast()
     }
     environment {
         STAN_NUM_THREADS = 4
