@@ -109,7 +109,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
  * @param[in] z z (is always called with 1 from beta binomial cdfs)
  * @param[in] precision precision of the infinite sum. defaults to 1e-6
  * @param[in] max_steps number of steps to take. defaults to 1e5
- * The 3F2 generalized hypergeometric function applied to the
+ * @return The 3F2 generalized hypergeometric function applied to the
  *  arguments {a1, a2, a3}, {b1, b2}
  */
 template <typename Ta, typename Tb, typename Tz,
@@ -138,7 +138,8 @@ auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
  * @param[in] z z (is always called with 1 from beta binomial cdfs)
  * @param[in] precision precision of the infinite sum. defaults to 1e-6
  * @param[in] max_steps number of steps to take. defaults to 1e5
- * @return Generalized hypergeometric function applied to the inputs
+ * @return The 3F2 generalized hypergeometric function applied to the
+ *  arguments {a1, a2, a3}, {b1, b2}
  */
 template <typename Ta, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
