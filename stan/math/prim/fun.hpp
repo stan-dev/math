@@ -46,6 +46,7 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
+#include <stan/math/prim/fun/complex_schur_decompose.hpp>
 #include <stan/math/prim/fun/conj.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
@@ -196,6 +197,7 @@
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp_signed.hpp>
 #include <stan/math/prim/fun/logical_and.hpp>
 #include <stan/math/prim/fun/logical_eq.hpp>
 #include <stan/math/prim/fun/logical_gt.hpp>

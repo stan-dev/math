@@ -12,7 +12,7 @@ TEST(mathMixMatFun, acos) {
   // can't autodiff acos through integers
   for (auto x : stan::test::internal::common_nonzero_args())
     stan::test::expect_unary_vectorized(f, x);
-  expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+  expect_unary_vectorized<stan::test::ScalarSupport::Real>(
       f, -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3,
       3.4, 4);
   for (double re : std::vector<double>{-0.2, 0, 0.3}) {
