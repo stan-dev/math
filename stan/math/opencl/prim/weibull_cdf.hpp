@@ -83,16 +83,16 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
   matrix_cl<double> sigma_deriv_cl;
 
   results(check_y_nonnegative, check_alpha_positive_finite,
-          check_sigma_positive_finite, cdf_zero_expr_cl, cdf_cl, y_deriv_cl,
+          check_sigma_positive_finite, cdf_cl, y_deriv_cl,
           alpha_deriv_cl, sigma_deriv_cl)
-      = expressions(y_nonnegative, alpha_positive_finite_expr, cdf_zero_expr,
+      = expressions(y_nonnegative, alpha_positive_finite_expr,
                     sigma_positive_finite_expr, cdf_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
 
   if (from_matrix_cl(cdf_zero_expr).any()) {
-    return LOG_ZERO;
+    return 0;
   }
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
