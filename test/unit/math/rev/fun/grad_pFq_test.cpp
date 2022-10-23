@@ -395,3 +395,32 @@ TEST(RevMath, grad_2F1_negative_z) {
   EXPECT_FLOAT_EQ(0.0677809985598383, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(0.865295247272367, std::get<2>(grad_tuple));
 }
+
+TEST(RevMath, grad_3F2_cross_zero) {
+  using stan::math::grad_F32;
+  using stan::math::grad_pFq;
+  using stan::math::hypergeometric_3F2;
+  using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
+
+  vector_v a_v(3);
+  a_v << 1, 1, -1;
+
+  vector_v b_v(2);
+  b_v << 2, 2;
+
+  var z_v = 0.292893;
+
+  double g_calc[6];
+  grad_F32(g_calc, 1.0, 1.0, -1.0, 2.0, 2.0, 0.292893);
+
+  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+
+  EXPECT_FLOAT_EQ(g_calc[0], std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(g_calc[1], std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(g_calc[2], std::get<0>(grad_tuple)[2]);
+  EXPECT_FLOAT_EQ(g_calc[3], std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(g_calc[4], std::get<1>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
+}
