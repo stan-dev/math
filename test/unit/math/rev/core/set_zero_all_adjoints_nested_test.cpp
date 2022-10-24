@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, set_zero_all_adjoints_nested_outside) {
+TEST(AgradRevZeroNested, set_zero_all_adjoints_nested_outside) {
   stan::math::var chaining = new stan::math::vari(1.0, true);
   chaining.adj() = 2.0;
 

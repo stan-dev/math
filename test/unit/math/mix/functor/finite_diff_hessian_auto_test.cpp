@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
+namespace finite_diff_hessian_auto_test {
 struct norm_functor {
   template <typename T>
   inline T operator()(
@@ -264,3 +265,4 @@ TEST(AgradFiniteDiff, hessianZeroOneArg) {
   stan::math::internal::finite_diff_hessian_auto(sum_f, z_sum_vec, f_z_eval_sum,
                                                  f_z_grad_sum, f_z_hess_sum);
 }
+}  // namespace finite_diff_hessian_auto_test

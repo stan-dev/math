@@ -5,6 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace cauchy_lccdf_test {
 TEST(ProbDistributionsCauchyLccdf, error_checking) {
   int N = 3;
 
@@ -140,4 +141,6 @@ TEST(ProbDistributionsCauchyLccdf, opencl_matches_cpu_big) {
       cauchy_lccdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval());
 }
+}  // namespace cauchy_lccdf_test
+
 #endif
