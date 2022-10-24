@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/F32.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 
 namespace stan {
 namespace math {
@@ -53,19 +53,21 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
   T_return inv_d_(0);
 
   if (is_fvar<T1>::value) {
+    std::vector<T_return> da_a{a_val, a_val, one_m_b};
+    std::vector<T_return> da_b{ap1, ap1};
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
-    auto da2
-        = exp(a_val * log_w + 2 * lgamma(a_val)
-              + log(F32(a_val, a_val, one_m_b, ap1, ap1, w)) - 2 * lgamma(ap1));
+    auto da2 = exp(a_val * log_w + 2 * lgamma(a_val)
+                   + log(hypergeometric_3F2(da_a, da_b, w)) - 2 * lgamma(ap1));
     auto da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                * (log_w - digamma(a_val) + digamma_apb);
     inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);
   }
 
   if (is_fvar<T2>::value) {
+    std::vector<T_return> db_a{b_val, b_val, one_m_a};
+    std::vector<T_return> db_b{bp1, bp1};
     auto db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
-    auto db2 = 2 * lgamma(b_val)
-               + log(F32(b_val, b_val, one_m_a, bp1, bp1, one_m_w))
+    auto db2 = 2 * lgamma(b_val) + log(hypergeometric_3F2(db_a, db_b, one_m_w))
                - 2 * lgamma(bp1) + b_val * log1m_w;
 
     auto db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
