@@ -12,8 +12,10 @@
 namespace stan {
 namespace math {
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
-          typename Op4 = double, typename Op5 = double,
-          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
+          typename Op4 = double, typename Op5 = double, typename Op6 = double,
+          typename Op7 = double, typename Op8 = double,
+          typename T_return_type
+          = return_type_t<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8>>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
@@ -70,7 +72,8 @@ class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   static constexpr int size() noexcept { return 0; }  // reverse mode
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
 };
 template <typename ViewElt, typename Op>
@@ -100,7 +103,7 @@ constexpr double
  *
  * This base template is instantiated when all operands are
  * primitives and we don't want to calculate derivatives at
- * all. So all Op1 - Op5 must be arithmetic primitives
+ * all. So all Op1 - Op8 must be arithmetic primitives
  * like int or double. This is controlled with the
  * T_return_type type parameter.
  *
@@ -109,12 +112,15 @@ constexpr double
  * @tparam Op3 type of the third operand
  * @tparam Op4 type of the fourth operand
  * @tparam Op5 type of the fifth operand
+ * @tparam Op6 type of the sixth operand
+ * @tparam Op7 type of the seventh operand
+ * @tparam Op8 type of the eighth operand
  * @tparam T_return_type return type of the expression. This defaults
  *   to calling a template metaprogram that calculates the scalar
- *   promotion of Op1..Op4
+ *   promotion of Op1..Op8
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-          typename T_return_type>
+          typename Op6, typename Op7, typename Op8, typename T_return_type>
 class operands_and_partials {
  public:
   explicit operands_and_partials(const Op1& /* op1 */) noexcept {}
@@ -126,6 +132,17 @@ class operands_and_partials {
   operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
                         const Op3& /* op3 */, const Op4& /* op4 */,
                         const Op5& /* op5 */) noexcept {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */,
+                        const Op5& /* op5 */, const Op6& /* op6 */) noexcept {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */,
+                        const Op5& /* op5 */, const Op6& /* op6 */,
+                        const Op7& /* op7 */) noexcept {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */,
+                        const Op5& /* op5 */, const Op6& /* op6 */,
+                        const Op7& /* op7 */, const Op8& /* op8 */) noexcept {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -148,6 +165,9 @@ class operands_and_partials {
   internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
   internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
   internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
+  internal::ops_partials_edge<double, std::decay_t<Op6>> edge6_;
+  internal::ops_partials_edge<double, std::decay_t<Op7>> edge7_;
+  internal::ops_partials_edge<double, std::decay_t<Op8>> edge8_;
 };
 
 }  // namespace math
