@@ -20,7 +20,7 @@ jobs:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: System Libs - prim and rev tests
+    name: System Libs - rev tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -46,11 +46,7 @@ jobs:
         echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
     - name: Run rev tests
       run: |
-        python runTests.py -j2 test/unit/*_test.cpp
-        python runTests.py -j2 test/unit/math/*_test.cpp
-        python runTests.py -j2 test/unit/math/prim
         python runTests.py -j2 test/unit/math/rev
-        python runTests.py -j2 test/unit/math/memory
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
       if: failure()
@@ -103,7 +99,7 @@ jobs:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: System Libs - opencl tests
+    name: System Libs - opencl prim tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -132,7 +128,7 @@ jobs:
         echo "STAN_OPENCL=true" >> make/local
     - name: Run opencl tests
       run: |
-        python runTests.py test/unit/math/opencl
+        python runTests.py test/unit/math/opencl/prim
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
       if: failure()
