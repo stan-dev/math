@@ -85,7 +85,7 @@ jobs:
         echo "SUNDIALS_INC=/usr" >> make/local
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
-    - name: Run rev tests
+    - name: Run fwd and non-fun mix tests
       run: |
         python runTests.py -j2 test/unit/math/fwd
         python runTests.py -j2 test/unit/math/mix/core
@@ -93,6 +93,46 @@ jobs:
         python runTests.py -j2 test/unit/math/mix/meta
         python runTests.py -j2 test/unit/math/mix/prob
         python runTests.py -j2 test/unit/math/mix/*_test.cpp
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
+  opencl:
+    permissions:
+      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
+      contents: read  # for actions/checkout to fetch code
+    name: System Libs - fwd and non-fun mix tests
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - name: Install system libraries
+      run: |
+        echo "deb http://archive.ubuntu.com/ubuntu focal main universe" | sudo tee -a /etc/apt/sources.list
+        sudo apt-get update
+        sudo apt-get install -y libeigen3-dev=3.3.7-2 libboost-all-dev libtbb-dev libsundials-dev ocl-icd-libopencl1 ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers
+        echo "EIGEN_INC=/usr/include/eigen3/" >> make/local
+        echo "BOOST_INC=/usr/include/" >> make/local
+        echo "TBB_INC=/usr/include/" >> make/local
+        echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
+        echo "TBB_INTERFACE_NEW=true" >> make/local
+        echo "SUNDIALS_INC=/usr" >> make/local
+        echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
+        echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
+        echo "OPENCL_INC=/usr/include/" >> make/local
+        echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
+        echo "STAN_OPENCL=true" >> make/local
+    - name: Run fwd and non-fun mix tests
+      run: |
+        python runTests.py -j2 test/unit/math/opencl
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
       if: failure()
