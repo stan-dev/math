@@ -103,7 +103,7 @@ jobs:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: System Libs - fwd and non-fun mix tests
+    name: System Libs - opencl tests
     runs-on: ubuntu-22.04
 
     steps:
