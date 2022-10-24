@@ -13,7 +13,9 @@
 #include <vector>
 #include <limits>
 
+#ifndef SUNDIALS_INTERFACE_OLD
 static sundials::Context sundials_context;
+#endif
 
 struct chemical_kinetics {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
