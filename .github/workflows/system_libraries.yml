@@ -20,7 +20,7 @@ jobs:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: Linking against system libraries
+    name: System Libs - prim and rev tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -61,7 +61,7 @@ jobs:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: Linking against system libraries
+    name: System Libs - fwd and non-fun mix tests
     runs-on: ubuntu-22.04
 
     steps:
