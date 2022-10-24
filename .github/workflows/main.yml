@@ -222,9 +222,21 @@ jobs:
     - uses: actions/setup-python@v4
     - name: Install system libraries
       run: |
-        sudo apt-get install -y libeigen3-dev libboost-all-dev libtbb-dev
+        sudo apt-get install -y libeigen3-dev libboost-all-dev libtbb-dev libsundials-dev
         echo "EIGEN_INC=/usr/include/eigen3/" >> make/local
-        echo "BOOST_INC=/usr/include/boost/" >> make/local
+        echo "BOOST_INC=/usr/include/" >> make/local
         echo "TBB_INC=/usr/include/" >> make/local
-        echo "TBB_LIB=/usr/lib/tbb" >> make/local
+        echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
         echo "TBB_INTERFACE_NEW=true" >> make/local
+        echo "SUNDIALS_INC=/usr" >> make/local
+        echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
+        echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
+    - name: Run rev tests
+      run:
+        python ./runTests.py -j2 test/unit/math/rev
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
