@@ -29,8 +29,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
       if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
 
-
-    steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
     - name: Install system libraries
