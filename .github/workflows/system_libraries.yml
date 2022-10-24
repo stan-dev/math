@@ -45,7 +45,7 @@ jobs:
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
     - name: Run rev tests
-      run:
+      run: |
         python runTests.py -j2 test/unit/*_test.cpp
         python runTests.py -j2 test/unit/math/*_test.cpp
         python runTests.py -j2 test/unit/math/prim
@@ -86,7 +86,7 @@ jobs:
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
     - name: Run rev tests
-      run:
+      run: |
         python runTests.py -j2 test/unit/math/fwd
         python runTests.py -j2 test/unit/math/mix/core
         python runTests.py -j2 test/unit/math/mix/functor
