@@ -87,6 +87,8 @@ $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 clean-sundials:
 	@echo '  cleaning sundials targets'
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+else
+LIBSUNDIALS := $(SUNDIALS_LIB)/libsundials_nvecserial.a $(SUNDIALS_LIB)/libsundials_cvodes.a $(SUNDIALS_LIB)/libsundials_idas.a $(SUNDIALS_LIB)/libsundials_kinsol.a
 endif
 
 ############################################################
