@@ -9,7 +9,9 @@
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
+#ifndef SUNDIALS_INTERFACE_OLD
 #include <sundials/sundials_context.h>
+#endif
 #include <ostream>
 #include <vector>
 #include <algorithm>
@@ -29,7 +31,9 @@ namespace math {
  */
 template <typename dae_type>
 struct idas_service {
+#ifndef SUNDIALS_INTERFACE_OLD
   sundials::Context sundials_context_;
+#endif
   int ns;
   N_Vector nv_yy;
   N_Vector nv_yp;
@@ -47,6 +51,7 @@ struct idas_service {
    * @param[in] f ODE RHS function
    */
   idas_service(double t0, dae_type& dae)
+#ifndef SUNDIALS_INTERFACE_OLD
       : sundials_context_(),
         ns(dae.ns),
         nv_yy(N_VNew_Serial(dae.N, sundials_context_)),
@@ -56,6 +61,16 @@ struct idas_service {
         mem(IDACreate(sundials_context_)),
         A(SUNDenseMatrix(dae.N, dae.N, sundials_context_)),
         LS(SUNLinSol_Dense(nv_yy, A, sundials_context_)) {
+#else
+      : ns(dae.ns),
+        nv_yy(N_VNew_Serial(dae.N)),
+        nv_yp(N_VNew_Serial(dae.N)),
+        nv_yys(nullptr),
+        nv_yps(nullptr),
+        mem(IDACreate()),
+        A(SUNDenseMatrix(dae.N, dae.N)),
+        LS(SUNLinSol_Dense(nv_yy, A)) {
+#endif
     const int n = dae.N;
     for (auto i = 0; i < n; ++i) {
       NV_Ith_S(nv_yy, i) = dae.dbl_yy[i];

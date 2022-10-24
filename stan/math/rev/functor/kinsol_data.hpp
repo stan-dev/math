@@ -6,7 +6,9 @@
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/functor/apply.hpp>
+#ifndef SUNDIALS_INTERFACE_OLD
 #include <sundials/sundials_context.h>
+#endif
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -36,7 +38,10 @@ class kinsol_system_data {
   typedef kinsol_system_data<F1, Args...> system_data;
 
  public:
+#ifndef SUNDIALS_INTERFACE_OLD
+  /** Sundials context **/
   sundials::Context sundials_context_;
+#endif
   N_Vector nv_x_;
   SUNMatrix J_;
   SUNLinearSolver LS_;
@@ -50,11 +55,18 @@ class kinsol_system_data {
         N_(x.size()),
         msgs_(msgs),
         args_tuple_(args...),
+#ifndef SUNDIALS_INTERFACE_OLD
         sundials_context_(),
         nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0], sundials_context_)),
         J_(SUNDenseMatrix(N_, N_, sundials_context_)),
         LS_(SUNLinSol_Dense(nv_x_, J_, sundials_context_)),
         kinsol_memory_(KINCreate(sundials_context_)) {}
+#else
+        nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
+        J_(SUNDenseMatrix(N_, N_)),
+        LS_(SUNLinSol_Dense(nv_x_, J_)),
+        kinsol_memory_(KINCreate()) {}
+#endif
 
   ~kinsol_system_data() {
     N_VDestroy_Serial(nv_x_);

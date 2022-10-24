@@ -20,7 +20,9 @@ namespace math {
  * IDAS DAE integrator.
  */
 class idas_integrator {
+#ifndef SUNDIALS_INTERFACE_OLD
   sundials::Context sundials_context_;
+#endif
 
   const double rtol_;
   const double atol_;
