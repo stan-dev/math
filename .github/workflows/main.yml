@@ -208,3 +208,17 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+  system-libraries:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - name: Install system libraries
+      run: |
+        sudo apt-get install -y libeigen3-dev libboost-all-dev libtbb-dev
+        echo "EIGEN_INC=/usr/include/eigen3/" >> make/local
+        echo "BOOST_INC=/usr/include/boost/" >> make/local
+        echo "TBB_INC=/usr/include/" >> make/local
+        echo "TBB_LIB=/usr/lib/tbb" >> make/local
+        echo "TBB_INTERFACE_NEW=true" >> make/local
