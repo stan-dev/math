@@ -130,9 +130,9 @@ jobs:
         echo "OPENCL_INC=/usr/include/" >> make/local
         echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "STAN_OPENCL=true" >> make/local
-    - name: Run fwd and non-fun mix tests
+    - name: Run opencl tests
       run: |
-        python runTests.py -j2 test/unit/math/opencl
+        python runTests.py test/unit/math/opencl
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v3
       if: failure()
