@@ -33,7 +33,7 @@ jobs:
     - uses: actions/setup-python@v4
     - name: Install system libraries
       run: |
-        echo "deb http://archive.ubuntu.com/ubuntu impish main universe" >> /etc/apt/sources.list
+        sudo echo "deb http://archive.ubuntu.com/ubuntu impish main universe" >> /etc/apt/sources.list
         sudo apt-get update
         sudo apt-get install -y libeigen3-dev=3.3.9-2 libboost-all-dev libtbb-dev libsundials-dev
         echo "EIGEN_INC=/usr/include/eigen3/" >> make/local
