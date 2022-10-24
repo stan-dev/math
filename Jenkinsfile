@@ -224,7 +224,7 @@ pipeline {
                         }
                     }
                     steps {
-                        unstash 'MathSetup'
+                        retry(3) { checkout scm }
 
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         sh "./runTests.py -j${PARALLEL} --changed --debug"

@@ -399,34 +399,34 @@ def main():
 
     jumboFiles = []
 
-    try:
-        if inputs.changed:
-            tests = findChangedTests(inputs.debug)
-        else:
-            # pass 0: generate all auto-generated tests
-            if any("test/prob" in arg for arg in inputs.tests):
-                generateTests(inputs.j)
+    if inputs.changed:
+        tests = findChangedTests(inputs.debug)
+    else:
+        # pass 0: generate all auto-generated tests
+        if any("test/prob" in arg for arg in inputs.tests):
+            generateTests(inputs.j)
 
-            if inputs.do_jumbo:
-                jumboFiles = generateJumboTests(inputs.tests)
-            if inputs.e == -1:
-                if inputs.j == 1:
-                    num_expr_test_files = 1
-                else:
-                    num_expr_test_files = inputs.j * 4
+        if inputs.do_jumbo:
+            jumboFiles = generateJumboTests(inputs.tests)
+        if inputs.e == -1:
+            if inputs.j == 1:
+                num_expr_test_files = 1
             else:
-                num_expr_test_files = inputs.e
-            handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
+                num_expr_test_files = inputs.j * 4
+        else:
+            num_expr_test_files = inputs.e
+        handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
 
-            tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
+        tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
-        if not tests:
-            if inputs.changed:
-                stopErr("No changed tests were found!", 0)
-            stopErr(
-                "No matching tests found. Check the path passed on the command line", -1
-            )
+    if not tests:
+        if inputs.changed:
+            stopErr("No changed tests were found!", 0)
+        stopErr(
+            "No matching tests found. Check the path passed on the command line", -1
+        )
 
+    try:
         # pass 1: make test executables
         for batch in batched(tests):
             if inputs.debug:
