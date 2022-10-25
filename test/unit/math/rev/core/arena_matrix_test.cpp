@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, arena_matrix_matrix_test) {
+TEST(AgradRevArenaMat, arena_matrix_matrix_test) {
   using Eigen::MatrixXd;
   using stan::math::arena_matrix;
 
@@ -29,7 +29,7 @@ TEST(AgradRev, arena_matrix_matrix_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, arena_matrix_vector_test) {
+TEST(AgradRevArenaMat, arena_matrix_vector_test) {
   using Eigen::VectorXd;
   using stan::math::arena_matrix;
 
@@ -56,7 +56,7 @@ TEST(AgradRev, arena_matrix_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, arena_matrix_row_vector_test) {
+TEST(AgradRevArenaMat, arena_matrix_row_vector_test) {
   using Eigen::RowVectorXd;
   using stan::math::arena_matrix;
 
@@ -83,7 +83,7 @@ TEST(AgradRev, arena_matrix_row_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, arena_matrix_transpose_test) {
+TEST(AgradRevArenaMat, arena_matrix_transpose_test) {
   using stan::math::arena_matrix;
 
   Eigen::VectorXd c = Eigen::VectorXd::Random(3);

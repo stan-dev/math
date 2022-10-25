@@ -7,6 +7,8 @@
 #include <limits>
 #include <sstream>
 
+namespace integrate_1d_test {
+
 std::ostringstream *msgs = nullptr;
 
 struct f1 {
@@ -893,3 +895,4 @@ TEST(StanMath_integrate_1d_rev, TestWeibull) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
+}  // namespace integrate_1d_test

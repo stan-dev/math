@@ -5,6 +5,7 @@
 #include <test/unit/math/rev/functor/test_fixture_dae_analytical.hpp>
 #include <test/unit/math/rev/functor/dae_test_functors.hpp>
 
+namespace analytical_dae_typed_test {
 /**
  *
  * Use same solver functor type for both w & w/o tolerance control
@@ -48,3 +49,4 @@ TYPED_TEST_P(analytical_dae_test, vd) {
 
 REGISTER_TYPED_TEST_SUITE_P(analytical_dae_test, dv, vd);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, analytical_dae_test, dae_test_types);
+}  // namespace analytical_dae_typed_test

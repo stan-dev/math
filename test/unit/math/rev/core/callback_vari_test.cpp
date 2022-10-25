@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-TEST(AgradRev, callback_vari_scalar_test) {
+TEST(AgradRevCBack, callback_vari_scalar_test) {
   stan::math::var a = 1;
   stan::math::var b = 1;
 
@@ -20,7 +20,7 @@ TEST(AgradRev, callback_vari_scalar_test) {
   EXPECT_EQ(b.adj(), 2);
 }
 
-TEST(AgradRev, callback_vari_const_scalar_compile_test) {
+TEST(AgradRevCBack, callback_vari_const_scalar_compile_test) {
   stan::math::var a = 1;
 
   const double& a_val = a.val();
@@ -29,7 +29,7 @@ TEST(AgradRev, callback_vari_const_scalar_compile_test) {
       a_val, [a](const auto& vi) mutable { a.adj() += vi.adj(); });
 }
 
-TEST(AgradRev, callback_vari_eigen_test) {
+TEST(AgradRevCBack, callback_vari_eigen_test) {
   Eigen::MatrixXd val(2, 3);
   val << 1, 2, 3, 4, 5, 6;
   stan::math::var_value<Eigen::MatrixXd> a = val;
@@ -43,7 +43,7 @@ TEST(AgradRev, callback_vari_eigen_test) {
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(2, 3, 2));
 }
 
-TEST(AgradRev, make_callback_var_scalar_test) {
+TEST(AgradRevCBack, make_callback_var_scalar_test) {
   stan::math::var a = 1;
   stan::math::var b = 1;
 
@@ -62,7 +62,7 @@ TEST(AgradRev, make_callback_var_scalar_test) {
   EXPECT_EQ(b.adj(), 2);
 }
 
-TEST(AgradRev, make_callback_var_eigen_test) {
+TEST(AgradRevCBack, make_callback_var_eigen_test) {
   Eigen::MatrixXd val(2, 3);
   val << 1, 2, 3, 4, 5, 6;
   stan::math::var_value<Eigen::MatrixXd> a = val;

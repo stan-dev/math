@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-TEST(AgradRev, scalar_type_t_var_value) {
+TEST(AgradRevScalar, scalar_type_t_var_value) {
   EXPECT_TRUE(
       (std::is_same<
           stan::math::var,
