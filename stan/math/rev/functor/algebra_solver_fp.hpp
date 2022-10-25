@@ -128,7 +128,7 @@ struct KinsolFixedPointEnv {
         mem_(KINCreate(sundials_context_)),
         nv_x_(N_VNew_Serial(N_, sundials_context_)),
         nv_u_scal_(N_VNew_Serial(N_, sundials_context_)),
-        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)) {
+        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)){
 #else
       : f_(f),
         y_dummy(stan::math::value_of(y)),
@@ -143,29 +143,29 @@ struct KinsolFixedPointEnv {
         nv_u_scal_(N_VNew_Serial(N_)),
         nv_f_scal_(N_VNew_Serial(N_)) {
 #endif
-    for (int i = 0; i < N_; ++i) {
-      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
-      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
-    }
-  }
+            for (int i = 0; i < N_; ++i) {
+              NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
+  NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+  NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
+}
+}  // namespace math
 
-  ~KinsolFixedPointEnv() {
-    N_VDestroy_Serial(nv_x_);
-    N_VDestroy_Serial(nv_u_scal_);
-    N_VDestroy_Serial(nv_f_scal_);
-    KINFree(&mem_);
-  }
+~KinsolFixedPointEnv() {
+  N_VDestroy_Serial(nv_x_);
+  N_VDestroy_Serial(nv_u_scal_);
+  N_VDestroy_Serial(nv_f_scal_);
+  KINFree(&mem_);
+}
 
-  /** Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
-    auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
-    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
-    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_)
-        = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
-    return 0;
-  }
-}; // NOLINT
+/** Implements the user-defined function passed to KINSOL. */
+static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
+  auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
+  Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
+  Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_)
+      = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
+  return 0;
+}
+};  // namespace stan
 
 /**
  * Calculate Jacobian Jxy(Jacobian of unknown x w.r.t. the * param y)

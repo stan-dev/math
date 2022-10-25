@@ -6,7 +6,7 @@
 #include <sundials/sundials_config.h>
 #include <string>
 
-#if __has_include (<tbb/tbb_stddef.h>)
+#if __has_include(<tbb/tbb_stddef.h>)
 #include <tbb/tbb_stddef.h>
 #else
 #include <tbb/version.h>

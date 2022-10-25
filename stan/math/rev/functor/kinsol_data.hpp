@@ -60,12 +60,14 @@ class kinsol_system_data {
         nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0], sundials_context_)),
         J_(SUNDenseMatrix(N_, N_, sundials_context_)),
         LS_(SUNLinSol_Dense(nv_x_, J_, sundials_context_)),
-        kinsol_memory_(KINCreate(sundials_context_)) {}
+        kinsol_memory_(KINCreate(sundials_context_)) {
+  }
 #else
         nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
         J_(SUNDenseMatrix(N_, N_)),
         LS_(SUNLinSol_Dense(nv_x_, J_)),
-        kinsol_memory_(KINCreate()) {}
+        kinsol_memory_(KINCreate()) {
+  }
 #endif
 
   ~kinsol_system_data() {
