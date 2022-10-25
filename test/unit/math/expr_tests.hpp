@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 
-
 namespace stan {
 namespace test {
 namespace internal {
@@ -31,18 +30,21 @@ namespace internal {
  * @param size_of_arg The size of a Eigen matrix type. For non eigen types
  *  the associated array will be zero.
  */
- template <std::size_t N>
+template <std::size_t N>
 void expect_all_used_only_once(std::array<int, N>& arg_evals,
- std::array<int, N>& size_of_arg) {
+                               std::array<int, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
-    EXPECT_LE(arg_evals[i], size_of_arg[i]) << " argument " << std::to_string(i)
-    << " was evaluated " << std::to_string(arg_evals[i]) << " times but should"
-    " be evaluated no more than its size (" << std::to_string(size_of_arg[i])
-    << "). Before accessing an input matrix in a function use "
-    "\n`auto&& {input_name}_ref = stan::math::to_ref({input_name})`\n"
-    " to evaluate the input matrix once."
-    " Then use `{input_name}_ref` inside of the function instead"
-    " of the original input.";
+    EXPECT_LE(arg_evals[i], size_of_arg[i])
+        << " argument " << std::to_string(i) << " was evaluated "
+        << std::to_string(arg_evals[i])
+        << " times but should"
+           " be evaluated no more than its size ("
+        << std::to_string(size_of_arg[i])
+        << "). Before accessing an input matrix in a function use "
+           "\n`auto&& {input_name}_ref = stan::math::to_ref({input_name})`\n"
+           " to evaluate the input matrix once."
+           " Then use `{input_name}_ref` inside of the function instead"
+           " of the original input.";
   }
 }
 
@@ -63,7 +65,8 @@ void expect_all_used_only_once(std::array<int, N>& arg_evals,
  */
 template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
 auto make_expr(int& count, EigMat&& arg) {
-  return arg.unaryExpr(stan::test::counterOp<stan::scalar_type_t<EigMat>>(&count));
+  return arg.unaryExpr(
+      stan::test::counterOp<stan::scalar_type_t<EigMat>>(&count));
 }
 
 /**
@@ -79,7 +82,8 @@ auto make_expr(int& /* count */, T&& arg) {
  * Generate a tuple from input args where Eigen types are wrapped by `counterOp`
  * @tparam N The number of arguments
  * @tparam Args Parameter pack of arguments passed to function to test.
- * @param expr_evals Integer array used to keep track of accesses to each argument
+ * @param expr_evals Integer array used to keep track of accesses to each
+ * argument
  * @param args Arguments to pass to function. Eigen arguments will be wrapped in
  *  `counterOp`.
  */
@@ -123,7 +127,8 @@ std::array<int, sizeof...(Args)> eigen_arg_sizes(Args&&... args) {
 /**
  * No-op for when none of the arguments is an Eigen type
  */
-template <typename ScalarType, typename F, typename... Args, require_all_not_eigen_t<Args...>* = nullptr>
+template <typename ScalarType, typename F, typename... Args,
+          require_all_not_eigen_t<Args...>* = nullptr>
 void check_expr_test(F&& f, Args&&... args) {}
 
 /**
@@ -153,29 +158,33 @@ void check_expr_test(F&& f, Args&&... args) {}
  * @param args pack of arguments to pass to the functor.
  */
 template <typename ScalarType, typename F, typename... Args,
- require_any_eigen_t<Args...>* = nullptr,
- require_all_st_arithmetic<Args...>* = nullptr>
+          require_any_eigen_t<Args...>* = nullptr,
+          require_all_st_arithmetic<Args...>* = nullptr>
 void check_expr_test(F&& f, Args&&... args) {
   std::array<int, sizeof...(args)> expr_eval_counts;
   for (int i = 0; i < sizeof...(args); ++i) {
     expr_eval_counts[i] = 0;
   }
-  std::array<int, sizeof...(args)> size_of_eigen_args = eigen_arg_sizes(args...);
+  std::array<int, sizeof...(args)> size_of_eigen_args
+      = eigen_arg_sizes(args...);
   // returns tuple of unary count expressions
-  auto promoted_args = std::make_tuple(stan::math::eval(stan::math::promote_scalar<ScalarType>(args))...);
-  auto expr_args = stan::math::apply([&expr_eval_counts](auto&&... args) mutable {
-    return make_expr_args(expr_eval_counts, args...);
-  }, promoted_args);
-  auto return_val = stan::math::eval(stan::math::apply([&f](auto&&... args) {
-    return f(std::forward<decltype(args)>(args)...);
-  }, expr_args));
+  auto promoted_args = std::make_tuple(
+      stan::math::eval(stan::math::promote_scalar<ScalarType>(args))...);
+  auto expr_args = stan::math::apply(
+      [&expr_eval_counts](auto&&... args) mutable {
+        return make_expr_args(expr_eval_counts, args...);
+      },
+      promoted_args);
+  auto return_val = stan::math::eval(stan::math::apply(
+      [&f](auto&&... args) { return f(std::forward<decltype(args)>(args)...); },
+      expr_args));
   expect_all_used_only_once(expr_eval_counts, size_of_eigen_args);
   if (stan::is_var<ScalarType>::value) {
     stan::math::recover_memory();
   }
 }
 
-}
+}  // namespace internal
 /**
  * Check whether any Eigen inputs are executed too many times.
  *
@@ -191,7 +200,7 @@ void check_expr_test(F&& f, Args&&... args) {
   stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
 }
 
-}
-}
+}  // namespace test
+}  // namespace stan
 
 #endif
