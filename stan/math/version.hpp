@@ -1,7 +1,26 @@
 #ifndef STAN_MATH_VERSION_HPP
 #define STAN_MATH_VERSION_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <boost/version.hpp>
+#include <sundials/sundials_config.h>
 #include <string>
+
+
+#if EIGEN_VERSION_AT_LEAST(3, 4, 0)
+#error "Stan Math is not yet compatible with Eigen 3.4"
+#endif
+
+// Hypergeometric functions were not introduced until Boost 1.72
+#if BOOST_VERSION < 107200
+#error "Boost 1.72 is the minimum compatible version for use with Stan Math"
+#endif
+
+#if SUNDIALS_VERSION_MAJOR < 6
+#ifndef SUNDIALS_INTERFACE_OLD
+#error "Stan Math requires the SUNDIALS_INTERFACE_OLD flag for use with SUNDIALS < 6.0.0"
+#endif
+#endif
 
 #ifndef STAN_STRING_EXPAND
 #define STAN_STRING_EXPAND(s) #s
