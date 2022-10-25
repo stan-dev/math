@@ -42,16 +42,13 @@ jobs:
         echo "BOOST_INC=/usr/include/" >> make/local
         echo "TBB_INC=/usr/include/" >> make/local
         echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
-        echo "TBB_INTERFACE_NEW=true" >> make/local
         echo "SUNDIALS_INC=/usr" >> make/local
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
-        echo "SUNDIALS_INTERFACE_OLD=true" >> make/local
         echo "OPENCL_INC=/usr/include/" >> make/local
         echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "STAN_OPENCL=true" >> make/local
     - name: Run fwd and non-fun mix tests
       run: |
-        python runTests.py -j2 test/unit/math/rev
         python runTests.py -j2 test/unit/math/fwd
         python runTests.py -j2 test/unit/math/mix/core
         python runTests.py -j2 test/unit/math/mix/functor
@@ -64,11 +61,11 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
-  system-libraries-fwd-mix:
+  system-libraries-rev:
     permissions:
       actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
       contents: read  # for actions/checkout to fetch code
-    name: System Library Linking - fwd and non-fun mix tests
+    name: System Library Linking - rev tests
     runs-on: ubuntu-22.04
 
     steps:
