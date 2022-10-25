@@ -5,6 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace exp_mod_normal_lccdf4_test {
+
 auto exp_mod_normal_lccdf_functor
     = [](const auto& y, const auto& mu, const auto& sigma, const auto& lambda) {
         return stan::math::exp_mod_normal_lccdf(y, mu, sigma, lambda);
@@ -27,5 +29,6 @@ TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_broadcast_lambda) {
       exp_mod_normal_lccdf_functor, y.transpose().eval(), mu,
       sigma.transpose().eval(), lambda_scal);
 }
+}  // namespace exp_mod_normal_lccdf4_test
 
 #endif
