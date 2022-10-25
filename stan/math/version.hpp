@@ -6,6 +6,11 @@
 #include <sundials/sundials_config.h>
 #include <string>
 
+#if __has_include (<tbb/tbb_stddef.h>)
+#include <tbb/tbb_stddef.h>
+#else
+#include <tbb/version.h>
+#endif
 
 #if EIGEN_VERSION_AT_LEAST(3, 4, 0)
 #error "Stan Math is not yet compatible with Eigen 3.4"
@@ -18,12 +23,6 @@
 
 #if SUNDIALS_VERSION_MAJOR < 6
 #define SUNDIALS_INTERFACE_OLD
-#endif
-
-#if __has_include (<tbb/tbb_stddef.h>)
-#include <tbb/tbb_stddef.h>
-#else
-#include <tbb/version.h>
 #endif
 
 #if TBB_VERSION_MAJOR >= 2020
