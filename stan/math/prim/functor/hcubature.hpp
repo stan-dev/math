@@ -359,6 +359,58 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
 
 }  // namespace internal
 
+/**
+ * Compute the n-dimensional integral of the function \f$f\f$ from \f$a\f$ to
+ \f$b\f$ within
+ * specified relative and absolute tolerances or maximum number of evaluations.
+
+ * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
+ *
+ * The prototype for \f$f\f$ is:
+ \verbatim
+   template <typename T_x, typename T_p>
+   stan::return_type_t<T_x, T_p> f(const T_x& x, const T_p& p) {
+   using T_x_ref = stan::ref_type_t<T_x>;
+   T_x_ref x_ref = x;
+   stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
+   my_params* pars = static_cast<my_params*>(p);
+   type_1 var_1 = (pars->par_1);
+   return ;
+   }
+ \endverbatim
+ *
+ * The parameters can be handed over to f as a struct:
+ \verbatim
+  struct my_params {
+  type_1 par_1;
+  type_2 par_2;
+  };
+ \endverbatim
+ *
+ * @tparam F Type of f
+ * @tparam T_pars Type of paramete-struct
+ * @tparam T_n Type of dimension
+ * @tparam T_a Type of a
+ * @tparam T_b Type of b
+ * @tparam T_maxEval Type of maximum number of evaluations
+ * @tparam T_reqAbsError Type of absolute error
+ * @tparam T_reqRelError Type of relative error
+ *
+ * @param f a functor with signature given above
+ * @param dim dimension of the integral
+ * @param a lower limit of integration as vector
+ * @param b upper limit of integration as vector
+ * @param maxEval maximal number of evaluations
+ * @param reqAbsError absolute error
+ * @param reqRelError relative error as vector
+ * @param pars parameters to be passed to f as a struct
+ * @param val correct value of integral
+ *
+ * @return The value of the n-dimensional integral of \f$f\f$ from \f$a\f$ to
+ \f$b\f$.
+ * @throw std::domain_error no errors will be thrown.
+ */
+
 // hcubature
 template <typename F, typename T_pars, typename T_n, typename T_a, typename T_b,
           typename T_maxEval, typename T_reqAbsError, typename T_reqRelError>

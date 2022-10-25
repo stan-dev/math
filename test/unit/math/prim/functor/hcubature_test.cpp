@@ -108,8 +108,15 @@ stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
  *	using T_x_ref = stan::ref_type_t<T_x>;
  *	T_x_ref x_ref = x;
  *	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
+ *  my_params* pars = static_cast<my_params*>(p);
+ *  type_1 var_1 = (pars->par_1);
  *	return ;
  * }
+ * The parameters can be handed to f as a struct:
+ * struct my_params {
+ * type_1 par_1;
+ * type_2 par_2;
+ * };
  *
  * @tparam F Type of f
  * @param f a functor with signature given above
@@ -132,7 +139,7 @@ void test_integration(const F& f, hcubature_test::my_params* pars, int dim,
   using stan::math::hcubature;
 
   for (auto tolerance : reqRelError) {
-    EXPECT_LE(
+    EXPECT_NEAR(
         std::abs(hcubature(f, pars, dim, a, b, maxEval, reqAbsError, tolerance)
                  - val),
         tolerance);
