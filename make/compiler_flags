@@ -105,7 +105,7 @@ endif
 O ?= 3
 
 ## setup includes
-INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.)
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -include stan/math/version.hpp
 INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS)/src/sundials
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 

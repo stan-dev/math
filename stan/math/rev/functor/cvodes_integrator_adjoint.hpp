@@ -166,12 +166,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           LS_forward_(N == 0 ? nullptr
                              : SUNLinSol_Dense(nv_state_forward_, A_forward_)),
           LS_backward_(N == 0 ? nullptr
-                              : SUNLinSol_Dense(nv_state_backward_, A_backward_)),
+                              : SUNLinSol_Dense(nv_state_backward_,
+                                                A_backward_)),
           cvodes_mem_(CVodeCreate(solver_forward)),
 #endif
           local_args_tuple_(deep_copy_vars(args)...),
           value_of_args_tuple_(value_of(args)...) {
-
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }

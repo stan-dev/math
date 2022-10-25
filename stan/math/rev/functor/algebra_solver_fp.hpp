@@ -165,7 +165,7 @@ struct KinsolFixedPointEnv {
         = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
     return 0;
   }
-};
+}; // NOLINT
 
 /**
  * Calculate Jacobian Jxy(Jacobian of unknown x w.r.t. the * param y)

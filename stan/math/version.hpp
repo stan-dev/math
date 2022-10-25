@@ -17,9 +17,17 @@
 #endif
 
 #if SUNDIALS_VERSION_MAJOR < 6
-#ifndef SUNDIALS_INTERFACE_OLD
-#error "Stan Math requires the SUNDIALS_INTERFACE_OLD flag for use with SUNDIALS < 6.0.0"
+#define SUNDIALS_INTERFACE_OLD
 #endif
+
+#if __has_include (<tbb/tbb_stddef.h>)
+#include <tbb/tbb_stddef.h>
+#else
+#include <tbb/version.h>
+#endif
+
+#if TBB_VERSION_MAJOR >= 2020
+#define TBB_INTERFACE_NEW
 #endif
 
 #ifndef STAN_STRING_EXPAND
