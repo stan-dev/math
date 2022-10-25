@@ -449,7 +449,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
-            agent { label 'linux' }
+            agent { label 'linux && docker' }
             steps {
                 script {
                     unstash 'MathSetup'
@@ -457,7 +457,7 @@ pipeline {
                     def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node {
+                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 unstash 'MathSetup'
                                 sh """
