@@ -14,8 +14,18 @@ struct my_params {
 	double y;
 };
 
+
 template <typename T_x, typename T_p>
 stan::return_type_t<T_x, T_p> f1(const T_x& x, const T_p& p) {
+	using T_x_ref = stan::ref_type_t<T_x>;
+	T_x_ref x_ref = x;
+	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
+	return cos(x_vec[0]);
+}
+
+
+template <typename T_x, typename T_p>
+stan::return_type_t<T_x, T_p> f2(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	T_x_ref x_ref = x;
 	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
@@ -24,7 +34,7 @@ stan::return_type_t<T_x, T_p> f1(const T_x& x, const T_p& p) {
 
 
 template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f2(const T_x& x, const T_p& p) {
+stan::return_type_t<T_x, T_p> f3(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	T_x_ref x_ref = x;
 	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
@@ -41,7 +51,7 @@ stan::return_type_t<T_x, T_p> f2(const T_x& x, const T_p& p) {
 
 
 template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f3(const T_x& x, const T_p& p) {
+stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	using namespace stan::math;
 	T_x_ref x_ref = x;
@@ -51,12 +61,10 @@ stan::return_type_t<T_x, T_p> f3(const T_x& x, const T_p& p) {
 	double s = std::pow(x_vec[0] - 0.5, 2) + std::pow(x_vec[1] - 0.5, 2);
 	return std::pow(TWO_OVER_SQRT_PI / (2.0 * a), 2) * exp(-s / std::pow(a, 2));
 }
-
-
 	
 
 template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
+stan::return_type_t<T_x, T_p> f5(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	using namespace stan::math;
 	T_x_ref x_ref = x;
@@ -72,7 +80,7 @@ stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
 
 
 template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f5(const T_x& x, const T_p& p) {
+stan::return_type_t<T_x, T_p> f6(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	T_x_ref x_ref = x;
 	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
@@ -81,7 +89,7 @@ stan::return_type_t<T_x, T_p> f5(const T_x& x, const T_p& p) {
 
 
 template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f6(const T_x& x, const T_p& p) {
+stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
 	using T_x_ref = stan::ref_type_t<T_x>;
 	T_x_ref x_ref = x;
 	stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
@@ -234,20 +242,28 @@ TEST(StanMath_hcubature_prim, test_integer_arguments) {
 TEST(StanMath_hcubature_prim, test1) {
   // Integrals from https://www.quantargo.com/help/r/latest/packages/cubature/2.0.4.1/hcubature
 
-int dim = 2;
-std::vector<double> a = {0.0, 0.0};
-std::vector<double> b = {1.0, 1.0};
+int dim = 1;
+std::vector<double> a = {0.0};
+std::vector<double> b = {1.0};
 std::vector<double> reqRelError = {1e-4, 1e-6, 1e-7};
 hcubature_test::my_params pars = {};
-
 test_integration(hcubature_test::f1<std::vector<double>, void*>, 
+				 &pars, dim, a, b, 6000, 0.0, reqRelError,
+                 0.841471);
+
+
+dim = 2;
+a = {0.0, 0.0};
+b = {1.0, 1.0};
+reqRelError = {1e-4, 1e-6, 1e-7};
+test_integration(hcubature_test::f2<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 6000, 0.0, reqRelError,
                  0.7080734);
 
 
 reqRelError = {1e-4};
 pars = {0.50124145262344534123412, 0.0};
-test_integration(hcubature_test::f2<std::vector<double>, void*>, 
+test_integration(hcubature_test::f3<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 6000, 0.0, reqRelError,
                  0.1972807);
 
@@ -255,7 +271,7 @@ test_integration(hcubature_test::f2<std::vector<double>, void*>,
 // (Gaussian centered at 1/2)
 reqRelError = {1e-4, 1e-6, 1e-7};
 pars = {0.0, 0.1};
-test_integration(hcubature_test::f3<std::vector<double>, void*>, 
+test_integration(hcubature_test::f4<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 6000, 0.0, reqRelError,
                  1);
 
@@ -264,13 +280,13 @@ dim = 3;
 a = {0.0, 0.0, 0.0};
 b = {1.0, 1.0, 1.0};
 reqRelError = {1e-4, 1e-6};
-test_integration(hcubature_test::f4<std::vector<double>, void*>, 
+test_integration(hcubature_test::f5<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 6000, 0.0, reqRelError,
                  1.00001);
 
 
 reqRelError = {1e-4, 1e-6, 1e-8};
-test_integration(hcubature_test::f5<std::vector<double>, void*>, 
+test_integration(hcubature_test::f6<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 6000, 0.0, reqRelError,
                  1);
 
@@ -281,53 +297,9 @@ a = {0.0, 0.0, 0.0, 0.0};
 b = {1.0, 1.0, 1.0, 1.0};
 reqRelError = {1e-4, 1e-6};
 pars = {0.0, (1 + sqrt(10.0)) / 9.0};
-test_integration(hcubature_test::f6<std::vector<double>, void*>, 
+test_integration(hcubature_test::f7<std::vector<double>, void*>, 
 				 &pars, dim, a, b, 19000, 0.0, reqRelError,
                  0.999998);
 }
 
 
-
-
-
-
-/*
-
-
-
-template <typename T_y, typename T_alpha, typename T_delta, typename T_beta, typename T_t0, typename T_sv, typename T_sw, typename T_st0, typename T_err>
-struct my_params {
-	T_y y;
-	T_alpha a;
-	T_delta v;
-	T_beta w;
-	T_t0 t0;
-	T_sv sv;
-	T_sw sw;
-	T_st0 st0;
-	T_err lerr;
-};
-
-
-	using T_return_type = return_type_t<T_x, T_p>; 
-	my_params<T_return_type, T_return_type, T_return_type, T_return_type, T_return_type, T_return_type, T_return_type, 
-	T_return_type, T_return_type>  *params = static_cast<my_params<T_return_type, T_return_type, T_return_type, T_return_type, 
-	T_return_type, T_return_type, T_return_type, T_return_type, T_return_type> *>(p);
-	T_return_type y = (params->y);
-	T_return_type a = (params->a);
-
-
-internal::my_params<T_partials_return, T_partials_return, T_partials_return, T_partials_return, 
-T_partials_return, T_partials_return, T_partials_return, T_partials_return, T_partials_return> params_new_error = {y_val, alpha_val, delta_val, beta_val, t0_val, sv_val, sw_val, st0_val, log(.1) + lerror_bound - log(2) + log(fabs(deriv))};
-				
-
-
-
-
-
- 1/dens*hcubature(internal::int_dsvddiff<std::vector<double>, void*>, &params_new_error, dim, xmin, xmax, Meval, abstol, reltol/2);
-				
-
-
-
-*/
