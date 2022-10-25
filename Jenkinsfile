@@ -137,13 +137,13 @@ pipeline {
                     stash 'MathSetup'
                     sh "echo CXX=${CLANG_CXX} > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
-                    parallel(
-                        CppLint: { sh "make cpplint" },
-                        Dependencies: { sh """#!/bin/bash
-                            set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
-                    )
+                    // parallel(
+                    //     CppLint: { sh "make cpplint" },
+                    //     Dependencies: { sh """#!/bin/bash
+                    //         set -o pipefail
+                    //         make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                    //     Documentation: { sh "make doxygen" },
+                    // )
                 }
             }
             post {
@@ -157,25 +157,25 @@ pipeline {
             }
         }
 
-        stage('Verify changes') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
-            steps {
-                script {
+        // stage('Verify changes') {
+        //     agent {
+        //         docker {
+        //             image 'stanorg/ci:gpu-cpp17'
+        //             label 'linux'
+        //         }
+        //     }
+        //     steps {
+        //         script {
 
-                    retry(3) { checkout scm }
-                    sh 'git clean -xffd'
+        //             retry(3) { checkout scm }
+        //             sh 'git clean -xffd'
 
-                    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
-                    skipRemainingStages = utils.verifyChanges(paths)
+        //             def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
+        //             skipRemainingStages = utils.verifyChanges(paths)
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
 
         // stage('Headers check') {
         //     agent {
@@ -421,7 +421,7 @@ pipeline {
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node {
-                            label "linux"
+                            label "docker"
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 unstash 'MathSetup'
                                 sh """
