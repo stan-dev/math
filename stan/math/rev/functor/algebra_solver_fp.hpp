@@ -65,6 +65,7 @@ struct KinsolFixedPointEnv {
   /** NVECTOR for scaling f */
   N_Vector nv_f_scal_;
 
+#ifndef SUNDIALS_INTERFACE_OLD
   /** Constructor when y is data */
   template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
@@ -72,7 +73,6 @@ struct KinsolFixedPointEnv {
                       const std::vector<int>& x_i, std::ostream* msgs,
                       const std::vector<T_u>& u_scale,
                       const std::vector<T_f>& f_scale)
-#ifndef SUNDIALS_INTERFACE_OLD
       : sundials_context_(),
         f_(f),
         y_dummy(),
@@ -86,20 +86,6 @@ struct KinsolFixedPointEnv {
         nv_x_(N_VNew_Serial(N_, sundials_context_)),
         nv_u_scal_(N_VNew_Serial(N_, sundials_context_)),
         nv_f_scal_(N_VNew_Serial(N_, sundials_context_)) {
-#else
-      : f_(f),
-        y_dummy(),
-        y_(y),
-        N_(x.size()),
-        M_(y.size()),
-        x_r_(x_r),
-        x_i_(x_i),
-        msgs_(msgs),
-        mem_(KINCreate()),
-        nv_x_(N_VNew_Serial(N_)),
-        nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_)) {
-#endif
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
       NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
@@ -115,7 +101,6 @@ struct KinsolFixedPointEnv {
                       const std::vector<int>& x_i, std::ostream* msgs,
                       const std::vector<T_u>& u_scale,
                       const std::vector<T_f>& f_scale)
-#ifndef SUNDIALS_INTERFACE_OLD
       : sundials_context_(),
         f_(f),
         y_dummy(stan::math::value_of(y)),
@@ -128,8 +113,48 @@ struct KinsolFixedPointEnv {
         mem_(KINCreate(sundials_context_)),
         nv_x_(N_VNew_Serial(N_, sundials_context_)),
         nv_u_scal_(N_VNew_Serial(N_, sundials_context_)),
-        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)){
+        nv_f_scal_(N_VNew_Serial(N_, sundials_context_)) {
+    for (int i = 0; i < N_; ++i) {
+      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
+      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
+    }
+  }
 #else
+  /** Constructor when y is data */
+  template <typename T, typename T_u, typename T_f>
+  KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
+                      const Eigen::VectorXd& y, const std::vector<double>& x_r,
+                      const std::vector<int>& x_i, std::ostream* msgs,
+                      const std::vector<T_u>& u_scale,
+                      const std::vector<T_f>& f_scale)
+      : f_(f),
+        y_dummy(),
+        y_(y),
+        N_(x.size()),
+        M_(y.size()),
+        x_r_(x_r),
+        x_i_(x_i),
+        msgs_(msgs),
+        mem_(KINCreate()),
+        nv_x_(N_VNew_Serial(N_)),
+        nv_u_scal_(N_VNew_Serial(N_)),
+        nv_f_scal_(N_VNew_Serial(N_)) {
+    for (int i = 0; i < N_; ++i) {
+      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
+      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
+    }
+  }
+
+  /** Constructor when y is param */
+  template <typename T, typename T_u, typename T_f>
+  KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
+                      const Eigen::Matrix<stan::math::var, -1, 1>& y,
+                      const std::vector<double>& x_r,
+                      const std::vector<int>& x_i, std::ostream* msgs,
+                      const std::vector<T_u>& u_scale,
+                      const std::vector<T_f>& f_scale)
       : f_(f),
         y_dummy(stan::math::value_of(y)),
         y_(y_dummy),
@@ -142,30 +167,30 @@ struct KinsolFixedPointEnv {
         nv_x_(N_VNew_Serial(N_)),
         nv_u_scal_(N_VNew_Serial(N_)),
         nv_f_scal_(N_VNew_Serial(N_)) {
+    for (int i = 0; i < N_; ++i) {
+      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
+      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
+    }
+  }
 #endif
-            for (int i = 0; i < N_; ++i) {
-              NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-  NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
-  NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
-}
-}  // namespace math
 
-~KinsolFixedPointEnv() {
-  N_VDestroy_Serial(nv_x_);
-  N_VDestroy_Serial(nv_u_scal_);
-  N_VDestroy_Serial(nv_f_scal_);
-  KINFree(&mem_);
-}
+  ~KinsolFixedPointEnv() {
+    N_VDestroy_Serial(nv_x_);
+    N_VDestroy_Serial(nv_u_scal_);
+    N_VDestroy_Serial(nv_f_scal_);
+    KINFree(&mem_);
+  }
 
-/** Implements the user-defined function passed to KINSOL. */
-static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
-  auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
-  Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
-  Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_)
-      = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
-  return 0;
-}
-};  // namespace stan
+  /** Implements the user-defined function passed to KINSOL. */
+  static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
+    auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
+    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
+    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_)
+        = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
+    return 0;
+  }
+};
 
 /**
  * Calculate Jacobian Jxy(Jacobian of unknown x w.r.t. the * param y)
