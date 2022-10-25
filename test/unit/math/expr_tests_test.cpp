@@ -12,7 +12,7 @@ auto fail_single_call_fun(T&& x) {
   }
   return res;
 }
-TEST(ExpressionTest, simple_single_fail) {
+TEST(ExpressionTest, single_fail) {
   auto f_fail = [](auto&& x) { return fail_single_call_fun(x); };
   Eigen::VectorXd x = Eigen::VectorXd::Random(2);
   EXPECT_NONFATAL_FAILURE(
@@ -24,6 +24,20 @@ TEST(ExpressionTest, simple_single_fail) {
                                                                       x),
       "");
 }
+
+TEST(ExpressionTest, single_fail_complex) {
+  auto f_fail = [](auto&& x) { return fail_single_call_fun(x); };
+  Eigen::Matrix<std::complex<double>, -1, 1> x = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<double>>(f_fail, x), "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::var>>(f_fail, x), "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::fvar<double>>>(f_fail,
+                                                                      x),
+      "");
+}
+
 template <typename T>
 auto pass_single_call_fun(T&& x) {
   auto&& x_ref = stan::math::to_ref(x);
@@ -33,9 +47,15 @@ auto pass_single_call_fun(T&& x) {
   }
   return res;
 }
-TEST(ExpressionTest, simple_single_pass) {
+TEST(ExpressionTest, single_pass) {
   auto f_pass = [](auto&& x) { return pass_single_call_fun(x); };
   Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  stan::test::check_expr_test(f_pass, x);
+}
+
+TEST(ExpressionTest, single_pass_complex) {
+  auto f_pass = [](auto&& x) { return pass_single_call_fun(x); };
+  Eigen::Matrix<std::complex<double>, -1, 1> x = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
   stan::test::check_expr_test(f_pass, x);
 }
 
@@ -48,7 +68,7 @@ auto fail_double_call_fun(T1&& x1, T2&& x2) {
   return res;
 }
 
-TEST(ExpressionTest, simple_double_fail) {
+TEST(ExpressionTest, double_fail) {
   auto f_fail
       = [](auto&& x1, auto&& x2) { return fail_double_call_fun(x1, x2); };
   Eigen::VectorXd x1 = Eigen::VectorXd::Random(2);
@@ -77,6 +97,37 @@ TEST(ExpressionTest, simple_double_fail) {
       "");
 }
 
+
+TEST(ExpressionTest, double_fail_complex) {
+  auto f_fail
+      = [](auto&& x1, auto&& x2) { return fail_double_call_fun(x1, x2); };
+  Eigen::Matrix<std::complex<double>, -1, 1> x1 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x2 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(stan::test::check_expr_test(f_fail, x1, x2), ""),
+      "6 failures");
+  std::vector<std::complex<double>> x_vec{1, 2};
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<double>>(f_fail, x1, x_vec), "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::var>>(f_fail, x1, x_vec),
+      "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::fvar<double>>>(
+          f_fail, x1, x_vec),
+      "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<double>>(f_fail, x_vec, x1), "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::var>>(f_fail, x_vec, x1),
+      "");
+  EXPECT_NONFATAL_FAILURE(
+      stan::test::internal::check_expr_test<std::complex<stan::math::fvar<double>>>(
+          f_fail, x_vec, x1),
+      "");
+}
+
+
 template <typename T1, typename T2>
 auto pass_double_call_fun(T1&& x1, T2&& x2) {
   auto&& x1_ref = stan::math::to_ref(x1);
@@ -88,13 +139,24 @@ auto pass_double_call_fun(T1&& x1, T2&& x2) {
   return res;
 }
 
-TEST(ExpressionTest, simple_double_pass) {
+TEST(ExpressionTest, double_pass) {
   auto f_pass
       = [](auto&& x1, auto&& x2) { return pass_double_call_fun(x1, x2); };
   Eigen::VectorXd x1 = Eigen::VectorXd::Random(2);
   Eigen::VectorXd x2 = Eigen::VectorXd::Random(2);
   stan::test::check_expr_test(f_pass, x1, x2);
   std::vector<double> x_vec{1, 2};
+  stan::test::check_expr_test(f_pass, x1, x_vec);
+  stan::test::check_expr_test(f_pass, x_vec, x1);
+}
+
+TEST(ExpressionTest, double_pass_complex) {
+  auto f_pass
+      = [](auto&& x1, auto&& x2) { return pass_double_call_fun(x1, x2); };
+  Eigen::Matrix<std::complex<double>, -1, 1> x1 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x2 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  stan::test::check_expr_test(f_pass, x1, x2);
+  std::vector<std::complex<double>> x_vec{std::complex<double>(1.0), std::complex<double>(2.0)};
   stan::test::check_expr_test(f_pass, x1, x_vec);
   stan::test::check_expr_test(f_pass, x_vec, x1);
 }
@@ -108,13 +170,51 @@ auto fail_triple_call_fun(T1&& x1, T2&& x2, T3&& x3) {
   return res;
 }
 
-TEST(ExpressionTest, simple_triple_fail) {
+TEST(ExpressionTest, triple_fail) {
   auto f_fail = [](auto&& x1, auto&& x2, auto&& x3) {
     return fail_triple_call_fun(x1, x2, x3);
   };
   Eigen::VectorXd x1 = Eigen::VectorXd::Random(2);
   Eigen::VectorXd x2 = Eigen::VectorXd::Random(2);
   Eigen::VectorXd x3 = Eigen::VectorXd::Random(2);
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(stan::test::check_expr_test(f_fail, x1, x2, x3),
+                              ""),
+      "9 failures");
+  std::vector<double> x_vec{1, 2};
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x_vec, x2, x3), ""),
+      "6 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x1, x_vec, x3), ""),
+      "6 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x1, x2, x_vec), ""),
+      "6 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x1, x_vec, x_vec), ""),
+      "3 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x_vec, x2, x_vec), ""),
+      "3 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(
+          stan::test::check_expr_test(f_fail, x_vec, x_vec, x3), ""),
+      "3 failures");
+}
+
+TEST(ExpressionTest, triple_fail_complex) {
+  auto f_fail = [](auto&& x1, auto&& x2, auto&& x3) {
+    return fail_triple_call_fun(x1, x2, x3);
+  };
+  Eigen::Matrix<std::complex<double>, -1, 1> x1 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x2 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x3 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
   EXPECT_NONFATAL_FAILURE(
       EXPECT_NONFATAL_FAILURE(stan::test::check_expr_test(f_fail, x1, x2, x3),
                               ""),
@@ -159,13 +259,28 @@ auto pass_triple_call_fun(T1&& x1, T2&& x2, T3&& x3) {
   return res;
 }
 
-TEST(ExpressionTest, simple_triple_pass) {
+TEST(ExpressionTest, triple_pass) {
   auto f_pass = [](auto&& x1, auto&& x2, auto&& x3) {
     return pass_triple_call_fun(x1, x2, x3);
   };
   Eigen::VectorXd x1 = Eigen::VectorXd::Random(2);
   Eigen::VectorXd x2 = Eigen::VectorXd::Random(2);
   Eigen::VectorXd x3 = Eigen::VectorXd::Random(2);
+  stan::test::check_expr_test(f_pass, x1, x2, x3);
+  std::vector<double> x_vec{1, 2};
+  stan::test::check_expr_test(f_pass, x1, x2, x_vec);
+  stan::test::check_expr_test(f_pass, x1, x_vec, x3);
+  stan::test::check_expr_test(f_pass, x_vec, x2, x3);
+  stan::test::check_expr_test(f_pass, x_vec, x_vec, x3);
+}
+
+TEST(ExpressionTest, triple_pass_complex) {
+  auto f_pass = [](auto&& x1, auto&& x2, auto&& x3) {
+    return pass_triple_call_fun(x1, x2, x3);
+  };
+  Eigen::Matrix<std::complex<double>, -1, 1> x1 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x2 = Eigen::Matrix<std::complex<double>, -1, 1>::Random(2);
+  Eigen::Matrix<std::complex<double>, -1, 1> x3 = Eigen::VectorXd::Random(2);
   stan::test::check_expr_test(f_pass, x1, x2, x3);
   std::vector<double> x_vec{1, 2};
   stan::test::check_expr_test(f_pass, x1, x2, x_vec);
