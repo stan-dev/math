@@ -421,6 +421,7 @@ pipeline {
                     for (f in files.toList().collate(8)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node {
+                            label "linux"
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 unstash 'MathSetup'
                                 sh """
