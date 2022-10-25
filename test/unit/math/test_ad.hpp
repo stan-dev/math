@@ -8,6 +8,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/serializer.hpp>
 #include <test/unit/math/test_ad_matvar.hpp>
+#include <test/expressions/expression_test_helpers.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -25,6 +26,53 @@ using ffv_t = stan::math::fvar<fv_t>;
 namespace stan {
 namespace test {
 namespace internal {
+
+
+template <std::size_t N>
+void expect_all_used_only_once(std::array<int, N>& arg_evals) {
+  for (int i = 0; i < N; ++i) {
+    EXPECT_LE(arg_evals[i], 1) << " for argument " << std::to_string(i);
+    EXPECT_GE(arg_evals[i], -1) << " for argument " << std::to_string(i);
+  }
+}
+
+template <typename T, stan::require_eigen_t<T>* = nullptr>
+auto make_expr(int& count, T&& arg) {
+  return arg.unaryExpr(stan::test::counterOp<stan::math::var>(&count));
+}
+template <typename T, require_not_eigen_t<T>* = nullptr>
+auto make_expr(int& count, T&& arg) {
+  return arg;
+}
+
+template <std::size_t N, typename... Args>
+auto make_expr_args(std::array<int, N>& expr_evals, Args&&... args) {
+  return stan::math::index_apply<N>([&expr_evals, &args...](auto... Is) {
+    return std::make_tuple(make_expr(expr_evals[Is], args)...);
+  });
+}
+template <typename ScalarType, typename F, typename... Args, require_all_not_eigen_t<Args...>* = nullptr>
+void check_expr_test(F&& f, Args&&... args) {}
+
+template <typename ScalarType, typename F, typename... Args, require_any_eigen_t<Args...>* = nullptr>
+void check_expr_test(F&& f, Args&&... args) {
+  std::array<int, sizeof...(args)> expr_eval_counts;
+  for (int i = 0; i < sizeof...(args); ++i) {
+    expr_eval_counts[i] = 0;
+  }
+  // returns tuple of unary count expressions
+  auto promoted_args = std::make_tuple(stan::math::eval(stan::math::promote_scalar<ScalarType>(args)...));
+  auto expr_args = stan::math::apply([&expr_eval_counts](auto&&... args) mutable {
+    return make_expr_args(expr_eval_counts, args...);
+  }, promoted_args);
+  auto return_val = stan::math::eval(stan::math::apply([&f](auto&&... args) {
+    return f(std::forward<decltype(args)>(args)...);
+  }, expr_args));
+  expect_all_used_only_once(expr_eval_counts);
+  if (stan::is_var<ScalarType>::value) {
+    stan::math::recover_memory();
+  }
+}
 
 /**
  * Evaluates nested matrix template expressions, which is a no-op for
@@ -1131,6 +1179,8 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T>
 void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
+  stan::test::internal::check_expr_test<double>(f, x);
+  stan::test::internal::check_expr_test<stan::math::var>(f, x);
   internal::expect_ad_v(tols, f, x);
 }
 
@@ -1168,6 +1218,8 @@ void expect_ad(const F& f, const T& x) {
 template <typename F, typename T1, typename T2>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2) {
+  stan::test::internal::check_expr_test<double>(f, x1, x2);
+  stan::test::internal::check_expr_test<stan::math::var>(f, x1, x2);
   internal::expect_ad_vv(tols, f, x1, x2);
 }
 
@@ -1208,6 +1260,8 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2, const T3& x3) {
+  stan::test::internal::check_expr_test<double>(f, x1, x2, x3);
+  stan::test::internal::check_expr_test<stan::math::var>(f, x1, x2, x3);
   internal::expect_ad_vvv(tols, f, x1, x2, x3);
 }
 
