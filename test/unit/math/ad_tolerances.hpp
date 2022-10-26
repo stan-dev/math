@@ -69,34 +69,6 @@ struct ad_tolerances {
         grad_hessian_grad_hessian_(1e-2) {}
 };
 
-/**
- * Return tolerances that are infinite other than for the value
- * tolerance and gradient tolerance for reverse mode.
- *
- * @param val_tol value relative tolerance (default `1e-8`)
- * @param grad_tol gradient relative tolerance (default `1e-4`)
- */
-ad_tolerances reverse_only_ad_tolerances(double val_tol = 1e-8,
-                                         double grad_tol = 1e-4) {
-  ad_tolerances tols;
-  tols.gradient_val_ = val_tol;
-  tols.gradient_grad_ = grad_tol;
-  constexpr double inf = std::numeric_limits<double>::infinity();
-  tols.gradient_grad_varmat_matvar_ = inf;
-  tols.gradient_fvar_val_ = inf;
-  tols.gradient_fvar_grad_ = inf;
-  tols.hessian_val_ = inf;
-  tols.hessian_grad_ = inf;
-  tols.hessian_hessian_ = inf;
-  tols.hessian_fvar_val_ = inf;
-  tols.hessian_fvar_grad_ = inf;
-  tols.hessian_fvar_hessian_ = inf;
-  tols.grad_hessian_val_ = inf;
-  tols.grad_hessian_hessian_ = inf;
-  tols.grad_hessian_grad_hessian_ = inf;
-  return tols;
-}
-
 }  // namespace test
 }  // namespace stan
 #endif

@@ -306,8 +306,8 @@ TEST(testAd, integerGetsPassedVectorized) {
   baz_double = 0;
   baz_var = 0;
   baz_fvar = 0;
-  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::Yes>(
-      h);
+  stan::test::expect_common_unary_vectorized<
+      stan::test::ScalarSupport::RealAndComplex>(h);
   EXPECT_GT(baz_int, 0);  // int version gets called
   EXPECT_GT(baz_double, 0);
   EXPECT_GT(baz_var, 0);

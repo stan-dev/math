@@ -10,15 +10,15 @@
 #include <string>
 #include <limits>
 
-using stan::math::algebra_solver_fp;
-using stan::math::finite_diff_gradient_auto;
-using stan::math::FixedPointADJac;
-using stan::math::FixedPointSolver;
-using stan::math::KinsolFixedPointEnv;
-using stan::math::to_array_1d;
-using stan::math::to_var;
-using stan::math::value_of;
-using stan::math::var;
+using ::stan::math::algebra_solver_fp;
+using ::stan::math::finite_diff_gradient_auto;
+using ::stan::math::FixedPointADJac;
+using ::stan::math::FixedPointSolver;
+using ::stan::math::KinsolFixedPointEnv;
+using ::stan::math::to_array_1d;
+using ::stan::math::to_var;
+using ::stan::math::value_of;
+using ::stan::math::var;
 
 /*
  * Solve eq

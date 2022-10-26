@@ -5,6 +5,8 @@
 #include <test/unit/math/rev/functor/test_fixture_dae_chem.hpp>
 #include <test/unit/math/rev/functor/dae_test_functors.hpp>
 
+namespace chem_dae_typed_test {
+
 /**
  *
  * Use same solver functor type for both w & w/o tolerance control
@@ -64,3 +66,4 @@ REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_data_test, value,
                             param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, chemical_kinetics_data_test,
                                chemical_kinetics_test_types);
+}  // namespace chem_dae_typed_test
