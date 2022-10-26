@@ -26,7 +26,7 @@ template<> struct make_integer<double>   { typedef numext::int64_t type; };
 template<> struct make_integer<half>     { typedef numext::int16_t type; };
 template<> struct make_integer<bfloat16> { typedef numext::int16_t type; };
 
-template<typename Packet> EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC  
+template<typename Packet> EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
 Packet pfrexp_generic_get_biased_exponent(const Packet& a) {
   typedef typename unpacket_traits<Packet>::type Scalar;
   typedef typename unpacket_traits<Packet>::integer_packet PacketI;
@@ -46,27 +46,27 @@ Packet pfrexp_generic(const Packet& a, Packet& exponent) {
     ExponentBits = int(TotalBits) - int(MantissaBits) - 1
   };
 
-  EIGEN_CONSTEXPR ScalarUI scalar_sign_mantissa_mask = 
+  EIGEN_CONSTEXPR ScalarUI scalar_sign_mantissa_mask =
       ~(((ScalarUI(1) << int(ExponentBits)) - ScalarUI(1)) << int(MantissaBits)); // ~0x7f800000
-  const Packet sign_mantissa_mask = pset1frombits<Packet>(static_cast<ScalarUI>(scalar_sign_mantissa_mask)); 
+  const Packet sign_mantissa_mask = pset1frombits<Packet>(static_cast<ScalarUI>(scalar_sign_mantissa_mask));
   const Packet half = pset1<Packet>(Scalar(0.5));
   const Packet zero = pzero(a);
   const Packet normal_min = pset1<Packet>((numext::numeric_limits<Scalar>::min)()); // Minimum normal value, 2^-126
-  
+
   // To handle denormals, normalize by multiplying by 2^(int(MantissaBits)+1).
   const Packet is_denormal = pcmp_lt(pabs(a), normal_min);
   EIGEN_CONSTEXPR ScalarUI scalar_normalization_offset = ScalarUI(int(MantissaBits) + 1); // 24
   // The following cannot be constexpr because bfloat16(uint16_t) is not constexpr.
   const Scalar scalar_normalization_factor = Scalar(ScalarUI(1) << int(scalar_normalization_offset)); // 2^24
-  const Packet normalization_factor = pset1<Packet>(scalar_normalization_factor);  
+  const Packet normalization_factor = pset1<Packet>(scalar_normalization_factor);
   const Packet normalized_a = pselect(is_denormal, pmul(a, normalization_factor), a);
-  
+
   // Determine exponent offset: -126 if normal, -126-24 if denormal
   const Scalar scalar_exponent_offset = -Scalar((ScalarUI(1)<<(int(ExponentBits)-1)) - ScalarUI(2)); // -126
   Packet exponent_offset = pset1<Packet>(scalar_exponent_offset);
   const Packet normalization_offset = pset1<Packet>(-Scalar(scalar_normalization_offset)); // -24
   exponent_offset = pselect(is_denormal, padd(exponent_offset, normalization_offset), exponent_offset);
-  
+
   // Determine exponent and mantissa from normalized_a.
   exponent = pfrexp_generic_get_biased_exponent(normalized_a);
   // Zero, Inf and NaN return 'a' unmodified, exponent is zero
@@ -75,7 +75,7 @@ Packet pfrexp_generic(const Packet& a, Packet& exponent) {
   const Packet non_finite_exponent = pset1<Packet>(scalar_non_finite_exponent);
   const Packet is_zero_or_not_finite = por(pcmp_eq(a, zero), pcmp_eq(exponent, non_finite_exponent));
   const Packet m = pselect(is_zero_or_not_finite, a, por(pand(normalized_a, sign_mantissa_mask), half));
-  exponent = pselect(is_zero_or_not_finite, zero, padd(exponent, exponent_offset));  
+  exponent = pselect(is_zero_or_not_finite, zero, padd(exponent, exponent_offset));
   return m;
 }
 
@@ -91,7 +91,7 @@ Packet pldexp_generic(const Packet& a, const Packet& exponent) {
   // to consider for a float is:
   //   -255-23 -> 255+23
   // Below -278 any finite float 'a' will become zero, and above +278 any
-  // finite float will become inf, including when 'a' is the smallest possible 
+  // finite float will become inf, including when 'a' is the smallest possible
   // denormal.
   //
   // Unfortunately, 2^(278) cannot be represented using either one or two
@@ -126,7 +126,7 @@ Packet pldexp_generic(const Packet& a, const Packet& exponent) {
   return out;
 }
 
-// Explicitly multiplies 
+// Explicitly multiplies
 //    a * (2^e)
 // clamping e to the range
 // [NumTraits<Scalar>::min_exponent()-2, NumTraits<Scalar>::max_exponent()]
@@ -145,7 +145,7 @@ struct pldexp_fast_impl {
     MantissaBits = numext::numeric_limits<Scalar>::digits - 1,
     ExponentBits = int(TotalBits) - int(MantissaBits) - 1
   };
-  
+
   static EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
   Packet run(const Packet& a, const Packet& exponent) {
     const Packet bias = pset1<Packet>(Scalar((ScalarI(1)<<(int(ExponentBits)-1)) - ScalarI(1)));  // 127
@@ -171,7 +171,7 @@ Packet plog_impl_float(const Packet _x)
   Packet x = _x;
 
   const Packet cst_1              = pset1<Packet>(1.0f);
-  const Packet cst_neg_half       = pset1<Packet>(-0.5f);
+  const Packet cst_half       = pset1<Packet>(0.5f);
   // The smallest non denormalized float number.
   const Packet cst_min_norm_pos   = pset1frombits<Packet>( 0x00800000u);
   const Packet cst_minus_inf      = pset1frombits<Packet>( 0xff800000u);
@@ -188,6 +188,9 @@ Packet plog_impl_float(const Packet _x)
   const Packet cst_cephes_log_p6 = pset1<Packet>(+2.0000714765E-1f);
   const Packet cst_cephes_log_p7 = pset1<Packet>(-2.4999993993E-1f);
   const Packet cst_cephes_log_p8 = pset1<Packet>(+3.3333331174E-1f);
+  const Packet cst_cephes_log_q1 = pset1<Packet>(-2.12194440e-4f);
+  const Packet cst_cephes_log_q2 = pset1<Packet>(0.693359375f);
+
 
   // Truncate input values to the minimum positive normal.
   x = pmax(x, cst_min_norm_pos);
@@ -225,17 +228,14 @@ Packet plog_impl_float(const Packet _x)
   y  = pmadd(y, x3, y2);
   y  = pmul(y, x3);
 
-  y = pmadd(cst_neg_half, x2, y);
-  x = padd(x, y);
+  y1  = pmul(e, cst_cephes_log_q1);
+  tmp = pmul(x2, cst_half);
+  y   = padd(y, y1);
+  x   = psub(x, tmp);
+  y2  = pmul(e, cst_cephes_log_q2);
+  x   = padd(x, y);
+  x   = padd(x, y2);
 
-  // Add the logarithm of the exponent back to the result of the interpolation.
-  if (base2) {
-    const Packet cst_log2e = pset1<Packet>(static_cast<float>(EIGEN_LOG2E));
-    x = pmadd(x, cst_log2e, e);
-  } else {
-    const Packet cst_ln2 = pset1<Packet>(static_cast<float>(EIGEN_LN2));
-    x = pmadd(e, cst_ln2, x);
-  }
 
   Packet invalid_mask = pcmp_lt_or_nan(_x, pzero(_x));
   Packet iszero_mask  = pcmp_eq(_x,pzero(_x));
@@ -281,7 +281,7 @@ Packet plog_impl_double(const Packet _x)
   Packet x = _x;
 
   const Packet cst_1              = pset1<Packet>(1.0);
-  const Packet cst_neg_half       = pset1<Packet>(-0.5);
+  const Packet cst_half       = pset1<Packet>(0.5);
   // The smallest non denormalized double.
   const Packet cst_min_norm_pos   = pset1frombits<Packet>( static_cast<uint64_t>(0x0010000000000000ull));
   const Packet cst_minus_inf      = pset1frombits<Packet>( static_cast<uint64_t>(0xfff0000000000000ull));
@@ -298,12 +298,16 @@ Packet plog_impl_double(const Packet _x)
   const Packet cst_cephes_log_p4 = pset1<Packet>(1.79368678507819816313E1);
   const Packet cst_cephes_log_p5 = pset1<Packet>(7.70838733755885391666E0);
 
-  const Packet cst_cephes_log_q0 = pset1<Packet>(1.0);
-  const Packet cst_cephes_log_q1 = pset1<Packet>(1.12873587189167450590E1);
-  const Packet cst_cephes_log_q2 = pset1<Packet>(4.52279145837532221105E1);
-  const Packet cst_cephes_log_q3 = pset1<Packet>(8.29875266912776603211E1);
-  const Packet cst_cephes_log_q4 = pset1<Packet>(7.11544750618563894466E1);
-  const Packet cst_cephes_log_q5 = pset1<Packet>(2.31251620126765340583E1);
+  const Packet cst_cephes_log_r0 = pset1<Packet>(1.0);
+  const Packet cst_cephes_log_r1 = pset1<Packet>(1.12873587189167450590E1);
+  const Packet cst_cephes_log_r2 = pset1<Packet>(4.52279145837532221105E1);
+  const Packet cst_cephes_log_r3 = pset1<Packet>(8.29875266912776603211E1);
+  const Packet cst_cephes_log_r4 = pset1<Packet>(7.11544750618563894466E1);
+  const Packet cst_cephes_log_r5 = pset1<Packet>(2.31251620126765340583E1);
+
+  const Packet cst_cephes_log_q1 = pset1<Packet>(-2.121944400546905827679e-4);
+  const Packet cst_cephes_log_q2 = pset1<Packet>(0.693359375);
+
 
   // Truncate input values to the minimum positive normal.
   x = pmax(x, cst_min_norm_pos);
@@ -311,7 +315,7 @@ Packet plog_impl_double(const Packet _x)
   Packet e;
   // extract significant in the range [0.5,1) and exponent
   x = pfrexp(x,e);
-  
+
   // Shift the inputs from the range [0.5,1) to [sqrt(1/2),sqrt(2))
   // and shift by -1. The values are then centered around 0, which improves
   // the stability of the polynomial evaluation.
@@ -330,33 +334,31 @@ Packet plog_impl_double(const Packet _x)
 
   // Evaluate the polynomial approximant , probably to improve instruction-level parallelism.
   // y = x - 0.5*x^2 + x^3 * polevl( x, P, 5 ) / p1evl( x, Q, 5 ) );
-  Packet y, y1, y_;
+  Packet y, y1, y2, y_;
   y  = pmadd(cst_cephes_log_p0, x, cst_cephes_log_p1);
   y1 = pmadd(cst_cephes_log_p3, x, cst_cephes_log_p4);
   y  = pmadd(y, x, cst_cephes_log_p2);
   y1 = pmadd(y1, x, cst_cephes_log_p5);
   y_ = pmadd(y, x3, y1);
 
-  y  = pmadd(cst_cephes_log_q0, x, cst_cephes_log_q1);
-  y1 = pmadd(cst_cephes_log_q3, x, cst_cephes_log_q4);
-  y  = pmadd(y, x, cst_cephes_log_q2);
-  y1 = pmadd(y1, x, cst_cephes_log_q5);
+  y  = pmadd(cst_cephes_log_r0, x, cst_cephes_log_r1);
+  y1 = pmadd(cst_cephes_log_r3, x, cst_cephes_log_r4);
+  y  = pmadd(y, x, cst_cephes_log_r2);
+  y1 = pmadd(y1, x, cst_cephes_log_r5);
   y  = pmadd(y, x3, y1);
 
   y_ = pmul(y_, x3);
   y  = pdiv(y_, y);
 
-  y = pmadd(cst_neg_half, x2, y);
-  x = padd(x, y);
-
   // Add the logarithm of the exponent back to the result of the interpolation.
-  if (base2) {
-    const Packet cst_log2e = pset1<Packet>(static_cast<double>(EIGEN_LOG2E));
-    x = pmadd(x, cst_log2e, e);
-  } else {
-    const Packet cst_ln2 = pset1<Packet>(static_cast<double>(EIGEN_LN2));
-    x = pmadd(e, cst_ln2, x);
-  }
+  y1  = pmul(e, cst_cephes_log_q1);
+  tmp = pmul(x2, cst_half);
+  y   = padd(y, y1);
+  x   = psub(x, tmp);
+  y2  = pmul(e, cst_cephes_log_q2);
+  x   = padd(x, y);
+  x   = padd(x, y2);
+
 
   Packet invalid_mask = pcmp_lt_or_nan(_x, pzero(_x));
   Packet iszero_mask  = pcmp_eq(_x,pzero(_x));
@@ -574,7 +576,7 @@ inline float trig_reduce_huge (float xf, int *quadrant)
 
   // 192 bits of 2/pi for Payne-Hanek reduction
   // Bits are introduced by packet of 8 to enable aligned reads.
-  static const uint32_t two_over_pi [] = 
+  static const uint32_t two_over_pi [] =
   {
     0x00000028, 0x000028be, 0x0028be60, 0x28be60db,
     0xbe60db93, 0x60db9391, 0xdb939105, 0x9391054a,
@@ -584,7 +586,7 @@ inline float trig_reduce_huge (float xf, int *quadrant)
     0xd8a5664f, 0xa5664f10, 0x664f10e4, 0x4f10e410,
     0x10e41000, 0xe4100000
   };
-  
+
   uint32_t xi = numext::bit_cast<uint32_t>(xf);
   // Below, -118 = -126 + 8.
   //   -126 is to get the exponent,
@@ -1102,7 +1104,7 @@ struct accurate_log2<float> {
     // > f = log2(1+x)/x;
     // > interval = [sqrt(0.5)-1;sqrt(2)-1];
     // > p = fpminimax(f,n,[|double,double,double,double,single...|],interval,relative,floating);
-    
+
     const Packet p6 = pset1<Packet>( 9.703654795885e-2f);
     const Packet p5 = pset1<Packet>(-0.1690667718648f);
     const Packet p4 = pset1<Packet>( 0.1720575392246f);
@@ -1351,7 +1353,7 @@ struct fast_accurate_exp2<double> {
     const Packet p2 = pset1<Packet>(9.618129107593478832e-3);
     const Packet p1 = pset1<Packet>(5.550410866481961247e-2);
     const Packet p0 = pset1<Packet>(0.240226506959101332);
-    const Packet C_hi = pset1<Packet>(0.693147180559945286); 
+    const Packet C_hi = pset1<Packet>(0.693147180559945286);
     const Packet C_lo = pset1<Packet>(4.81927865669806721e-17);
     const Packet one = pset1<Packet>(1.0);
 
