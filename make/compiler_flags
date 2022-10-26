@@ -129,7 +129,7 @@ endif
 ifdef SUNDIALS_LIB
 LDFLAGS_SUNDIALS ?= -L $(SUNDIALS_LIB) -lsundials_cvodes -lsundials_idas -lsundials_kinsol -lsundials_nvecserial
 ifdef SUNDIALS_INC
-CXXFLAGS_SUNDIALS += -I $(SUNDIALS_INC)/include -I $(SUNDIALS_INC)/src/sundials
+CXXFLAGS_SUNDIALS += -I $(SUNDIALS_INC)
 endif
 else
 CXXFLAGS_SUNDIALS += $(INC_SUNDIALS)
