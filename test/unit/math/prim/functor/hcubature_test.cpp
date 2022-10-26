@@ -139,10 +139,8 @@ void test_integration(const F& f, hcubature_test::my_params* pars, int dim,
   using stan::math::hcubature;
 
   for (auto tolerance : reqRelError) {
-    EXPECT_NEAR(
-        std::abs(hcubature(f, pars, dim, a, b, maxEval, reqAbsError, tolerance)
-                 - val),
-        tolerance);
+    EXPECT_NEAR(hcubature(f, pars, dim, a, b, maxEval, reqAbsError, tolerance),
+                val, tolerance);
   }
 }
 
