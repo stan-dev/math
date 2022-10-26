@@ -42,7 +42,7 @@ jobs:
         echo "BOOST_INC=/usr/include/" >> make/local
         echo "TBB_INC=/usr/include/" >> make/local
         echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
-        echo "SUNDIALS_INC=/usr" >> make/local
+        echo "SUNDIALS_INC=/usr/include" >> make/local
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "OPENCL_INC=/usr/include/" >> make/local
         echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
@@ -87,12 +87,12 @@ jobs:
         echo "BOOST_INC=/usr/include/" >> make/local
         echo "TBB_INC=/usr/include/" >> make/local
         echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
-        echo "SUNDIALS_INC=/usr" >> make/local
+        echo "SUNDIALS_INC=/usr/include" >> make/local
         echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "OPENCL_INC=/usr/include/" >> make/local
         echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "STAN_OPENCL=true" >> make/local
-    - name: Run fwd and non-fun mix tests
+    - name: Run rev tests
       run: |
         python runTests.py -j2 test/unit/math/rev
     - name: Upload gtest_output xml
