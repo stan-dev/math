@@ -960,6 +960,26 @@ std::vector<double> common_args() {
   return result;
 }
 
+/**
+ * Returns commonly used values to test in the autodiff framework, while
+ *  filtering out values that are not defined for the function being called.
+ * @tparam F a type with a valid `bool operator(const double val)`.
+ * @param f a functor that accepts a value and returns true or false if the
+ *  value satisfies the user given condition.
+ */
+template <typename F>
+std::vector<double> common_args(F&& comparison) {
+  auto common_arg_vals = common_nonzero_args();
+  common_arg_vals.push_back(0);
+  std::vector<double> common_args_filtered;
+  for (auto& val : common_arg_vals) {
+    if (comparison(val)) {
+      common_args_filtered.push_back(val);
+    }
+  }
+  return common_args_filtered;
+}
+
 std::vector<int> common_nonzero_int_args() {
   static const std::vector<int> args{-1, 1};
   return args;
