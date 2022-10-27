@@ -210,7 +210,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
                          const std::vector<double>& a, const std::vector<double>& b, internal::one_d& out,
                          T_pars& pars) {
   std::vector<double> c(dim, 0);
-  double* deltac = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+  std::vector<double> deltac(dim);
 
   for (size_t i = 0; i != dim; i++)
     c[i] = (a[i] + b[i]) / 2;
@@ -225,7 +225,6 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
     out.err = 0.0;
     out.result = 0.0;
     out.kdivide = 0;
-    free(deltac);
     return;
   }
 
@@ -235,12 +234,9 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   double twelvef1 = 12 * f1;
 
   double maxdivdiff = 0.0;
-  double* divdiff
-      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
-  double* p2
-      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
-  double* p3
-      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+  std::vector<double> divdiff(dim);
+  std::vector<double> p2(dim);
+  std::vector<double> p3(dim);
   std::vector<double> cc(dim, 0);
 
   for (size_t i = 0; i != dim; i++) {
@@ -268,10 +264,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
     f3 += f3i;
     divdiff[i] = fabs(f3i + twelvef1 - 7 * f2i);
   }
-  free(p2);
-  free(p3);
-  double* p4
-      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+  std::vector<double> p4(dim);
   double f4 = 0.0;
   for (size_t i = 0; i != g.p[2].size(); i++) {
     for (size_t j = 0; j != dim; j++)
@@ -281,10 +274,8 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
     double temp = integrand(cc, pars);
     f4 += temp;
   }
-  free(p4);
   double f5 = 0.0;
-  double* p5
-      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+  std::vector<double> p5(dim);
   for (size_t i = 0; i != g.p[3].size(); i++) {
     for (size_t j = 0; j != dim; j++)
       p5[j] = deltac[j] * g.p[3][i][j];
@@ -294,7 +285,6 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
     double temp = integrand(cc, pars);
     f5 += temp;
   }
-  free(p5);
 
   double I
       = v
@@ -317,8 +307,6 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   out.result = I;
   out.err = E;
   out.kdivide = kdivide;
-  free(deltac);
-  free(divdiff);
 }
 
 class Box {
