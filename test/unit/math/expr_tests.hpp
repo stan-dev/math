@@ -15,6 +15,26 @@ namespace stan {
 namespace test {
 namespace internal {
 
+template <typename T>
+struct char_scalar_type;
+
+template <>
+struct char_scalar_type<double> {
+  static constexpr const char* scalar{"double"};
+};
+constexpr const char* char_scalar_type<double>::scalar;
+template <>
+struct char_scalar_type<stan::math::var> {
+  static constexpr const char* scalar{"var"};
+};
+constexpr const char* char_scalar_type<stan::math::var>::scalar;
+
+template <>
+struct char_scalar_type<stan::math::fvar<double>> {
+  static constexpr const char* scalar{"fvar<double>"};
+};
+constexpr const char* char_scalar_type<stan::math::fvar<double>>::scalar;
+
 /**
  * Check that the evaluations were less than the size of the input size.
  *
@@ -30,11 +50,11 @@ namespace internal {
  * @param size_of_arg The size of a Eigen matrix type. For non eigen types
  *  the associated array will be zero.
  */
-template <std::size_t N>
+template <typename ScalarType, std::size_t N>
 void expect_all_used_only_once(std::array<int, N>& arg_evals,
                                std::array<int, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
-    EXPECT_LE(arg_evals[i], size_of_arg[i])
+    EXPECT_LE(arg_evals[i], size_of_arg[i]) << "(" << char_scalar_type<ScalarType>::scalar << ")"
         << " argument " << std::to_string(i) << " was evaluated "
         << std::to_string(arg_evals[i])
         << " times but should"
@@ -177,7 +197,7 @@ void check_expr_test(F&& f, Args&&... args) {
   auto return_val = stan::math::eval(stan::math::apply(
       [&f](auto&&... args) { return f(std::forward<decltype(args)>(args)...); },
       expr_args));
-  expect_all_used_only_once(expr_eval_counts, size_of_eigen_args);
+  expect_all_used_only_once<ScalarType>(expr_eval_counts, size_of_eigen_args);
   if (stan::is_var<ScalarType>::value) {
     stan::math::recover_memory();
   }

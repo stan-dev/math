@@ -10,8 +10,6 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar) {
   double ub = 3.5;
   lub_constrain_tests::expect(x1, lb, ub);
   lub_constrain_tests::expect(x2, lb, ub);
-  lub_constrain_tests::expect(x1, lb, lb);
-  lub_constrain_tests::expect(x2, lb, lb);
 
   // ub inf
   auto ub_inf = stan::math::INFTY;
