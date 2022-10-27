@@ -178,9 +178,6 @@ void gauss_kronrod(const F& integrand, const T_a& a, const T_b& b, T_oned& out,
   Idash *= V;
   out.result = I;
   out.err = fabs(I - Idash);
- // std::vector<T_return_type>().swap(c);
- // std::vector<T_return_type>().swap(cp);
- // std::vector<T_return_type>().swap(cm);
 }
 
 template <typename T_n, typename T_GenzMalik>
@@ -309,7 +306,6 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
     f5 += temp;
   }
   free(p5);
- // std::vector<T_return_type>().swap(cc);
   T_return_type I
       = v
         * (g.w[0] * f1 + g.w[1] * f2 + g.w[2] * f3 + g.w[3] * f4 + g.w[4] * f5);
@@ -333,7 +329,6 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   out.kdivide = kdivide;
   free(deltac);
   free(divdiff);
-  std::vector<T_return_type>().swap(c);
 }
 
 class Box {
@@ -487,10 +482,6 @@ return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubatur
     err += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
 
-    std::vector<double>().swap(box.a);
-    std::vector<double>().swap(box.b);
-    std::vector<double>().swap(ma);
-    std::vector<double>().swap(mb);
     if (((err <= max(reqRelError * fabs(val), reqAbsError))
          || ((maxEval != 0) && (numevals >= maxEval)))
         || !(std::isfinite(val))) {
@@ -506,12 +497,6 @@ return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubatur
     err += (*rit).E;
   }
 
-  for (std::multiset<internal::Box>::iterator it = ms.begin(); it != ms.end();
-       it++) {
-    internal::Box box = *it;
-    std::vector<double>().swap(box.a);
-    std::vector<double>().swap(box.b);
-  }
   internal::clean_GenzMalik(g);
   return val;
 }  // hcubature
