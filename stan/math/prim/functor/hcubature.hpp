@@ -66,8 +66,8 @@ struct GenzMalik {
   double wd[4];
 };
 
-template <typename T_c, typename T_n, typename T_p, typename T_x>
-void combination(T_c& c, const T_n& n, const T_p& p, const T_x& x) {
+
+void combination(int* c, const int& n, const int& p, const int& x) {
   size_t i, r, k = 0;
   for (i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
@@ -84,11 +84,11 @@ void combination(T_c& c, const T_n& n, const T_p& p, const T_x& x) {
     c[0] = x;
 }
 
-template <typename T_k, typename T_lambda, typename T_n, typename T_p>
-void combos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
-  T_k* c = reinterpret_cast<T_k*>(malloc(k * sizeof(T_k)));
+
+void combos(const int& k, const double& lambda, const int& n, std::vector<double*>& p) {
+  int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
   for (size_t i = 1; i != choose(n, k) + 1; i++) {
-    T_lambda* temp = reinterpret_cast<T_lambda*>(calloc(n, sizeof(T_lambda)));
+    double* temp = reinterpret_cast<double*>(calloc(n, sizeof(double)));
     combination(c, n, k, i);
     for (size_t j = 0; j != k; j++)
       temp[c[j] - 1] = lambda;
@@ -97,10 +97,8 @@ void combos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
   free(c);
 }
 
-template <typename T_index, typename T_k, typename T_lambda, typename T_n,
-          typename T_c, typename T_temp>
-void increment(T_index& index, const T_k& k, const T_lambda& lambda,
-               const T_n& n, const T_c& c, T_temp& temp) {
+void increment(std::vector<bool>& index, const int& k, const double& lambda,
+               const int& n, const int* c, double* temp) {
   // temp size n, all elements initially zero
   if (index.size() == 0) {
     index.push_back(false);
@@ -108,7 +106,7 @@ void increment(T_index& index, const T_k& k, const T_lambda& lambda,
       temp[c[j] - 1] = lambda;
     return;
   }
-  T_k first_zero = 0;
+  int first_zero = 0;
   while ((first_zero < index.size()) && index[first_zero])
     first_zero++;
   if (first_zero == index.size()) {
@@ -119,7 +117,6 @@ void increment(T_index& index, const T_k& k, const T_lambda& lambda,
     temp[c[index.size() - 1] - 1] = -lambda;
   } else {
     for (size_t i = 0; i != first_zero + 1; i++) {
-      //           index[i] = !index[i];
       if (index[i])
         index[i] = 0;
       else
@@ -129,19 +126,18 @@ void increment(T_index& index, const T_k& k, const T_lambda& lambda,
   }
 }
 
-template <typename T_k, typename T_lambda, typename T_n, typename T_p>
-void signcombos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
-  T_k* c = reinterpret_cast<T_k*>(malloc(k * sizeof(T_k)));
+void signcombos(const int& k, const double& lambda, const int& n, std::vector<double*>& p) {
+  int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
   for (size_t i = 1; i != choose(n, k) + 1; i++) {
-    T_lambda* temp = reinterpret_cast<T_lambda*>(calloc(n, sizeof(T_lambda)));
+    double* temp = reinterpret_cast<double*>(calloc(n, sizeof(double)));
     combination(c, n, k, i);
     std::vector<bool> index;
     index.clear();
     for (size_t j = 0; j != std::pow(2, k); j++) {
       increment(index, k, lambda, n, c, temp);
-      T_lambda* next
-          = reinterpret_cast<T_lambda*>(malloc(n * sizeof(T_lambda)));
-      memcpy(next, temp, n * sizeof(T_lambda));
+      double* next
+          = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+      memcpy(next, temp, n * sizeof(double));
       p.push_back(next);
     }
     free(temp);
@@ -149,46 +145,42 @@ void signcombos(const T_k& k, const T_lambda& lambda, const T_n& n, T_p& p) {
   free(c);
 }
 
-template <typename F, typename T_a, typename T_b, typename T_oned,
-          typename T_pars>
-void gauss_kronrod(const F& integrand, const T_a& a, const T_b& b, T_oned& out,
+template <typename F, typename T_pars>
+void gauss_kronrod(const F& integrand, const double& a, const double& b, internal::one_d& out,
                    T_pars& pars) {
-  using T_return_type = return_type_t<T_a, T_b, T_oned, T_pars>;
-  std::vector<T_return_type> c(1, 0);
-  std::vector<T_return_type> cp(1, 0);
-  std::vector<T_return_type> cm(1, 0);
+  std::vector<double> c(1, 0);
+  std::vector<double> cp(1, 0);
+  std::vector<double> cm(1, 0);
   c[0] = 0.5 * (a + b);
-  T_return_type delta = 0.5 * (b - a);
-  T_return_type f0 = integrand(c, pars);
-  T_return_type I = f0 * wd7[7];
-  T_return_type Idash = f0 * gwd7[3];
+  double delta = 0.5 * (b - a);
+  double f0 = integrand(c, pars);
+  double I = f0 * wd7[7];
+  double Idash = f0 * gwd7[3];
   for (size_t i = 0; i != 7; i++) {
-    T_return_type deltax = delta * xd7[i];
+    double deltax = delta * xd7[i];
     cp[0] = c[0] + deltax;
     cm[0] = c[0] - deltax;
-    T_return_type fx = integrand(cp, pars);
-    T_return_type temp = integrand(cm, pars);
+    double fx = integrand(cp, pars);
+    double temp = integrand(cm, pars);
     fx += temp;
     I += fx * wd7[i];
     if (i % 2 == 1)
       Idash += fx * gwd7[i / 2];
   }
-  T_return_type V = fabs(delta);
+  double V = fabs(delta);
   I *= V;
   Idash *= V;
   out.result = I;
   out.err = fabs(I - Idash);
 }
 
-template <typename T_n, typename T_GenzMalik>
-void make_GenzMalik(const T_n& n, T_GenzMalik& g) {
-  using T_return_type = return_type_t<T_n, T_GenzMalik>;
-  T_return_type l4 = std::sqrt(9 * 1.0 / 10);
-  T_return_type l2 = std::sqrt(9 * 1.0 / 70);
-  T_return_type l3 = l4;
-  T_return_type l5 = std::sqrt(9 * 1.0 / 19);
+void make_GenzMalik(const int& n, internal::GenzMalik& g) {
+  double l4 = std::sqrt(9 * 1.0 / 10);
+  double l2 = std::sqrt(9 * 1.0 / 70);
+  double l3 = l4;
+  double l5 = std::sqrt(9 * 1.0 / 19);
 
-  T_return_type twopn = std::pow(2, n);
+  double twopn = std::pow(2, n);
 
   g.w[0] = twopn * ((12824 - 9120 * n + 400 * n * n) * 1.0 / 19683);
   g.w[1] = twopn * (980.0 / 6561);
@@ -206,21 +198,18 @@ void make_GenzMalik(const T_n& n, T_GenzMalik& g) {
   signcombos(n, l5, n, g.p[3]);
 }
 
-template <typename T_GenzMalik>
-void clean_GenzMalik(T_GenzMalik& g) {
+void clean_GenzMalik(internal::GenzMalik& g) {
   for (size_t j = 0; j != 4; j++)
     for (size_t i = 0; i != g.p[j].size(); i++)
       if (g.p[j][i])
         free(g.p[j][i]);
 }
 
-template <typename F, typename T_GenzMalik, typename T_n, typename T_a,
-          typename T_b, typename T_oned, typename T_pars>
-void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
-                         const T_a& a, const T_b& b, T_oned& out,
+template <typename F, typename T_pars>
+void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& n,
+                         const std::vector<double>& a, const std::vector<double>& b, internal::one_d& out,
                          T_pars& pars) {
-  using T_return_type = return_type_t<T_n, T_a, T_b>;
-  std::vector<T_return_type> c(n, 0);
+  std::vector<double> c(n, 0);
   double* deltac = reinterpret_cast<double*>(malloc(n * sizeof(double)));
 
   for (size_t i = 0; i != n; i++)
@@ -228,7 +217,7 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
 
   for (size_t i = 0; i != n; i++)
     deltac[i] = fabs(b[i] - a[i]) / 2;
-  T_return_type v = 1.0;
+  double v = 1.0;
   for (size_t i = 0; i != n; i++)
     v *= deltac[i];
 
@@ -240,19 +229,19 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
     return;
   }
 
-  T_return_type f1 = integrand(c, pars);
-  T_return_type f2 = 0.0;
-  T_return_type f3 = 0.0;
-  T_return_type twelvef1 = 12 * f1;
+  double f1 = integrand(c, pars);
+  double f2 = 0.0;
+  double f3 = 0.0;
+  double twelvef1 = 12 * f1;
 
-  T_return_type maxdivdiff = 0.0;
-  T_return_type* divdiff
-      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  T_return_type* p2
-      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  T_return_type* p3
-      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  std::vector<T_return_type> cc(n, 0);
+  double maxdivdiff = 0.0;
+  double* divdiff
+      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+  double* p2
+      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+  double* p3
+      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+  std::vector<double> cc(n, 0);
 
   for (size_t i = 0; i != n; i++) {
     for (size_t j = 0; j != n; j++)
@@ -260,17 +249,17 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
 
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] + p2[j];
-    T_return_type f2i = integrand(cc, pars);
+    double f2i = integrand(cc, pars);
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] - p2[j];
-    T_return_type temp = integrand(cc, pars);
+    double temp = integrand(cc, pars);
     f2i += temp;
 
     for (size_t j = 0; j != n; j++)
       p3[j] = deltac[j] * g.p[1][i][j];
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] + p3[j];
-    T_return_type f3i = integrand(cc, pars);
+    double f3i = integrand(cc, pars);
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] - p3[j];
     temp = integrand(cc, pars);
@@ -281,42 +270,43 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
   }
   free(p2);
   free(p3);
-  T_return_type* p4
-      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
-  T_return_type f4 = 0.0;
+  double* p4
+      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+  double f4 = 0.0;
   for (size_t i = 0; i != g.p[2].size(); i++) {
     for (size_t j = 0; j != n; j++)
       p4[j] = deltac[j] * g.p[2][i][j];
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] + p4[j];
-    T_return_type temp = integrand(cc, pars);
+    double temp = integrand(cc, pars);
     f4 += temp;
   }
   free(p4);
-  T_return_type f5 = 0.0;
-  T_return_type* p5
-      = reinterpret_cast<T_return_type*>(malloc(n * sizeof(T_return_type)));
+  double f5 = 0.0;
+  double* p5
+      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
   for (size_t i = 0; i != g.p[3].size(); i++) {
     for (size_t j = 0; j != n; j++)
       p5[j] = deltac[j] * g.p[3][i][j];
 
     for (size_t j = 0; j != n; j++)
       cc[j] = c[j] + p5[j];
-    T_return_type temp = integrand(cc, pars);
+    double temp = integrand(cc, pars);
     f5 += temp;
   }
   free(p5);
-  T_return_type I
+
+  double I
       = v
         * (g.w[0] * f1 + g.w[1] * f2 + g.w[2] * f3 + g.w[3] * f4 + g.w[4] * f5);
-  T_return_type Idash
+  double Idash
       = v * (g.wd[0] * f1 + g.wd[1] * f2 + g.wd[2] * f3 + g.wd[3] * f4);
-  T_return_type E = fabs(I - Idash);
+  double E = fabs(I - Idash);
 
   int kdivide = 0;
-  T_return_type deltaf = E / (std::pow(10, n) * v);
+  double deltaf = E / (std::pow(10, n) * v);
   for (size_t i = 0; i != n; i++) {
-    T_return_type delta = divdiff[i] - maxdivdiff;
+    double delta = divdiff[i] - maxdivdiff;
     if (delta > deltaf) {
       kdivide = i;
       maxdivdiff = divdiff[i];
@@ -353,6 +343,7 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
 }
 
 }  // namespace internal
+
 
 /**
  * Compute the n-dimensional integral of the function \f$f\f$ from \f$a\f$ to
@@ -407,39 +398,27 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
  */
 
 // hcubature
-template <typename F, typename T_pars, typename T_dim, typename T_a, typename T_b,
-          typename T_maxEval, typename T_reqAbsError, typename T_reqRelError>
-return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
-    const F& integrand, const T_pars& pars, const T_dim& dim, const T_a& a,
-    const T_b& b, const T_maxEval& maxEval, const T_reqAbsError& reqAbsError,
-    const T_reqRelError& reqRelError) {
-  using T_return_type
-      = return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError>;
-
-  using T_a_ref = ref_type_t<T_a>;
-  using T_b_ref = ref_type_t<T_b>;
-
-  T_a_ref a_ref = a;
-  T_b_ref b_ref = b;
-
-  scalar_seq_view<T_a_ref> a_vec(a_ref);
-  scalar_seq_view<T_b_ref> b_vec(b_ref);
+template <typename F, typename T_pars>
+double hcubature(
+    const F& integrand, const T_pars& pars, const int& dim, const std::vector<double>& a,
+    const std::vector<double>& b, const int& maxEval, const double& reqAbsError,
+    const double& reqRelError) {
 
   internal::one_d out;
   internal::GenzMalik g;
 
   if (dim == 1) {
-    internal::gauss_kronrod(integrand, a_vec.val(0), b_vec.val(0), out, pars);
+    internal::gauss_kronrod(integrand, a[0], b[0], out, pars);
   } else {
     internal::make_GenzMalik(dim, g);
     internal::integrate_GenzMalik(integrand, g, dim, a, b, out, pars);
   }
-  T_return_type numevals
+  int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
-  T_return_type evals_per_box = numevals;
-  T_return_type kdiv = out.kdivide;
-  T_return_type err = out.err;
-  T_return_type val = out.result;
+  int evals_per_box = numevals;
+  int kdiv = out.kdivide;
+  double err = out.err;
+  double val = out.result;
   // convergence test
   if ((err <= fmax(reqRelError * fabs(val), reqAbsError))
       || ((maxEval != 0) && (numevals >= maxEval))) {
@@ -456,7 +435,7 @@ return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubatur
     internal::Box box = *it;
     ms.erase(it);
     // split along dimension kdiv
-    T_return_type w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
+    double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
     std::vector<double> ma(box.a);
 
     ma[box.kdiv] += w;
