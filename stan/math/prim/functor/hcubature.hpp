@@ -67,13 +67,13 @@ struct GenzMalik {
 };
 
 
-void combination(int* c, const int& n, const int& p, const int& x) {
+void combination(int* c, const int& dim, const int& p, const int& x) {
   size_t i, r, k = 0;
   for (i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
     do {
       c[i]++;
-      r = choose(n - c[i], p - (i + 1));
+      r = choose(dim - c[i], p - (i + 1));
       k = k + r;
     } while (k < x);
     k = k - r;
@@ -85,11 +85,11 @@ void combination(int* c, const int& n, const int& p, const int& x) {
 }
 
 
-void combos(const int& k, const double& lambda, const int& n, std::vector<double*>& p) {
+void combos(const int& k, const double& lambda, const int& dim, std::vector<double*>& p) {
   int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
-  for (size_t i = 1; i != choose(n, k) + 1; i++) {
-    double* temp = reinterpret_cast<double*>(calloc(n, sizeof(double)));
-    combination(c, n, k, i);
+  for (size_t i = 1; i != choose(dim, k) + 1; i++) {
+    double* temp = reinterpret_cast<double*>(calloc(dim, sizeof(double)));
+    combination(c, dim, k, i);
     for (size_t j = 0; j != k; j++)
       temp[c[j] - 1] = lambda;
     p.push_back(temp);
@@ -98,8 +98,8 @@ void combos(const int& k, const double& lambda, const int& n, std::vector<double
 }
 
 void increment(std::vector<bool>& index, const int& k, const double& lambda,
-               const int& n, const int* c, double* temp) {
-  // temp size n, all elements initially zero
+               const int* c, double* temp) {
+  // temp size dim, all elements initially zero
   if (index.size() == 0) {
     index.push_back(false);
     for (size_t j = 0; j != k; j++)
@@ -126,18 +126,18 @@ void increment(std::vector<bool>& index, const int& k, const double& lambda,
   }
 }
 
-void signcombos(const int& k, const double& lambda, const int& n, std::vector<double*>& p) {
+void signcombos(const int& k, const double& lambda, const int& dim, std::vector<double*>& p) {
   int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
-  for (size_t i = 1; i != choose(n, k) + 1; i++) {
-    double* temp = reinterpret_cast<double*>(calloc(n, sizeof(double)));
-    combination(c, n, k, i);
+  for (size_t i = 1; i != choose(dim, k) + 1; i++) {
+    double* temp = reinterpret_cast<double*>(calloc(dim, sizeof(double)));
+    combination(c, dim, k, i);
     std::vector<bool> index;
     index.clear();
     for (size_t j = 0; j != std::pow(2, k); j++) {
-      increment(index, k, lambda, n, c, temp);
+      increment(index, k, lambda, c, temp);
       double* next
-          = reinterpret_cast<double*>(malloc(n * sizeof(double)));
-      memcpy(next, temp, n * sizeof(double));
+          = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+      memcpy(next, temp, dim * sizeof(double));
       p.push_back(next);
     }
     free(temp);
@@ -174,28 +174,28 @@ void gauss_kronrod(const F& integrand, const double& a, const double& b, interna
   out.err = fabs(I - Idash);
 }
 
-void make_GenzMalik(const int& n, internal::GenzMalik& g) {
+void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
   double l3 = l4;
   double l5 = std::sqrt(9 * 1.0 / 19);
 
-  double twopn = std::pow(2, n);
+  double twopn = std::pow(2, dim);
 
-  g.w[0] = twopn * ((12824 - 9120 * n + 400 * n * n) * 1.0 / 19683);
+  g.w[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
   g.w[1] = twopn * (980.0 / 6561);
-  g.w[2] = twopn * ((1820 - 400 * n) * 1.0 / 19683);
+  g.w[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
   g.w[3] = twopn * (200.0 / 19683);
   g.w[4] = 6859.0 / 19683;
   g.wd[3] = twopn * (25.0 / 729);
-  g.wd[2] = twopn * ((265 - 100 * n) * 1.0 / 1458);
+  g.wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
   g.wd[1] = twopn * (245.0 / 486);
-  g.wd[0] = twopn * ((729 - 950 * n + 50 * n * n) * 1.0 / 729);
+  g.wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
 
-  combos(1, l2, n, g.p[0]);
-  combos(1, l3, n, g.p[1]);
-  signcombos(2, l4, n, g.p[2]);
-  signcombos(n, l5, n, g.p[3]);
+  combos(1, l2, dim, g.p[0]);
+  combos(1, l3, dim, g.p[1]);
+  signcombos(2, l4, dim, g.p[2]);
+  signcombos(dim, l5, dim, g.p[3]);
 }
 
 void clean_GenzMalik(internal::GenzMalik& g) {
@@ -206,19 +206,19 @@ void clean_GenzMalik(internal::GenzMalik& g) {
 }
 
 template <typename F, typename T_pars>
-void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& n,
+void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& dim,
                          const std::vector<double>& a, const std::vector<double>& b, internal::one_d& out,
                          T_pars& pars) {
-  std::vector<double> c(n, 0);
-  double* deltac = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+  std::vector<double> c(dim, 0);
+  double* deltac = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
 
-  for (size_t i = 0; i != n; i++)
+  for (size_t i = 0; i != dim; i++)
     c[i] = (a[i] + b[i]) / 2;
 
-  for (size_t i = 0; i != n; i++)
+  for (size_t i = 0; i != dim; i++)
     deltac[i] = fabs(b[i] - a[i]) / 2;
   double v = 1.0;
-  for (size_t i = 0; i != n; i++)
+  for (size_t i = 0; i != dim; i++)
     v *= deltac[i];
 
   if (v == 0.0) {
@@ -236,31 +236,31 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
 
   double maxdivdiff = 0.0;
   double* divdiff
-      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
   double* p2
-      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
   double* p3
-      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
-  std::vector<double> cc(n, 0);
+      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
+  std::vector<double> cc(dim, 0);
 
-  for (size_t i = 0; i != n; i++) {
-    for (size_t j = 0; j != n; j++)
+  for (size_t i = 0; i != dim; i++) {
+    for (size_t j = 0; j != dim; j++)
       p2[j] = deltac[j] * g.p[0][i][j];
 
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] + p2[j];
     double f2i = integrand(cc, pars);
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] - p2[j];
     double temp = integrand(cc, pars);
     f2i += temp;
 
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       p3[j] = deltac[j] * g.p[1][i][j];
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] + p3[j];
     double f3i = integrand(cc, pars);
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] - p3[j];
     temp = integrand(cc, pars);
     f3i += temp;
@@ -271,12 +271,12 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   free(p2);
   free(p3);
   double* p4
-      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
   double f4 = 0.0;
   for (size_t i = 0; i != g.p[2].size(); i++) {
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       p4[j] = deltac[j] * g.p[2][i][j];
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] + p4[j];
     double temp = integrand(cc, pars);
     f4 += temp;
@@ -284,12 +284,12 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   free(p4);
   double f5 = 0.0;
   double* p5
-      = reinterpret_cast<double*>(malloc(n * sizeof(double)));
+      = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
   for (size_t i = 0; i != g.p[3].size(); i++) {
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       p5[j] = deltac[j] * g.p[3][i][j];
 
-    for (size_t j = 0; j != n; j++)
+    for (size_t j = 0; j != dim; j++)
       cc[j] = c[j] + p5[j];
     double temp = integrand(cc, pars);
     f5 += temp;
@@ -304,8 +304,8 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   double E = fabs(I - Idash);
 
   int kdivide = 0;
-  double deltaf = E / (std::pow(10, n) * v);
-  for (size_t i = 0; i != n; i++) {
+  double deltaf = E / (std::pow(10, dim) * v);
+  for (size_t i = 0; i != dim; i++) {
     double delta = divdiff[i] - maxdivdiff;
     if (delta > deltaf) {
       kdivide = i;
@@ -334,7 +334,7 @@ class Box {
   int kdiv;
 };
 
-inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
+inline class Box make_box(std::vector<double> a, std::vector<double> b,
                           one_d out) {
   std::vector<double> ac(a);
   std::vector<double> bc(b);
@@ -346,7 +346,7 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
 
 
 /**
- * Compute the n-dimensional integral of the function \f$f\f$ from \f$a\f$ to
+ * Compute the dim-dimensional integral of the function \f$f\f$ from \f$a\f$ to
  \f$b\f$ within
  * specified relative and absolute tolerances or maximum number of evaluations.
 
@@ -427,7 +427,7 @@ double hcubature(
   }
 
   std::multiset<internal::Box> ms;
-  ms.insert(internal::make_box(dim, a, b, out));
+  ms.insert(internal::make_box(a, b, out));
 
   while (true) {
     std::multiset<internal::Box>::iterator it;
@@ -447,7 +447,7 @@ double hcubature(
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
     }
-    internal::Box box1 = make_box(dim, ma, box.b, out);
+    internal::Box box1 = make_box(ma, box.b, out);
     ms.insert(box1);
 
     if (dim == 1) {
@@ -455,7 +455,7 @@ double hcubature(
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
     }
-    internal::Box box2 = make_box(dim, box.a, mb, out);
+    internal::Box box2 = make_box(box.a, mb, out);
     ms.insert(box2);
     val += box1.I + box2.I - box.I;
     err += box1.E + box2.E - box.E;
