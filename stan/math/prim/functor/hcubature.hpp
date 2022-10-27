@@ -178,9 +178,9 @@ void gauss_kronrod(const F& integrand, const T_a& a, const T_b& b, T_oned& out,
   Idash *= V;
   out.result = I;
   out.err = fabs(I - Idash);
-  std::vector<T_return_type>().swap(c);
-  std::vector<T_return_type>().swap(cp);
-  std::vector<T_return_type>().swap(cm);
+ // std::vector<T_return_type>().swap(c);
+ // std::vector<T_return_type>().swap(cp);
+ // std::vector<T_return_type>().swap(cm);
 }
 
 template <typename T_n, typename T_GenzMalik>
@@ -309,7 +309,7 @@ void integrate_GenzMalik(const F& integrand, T_GenzMalik& g, const T_n& n,
     f5 += temp;
   }
   free(p5);
-  std::vector<T_return_type>().swap(cc);
+ // std::vector<T_return_type>().swap(cc);
   T_return_type I
       = v
         * (g.w[0] * f1 + g.w[1] * f2 + g.w[2] * f3 + g.w[3] * f4 + g.w[4] * f5);
@@ -389,7 +389,7 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
  *
  * @tparam F Type of f
  * @tparam T_pars Type of paramete-struct
- * @tparam T_n Type of dimension
+ * @tparam T_dim Type of dimension
  * @tparam T_a Type of a
  * @tparam T_b Type of b
  * @tparam T_maxEval Type of maximum number of evaluations
@@ -412,14 +412,14 @@ inline class Box make_box(int n, std::vector<double> a, std::vector<double> b,
  */
 
 // hcubature
-template <typename F, typename T_pars, typename T_n, typename T_a, typename T_b,
+template <typename F, typename T_pars, typename T_dim, typename T_a, typename T_b,
           typename T_maxEval, typename T_reqAbsError, typename T_reqRelError>
-return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
-    const F& integrand, const T_pars& pars, const T_n& n, const T_a& a,
+return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
+    const F& integrand, const T_pars& pars, const T_dim& dim, const T_a& a,
     const T_b& b, const T_maxEval& maxEval, const T_reqAbsError& reqAbsError,
     const T_reqRelError& reqRelError) {
   using T_return_type
-      = return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError>;
+      = return_type_t<T_dim, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError>;
 
   using T_a_ref = ref_type_t<T_a>;
   using T_b_ref = ref_type_t<T_b>;
@@ -433,14 +433,14 @@ return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
   internal::one_d out;
   internal::GenzMalik g;
 
-  if (n == 1) {
+  if (dim == 1) {
     internal::gauss_kronrod(integrand, a_vec.val(0), b_vec.val(0), out, pars);
   } else {
-    internal::make_GenzMalik(n, g);
-    internal::integrate_GenzMalik(integrand, g, n, a, b, out, pars);
+    internal::make_GenzMalik(dim, g);
+    internal::integrate_GenzMalik(integrand, g, dim, a, b, out, pars);
   }
   T_return_type numevals
-      = (n == 1) ? 15 : 1 + 4 * n + 2 * n * (n - 1) + std::pow(2, n);
+      = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
   T_return_type evals_per_box = numevals;
   T_return_type kdiv = out.kdivide;
   T_return_type err = out.err;
@@ -453,7 +453,7 @@ return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
   }
 
   std::multiset<internal::Box> ms;
-  ms.insert(internal::make_box(n, a, b, out));
+  ms.insert(internal::make_box(dim, a, b, out));
 
   while (true) {
     std::multiset<internal::Box>::iterator it;
@@ -468,20 +468,20 @@ return_type_t<T_n, T_a, T_b, T_maxEval, T_reqAbsError, T_reqRelError> hcubature(
     std::vector<double> mb(box.b);
     mb[box.kdiv] -= w;
 
-    if (n == 1) {
+    if (dim == 1) {
       internal::gauss_kronrod(integrand, ma[0], box.b[0], out, pars);
     } else {
-      internal::integrate_GenzMalik(integrand, g, n, ma, box.b, out, pars);
+      internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
     }
-    internal::Box box1 = make_box(n, ma, box.b, out);
+    internal::Box box1 = make_box(dim, ma, box.b, out);
     ms.insert(box1);
 
-    if (n == 1) {
+    if (dim == 1) {
       internal::gauss_kronrod(integrand, box.a[0], mb[0], out, pars);
     } else {
-      internal::integrate_GenzMalik(integrand, g, n, box.a, mb, out, pars);
+      internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
     }
-    internal::Box box2 = make_box(n, box.a, mb, out);
+    internal::Box box2 = make_box(dim, box.a, mb, out);
     ms.insert(box2);
     val += box1.I + box2.I - box.I;
     err += box1.E + box2.E - box.E;
