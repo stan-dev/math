@@ -57,11 +57,11 @@ template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
 Eigen::VectorXd solve_newton_tol(const F& f, const T& x,
-                                  const double scaling_step_size,
-                                  const double function_tolerance,
-                                  const int64_t max_num_steps,
-                                  std::ostream* const msgs,
-                                  const Args&... args) {
+                                 const double scaling_step_size,
+                                 const double function_tolerance,
+                                 const int64_t max_num_steps,
+                                 std::ostream* const msgs,
+                                 const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
   check_nonzero_size("solve_newton", "initial guess", x_ref);
@@ -298,9 +298,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const double scaling_step_size = 1e-3,
     const double function_tolerance = 1e-6,
     const long int max_num_steps = 200) {  // NOLINT(runtime/int)
-  return solve_newton_tol(algebra_solver_adapter<F>(f), x,
-                           scaling_step_size, function_tolerance, max_num_steps,
-                           msgs, y, dat, dat_int);
+  return solve_newton_tol(algebra_solver_adapter<F>(f), x, scaling_step_size,
+                          function_tolerance, max_num_steps, msgs, y, dat,
+                          dat_int);
 }
 
 }  // namespace math

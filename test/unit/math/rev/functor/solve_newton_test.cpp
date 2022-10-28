@@ -14,15 +14,13 @@
 
 TEST_F(algebra_solver_simple_eq_test, newton_dbl) {
   bool is_newton = true;
-  Eigen::VectorXd theta
-      = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
+  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
 }
 
 TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
   bool is_newton = true;
-  Eigen::VectorXd theta
-      = simple_eq_test(simple_eq_functor(), y_dbl, is_newton, true,
-                       scale_step, xtol, ftol, maxfev);
+  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
+                                         true, scale_step, xtol, ftol, maxfev);
 }
 
 TEST_F(algebra_solver_simple_eq_nopara_test, newton_dbl) {
@@ -266,8 +264,7 @@ TEST_F(algebra_solver_simple_eq_test, newton_deprecated) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y,
-                                   is_newton);
+        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y, is_newton);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
@@ -285,9 +282,8 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned_deprecated) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y,
-                                   is_newton, true,
-                                   scale_step, xtol, ftol, maxfev);
+        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y, is_newton,
+                                   true, scale_step, xtol, ftol, maxfev);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
