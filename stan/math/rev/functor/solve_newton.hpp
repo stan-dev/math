@@ -243,7 +243,7 @@ solve_newton_tol(const F& f, const T& x, const double scaling_step_size,
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return math::apply(
       [&](const auto&... args_refs) {
-        return solve_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
+        return solve_newton_impl(f, x, msgs,
                                  scaling_step_size, function_tolerance,
                                  max_num_steps, args_refs...);
       },

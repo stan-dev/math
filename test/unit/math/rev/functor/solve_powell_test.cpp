@@ -13,15 +13,15 @@
 // Tests for powell solver.
 
 TEST_F(algebra_solver_simple_eq_test, powell_dbl) {
-  int solver_type = 0;
+  bool is_newton = false;
   Eigen::VectorXd theta
-      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type);
+      = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
 }
 
 TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
-  int solver_type = 0;
+  bool is_newton = false;
   Eigen::VectorXd theta
-      = simple_eq_test(simple_eq_functor(), y_dbl, solver_type, true,
+      = simple_eq_test(simple_eq_functor(), y_dbl, is_newton, true,
                        scale_step, xtol, ftol, maxfev);
 }
 
@@ -34,9 +34,9 @@ TEST_F(algebra_solver_simple_eq_nopara_test, powell) {
 }
 
 TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
-  int solver_type = 0;
+  bool is_newton = false;
   Eigen::VectorXd theta
-      = non_linear_eq_test(non_linear_eq_functor(), y_dbl, solver_type);
+      = non_linear_eq_test(non_linear_eq_functor(), y_dbl, is_newton);
   EXPECT_FLOAT_EQ(-y_dbl(0), theta(0));
   EXPECT_FLOAT_EQ(-y_dbl(1), theta(1));
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
@@ -51,8 +51,8 @@ TEST_F(algebra_solver_simple_eq_nopara_test, powell_double) {
 }
 
 TEST_F(error_message_test, powell_dbl) {
-  int solver_type = 0;
-  error_conditions_test(non_linear_eq_functor(), y_3, solver_type);
+  bool is_newton = false;
+  error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
 
 TEST(unsolvable_test, powell_dbl) {
@@ -62,8 +62,8 @@ TEST(unsolvable_test, powell_dbl) {
 }
 
 TEST_F(max_steps_test, powell_dbl) {
-  int solver_type = 0;
-  max_num_steps_test(y, solver_type);
+  bool is_newton = false;
+  max_num_steps_test(y, is_newton);
 }
 
 TEST_F(degenerate_eq_test, powell_guess1_dbl) {
@@ -114,12 +114,12 @@ TEST_F(degenerate_eq_test, powell_guess_saddle_point_dbl) {
 
 TEST_F(algebra_solver_simple_eq_test, powell) {
   using stan::math::var;
-  int solver_type = 0;
+  bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, solver_type);
+        = simple_eq_test(simple_eq_functor(), y, is_newton);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
@@ -133,13 +133,13 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
 
 TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   using stan::math::var;
-  int solver_type = 0;
+  bool is_newton = false;
   bool use_tol = true;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, solver_type, use_tol,
+        = simple_eq_test(simple_eq_functor(), y, is_newton, use_tol,
                          scale_step, xtol, ftol, maxfev);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
@@ -161,11 +161,11 @@ TEST_F(algebra_solver_simple_eq_test, powell_init_is_para) {
 
 TEST_F(algebra_solver_non_linear_eq_test, powell) {
   using stan::math::var;
-  int solver_type = 0;
+  bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = non_linear_eq_test(non_linear_eq_functor(), y, solver_type);
+        = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
 
     EXPECT_FLOAT_EQ(-y(0).val(), theta(0).val());
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
@@ -182,9 +182,9 @@ TEST_F(algebra_solver_non_linear_eq_test, powell) {
 
 TEST_F(error_message_test, powell) {
   using stan::math::var;
-  int solver_type = 0;
+  bool is_newton = false;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_2;
-  error_conditions_test(non_linear_eq_functor(), y, solver_type);
+  error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
 
 TEST(unsolvable_test, powell) {
@@ -195,8 +195,8 @@ TEST(unsolvable_test, powell) {
 }
 
 TEST_F(max_steps_test, powell) {
-  int solver_type = 0;
-  max_num_steps_test(y_var, solver_type);
+  bool is_newton = false;
+  max_num_steps_test(y_var, is_newton);
 }
 
 TEST_F(degenerate_eq_test, powell_guess1) {
@@ -245,8 +245,7 @@ TEST_F(degenerate_eq_test, powell_guess2) {
 
 TEST_F(variadic_test, powell) {
   using stan::math::var;
-  int solver_type = 0;
-  bool is_impl = false;
+  bool is_newton = false;
   bool use_tol = false;
   for (int k = 0; k < n_x; k++) {
     var y_1 = y_1_dbl;
@@ -254,7 +253,7 @@ TEST_F(variadic_test, powell) {
     var y_3 = y_3_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = variadic_eq_impl_test(
-        A, y_1, y_2, y_3, i, solver_type, is_impl, use_tol, scaling_step_size,
+        A, y_1, y_2, y_3, i, is_newton, use_tol, scaling_step_size,
         relative_tolerance, function_tolerance, max_num_steps);
 
     std::vector<var> y_vec{y_1, y_2, y_3};
@@ -269,12 +268,12 @@ TEST_F(variadic_test, powell) {
 // Additional tests for deprecated signature (with and without tol)
 TEST_F(algebra_solver_simple_eq_test, powell_deprecated) {
   using stan::math::var;
-  int solver_type = 2;
+  bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, solver_type);
+        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y, is_newton);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
@@ -287,13 +286,13 @@ TEST_F(algebra_solver_simple_eq_test, powell_deprecated) {
 
 TEST_F(algebra_solver_simple_eq_test, powell_tuned_deprecated) {
   using stan::math::var;
-  int solver_type = 2;
+  bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, solver_type, true, scale_step,
-                         xtol, ftol, maxfev);
+        = simple_eq_non_varia_test(simple_eq_non_varia_functor(), y, is_newton,
+                                   true, scale_step, xtol, ftol, maxfev);
 
     std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
