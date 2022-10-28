@@ -206,56 +206,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> solve_newton_tol(
  * which get passed into the algebraic system. Use the
  * KINSOL solver from the SUNDIALS suite.
  *
- * The user can also specify the scaled step size, the function
- * tolerance, and the maximum number of steps.
- *
- * @tparam F type of equation system function
- * @tparam T type of elements in the x vector
- * @tparam Args types of additional input to the equation system functor
- *
- * @param[in] f Functor that evaluates the system of equations.
- * @param[in] x Vector of starting values (initial guess).
- * @param[in, out] msgs The print stream for warning messages.
- * @param[in] scaling_step_size Scaled-step stopping tolerance. If
- *            a Newton step is smaller than the scaling step
- *            tolerance, the code breaks, assuming the solver is no
- *            longer making significant progress (i.e. is stuck)
- * @param[in] function_tolerance determines whether roots are acceptable.
- * @param[in] max_num_steps  maximum number of function evaluations.
- * @param[in, out] msgs the print stream for warning messages.
- * @param[in] args Additional parameters to the equation system functor.
- * @return theta Vector of solutions to the system of equations.
- * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if x has non-finite elements.
- * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
- * negative.
- * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
- * negative.
- * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>std::domain_error if solver exceeds max_num_steps.
- */
-// template <typename F, typename T, typename... T_Args,
-//           require_eigen_vector_t<T>* = nullptr>
-// Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
-// solve_newton_tol(const F& f, const T& x, const double scaling_step_size,
-//                  const double function_tolerance, const int64_t max_num_steps,
-//                  std::ostream* const msgs, const T_Args&... args) {
-//   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-//   return math::apply(
-//       [&](const auto&... args_refs) {
-//         return solve_newton_impl(f, x, msgs,
-//                                  scaling_step_size, function_tolerance,
-//                                  max_num_steps, args_refs...);
-//       },
-//       args_ref_tuple);
-// }
-
-/**
- * Return the solution to the specified system of algebraic
- * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system. Use the
- * KINSOL solver from the SUNDIALS suite.
- *
  * This signature does not give users control over the tuning parameters
  * and instead relies on default values.
  *
