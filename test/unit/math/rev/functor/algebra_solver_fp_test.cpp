@@ -494,8 +494,8 @@ TEST_F(FP_direct_prod_func_test, algebra_solver_fp) {
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
   Eigen::Matrix<var, -1, 1> xv_fp = algebra_solver_fp(
       f, x, yp, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
-  Eigen::Matrix<var, -1, 1> xv_newton = solve_newton_tol(
-      f_newton, x, 1.e-3, f_tol, max_num_steps, 0, yp, x_r, x_i);  // NOLINT
+  Eigen::Matrix<var, -1, 1> xv_newton = algebra_solver_newton(
+      f_newton, x, yp, x_r, x_i, 0, 1.e-3, f_tol, max_num_steps);     // NOLINT
   for (int i = 0; i < n; ++i) {
     EXPECT_FLOAT_EQ(value_of(xv_fp(i)), value_of(xv_newton(i)));
   }
