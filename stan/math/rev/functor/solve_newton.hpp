@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
-#define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_SOLVE_NEWTON_HPP
+#define STAN_MATH_REV_FUNCTOR_SOLVE_NEWTON_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
@@ -56,21 +56,19 @@ namespace math {
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd algebra_solver_newton_impl(const F& f, const T& x,
-                                           std::ostream* const msgs,
-                                           const double scaling_step_size,
-                                           const double function_tolerance,
-                                           const int64_t max_num_steps,
-                                           const Args&... args) {
+Eigen::VectorXd solve_newton_tol(const F& f, const T& x,
+                                 const double scaling_step_size,
+                                 const double function_tolerance,
+                                 const int64_t max_num_steps,
+                                 std::ostream* const msgs,
+                                 const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
-  check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
-  check_finite("algebra_solver_newton", "initial guess", x_ref);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size",
-                    scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance",
-                    function_tolerance);
-  check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
+  check_nonzero_size("solve_newton", "initial guess", x_ref);
+  check_finite("solve_newton", "initial guess", x_ref);
+  check_nonnegative("solve_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("solve_newton", "function_tolerance", function_tolerance);
+  check_positive("solve_newton", "max_num_steps", max_num_steps);
 
   return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
                       max_num_steps, 1, 10, KIN_LINESEARCH, msgs, args...);
@@ -137,10 +135,10 @@ Eigen::VectorXd algebra_solver_newton_impl(const F& f, const T& x,
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
-Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
-    const F& f, const T& x, std::ostream* const msgs,
-    const double scaling_step_size, const double function_tolerance,
-    const int64_t max_num_steps, const T_Args&... args) {
+Eigen::Matrix<var, Eigen::Dynamic, 1> solve_newton_tol(
+    const F& f, const T& x, const double scaling_step_size,
+    const double function_tolerance, const int64_t max_num_steps,
+    std::ostream* const msgs, const T_Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
   auto args_vals_tuple = math::apply(
@@ -149,13 +147,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
       },
       *arena_args_tuple);
 
-  check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
-  check_finite("algebra_solver_newton", "initial guess", x_ref);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size",
-                    scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance",
-                    function_tolerance);
-  check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
+  check_nonzero_size("solve_newton", "initial guess", x_ref);
+  check_finite("solve_newton", "initial guess", x_ref);
+  check_nonnegative("solve_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("solve_newton", "function_tolerance", function_tolerance);
+  check_positive("solve_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
   Eigen::VectorXd theta_dbl = math::apply(
@@ -210,6 +206,56 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
  * which get passed into the algebraic system. Use the
  * KINSOL solver from the SUNDIALS suite.
  *
+ * This signature does not give users control over the tuning parameters
+ * and instead relies on default values.
+ *
+ * @tparam F type of equation system function
+ * @tparam T type of elements in the x vector
+ * @tparam Args types of additional input to the equation system functor
+ *
+ * @param[in] f Functor that evaluates the system of equations.
+ * @param[in] x Vector of starting values (initial guess).
+ * @param[in, out] msgs The print stream for warning messages.
+ * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ *            a Newton step is smaller than the scaling step
+ *            tolerance, the code breaks, assuming the solver is no
+ *            longer making significant progress (i.e. is stuck)
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ * @param[in, out] msgs the print stream for warning messages.
+ * @param[in] args Additional parameters to the equation system functor.
+ * @return theta Vector of solutions to the system of equations.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>std::domain_error if solver exceeds max_num_steps.
+ */
+template <typename F, typename T, typename... T_Args,
+          require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_newton(
+    const F& f, const T& x, std::ostream* const msgs, const T_Args&... args) {
+  double scaling_step_size = 1e-3;
+  double function_tolerance = 1e-6;
+  int64_t max_num_steps = 200;
+  const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
+  return math::apply(
+      [&](const auto&... args_refs) {
+        return solve_newton_tol(f, x, scaling_step_size, function_tolerance,
+                                max_num_steps, msgs, args_refs...);
+      },
+      args_ref_tuple);
+}
+
+/**
+ * Return the solution to the specified system of algebraic
+ * equations given an initial guess, and parameters and data,
+ * which get passed into the algebraic system. Use the
+ * KINSOL solver from the SUNDIALS suite.
+ *
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
  *
@@ -252,9 +298,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const double scaling_step_size = 1e-3,
     const double function_tolerance = 1e-6,
     const long int max_num_steps = 200) {  // NOLINT(runtime/int)
-  return algebra_solver_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
-                                    scaling_step_size, function_tolerance,
-                                    max_num_steps, y, dat, dat_int);
+  return solve_newton_tol(algebra_solver_adapter<F>(f), x, scaling_step_size,
+                          function_tolerance, max_num_steps, msgs, y, dat,
+                          dat_int);
 }
 
 }  // namespace math
