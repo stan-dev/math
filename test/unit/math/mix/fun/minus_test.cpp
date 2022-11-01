@@ -41,7 +41,7 @@ TEST(MathMixMatFun, minus) {
   }
 
   Eigen::MatrixXd v22(2, 2);
-  u22 << 5, 6, 7, 8;
+  v22 << 5, 6, 7, 8;
   std::vector<Eigen::MatrixXd> vec_mat{u22, v22};
   stan::test::expect_ad(f, vec_mat);
 }
