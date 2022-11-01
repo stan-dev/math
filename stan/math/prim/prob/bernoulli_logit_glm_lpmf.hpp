@@ -137,25 +137,25 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 theta_derivative.sum() * x_val);
       } else {
-        stan::math::edge<2>(ops_partials).partials_ = x_val.transpose() * theta_derivative;
+        edge<2>(ops_partials).partials_ = x_val.transpose() * theta_derivative;
       }
     }
     if (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
-        stan::math::edge<0>(ops_partials).partials_
+        edge<0>(ops_partials).partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * theta_derivative.sum());
       } else {
-        stan::math::edge<0>(ops_partials).partials_
+        edge<0>(ops_partials).partials_
             = (beta_val_vec * theta_derivative.transpose()).transpose();
       }
     }
     if (!is_constant_all<T_alpha>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = theta_derivative;
+      edge<1>(ops_partials).partials_ = theta_derivative;
     }
   }
   return ops_partials.build(logp);

@@ -107,13 +107,13 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
   auto ops_partials = partials_propagator(y_col, y_min_col, alpha_col);
 
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(y_min_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(y_min_deriv_cl);
   }
   if (!is_constant<T_shape_cl>::value) {
-    stan::math::edge<2>(ops_partials).partials_ = std::move(alpha_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(alpha_deriv_cl);
   }
   return ops_partials.build(lcdf);
 }

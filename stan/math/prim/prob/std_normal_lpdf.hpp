@@ -53,7 +53,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
     const T_partials_return y_val = y_vec.val(n);
     logp += y_val * y_val;
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n] -= y_val;
+      edge<0>(ops_partials).partials_[n] -= y_val;
     }
   }
   logp *= -0.5;

@@ -100,7 +100,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
-    stan::math::edge<0>(ops_partials).partials_
+    edge<0>(ops_partials).partials_
         = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
   if (!is_constant_all<T_loc, T_prec>::value) {
@@ -111,12 +111,12 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
         !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
         digamma(kappa_val - mukappa));
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_
+      edge<1>(ops_partials).partials_
           = kappa_val
             * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
     if (!is_constant_all<T_prec>::value) {
-      stan::math::edge<2>(ops_partials).partials_
+      edge<2>(ops_partials).partials_
           = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
             + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);
     }

@@ -124,10 +124,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = -deriv_y_mu;
+      edge<0>(ops_partials).partials_ = -deriv_y_mu;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<2>(ops_partials).partials_ = std::move(deriv_y_mu);
+      edge<2>(ops_partials).partials_ = std::move(deriv_y_mu);
     }
   }
   if (!is_constant_all<T_dof, T_scale>::value) {
@@ -138,13 +138,13 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     if (!is_constant_all<T_dof>::value) {
       const auto& digamma_half_nu_plus_half = digamma(half_nu + 0.5);
       const auto& digamma_half_nu = digamma(half_nu);
-      stan::math::edge<1>(ops_partials).partials_
+      edge<1>(ops_partials).partials_
           = 0.5
             * (digamma_half_nu_plus_half - digamma_half_nu - log1p_val
                + rep_deriv / nu_val);
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<3>(ops_partials).partials_ = rep_deriv / sigma_val;
+      edge<3>(ops_partials).partials_ = rep_deriv / sigma_val;
     }
   }
   return ops_partials.build(logp);

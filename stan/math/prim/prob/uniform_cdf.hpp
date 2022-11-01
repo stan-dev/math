@@ -73,20 +73,20 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
           = to_ref_if<(!is_constant_all<T_low>::value
                        && !is_constant_all<T_y>::value)>(rep_deriv / cdf_n);
       if (!is_constant_all<T_low>::value) {
-        stan::math::edge<1>(ops_partials).partials_
+        edge<1>(ops_partials).partials_
             = (y_val - beta_val) * deriv_y / b_minus_a;
       }
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_ = std::move(deriv_y);
+        edge<0>(ops_partials).partials_ = std::move(deriv_y);
       }
     }
     if (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = -rep_deriv * max_size(y, alpha, beta) / max_size(alpha, beta);
       } else {
-        stan::math::edge<2>(ops_partials).partials_ = -rep_deriv;
+        edge<2>(ops_partials).partials_ = -rep_deriv;
       }
     }
   }

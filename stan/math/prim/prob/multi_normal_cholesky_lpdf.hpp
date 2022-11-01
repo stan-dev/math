@@ -157,10 +157,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
                         .transpose();
 
       logp += sum(log(inv_L_val.diagonal())) * size_vec;
-      stan::math::edge<2>(ops_partials).partials_ -= size_vec * inv_L_val.transpose();
+      edge<2>(ops_partials).partials_ -= size_vec * inv_L_val.transpose();
 
       for (size_t i = 0; i < size_vec; i++) {
-        stan::math::edge<2>(ops_partials).partials_vec_[i]
+        edge<2>(ops_partials).partials_vec_[i]
             += scaled_diff.col(i) * half.row(i);
       }
     }
@@ -169,10 +169,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
     for (size_t i = 0; i < size_vec; i++) {
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_vec_[i] -= scaled_diff.col(i);
+        edge<0>(ops_partials).partials_vec_[i] -= scaled_diff.col(i);
       }
       if (!is_constant_all<T_loc>::value) {
-        stan::math::edge<1>(ops_partials).partials_vec_[i] += scaled_diff.col(i);
+        edge<1>(ops_partials).partials_vec_[i] += scaled_diff.col(i);
       }
     }
   }
@@ -280,17 +280,17 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
                         .transpose();
 
       logp += sum(log(inv_L_val.diagonal()));
-      stan::math::edge<2>(ops_partials).partials_
+      edge<2>(ops_partials).partials_
           += scaled_diff * half - inv_L_val.transpose();
     }
 
     logp -= 0.5 * sum(dot_self(half));
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ -= scaled_diff;
+      edge<0>(ops_partials).partials_ -= scaled_diff;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_ += scaled_diff;
+      edge<1>(ops_partials).partials_ += scaled_diff;
     }
   }
 

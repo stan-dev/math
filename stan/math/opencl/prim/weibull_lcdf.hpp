@@ -92,13 +92,13 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lcdf(
   auto ops_partials = partials_propagator(y_col, alpha_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_shape_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(alpha_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(alpha_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    stan::math::edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(lcdf);
 }

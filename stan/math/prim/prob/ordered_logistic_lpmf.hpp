@@ -187,16 +187,16 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
           - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
                               1 / (1 + exp(cut1)));
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = d1 - d2;
+      edge<0>(ops_partials).partials_ = d1 - d2;
     }
     if (!is_constant_all<T_cut>::value) {
       for (int i = 0; i < N; i++) {
         int c = y_seq[i];
         if (c != K) {
-          stan::math::edge<1>(ops_partials).partials_vec_[i][c - 1] += d2.coeff(i);
+          edge<1>(ops_partials).partials_vec_[i][c - 1] += d2.coeff(i);
         }
         if (c != 1) {
-          stan::math::edge<1>(ops_partials).partials_vec_[i][c - 2] -= d1.coeff(i);
+          edge<1>(ops_partials).partials_vec_[i][c - 2] -= d1.coeff(i);
         }
       }
     }

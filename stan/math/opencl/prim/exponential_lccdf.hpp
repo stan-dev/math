@@ -70,10 +70,10 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lccdf(
       y_col, beta_col);
 
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = constant(0.0, N, 1) - beta_val;
+    edge<0>(ops_partials).partials_ = constant(0.0, N, 1) - beta_val;
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = constant(0.0, N, 1) - y_val;
+    edge<1>(ops_partials).partials_ = constant(0.0, N, 1) - y_val;
   }
   return ops_partials.build(lccdf);
 }

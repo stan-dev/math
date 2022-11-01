@@ -125,13 +125,13 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   auto ops_partials = partials_propagator(x, alpha, beta);
   if (!is_constant_all<T_x>::value) {
     if (is_y_vector) {
-      stan::math::edge<0>(ops_partials).partials_
+      edge<0>(ops_partials).partials_
           = indexing(beta_val, col_index(x.rows(), x.cols()),
                      rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))
             - elt_multiply(exp_lin_cl * transpose(beta_val),
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     } else {
-      stan::math::edge<0>(ops_partials).partials_
+      edge<0>(ops_partials).partials_
           = indexing(beta_val, col_index(x.rows(), x.cols()),
                      forward_as<int>(y_val) - 1)
             - elt_multiply(exp_lin_cl * transpose(beta_val),
@@ -140,18 +140,18 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
   if (!is_constant_all<T_alpha>::value) {
     if (wgs == 1) {
-      stan::math::edge<1>(ops_partials).partials_ = std::move(alpha_derivative_cl);
+      edge<1>(ops_partials).partials_ = std::move(alpha_derivative_cl);
     } else {
-      stan::math::edge<1>(ops_partials).partials_ = rowwise_sum(alpha_derivative_cl);
+      edge<1>(ops_partials).partials_ = rowwise_sum(alpha_derivative_cl);
     }
   }
   if (!is_constant_all<T_beta>::value && N_attributes != 0) {
-    stan::math::edge<2>(ops_partials).partials_ = transpose(x_val) * neg_softmax_lin_cl;
+    edge<2>(ops_partials).partials_ = transpose(x_val) * neg_softmax_lin_cl;
     matrix_cl<double> temp(N_classes, local_size * N_attributes);
     try {
       opencl_kernels::categorical_logit_glm_beta_derivative(
           cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-          forward_as<arena_matrix_cl<double>>(stan::math::edge<2>(ops_partials).partials_),
+          forward_as<arena_matrix_cl<double>>(edge<2>(ops_partials).partials_),
           temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
           is_y_vector);
     } catch (const cl::Error& e) {

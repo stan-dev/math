@@ -84,14 +84,14 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = (half_nu - 1.0) / y_val - 0.5;
+    edge<0>(ops_partials).partials_ = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = forward_as<T_partials_array>(
+      edge<1>(ops_partials).partials_ = forward_as<T_partials_array>(
           (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
     } else {
-      stan::math::edge<1>(ops_partials).partials_[0]
+      edge<1>(ops_partials).partials_[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;
     }
   }

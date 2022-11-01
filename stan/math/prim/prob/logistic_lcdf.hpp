@@ -77,15 +77,15 @@ return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n]
+      edge<0>(ops_partials).partials_[n]
           += exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_[n]
+      edge<1>(ops_partials).partials_[n]
           += -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += -(y_dbl - mu_dbl) * sigma_inv_vec
              * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }

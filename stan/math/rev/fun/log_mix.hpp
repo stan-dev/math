@@ -108,15 +108,15 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
   }
 
   if (!is_constant_all<T_theta>::value) {
-    stan::math::edge<0>(ops_partials).partials_[0]
+    edge<0>(ops_partials).partials_[0]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
   if (!is_constant_all<T_lambda1>::value) {
-    stan::math::edge<1>(ops_partials).partials_[0]
+    edge<1>(ops_partials).partials_[0]
         = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
   if (!is_constant_all<T_lambda2>::value) {
-    stan::math::edge<2>(ops_partials).partials_[0]
+    edge<2>(ops_partials).partials_[0]
         = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }

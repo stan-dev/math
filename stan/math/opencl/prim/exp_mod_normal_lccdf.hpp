@@ -135,16 +135,16 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
   auto ops_partials = partials_propagator(y_col, mu_col, sigma_col, lambda_col);
 
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    stan::math::edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    stan::math::edge<3>(ops_partials).partials_ = std::move(lambda_deriv_cl);
+    edge<3>(ops_partials).partials_ = std::move(lambda_deriv_cl);
   }
   return ops_partials.build(ccdf_log);
 }

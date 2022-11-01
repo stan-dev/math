@@ -103,18 +103,18 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
           alpha_div_y_pow_beta * beta_val);
       if (!is_constant_all<T_y>::value) {
         const auto& y_deriv = alpha_div_times_beta / y_val * prod_all_sq;
-        stan::math::edge<0>(ops_partials).partials_ = y_deriv * cdf_div_elt;
+        edge<0>(ops_partials).partials_ = y_deriv * cdf_div_elt;
       }
       if (!is_constant_all<T_scale>::value) {
         const auto& alpha_deriv
             = -alpha_div_times_beta / alpha_val * prod_all_sq;
-        stan::math::edge<1>(ops_partials).partials_ = alpha_deriv * cdf_div_elt;
+        edge<1>(ops_partials).partials_ = alpha_deriv * cdf_div_elt;
       }
     }
     if (!is_constant_all<T_shape>::value) {
       const auto& beta_deriv
           = -multiply_log(alpha_div_y_pow_beta, alpha_div_y) * prod_all_sq;
-      stan::math::edge<2>(ops_partials).partials_ = beta_deriv * cdf_div_elt;
+      edge<2>(ops_partials).partials_ = beta_deriv * cdf_div_elt;
     }
   }
 

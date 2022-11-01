@@ -138,45 +138,45 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_ = -mu_derivative;
+        edge<0>(ops_partials).partials_ = -mu_derivative;
       } else {
-        stan::math::edge<0>(ops_partials).partials_[0] = -mu_derivative.sum();
+        edge<0>(ops_partials).partials_[0] = -mu_derivative.sum();
       }
     }
     if (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
-        stan::math::edge<1>(ops_partials).partials_
+        edge<1>(ops_partials).partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * sum(mu_derivative));
       } else {
-        stan::math::edge<1>(ops_partials).partials_
+        edge<1>(ops_partials).partials_
             = (beta_val_vec * mu_derivative.transpose()).transpose();
       }
     }
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
-        stan::math::edge<3>(ops_partials).partials_
+        edge<3>(ops_partials).partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
-        stan::math::edge<3>(ops_partials).partials_ = mu_derivative.transpose() * x_val;
+        edge<3>(ops_partials).partials_ = mu_derivative.transpose() * x_val;
       }
     }
     if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value) {
-        stan::math::edge<2>(ops_partials).partials_ = mu_derivative;
+        edge<2>(ops_partials).partials_ = mu_derivative;
       } else {
-        stan::math::edge<2>(ops_partials).partials_[0] = sum(mu_derivative);
+        edge<2>(ops_partials).partials_[0] = sum(mu_derivative);
       }
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
         y_scaled_sq_sum = sum(y_scaled_sq);
-        stan::math::edge<4>(ops_partials).partials_ = (y_scaled_sq - 1) * inv_sigma;
+        edge<4>(ops_partials).partials_ = (y_scaled_sq - 1) * inv_sigma;
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
-        stan::math::edge<4>(ops_partials).partials_[0]
+        edge<4>(ops_partials).partials_[0]
             = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
     } else {

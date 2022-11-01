@@ -105,12 +105,12 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
           = expressions(calc_if<!is_constant<T_theta_cl>::value>(derivs_expr),
                         lambda_deriv_expr);
 
-      stan::math::edge<1>(ops_partials).partials_ = std::move(lambda_deriv);
+      edge<1>(ops_partials).partials_ = std::move(lambda_deriv);
       if (!is_constant<T_theta_cl>::value) {
-        stan::math::edge<0>(ops_partials).partials_ = rowwise_sum(derivs);
+        edge<0>(ops_partials).partials_ = rowwise_sum(derivs);
       }
     } else if (!is_constant<T_theta_cl>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = rowwise_sum(derivs_expr);
+      edge<0>(ops_partials).partials_ = rowwise_sum(derivs_expr);
     }
   }
   return ops_partials.build(sum(from_matrix_cl(logp_sum)));

@@ -77,15 +77,15 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n]
+      edge<0>(ops_partials).partials_[n]
           += exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_[n]
+      edge<1>(ops_partials).partials_[n]
           += -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += -(y_dbl - mu_dbl) * sigma_inv_vec
              * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
@@ -93,17 +93,17 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      stan::math::edge<0>(ops_partials).partials_[n] *= P;
+      edge<0>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      stan::math::edge<1>(ops_partials).partials_[n] *= P;
+      edge<1>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      stan::math::edge<2>(ops_partials).partials_[n] *= P;
+      edge<2>(ops_partials).partials_[n] *= P;
     }
   }
   return ops_partials.build(P);

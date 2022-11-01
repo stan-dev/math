@@ -99,15 +99,15 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    stan::math::edge<0>(ops_partials).partials_
+    edge<0>(ops_partials).partials_
         = (alpha_val * (1 - y_div_sigma_pow_alpha) - 1.0) / y_val;
   }
   if (!is_constant_all<T_shape>::value) {
-    stan::math::edge<1>(ops_partials).partials_
+    edge<1>(ops_partials).partials_
         = inv(alpha_val) + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
   }
   if (!is_constant_all<T_scale>::value) {
-    stan::math::edge<2>(ops_partials).partials_
+    edge<2>(ops_partials).partials_
         = alpha_val * inv_sigma * (y_div_sigma_pow_alpha - 1.0);
   }
   return ops_partials.build(logp);

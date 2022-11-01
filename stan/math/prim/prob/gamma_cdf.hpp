@@ -109,18 +109,18 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+      edge<0>(ops_partials).partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      stan::math::edge<1>(ops_partials).partials_[n]
+      edge<1>(ops_partials).partials_[n]
           -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
+      edge<2>(ops_partials).partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
@@ -128,17 +128,17 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      stan::math::edge<0>(ops_partials).partials_[n] *= P;
+      edge<0>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      stan::math::edge<1>(ops_partials).partials_[n] *= P;
+      edge<1>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
-      stan::math::edge<2>(ops_partials).partials_[n] *= P;
+      edge<2>(ops_partials).partials_[n] *= P;
     }
   }
   return ops_partials.build(P);

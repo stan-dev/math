@@ -69,7 +69,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
   auto ops_partials = partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   return ops_partials.build(logp);
 }

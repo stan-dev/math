@@ -123,23 +123,23 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
     if (!is_constant_all<T_size1>::value) {
       const T_partials_return g
           = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
-      stan::math::edge<0>(ops_partials).partials_[i] += g / Pi;
+      edge<0>(ops_partials).partials_[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
       const T_partials_return g
           = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
-      stan::math::edge<1>(ops_partials).partials_[i] += g / Pi;
+      edge<1>(ops_partials).partials_[i] += g / Pi;
     }
   }
 
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); ++i) {
-      stan::math::edge<0>(ops_partials).partials_[i] *= P;
+      edge<0>(ops_partials).partials_[i] *= P;
     }
   }
   if (!is_constant_all<T_size2>::value) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
-      stan::math::edge<1>(ops_partials).partials_[i] *= P;
+      edge<1>(ops_partials).partials_[i] *= P;
     }
   }
 

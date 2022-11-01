@@ -75,15 +75,15 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
                                      && !is_constant_all<T_y>::value)>(
         (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = y_deriv;
+      edge<0>(ops_partials).partials_ = y_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
+      edge<2>(ops_partials).partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
-    stan::math::edge<1>(ops_partials).partials_
+    edge<1>(ops_partials).partials_
         = (1
            - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
           * inv_sigma;

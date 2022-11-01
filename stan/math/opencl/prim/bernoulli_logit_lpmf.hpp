@@ -81,7 +81,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   auto ops_partials = partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = deriv_cl;
+    edge<0>(ops_partials).partials_ = deriv_cl;
   }
 
   return ops_partials.build(logp);

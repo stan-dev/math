@@ -87,13 +87,13 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                         + !is_constant_all<T_scale>::value
                     >= 2>(logy_m_mu * inv_sigma_sq);
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = -(1 + logy_m_mu_div_sigma) / y_val;
+      edge<0>(ops_partials).partials_ = -(1 + logy_m_mu_div_sigma) / y_val;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = logy_m_mu_div_sigma;
+      edge<1>(ops_partials).partials_ = logy_m_mu_div_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_
+      edge<2>(ops_partials).partials_
           = (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma;
     }
   }

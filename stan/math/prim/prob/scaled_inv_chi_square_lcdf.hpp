@@ -99,11 +99,11 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n]
+      edge<0>(ops_partials).partials_[n]
           += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
-      stan::math::edge<1>(ops_partials).partials_[n]
+      edge<1>(ops_partials).partials_[n]
           += (0.5
                   * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
                                        gamma_vec[n], digamma_vec[n])
@@ -111,7 +111,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
              / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
   }

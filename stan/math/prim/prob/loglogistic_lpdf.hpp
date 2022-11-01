@@ -122,20 +122,20 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
                               - two_inv_log1_arg
                                     * (beta_val * inv_alpha_pow_beta)
                                     * y_pow_beta * inv_y;
-        stan::math::edge<0>(ops_partials).partials_ = y_deriv;
+        edge<0>(ops_partials).partials_ = y_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
         const auto& alpha_deriv = -beta_val * inv_alpha
                                   - two_inv_log1_arg * y_pow_beta * (-beta_val)
                                         * inv_alpha_pow_beta * inv_alpha;
-        stan::math::edge<1>(ops_partials).partials_ = alpha_deriv;
+        edge<1>(ops_partials).partials_ = alpha_deriv;
       }
     }
     if (!is_constant_all<T_shape>::value) {
       const auto& beta_deriv
           = (1.0 * inv(beta_val)) + log_y - log_alpha
             - two_inv_log1_arg * y_div_alpha_pow_beta * log(y_div_alpha);
-      stan::math::edge<2>(ops_partials).partials_ = beta_deriv;
+      edge<2>(ops_partials).partials_ = beta_deriv;
     }
   }
   return ops_partials.build(logp);

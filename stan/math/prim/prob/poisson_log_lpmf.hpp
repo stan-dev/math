@@ -80,7 +80,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   }
 
   if (!is_constant_all<T_log_rate>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = n_val - exp_alpha;
+    edge<0>(ops_partials).partials_ = n_val - exp_alpha;
   }
 
   return ops_partials.build(logp);

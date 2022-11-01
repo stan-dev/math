@@ -110,7 +110,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_[n]
+        edge<0>(ops_partials).partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -122,16 +122,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        stan::math::edge<1>(ops_partials).partials_[n]
+        edge<1>(ops_partials).partials_[n]
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        stan::math::edge<2>(ops_partials).partials_[n]
+        edge<2>(ops_partials).partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        stan::math::edge<3>(ops_partials).partials_[n]
+        edge<3>(ops_partials).partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
 
@@ -148,7 +148,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_[n]
+        edge<0>(ops_partials).partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -160,16 +160,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        stan::math::edge<1>(ops_partials).partials_[n]
+        edge<1>(ops_partials).partials_[n]
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        stan::math::edge<2>(ops_partials).partials_[n]
+        edge<2>(ops_partials).partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        stan::math::edge<3>(ops_partials).partials_[n]
+        edge<3>(ops_partials).partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
     }

@@ -112,10 +112,10 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
       eta_col, phi_col);
 
   if (!is_constant<T_log_location_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(eta_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(eta_deriv_cl);
   }
   if (!is_constant<T_precision_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(phi_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(phi_deriv_cl);
   }
   return ops_partials.build(logp);
 }

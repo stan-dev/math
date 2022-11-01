@@ -127,16 +127,16 @@ skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
 
   auto ops_partials = partials_propagator(y_col, mu_col, sigma_col, tau_col);
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    stan::math::edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
   }
   if (!is_constant<T_skewness_cl>::value) {
-    stan::math::edge<3>(ops_partials).partials_ = std::move(tau_deriv_cl);
+    edge<3>(ops_partials).partials_ = std::move(tau_deriv_cl);
   }
   return ops_partials.build(logp);
 }

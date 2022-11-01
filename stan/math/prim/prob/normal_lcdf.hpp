@@ -216,13 +216,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       }
 
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_[n] += dncdf_log / sigma_sqrt2;
+        edge<0>(ops_partials).partials_[n] += dncdf_log / sigma_sqrt2;
       }
       if (!is_constant_all<T_loc>::value) {
-        stan::math::edge<1>(ops_partials).partials_[n] -= dncdf_log / sigma_sqrt2;
+        edge<1>(ops_partials).partials_[n] -= dncdf_log / sigma_sqrt2;
       }
       if (!is_constant_all<T_scale>::value) {
-        stan::math::edge<2>(ops_partials).partials_[n] -= dncdf_log * scaled_diff / sigma_dbl;
+        edge<2>(ops_partials).partials_[n] -= dncdf_log * scaled_diff / sigma_dbl;
       }
     }
   }

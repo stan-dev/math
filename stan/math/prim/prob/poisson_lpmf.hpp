@@ -75,7 +75,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   }
 
   if (!is_constant_all<T_rate>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = n_val / lambda_val - 1.0;
+    edge<0>(ops_partials).partials_ = n_val / lambda_val - 1.0;
   }
 
   return ops_partials.build(logp);

@@ -147,23 +147,23 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   }
   if (!is_constant<T_y_cl>::value) {
     if (is_y_vector) {
-      stan::math::edge<0>(ops_partials).partials_ = -mu_derivative_cl;
+      edge<0>(ops_partials).partials_ = -mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          stan::math::edge<0>(ops_partials).partials_)[0]
+          edge<0>(ops_partials).partials_)[0]
           = -mu_derivative_sum;
     }
   }
   if (!is_constant<T_x_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_
+    edge<1>(ops_partials).partials_
         = transpose(beta_val * transpose(mu_derivative_cl));
   }
   if (!is_constant<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      stan::math::edge<2>(ops_partials).partials_ = mu_derivative_cl;
+      edge<2>(ops_partials).partials_ = mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          stan::math::edge<2>(ops_partials).partials_)[0]
+          edge<2>(ops_partials).partials_)[0]
           = mu_derivative_sum;
     }
   }
@@ -173,16 +173,16 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
-    stan::math::edge<3>(ops_partials).partials_
+    edge<3>(ops_partials).partials_
         = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
                             edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      stan::math::edge<3>(ops_partials).partials_.add_write_event(
+      edge<3>(ops_partials).partials_.add_write_event(
           edge4_partials_transpose_cl.write_events().back());
     }
   }
   if (!is_constant<T_sigma_cl>::value) {
-    stan::math::edge<4>(ops_partials).partials_ = sigma_derivative_cl;
+    edge<4>(ops_partials).partials_ = sigma_derivative_cl;
   }
 
   if (!std::isfinite(y_scaled_sq_sum)) {

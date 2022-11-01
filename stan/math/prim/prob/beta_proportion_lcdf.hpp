@@ -116,7 +116,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
         = is_constant_all<T_y, T_loc, T_prec>::value ? 0 : inv(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
+      edge<0>(ops_partials).partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1) * inv_Pn
                                           / betafunc_dbl;
     }
@@ -130,10 +130,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
                         digamma_kappa[n], betafunc_dbl);
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_[n] += kappa_dbl * (g1 - g2) * inv_Pn;
+      edge<1>(ops_partials).partials_[n] += kappa_dbl * (g1 - g2) * inv_Pn;
     }
     if (!is_constant_all<T_prec>::value) {
-      stan::math::edge<2>(ops_partials).partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
     }
   }

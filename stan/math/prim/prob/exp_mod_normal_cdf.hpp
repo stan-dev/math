@@ -119,14 +119,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
         if (!is_constant_all<T_y>::value) {
-          stan::math::edge<0>(ops_partials).partials_ = deriv;
+          edge<0>(ops_partials).partials_ = deriv;
         }
         if (!is_constant_all<T_loc>::value) {
-          stan::math::edge<1>(ops_partials).partials_ = -deriv;
+          edge<1>(ops_partials).partials_ = -deriv;
         }
       }
       if (!is_constant_all<T_scale>::value) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = -cdf
               * ((deriv_1 - deriv_2) * v
                  + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
@@ -134,7 +134,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       }
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      stan::math::edge<3>(ops_partials).partials_
+      edge<3>(ops_partials).partials_
           = cdf * exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2
                - (v * sigma_val - diff) * erf_calc)

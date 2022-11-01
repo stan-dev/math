@@ -98,7 +98,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
             - n_vec[i] * log_mu_plus_phi[i];
 
     if (!is_constant_all<T_location>::value) {
-      stan::math::edge<0>(ops_partials).partials_[i]
+      edge<0>(ops_partials).partials_[i]
           += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
@@ -108,7 +108,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       } else {
         log_term = log_phi[i] - log_mu_plus_phi[i];
       }
-      stan::math::edge<1>(ops_partials).partials_[i]
+      edge<1>(ops_partials).partials_[i]
           += (mu_val[i] - n_vec[i]) / mu_plus_phi[i] + log_term
              - digamma(phi_val[i]) + digamma(n_plus_phi[i]);
     }

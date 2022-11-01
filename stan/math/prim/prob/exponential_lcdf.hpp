@@ -52,10 +52,10 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
         !is_constant_all<T_y>::value || !is_constant_all<T_inv_scale>::value)>(
         -exp_val / (1.0 - exp_val));
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = -rep_deriv * beta_val;
+      edge<0>(ops_partials).partials_ = -rep_deriv * beta_val;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = -rep_deriv * y_val;
+      edge<1>(ops_partials).partials_ = -rep_deriv * y_val;
     }
   }
   return ops_partials.build(cdf_log);

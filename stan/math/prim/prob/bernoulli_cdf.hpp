@@ -70,13 +70,13 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
     P *= Pi;
 
     if (!is_constant_all<T_prob>::value) {
-      stan::math::edge<0>(ops_partials).partials_[i] += -1 / Pi;
+      edge<0>(ops_partials).partials_[i] += -1 / Pi;
     }
   }
 
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      stan::math::edge<0>(ops_partials).partials_[i] *= P;
+      edge<0>(ops_partials).partials_[i] *= P;
     }
   }
   return ops_partials.build(P);

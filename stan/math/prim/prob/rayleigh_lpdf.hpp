@@ -67,10 +67,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
                                          && !is_constant_all<T_scale>::value)>(
         inv_sigma * y_over_sigma);
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = inv(y_val) - scaled_diff;
+      edge<0>(ops_partials).partials_ = inv(y_val) - scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<1>(ops_partials).partials_
+      edge<1>(ops_partials).partials_
           = y_over_sigma * scaled_diff - 2.0 * inv_sigma;
     }
   }

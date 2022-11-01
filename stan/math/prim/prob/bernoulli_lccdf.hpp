@@ -72,7 +72,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
     P += log(Pi);
 
     if (!is_constant_all<T_prob>::value) {
-      stan::math::edge<0>(ops_partials).partials_[i] += inv(Pi);
+      edge<0>(ops_partials).partials_[i] += inv(Pi);
     }
   }
 

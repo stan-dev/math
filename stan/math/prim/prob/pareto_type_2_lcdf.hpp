@@ -76,18 +76,18 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
                                 >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
                                       / (lambda_val - mu_val + y_val));
       if (!is_constant_all<T_loc>::value) {
-        stan::math::edge<1>(ops_partials).partials_ = -grad_1_2;
+        edge<1>(ops_partials).partials_ = -grad_1_2;
       }
       if (!is_constant_all<T_scale>::value) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = (mu_val - y_val) * grad_1_2 / lambda_val;
       }
       if (!is_constant_all<T_y>::value) {
-        stan::math::edge<0>(ops_partials).partials_ = std::move(grad_1_2);
+        edge<0>(ops_partials).partials_ = std::move(grad_1_2);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      stan::math::edge<3>(ops_partials).partials_ = log(temp) * inv_p1_pow_alpha_minus_one;
+      edge<3>(ops_partials).partials_ = log(temp) * inv_p1_pow_alpha_minus_one;
     }
   }
 

@@ -100,13 +100,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
 
   auto ops_partials = partials_propagator(y_col, mu_col, beta_col);
   if (!is_constant<T_y_cl>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    stan::math::edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    stan::math::edge<2>(ops_partials).partials_ = std::move(beta_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(beta_deriv_cl);
   }
 
   return ops_partials.build(logp);

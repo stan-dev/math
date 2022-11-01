@@ -129,7 +129,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
 
   if (!is_constant_all<T_Gamma>::value) {
     for (int n = n_transitions - 1; n >= 0; --n) {
-      stan::math::edge<1>(ops_partials).partials_
+      edge<1>(ops_partials).partials_
           += grad_corr[n] * alphas.col(n)
              * kappa[n].cwiseProduct(omegas.col(n + 1)).transpose()
              / unnormed_marginal;
@@ -140,12 +140,12 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
     // Boundary terms
     if (n_transitions == 0) {
       if (!is_constant_all<T_omega>::value) {
-        stan::math::edge<0>(ops_partials).partials_
+        edge<0>(ops_partials).partials_
             = omegas.cwiseProduct(rho_val) / exp(log_marginal_density);
       }
 
       if (!is_constant_all<T_rho>::value) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = omegas.col(0) / exp(log_marginal_density);
       }
       return ops_partials.build(log_marginal_density);
@@ -164,12 +164,12 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
         }
 
         log_omega_jacad.col(0) = grad_corr_boundary * C.cwiseProduct(rho_val);
-        stan::math::edge<0>(ops_partials).partials_
+        edge<0>(ops_partials).partials_
             = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       }
 
       if (!is_constant_all<T_rho>::value) {
-        stan::math::edge<2>(ops_partials).partials_ = grad_corr_boundary
+        edge<2>(ops_partials).partials_ = grad_corr_boundary
                                         * C.cwiseProduct(omegas.col(0))
                                         / unnormed_marginal;
       }

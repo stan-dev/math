@@ -156,10 +156,10 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     logp += lbeta_diff[i];
 
     if (!is_constant_all<T_size1>::value)
-      stan::math::edge<0>(ops_partials).partials_[i]
+      edge<0>(ops_partials).partials_[i]
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
     if (!is_constant_all<T_size2>::value)
-      stan::math::edge<1>(ops_partials).partials_[i]
+      edge<1>(ops_partials).partials_[i]
           += digamma(N_vec.val(i) - n_vec.val(i) + beta_vec.val(i))
              + digamma_diff[i] - digamma_beta[i];
   }

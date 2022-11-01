@@ -96,7 +96,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, beta_ref);
   if (!is_constant_all<T_y>::value) {
-    stan::math::edge<0>(ops_partials).partials_
+    edge<0>(ops_partials).partials_
         = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
   }
 
@@ -110,11 +110,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
           = to_ref_if < !is_constant_all<T_scale_succ>::value
             && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
       if (!is_constant_all<T_scale_succ>::value) {
-        stan::math::edge<1>(ops_partials).partials_
+        edge<1>(ops_partials).partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);
       }
       if (!is_constant_all<T_scale_fail>::value) {
-        stan::math::edge<2>(ops_partials).partials_
+        edge<2>(ops_partials).partials_
             = log1m_y + digamma_alpha_beta - digamma(beta_val);
       }
     }

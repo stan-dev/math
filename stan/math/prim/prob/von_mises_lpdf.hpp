@@ -73,14 +73,14 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = -kappa_sin;
+      edge<0>(ops_partials).partials_ = -kappa_sin;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = std::move(kappa_sin);
+      edge<1>(ops_partials).partials_ = std::move(kappa_sin);
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    stan::math::edge<2>(ops_partials).partials_
+    edge<2>(ops_partials).partials_
         = cos_mu_minus_y
           - modified_bessel_first_kind(-1, kappa_val)
                 / modified_bessel_first_kind(0, kappa_val);

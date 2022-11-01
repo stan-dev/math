@@ -94,13 +94,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                      + !is_constant_all<T_loc>::value
                                  >= 2>(inv_sigma * y_scaled);
     if (!is_constant_all<T_y>::value) {
-      stan::math::edge<0>(ops_partials).partials_ = -scaled_diff;
+      edge<0>(ops_partials).partials_ = -scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      stan::math::edge<2>(ops_partials).partials_ = inv_sigma * y_scaled_sq - inv_sigma;
+      edge<2>(ops_partials).partials_ = inv_sigma * y_scaled_sq - inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
-      stan::math::edge<1>(ops_partials).partials_ = std::move(scaled_diff);
+      edge<1>(ops_partials).partials_ = std::move(scaled_diff);
     }
   }
   return ops_partials.build(logp);

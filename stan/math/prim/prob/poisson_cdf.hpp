@@ -58,7 +58,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   T_partials_return P = prod(Pi);
 
   if (!is_constant_all<T_rate>::value) {
-    stan::math::edge<0>(ops_partials).partials_ = -exp(-lambda_val) * pow(lambda_val, n_val)
+    edge<0>(ops_partials).partials_ = -exp(-lambda_val) * pow(lambda_val, n_val)
                                     / (tgamma(n_val + 1.0) * Pi) * P;
   }
 
