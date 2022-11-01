@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 
 namespace stan {
@@ -173,7 +173,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     }
   }
 
-  operands_and_partials<T_lambda_ref, T_cut_ref> ops_partials(lambda_ref,
+  auto ops_partials = partials_propagator(lambda_ref,
                                                               c_ref);
   if (!is_constant_all<T_loc, T_cut>::value) {
     Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
@@ -187,16 +187,16 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
           - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
                               1 / (1 + exp(cut1)));
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge1_.partials_ = d1 - d2;
+      stan::math::edge<0>(ops_partials).partials_ = d1 - d2;
     }
     if (!is_constant_all<T_cut>::value) {
       for (int i = 0; i < N; i++) {
         int c = y_seq[i];
         if (c != K) {
-          ops_partials.edge2_.partials_vec_[i][c - 1] += d2.coeff(i);
+          stan::math::edge<1>(ops_partials).partials_vec_[i][c - 1] += d2.coeff(i);
         }
         if (c != 1) {
-          ops_partials.edge2_.partials_vec_[i][c - 2] -= d1.coeff(i);
+          stan::math::edge<1>(ops_partials).partials_vec_[i][c - 2] -= d1.coeff(i);
         }
       }
     }

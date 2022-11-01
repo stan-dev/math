@@ -133,19 +133,19 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
         = isfinite(x_val);
   }
 
-  operands_and_partials<T_x_cl, T_alpha_cl, T_beta_cl> ops_partials(x, alpha,
+  auto ops_partials = partials_propagator(x, alpha,
                                                                     beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x_cl>::value) {
-    ops_partials.edge1_.partials_
+    stan::math::edge<0>(ops_partials).partials_
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
   if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      ops_partials.edge2_.partials_ = theta_derivative_cl;
+      stan::math::edge<1>(ops_partials).partials_ = theta_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge2_.partials_)[0]
+          stan::math::edge<1>(ops_partials).partials_)[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
@@ -155,11 +155,11 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    ops_partials.edge3_.partials_
+    stan::math::edge<2>(ops_partials).partials_
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      ops_partials.edge3_.partials_.add_write_event(
+      stan::math::edge<2>(ops_partials).partials_.add_write_event(
           edge3_partials_transpose_cl.write_events().back());
     }
   }

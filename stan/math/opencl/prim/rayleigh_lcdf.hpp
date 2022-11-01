@@ -76,14 +76,14 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lcdf(const T_y_cl& y,
 
   T_partials_return lcdf = from_matrix_cl(lcdf_cl).sum();
 
-  operands_and_partials<decltype(y_col), decltype(sigma_col)> ops_partials(
+  auto ops_partials = partials_propagator(
       y_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(sigma_deriv_cl);
+    stan::math::edge<1>(ops_partials).partials_ = std::move(sigma_deriv_cl);
   }
 
   return ops_partials.build(lcdf);

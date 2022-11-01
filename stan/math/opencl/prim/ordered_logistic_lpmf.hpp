@@ -142,16 +142,16 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
         = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
                       isfinite(lambda_val));
   }
-  operands_and_partials<T_loc_cl, T_cuts_cl> ops_partials(lambda, cuts);
+  auto ops_partials = partials_propagator(lambda, cuts);
 
   if (!is_constant_all<T_loc_cl>::value) {
-    ops_partials.edge1_.partials_ = lambda_derivative_cl;
+    stan::math::edge<0>(ops_partials).partials_ = lambda_derivative_cl;
   }
   if (!is_constant_all<T_cuts_cl>::value) {
     if (need_broadcasting) {
-      ops_partials.edge2_.partials_ = rowwise_sum(cuts_derivative_cl);
+      stan::math::edge<1>(ops_partials).partials_ = rowwise_sum(cuts_derivative_cl);
     } else {
-      ops_partials.edge2_.partials_ = std::move(cuts_derivative_cl);
+      stan::math::edge<1>(ops_partials).partials_ = std::move(cuts_derivative_cl);
     }
   }
   return ops_partials.build(logp);

@@ -106,14 +106,14 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(mu_col), decltype(phi_col)> ops_partials(
+  auto ops_partials = partials_propagator(
       mu_col, phi_col);
 
   if (!is_constant<T_location_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(mu_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_precision_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(phi_deriv_cl);
+    stan::math::edge<1>(ops_partials).partials_ = std::move(phi_deriv_cl);
   }
   return ops_partials.build(logp);
 }

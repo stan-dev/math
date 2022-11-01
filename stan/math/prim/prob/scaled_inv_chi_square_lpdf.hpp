@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -70,7 +70,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   }
 
   T_partials_return logp(0);
-  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref,
+  auto ops_partials = partials_propagator(y_ref, nu_ref,
                                                                  s_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -155,17 +155,17 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      stan::math::edge<0>(ops_partials).partials_[n]
           += -(half_nu[n] + 1.0) * inv_y[n]
              + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      stan::math::edge<1>(ops_partials).partials_[n]
           += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
              - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      stan::math::edge<2>(ops_partials).partials_[n]
           += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }
   }

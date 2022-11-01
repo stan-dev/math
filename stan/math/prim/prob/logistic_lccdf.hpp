@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/logistic_log.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -44,7 +44,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = partials_propagator(
       y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -77,15 +77,15 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      stan::math::edge<0>(ops_partials).partials_[n]
           -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
+      stan::math::edge<1>(ops_partials).partials_[n]
           -= -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      stan::math::edge<2>(ops_partials).partials_[n]
           -= -(y_dbl - mu_dbl) * sigma_inv_vec
              * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }

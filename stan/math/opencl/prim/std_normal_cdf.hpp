@@ -59,10 +59,10 @@ return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
-  operands_and_partials<decltype(y_col)> ops_partials(y_col);
+  auto ops_partials = partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = y_deriv_cl * cdf;
+    stan::math::edge<0>(ops_partials).partials_ = y_deriv_cl * cdf;
   }
   return ops_partials.build(cdf);
 }

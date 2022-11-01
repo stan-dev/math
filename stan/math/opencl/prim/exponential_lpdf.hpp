@@ -66,7 +66,7 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
   const auto& y_val = value_of(y_col);
   const auto& beta_val = value_of(beta_col);
 
-  operands_and_partials<decltype(y_col), decltype(beta_col)> ops_partials(
+  auto ops_partials = partials_propagator(
       y_col, beta_col);
 
   auto check_y_nonnegative
@@ -100,10 +100,10 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(beta_deriv_cl);
+    stan::math::edge<1>(ops_partials).partials_ = std::move(beta_deriv_cl);
   }
 
   return ops_partials.build(logp);

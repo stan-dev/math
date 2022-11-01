@@ -61,10 +61,10 @@ return_type_t<T_y_cl> std_normal_lccdf(const T_y_cl& y) {
 
   T_partials_return lccdf = from_matrix_cl(lccdf_cl).sum() + LOG_HALF * N;
 
-  operands_and_partials<decltype(y_col)> ops_partials(y_col);
+  auto ops_partials = partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   return ops_partials.build(lccdf);
 }

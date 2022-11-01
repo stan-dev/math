@@ -50,7 +50,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   const auto& lambda_val = value_of(lambda_col);
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype(lambda_col)> ops_partials(lambda_col);
+  auto ops_partials = partials_propagator(lambda_col);
 
   auto check_n_nonnegative
       = check_cl(function, "Random variable", n, "nonnegative");
@@ -87,7 +87,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant_all<T_rate_cl>::value) {
-    ops_partials.edge1_.partials_ = deriv_cl;
+    stan::math::edge<0>(ops_partials).partials_ = deriv_cl;
   }
 
   return ops_partials.build(logp);

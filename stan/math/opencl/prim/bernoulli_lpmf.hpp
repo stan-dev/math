@@ -50,7 +50,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
   const auto& theta_val = value_of(theta_col);
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
+  auto ops_partials = partials_propagator(theta_col);
 
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
@@ -75,7 +75,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     logp = sum(from_matrix_cl(logp_cl));
 
     if (!is_constant_all<T_prob_cl>::value) {
-      ops_partials.edge1_.partials_ = deriv_cl;
+      stan::math::edge<0>(ops_partials).partials_ = deriv_cl;
     }
   } else {
     auto n_sum_expr = rowwise_sum(forward_as<matrix_cl<int>>(n));
@@ -96,7 +96,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     }
     if (!is_constant_all<T_prob_cl>::value) {
       double& edge1_partial = forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge1_.partials_)[0];
+          stan::math::edge<0>(ops_partials).partials_)[0];
       if (n_sum == N) {
         edge1_partial += N / theta_val_scal;
       } else if (n_sum == 0) {

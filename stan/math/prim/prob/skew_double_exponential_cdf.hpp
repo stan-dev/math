@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -69,7 +69,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   }
 
   T_partials_return cdf(1.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
+  auto ops_partials = partials_propagator(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
@@ -120,37 +120,37 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     cdf *= cdfn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[i] += rep_deriv;
+      stan::math::edge<0>(ops_partials).partials_[i] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[i] -= rep_deriv;
+      stan::math::edge<1>(ops_partials).partials_[i] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[i] += sig_deriv;
+      stan::math::edge<2>(ops_partials).partials_[i] += sig_deriv;
     }
     if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_[i] += skew_deriv;
+      stan::math::edge<3>(ops_partials).partials_[i] += skew_deriv;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      stan::math::edge<0>(ops_partials).partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      stan::math::edge<1>(ops_partials).partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      ops_partials.edge3_.partials_[n] *= cdf;
+      stan::math::edge<2>(ops_partials).partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_skewness>::value) {
     for (size_t n = 0; n < stan::math::size(tau); ++n) {
-      ops_partials.edge4_.partials_[n] *= cdf;
+      stan::math::edge<3>(ops_partials).partials_[n] *= cdf;
     }
   }
 

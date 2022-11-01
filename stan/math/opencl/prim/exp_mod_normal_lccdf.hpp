@@ -132,21 +132,19 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
 
   T_partials_return ccdf_log = (from_matrix_cl(ccdf_log_cl)).sum();
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col),
-                        decltype(lambda_col)>
-      ops_partials(y_col, mu_col, sigma_col, lambda_col);
+  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col, lambda_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+    stan::math::edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
+    stan::math::edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    ops_partials.edge4_.partials_ = std::move(lambda_deriv_cl);
+    stan::math::edge<3>(ops_partials).partials_ = std::move(lambda_deriv_cl);
   }
   return ops_partials.build(ccdf_log);
 }

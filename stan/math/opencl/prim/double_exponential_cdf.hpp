@@ -83,8 +83,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_cdf(
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col)>
-      ops_partials(y_col, mu_col, sigma_col);
+  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col);
   if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl>::value) {
     auto cdf_div_sigma = elt_divide(cdf, sigma_val);
     auto y_deriv = select(cond, cdf_div_sigma,
@@ -100,13 +99,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_cdf(
                       calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
 
     if (!is_constant<T_y_cl>::value) {
-      ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+      stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
     }
     if (!is_constant<T_loc_cl>::value) {
-      ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+      stan::math::edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
     }
     if (!is_constant<T_scale_cl>::value) {
-      ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
+      stan::math::edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
     }
   }
   return ops_partials.build(cdf);

@@ -256,24 +256,24 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     lp += from_matrix_cl(theta_log_alpha_m_1_sum_cl).sum();
   }
 
-  operands_and_partials<T_prob_cl, T_prior_size_cl> ops_partials(theta, alpha);
+  auto ops_partials = partials_propagator(theta, alpha);
 
   if (!is_constant<T_prob_cl>::value) {
     if (theta.cols() < alpha.cols()) {
-      ops_partials.edge1_.partials_ = rowwise_sum(theta_deriv_cl);
+      stan::math::edge<0>(ops_partials).partials_ = rowwise_sum(theta_deriv_cl);
     } else {
-      ops_partials.edge1_.partials_ = std::move(theta_deriv_cl);
+      stan::math::edge<0>(ops_partials).partials_ = std::move(theta_deriv_cl);
     }
   }
   if (!is_constant<T_prior_size_cl>::value) {
     if (theta.cols() > alpha.cols()) {
       matrix_cl<double> tmp_cl
           = digamma(alpha_csum_cl) * static_cast<double>(theta.cols());
-      ops_partials.edge2_.partials_
+      stan::math::edge<1>(ops_partials).partials_
           = colwise_broadcast(tmp_cl) + rowwise_sum(alpha_deriv_cl);
     } else {
       matrix_cl<double> tmp_cl = digamma(alpha_csum_cl);
-      ops_partials.edge2_.partials_
+      stan::math::edge<1>(ops_partials).partials_
           = colwise_broadcast(tmp_cl) + alpha_deriv_cl;
     }
   }

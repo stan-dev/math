@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,7 +45,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
   check_positive_finite(function, "Shape parameter", alpha_ref);
 
   T_partials_return P(1.0);
-  operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
+  auto ops_partials = partials_propagator(
       y_ref, y_min_ref, alpha_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -77,32 +77,32 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      stan::math::edge<0>(ops_partials).partials_[n]
           += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n]
+      stan::math::edge<1>(ops_partials).partials_[n]
           += -alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_[n]
+      stan::math::edge<2>(ops_partials).partials_[n]
           += -exp(alpha_dbl * log_dbl) * log_dbl / Pn;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= P;
+      stan::math::edge<0>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(y_min); ++n) {
-      ops_partials.edge2_.partials_[n] *= P;
+      stan::math::edge<1>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      ops_partials.edge3_.partials_[n] *= P;
+      stan::math::edge<2>(ops_partials).partials_[n] *= P;
     }
   }
   return ops_partials.build(P);

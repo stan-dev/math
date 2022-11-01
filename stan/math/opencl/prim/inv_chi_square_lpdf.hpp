@@ -64,7 +64,7 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
   const auto& y_val = value_of(y_col);
   const auto& nu_val = value_of(nu_col);
 
-  operands_and_partials<decltype(y_col), decltype(nu_col)> ops_partials(y_col,
+  auto ops_partials = partials_propagator(y_col,
                                                                         nu_col);
 
   auto check_nu_pos_finite = check_cl(function, "Degrees of freedom parameter",
@@ -107,10 +107,10 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    stan::math::edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_dof_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(nu_deriv_cl);
+    stan::math::edge<1>(ops_partials).partials_ = std::move(nu_deriv_cl);
   }
 
   return ops_partials.build(logp);
