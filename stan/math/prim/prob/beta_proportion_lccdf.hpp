@@ -67,7 +67,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   check_bounded(function, "Random variable", value_of(y_ref), 0.0, 1.0);
 
   T_partials_return ccdf_log(0.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, kappa_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);

@@ -53,7 +53,7 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
     return 1.0;
   }
 
-  auto ops_partials = partials_propagator(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
 
   constexpr bool any_derivatives = !is_constant_all<T_y, T_inv_scale>::value;
   const auto& exp_val = to_ref_if<any_derivatives>(exp(-beta_val * y_val));

@@ -61,7 +61,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
   }
 
   T_partials_return P(1.0);
-  auto ops_partials = partials_propagator(y_ref, nu_ref,
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref,
                                                                  s_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);

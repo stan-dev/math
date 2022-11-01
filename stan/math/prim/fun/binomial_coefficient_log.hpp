@@ -102,7 +102,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   check_greater_or_equal(function, "(first argument - second argument + 1)",
                          n_plus_1_mk, 0.0);
 
-  auto ops_partials = partials_propagator(n, k);
+  auto ops_partials = make_partials_propagator(n, k);
 
   T_partials_return value;
   if (k_dbl == 0) {

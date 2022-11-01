@@ -56,7 +56,7 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   }
 
   T_partials_return cdf_log(0.0);
-  auto ops_partials = partials_propagator(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);

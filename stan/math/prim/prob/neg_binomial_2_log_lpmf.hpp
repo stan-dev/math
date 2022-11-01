@@ -54,7 +54,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = partials_propagator(eta_ref, phi_ref);
+  auto ops_partials = make_partials_propagator(eta_ref, phi_ref);
 
   scalar_seq_view<T_n> n_vec(n_ref);
   scalar_seq_view<T_eta_ref> eta_vec(eta_ref);

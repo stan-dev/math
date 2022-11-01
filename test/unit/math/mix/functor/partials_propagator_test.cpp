@@ -4,7 +4,7 @@
 
 TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   std::vector<var> val_dxs;
@@ -26,7 +26,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  auto ops_partials = stan::math::partials_propagator(m1);
+  auto ops_partials = stan::math::make_partials_propagator(m1);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] += dxm1;
@@ -48,7 +48,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
 TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
   using stan::is_constant_all;
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   std::vector<var> val_dxs;
@@ -72,7 +72,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  auto ops_partials = partials_propagator(m1, m2);
+  auto ops_partials = make_partials_propagator(m1, m2);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] += dxm1;
@@ -93,7 +93,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
 
 TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   typedef Eigen::Matrix<fvar<var>, -1, -1> uni_mat_t;
@@ -133,7 +133,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  auto ops_partials = stan::math::partials_propagator(multi_mat);
+  auto ops_partials = stan::math::make_partials_propagator(multi_mat);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] += dxm1;
@@ -155,7 +155,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
 
 TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   typedef Eigen::Matrix<fvar<var>, -1, -1> uni_mat_t;
@@ -198,7 +198,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  auto ops_partials = partials_propagator(multi_mat, m3);
+  auto ops_partials = make_partials_propagator(multi_mat, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] += dxm1;
@@ -220,7 +220,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
 
 TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   typedef std::vector<fvar<var>> uni_std_t;
@@ -264,7 +264,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  auto ops_partials = stan::math::partials_propagator(multi_std);
+  auto ops_partials = stan::math::make_partials_propagator(multi_std);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] = dxm1;
@@ -286,7 +286,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
 
 TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   typedef std::vector<fvar<var>> uni_std_t;
@@ -333,7 +333,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  auto ops_partials = partials_propagator(multi_std, m3);
+  auto ops_partials = make_partials_propagator(multi_std, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   stan::math::edge<0>(ops_partials).partials_vec_[0] = dxm1;
@@ -354,7 +354,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
 }
 
 TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;
 
@@ -375,7 +375,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
   multi_mat.push_back(m1);
   multi_mat.push_back(m2);
 
-  auto ops_partials = stan::math::partials_propagator(multi_mat);
+  auto ops_partials = stan::math::make_partials_propagator(multi_mat);
 
   double v = ops_partials.build(10.0);
 
@@ -383,7 +383,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
 }
 
 TEST(MathMetaMix, OperandsAndPartialsMultiMixInt_dbl) {
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;
 
@@ -407,7 +407,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt_dbl) {
   Eigen::Matrix<double, -1, -1> m3(2, 2);
   m3 << 2.0, 2.0, 2.0, 2.0;
 
-  auto ops_partials = partials_propagator(multi_mat);
+  auto ops_partials = make_partials_propagator(multi_mat);
 
   double v = ops_partials.build(10.0);
 

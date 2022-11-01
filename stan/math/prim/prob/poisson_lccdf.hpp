@@ -46,7 +46,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
     return 0;
   }
 
-  auto ops_partials = partials_propagator(lambda_ref);
+  auto ops_partials = make_partials_propagator(lambda_ref);
 
   if (sum(promote_scalar<int>(n_val < 0))) {
     return ops_partials.build(0.0);

@@ -68,7 +68,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     return 0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, sigma_ref);
 
   if (sum(promote_scalar<int>(y_val < 0))) {

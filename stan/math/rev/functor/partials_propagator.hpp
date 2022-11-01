@@ -58,7 +58,7 @@ namespace internal {
  * @tparam ReturnType The type returned from the `build()` method.
  */
 template <typename ReturnType, typename... Ops>
-class partials_propagator_impl<ReturnType, require_var_t<ReturnType>,
+class partials_propagator<ReturnType, require_var_t<ReturnType>,
                                  Ops...> {
  public:
   std::tuple<
@@ -66,7 +66,7 @@ class partials_propagator_impl<ReturnType, require_var_t<ReturnType>,
       edges_;
 
   template <typename... Types>
-  explicit partials_propagator_impl(Types&&... ops)
+  explicit partials_propagator(Types&&... ops)
       : edges_(internal::ops_partials_edge<double,
                                            plain_type_t<std::decay_t<Ops>>>(
             std::forward<Types>(ops))...) {}

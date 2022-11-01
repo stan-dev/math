@@ -111,7 +111,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     return T_return(0);
   }
 
-  auto ops_partials = partials_propagator(y_ref, mu_ref,
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref,
                                                                  L_ref);
 
   T_partials_return logp(0);
@@ -242,7 +242,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     return T_return(0);
   }
 
-  auto ops_partials = partials_propagator(y_ref, mu_ref,
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref,
                                                                  L_ref);
 
   T_partials_return logp(0);

@@ -66,7 +66,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     }
   }
 
-  auto ops_partials = partials_propagator(alpha_ref);
+  auto ops_partials = make_partials_propagator(alpha_ref);
 
   const auto& exp_alpha
       = to_ref_if<!is_constant_all<T_log_rate>::value>(exp(alpha_val));

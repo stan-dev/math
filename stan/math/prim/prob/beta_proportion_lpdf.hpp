@@ -97,7 +97,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
   logp += sum((mukappa - 1) * log_y + (kappa_val - mukappa - 1) * log1m_y);
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
     stan::math::edge<0>(ops_partials).partials_

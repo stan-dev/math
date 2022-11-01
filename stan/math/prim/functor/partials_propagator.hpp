@@ -16,7 +16,7 @@ namespace math {
 namespace internal {
 
 template <typename ReturnType, typename Enable, typename... Ops>
-struct partials_propagator_impl;
+struct partials_propagator;
 
 /** \ingroup type_trait
  * \callergraph
@@ -48,11 +48,11 @@ struct partials_propagator_impl;
  * @tparam ReturnType The type returned from calling the `build()` method.
  */
 template <typename ReturnType, typename... Ops>
-class partials_propagator_impl<ReturnType, require_arithmetic_t<ReturnType>,
+class partials_propagator<ReturnType, require_arithmetic_t<ReturnType>,
                                  Ops...> {
  public:
   template <typename... Types>
-  explicit partials_propagator_impl(Types&&... /* ops */) noexcept {}
+  explicit partials_propagator(Types&&... /* ops */) noexcept {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -75,30 +75,31 @@ class partials_propagator_impl<ReturnType, require_arithmetic_t<ReturnType>,
 }  // namespace internal
 
 /**
- * Construct an `partials_propagator_impl`.
+ * Access the edge of an `partials_propagator`
+ * @tparam I The index of the edge to access
+ * @tparam Types The types inside of the operands and partials.
+ * @param x An `partials_propagator` type whose edge will be accessed.
+ */
+template <std::size_t I, class... Types>
+inline constexpr auto& edge(
+    internal::partials_propagator<Types...>& x) noexcept {
+  return std::get<I>(x.edges_);
+};
+
+/**
+ * Construct an `partials_propagator`.
  * @tparam Ops The type of the operands used in the edges of the
- * `partials_propagator_impl`.
+ * `partials_propagator`.
  * @param ops The operands to be placed into the edges.
  */
 template <typename... Ops>
-inline auto partials_propagator(Ops&&... ops) {
+inline auto make_partials_propagator(Ops&&... ops) {
   using return_type = return_type_t<Ops...>;
-  return internal::partials_propagator_impl<
+  return internal::partials_propagator<
       return_type, void, plain_type_t<std::decay_t<Ops>>...>(
       std::forward<Ops>(ops)...);
 }
 
-/**
- * Access the edge of an `partials_propagator_impl`
- * @tparam I The index of the edge to access
- * @tparam Types The types inside of the operands and partials.
- * @param x An `partials_propagator_impl` type whose edge will be accessed.
- */
-template <std::size_t I, class... Types>
-inline constexpr auto& edge(
-    internal::partials_propagator_impl<Types...>& x) noexcept {
-  return std::get<I>(x.edges_);
-};
 
 }  // namespace math
 }  // namespace stan

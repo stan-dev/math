@@ -72,7 +72,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = partials_propagator(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
 
   T_partials_return logp(0.0);
   if (include_summand<propto, T_inv_scale>::value) {

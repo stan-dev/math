@@ -41,7 +41,7 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
     return 0;
   }
 
-  auto ops_partials = partials_propagator(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
   const auto& exp_val = to_ref_if<!is_constant_all<T_y, T_inv_scale>::value>(
       exp(-beta_val * y_val));
 

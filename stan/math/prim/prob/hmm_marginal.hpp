@@ -93,7 +93,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
   const auto& rho_val = to_ref(value_of(rho_ref));
   hmm_check(log_omegas, Gamma_val, rho_val, "hmm_marginal");
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       log_omegas_ref, Gamma_ref, rho_ref);
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);

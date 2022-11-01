@@ -53,7 +53,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
     return 0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a

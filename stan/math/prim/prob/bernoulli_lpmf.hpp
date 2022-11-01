@@ -53,7 +53,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = partials_propagator(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);

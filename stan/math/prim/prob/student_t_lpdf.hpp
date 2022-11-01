@@ -91,7 +91,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, nu_ref, mu_ref, sigma_ref);
 
   const auto& half_nu

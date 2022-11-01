@@ -38,7 +38,7 @@ namespace internal {
 template <typename F, typename T_shared_param, typename T_job_param,
           require_eigen_col_vector_t<T_shared_param>* = nullptr>
 class map_rect_combine {
-  using ops_partials_t = internal::partials_propagator_impl<
+  using ops_partials_t = internal::partials_propagator<
       return_type_t<T_shared_param, T_job_param>, void, T_shared_param,
       Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>;
   std::vector<ops_partials_t> ops_partials_;

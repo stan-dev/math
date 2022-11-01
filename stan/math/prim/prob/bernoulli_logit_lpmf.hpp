@@ -76,7 +76,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
           .select(-exp_m_ntheta,
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
-  auto ops_partials = partials_propagator(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
   if (!is_constant_all<T_prob>::value) {
     stan::math::edge<0>(ops_partials).partials_
         = (ntheta > cutoff)

@@ -74,7 +74,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     return LOG_ZERO;
   }
 
-  auto ops_partials = partials_propagator(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
   const auto& log_y = to_ref_if<!is_constant_all<T_dof>::value>(log(y_val));
   const auto& half_nu = to_ref(0.5 * nu_val);

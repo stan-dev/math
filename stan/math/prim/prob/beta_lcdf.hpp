@@ -63,7 +63,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   check_bounded(function, "Random variable", value_of(y_ref), 0, 1);
 
   T_partials_return cdf_log(0.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, beta_ref);
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);

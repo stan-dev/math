@@ -191,7 +191,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   }
 
   // Compute the necessary derivatives.
-  auto ops_partials = partials_propagator(x_ref, alpha_ref, beta_ref, phi_ref);
+  auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref, phi_ref);
   if (!is_constant_all<T_x, T_beta, T_alpha, T_precision>::value) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
     if (!is_constant_all<T_x, T_beta, T_alpha>::value) {

@@ -47,7 +47,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   }
 
   T_partials_return P(0.0);
-  auto ops_partials = partials_propagator(alpha_ref,
+  auto ops_partials = make_partials_propagator(alpha_ref,
                                                               beta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);

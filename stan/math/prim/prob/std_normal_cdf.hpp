@@ -43,7 +43,7 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
   }
 
   T_partials_return cdf(1.0);
-  auto ops_partials = partials_propagator(y_ref);
+  auto ops_partials = make_partials_propagator(y_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   size_t N = stan::math::size(y);

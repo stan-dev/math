@@ -69,7 +69,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   }
 
   T_partials_return cdf(1.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);

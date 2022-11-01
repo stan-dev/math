@@ -53,7 +53,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     return 0.0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, sigma_ref);
 
   const auto& inv_sigma

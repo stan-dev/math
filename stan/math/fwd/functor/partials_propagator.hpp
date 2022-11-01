@@ -19,7 +19,7 @@ namespace math {
 namespace internal {
 
 
-/** \ingroup type_trait
+/**
  * This class builds partial derivatives with respect to a set of
  * operands. There are two reason for the generality of this
  * class. The first is to handle vector and scalar arguments
@@ -52,7 +52,7 @@ namespace internal {
  *   Ops
  */
 template <typename ReturnType, typename... Ops>
-class partials_propagator_impl<ReturnType, require_fvar_t<ReturnType>,
+class partials_propagator<ReturnType, require_fvar_t<ReturnType>,
                                  Ops...> {
  public:
   using Dx = partials_type_t<ReturnType>;
@@ -62,7 +62,7 @@ class partials_propagator_impl<ReturnType, require_fvar_t<ReturnType>,
   using T_return_type = fvar<Dx>;
 
   template <typename... Types>
-  explicit partials_propagator_impl(Types&&... ops)
+  explicit partials_propagator(Types&&... ops)
       : edges_(internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>(
             std::forward<Types>(ops))...) {}
 

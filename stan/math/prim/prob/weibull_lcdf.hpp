@@ -61,7 +61,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, sigma_ref);
 
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;

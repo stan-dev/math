@@ -51,7 +51,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   }
 
   T_partials_return cdf_log(0.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);

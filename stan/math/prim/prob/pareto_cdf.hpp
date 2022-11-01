@@ -45,7 +45,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
   check_positive_finite(function, "Shape parameter", alpha_ref);
 
   T_partials_return P(1.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, y_min_ref, alpha_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);

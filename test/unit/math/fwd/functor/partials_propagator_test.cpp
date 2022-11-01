@@ -4,7 +4,7 @@
 
 TEST(MathMetaFwd, OperandsAndPartialsFvar) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::edge;
 
   fvar<double> x1 = 2.0;
@@ -14,7 +14,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvar) {
   x2.d_ = -1.0;
   x3.d_ = 4.0;
 
-  auto o = stan::math::partials_propagator(x1, x2, x3);
+  auto o = stan::math::make_partials_propagator(x1, x2, x3);
   stan::math::edge<0>(o).partials_[0] += 17.0;
   stan::math::edge<1>(o).partials_[0] += 19.0;
   stan::math::edge<2>(o).partials_[0] += 23.0;
@@ -26,7 +26,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvar) {
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::edge;
 
 
@@ -36,7 +36,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
   Eigen::VectorXd dx1(2);
   dx1 << 17.0, 13.0;
 
-  auto o = stan::math::partials_propagator(x3);
+  auto o = stan::math::make_partials_propagator(x3);
   stan::math::edge<0>(o).partials_[0] += 23.0;
   stan::math::edge<0>(o).partials_[0] += 23.0;
   fvar<double> y = o.build(-1.0);
@@ -47,7 +47,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::edge;
 
   std::vector<fvar<double>> x1;
@@ -62,7 +62,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
   Eigen::VectorXd dx1(2);
   dx1 << 17.0, 13.0;
 
-  auto o = partials_propagator(x1, x2, x3);
+  auto o = make_partials_propagator(x1, x2, x3);
   stan::math::edge<0>(o).partials_vec_[0] += dx1;
   stan::math::edge<1>(o).partials_[0] += 19.0;
   stan::math::edge<1>(o).partials_[0] += 19.0;
@@ -76,7 +76,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarMat) {
   using stan::math::fvar;
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
   using stan::math::edge;
 
 
@@ -87,7 +87,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarMat) {
   Eigen::MatrixXd dx1(2, 2);
   dx1 << 17.0, 13.0, 23.0, 32.0;
 
-  auto o = stan::math::partials_propagator(x1);
+  auto o = stan::math::make_partials_propagator(x1);
   stan::math::edge<0>(o).partials_vec_[0] += dx1;
 
   fvar<double> y = o.build(-1.0);

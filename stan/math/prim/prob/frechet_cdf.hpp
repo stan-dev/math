@@ -47,7 +47,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
   }
 
   T_partials_return cdf(1.0);
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, sigma_ref);
 
   scalar_seq_view<T_y> y_vec(y_ref);

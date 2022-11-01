@@ -93,7 +93,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     logp += sum((beta_val - 1.0) * log1m_y) * N / max_size(y, beta);
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, beta_ref);
   if (!is_constant_all<T_y>::value) {
     stan::math::edge<0>(ops_partials).partials_

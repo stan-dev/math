@@ -49,7 +49,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = partials_propagator(mu_ref, phi_ref);
+  auto ops_partials = make_partials_propagator(mu_ref, phi_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);

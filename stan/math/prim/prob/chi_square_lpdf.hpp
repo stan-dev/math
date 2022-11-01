@@ -82,7 +82,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     logp -= 0.5 * sum(y_val) * N / math::size(y);
   }
 
-  auto ops_partials = partials_propagator(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
     stan::math::edge<0>(ops_partials).partials_ = (half_nu - 1.0) / y_val - 0.5;
   }

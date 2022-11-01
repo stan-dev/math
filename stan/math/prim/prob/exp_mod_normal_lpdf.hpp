@@ -85,7 +85,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   logp
       += sum(lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq) + log_erfc_calc);
 
-  auto ops_partials = partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_m_sq_inner_term = exp(-square(inner_term));

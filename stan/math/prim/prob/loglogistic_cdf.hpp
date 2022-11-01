@@ -70,7 +70,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
     return 1.0;
   }
 
-  auto ops_partials = partials_propagator(
+  auto ops_partials = make_partials_propagator(
       y_ref, alpha_ref, beta_ref);
 
   if (sum(promote_scalar<int>(y_val == 0))) {

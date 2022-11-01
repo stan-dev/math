@@ -2,10 +2,10 @@
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, OperandsAndPartials) {
-  using stan::math::partials_propagator;
+  using stan::math::make_partials_propagator;
 
-  auto o1 = stan::math::partials_propagator(1.0);
-  auto o2 = stan::math::partials_propagator(2.0, 3.0, 4.0, 5.0);
+  auto o1 = stan::math::make_partials_propagator(1.0);
+  auto o2 = stan::math::make_partials_propagator(2.0, 3.0, 4.0, 5.0);
 
   // This is size 8 because it just hold an tuple with 4 elements of size 8
   EXPECT_EQ(8, sizeof(o2));
