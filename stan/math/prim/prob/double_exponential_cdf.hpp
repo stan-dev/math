@@ -54,8 +54,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   T_sigma_ref sigma_ref = sigma;
 
   T_partials_return cdf(1.0);
-  auto ops_partials = make_partials_propagator(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));

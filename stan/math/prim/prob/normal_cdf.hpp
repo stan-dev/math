@@ -58,8 +58,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
   }
 
   T_partials_return cdf(1.0);
-  auto ops_partials = make_partials_propagator(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -98,7 +97,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
         edge<1>(ops_partials).partials_[n] -= rep_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<2>(ops_partials).partials_[n] -= rep_deriv * scaled_diff * SQRT_TWO;
+        edge<2>(ops_partials).partials_[n]
+            -= rep_deriv * scaled_diff * SQRT_TWO;
       }
     }
   }

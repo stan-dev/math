@@ -177,8 +177,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     logp[n] = log_sum_exp(logp_tmp.col(n));
   }
 
-  auto ops_partials = make_partials_propagator(theta_ref,
-                                                                 lambda);
+  auto ops_partials = make_partials_propagator(theta_ref, lambda);
   if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {

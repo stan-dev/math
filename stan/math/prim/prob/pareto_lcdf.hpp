@@ -52,8 +52,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   check_positive_finite(function, "Scale parameter", y_min_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
 
-  auto ops_partials = make_partials_propagator(
-      y_ref, y_min_ref, alpha_ref);
+  auto ops_partials = make_partials_propagator(y_ref, y_min_ref, alpha_ref);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero

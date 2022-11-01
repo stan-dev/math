@@ -122,8 +122,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
         = isfinite(x_val);
   }
 
-  auto ops_partials = partials_propagator(x, alpha,
-                                                                    beta);
+  auto ops_partials = partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x_cl>::value) {
     edge<0>(ops_partials).partials_
@@ -148,8 +147,9 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      edge<2>(ops_partials).partials_.add_write_event(
-          edge3_partials_transpose_cl.write_events().back());
+      edge<2>(ops_partials)
+          .partials_.add_write_event(
+              edge3_partials_transpose_cl.write_events().back());
     }
   }
   return ops_partials.build(logp);

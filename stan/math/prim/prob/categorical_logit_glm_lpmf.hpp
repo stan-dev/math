@@ -146,8 +146,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
       // TODO(Tadej) maybe we can replace previous block with the following line
-      // when we have newer Eigen  edge<0>(ops_partials).partials_ = beta_val(y -
-      // 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
+      // when we have newer Eigen  edge<0>(ops_partials).partials_ = beta_val(y
+      // - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
       // inv_sum_exp_lin;
     }
   }
@@ -182,8 +182,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         }
       }
       // TODO(Tadej) maybe we can replace previous loop with the following line
-      // when we have newer Eigen  edge<2>(ops_partials).partials_(Eigen::all, y -
-      // 1) += x_val.colwise.sum().transpose();
+      // when we have newer Eigen  edge<2>(ops_partials).partials_(Eigen::all, y
+      // - 1) += x_val.colwise.sum().transpose();
 
       edge<2>(ops_partials).partials_ = std::move(beta_derivative);
     }

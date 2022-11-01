@@ -42,7 +42,6 @@ namespace internal {
 template <typename ViewElt, typename Op, typename Enable = void>
 class ops_partials_edge;
 
-
 /**
  * Class representing an edge with an inner type of double. This class
  *  should never be used by the program and only exists so that
@@ -68,8 +67,11 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   static constexpr double operands_{0};
   ops_partials_edge() = default;
 
-  template <typename T, require_not_same_t<std::decay_t<T>,
-   std::decay_t<ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>>>* = nullptr>
+  template <typename T,
+            require_not_same_t<
+                std::decay_t<T>,
+                std::decay_t<ops_partials_edge<
+                    ViewElt, Op, require_st_arithmetic<Op>>>>* = nullptr>
   explicit ops_partials_edge(T&& /* op */) noexcept {}
 
   /**
@@ -93,7 +95,6 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * time expression returning zero.
    */
   static constexpr int size() { return 0; }  // reverse mode
-
 };
 
 template <typename ViewElt, typename Op>
@@ -101,7 +102,6 @@ constexpr double
     ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 
 }  // namespace internal
-
 
 /** \ingroup type_trait
  * \callergraph

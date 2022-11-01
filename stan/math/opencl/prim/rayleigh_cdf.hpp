@@ -76,8 +76,7 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_cdf(const T_y_cl& y,
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
-  auto ops_partials = partials_propagator(
-      y_col, sigma_col);
+  auto ops_partials = partials_propagator(y_col, sigma_col);
 
   if (!is_constant_all<T_y_cl, T_scale_cl>::value) {
     results(y_deriv_cl, sigma_deriv_cl) = expressions(

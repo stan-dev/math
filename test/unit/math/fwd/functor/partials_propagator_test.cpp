@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(MathMetaFwd, OperandsAndPartialsFvar) {
+  using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
-  using stan::math::edge;
 
   fvar<double> x1 = 2.0;
   fvar<double> x2 = 3.0;
@@ -25,10 +25,9 @@ TEST(MathMetaFwd, OperandsAndPartialsFvar) {
 }
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
+  using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
-  using stan::math::edge;
-
 
   fvar<double> x3 = 5.0;
   x3.d_ = 4.0;
@@ -46,9 +45,9 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
 }
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
+  using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
-  using stan::math::edge;
 
   std::vector<fvar<double>> x1;
   x1.push_back(fvar<double>(2.0, 2.0));
@@ -75,10 +74,9 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
 }
 
 TEST(MathMetaFwd, OperandsAndPartialsFvarMat) {
+  using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
-  using stan::math::edge;
-
 
   Eigen::Matrix<fvar<double>, -1, -1> x1(2, 2);
   x1 << (fvar<double>(2.0, 2.0)), (fvar<double>(1.0, 3.0)),

@@ -49,7 +49,7 @@ struct partials_propagator;
  */
 template <typename ReturnType, typename... Ops>
 class partials_propagator<ReturnType, require_arithmetic_t<ReturnType>,
-                                 Ops...> {
+                          Ops...> {
  public:
   template <typename... Types>
   explicit partials_propagator(Types&&... /* ops */) noexcept {}
@@ -69,7 +69,6 @@ class partials_propagator<ReturnType, require_arithmetic_t<ReturnType>,
    */
   inline static double build(double value) noexcept { return value; }
   std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
-
 };
 
 }  // namespace internal
@@ -95,11 +94,10 @@ inline constexpr auto& edge(
 template <typename... Ops>
 inline auto make_partials_propagator(Ops&&... ops) {
   using return_type = return_type_t<Ops...>;
-  return internal::partials_propagator<
-      return_type, void, plain_type_t<std::decay_t<Ops>>...>(
+  return internal::partials_propagator<return_type, void,
+                                       plain_type_t<std::decay_t<Ops>>...>(
       std::forward<Ops>(ops)...);
 }
-
 
 }  // namespace math
 }  // namespace stan

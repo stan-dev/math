@@ -85,8 +85,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     logp -= sum(log(beta_val - alpha_val)) * N / max_size(alpha, beta);
   }
 
-  auto ops_partials = make_partials_propagator(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_low, T_high>::value) {
     auto inv_beta_minus_alpha = to_ref_if<(!is_constant_all<T_high>::value

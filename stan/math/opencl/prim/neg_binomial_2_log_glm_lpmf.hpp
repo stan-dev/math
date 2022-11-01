@@ -178,8 +178,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
   }
 
-  auto ops_partials = partials_propagator(
-      x, alpha, beta, phi);
+  auto ops_partials = partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
   if (!is_constant<T_x_cl>::value) {
     edge<0>(ops_partials).partials_
@@ -195,8 +194,9 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      edge<2>(ops_partials).partials_.add_write_event(
-          edge3_partials_transpose_cl.write_events().back());
+      edge<2>(ops_partials)
+          .partials_.add_write_event(
+              edge3_partials_transpose_cl.write_events().back());
     }
   }
   if (!is_constant_all<T_alpha_cl>::value) {

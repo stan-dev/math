@@ -106,8 +106,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
     lp += (theta_log * alpha_m_1).sum();
   }
 
-  auto ops_partials = make_partials_propagator(theta_ref,
-                                                               alpha_ref);
+  auto ops_partials = make_partials_propagator(theta_ref, alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
       edge<0>(ops_partials).partials_vec_[t]

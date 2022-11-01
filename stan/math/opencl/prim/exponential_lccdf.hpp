@@ -66,8 +66,7 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lccdf(
 
   T_partials_return lccdf = (from_matrix_cl(lccdf_cl)).sum();
 
-  auto ops_partials = partials_propagator(
-      y_col, beta_col);
+  auto ops_partials = partials_propagator(y_col, beta_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = constant(0.0, N, 1) - beta_val;

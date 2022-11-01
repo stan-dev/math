@@ -65,8 +65,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     return 0.0;
   }
 
-  auto ops_partials = make_partials_propagator(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, tau_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));

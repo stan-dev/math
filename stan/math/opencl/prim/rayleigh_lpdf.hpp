@@ -49,8 +49,7 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lpdf(const T_y_cl& y,
   const auto& y_val = value_of(y_col);
   const auto& sigma_val = value_of(sigma_col);
 
-  auto ops_partials = partials_propagator(
-      y_col, sigma_col);
+  auto ops_partials = partials_propagator(y_col, sigma_col);
 
   auto check_y_positive
       = check_cl(function, "Random variable", y_val, "positive");

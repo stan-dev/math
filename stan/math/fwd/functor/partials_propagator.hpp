@@ -18,7 +18,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-
 /**
  * This class builds partial derivatives with respect to a set of
  * operands. There are two reason for the generality of this
@@ -52,8 +51,7 @@ namespace internal {
  *   Ops
  */
 template <typename ReturnType, typename... Ops>
-class partials_propagator<ReturnType, require_fvar_t<ReturnType>,
-                                 Ops...> {
+class partials_propagator<ReturnType, require_fvar_t<ReturnType>, Ops...> {
  public:
   using Dx = partials_type_t<ReturnType>;
   std::tuple<
@@ -64,7 +62,7 @@ class partials_propagator<ReturnType, require_fvar_t<ReturnType>,
   template <typename... Types>
   explicit partials_propagator(Types&&... ops)
       : edges_(internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>(
-            std::forward<Types>(ops))...) {}
+          std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -85,7 +83,6 @@ class partials_propagator<ReturnType, require_fvar_t<ReturnType>,
     return T_return_type(value, deriv);
   }
 };
-
 
 }  // namespace internal
 }  // namespace math

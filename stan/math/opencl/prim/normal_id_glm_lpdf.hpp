@@ -177,8 +177,9 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
         = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
                             edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      edge<3>(ops_partials).partials_.add_write_event(
-          edge4_partials_transpose_cl.write_events().back());
+      edge<3>(ops_partials)
+          .partials_.add_write_event(
+              edge4_partials_transpose_cl.write_events().back());
     }
   }
   if (!is_constant<T_sigma_cl>::value) {

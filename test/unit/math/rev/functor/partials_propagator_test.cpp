@@ -100,9 +100,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMat) {
+  using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   matrix_d d_mat(2, 2);
@@ -141,9 +141,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
+  using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   matrix_d d_mat(2, 2);
@@ -254,8 +254,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
 // XXX Test mixed - partials_propagator<std::vector<matrix_v>,
 //                                        vector_d, vector_v>
 TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
-  using stan::math::matrix_v;
   using stan::math::make_partials_propagator;
+  using stan::math::matrix_v;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
@@ -325,9 +325,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
+  using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   Eigen::MatrixXd a(2, 2);
@@ -343,9 +343,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsStdVectorVarValueMat) {
+  using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::make_partials_propagator;
   using stan::math::var;
 
   Eigen::MatrixXd a(2, 2);
@@ -354,8 +354,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVectorVarValueMat) {
 
   auto ops = make_partials_propagator(av);
 
-  stan::math::edge<0>(ops).partials_vec_[0] = Eigen::MatrixXd::Constant(2, 2, -2);
-  stan::math::edge<0>(ops).partials_vec_[1] = Eigen::MatrixXd::Constant(2, 2, -3);
+  stan::math::edge<0>(ops).partials_vec_[0]
+      = Eigen::MatrixXd::Constant(2, 2, -2);
+  stan::math::edge<0>(ops).partials_vec_[1]
+      = Eigen::MatrixXd::Constant(2, 2, -3);
   var lp = ops.build(1);
   (2 * lp).grad();
   EXPECT_MATRIX_EQ(av[0].adj(), Eigen::MatrixXd::Constant(2, 2, -4));

@@ -93,8 +93,8 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
   const auto& rho_val = to_ref(value_of(rho_ref));
   hmm_check(log_omegas, Gamma_val, rho_val, "hmm_marginal");
 
-  auto ops_partials = make_partials_propagator(
-      log_omegas_ref, Gamma_ref, rho_ref);
+  auto ops_partials
+      = make_partials_propagator(log_omegas_ref, Gamma_ref, rho_ref);
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);
   eig_vector_partial alpha_log_norms(n_transitions + 1);
@@ -170,8 +170,8 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
 
       if (!is_constant_all<T_rho>::value) {
         edge<2>(ops_partials).partials_ = grad_corr_boundary
-                                        * C.cwiseProduct(omegas.col(0))
-                                        / unnormed_marginal;
+                                          * C.cwiseProduct(omegas.col(0))
+                                          / unnormed_marginal;
       }
     }
   }

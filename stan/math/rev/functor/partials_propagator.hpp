@@ -25,7 +25,6 @@ namespace math {
 
 namespace internal {
 
-
 /** \ingroup type_trait
  * \callergraph
  * This class builds partial derivatives with respect to a set of
@@ -58,8 +57,7 @@ namespace internal {
  * @tparam ReturnType The type returned from the `build()` method.
  */
 template <typename ReturnType, typename... Ops>
-class partials_propagator<ReturnType, require_var_t<ReturnType>,
-                                 Ops...> {
+class partials_propagator<ReturnType, require_var_t<ReturnType>, Ops...> {
  public:
   std::tuple<
       internal::ops_partials_edge<double, plain_type_t<std::decay_t<Ops>>>...>
@@ -67,9 +65,9 @@ class partials_propagator<ReturnType, require_var_t<ReturnType>,
 
   template <typename... Types>
   explicit partials_propagator(Types&&... ops)
-      : edges_(internal::ops_partials_edge<double,
-                                           plain_type_t<std::decay_t<Ops>>>(
-            std::forward<Types>(ops))...) {}
+      : edges_(
+          internal::ops_partials_edge<double, plain_type_t<std::decay_t<Ops>>>(
+              std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -96,7 +94,7 @@ class partials_propagator<ReturnType, require_var_t<ReturnType>,
     return ret;
   }
 };
-}  // internal
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 #endif
