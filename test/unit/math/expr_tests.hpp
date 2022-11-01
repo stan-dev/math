@@ -54,7 +54,8 @@ template <typename ScalarType, std::size_t N>
 void expect_all_used_only_once(std::array<int, N>& arg_evals,
                                std::array<int, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
-    EXPECT_LE(arg_evals[i], size_of_arg[i]) << "(" << char_scalar_type<ScalarType>::scalar << ")"
+    EXPECT_LE(arg_evals[i], size_of_arg[i])
+        << "(" << char_scalar_type<ScalarType>::scalar << ")"
         << " argument " << std::to_string(i) << " was evaluated "
         << std::to_string(arg_evals[i])
         << " times but should"

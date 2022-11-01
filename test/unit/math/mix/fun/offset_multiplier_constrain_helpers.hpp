@@ -27,7 +27,7 @@ void expect(const T1& x, const T2& mu, const T3& sigma) {
 
   stan::test::expect_ad(f1, x, mu, sigma);
   stan::test::expect_ad(f2, x, mu, sigma);
-//  stan::test::expect_ad(f3, x, mu, sigma);
+  //  stan::test::expect_ad(f3, x, mu, sigma);
   stan::test::expect_ad(f4, x, mu, sigma);
 }
 template <typename T1, typename T2, typename T3>
@@ -49,7 +49,8 @@ void expect_vec(const T1& x, const T2& mu, const T3& sigma) {
     using lub_t
         = stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)>;
     lub_t lp = 0;
-    auto xx = stan::math::eval(stan::math::offset_multiplier_constrain<true>(x, mu, sigma, lp));
+    auto xx = stan::math::eval(
+        stan::math::offset_multiplier_constrain<true>(x, mu, sigma, lp));
     lub_t xx_acc = 0;
     for (size_t i = 0; i < xx.size(); ++i) {
       xx_acc += stan::math::sum(xx[i]);

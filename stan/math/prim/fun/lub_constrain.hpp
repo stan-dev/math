@@ -118,8 +118,8 @@ template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
-  return eval(
-      to_ref(x).unaryExpr([ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
+  return eval(to_ref(x).unaryExpr(
+      [ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
 }
 
 /**
@@ -144,8 +144,9 @@ template <typename T, typename L, typename U,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return eval(to_ref(x).binaryExpr(
-      to_ref(lb), [ub](auto&& x, auto&& lb) { return lub_constrain(x, lb, ub); }));
+  return eval(to_ref(x).binaryExpr(to_ref(lb), [ub](auto&& x, auto&& lb) {
+    return lub_constrain(x, lb, ub);
+  }));
 }
 
 /**
@@ -174,8 +175,9 @@ template <typename T, typename L, typename U,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
-  return eval(to_ref(x).binaryExpr(
-      to_ref(ub), [lb](auto&& x, auto&& ub) { return lub_constrain(x, lb, ub); }));
+  return eval(to_ref(x).binaryExpr(to_ref(ub), [lb](auto&& x, auto&& ub) {
+    return lub_constrain(x, lb, ub);
+  }));
 }
 
 /**

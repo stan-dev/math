@@ -6,7 +6,8 @@ TEST(mathMixMatFun, acosh) {
     using stan::math::acosh;
     return acosh(x1);
   };
-  for (double x : stan::test::internal::common_args([](auto val) {return val > 1.0;})) {
+  for (double x :
+       stan::test::internal::common_args([](auto val) { return val > 1.0; })) {
     stan::test::expect_unary_vectorized(f, x);
   }
 

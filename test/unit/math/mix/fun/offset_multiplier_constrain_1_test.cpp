@@ -30,5 +30,5 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_scalar) {
   mu << -3.0, 5.0, -6.0, 6.0;
   double sigma = 13.5;
   offset_multiplier_constrain_tests::expect(x1, mu, sigma);
-//  offset_multiplier_constrain_tests::expect(x2, mu, sigma);
+  //  offset_multiplier_constrain_tests::expect(x2, mu, sigma);
 }
