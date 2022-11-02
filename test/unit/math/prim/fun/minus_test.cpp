@@ -10,3 +10,9 @@ TEST(MathMatrixPrimMat, minus) {
   EXPECT_EQ(0, stan::math::minus(rv0).size());
   EXPECT_EQ(0, stan::math::minus(m0).size());
 }
+
+TEST(MathMatrixPrimMat, vectorized_minus) {
+  // test int->int
+  std::vector<int> u{1, 2, 3, 4};
+  std::vector<int> v = stan::math::minus(u);
+}
