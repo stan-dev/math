@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {

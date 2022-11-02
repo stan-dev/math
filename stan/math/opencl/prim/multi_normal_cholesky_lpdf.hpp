@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 
 namespace stan {

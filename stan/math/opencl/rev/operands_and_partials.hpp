@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_REV_OPERANDS_AND_PARTIALS_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>

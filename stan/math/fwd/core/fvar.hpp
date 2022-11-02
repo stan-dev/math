@@ -49,11 +49,6 @@ struct fvar {
   Scalar val_;
 
   /**
-   * The tangent (derivative) of this variable.
-   */
-  Scalar d_;
-
-  /**
    * Return the value of this variable.
    *
    * @return value of this variable
@@ -61,11 +56,24 @@ struct fvar {
   Scalar val() const { return val_; }
 
   /**
+   * The tangent (derivative) of this variable.
+   */
+  Scalar d_;
+
+
+  /**
    * Return the tangent (derivative) of this variable.
    *
    * @return tangent of this variable
    */
   Scalar tangent() const { return d_; }
+
+  /**
+   * Return the tangent (derivative) of this variable.
+   *
+   * @return tangent of this variable
+   */
+  Scalar d() const { return d_; }
 
   /**
    * Construct a forward variable with zero value and tangent.
