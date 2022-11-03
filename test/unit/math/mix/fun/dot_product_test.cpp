@@ -105,13 +105,13 @@ TEST(mathMixMatFun, dotProduct) {
   stan::test::expect_ad_matvar(f, v3, rv3b);
   stan::test::expect_ad_matvar(f, rv3, v3b);
   stan::test::expect_ad_matvar(f, rv3, rv3b);
+  stan::test::expect_ad(f, sv1, sv3);
 
   // following throw due to mismatched size
-  stan::test::expect_ad(f, v1, v3);
-  stan::test::expect_ad(f, v1, rv3);
-  stan::test::expect_ad(f, rv1, v3);
-  stan::test::expect_ad(f, rv1, rv3);
-  stan::test::expect_ad(f, sv1, sv3);
+  EXPECT_THROW(stan::test::expect_ad(f, v1, v3), std::invalid_argument);
+  EXPECT_THROW(stan::test::expect_ad(f, v1, rv3), std::invalid_argument);
+  EXPECT_THROW(stan::test::expect_ad(f, rv1, v3), std::invalid_argument);
+  EXPECT_THROW(stan::test::expect_ad(f, rv1, rv3), std::invalid_argument);
 
   stan::test::expect_ad_matvar(f, v1, v3);
   stan::test::expect_ad_matvar(f, v1, rv3);

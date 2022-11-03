@@ -6,7 +6,7 @@ TEST(mathMixScalFun, fallingFactorial) {
     return
         [=](const auto& x1) { return stan::math::falling_factorial(x1, x2); };
   };
-  stan::test::expect_ad(f(-2), -3.0);  // throws
+  stan::test::expect_ad(f(-2), -3.0);  
 
   stan::test::expect_ad(f(3), 5);
 
