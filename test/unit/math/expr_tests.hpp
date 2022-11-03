@@ -52,7 +52,8 @@ template <>
 struct char_scalar_type<std::complex<stan::math::fvar<double>>> {
   static constexpr const char* scalar{"std::complex<fvar<double>>"};
 };
-constexpr const char* char_scalar_type<std::complex<stan::math::fvar<double>>>::scalar;
+constexpr const char*
+    char_scalar_type<std::complex<stan::math::fvar<double>>>::scalar;
 
 /**
  * Check that the evaluations were less than the size of the input size.
