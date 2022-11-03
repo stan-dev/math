@@ -150,7 +150,7 @@ static constexpr const char* indexing_rev_local_independent_kernel_code
           }
         }
         // \cond
-    ); // NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 /** \ingroup opencl_kernels
