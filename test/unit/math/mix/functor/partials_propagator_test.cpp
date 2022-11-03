@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
+TEST(MathMetaMix, PartialsPropagatorUniMixMat) {
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
   using stan::math::var;
@@ -45,7 +45,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
+TEST(MathMetaMix, PartialsPropagatorUniMixMat_dbl) {
   using stan::is_constant_all;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
@@ -91,7 +91,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
+TEST(MathMetaMix, PartialsPropagatorMultiMix) {
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
   using stan::math::var;
@@ -153,7 +153,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
+TEST(MathMetaMix, PartialsPropagatorMultiMix_dbl) {
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
   using stan::math::var;
@@ -218,7 +218,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
+TEST(MathMetaMix, PartialsPropagatorMultiStdMix) {
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
   using stan::math::var;
@@ -284,7 +284,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
+TEST(MathMetaMix, PartialsPropagatorMultiStdMix_dbl) {
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
   using stan::math::var;
@@ -353,7 +353,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
+TEST(MathMetaMix, PartialsPropagatorMultiMixInt) {
   using stan::math::make_partials_propagator;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;
@@ -382,7 +382,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
   EXPECT_FLOAT_EQ(10.0, v);
 }
 
-TEST(MathMetaMix, OperandsAndPartialsMultiMixInt_dbl) {
+TEST(MathMetaMix, PartialsPropagatorMultiMixInt_dbl) {
   using stan::math::make_partials_propagator;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;

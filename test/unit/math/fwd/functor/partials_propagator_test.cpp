@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaFwd, OperandsAndPartialsFvar) {
+TEST(MathMetaFwd, PartialsPropagatorFvar) {
   using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
@@ -24,7 +24,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvar) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
+TEST(MathMetaFwd, PartialsPropagatorFvarScal) {
   using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
@@ -44,7 +44,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
+TEST(MathMetaFwd, PartialsPropagatorFvarVec) {
   using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;
@@ -73,7 +73,7 @@ TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(MathMetaFwd, OperandsAndPartialsFvarMat) {
+TEST(MathMetaFwd, PartialsPropagatorFvarMat) {
   using stan::math::edge;
   using stan::math::fvar;
   using stan::math::make_partials_propagator;

@@ -118,24 +118,20 @@ class ops_partials_edge<double, var> {
 template <>
 class ops_partials_edge<double, std::vector<var>> {
  public:
-  using partials_t = arena_t<std::vector<double, arena_allocator<double>>>;
+  using Op = std::vector<var, arena_allocator<var>>;
+  using partials_t = arena_t<Eigen::VectorXd>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const std::vector<var>& op)
-      : partials_(op.size(), 0),
+      : partials_(partials_t::Zero(op.size())),
         partials_vec_(partials_),
-        operands_(to_arena(op)) {}
+        operands_(op.begin(), op.end()) {}
 
-  explicit ops_partials_edge(
-      const ops_partials_edge<double, std::vector<var>>& other)
-      : partials_(other.partials_),
-        partials_vec_(partials_),
-        operands_(other.operands_) {}
+  Op operands_;
 
-  inline auto& partial() noexcept { return partials_; }
-  inline auto& operand() noexcept { return operands_; }
   inline int size() const noexcept { return this->operands_.size(); }
-  arena_t<std::vector<var>> operands_;
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto& partial() noexcept { return this->partials_; }
 };
 
 template <typename Op>
