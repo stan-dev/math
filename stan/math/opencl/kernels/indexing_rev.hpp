@@ -103,7 +103,7 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
 
 // \cond
 static constexpr const char* indexing_rev_local_independent_kernel_code =
- STRINGIFY(
+    STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *
@@ -125,37 +125,44 @@ static constexpr const char* indexing_rev_local_independent_kernel_code =
                                const __global double* res,
                                __local double* adj_loc, int index_size,
                                int adj_size) {
-  const int gid = get_global_id(0);
-  const int lid = get_local_id(0);
-  const int gsize = get_global_size(0);
-  const int lsize = get_local_size(0);
-  for (int i = lid; i < adj_size * lsize; i += lsize) {
-    adj_loc[i] = 0;
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-  for (int i = gid; i < index_size; i += gsize) {
-    adj_loc[index[i] + lid * adj_size] += res[i];
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-  for (int i = lid; i < adj_size; i += lsize) {
-    double p = adj_loc[i + adj_size];
-    for (int j = 2; j < lsize; j++) {
-      p += adj_loc[i + j * adj_size];
+      const int gid = get_global_id(0);
+      const int lid = get_local_id(0);
+      const int gsize = get_global_size(0);
+      const int lsize = get_local_size(0);
+      for (int i = lid; i < adj_size * lsize; i += lsize) {
+        adj_loc[i] = 0;
+      }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      for (int i = gid; i < index_size; i += gsize) {
+        adj_loc[index[i] + lid * adj_size] += res[i];
+      }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      for (int i = lid; i < adj_size; i += lsize) {
+        double p = adj_loc[i + adj_size];
+        for (int j = 2; j < lsize; j++) {
+          p += adj_loc[i + j * adj_size];
+        }
+        adj_loc[i] += p;
+      }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      for (int i = lid; i < adj_size; i += lsize) {
+        atomic_add_double(adj + i, adj_loc[i]);
+      }
     }
     // \cond
-    );  // NOLINT(whitespace/parens)
-    // \endcond
+);
+// \endcond
 
-    /** \ingroup opencl_kernels
-     * See the docs for \link kernels/add.hpp add_batch() \endlink
-     */
-    const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
-                    int>
-        indexing_rev_local_independent(
-            "indexing_rev", {atomic_add_double_device_function,
-                             indexing_rev_local_independent_kernel_code});
-  }  // namespace opencl_kernels
-}  // namespace math
+/** \ingroup opencl_kernels
+ * See the docs for \link kernels/add.hpp add_batch() \endlink
+ */
+const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
+                int>
+    indexing_rev_local_independent(
+        "indexing_rev", {atomic_add_double_device_function,
+                         indexing_rev_local_independent_kernel_code});
 }  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 #endif
 #endif
