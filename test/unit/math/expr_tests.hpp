@@ -34,7 +34,7 @@ template <>
 struct char_scalar_type<stan::math::fvar<double>> {
   static constexpr const char* scalar{"fvar<double>"};
 };
-constexpr const char* char_scalar_type<stan::math::fvar<stan::math::var>>::scalar;
+constexpr const char* char_scalar_type<stan::math::fvar<double>>::scalar;
 
 template <>
 struct char_scalar_type<std::complex<double>> {
