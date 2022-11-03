@@ -60,7 +60,6 @@ struct fvar {
    */
   Scalar d_;
 
-
   /**
    * Return the tangent (derivative) of this variable.
    *
