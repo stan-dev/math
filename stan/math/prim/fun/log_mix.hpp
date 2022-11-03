@@ -149,7 +149,6 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using T_partials_mat =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
-  using T_lamvec_type = typename std::vector<T_lam>;
   using T_theta_ref = ref_type_t<T_theta>;
 
   const int N = stan::math::size(lambda);
