@@ -94,7 +94,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
-#include <stan/math/prim/fun/F32.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/factor_U.hpp>
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
@@ -132,6 +131,7 @@
 #include <stan/math/prim/fun/head.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F2.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>

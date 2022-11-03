@@ -5,6 +5,7 @@
 #include <test/unit/math/rev/functor/test_fixture_ode_sho_ctl.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
+namespace sho_ode_adjoint_typed_error_test {
 /**
  *
  * Use same solver functor type for both w & w/o tolerance control
@@ -45,5 +46,6 @@ TYPED_TEST_P(harmonic_oscillator_ctl_test, value) {
 
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_ctl_test, no_error,
                             error_conditions, value);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_ctl_test,
+INSTANTIATE_TYPED_TEST_SUITE_P(StanAdjShoOde, harmonic_oscillator_ctl_test,
                                harmonic_oscillator_ctl_test_types);
+}  // namespace sho_ode_adjoint_typed_error_test
