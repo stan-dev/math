@@ -1,7 +1,7 @@
 #include <stan/math/prim/functor.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMetaPrim, OperandsAndPartials) {
+TEST(MathMetaPrim, PartialsPropagator) {
   using stan::math::make_partials_propagator;
 
   auto o1 = stan::math::make_partials_propagator(1.0);
