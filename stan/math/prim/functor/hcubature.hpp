@@ -18,12 +18,16 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_HCUBATURE_HPP
 #define STAN_MATH_PRIM_FUNCTOR_HCUBATURE_HPP
 
-#include <set>
 #include <stan/math/prim/fun/choose.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
+#include <deque>
+#include <set>
+
+#include <iostream>
+#include <queue>
 
 namespace stan {
 namespace math {
@@ -31,28 +35,28 @@ namespace math {
 namespace internal {
 
 // tools
-static const double xd7[8] = {-9.9145537112081263920685469752598e-01,
-                              -9.4910791234275852452618968404809e-01,
-                              -8.6486442335976907278971278864098e-01,
-                              -7.415311855993944398638647732811e-01,
-                              -5.8608723546769113029414483825842e-01,
-                              -4.0584515137739716690660641207707e-01,
-                              -2.0778495500789846760068940377309e-01,
-                              0.0};
+static constexpr double xd7[8] = {-9.9145537112081263920685469752598e-01,
+                                  -9.4910791234275852452618968404809e-01,
+                                  -8.6486442335976907278971278864098e-01,
+                                  -7.415311855993944398638647732811e-01,
+                                  -5.8608723546769113029414483825842e-01,
+                                  -4.0584515137739716690660641207707e-01,
+                                  -2.0778495500789846760068940377309e-01,
+                                  0.0};
 
-static const double wd7[8] = {2.2935322010529224963732008059913e-02,
-                              6.3092092629978553290700663189093e-02,
-                              1.0479001032225018383987632254189e-01,
-                              1.4065325971552591874518959051021e-01,
-                              1.6900472663926790282658342659795e-01,
-                              1.9035057806478540991325640242055e-01,
-                              2.0443294007529889241416199923466e-01,
-                              2.0948214108472782801299917489173e-01};
+static constexpr double wd7[8] = {2.2935322010529224963732008059913e-02,
+                                  6.3092092629978553290700663189093e-02,
+                                  1.0479001032225018383987632254189e-01,
+                                  1.4065325971552591874518959051021e-01,
+                                  1.6900472663926790282658342659795e-01,
+                                  1.9035057806478540991325640242055e-01,
+                                  2.0443294007529889241416199923466e-01,
+                                  2.0948214108472782801299917489173e-01};
 
-static const double gwd7[4] = {1.2948496616886969327061143267787e-01,
-                               2.797053914892766679014677714229e-01,
-                               3.8183005050511894495036977548818e-01,
-                               4.1795918367346938775510204081658e-01};
+static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
+                                   2.797053914892766679014677714229e-01,
+                                   3.8183005050511894495036977548818e-01,
+                                   4.1795918367346938775510204081658e-01};
 
 struct one_d {
   double result;
@@ -61,15 +65,14 @@ struct one_d {
 };
 
 struct GenzMalik {
-  std::vector<double*> p[4];
+  std::vector<std::vector<double>> p[4];
   double w[5];
   double wd[4];
 };
 
-
-void combination(int* c, const int& dim, const int& p, const int& x) {
-  size_t i, r, k = 0;
-  for (i = 0; i < p - 1; i++) {
+void combination(std::vector<int>& c, const int& dim, const int& p, const int& x) {
+  size_t r, k = 0;
+  for (std::size_t i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
     do {
       c[i]++;
@@ -78,76 +81,79 @@ void combination(int* c, const int& dim, const int& p, const int& x) {
     } while (k < x);
     k = k - r;
   }
-  if (p > 1)
+  if (p > 1) {
     c[p - 1] = c[p - 2] + x - k;
-  else
+  } else {
     c[0] = x;
+  }
 }
 
-
-void combos(const int& k, const double& lambda, const int& dim, std::vector<double*>& p) {
-  int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
-  for (size_t i = 1; i != choose(dim, k) + 1; i++) {
-    double* temp = reinterpret_cast<double*>(calloc(dim, sizeof(double)));
+void combos(const int& k, const double& lambda, const int& dim,
+            std::vector<std::vector<double>>& p) {
+  std::vector<int> c(k);
+  const auto choose_dimk = choose(dim, k);
+  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
+    std::vector<double> temp(dim, 0.0);
     combination(c, dim, k, i);
-    for (size_t j = 0; j != k; j++)
+    for (std::size_t j = 0; j != k; j++) {
       temp[c[j] - 1] = lambda;
+    }
     p.push_back(temp);
   }
-  free(c);
 }
 
 void increment(std::vector<bool>& index, const int& k, const double& lambda,
-               const int* c, double* temp) {
+               const std::vector<int>& c, std::vector<double>& temp) {
   // temp size dim, all elements initially zero
   if (index.size() == 0) {
     index.push_back(false);
-    for (size_t j = 0; j != k; j++)
+    for (std::size_t j = 0; j != k; j++) {
       temp[c[j] - 1] = lambda;
+    }
     return;
   }
   int first_zero = 0;
-  while ((first_zero < index.size()) && index[first_zero])
+  while ((first_zero < index.size()) && index[first_zero]) {
     first_zero++;
+  }
   if (first_zero == index.size()) {
     index.flip();
-    for (size_t j = 0; j != index.size(); j++)
+    for (std::size_t j = 0; j != index.size(); j++) {
       temp[c[j] - 1] *= -1;
+    }
     index.push_back(true);
     temp[c[index.size() - 1] - 1] = -lambda;
   } else {
-    for (size_t i = 0; i != first_zero + 1; i++) {
-      if (index[i])
+    for (std::size_t i = 0; i != first_zero + 1; i++) {
+      if (index[i]) {
         index[i] = 0;
-      else
+      } else {
         index[i] = 1;
+      }
       temp[c[i] - 1] *= -1;
     }
   }
 }
 
-void signcombos(const int& k, const double& lambda, const int& dim, std::vector<double*>& p) {
-  int* c = reinterpret_cast<int*>(malloc(k * sizeof(int)));
-  for (size_t i = 1; i != choose(dim, k) + 1; i++) {
-    double* temp = reinterpret_cast<double*>(calloc(dim, sizeof(double)));
+void signcombos(const int& k, const double& lambda, const int& dim,
+                std::vector<std::vector<double>>& p) {
+  std::vector<int> c(k);
+  const auto choose_dimk = choose(dim, k);
+  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
+	std::vector<double> temp(dim, 0.0);
     combination(c, dim, k, i);
     std::vector<bool> index;
     index.clear();
-    for (size_t j = 0; j != std::pow(2, k); j++) {
+    for (std::size_t j = 0; j != std::pow(2, k); j++) {
       increment(index, k, lambda, c, temp);
-      double* next
-          = reinterpret_cast<double*>(malloc(dim * sizeof(double)));
-      memcpy(next, temp, dim * sizeof(double));
-      p.push_back(next);
+      p.push_back(temp);
     }
-    free(temp);
   }
-  free(c);
 }
 
 template <typename F, typename T_pars>
-void gauss_kronrod(const F& integrand, const double& a, const double& b, internal::one_d& out,
-                   T_pars& pars) {
+void gauss_kronrod(const F& integrand, const double& a, const double& b,
+                   internal::one_d& out, T_pars& pars) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
@@ -156,7 +162,7 @@ void gauss_kronrod(const F& integrand, const double& a, const double& b, interna
   double f0 = integrand(c, pars);
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
-  for (size_t i = 0; i != 7; i++) {
+  for (std::size_t i = 0; i != 7; i++) {
     double deltax = delta * xd7[i];
     cp[0] = c[0] + deltax;
     cm[0] = c[0] - deltax;
@@ -164,8 +170,9 @@ void gauss_kronrod(const F& integrand, const double& a, const double& b, interna
     double temp = integrand(cm, pars);
     fx += temp;
     I += fx * wd7[i];
-    if (i % 2 == 1)
+    if (i % 2 == 1) {
       Idash += fx * gwd7[i / 2];
+    }
   }
   double V = fabs(delta);
   I *= V;
@@ -198,28 +205,25 @@ void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
   signcombos(dim, l5, dim, g.p[3]);
 }
 
-void clean_GenzMalik(internal::GenzMalik& g) {
-  for (size_t j = 0; j != 4; j++)
-    for (size_t i = 0; i != g.p[j].size(); i++)
-      if (g.p[j][i])
-        free(g.p[j][i]);
-}
-
 template <typename F, typename T_pars>
-void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& dim,
-                         const std::vector<double>& a, const std::vector<double>& b, internal::one_d& out,
+void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
+                         const int& dim, const std::vector<double>& a,
+                         const std::vector<double>& b, internal::one_d& out,
                          T_pars& pars) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim);
 
-  for (size_t i = 0; i != dim; i++)
+  for (std::size_t i = 0; i != dim; i++) {
     c[i] = (a[i] + b[i]) / 2;
+  }
 
-  for (size_t i = 0; i != dim; i++)
+  for (std::size_t i = 0; i != dim; i++) {
     deltac[i] = fabs(b[i] - a[i]) / 2;
+  }
   double v = 1.0;
-  for (size_t i = 0; i != dim; i++)
+  for (std::size_t i = 0; i != dim; i++) {
     v *= deltac[i];
+  }
 
   if (v == 0.0) {
     out.err = 0.0;
@@ -239,25 +243,31 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   std::vector<double> p3(dim);
   std::vector<double> cc(dim, 0);
 
-  for (size_t i = 0; i != dim; i++) {
-    for (size_t j = 0; j != dim; j++)
+  for (std::size_t i = 0; i != dim; i++) {
+    for (std::size_t j = 0; j != dim; j++) {
       p2[j] = deltac[j] * g.p[0][i][j];
+    }
 
-    for (size_t j = 0; j != dim; j++)
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p2[j];
+    }
     double f2i = integrand(cc, pars);
-    for (size_t j = 0; j != dim; j++)
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p2[j];
+    }
     double temp = integrand(cc, pars);
     f2i += temp;
 
-    for (size_t j = 0; j != dim; j++)
+    for (std::size_t j = 0; j != dim; j++) {
       p3[j] = deltac[j] * g.p[1][i][j];
-    for (size_t j = 0; j != dim; j++)
+    }
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
+    }
     double f3i = integrand(cc, pars);
-    for (size_t j = 0; j != dim; j++)
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p3[j];
+    }
     temp = integrand(cc, pars);
     f3i += temp;
     f2 += f2i;
@@ -266,22 +276,26 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   }
   std::vector<double> p4(dim);
   double f4 = 0.0;
-  for (size_t i = 0; i != g.p[2].size(); i++) {
-    for (size_t j = 0; j != dim; j++)
+  for (std::size_t i = 0; i != g.p[2].size(); i++) {
+    for (std::size_t j = 0; j != dim; j++) {
       p4[j] = deltac[j] * g.p[2][i][j];
-    for (size_t j = 0; j != dim; j++)
+    }
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
+    }
     double temp = integrand(cc, pars);
     f4 += temp;
   }
   double f5 = 0.0;
   std::vector<double> p5(dim);
-  for (size_t i = 0; i != g.p[3].size(); i++) {
-    for (size_t j = 0; j != dim; j++)
+  for (std::size_t i = 0; i != g.p[3].size(); i++) {
+    for (std::size_t j = 0; j != dim; j++) {
       p5[j] = deltac[j] * g.p[3][i][j];
+    }
 
-    for (size_t j = 0; j != dim; j++)
+    for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p5[j];
+    }
     double temp = integrand(cc, pars);
     f5 += temp;
   }
@@ -295,7 +309,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
 
   int kdivide = 0;
   double deltaf = E / (std::pow(10, dim) * v);
-  for (size_t i = 0; i != dim; i++) {
+  for (std::size_t i = 0; i != dim; i++) {
     double delta = divdiff[i] - maxdivdiff;
     if (delta > deltaf) {
       kdivide = i;
@@ -309,10 +323,9 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g, const int& 
   out.kdivide = kdivide;
 }
 
-class Box {
- public:
-  Box(std::vector<double> a, std::vector<double> b, double& I, double& err,
-      int& kdivide)
+struct Box {
+  Box(const std::vector<double>& a, const std::vector<double>& b, double I,
+      double err, int kdivide)
       : a(a), b(b), I(I), E(err), kdiv(kdivide) {}
   bool operator<(const Box& box) const { return E > box.E; }
   std::vector<double> a;
@@ -322,22 +335,20 @@ class Box {
   int kdiv;
 };
 
-inline class Box make_box(std::vector<double> a, std::vector<double> b,
-                          one_d out) {
+/*inline class Box make_box(const std::vector<double>& a,
+                          const std::vector<double>& b, one_d out) {
   std::vector<double> ac(a);
   std::vector<double> bc(b);
   Box box(ac, bc, out.result, out.err, out.kdivide);
   return box;
-}
+}*/
 
 }  // namespace internal
-
 
 /**
  * Compute the dim-dimensional integral of the function \f$f\f$ from \f$a\f$ to
  \f$b\f$ within
  * specified relative and absolute tolerances or maximum number of evaluations.
-
  * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
  *
  * The prototype for \f$f\f$ is:
@@ -384,14 +395,11 @@ inline class Box make_box(std::vector<double> a, std::vector<double> b,
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-
-// hcubature
 template <typename F, typename T_pars>
-double hcubature(
-    const F& integrand, const T_pars& pars, const int& dim, const std::vector<double>& a,
-    const std::vector<double>& b, const int& maxEval, const double& reqAbsError,
-    const double& reqRelError) {
-
+double hcubature(const F& integrand, const T_pars& pars, const int& dim,
+                 const std::vector<double>& a, const std::vector<double>& b,
+                 const int& maxEval, const double& reqAbsError,
+                 const double& reqRelError) {
   internal::one_d out;
   internal::GenzMalik g;
 
@@ -410,18 +418,26 @@ double hcubature(
   // convergence test
   if ((err <= fmax(reqRelError * fabs(val), reqAbsError))
       || ((maxEval != 0) && (numevals >= maxEval))) {
-    internal::clean_GenzMalik(g);
     return val;
   }
 
   std::multiset<internal::Box> ms;
-  ms.insert(internal::make_box(a, b, out));
+  //std::deque<internal::Box> ms;
+  //std::priority_queue<internal::Box> ms;
+  internal::Box box(a, b, out.result, out.err, out.kdivide);
+  ms.insert(box);
+  //ms.push(box);
+  //ms.insert(internal::make_box(a, b, out));
 
   while (true) {
     std::multiset<internal::Box>::iterator it;
+//	std::deque<internal::Box>::iterator it;
     it = ms.begin();
     internal::Box box = *it;
+    //internal::Box box = ms.top();
     ms.erase(it);
+    //ms.pop();
+	
     // split along dimension kdiv
     double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
     std::vector<double> ma(box.a);
@@ -435,16 +451,20 @@ double hcubature(
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
     }
-    internal::Box box1 = make_box(ma, box.b, out);
+	internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
+ //   internal::Box box1 = make_box(ma, box.b, out);
     ms.insert(box1);
+	//ms.push(box1);
 
     if (dim == 1) {
       internal::gauss_kronrod(integrand, box.a[0], mb[0], out, pars);
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
     }
-    internal::Box box2 = make_box(box.a, mb, out);
+	internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
+   // internal::Box box2 = make_box(box.a, mb, out);
     ms.insert(box2);
+	//ms.push(box2);
     val += box1.I + box2.I - box.I;
     err += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
@@ -462,9 +482,16 @@ double hcubature(
        rit != ms.rend(); rit++) {
     val += (*rit).I;
     err += (*rit).E;
+	std::cout << "val:" << val << std::endl;
   }
-
-  internal::clean_GenzMalik(g);
+ /* for (int i = 0; i < ms.size(); i++) {
+	  internal::Box box = ms.top();
+	  ms.pop();
+	  val += box.I;
+	  err += box.E;
+	  std::cout << "val:" << val << std::endl;
+  }
+  std::cout << "Neuer Aufruf --------------------" << std::endl;*/
   return val;
 }  // hcubature
 
