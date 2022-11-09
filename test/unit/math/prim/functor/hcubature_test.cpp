@@ -50,9 +50,9 @@ stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
   T_x_ref x_ref = x;
   stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
   my_params* pars = static_cast<my_params*>(p);
-  double a = (pars->y);
-  double s = std::pow(x_vec[0] - 0.5, 2) + std::pow(x_vec[1] - 0.5, 2);
-  return std::pow(TWO_OVER_SQRT_PI / (2.0 * a), 2) * exp(-s / std::pow(a, 2));
+  double sigma = (pars->y);
+  double numerator = std::pow(x_vec[0] - 0.5, 2) + std::pow(x_vec[1] - 0.5, 2);
+  return std::pow(TWO_OVER_SQRT_PI / (2.0 * sigma), 2) * exp(-numerator / std::pow(sigma, 2));
 }
 
 template <typename T_x, typename T_p>

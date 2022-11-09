@@ -412,7 +412,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
       || ((maxEval != 0) && (numevals >= maxEval))) {
     return val;
   }
-
   std::priority_queue<internal::Box, std::vector<internal::Box>, std::greater<internal::Box>> ms;
   internal::Box box(a, b, out.result, out.err, out.kdivide);
   ms.push(box);
