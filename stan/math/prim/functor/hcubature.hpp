@@ -327,21 +327,13 @@ struct Box {
   Box(const std::vector<double>& a, const std::vector<double>& b, double I,
       double err, int kdivide)
       : a(a), b(b), I(I), E(err), kdiv(kdivide) {}
-  bool operator<(const Box& box) const { return E > box.E; }
+  bool operator>(const Box& box) const { return E < box.E; }
   std::vector<double> a;
   std::vector<double> b;
   double I;
   double E;
   int kdiv;
 };
-
-/*inline class Box make_box(const std::vector<double>& a,
-                          const std::vector<double>& b, one_d out) {
-  std::vector<double> ac(a);
-  std::vector<double> bc(b);
-  Box box(ac, bc, out.result, out.err, out.kdivide);
-  return box;
-}*/
 
 }  // namespace internal
 
@@ -421,22 +413,13 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     return val;
   }
 
-  std::multiset<internal::Box> ms;
-  //std::deque<internal::Box> ms;
-  //std::priority_queue<internal::Box> ms;
+  std::priority_queue<internal::Box, std::vector<internal::Box>, std::greater<internal::Box>> ms;
   internal::Box box(a, b, out.result, out.err, out.kdivide);
-  ms.insert(box);
-  //ms.push(box);
-  //ms.insert(internal::make_box(a, b, out));
+  ms.push(box);
 
   while (true) {
-    std::multiset<internal::Box>::iterator it;
-//	std::deque<internal::Box>::iterator it;
-    it = ms.begin();
-    internal::Box box = *it;
-    //internal::Box box = ms.top();
-    ms.erase(it);
-    //ms.pop();
+    internal::Box box = ms.top();
+    ms.pop();
 	
     // split along dimension kdiv
     double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
@@ -451,20 +434,16 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
     }
-	internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
- //   internal::Box box1 = make_box(ma, box.b, out);
-    ms.insert(box1);
-	//ms.push(box1);
+	  internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
+	  ms.push(box1);
 
     if (dim == 1) {
       internal::gauss_kronrod(integrand, box.a[0], mb[0], out, pars);
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
     }
-	internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
-   // internal::Box box2 = make_box(box.a, mb, out);
-    ms.insert(box2);
-	//ms.push(box2);
+	  internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
+	  ms.push(box2);
     val += box1.I + box2.I - box.I;
     err += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
@@ -478,20 +457,11 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   val = 0.0;
   err = 0.0;
 
-  for (std::multiset<internal::Box>::reverse_iterator rit = ms.rbegin();
-       rit != ms.rend(); rit++) {
-    val += (*rit).I;
-    err += (*rit).E;
-	std::cout << "val:" << val << std::endl;
-  }
- /* for (int i = 0; i < ms.size(); i++) {
+  for (; !ms.empty(); ms.pop()) {
 	  internal::Box box = ms.top();
-	  ms.pop();
 	  val += box.I;
 	  err += box.E;
-	  std::cout << "val:" << val << std::endl;
   }
-  std::cout << "Neuer Aufruf --------------------" << std::endl;*/
   return val;
 }  // hcubature
 
