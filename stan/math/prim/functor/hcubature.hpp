@@ -23,10 +23,6 @@
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
-#include <deque>
-#include <set>
-
-#include <iostream>
 #include <queue>
 
 namespace stan {
@@ -390,10 +386,14 @@ struct Box {
 template <typename F, typename T_pars>
 double hcubature(const F& integrand, const T_pars& pars, const int& dim,
                  const std::vector<double>& a, const std::vector<double>& b,
-                 const int& maxEval, const double& reqAbsError,
+                 int& maxEval, const double& reqAbsError,
                  const double& reqRelError) {
   internal::one_d out;
   internal::GenzMalik g;
+  
+  if (maxEval <= 0) {
+	  maxEval = 1000000;
+  }
 
   if (dim == 1) {
     internal::gauss_kronrod(integrand, a[0], b[0], out, pars);
@@ -409,14 +409,15 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   double val = out.result;
   // convergence test
   if ((err <= fmax(reqRelError * fabs(val), reqAbsError))
-      || ((maxEval != 0) && (numevals >= maxEval))) {
+      || (numevals >= maxEval)) {
     return val;
   }
   std::priority_queue<internal::Box, std::vector<internal::Box>, std::greater<internal::Box>> ms;
   internal::Box box(a, b, out.result, out.err, out.kdivide);
   ms.push(box);
 
-  while (true) {
+  numevals += 2 * evals_per_box;
+  while ((numevals < maxEval)) {
     internal::Box box = ms.top();
     ms.pop();
 	
@@ -447,8 +448,7 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     err += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
 
-    if (((err <= max(reqRelError * fabs(val), reqAbsError))
-         || ((maxEval != 0) && (numevals >= maxEval)))
+    if ((err <= max(reqRelError * fabs(val), reqAbsError))
         || !(std::isfinite(val))) {
       break;
     }

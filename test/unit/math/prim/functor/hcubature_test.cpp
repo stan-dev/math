@@ -134,7 +134,7 @@ stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
 template <typename F>
 void test_integration(const F& f, hcubature_test::my_params* pars, int dim,
                       std::vector<double> a, std::vector<double> b,
-                      double maxEval, double reqAbsError,
+                      int maxEval, double reqAbsError,
                       std::vector<double> reqRelError, double val) {
   using stan::math::hcubature;
 
@@ -167,7 +167,7 @@ TEST(StanMath_hcubature_prim, test1) {
   reqRelError = {1e-4};
   pars = {0.50124145262344534123412, 0.0};
   test_integration(hcubature_test::f3<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 0.1972807);
+                   a, b, 10000, 0.0, reqRelError, 0.1972807);
 
   // (Gaussian centered at 1/2)
   reqRelError = {1e-4, 1e-6, 1e-7};
@@ -193,5 +193,5 @@ TEST(StanMath_hcubature_prim, test1) {
   reqRelError = {1e-4, 1e-6};
   pars = {0.0, (1 + sqrt(10.0)) / 9.0};
   test_integration(hcubature_test::f7<std::vector<double>, void*>, &pars, dim,
-                   a, b, 19000, 0.0, reqRelError, 0.999998);
+                   a, b, 20000, 0.0, reqRelError, 0.999998);
 }
