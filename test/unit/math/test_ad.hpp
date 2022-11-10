@@ -334,25 +334,12 @@ template <typename G>
 void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
                            const Eigen::VectorXd& x) {
   double gx = g(x);
-  if (!tols.gradient_val_.is_inf() || !tols.gradient_grad_.is_inf()) {
-    test_gradient(tols, g, x, gx);
-  }
+  test_gradient(tols, g, x, gx);
 #ifndef STAN_MATH_TESTS_REV_ONLY
-  if (!tols.gradient_fvar_val_.is_inf() || !tols.gradient_fvar_grad_.is_inf()) {
-    test_gradient_fvar(tols, g, x, gx);
-  }
-  if (!tols.hessian_val_.is_inf() || !tols.hessian_grad_.is_inf()
-      || !tols.hessian_hessian_.is_inf()) {
-    test_hessian(tols, g, x, gx);
-  }
-  if (!tols.hessian_fvar_val_.is_inf() || !tols.hessian_fvar_grad_.is_inf()
-      || !tols.hessian_hessian_.is_inf()) {
-    test_hessian_fvar(tols, g, x, gx);
-  }
-  if (!tols.grad_hessian_val_.is_inf() || !tols.grad_hessian_hessian_.is_inf()
-      || !tols.grad_hessian_grad_hessian_.is_inf()) {
-    test_grad_hessian(tols, g, x, gx);
-  }
+  test_gradient_fvar(tols, g, x, gx);
+  test_hessian(tols, g, x, gx);
+  test_hessian_fvar(tols, g, x, gx);
+  test_grad_hessian(tols, g, x, gx);
 #endif
 }
 

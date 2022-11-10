@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-TEST(AgradRev, build_vari_array) {
+TEST(AgradRevBuild, build_vari_array) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
