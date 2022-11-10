@@ -24,6 +24,7 @@
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <queue>
+#include <vector>
 
 namespace stan {
 namespace math {
