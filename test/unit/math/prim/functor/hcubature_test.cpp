@@ -52,7 +52,8 @@ stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
   my_params* pars = static_cast<my_params*>(p);
   double sigma = (pars->y);
   double numerator = std::pow(x_vec[0] - 0.5, 2) + std::pow(x_vec[1] - 0.5, 2);
-  return std::pow(TWO_OVER_SQRT_PI / (2.0 * sigma), 2) * exp(-numerator / std::pow(sigma, 2));
+  return std::pow(TWO_OVER_SQRT_PI / (2.0 * sigma), 2)
+         * exp(-numerator / std::pow(sigma, 2));
 }
 
 template <typename T_x, typename T_p>
@@ -133,9 +134,9 @@ stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
 
 template <typename F>
 void test_integration(const F& f, hcubature_test::my_params* pars, int dim,
-                      std::vector<double> a, std::vector<double> b,
-                      int maxEval, double reqAbsError,
-                      std::vector<double> reqRelError, double val) {
+                      std::vector<double> a, std::vector<double> b, int maxEval,
+                      double reqAbsError, std::vector<double> reqRelError,
+                      double val) {
   using stan::math::hcubature;
 
   for (auto tolerance : reqRelError) {

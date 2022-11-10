@@ -66,7 +66,8 @@ struct GenzMalik {
   double wd[4];
 };
 
-void combination(std::vector<int>& c, const int& dim, const int& p, const int& x) {
+void combination(std::vector<int>& c, const int& dim, const int& p,
+                 const int& x) {
   size_t r, k = 0;
   for (std::size_t i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
@@ -136,7 +137,7 @@ void signcombos(const int& k, const double& lambda, const int& dim,
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
   for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-	std::vector<double> temp(dim, 0.0);
+    std::vector<double> temp(dim, 0.0);
     combination(c, dim, k, i);
     std::vector<bool> index;
     index.clear();
@@ -390,9 +391,9 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
                  const double& reqRelError) {
   internal::one_d out;
   internal::GenzMalik g;
-  
+
   if (maxEval <= 0) {
-	  maxEval = 1000000;
+    maxEval = 1000000;
   }
 
   if (dim == 1) {
@@ -412,7 +413,9 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
       || (numevals >= maxEval)) {
     return val;
   }
-  std::priority_queue<internal::Box, std::vector<internal::Box>, std::greater<internal::Box>> ms;
+  std::priority_queue<internal::Box, std::vector<internal::Box>,
+                      std::greater<internal::Box>>
+      ms;
   internal::Box box(a, b, out.result, out.err, out.kdivide);
   ms.push(box);
 
@@ -420,7 +423,7 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   while ((numevals < maxEval)) {
     internal::Box box = ms.top();
     ms.pop();
-	
+
     // split along dimension kdiv
     double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
     std::vector<double> ma(box.a);
@@ -434,16 +437,16 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
     }
-	  internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
-	  ms.push(box1);
+    internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
+    ms.push(box1);
 
     if (dim == 1) {
       internal::gauss_kronrod(integrand, box.a[0], mb[0], out, pars);
     } else {
       internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
     }
-	  internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
-	  ms.push(box2);
+    internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
+    ms.push(box2);
     val += box1.I + box2.I - box.I;
     err += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
@@ -457,9 +460,9 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   err = 0.0;
 
   for (; !ms.empty(); ms.pop()) {
-	  internal::Box box = ms.top();
-	  val += box.I;
-	  err += box.E;
+    internal::Box box = ms.top();
+    val += box.I;
+    err += box.E;
   }
   return val;
 }  // hcubature
