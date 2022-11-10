@@ -24,7 +24,6 @@
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <queue>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -67,7 +66,7 @@ struct GenzMalik {
   double wd[4];
 };
 
-void combination(std::vector<int>& c, const int& dim, const int& p,
+inline void combination(std::vector<int>& c, const int& dim, const int& p,
                  const int& x) {
   size_t r, k = 0;
   for (std::size_t i = 0; i < p - 1; i++) {
@@ -86,7 +85,7 @@ void combination(std::vector<int>& c, const int& dim, const int& p,
   }
 }
 
-void combos(const int& k, const double& lambda, const int& dim,
+inline void combos(const int& k, const double& lambda, const int& dim,
             std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
@@ -100,7 +99,7 @@ void combos(const int& k, const double& lambda, const int& dim,
   }
 }
 
-void increment(std::vector<bool>& index, const int& k, const double& lambda,
+inline void increment(std::vector<bool>& index, const int& k, const double& lambda,
                const std::vector<int>& c, std::vector<double>& temp) {
   // temp size dim, all elements initially zero
   if (index.size() == 0) {
@@ -133,7 +132,7 @@ void increment(std::vector<bool>& index, const int& k, const double& lambda,
   }
 }
 
-void signcombos(const int& k, const double& lambda, const int& dim,
+inline void signcombos(const int& k, const double& lambda, const int& dim,
                 std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
@@ -179,7 +178,7 @@ void gauss_kronrod(const F& integrand, const double& a, const double& b,
   out.err = fabs(I - Idash);
 }
 
-void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
+inline void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
   double l3 = l4;
