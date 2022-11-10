@@ -67,7 +67,7 @@ struct GenzMalik {
 };
 
 inline void combination(std::vector<int>& c, const int& dim, const int& p,
-                 const int& x) {
+                        const int& x) {
   size_t r, k = 0;
   for (std::size_t i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
@@ -86,7 +86,7 @@ inline void combination(std::vector<int>& c, const int& dim, const int& p,
 }
 
 inline void combos(const int& k, const double& lambda, const int& dim,
-            std::vector<std::vector<double>>& p) {
+                   std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
   for (std::size_t i = 1; i != choose_dimk + 1; i++) {
@@ -99,8 +99,9 @@ inline void combos(const int& k, const double& lambda, const int& dim,
   }
 }
 
-inline void increment(std::vector<bool>& index, const int& k, const double& lambda,
-               const std::vector<int>& c, std::vector<double>& temp) {
+inline void increment(std::vector<bool>& index, const int& k,
+                      const double& lambda, const std::vector<int>& c,
+                      std::vector<double>& temp) {
   // temp size dim, all elements initially zero
   if (index.size() == 0) {
     index.push_back(false);
@@ -133,7 +134,7 @@ inline void increment(std::vector<bool>& index, const int& k, const double& lamb
 }
 
 inline void signcombos(const int& k, const double& lambda, const int& dim,
-                std::vector<std::vector<double>>& p) {
+                       std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
   for (std::size_t i = 1; i != choose_dimk + 1; i++) {
