@@ -24,13 +24,13 @@
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <queue>
+#include <tuple>
 
 namespace stan {
 namespace math {
 
 namespace internal {
 
-// tools
 static constexpr double xd7[8] = {-9.9145537112081263920685469752598e-01,
                                   -9.4910791234275852452618968404809e-01,
                                   -8.6486442335976907278971278864098e-01,
@@ -53,18 +53,6 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
                                    2.797053914892766679014677714229e-01,
                                    3.8183005050511894495036977548818e-01,
                                    4.1795918367346938775510204081658e-01};
-
-struct one_d {
-  double result;
-  double err;
-  int kdivide = 0;
-};
-
-struct GenzMalik {
-  std::vector<std::vector<double>> p[4];
-  double w[5];
-  double wd[4];
-};
 
 inline void combination(std::vector<int>& c, const int& dim, const int& p,
                         const int& x) {
@@ -102,7 +90,6 @@ inline void combos(const int& k, const double& lambda, const int& dim,
 inline void increment(std::vector<bool>& index, const int& k,
                       const double& lambda, const std::vector<int>& c,
                       std::vector<double>& temp) {
-  // temp size dim, all elements initially zero
   if (index.size() == 0) {
     index.push_back(false);
     for (std::size_t j = 0; j != k; j++) {
@@ -150,8 +137,8 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
 }
 
 template <typename F, typename T_pars>
-void gauss_kronrod(const F& integrand, const double& a, const double& b,
-                   internal::one_d& out, T_pars& pars) {
+std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
+                                         const double& b, T_pars& pars) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
@@ -175,11 +162,12 @@ void gauss_kronrod(const F& integrand, const double& a, const double& b,
   double V = fabs(delta);
   I *= V;
   Idash *= V;
-  out.result = I;
-  out.err = fabs(I - Idash);
+  return std::make_tuple(I, fabs(I - Idash));
 }
 
-inline void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
+inline void make_GenzMalik(const int& dim,
+                           std::vector<std::vector<std::vector<double>>>& p,
+                           std::vector<double>& w, std::vector<double>& wd) {
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
   double l3 = l4;
@@ -187,27 +175,27 @@ inline void make_GenzMalik(const int& dim, internal::GenzMalik& g) {
 
   double twopn = std::pow(2, dim);
 
-  g.w[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
-  g.w[1] = twopn * (980.0 / 6561);
-  g.w[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
-  g.w[3] = twopn * (200.0 / 19683);
-  g.w[4] = 6859.0 / 19683;
-  g.wd[3] = twopn * (25.0 / 729);
-  g.wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
-  g.wd[1] = twopn * (245.0 / 486);
-  g.wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
+  w[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
+  w[1] = twopn * (980.0 / 6561);
+  w[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
+  w[3] = twopn * (200.0 / 19683);
+  w[4] = 6859.0 / 19683;
+  wd[3] = twopn * (25.0 / 729);
+  wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
+  wd[1] = twopn * (245.0 / 486);
+  wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
 
-  combos(1, l2, dim, g.p[0]);
-  combos(1, l3, dim, g.p[1]);
-  signcombos(2, l4, dim, g.p[2]);
-  signcombos(dim, l5, dim, g.p[3]);
+  combos(1, l2, dim, p[0]);
+  combos(1, l3, dim, p[1]);
+  signcombos(2, l4, dim, p[2]);
+  signcombos(dim, l5, dim, p[3]);
 }
 
 template <typename F, typename T_pars>
-void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
-                         const int& dim, const std::vector<double>& a,
-                         const std::vector<double>& b, internal::one_d& out,
-                         T_pars& pars) {
+std::tuple<double, double, int> integrate_GenzMalik(
+    const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
+    std::vector<double>& w, std::vector<double>& wd, const int& dim,
+    const std::vector<double>& a, const std::vector<double>& b, T_pars& pars) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim);
 
@@ -224,10 +212,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
   }
 
   if (v == 0.0) {
-    out.err = 0.0;
-    out.result = 0.0;
-    out.kdivide = 0;
-    return;
+    return std::make_tuple(0.0, 0.0, 0);
   }
 
   double f1 = integrand(c, pars);
@@ -243,7 +228,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
 
   for (std::size_t i = 0; i != dim; i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p2[j] = deltac[j] * g.p[0][i][j];
+      p2[j] = deltac[j] * p[0][i][j];
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -257,7 +242,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
-      p3[j] = deltac[j] * g.p[1][i][j];
+      p3[j] = deltac[j] * p[1][i][j];
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
@@ -274,9 +259,9 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
   }
   std::vector<double> p4(dim);
   double f4 = 0.0;
-  for (std::size_t i = 0; i != g.p[2].size(); i++) {
+  for (std::size_t i = 0; i != p[2].size(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p4[j] = deltac[j] * g.p[2][i][j];
+      p4[j] = deltac[j] * p[2][i][j];
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
@@ -286,9 +271,9 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
   }
   double f5 = 0.0;
   std::vector<double> p5(dim);
-  for (std::size_t i = 0; i != g.p[3].size(); i++) {
+  for (std::size_t i = 0; i != p[3].size(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p5[j] = deltac[j] * g.p[3][i][j];
+      p5[j] = deltac[j] * p[3][i][j];
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -298,11 +283,8 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
     f5 += temp;
   }
 
-  double I
-      = v
-        * (g.w[0] * f1 + g.w[1] * f2 + g.w[2] * f3 + g.w[3] * f4 + g.w[4] * f5);
-  double Idash
-      = v * (g.wd[0] * f1 + g.wd[1] * f2 + g.wd[2] * f3 + g.wd[3] * f4);
+  double I = v * (w[0] * f1 + w[1] * f2 + w[2] * f3 + w[3] * f4 + w[4] * f5);
+  double Idash = v * (wd[0] * f1 + wd[1] * f2 + wd[2] * f3 + wd[3] * f4);
   double E = fabs(I - Idash);
 
   int kdivide = 0;
@@ -316,9 +298,7 @@ void integrate_GenzMalik(const F& integrand, internal::GenzMalik& g,
       kdivide = i;
     }
   }
-  out.result = I;
-  out.err = E;
-  out.kdivide = kdivide;
+  return std::make_tuple(I, E, kdivide);
 }
 
 struct Box {
@@ -364,12 +344,6 @@ struct Box {
  *
  * @tparam F Type of f
  * @tparam T_pars Type of paramete-struct
- * @tparam T_dim Type of dimension
- * @tparam T_a Type of a
- * @tparam T_b Type of b
- * @tparam T_maxEval Type of maximum number of evaluations
- * @tparam T_reqAbsError Type of absolute error
- * @tparam T_reqRelError Type of relative error
  *
  * @param f a functor with signature given above
  * @param dim dimension of the integral
@@ -381,7 +355,7 @@ struct Box {
  * @param pars parameters to be passed to f as a struct
  * @param val correct value of integral
  *
- * @return The value of the n-dimensional integral of \f$f\f$ from \f$a\f$ to
+ * @return The value of the dim-dimensional integral of \f$f\f$ from \f$a\f$ to
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
@@ -390,34 +364,40 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
                  const std::vector<double>& a, const std::vector<double>& b,
                  int& maxEval, const double& reqAbsError,
                  const double& reqRelError) {
-  internal::one_d out;
-  internal::GenzMalik g;
-
   if (maxEval <= 0) {
     maxEval = 1000000;
   }
 
+  double result, err;
+  int kdivide = 0;
+
+  std::vector<std::vector<std::vector<double>>> p(4);
+  std::vector<double> w_five(5);
+  std::vector<double> wd_four(4);
+
   if (dim == 1) {
-    internal::gauss_kronrod(integrand, a[0], b[0], out, pars);
+    std::tie(result, err)
+        = internal::gauss_kronrod(integrand, a[0], b[0], pars);
   } else {
-    internal::make_GenzMalik(dim, g);
-    internal::integrate_GenzMalik(integrand, g, dim, a, b, out, pars);
+    internal::make_GenzMalik(dim, p, w_five, wd_four);
+    std::tie(result, err, kdivide) = internal::integrate_GenzMalik(
+        integrand, p, w_five, wd_four, dim, a, b, pars);
   }
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
   int evals_per_box = numevals;
-  int kdiv = out.kdivide;
-  double err = out.err;
-  double val = out.result;
-  // convergence test
-  if ((err <= fmax(reqRelError * fabs(val), reqAbsError))
+  int kdiv = kdivide;
+  double error = err;
+  double val = result;
+
+  if ((error <= fmax(reqRelError * fabs(val), reqAbsError))
       || (numevals >= maxEval)) {
     return val;
   }
   std::priority_queue<internal::Box, std::vector<internal::Box>,
                       std::greater<internal::Box>>
       ms;
-  internal::Box box(a, b, out.result, out.err, out.kdivide);
+  internal::Box box(a, b, result, err, kdivide);
   ms.push(box);
 
   numevals += 2 * evals_per_box;
@@ -425,7 +405,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     internal::Box box = ms.top();
     ms.pop();
 
-    // split along dimension kdiv
     double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
     std::vector<double> ma(box.a);
 
@@ -433,37 +412,39 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     std::vector<double> mb(box.b);
     mb[box.kdiv] -= w;
 
-    if (dim == 1) {
-      internal::gauss_kronrod(integrand, ma[0], box.b[0], out, pars);
-    } else {
-      internal::integrate_GenzMalik(integrand, g, dim, ma, box.b, out, pars);
-    }
-    internal::Box box1(ma, box.b, out.result, out.err, out.kdivide);
-    ms.push(box1);
+    double result_1, result_2, err_1, err_2, kdivide_1, kdivide_2;
 
     if (dim == 1) {
-      internal::gauss_kronrod(integrand, box.a[0], mb[0], out, pars);
+      std::tie(result_1, err_1)
+          = internal::gauss_kronrod(integrand, ma[0], box.b[0], pars);
+      std::tie(result_2, err_2)
+          = internal::gauss_kronrod(integrand, box.a[0], mb[0], pars);
     } else {
-      internal::integrate_GenzMalik(integrand, g, dim, box.a, mb, out, pars);
+      std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
+          integrand, p, w_five, wd_four, dim, ma, box.b, pars);
+      std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
+          integrand, p, w_five, wd_four, dim, box.a, mb, pars);
     }
-    internal::Box box2(box.a, mb, out.result, out.err, out.kdivide);
+    internal::Box box1(ma, box.b, result_1, err_1, kdivide_1);
+    ms.push(box1);
+    internal::Box box2(box.a, mb, result_2, err_2, kdivide_2);
     ms.push(box2);
     val += box1.I + box2.I - box.I;
-    err += box1.E + box2.E - box.E;
+    error += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
 
-    if ((err <= max(reqRelError * fabs(val), reqAbsError))
+    if ((error <= max(reqRelError * fabs(val), reqAbsError))
         || !(std::isfinite(val))) {
       break;
     }
   }
   val = 0.0;
-  err = 0.0;
+  error = 0.0;
 
   for (; !ms.empty(); ms.pop()) {
     internal::Box box = ms.top();
     val += box.I;
-    err += box.E;
+    error += box.E;
   }
   return val;
 }  // hcubature
