@@ -15,11 +15,10 @@ TEST(mathMixFun, eigenvalues) {
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
 
-
 TEST(mathMixFun, eigenvaluesComplex) {
   auto f = [](const auto& x) {
     using stan::math::eigenvalues;
-    return eigenvalues(stan::math::to_complex(x,0));
+    return eigenvalues(stan::math::to_complex(x, 0));
   };
   for (const auto& x : stan::test::square_test_matrices(0, 2)) {
     stan::test::expect_ad(f, x);
