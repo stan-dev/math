@@ -45,10 +45,9 @@ template <typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2, T3>* = nullptr,
           require_all_not_var_matrix_t<T1, T2, T3>* = nullptr>
 inline auto inc_beta(const T1& a, const T2& b, const T3& c) {
-  return apply_scalar_ternary(a, b, c,
-                              [](const auto& d, const auto& e, const auto& f) {
+  return apply_scalar_ternary([](const auto& d, const auto& e, const auto& f) {
                                 return inc_beta(d, e, f);
-                              });
+                              }, a, b, c);
 }
 
 }  // namespace math

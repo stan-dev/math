@@ -220,7 +220,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 const CwiseTernaryOp<CustomTernaryOp, const Derived,
                      const OtherDerived1, const OtherDerived2>
   ternaryExpr(const OtherDerived1& other1, const OtherDerived2& other2,
-              const CustomTernaryOp& func = CustomTernaryOp()) const {
+              const CustomTernaryOp& func) const {
     return CwiseTernaryOp<CustomTernaryOp, const Derived,
                           const OtherDerived1, const OtherDerived2>(
       derived(), other1.derived(), other2.derived(), func);

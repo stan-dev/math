@@ -24,9 +24,9 @@ namespace math {
  *
  * This base template function takes (and returns) scalars.
  *
- * @tparam T1 Type of first scalar to which functor is applied.
- * @tparam T2 Type of second scalar to which functor is applied.
- * @tparam T3 Type of third scalar to which functor is applied.
+ * @tparam T1 An Arithmetic, Integral, var, or fvar<T> type.
+ * @tparam T2 An Arithmetic, Integral, var, or fvar<T> type.
+ * @tparam T3 An Arithmetic, Integral, var, or fvar<T> type.
  * @tparam F Type of functor to apply.
  * @param x First input to which operation is applied.
  * @param y Second input to which operation is applied.
@@ -34,10 +34,10 @@ namespace math {
  * @param f functor to apply to inputs.
  * @return Scalar with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   return f(x, y, z);
 }
 
@@ -46,9 +46,9 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * is used for more efficient indexing of both row- and column-major inputs
  * without separate loops.
  *
- * @tparam T1 Type of first argument to which functor is applied.
- * @tparam T2 Type of second argument to which functor is applied.
- * @tparam T3 Type of third argument to which functor is applied.
+ * @tparam T1 Eigen type of first argument to which functor is applied.
+ * @tparam T2 Eigen type Type of second argument to which functor is applied.
+ * @tparam T3 Eigen type of third argument to which functor is applied.
  * @tparam F Type of functor to apply.
  * @param x First Eigen input to which operation is applied.
  * @param y Second Eigen input to which operation is applied.
@@ -56,14 +56,18 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to Eigen input.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_all_eigen_t<T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   check_matching_dims("Ternary function", "x", x, "y", y);
   check_matching_dims("Ternary function", "y", y, "z", z);
   check_matching_dims("Ternary function", "x", x, "z", z);
-  return x.ternaryExpr(y, z, f);
+  return make_holder(
+    [](auto& f_inner, const auto& x_inner, const auto& y_inner, const auto& z_inner) {
+      return x_inner.ternaryExpr(f_inner, y_inner, z_inner);
+    },
+    std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z));
 }
 
 /**
@@ -85,10 +89,10 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_all_std_vector_vt<is_stan_scalar, T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
   check_matching_sizes("Ternary function", "x", x, "z", z);
@@ -118,11 +122,11 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_all_std_vector_vt<is_container_or_var_matrix, T1, T2,
                                     T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
   check_matching_sizes("Ternary function", "x", x, "z", z);
@@ -142,9 +146,9 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
- * @tparam T1 Type of first input.
- * @tparam T2 Type of second input.
- * @tparam T3 Type of scalar third input
+ * @tparam T1 A container or nested container type.
+ * @tparam T2 A container or nested container type.
+ * @tparam T3 An Arithmetic, Integral, var, or fvar<T> type.
  * @tparam F Type of functor to apply.
  * @param x First input to which operation is applied.
  * @param y Second input to which operation is applied.
@@ -152,11 +156,11 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   return apply_scalar_binary(
       x, y, [f, z](const auto& a, const auto& b) { return f(a, b, z); });
 }
@@ -167,9 +171,9 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
- * @tparam T1 Type of first input.
- * @tparam T2 Type of scalar second input.
- * @tparam T3 Type of third input
+ * @tparam T1 A container or nested container type.
+ * @tparam T2 An Arithmetic, Integral, var, or fvar<T> type.
+ * @tparam T3 A container or nester container type.
  * @tparam F Type of functor to apply.
  * @param x First input to which operation is applied.
  * @param y Second scalar input to which operation is applied.
@@ -177,11 +181,11 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_all_container_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   return apply_scalar_binary(
       x, z, [f, y](const auto& a, const auto& c) { return f(a, y, c); });
 }
@@ -192,9 +196,9 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
  *
- * @tparam T1 Type of scalar first input.
- * @tparam T2 Type of second input.
- * @tparam T3 Type of third input
+ * @tparam T1 An Arithmetic, Integral, var, or fvar<T> type.
+ * @tparam T2 A container or nested container type.
+ * @tparam T3 A container or nested container type
  * @tparam F Type of functor to apply.
  * @param x First scalar input to which operation is applied.
  * @param y Second input to which operation is applied.
@@ -202,11 +206,11 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
  * @param f functor to apply to inputs.
  * @return container with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename T3, typename F,
+template <typename F, typename T1, typename T2, typename T3,
           require_container_t<T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z,
-                                 const F& f) {
+inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
   return apply_scalar_binary(
       y, z, [f, x](const auto& b, const auto& c) { return f(x, b, c); });
 }
