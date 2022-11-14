@@ -58,15 +58,13 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_eigen_t<T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   check_matching_dims("Ternary function", "x", x, "y", y);
   check_matching_dims("Ternary function", "y", y, "z", z);
   check_matching_dims("Ternary function", "x", x, "z", z);
   return make_holder(
-      [](auto& f_inner, const auto& x_inner, const auto& y_inner,
-         const auto& z_inner) {
-        return x_inner.ternaryExpr(f_inner, y_inner, z_inner);
+      [](auto& f_inner, auto& x_inner, auto& y_inner, auto& z_inner) {
+        return x_inner.ternaryExpr(y_inner, z_inner, f_inner);
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y),
       std::forward<T3>(z));
@@ -133,11 +131,11 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
   check_matching_sizes("Ternary function", "y", y, "z", z);
   check_matching_sizes("Ternary function", "x", x, "z", z);
   using T_return
-      = plain_type_t<decltype(apply_scalar_ternary(x[0], y[0], z[0], f))>;
+      = plain_type_t<decltype(apply_scalar_ternary(f, x[0], y[0], z[0]))>;
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
   for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x[i], y[i], z[i], f);
+    result[i] = apply_scalar_ternary(f, x[i], y[i], z[i]);
   }
   return result;
 }
