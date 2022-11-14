@@ -45,18 +45,6 @@ TEST(primFun, fft) {
   EXPECT_NEAR(imag(yb[2]), 2 * -6.53589838, 1e-6);
 }
 
-template <typename T, typename U>
-void expect_complex_mat_eq(const T& x, const U& y, double tol = 1e-8) {
-  EXPECT_EQ(x.rows(), y.rows());
-  EXPECT_EQ(x.cols(), y.cols());
-  for (int j = 0; j < x.cols(); ++j) {
-    for (int i = 0; i < x.rows(); ++i) {
-      EXPECT_FLOAT_EQ(real(x(i, j)), real(y(i, j)));
-      EXPECT_FLOAT_EQ(imag(x(i, j)), imag(y(i, j)));
-    }
-  }
-}
-
 TEST(primFun, inv_fft) {
   using c_t = std::complex<double>;
   using cv_t = Eigen::Matrix<std::complex<double>, -1, 1>;
@@ -74,7 +62,7 @@ TEST(primFun, inv_fft) {
   cv_t x1 = inv_fft(y1);
   cv_t x1_expected(1);
   x1_expected << c_t(-3.247, 1.98555);
-  expect_complex_mat_eq(x1_expected, x1);
+  EXPECT_MATRIX_COMPLEX_NEAR(x1_expected, x1, 1e-8);
 
   EXPECT_EQ(1, x1.size());
   EXPECT_EQ(real(x1[0]), -3.247);
@@ -87,7 +75,7 @@ TEST(primFun, inv_fft) {
   EXPECT_EQ(3, y.size());
   Eigen::VectorXcd x_expected(3);
   x_expected << c_t(1, -2), c_t(-3, 5), c_t(-7, 11);
-  expect_complex_mat_eq(x_expected, x);
+  EXPECT_MATRIX_COMPLEX_NEAR(x_expected, x, 1e-8);
 }
 
 TEST(primFun, fft2) {
@@ -115,7 +103,7 @@ TEST(primFun, fft2) {
   cm_t y12 = fft2(x12);
   cm_t y12_expected(1, 2);
   y12_expected << c_t(-7.6, -3.7), c_t(9.6, -4.1);
-  expect_complex_mat_eq(y12_expected, y12);
+  EXPECT_MATRIX_COMPLEX_NEAR(y12_expected, y12, 1e-8);
 
   cm_t x33(3, 3);
   x33 << c_t(1, 2), c_t(3, -1.4), c_t(2, 1), c_t(3, -9), c_t(2, -1.3),
@@ -127,7 +115,7 @@ TEST(primFun, fft2) {
       c_t(-13.29326674, 20.88153533), c_t(-13.25262794, 15.82794549),
       c_t(4.160254038, 5.928718708), c_t(-11.34737206, -7.72794549),
       c_t(4.89326674, -1.98153533);
-  expect_complex_mat_eq(y33_expected, y33);
+  EXPECT_MATRIX_COMPLEX_NEAR(y33_expected, y33, 1e-8);
 }
 
 TEST(primFunFFT, invfft2) {
@@ -153,7 +141,7 @@ TEST(primFunFFT, invfft2) {
   x13 << c_t(-2.3, 1.82), c_t(1.18, 9.32), c_t(1.15, -14.1);
   cm_t y13 = inv_fft2(x13);
   cm_t y13copy = inv_fft(x13.row(0));
-  expect_complex_mat_eq(y13, y13copy.transpose());
+  EXPECT_MATRIX_COMPLEX_NEAR(y13, y13copy.transpose(), 1e-8);
 
   cm_t x33(3, 3);
   x33 << c_t(1, 2), c_t(3, -1.4), c_t(2, 1), c_t(3, -9), c_t(2, -1.3),
@@ -182,10 +170,10 @@ TEST(primFunFFT, invfft2) {
 
   // check round trips inv_fft(fft(x))
   cm_t x33copy = inv_fft2(y33);
-  expect_complex_mat_eq(x33, x33copy);
+  EXPECT_MATRIX_COMPLEX_NEAR(x33, x33copy, 1e-8);
 
   // check round trip fft(inv_fft(x))
   cm_t z33 = inv_fft2(x33);
   cm_t x33copy2 = fft2(z33);
-  expect_complex_mat_eq(x33, x33copy2);
+  EXPECT_MATRIX_COMPLEX_NEAR(x33, x33copy2, 1e-8);
 }

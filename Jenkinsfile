@@ -4,8 +4,8 @@ import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
     try {
-        if (jumbo) {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+        if (jumbo && !params.disableJumbo) {
+            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath}"
         }
@@ -13,51 +13,7 @@ def runTests(String testPath, boolean jumbo = false) {
         finally { junit 'test/**/*.xml' }
 }
 
-// We're using Anaconda3 Python on win-10
-def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
-    withEnv(['PATH+TBB=./lib/tbb']) {
-        if (buildLibs){
-            bat """
-                SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                mingw32-make.exe -f make/standalone math-libs
-            """
-        }
-        try {
-            if (jumbo) {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath} --jumbo
-                """
-             } else {
-                bat """
-                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
-                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
-                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
-                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
-                    python runTests.py -j${env.PARALLEL} ${testPath}
-                """
-             }
-        }
-        finally { junit 'test/**/*.xml' }
-    }
-}
-
-
-def deleteDirWin() {
-    bat "attrib -r -s /s /d"
-    deleteDir()
-}
-
 def skipRemainingStages = false
-def skipOpenCL = false
 
 def utils = new org.stan.Utils()
 
@@ -80,24 +36,27 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
+        booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)')
     }
     options {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
+	parallelsAlwaysFailFast()
     }
     environment {
         STAN_NUM_THREADS = 4
         CLANG_CXX = 'clang++-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
-        N_TESTS = 150
+        N_TESTS = 100
         OPENCL_DEVICE_ID = 0
         OPENCL_DEVICE_ID_CPU = 0
         OPENCL_DEVICE_ID_GPU = 0
         OPENCL_PLATFORM_ID = 1
         OPENCL_PLATFORM_ID_CPU = 0
         OPENCL_PLATFORM_ID_GPU = 0
-        PARALLEL = 8
+        PARALLEL = 4
     }
     stages {
 
@@ -192,9 +151,8 @@ pipeline {
                     recordIssues enabledForFailure: true, tools:
                         [cppLint(),
                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-                }
-                success {
                     deleteDir()
+
                 }
             }
         }
@@ -215,8 +173,6 @@ pipeline {
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
 
-                    def openCLPaths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
-                    skipOpenCL = utils.verifyChanges(openCLPaths)
                 }
             }
         }
@@ -236,6 +192,7 @@ pipeline {
             steps {
                 unstash 'MathSetup'
                 sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                sh "echo O=0 >> make/local"
                 sh "make -j${PARALLEL} test-headers"
             }
             post { always { deleteDir() } }
@@ -265,9 +222,14 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+
                         script {
-                            runTests("test/unit/math/rev", false)
-                            runTests("test/unit/math/fwd", false)
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
+
+                            runTests("test/unit/math/rev")
+                            runTests("test/unit/math/fwd")
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -289,7 +251,10 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", false)
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
+                            runTests("test/unit/math/mix", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -311,13 +276,41 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", false)
+                            runTests("test/unit/math/prim", true)
                             runTests("test/unit/math/memory", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL GPU tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'v100'
+                            args '--gpus 1'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true >> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+                            """
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
+                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
+                            runTests("test/unit/multiple_translation_units_test.cpp")
+                        }
+                    }
                 }
             }
         }
@@ -348,63 +341,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-
-                stage('OpenCL GPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'v100'
-                            args '--gpus 1'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
-                            runTests("test/unit/math/opencl")
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
-                }
-
-                stage('Distribution tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${CLANG_CXX} > make/local
-                            echo O=0 >> make/local
-                            echo N_TESTS=${N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
-                    }
-                }
-
                 stage('Expressions test') {
                     agent {
                         docker {
@@ -466,6 +402,49 @@ pipeline {
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
+
+        stage ('Distribution tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            agent { label 'linux && docker' }
+            steps {
+                script {
+                    unstash 'MathSetup'
+                    def tests = [:]
+                    def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
+                    for (f in files.toList().collate(8)) {
+                        def names = f.join(" ")
+                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+                            docker.image('stanorg/ci:gpu-cpp17').inside {
+                                unstash 'MathSetup'
+                                sh """
+                                    echo CXX=${CLANG_CXX} > make/local
+                                    echo O=0 >> make/local
+                                    echo N_TESTS=${N_TESTS} >> make/local
+                                    """
+                                script {
+                                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                                    }
+                                }
+                                sh "./runTests.py -j${PARALLEL} ${names}"
+                            }
+                        } }
+                    }
+                    tests.failFast = true
+                    parallel tests
+                }
+            }
+            post {
+                always {
+                    retry(3) { deleteDir() }
                 }
             }
         }

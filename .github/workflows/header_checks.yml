@@ -13,8 +13,14 @@ on:
       - 'README.md'
       - 'RELEASE-NOTES.txt'
 
+permissions:
+  contents: read
+
 jobs:
   windows:
+    permissions:
+      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
+      contents: read  # for actions/checkout to fetch code
     name: Windows
     runs-on: windows-latest
 
@@ -28,7 +34,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: '2.x'
+        python-version: '3.x'
 
     - name: Print g++/mingw32-make version and path
       run: |
@@ -40,13 +46,16 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
 
     - name: Run header tests
       shell: powershell
       run: make -j2 test-headers
 
   opencl:
+    permissions:
+      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
+      contents: read  # for actions/checkout to fetch code
     name: OpenCL
     runs-on: ubuntu-latest
 
@@ -64,6 +73,9 @@ jobs:
         echo "STAN_OPENCL=true" > make/local
         make -j2 test-headers
   no_range_checks:
+    permissions:
+      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
+      contents: read  # for actions/checkout to fetch code
     name: NoRange
     runs-on: ubuntu-latest
 
