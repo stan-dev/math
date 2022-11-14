@@ -35,13 +35,15 @@ inline auto select(const bool c, const T_true y_true, const T_false y_false) {
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
  */
-template <typename T_true, typename T_false,
-          typename T_return = return_type_t<T_true, T_false>,
-          typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
-          typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
-          require_all_eigen_t<T_true, T_false>* = nullptr,
-          require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
-inline T_true_plain select(const bool c, const T_true y_true, const T_false y_false) {
+template <
+    typename T_true, typename T_false,
+    typename T_return = return_type_t<T_true, T_false>,
+    typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
+    typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
+    require_all_eigen_t<T_true, T_false>* = nullptr,
+    require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
+inline T_true_plain select(const bool c, const T_true y_true,
+                           const T_false y_false) {
   if (c) {
     return y_true;
   } else {
