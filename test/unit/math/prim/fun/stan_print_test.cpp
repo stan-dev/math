@@ -9,6 +9,8 @@ TEST(MathPrim, basic_print) {
   Eigen::MatrixXd m = Eigen::MatrixXd::Ones(1, 1);
   std::vector<double> a(1, 1);
 
+  std::tuple<Eigen::VectorXd, int, std::vector<double>> tup(v, i, a);
+
   {
     std::stringstream s;
     stan::math::stan_print(&s, i);
@@ -43,6 +45,12 @@ TEST(MathPrim, basic_print) {
     std::stringstream s;
     stan::math::stan_print(&s, a);
     EXPECT_TRUE(s.str().find("[1]") != std::string::npos);
+  }
+
+  {
+    std::stringstream s;
+    stan::math::stan_print(&s, tup);
+    EXPECT_TRUE(s.str().find("([1],1,[1])") != std::string::npos);
   }
 }
 
