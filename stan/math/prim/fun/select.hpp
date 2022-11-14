@@ -36,11 +36,17 @@ inline auto select(const bool c, const T_true y_true, const T_false y_false) {
  * @param y_false Value to return if condition is false.
  */
 template <typename T_true, typename T_false,
-          require_all_eigen_t<T_true, T_false>* = nullptr>
-inline auto select(const bool c, const T_true y_true, const T_false y_false) {
-  return y_true
-      .binaryExpr(y_false, [&](auto&& x, auto&& y) { return c ? x : y; })
-      .eval();
+          typename T_return = return_type_t<T_true, T_false>,
+          typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
+          typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
+          require_all_eigen_t<T_true, T_false>* = nullptr,
+          require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
+inline T_true_plain select(const bool c, const T_true y_true, const T_false y_false) {
+  if (c) {
+    return y_true;
+  } else {
+    return y_false;
+  }
 }
 
 /**
@@ -64,9 +70,9 @@ inline ReturnT select(const bool c, const T_true& y_true,
                       const T_false& y_false) {
   if (c) {
     return y_true;
+  } else {
+    return y_true.unaryExpr([&](auto&& y) { return y_false; });
   }
-
-  return y_true.unaryExpr([&](auto&& y) { return y_false; });
 }
 
 /**
@@ -90,9 +96,9 @@ inline ReturnT select(const bool c, const T_true y_true,
                       const T_false y_false) {
   if (c) {
     return y_false.unaryExpr([&](auto&& y) { return y_true; });
+  } else {
+    return y_false;
   }
-
-  return y_false;
 }
 
 /**
@@ -129,7 +135,8 @@ inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
  */
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
-          require_any_eigen_array_t<T_true, T_false>* = nullptr>
+          require_any_eigen_array_t<T_true, T_false>* = nullptr,
+          require_any_stan_scalar_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
   return c.select(y_true, y_false).eval();
 }

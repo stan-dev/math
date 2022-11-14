@@ -54,8 +54,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   // The gradients are technically ill-defined, but treated as zero
   if (sum(n_arr < 0)) {
     return ops_partials.build(0.0);
-  }
-  if (sum(n_arr >= 1)) {
+  } else if (sum(n_arr >= 1)) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
