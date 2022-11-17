@@ -7,6 +7,15 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the eigenvectors of a (real-valued) matrix
+ *
+ * @tparam EigMat type of real matrix argument
+ * @param[in] m matrix to find the eigenvectors of. Must be square and have a
+ * non-zero size.
+ * @return a complex-valued matrix with columns representing the eigenvectors of
+ * `m`
+ */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_vt_complex<EigMat>* = nullptr>
 inline auto eigenvectors(const EigMat& m) {
@@ -19,6 +28,15 @@ inline auto eigenvectors(const EigMat& m) {
   return solver.eigenvectors();
 }
 
+/**
+ * Return the eigenvectors of a (complex-valued) matrix
+ *
+ * @tparam EigMat type of complex matrix argument
+ * @param[in] m matrix to find the eigenvectors of. Must be square and have a
+ * non-zero size.
+ * @return a complex-valued matrix with columns representing the eigenvectors of
+ * `m`
+ */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_vt_complex<EigMat>* = nullptr>
 inline auto eigenvectors(const EigMat& m) {
