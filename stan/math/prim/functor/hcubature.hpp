@@ -305,7 +305,7 @@ struct Box {
   Box(const std::vector<double>& a, const std::vector<double>& b, double I,
       double err, int kdivide)
       : a(a), b(b), I(I), E(err), kdiv(kdivide) {}
-  bool operator>(const Box& box) const { return E < box.E; }
+  bool operator<(const Box& box) const { return E < box.E; }
   std::vector<double> a;
   std::vector<double> b;
   double I;
@@ -394,14 +394,14 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
       || (numevals >= maxEval)) {
     return val;
   }
-  std::priority_queue<internal::Box, std::vector<internal::Box>,
-                      std::greater<internal::Box>>
-      ms;
+  std::priority_queue<internal::Box> ms;
   internal::Box box(a, b, result, err, kdivide);
   ms.push(box);
 
   numevals += 2 * evals_per_box;
-  while ((numevals < maxEval)) {
+  while ((numevals < maxEval)
+        && (error > max(reqRelError * fabs(val), reqAbsError))
+        && std::isfinite(val)) {
     internal::Box box = ms.top();
     ms.pop();
 
@@ -432,11 +432,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     val += box1.I + box2.I - box.I;
     error += box1.E + box2.E - box.E;
     numevals += 2 * evals_per_box;
-
-    if ((error <= max(reqRelError * fabs(val), reqAbsError))
-        || !(std::isfinite(val))) {
-      break;
-    }
   }
   val = 0.0;
   error = 0.0;
@@ -452,3 +447,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
 }  // namespace math
 }  // namespace stan
 #endif
+
+
+
