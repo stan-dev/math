@@ -400,8 +400,8 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
 
   numevals += 2 * evals_per_box;
   while ((numevals < maxEval)
-        && (error > max(reqRelError * fabs(val), reqAbsError))
-        && std::isfinite(val)) {
+         && (error > max(reqRelError * fabs(val), reqAbsError))
+         && std::isfinite(val)) {
     internal::Box box = ms.top();
     ms.pop();
 
@@ -447,6 +447,3 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
 }  // namespace math
 }  // namespace stan
 #endif
-
-
-
