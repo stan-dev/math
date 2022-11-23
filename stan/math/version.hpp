@@ -12,7 +12,7 @@
 #endif
 
 #define STAN_MATH_MAJOR 4
-#define STAN_MATH_MINOR 4
+#define STAN_MATH_MINOR 5
 #define STAN_MATH_PATCH 0
 
 namespace stan {
