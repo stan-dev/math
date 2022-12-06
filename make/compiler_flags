@@ -105,7 +105,7 @@ endif
 O ?= 3
 
 ## setup includes
-INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -include stan/math/version.hpp
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS)/src/sundials
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
@@ -121,6 +121,7 @@ CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
 
 ifdef BOOST_INC
+DEPS_VERSION_CHECK ?= true
 CXXFLAGS_BOOST ?= -I $(BOOST_INC)
 else
 CXXFLAGS_BOOST ?= -I $(BOOST)
@@ -129,6 +130,7 @@ endif
 ifdef SUNDIALS_LIB
 LDFLAGS_SUNDIALS ?= -L $(SUNDIALS_LIB) -lsundials_cvodes -lsundials_idas -lsundials_kinsol -lsundials_nvecserial
 ifdef SUNDIALS_INC
+DEPS_VERSION_CHECK ?= true
 CXXFLAGS_SUNDIALS += -I $(SUNDIALS_INC)
 endif
 else
@@ -140,6 +142,7 @@ CXXFLAGS_SUNDIALS += -DSUNDIALS_INTERFACE_OLD
 endif
 
 ifdef EIGEN_INC
+DEPS_VERSION_CHECK ?= true
 CXXFLAGS_EIGEN ?= -I $(EIGEN_INC)
 else
 CXXFLAGS_EIGEN ?= -I $(EIGEN)
@@ -283,6 +286,7 @@ endif
 ifdef TBB_LIB
 
 ifdef TBB_INC
+DEPS_VERSION_CHECK ?= true
 CXXFLAGS_TBB ?= -I $(TBB_INC)
 else
 CXXFLAGS_TBB ?= -I $(TBB)/include
@@ -341,6 +345,11 @@ ifdef STAN_MPI
 
   LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(LDFLAGS_MPI_FLTO) $(MPI_OPTIM)
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
+endif
+
+# If external dependencies are provided then perform compatibility-checking as first include
+ifdef DEPS_VERSION_CHECK
+  INC += -include stan/math/version.hpp
 endif
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) $(CXXFLAGS_NO_RANGE_CHECKS) -O$(O) $(INC)
