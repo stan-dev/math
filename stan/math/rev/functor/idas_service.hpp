@@ -9,9 +9,7 @@
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#ifndef SUNDIALS_INTERFACE_OLD
 #include <sundials/sundials_context.h>
-#endif
 #include <ostream>
 #include <vector>
 #include <algorithm>
@@ -31,10 +29,7 @@ namespace math {
  */
 template <typename dae_type>
 struct idas_service {
-#ifndef SUNDIALS_INTERFACE_OLD
-  /** Sundials context **/
   sundials::Context sundials_context_;
-#endif
   int ns;
   N_Vector nv_yy;
   N_Vector nv_yp;
@@ -51,7 +46,6 @@ struct idas_service {
    * @param[in] m length of parameter theta
    * @param[in] f ODE RHS function
    */
-#ifndef SUNDIALS_INTERFACE_OLD
   idas_service(double t0, dae_type& dae)
       : sundials_context_(),
         ns(dae.ns),
@@ -74,29 +68,6 @@ struct idas_service {
 
     idas_sens_init(nv_yys, nv_yps, ns, n);
   }
-#else
-  idas_service(double t0, dae_type& dae)
-      : ns(dae.ns),
-        nv_yy(N_VNew_Serial(dae.N)),
-        nv_yp(N_VNew_Serial(dae.N)),
-        nv_yys(nullptr),
-        nv_yps(nullptr),
-        mem(IDACreate()),
-        A(SUNDenseMatrix(dae.N, dae.N)),
-        LS(SUNLinSol_Dense(nv_yy, A)) {
-    const int n = dae.N;
-    for (auto i = 0; i < n; ++i) {
-      NV_Ith_S(nv_yy, i) = dae.dbl_yy[i];
-      NV_Ith_S(nv_yp, i) = dae.dbl_yp[i];
-    }
-
-    CHECK_IDAS_CALL(IDAInit(mem, dae_type::idas_res, t0, nv_yy, nv_yp));
-    CHECK_IDAS_CALL(IDASetUserData(mem, static_cast<void*>(&dae)));
-    CHECK_IDAS_CALL(IDASetLinearSolver(mem, LS, A));
-
-    idas_sens_init(nv_yys, nv_yps, ns, n);
-  }
-#endif
 
   ~idas_service() {
     SUNLinSolFree(LS);

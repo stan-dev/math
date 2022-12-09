@@ -11,9 +11,7 @@
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#ifndef SUNDIALS_INTERFACE_OLD
 #include <sundials/sundials_context.h>
-#endif
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -35,10 +33,8 @@ namespace math {
  */
 template <typename F>
 struct KinsolFixedPointEnv {
-#ifndef SUNDIALS_INTERFACE_OLD
   /** Sundials context **/
   sundials::Context sundials_context_;
-#endif
   /** RHS functor. */
   const F& f_;
   /** val of params for @c y_ to refer to when
@@ -65,7 +61,6 @@ struct KinsolFixedPointEnv {
   /** NVECTOR for scaling f */
   N_Vector nv_f_scal_;
 
-#ifndef SUNDIALS_INTERFACE_OLD
   /** Constructor when y is data */
   template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
@@ -120,60 +115,6 @@ struct KinsolFixedPointEnv {
       NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
     }
   }
-#else
-  /** Constructor when y is data */
-  template <typename T, typename T_u, typename T_f>
-  KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
-                      const Eigen::VectorXd& y, const std::vector<double>& x_r,
-                      const std::vector<int>& x_i, std::ostream* msgs,
-                      const std::vector<T_u>& u_scale,
-                      const std::vector<T_f>& f_scale)
-      : f_(f),
-        y_dummy(),
-        y_(y),
-        N_(x.size()),
-        M_(y.size()),
-        x_r_(x_r),
-        x_i_(x_i),
-        msgs_(msgs),
-        mem_(KINCreate()),
-        nv_x_(N_VNew_Serial(N_)),
-        nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_)) {
-    for (int i = 0; i < N_; ++i) {
-      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
-      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
-    }
-  }
-
-  /** Constructor when y is param */
-  template <typename T, typename T_u, typename T_f>
-  KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
-                      const Eigen::Matrix<stan::math::var, -1, 1>& y,
-                      const std::vector<double>& x_r,
-                      const std::vector<int>& x_i, std::ostream* msgs,
-                      const std::vector<T_u>& u_scale,
-                      const std::vector<T_f>& f_scale)
-      : f_(f),
-        y_dummy(stan::math::value_of(y)),
-        y_(y_dummy),
-        N_(x.size()),
-        M_(y.size()),
-        x_r_(x_r),
-        x_i_(x_i),
-        msgs_(msgs),
-        mem_(KINCreate()),
-        nv_x_(N_VNew_Serial(N_)),
-        nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_)) {
-    for (int i = 0; i < N_; ++i) {
-      NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
-      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
-    }
-  }
-#endif
 
   ~KinsolFixedPointEnv() {
     N_VDestroy_Serial(nv_x_);

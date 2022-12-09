@@ -8,9 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#ifndef SUNDIALS_INTERFACE_OLD
 #include <sundials/sundials_context.h>
-#endif
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -39,9 +37,7 @@ class cvodes_integrator {
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
   const char* function_name_;
-#ifndef SUNDIALS_INTERFACE_OLD
   sundials::Context sundials_context_;
-#endif
   const F& f_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
@@ -198,9 +194,7 @@ class cvodes_integrator {
                     long int max_num_steps,  // NOLINT(runtime/int)
                     std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
-#ifndef SUNDIALS_INTERFACE_OLD
         sundials_context_(),
-#endif
         f_(f),
         y0_(y0.template cast<T_y0_t0>()),
         t0_(t0),
@@ -240,19 +234,10 @@ class cvodes_integrator {
                           absolute_tolerance_);
     check_positive(function_name, "max_num_steps", max_num_steps_);
 
-#ifndef SUNDIALS_INTERFACE_OLD
     nv_state_ = N_VMake_Serial(N_, &coupled_state_[0], sundials_context_);
     nv_state_sens_ = nullptr;
-
     A_ = SUNDenseMatrix(N_, N_, sundials_context_);
     LS_ = SUNLinSol_Dense(nv_state_, A_, sundials_context_);
-#else
-    nv_state_ = N_VMake_Serial(N_, &coupled_state_[0]);
-    nv_state_sens_ = nullptr;
-
-    A_ = SUNDenseMatrix(N_, N_);
-    LS_ = SUNLinSol_Dense(nv_state_, A_);
-#endif
 
     if (num_y0_vars_ + num_args_vars_ > 0) {
       nv_state_sens_
@@ -283,11 +268,7 @@ class cvodes_integrator {
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
-#ifndef SUNDIALS_INTERFACE_OLD
     void* cvodes_mem = CVodeCreate(Lmm, sundials_context_);
-#else
-    void* cvodes_mem = CVodeCreate(Lmm);
-#endif
     if (cvodes_mem == nullptr) {
       throw std::runtime_error("CVodeCreate failed to allocate memory");
     }

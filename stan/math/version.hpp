@@ -22,7 +22,7 @@
 #endif
 
 #if SUNDIALS_VERSION_MAJOR < 6
-#define SUNDIALS_INTERFACE_OLD
+#error "Sundials 6.0.0 is the minimum compatible version for use with Stan Math"
 #endif
 
 #if TBB_VERSION_MAJOR >= 2020

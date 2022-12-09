@@ -82,13 +82,11 @@ jobs:
         # manually install 3.3.9 from Debian repositories
         wget http://ftp.de.debian.org/debian/pool/main/e/eigen3/libeigen3-dev_3.3.9-2_all.deb
         sudo dpkg -i ./libeigen3-dev_3.3.9-2_all.deb
-        sudo apt-get install -y libboost-all-dev libtbb-dev libsundials-dev ocl-icd-libopencl1 ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers
+        sudo apt-get install -y libboost-all-dev libtbb-dev ocl-icd-libopencl1 ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers
         echo "EIGEN_INC=/usr/include/eigen3/" >> make/local
         echo "BOOST_INC=/usr/include/" >> make/local
         echo "TBB_INC=/usr/include/" >> make/local
         echo "TBB_LIB=/usr/lib/86_64-linux-gnu" >> make/local
-        echo "SUNDIALS_INC=/usr/include" >> make/local
-        echo "SUNDIALS_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "OPENCL_INC=/usr/include/" >> make/local
         echo "OPENCL_LIB=/usr/lib/x86_64-linux-gnu" >> make/local
         echo "STAN_OPENCL=true" >> make/local
