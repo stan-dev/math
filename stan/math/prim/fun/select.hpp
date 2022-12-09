@@ -99,7 +99,7 @@ template <typename T_true, typename T_false,
           typename ReturnT = promote_scalar_t<return_type_t<T_true, T_false>,
                                               plain_type_t<T_false>>,
           require_stan_scalar_t<T_true>* = nullptr,
-          require_eigen_t<T_false>* = nullptr>
+          require_container_t<T_false>* = nullptr>
 inline ReturnT select(const bool c, const T_true y_true,
                       const T_false y_false) {
   if (c) {
@@ -136,7 +136,7 @@ inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
 /**
  * Return the second argument if the first argument is true
  * and otherwise return the third argument. Overload for use with an Eigen
- * object of booleans, and at least one Eigen object as input.
+ * array of booleans, one Eigen array and a scalar as input.
  *
  * @tparam T_bool type of Eigen boolean object
  * @tparam T_true type of the true argument
@@ -147,9 +147,9 @@ inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
  */
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
-          require_any_eigen_array_t<T_true, T_false>* = nullptr,
-          require_any_stan_scalar_t<T_true, T_false>* = nullptr>
+          require_any_eigen_array_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+  check_consistent_sizes("select", "boolean", c, "y_true", y_true, "y_false", y_false);
   return c.select(y_true, y_false).eval();
 }
 
