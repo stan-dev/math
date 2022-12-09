@@ -149,7 +149,8 @@ template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
           require_any_eigen_array_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
-  check_consistent_sizes("select", "boolean", c, "y_true", y_true, "y_false", y_false);
+  check_consistent_sizes("select", "boolean", c, "y_true", y_true,
+                          "y_false", y_false);
   return c.select(y_true, y_false).eval();
 }
 
