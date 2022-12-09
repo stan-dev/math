@@ -89,8 +89,10 @@ TEST(MathFunctions, select_scalar_container) {
   std::vector<std::vector<double>> std_a_nested{std_a, std_a, std_a};
   std::vector<std::vector<double>> std_b_nested{std_b, std_b, std_b};
 
-  std::vector<std::vector<double>> promoted_a_nested{promoted_a, promoted_a, promoted_a};
-  std::vector<std::vector<double>> promoted_b_nested{promoted_b, promoted_b, promoted_b};
+  std::vector<std::vector<double>> promoted_a_nested{promoted_a, promoted_a,
+                                                     promoted_a};
+  std::vector<std::vector<double>> promoted_b_nested{promoted_b, promoted_b,
+                                                     promoted_b};
 
   EXPECT_STD_VECTOR_EQ(std_a_nested, select(true, std_a_nested, 0.5));
   EXPECT_STD_VECTOR_EQ(std_b_nested, select(false, 10.55, std_b_nested));
@@ -178,5 +180,5 @@ TEST(MathFunctions, select_array_bool) {
   EXPECT_THROW(select(val < 0, a, b_array_short), std::invalid_argument);
 
   EXPECT_THROW(select(val < 0, b_array_short, b_array_short),
-                std::invalid_argument);
+               std::invalid_argument);
 }

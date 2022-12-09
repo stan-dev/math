@@ -76,10 +76,10 @@ inline ReturnT select(const bool c, const T_true& y_true,
     return y_true;
   } else {
     return apply_scalar_binary(
-      y_true, y_false,
-      [](const auto& y_true_inner, const auto& y_false_inner) {
-        return y_false_inner;
-    });
+        y_true, y_false,
+        [](const auto& y_true_inner, const auto& y_false_inner) {
+          return y_false_inner;
+        });
   }
 }
 
@@ -104,10 +104,10 @@ inline ReturnT select(const bool c, const T_true y_true,
                       const T_false y_false) {
   if (c) {
     return apply_scalar_binary(
-      y_true, y_false,
-      [](const auto& y_true_inner, const auto& y_false_inner) {
-        return y_true_inner;
-    });
+        y_true, y_false,
+        [](const auto& y_true_inner, const auto& y_false_inner) {
+          return y_true_inner;
+        });
   } else {
     return y_false;
   }
@@ -149,8 +149,8 @@ template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
           require_any_eigen_array_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
-  check_consistent_sizes("select", "boolean", c, "y_true", y_true,
-                          "y_false", y_false);
+  check_consistent_sizes("select", "boolean", c, "y_true", y_true, "y_false",
+                         y_false);
   return c.select(y_true, y_false).eval();
 }
 
