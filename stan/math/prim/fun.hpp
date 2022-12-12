@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/acosh.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/add_diag.hpp>
+#include <stan/math/prim/fun/all.hpp>
+#include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/append_array.hpp>
 #include <stan/math/prim/fun/append_col.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
