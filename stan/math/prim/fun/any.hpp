@@ -15,9 +15,7 @@ namespace math {
  * @param x boolean input
  * @return The input unchanged
  */
-inline bool any(bool x) {
-  return x;
-}
+inline bool any(bool x) { return x; }
 
 /**
  * Return true if any values in the input are true.
@@ -30,7 +28,7 @@ inline bool any(bool x) {
  * @return Boolean indicating whether any elements are true
  */
 inline bool any(const std::vector<bool>& x) {
-  return std::any_of(x.begin(), x.end(), [](bool i){ return i; });
+  return std::any_of(x.begin(), x.end(), [](bool i) { return i; });
 }
 
 /**
@@ -57,10 +55,9 @@ inline bool any(const ContainerT& x) {
  * @param x Nested container of boolean inputs
  * @return Boolean indicating whether any elements are true
  */
-template <typename ContainerT,
-          require_container_t<ContainerT>* = nullptr>
+template <typename ContainerT, require_container_t<ContainerT>* = nullptr>
 inline bool any(const std::vector<ContainerT>& x) {
-  return std::any_of(x.begin(), x.end(), [](const auto& i){ return any(i); });
+  return std::any_of(x.begin(), x.end(), [](const auto& i) { return any(i); });
 }
 
 }  // namespace math

@@ -15,9 +15,7 @@ namespace math {
  * @param x boolean input
  * @return The input unchanged
  */
-inline bool all(bool x) {
-  return x;
-}
+inline bool all(bool x) { return x; }
 
 /**
  * Return true if all values in the input are true.
@@ -30,7 +28,7 @@ inline bool all(bool x) {
  * @return Boolean indicating whether all elements are true
  */
 inline bool all(const std::vector<bool>& x) {
-  return std::all_of(x.begin(), x.end(), [](bool i){ return i; });
+  return std::all_of(x.begin(), x.end(), [](bool i) { return i; });
 }
 
 /**
@@ -57,10 +55,9 @@ inline bool all(const ContainerT& x) {
  * @param x Nested container of boolean inputs
  * @return Boolean indicating whether all elements are true
  */
-template <typename ContainerT,
-          require_container_t<ContainerT>* = nullptr>
+template <typename ContainerT, require_container_t<ContainerT>* = nullptr>
 inline bool all(const std::vector<ContainerT>& x) {
-  return std::all_of(x.begin(), x.end(), [](const auto& i){ return all(i); });
+  return std::all_of(x.begin(), x.end(), [](const auto& i) { return all(i); });
 }
 
 }  // namespace math
