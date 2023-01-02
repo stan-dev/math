@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/F32.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 
 namespace stan {
@@ -72,9 +72,10 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
 
     if (!is_constant_all<T1>::value) {
       double da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
-      double da2 = a_val * log_w + 2 * lgamma(a_val)
-                   + log(F32(a_val, a_val, one_m_b, ap1, ap1, w))
-                   - 2 * lgamma(ap1);
+      double da2
+          = a_val * log_w + 2 * lgamma(a_val)
+            + log(hypergeometric_3F2({a_val, a_val, one_m_b}, {ap1, ap1}, w))
+            - 2 * lgamma(ap1);
       double da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                    * (log_w - digamma(a_val) + digamma_apb);
 
@@ -84,7 +85,8 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
     if (!is_constant_all<T2>::value) {
       double db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
       double db2 = 2 * lgamma(b_val)
-                   + log(F32(b_val, b_val, one_m_a, bp1, bp1, one_m_w))
+                   + log(hypergeometric_3F2({b_val, b_val, one_m_a}, {bp1, bp1},
+                                            one_m_w))
                    - 2 * lgamma(bp1) + b_val * log1m_w;
 
       double db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)

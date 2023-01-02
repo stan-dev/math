@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/functor/solve_powell.hpp>
+#include <stan/math/rev/functor/solve_newton.hpp>
 #include <test/unit/util.hpp>
 #include <sstream>
 #include <vector>
@@ -178,31 +178,80 @@ class variadic_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
-/* wrapper function that either calls the dogleg or the newton solver. */
+/* wrapper function that either calls the Newton or the Powell solver. */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
-    bool is_newton, const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    bool is_newton, bool use_tol, const F& f,
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  using stan::math::algebra_solver_newton;
-  using stan::math::algebra_solver_powell;
+  using stan::math::solve_newton;
+  using stan::math::solve_newton_tol;
+  using stan::math::solve_powell;
+  using stan::math::solve_powell_tol;
 
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> theta
-      = (is_newton) ? algebra_solver_newton(f, x, y, dat, dat_int, msgs,
-                                            scaling_step_size,
-                                            function_tolerance, max_num_steps)
-                    : algebra_solver_powell(f, x, y, dat, dat_int, msgs,
-                                            relative_tolerance,
-                                            function_tolerance, max_num_steps);
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> theta;
+
+  if (!is_newton) {
+    theta = use_tol
+                ? solve_powell_tol(f, x, relative_tolerance, function_tolerance,
+                                   max_num_steps, msgs, y, dat, dat_int)
+                : solve_powell(f, x, msgs, y, dat, dat_int);
+  } else {
+    theta = use_tol
+                ? solve_newton_tol(f, x, scaling_step_size, function_tolerance,
+                                   max_num_steps, msgs, y, dat, dat_int)
+                : solve_newton(f, x, msgs, y, dat, dat_int);
+  }
+  return theta;
+}
+
+/* wrapper function that either calls the Newton or the Powell solver,
+ * using deprecated signatures.
+ */
+template <typename F, typename T1, typename T2>
+Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver_non_varia(
+    bool is_newton, bool use_tol, const F& f,
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+    double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
+    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
+
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> theta;
+  if (!is_newton) {
+    theta = algebra_solver(f, x, y, dat, dat_int, msgs, relative_tolerance,
+                           function_tolerance, max_num_steps);
+  } else {
+    theta
+        = algebra_solver_newton(f, x, y, dat, dat_int, msgs, scaling_step_size,
+                                function_tolerance, max_num_steps);
+  }
   return theta;
 }
 
 /* define algebraic functions which get solved. */
-
 struct simple_eq_functor {
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
+    z(0) = x(0) - y(0) * y(1);
+    z(1) = x(1) - y(2);
+    return z;
+  }
+};
+
+// Same as above, which pstream__ passed as the last argument when using
+// an algebra_solver with no variadic arguments.
+struct simple_eq_non_varia_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
   operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
@@ -217,8 +266,8 @@ struct simple_eq_functor {
 struct simple_eq_functor_nopara {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - dat[0] * dat[1];
     z(1) = x(1) - dat[2];
@@ -229,8 +278,8 @@ struct simple_eq_functor_nopara {
 struct non_linear_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(3);
     z(0) = x(2) - y(2);
     z(1) = x(0) * x(1) - y(0) * y(1);
@@ -242,8 +291,8 @@ struct non_linear_eq_functor {
 struct non_square_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - y(0);
     z(1) = x(1) * x(2) - y(1);
@@ -254,8 +303,8 @@ struct non_square_eq_functor {
 struct unsolvable_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) * x(0) + y(0);
     z(1) = x(1) * x(1) + y(1);
@@ -267,8 +316,8 @@ struct unsolvable_eq_functor {
 struct degenerate_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, std::ostream* pstream__, const T2& y, const T3& dat,
+             const T4& dat_int) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = (x(0) - y(0)) * (x(1) - y(1));
     z(1) = (x(0) - y(1)) * (x(1) - y(0));
@@ -297,24 +346,36 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     bool is_newton = false, bool tuning = false, double scale_step = 1e-3,
     double rel_tol = 1e-10, double fun_tol = 1e-6, int32_t max_steps = 1e+3) {
-  using stan::math::algebra_solver_newton;
-  using stan::math::algebra_solver_powell;
-  using stan::math::var;
-
   int n_x = 2;
   Eigen::VectorXd x(n_x);
   x << 1, 1;  // initial guess
   std::vector<double> dummy_dat;
   std::vector<int> dummy_dat_int;
 
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> theta = general_algebra_solver(
+      is_newton, tuning, f, x, y, dummy_dat, dummy_dat_int, &std::cout,
+      scale_step, rel_tol, fun_tol, max_steps);
 
-  if (tuning == false)
-    theta
-        = general_algebra_solver(is_newton, f, x, y, dummy_dat, dummy_dat_int);
-  else
-    theta = general_algebra_solver(is_newton, f, x, y, dummy_dat, dummy_dat_int,
-                                   0, scale_step, rel_tol, fun_tol, max_steps);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+
+  return theta;
+}
+
+template <typename F, typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_non_varia_test(
+    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    bool is_newton = false, bool tuning = false, double scale_step = 1e-3,
+    double rel_tol = 1e-10, double fun_tol = 1e-6, int32_t max_steps = 1e+3) {
+  int n_x = 2;
+  Eigen::VectorXd x(n_x);
+  x << 1, 1;  // initial guess
+  std::vector<double> dummy_dat;
+  std::vector<int> dummy_dat_int;
+
+  Eigen::Matrix<T, Eigen::Dynamic, 1> theta = general_algebra_solver_non_varia(
+      is_newton, tuning, f, x, y, dummy_dat, dummy_dat_int, &std::cout,
+      scale_step, rel_tol, fun_tol, max_steps);
 
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -325,7 +386,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
 template <typename F, typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-    bool is_newton = false) {
+    int solver_type = 0, bool use_tol = false) {
   int n_x = 3;
   Eigen::VectorXd x(n_x);
   x << -3, -3, -3;  // note: need good guess for this one
@@ -334,7 +395,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
 
   Eigen::Matrix<T, Eigen::Dynamic, 1> theta;
 
-  theta = general_algebra_solver(is_newton, f, x, y, dummy_dat, dummy_dat_int);
+  theta = general_algebra_solver(solver_type, use_tol, f, x, y, dummy_dat,
+                                 dummy_dat_int);
 
   return theta;
 }
@@ -342,9 +404,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
 template <typename F, typename T>
 inline void error_conditions_test(const F& f,
                                   const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                                  bool is_newton = 0) {
-  using stan::math::algebra_solver_powell;
-
+                                  int solver_type = 0, bool use_tol = true) {
   int n_x = 3;
   Eigen::VectorXd x(n_x);
   x << 1, 1, 1;
@@ -355,46 +415,49 @@ inline void error_conditions_test(const F& f,
   err_msg << "size of the algebraic system's output (2) "
           << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, non_square_eq_functor(), x,
-                                          y, dat, dat_int),
-                   std::invalid_argument, msg);
+  EXPECT_THROW_MSG(
+      general_algebra_solver(solver_type, use_tol, non_square_eq_functor(), x,
+                             y, dat, dat_int),
+      std::invalid_argument, msg);
 
   Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
   std::stringstream err_msg2;
   err_msg2 << "initial guess has size 0, but "
            << "must have a non-zero size";
   std::string msg2 = err_msg2.str();
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x_bad, y, dat, dat_int),
-                   std::invalid_argument, msg2);
+  EXPECT_THROW_MSG(
+      general_algebra_solver(solver_type, use_tol, f, x_bad, y, dat, dat_int),
+      std::invalid_argument, msg2);
 
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd x_bad_inf(n_x);
   x_bad_inf << inf, 1, 1;
-  EXPECT_THROW_MSG(
-      general_algebra_solver(is_newton, f, x_bad_inf, y, dat, dat_int),
-      std::domain_error, "initial guess[1] is inf, but must be finite!");
+  EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x_bad_inf, y,
+                                          dat, dat_int),
+                   std::domain_error,
+                   "initial guess[1] is inf, but must be finite!");
 
-  if (!is_newton) {
-    EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
-                                            -1, 1e-3, 1e-6, 1e+3),
+  if (solver_type == 0) {
+    EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x, y, dat,
+                                            dat_int, 0, -1, 1e-3, 1e-6, 1e+3),
                      std::domain_error, "relative_tolerance");
   }
-  if (is_newton) {
-    EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
-                                            1e-10, -1, 1e-6, 1e+3),
+  if (solver_type == 1) {
+    EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x, y, dat,
+                                            dat_int, 0, 1e-10, -1, 1e-6, 1e+3),
                      std::domain_error, "scaling_step_size");
   }
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
-                                          1e-10, 1e-3, -1, 1e+3),
+  EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x, y, dat,
+                                          dat_int, 0, 1e-10, 1e-3, -1, 1e+3),
                    std::domain_error, "function_tolerance");
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
-                                          1e-10, 1e-3, 1e-6, -1),
+  EXPECT_THROW_MSG(general_algebra_solver(solver_type, use_tol, f, x, y, dat,
+                                          dat_int, 0, 1e-10, 1e-3, 1e-6, -1),
                    std::domain_error, "max_num_steps");
 }
 
 template <typename T>
 void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                            bool is_newton = 0) {
+                            int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(2);
   x << 1, 1;
   std::vector<double> dat;
@@ -411,16 +474,16 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
           << ". Consider decreasing the relative tolerance and increasing"
           << " max_num_steps.";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(
-      general_algebra_solver(is_newton, unsolvable_eq_functor(), x, y, dat,
-                             dat_int, 0, relative_tolerance, scaling_step_size,
-                             function_tolerance, max_num_steps),
-      std::domain_error, msg);
+  EXPECT_THROW_MSG(general_algebra_solver(
+                       solver_type, use_tol, unsolvable_eq_functor(), x, y, dat,
+                       dat_int, 0, relative_tolerance, scaling_step_size,
+                       function_tolerance, max_num_steps),
+                   std::domain_error, msg);
 }
 
 template <typename T>
 void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                                 bool is_newton = 1) {
+                                 int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(2);
   x << 1, 1;
   std::vector<double> dat;
@@ -429,14 +492,15 @@ void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   err_msg << "The linear solver’s setup function failed in an unrecoverable "
              "manner.";  // NOLINT
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, unsolvable_eq_functor(), x,
-                                          y, dat, dat_int),
-                   std::runtime_error, msg);
+  EXPECT_THROW_MSG(
+      general_algebra_solver(solver_type, use_tol, unsolvable_eq_functor(), x,
+                             y, dat, dat_int),
+      std::runtime_error, msg);
 }
 
 template <typename T>
 inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                               bool is_newton = 0) {
+                               int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(3);
   x << 1, 1, 1;
   std::vector<double> dat;
@@ -447,22 +511,22 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   int max_num_steps = 2;  // very low for test
 
   EXPECT_THROW(
-      general_algebra_solver(is_newton, non_linear_eq_functor(), x, y, dat,
-                             dat_int, 0, scaling_step, relative_tolerance,
-                             function_tolerance, max_num_steps),
+      general_algebra_solver(
+          solver_type, use_tol, non_linear_eq_functor(), x, y, dat, dat_int, 0,
+          scaling_step, relative_tolerance, function_tolerance, max_num_steps),
       std::domain_error);
 }
 
-template <typename F>
-Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
-    const F& f,
+Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
     const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
     const stan::math::var& y_1, const stan::math::var& y_2,
     const stan::math::var& y_3, const int i, bool is_newton = false,
-    double scaling_step_size = 1e-3, double relative_tolerance = 1e-10,
-    double function_tolerance = 1e-6, int32_t max_num_steps = 1e+3) {
-  using stan::math::algebra_solver_newton;
-  using stan::math::algebra_solver_powell;
+    bool use_tol = false, double scaling_step_size = 1e-3,
+    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
+    int32_t max_num_steps = 1e+3) {
+  using stan::math::solve_newton;
+  using stan::math::solve_powell;
+  using stan::math::solve_powell_tol;
   using stan::math::var;
 
   int n_x = 2;
@@ -472,12 +536,18 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
   theta = is_newton
-              ? algebra_solver_newton_impl(
-                  variadic_eq_functor(), x, &std::cout, scaling_step_size,
-                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
-              : algebra_solver_powell_impl(
-                  variadic_eq_functor(), x, &std::cout, relative_tolerance,
-                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
+              ? use_tol ? solve_newton_tol(variadic_eq_functor(), x,
+                                           relative_tolerance,
+                                           function_tolerance, max_num_steps,
+                                           &std::cout, A, y_1, y_2, y_3, i)
+                        : solve_newton(variadic_eq_functor(), x, &std::cout, A,
+                                       y_1, y_2, y_3, i)
+              : use_tol ? solve_powell_tol(variadic_eq_functor(), x,
+                                           relative_tolerance,
+                                           function_tolerance, max_num_steps,
+                                           &std::cout, A, y_1, y_2, y_3, i)
+                        : solve_powell(variadic_eq_functor(), x, &std::cout, A,
+                                       y_1, y_2, y_3, i);
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);
   EXPECT_NEAR(2, value_of(theta(1)), 1e-6);

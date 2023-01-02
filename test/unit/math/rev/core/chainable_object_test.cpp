@@ -11,7 +11,7 @@ class ChainableObjectTest {
 
 int ChainableObjectTest::counter = 0;
 
-TEST(AgradRev, chainable_object_test) {
+TEST(AgradRevChain, chainable_object_test) {
   {
     auto ptr = new stan::math::chainable_object<ChainableObjectTest>(
         ChainableObjectTest());
@@ -23,7 +23,7 @@ TEST(AgradRev, chainable_object_test) {
   EXPECT_EQ((ChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, chainable_object_nested_test) {
+TEST(AgradRevChain, chainable_object_nested_test) {
   stan::math::start_nested();
 
   {
@@ -39,7 +39,7 @@ TEST(AgradRev, chainable_object_nested_test) {
   EXPECT_EQ((ChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, make_chainable_ptr_test) {
+TEST(AgradRevChain, make_chainable_ptr_test) {
   {
     ChainableObjectTest* ptr
         = stan::math::make_chainable_ptr(ChainableObjectTest());
@@ -51,7 +51,7 @@ TEST(AgradRev, make_chainable_ptr_test) {
   EXPECT_EQ((ChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, make_chainable_ptr_nested_test) {
+TEST(AgradRevChain, make_chainable_ptr_nested_test) {
   stan::math::start_nested();
 
   {
@@ -76,7 +76,7 @@ class UnsafeChainableObjectTest {
 
 int UnsafeChainableObjectTest::counter = 0;
 
-TEST(AgradRev, unsafe_chainable_object_test) {
+TEST(AgradRevChain, unsafe_chainable_object_test) {
   {
     auto ptr
         = new stan::math::unsafe_chainable_object<UnsafeChainableObjectTest>(
@@ -89,7 +89,7 @@ TEST(AgradRev, unsafe_chainable_object_test) {
   EXPECT_EQ((UnsafeChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, unsafe_chainable_object_nested_test) {
+TEST(AgradRevChain, unsafe_chainable_object_nested_test) {
   stan::math::start_nested();
 
   {
@@ -106,7 +106,7 @@ TEST(AgradRev, unsafe_chainable_object_nested_test) {
   EXPECT_EQ((UnsafeChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, make_unsafe_chainable_ptr_test) {
+TEST(AgradRevChain, make_unsafe_chainable_ptr_test) {
   {
     UnsafeChainableObjectTest* ptr
         = stan::math::make_unsafe_chainable_ptr(UnsafeChainableObjectTest());
@@ -118,7 +118,7 @@ TEST(AgradRev, make_unsafe_chainable_ptr_test) {
   EXPECT_EQ((UnsafeChainableObjectTest::counter), 1);
 }
 
-TEST(AgradRev, make_unsafe_chainable_ptr_nested_test) {
+TEST(AgradRevChain, make_unsafe_chainable_ptr_nested_test) {
   stan::math::start_nested();
 
   {

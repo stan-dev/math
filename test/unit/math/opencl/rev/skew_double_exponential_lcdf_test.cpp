@@ -5,6 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace skew_double_exponential_lcdf_test {
+
 TEST(ProbDistributionsSkewDoubleExponentialLcdf, error_checking) {
   int N = 3;
 
@@ -180,5 +182,6 @@ TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_matches_cpu_big) {
       skew_double_exponential_lcdf_functor, y.transpose().eval(),
       mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
+}  // namespace skew_double_exponential_lcdf_test
 
 #endif
