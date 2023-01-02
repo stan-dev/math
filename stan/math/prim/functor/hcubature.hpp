@@ -54,6 +54,19 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
                                    3.8183005050511894495036977548818e-01,
                                    4.1795918367346938775510204081658e-01};
 
+/**
+ * Get the [x]-th lexicographically ordered set of [p] elements in [dim]
+ * output is in [c], and should be sizeof(int)*[p]
+ * "Algorithm 515: Generation of a Vector from the Lexicographical Index";
+ * Buckles, B. P., and Lybanon, M. ACM Transactions on Mathematical Software,
+ * Vol. 3, No. 2, June 1977. User lucaroni from
+ * https://stackoverflow.com/questions/561/how-to-use-combinations-of-sets-as-test-data#794
+ *
+ * @param c output vector
+ * @param dim dimension
+ * @param p number of elements
+ * @param x x-th lexicographically ordered set
+ */
 inline void combination(std::vector<int>& c, const int& dim, const int& p,
                         const int& x) {
   size_t r, k = 0;
@@ -73,6 +86,15 @@ inline void combination(std::vector<int>& c, const int& dim, const int& p,
   }
 }
 
+/**
+ * Compute a vector [p] of all [dim]-component vectors
+ * with [k] components equal to [lambda] and other components equal to zero.
+ *
+ * @param k number of components equal to lambda
+ * @param lambda scalar
+ * @param dim dimension
+ * @param p vector of vectors
+ */
 inline void combos(const int& k, const double& lambda, const int& dim,
                    std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
@@ -87,6 +109,15 @@ inline void combos(const int& k, const double& lambda, const int& dim,
   }
 }
 
+/**
+ * Helper function for signcombos
+ *
+ * @param index helper vector
+ * @param k number of components equal to lambda
+ * @param lambda scalar
+ * @param c ordered vector
+ * @param temp helper vector
+ */
 inline void increment(std::vector<bool>& index, const int& k,
                       const double& lambda, const std::vector<int>& c,
                       std::vector<double>& temp) {
@@ -120,6 +151,16 @@ inline void increment(std::vector<bool>& index, const int& k,
   }
 }
 
+/**
+ * Compute a vector [p] of all [dim]-component vectors
+ * with [k] components equal to [±lambda] and other components equal to zero
+ * (with all possible signs).
+ *
+ * @param k number of components equal to lambda
+ * @param lambda scalar
+ * @param dim dimension
+ * @param p vector of vectors
+ */
 inline void signcombos(const int& k, const double& lambda, const int& dim,
                        std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
@@ -136,6 +177,18 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
   }
 }
 
+/**
+ * Compute the integral of the function to be integrated (integrand) from a to b
+ * for one dimension.
+ *
+ * @tparam F type of the integrand
+ * @tparam T_pars type of the parameters for the integrand
+ * @param integrand function to be integrated
+ * @param a lower limit of integration
+ * @param b upper limit of integration
+ * @param pars parameters for the integrand
+ * @return numeric integral of the integrand and error
+ */
 template <typename F, typename T_pars>
 std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
                                          const double& b, T_pars& pars) {
@@ -165,6 +218,15 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
   return std::make_tuple(I, fabs(I - Idash));
 }
 
+/**
+ * Compute the points and weights corresponding to a [dim]-dimensional
+ * Genz-Malik cubature rule
+ *
+ * @param dim dimension
+ * @param p points for the last 4 GenzMalik weights
+ * @param w weights for the 5 terms in the GenzMalik rule
+ * @param wd weights for the embedded lower-degree rule
+ */
 inline void make_GenzMalik(const int& dim,
                            std::vector<std::vector<std::vector<double>>>& p,
                            std::vector<double>& w, std::vector<double>& wd) {
@@ -191,6 +253,23 @@ inline void make_GenzMalik(const int& dim,
   signcombos(dim, l5, dim, p[3]);
 }
 
+/**
+ * Compute the integral of the function to be integrated (integrand) from a to b
+ * for more than one dimensions.
+ *
+ * @tparam F type of the integrand
+ * @tparam T_pars type of the parameters for the integrand
+ * @param integrand function to be integrated
+ * @param p
+ * @param w
+ * @param wd
+ * @param dim dimension of the multidimensional integral
+ * @param a lower limit of integration
+ * @param b upper limit of integration
+ * @param pars parameters for the integrand
+ * @return numeric integral of the integrand, error, and suggested coordinate to
+ * subdivide next
+ */
 template <typename F, typename T_pars>
 std::tuple<double, double, int> integrate_GenzMalik(
     const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
