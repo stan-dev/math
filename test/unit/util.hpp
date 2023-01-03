@@ -121,6 +121,26 @@
   }
 
 /**
+ * Tests for elementwise equality of the input matrices
+ * of std::complex<double>s with the EXPECT_FLOAT_EQ macro
+ * from GTest.
+ *
+ * @param A first input matrix to compare
+ * @param B second input matrix to compare
+ */
+#define EXPECT_MATRIX_COMPLEX_NEAR(A, B, DELTA)               \
+  {                                                           \
+    const Eigen::MatrixXcd& A_eval = A;                       \
+    const Eigen::MatrixXcd& B_eval = B;                       \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());                  \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());                  \
+    for (int i = 0; i < A_eval.size(); i++) {                 \
+      EXPECT_NEAR(A_eval(i).real(), B_eval(i).real(), DELTA); \
+      EXPECT_NEAR(A_eval(i).imag(), B_eval(i).imag(), DELTA); \
+    }                                                         \
+  }
+
+/**
  * Tests if given types are the same type.
  *
  * @param a first type

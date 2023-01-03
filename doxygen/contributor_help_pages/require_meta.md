@@ -2,7 +2,7 @@
 
 The [`requires` template parameters](@ref require_meta) type traits are aliases for `std::enable_if_t` that have premade conditions for turning on and off function definitions during compilation.
 These are useful for having generalized templates while still overloading a function or class.
-You can think of these as "legacy concepts". 
+You can think of these as "legacy concepts".
 These are used in a very similar fashion to C++20's `requires` keyword.
 
 `requires` template parameters are [`std::enable_if_t`](https://en.cppreference.com/w/cpp/types/enable_if) aliases such as the following example definition of @ref stan::require_t.
@@ -12,10 +12,10 @@ template <typename T>
 using require_t = std::enable_if_t<T::value>;
 ```
 
-This differes from `std::enable_if_t` in that `std::enable_if_t`'s argument must be boolean, but the alias @ref stan::require_t 's template type `T` must have a valid boolean member named `value`. 
+This differes from `std::enable_if_t` in that `std::enable_if_t`'s argument must be boolean, but the alias @ref stan::require_t 's template type `T` must have a valid boolean member named `value`.
 This allows us to directly call @ref stan::require_t with type traits instead of having to do the extra step of accessing the type traits boolean member struct value explicity with calls such as `a_type_trait::value`.
 
-The most common use case for a `requires` template parameters is to overload a function or declare specializations of a class. 
+The most common use case for a `requires` template parameters is to overload a function or declare specializations of a class.
 For example, the function below will only work on types derived from [`Eigen::DenseBase`](https://eigen.tuxfamily.org/dox/classEigen_1_1DenseBase.html) with only 1 row or column at compile time such as `Eigen::Matrix<double, -1, 1>` or `Eigen::Matrix<double, 1, -1>`.
 
 ```cpp
@@ -25,14 +25,14 @@ auto my_func(const EigVec& x) {
 }
 ```
 
-The `requires` template parameter is included in the template as a pointer [non-type template parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter) with a default value of `nullptr`. 
-This might look a bit odd, but it uses the fact that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler. 
-Under the hood, if any of the `requires` template parameters are successful they will return back a type `void`. 
-So when we pass a type that the `requires` template parameter accepts we get back a `void* = nullptr`, which is safely ignored by the compiler. 
-In the case that the type does not satisfy the `requires` template parameter then the function is removed from the set of possible functions the caller could use via SFINAE. 
+The `requires` template parameter is included in the template as a pointer [non-type template parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter) with a default value of `nullptr`.
+This might look a bit odd, but it uses the fact that any non-type template parameter of type `void*` with a default of `nullptr` will be ignored by the compiler.
+Under the hood, if any of the `requires` template parameters are successful they will return back a type `void`.
+So when we pass a type that the `requires` template parameter accepts we get back a `void* = nullptr`, which is safely ignored by the compiler.
+In the case that the type does not satisfy the `requires` template parameter then the function is removed from the set of possible functions the caller could use via SFINAE.
 With this scheme we end up having a very nice pattern for writing generic templates for functions while also being able to restrict the set of types that a function can be used for.
 
-For overloading classes and structs with this scheme we create an initial forward definition with a `void` non-type template parameter. 
+For overloading classes and structs with this scheme we create an initial forward definition with a `void` non-type template parameter.
 Then the class overloads use the `requires` template parameter in place of the non-type template parameter.
 
 ```cpp
@@ -51,7 +51,7 @@ class a_class<T, require_std_vector_st<is_var, T>> {
 
 In the above example, `a_class` has an overload specifically for standard vectors with a @ref stan::scalar_type of @ref stan::math::var .
 
-The examples below cover the general themes for all of the [`requires` template parameters](@ref require_meta) found in the Stan math library. 
+The examples below cover the general themes for all of the [`requires` template parameters](@ref require_meta) found in the Stan math library.
 Any `*` should be thought of as a wildcard where a type traits name is put in its place.
 
 - `requires_*_t`: A template parameter `T` must satisfy the `requires` template parameter in order for
@@ -65,8 +65,8 @@ the overload to be available.
 
 - `require_not_*_t` : A template parameter `T` must *not* satisfy the `requires` template parameter in order for the overload to be availabe.
 
-*NOTE:* The `not` version of the `requires` template parameters should be used sparingly. 
-Often a `requires` template parameter is used to specify what types a function should accept. 
+*NOTE:* The `not` version of the `requires` template parameters should be used sparingly.
+Often a `requires` template parameter is used to specify what types a function should accept.
 Defining a function by the types it cannot accept can make understanding what goes into a function more difficult and error prone.
 
 ```cpp
@@ -112,7 +112,7 @@ Defining a function by the types it cannot accept can make understanding what go
 
 `std::vector` and `Eigen` types have additional `requires` template parameters to detect if the @ref stan::value_type (the first underlying type) or the  @ref stan::scalar_type (the containers underlying scalar type) satisfy a condition to enable a class or function.
 
-The container `requires` template parameters have an ending at their signature of _vt and _st to symbolize whether you want to inspect the @ref stan::value_type or @ref stan::scalar_type. 
+The container `requires` template parameters have an ending at their signature of _vt and _st to symbolize whether you want to inspect the @ref stan::value_type or @ref stan::scalar_type.
 A function that accepts eigen matrices with floating point value types can be defined as
 
 ```cpp
@@ -137,10 +137,10 @@ A function that accepts standard vectors of Eigen vectors whose scalar type is @
  }
 ```
 
-There are also `requires` template parameters for generically checking if a type's @ref stan::value_type or @ref stan::scalar_type is correct. 
+There are also `requires` template parameters for generically checking if a type's @ref stan::value_type or @ref stan::scalar_type is correct.
 To differentiate them from the Eigen and standard library vector checks the `vt` and `st` come *before* the type such as `require_vt_var<T>` which checks if a type `T`'s @ref stan::value_type satisfies @ref stan::is_var.
 
-The `requires` template parameters type traits allow Stan to have more generic types so that the library can forward Eigen expression and have better move semantics. 
+The `requires` template parameters type traits allow Stan to have more generic types so that the library can forward Eigen expression and have better move semantics.
 For instance, the code below will accept any arbitrary Eigen expression that, if it's an rvalue, can be forwarded to another function.
 
 ```cpp

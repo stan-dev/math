@@ -7,7 +7,7 @@ TEST(mathMixMatFun, sqrt) {
     return sqrt(x1);
   };
   stan::test::expect_common_nonzero_unary_vectorized<
-      stan::test::PromoteToComplex::No>(f);
+      stan::test::ScalarSupport::Real>(f);
   stan::test::expect_unary_vectorized(f, -6, -5.2, 1.3, 7, 10.7, 36, 1e6);
 
   // undefined with 0 in denominator

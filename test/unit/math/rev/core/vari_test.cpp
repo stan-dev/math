@@ -3,21 +3,21 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-TEST(AgradRev, insertion_operator) {
+TEST(AgradRevVari, insertion_operator) {
   stan::math::vari v(5);
   std::stringstream ss;
   ss << &v;
   EXPECT_EQ("5:0", ss.str());
 }
 
-TEST(AgradRev, long_double_test) {
+TEST(AgradRevVari, long_double_test) {
   stan::math::vari_value<long double> v(5);
   std::stringstream ss;
   ss << &v;
   EXPECT_EQ("5:0", ss.str());
 }
 
-TEST(AgradRev, dense_matrix_vari) {
+TEST(AgradRevVari, dense_matrix_vari) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
   vari_value<eig_mat> A_vari(eig_mat::Random(3, 3));
@@ -25,7 +25,7 @@ TEST(AgradRev, dense_matrix_vari) {
   vari_value<eig_mat> B_vari(B);
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val());
 }
-TEST(AgradRev, dense_vector_vari) {
+TEST(AgradRevVari, dense_vector_vari) {
   using stan::math::vari_value;
   using eig_vec = Eigen::Matrix<double, -1, 1>;
   vari_value<eig_vec> A_vari(eig_vec::Random(3));
@@ -34,7 +34,7 @@ TEST(AgradRev, dense_vector_vari) {
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val());
 }
 
-TEST(AgradRev, dense_row_vector_vari) {
+TEST(AgradRevVari, dense_row_vector_vari) {
   using stan::math::vari_value;
   using eig_row_vec = Eigen::Matrix<double, 1, -1>;
   vari_value<eig_row_vec> A_vari(eig_row_vec::Random(3));
@@ -43,7 +43,7 @@ TEST(AgradRev, dense_row_vector_vari) {
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val());
 }
 
-TEST(AgradRev, sparse_matrix_vari) {
+TEST(AgradRevVari, sparse_matrix_vari) {
   using stan::math::vari_value;
   using eig_mat = Eigen::SparseMatrix<double>;
   using inner_iterator = typename eig_mat::InnerIterator;
@@ -58,7 +58,7 @@ TEST(AgradRev, sparse_matrix_vari) {
   }
 }
 
-TEST(AgradRev, arena_matrix_matrix_vari) {
+TEST(AgradRevVari, arena_matrix_matrix_vari) {
   using stan::math::arena_matrix;
   using stan::math::vari_value;
   arena_matrix<Eigen::MatrixXd> x(Eigen::MatrixXd::Random(5, 5));
@@ -73,7 +73,7 @@ TEST(AgradRev, arena_matrix_matrix_vari) {
   EXPECT_MATRIX_FLOAT_EQ((*D).val(), x);
 }
 
-TEST(AgradRev, dense_vari_matrix_views) {
+TEST(AgradRevVari, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
   eig_mat A(5, 5);
@@ -118,7 +118,7 @@ TEST(AgradRev, dense_vari_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val());
 }
 
-TEST(AgradRev, dense_vari_vector_views) {
+TEST(AgradRevVari, dense_vari_vector_views) {
   using stan::math::vari_value;
   using eig_vec = Eigen::VectorXd;
   eig_vec A(10);
@@ -151,7 +151,7 @@ TEST(AgradRev, dense_vari_vector_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_segment.adj(), A_v.adj().segment(3, 5));
 }
 
-TEST(AgradRev, dense_vari_row_vector_views) {
+TEST(AgradRevVari, dense_vari_row_vector_views) {
   using stan::math::vari_value;
   using eig_vec = Eigen::RowVectorXd;
   eig_vec A(10);

@@ -46,6 +46,7 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
+#include <stan/math/prim/fun/complex_schur_decompose.hpp>
 #include <stan/math/prim/fun/conj.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
@@ -93,7 +94,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
-#include <stan/math/prim/fun/F32.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/factor_U.hpp>
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
@@ -129,8 +129,10 @@
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/head.hpp>
-#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F2.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
@@ -195,6 +197,7 @@
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp_signed.hpp>
 #include <stan/math/prim/fun/logical_and.hpp>
 #include <stan/math/prim/fun/logical_eq.hpp>
 #include <stan/math/prim/fun/logical_gt.hpp>

@@ -67,7 +67,6 @@
  * \defgroup require_opencl_types OpenCL
  * `require` type traits to detect types used with OpenCL.
  */
-
 #include <stan/math/prim/meta/compiler_attributes.hpp>
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
@@ -104,6 +103,7 @@
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_and_matrix_types.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_var_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_var_eigen.hpp>
@@ -117,6 +117,7 @@
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/possibly_sum.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>

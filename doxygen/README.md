@@ -19,8 +19,8 @@ versions of the dependent libraries have been tested with Stan Math.
 Contributing
 ------------
 
-We love contributions from everyone in the form of good discussion, issues, and pull requests.
-If you are interested in contributing to Stan math please check the Contributor Guide at [mc-stan.org/math](https://mc-stan.org/math/).
+We love contributions from everyone in the form of good discussions, issues, and pull requests.
+If you are interested in contributing to Stan Math please check the Contributor Guide at [mc-stan.org/math](https://mc-stan.org/math/).
 
 Installation
 ------------
@@ -55,9 +55,9 @@ log normal(1 | 2, 3)=-2.07311
 
 The first make command with the `math-libs` target ensures that all
 binary dependencies of Stan Math are built and ready to use. The `-j4`
-instructs `make` to use 4 cores concurrently which should be adapted
-to your needs. The second make command ensures that the Stan Math
-sources and all of the dependencies are available to the compiler when
+instructs `make` to use 4 cores concurrently, which should be adapted
+to your needs. The second `make` command ensures that the Stan Math
+sources and all dependencies are available to the compiler when
 building `foo`.
 
 An example of a real instantiation whenever the path to Stan Math is
@@ -71,7 +71,7 @@ The `math-libs` target has to be called only once, and can be omitted
 for subsequent compilations.
 
 The standalone makefile ensures that all the required `-I` include
-statements are given to the compiler and the necessary libraries are
+statements are given to the compiler, and the necessary libraries are
 linked: `~/stan-dev/math` and `~/stan-dev/math/lib/eigen_3.3.9` and
 `~/stan-dev/math/lib/boost_1.78.0` and
 `~/stan-dev/math/lib/sundials_6.1.1/include` and
@@ -85,10 +85,10 @@ is found when executing the program.
 
 Note for Windows users: On Windows the `-rpath` feature as used by
 Stan Math to hardcode an absolute path to a dynamically loaded library
-does not work. On Windows the Intel TBB dynamic library `tbb.dll` is
+does not work. On Windows, the Intel TBB dynamic library `tbb.dll` is
 located in the `math/lib/tbb` directory. The user can choose to copy
 this file to the same directory of the executable or to add the
-directory `/path/to/math/lib/tbb` as absolute path to the system-wide
+directory `/path/to/math/lib/tbb` as an absolute path to the system-wide
 `PATH` variable.
 
 Intel TBB
@@ -133,9 +133,9 @@ Compilers
 ---------
 
 The above example will use the default compiler of the system as
-determined by `make`. On Linux this is usually `g++`, on MacOS
-`clang++`, and for Windows this is `g++` if the RTools for Windows are
-used. There's nothing special about any of these and they can be
+determined by `make`. On Linux this is usually `g++` while on MacOS
+it is typically `clang++`. On Windows, if the recommended RTools for Windows are
+used, it is `g++` as well. There's nothing special about any of these, and they can be
 changed through the `CXX` variable of `make`. The recommended way to
 set this variable for the Stan Math library is by creating a
 `make/local` file within the Stan Math library directory. Defining
