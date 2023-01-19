@@ -60,17 +60,17 @@ pipeline {
     }
     stages {
 
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
+        // stage('Kill previous builds') {
+        //     when {
+        //         not { branch 'develop' }
+        //         not { branch 'master' }
+        //     }
+        //     steps {
+        //         script {
+        //             utils.killOldBuilds()
+        //         }
+        //     }
+        // }
 
         // stage("Clang-format") {
         //     agent {
