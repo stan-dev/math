@@ -449,7 +449,12 @@ pipeline {
                     !skipRemainingStages
                 }
             }
-            agent { label 'linux && docker' }
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu-cpp17'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
                     retry(3) { checkout scm }
