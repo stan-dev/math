@@ -1,5 +1,6 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/bernoulli_log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stdexcept>
 
 using stan::math::var;
