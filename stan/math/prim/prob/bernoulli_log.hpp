@@ -5,6 +5,7 @@
 #include <stan/math/prim/prob/bernoulli_lpmf.hpp>
 
 namespace stan {
+  
 namespace math {
 
 /** \ingroup prob_dists
