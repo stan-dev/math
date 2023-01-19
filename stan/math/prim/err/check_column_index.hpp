@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
- 
+
 /**
  * Check if the specified index is a valid column of the matrix.
  * By default this is a 1-indexed check (as opposed to
