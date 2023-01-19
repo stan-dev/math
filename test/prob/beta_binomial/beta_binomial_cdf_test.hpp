@@ -1,5 +1,6 @@
 // Arguments: Ints, Ints, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/beta_binomial_cdf.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
