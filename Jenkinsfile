@@ -455,7 +455,7 @@ pipeline {
                     retry(3) { checkout scm }
 
                     def tests = [:]
-                    def files = sh(script:"python getDependencies.py", returnStdout:true).trim().split('\n')
+                    def files = sh(script:"python3 getDependencies.py", returnStdout:true).trim().split('\n')
                     for (f in files.toList().collate(32)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
