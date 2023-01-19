@@ -1,7 +1,8 @@
+from typing import Set
 import subprocess
 from pathlib import Path
 
-def get_dependencies(file: Path) -> set[str]:
+def get_dependencies(file: Path) -> Set[str]:
     file_dot_d = file.with_suffix('.d')
     subprocess.run(['make', str(file_dot_d)], stdout=subprocess.DEVNULL)
     contents = file_dot_d.read_text()
@@ -10,7 +11,7 @@ def get_dependencies(file: Path) -> set[str]:
     ## TODO include self as a 'dependency'
     return set(filter(lambda s: 'stan/math' in s and s.endswith(".hpp"), map(str.strip, contents.split(' '))))
 
-def get_changed() -> set[str]:
+def get_changed() -> Set[str]:
     changed_files = subprocess.run(
         ["git", "diff", "--name-only", "origin/develop...HEAD"], text=True, capture_output=True
     ).stdout.splitlines()
