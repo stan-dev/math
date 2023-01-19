@@ -5,7 +5,7 @@
 #include <stan/math/prim/prob/weibull_lcdf.hpp>
 
 namespace stan {
-namespace math { 
+namespace math {
 
 /** \ingroup prob_dists
  * @deprecated use <code>weibull_lcdf</code>
