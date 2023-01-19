@@ -177,25 +177,62 @@ pipeline {
             }
         }
 
-        stage('Headers check') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
+        stage('Quick tests') {
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            steps {
-                unstash 'MathSetup'
-                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                sh "echo O=0 >> make/local"
-                sh "make -j${PARALLEL} test-headers"
+            failFast true
+            parallel {
+                stage('Headers check') {
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                        sh "make -j${PARALLEL} test-headers"
+                    }
+                    post { always { deleteDir() } }
+                }
+                stage('Run changed unit tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        allOf {
+                            expression {
+                                env.BRANCH_NAME ==~ /PR-\d+/
+                            }
+                            expression {
+                                !skipRemainingStages
+                            }
+                        }
+                    }
+                    steps {
+                        retry(3) { checkout scm }
+
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "./runTests.py -j${PARALLEL} --changed --debug"
+
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
             }
-            post { always { deleteDir() } }
         }
 
         stage('Full Unit Tests') {
