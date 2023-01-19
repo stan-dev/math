@@ -3,7 +3,7 @@ from pathlib import Path
 
 def get_dependencies(file: Path) -> set[str]:
     file_dot_d = file.with_suffix('.d')
-    subprocess.run(['make', str(file_dot_d)])
+    subprocess.run(['make', str(file_dot_d)], stdout=subprocess.DEVNULL)
     contents = file_dot_d.read_text()
     file_dot_d.unlink()
 
@@ -21,7 +21,6 @@ def get_changed() -> set[str]:
 # if file has changed deps, run runTests on $file.replace("._test.hpp", "_*_test.hpp")
 
 changed = get_changed()
-print(changed)
 tests_to_run = []
 
 distribution_tests = Path("test", "prob")
@@ -34,4 +33,4 @@ for dist in distribution_tests.iterdir():
         if changed & deps:
             tests_to_run.append(str(test).replace("_test.hpp", "_0*_test.cpp"))
 
-print(tests_to_run)
+print('\n'.join(tests_to_run))

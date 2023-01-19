@@ -454,8 +454,8 @@ pipeline {
                 script {
                     unstash 'MathSetup'
                     def tests = [:]
-                    def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
-                    for (f in files.toList().collate(8)) {
+                    def files = sh(script:"python getDependencies.py", returnStdout:true).trim().split('\n')
+                    for (f in files.toList().collate(32)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             docker.image('stanorg/ci:gpu-cpp17').inside {
