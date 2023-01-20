@@ -14,7 +14,7 @@ def runTests(String testPath, boolean jumbo = false) {
 }
 
 def skipRemainingStages = false
-
+def changedDistributionTests = []
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -443,7 +443,7 @@ pipeline {
         //     }
         // }
 
-        stage ('Distribution tests') {
+        stage ('Discover changed distribution tests') {
             when {
                 expression {
                     !skipRemainingStages
@@ -458,10 +458,22 @@ pipeline {
             steps {
                 script {
                     retry(3) { checkout scm }
+                    changedDistributionTests = sh(script:"python3 getDependencies.py", returnStdout:true).trim().split('\n').toList()
+                }
+            }
+        }
 
+        stage ('Distribution tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            agent { label 'linux && docker' }
+            steps {
+                script {
                     def tests = [:]
-                    def files = sh(script:"python3 getDependencies.py", returnStdout:true).trim().split('\n')
-                    for (f in files.toList().collate(32)) {
+                    for (f in changedDistributionTests.collate(32)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             docker.image('stanorg/ci:gpu-cpp17').inside {
