@@ -1,5 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/normal_cdf_log.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::square;
 using stan::math::var;
