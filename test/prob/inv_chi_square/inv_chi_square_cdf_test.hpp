@@ -1,5 +1,6 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/inv_chi_square_cdf.hpp>
+#include <stan/math/prim/fun/gamma_q.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
