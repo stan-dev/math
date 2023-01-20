@@ -478,7 +478,7 @@ pipeline {
             steps {
                 script {
                     def tests = [:]
-                    for (f in changedDistributionTests.collate(32)) {
+                    for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             docker.image('stanorg/ci:gpu-cpp17').inside {
