@@ -3,7 +3,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/pow.hpp>
 
-
 using stan::math::var;
 using std::numeric_limits;
 using std::vector;
