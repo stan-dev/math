@@ -58,6 +58,10 @@ pipeline {
         OPENCL_PLATFORM_ID_CPU = 0
         OPENCL_PLATFORM_ID_GPU = 0
         PARALLEL = 4
+        GIT_AUTHOR_NAME = 'Stan Jenkins'
+        GIT_AUTHOR_EMAIL = 'mc.stanislaw@gmail.com'
+        GIT_COMMITTER_NAME = 'Stan Jenkins'
+        GIT_COMMITTER_EMAIL = 'mc.stanislaw@gmail.com'
     }
     stages {
 
@@ -86,14 +90,12 @@ pipeline {
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
-                        git config user.email "mc.stanislaw@gmail.com"
-                        git config user.name "Stan Jenkins"
                         git checkout -b ${branchName()}
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
                             git add stan test
-                            git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
