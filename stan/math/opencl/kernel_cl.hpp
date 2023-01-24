@@ -144,10 +144,10 @@ inline auto compile_kernel(const char* name,
     }
   }
 
-  std::cout << "Sources: " << std::endl;
+  std::cerr << "Sources: " << std::endl;
 
   for (auto s: sources) {
-    std::cout << s << std::endl;
+    std::cerr << s << std::endl;
   }
 
   std::string kernel_opts = "";
@@ -156,7 +156,7 @@ inline auto compile_kernel(const char* name,
                    + std::to_string(comp_opts.second);
   }
 
-  std::cout << "Options" << std::endl << kernel_opts << std::endl;
+  std::cerr << "Options" << std::endl << kernel_opts << std::endl;
 
   cl::Program program(opencl_context.context(), sources);
   try {
