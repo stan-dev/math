@@ -156,8 +156,8 @@ inline auto compile_kernel(const char* name,
                    + std::to_string(comp_opts.second);
   }
 
-  std::count << "Options" << std::endl << kernel_opts << std::endl;
-  
+  std::cout << "Options" << std::endl << kernel_opts << std::endl;
+
   cl::Program program(opencl_context.context(), sources);
   try {
     program.build({opencl_context.device()}, kernel_opts.c_str());
