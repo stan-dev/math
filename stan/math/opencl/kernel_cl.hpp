@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -142,11 +143,21 @@ inline auto compile_kernel(const char* name,
       base_opts[it.first] = it.second;
     }
   }
+
+  std::cout << "Sources: " << std::endl;
+
+  for (auto s: sources) {
+    std::cout << s << std::endl;
+  }
+
   std::string kernel_opts = "";
   for (auto&& comp_opts : base_opts) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
+
+  std::count << "Options" << std::endl << kernel_opts << std::endl;
+  
   cl::Program program(opencl_context.context(), sources);
   try {
     program.build({opencl_context.device()}, kernel_opts.c_str());
