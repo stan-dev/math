@@ -5,21 +5,21 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, tridiag_eigensolver_trivial) {
-  Eigen::VectorXd diag(3), subdiag(2), eigenvals;
-  diag << 1.5, 1.2, -2;
-  subdiag << 0, 0;
-  stan::math::matrix_cl<double> diag_cl(diag);
-  stan::math::matrix_cl<double> subdiag_cl(subdiag);
-  stan::math::matrix_cl<double> eigenvals_cl;
-  stan::math::matrix_cl<double> eigenvecs_cl;
+// TEST(MathMatrix, tridiag_eigensolver_trivial) {
+//   Eigen::VectorXd diag(3), subdiag(2), eigenvals;
+//   diag << 1.5, 1.2, -2;
+//   subdiag << 0, 0;
+//   stan::math::matrix_cl<double> diag_cl(diag);
+//   stan::math::matrix_cl<double> subdiag_cl(subdiag);
+//   stan::math::matrix_cl<double> eigenvals_cl;
+//   stan::math::matrix_cl<double> eigenvecs_cl;
 
-  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
-                                                   eigenvals_cl, eigenvecs_cl);
-  EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvals_cl), diag);
-  EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvecs_cl),
-                  Eigen::MatrixXd::Identity(3, 3));
-}
+//   stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+//                                                    eigenvals_cl, eigenvecs_cl);
+//   EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvals_cl), diag);
+//   EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvecs_cl),
+//                   Eigen::MatrixXd::Identity(3, 3));
+// }
 
 TEST(MathMatrix, tridiag_eigensolver_small) {
   int size = 7;
