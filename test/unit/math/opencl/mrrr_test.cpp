@@ -19,6 +19,7 @@ TEST(MathMatrix, tridiag_eigensolver_trivial) {
   EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvals_cl), diag);
   EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvecs_cl),
                   Eigen::MatrixXd::Identity(3, 3));
+  EXPECT_TRUE(false) << "forcing trivial test to fail to inspect output";
 }
 
 TEST(MathMatrix, tridiag_eigensolver_small) {
