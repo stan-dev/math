@@ -330,7 +330,7 @@ pipeline {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
-                            label 'k40'
+                            label 'v100'
                             args '--gpus 1'
                         }
                     }
