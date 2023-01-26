@@ -149,7 +149,8 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
 //   stan::math::matrix_cl<double> eigenvecs_cl;
 
 //   stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
-//                                                    eigenvals_cl, eigenvecs_cl);
+//                                                    eigenvals_cl,
+//                                                    eigenvecs_cl);
 
 //   Eigen::VectorXd eigenvals
 //       = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
@@ -162,7 +163,8 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
 //   EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
 //   EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(),
 //                      Eigen::MatrixXd::Identity(size, size), 1e-11);
-//   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
+//   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(),
+//   1e-12);
 // }
 
 #endif
