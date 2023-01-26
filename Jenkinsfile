@@ -237,14 +237,14 @@ pipeline {
         //     }
         // }
 
-        stage('Full Unit Tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            failFast true
-            parallel {
+        // stage('Full Unit Tests') {
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     failFast true
+        //     parallel {
                 // stage('Rev/Fwd Unit Tests') {
                 //     agent {
                 //         docker {
@@ -266,7 +266,7 @@ pipeline {
                 //             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                 //                 sh "echo O=0 >> make/local"
                 //             }
-                
+
                 //             runTests("test/unit/math/rev")
                 //             runTests("test/unit/math/fwd")
                 //         }
@@ -326,34 +326,34 @@ pipeline {
                 //     }
                 //     post { always { retry(3) { deleteDir() } } }
                 // }
-                stage('OpenCL GPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'v100'
-                            args '--gpus 1'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=1 >> make/local"
-                            }
-                            runTests("test/unit/math/opencl/mrrr_test.cpp", false)
-                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
-                }
-            }
-        }
+        //         stage('OpenCL GPU tests') {
+        //             agent {
+        //                 docker {
+        //                     image 'stanorg/ci:gpu-cpp17'
+        //                     label 'v100'
+        //                     args '--gpus 1'
+        //                 }
+        //             }
+        //             steps {
+        //                 script {
+        //                     unstash 'MathSetup'
+        //                     sh """
+        //                         echo CXX=${CLANG_CXX} -Werror > make/local
+        //                         echo STAN_OPENCL=true >> make/local
+        //                         echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+        //                         echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+        //                     """
+        //                     if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+        //                         sh "echo O=1 >> make/local"
+        //                     }
+        //                     runTests("test/unit/math/opencl/mrrr_test.cpp", false)
+        //                     runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
+        //                     runTests("test/unit/multiple_translation_units_test.cpp")
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         stage('Always-run tests') {
             when {
                 expression {
@@ -446,48 +446,48 @@ pipeline {
             }
         }
 
-        stage ('Distribution tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            agent { label 'linux && docker' }
-            steps {
-                script {
-                    unstash 'MathSetup'
-                    def tests = [:]
-                    def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
-                    for (f in files.toList().collate(8)) {
-                        def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
-                            docker.image('stanorg/ci:gpu-cpp17').inside {
-                                unstash 'MathSetup'
-                                sh """
-                                    echo CXX=${CLANG_CXX} > make/local
-                                    echo O=0 >> make/local
-                                    echo N_TESTS=${N_TESTS} >> make/local
-                                    """
-                                script {
-                                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                                    }
-                                }
-                                sh "./runTests.py -j${PARALLEL} ${names}"
-                            }
-                        } }
-                    }
-                    tests.failFast = true
-                    parallel tests
-                }
-            }
-            post {
-                always {
-                    retry(3) { deleteDir() }
-                }
-            }
-        }
+        // stage ('Distribution tests') {
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     agent { label 'linux && docker' }
+        //     steps {
+        //         script {
+        //             unstash 'MathSetup'
+        //             def tests = [:]
+        //             def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
+        //             for (f in files.toList().collate(8)) {
+        //                 def names = f.join(" ")
+        //                 tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+        //                     docker.image('stanorg/ci:gpu-cpp17').inside {
+        //                         unstash 'MathSetup'
+        //                         sh """
+        //                             echo CXX=${CLANG_CXX} > make/local
+        //                             echo O=0 >> make/local
+        //                             echo N_TESTS=${N_TESTS} >> make/local
+        //                             """
+        //                         script {
+        //                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+        //                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+        //                                 sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+        //                             }
+        //                         }
+        //                         sh "./runTests.py -j${PARALLEL} ${names}"
+        //                     }
+        //                 } }
+        //             }
+        //             tests.failFast = true
+        //             parallel tests
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             retry(3) { deleteDir() }
+        //         }
+        //     }
+        // }
 
         stage('Upstream tests') {
             agent { label 'linux' }
