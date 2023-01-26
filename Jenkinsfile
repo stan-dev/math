@@ -346,7 +346,8 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=1 >> make/local"
                             }
-                            runTests("test/unit/math/opencl/mrrr_test.cpp", false) // TODO(bward): try to enable
+                            runTests("test/unit/math/opencl/mrrr_test.cpp", false)
+                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
