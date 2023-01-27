@@ -14,7 +14,7 @@ def runTests(String testPath, boolean jumbo = false) {
 }
 
 def skipRemainingStages = false
-
+def changedDistributionTests = []
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -38,11 +38,12 @@ pipeline {
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
         booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
         booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)')
+        booleanParam(defaultValue: false, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop')
     }
     options {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
-	parallelsAlwaysFailFast()
+        parallelsAlwaysFailFast()
     }
     environment {
         STAN_NUM_THREADS = 4
@@ -123,7 +124,7 @@ pipeline {
                     }
                 }
             }
-         }
+        }
 
         stage('Linting & Doc checks') {
             agent {
@@ -445,6 +446,30 @@ pipeline {
             }
         }
 
+        stage ('Discover changed distribution tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu-cpp17'
+                    label 'linux'
+                }
+            }
+            steps {
+                script {
+                    retry(3) { checkout scm }
+                    if (params.runAllDistributions || isBranch('develop') || isBranch('master')) {
+                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().split('\n').toList()
+                    } else {
+                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py", returnStdout:true).trim().split('\n').toList()
+                    }
+                }
+            }
+        }
+
         stage ('Distribution tests') {
             when {
                 expression {
@@ -454,10 +479,8 @@ pipeline {
             agent { label 'linux && docker' }
             steps {
                 script {
-                    unstash 'MathSetup'
                     def tests = [:]
-                    def files = sh(script:"find test/prob/* -type d", returnStdout:true).trim().split('\n')
-                    for (f in files.toList().collate(8)) {
+                    for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             docker.image('stanorg/ci:gpu-cpp17').inside {

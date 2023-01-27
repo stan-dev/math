@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/loglogistic_lpdf.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

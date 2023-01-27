@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/double_exponential_cdf.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
