@@ -1,50 +1,44 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mixScalFun, grad_2F2_ffv) {
-  using stan::math::fvar;
-  using stan::math::hypergeometric_pFq;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+TEST(mixScalFun, hypergeometric_pFq_ad) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::hypergeometric_pFq;
+    return hypergeometric_pFq(a, b, z);
+  };
 
-  vector_ffv ffv_a(2);
-  vector_d d_a(2);
-  ffv_a.val().val() << 4, 2;
-  d_a << 4, 2;
-  ffv_a.val().d() << 1, 1;
+  stan::test::expect_ad(f, std::vector<double>{4, 2},
+                           std::vector<double>{6, 3},
+                           4.0);
 
-  vector_ffv ffv_b(2);
-  vector_d d_b(2);
-  ffv_b.val().val() << 6, 3;
-  d_b << 6, 3;
-  ffv_b.val().d() << 1, 1;
+  stan::test::expect_ad(f, std::vector<double>{2, 3},
+                           std::vector<double>{2, 4, 5},
+                           1.0);
 
-  fvar<fvar<var>> ffv_z;
-  ffv_z.val_.val_ = 4;
-  ffv_z.val_.d_ = 1;
-  double d_z = 4;
+  stan::test::expect_ad(f, std::vector<double>{1, 2, 3, 4},
+                           std::vector<double>{5, 6, 7},
+                           1.5);
 
-  double a_adj = 3.924636646666071 + 6.897245961898751;
-  double b_adj = -2.775051002566842 - 4.980095849781222;
-  double z_adj = 4.916522138006060;
+  stan::test::expect_ad(f, std::vector<double>{1, 1},
+                           std::vector<double>{1},
+                           0.6);
+  stan::test::expect_ad(f, std::vector<double>{1, 31},
+                           std::vector<double>{41},
+                           0.5);
 
-  // fvar, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, ffv_b, ffv_z).val_.d_.val(),
-                  a_adj + b_adj + z_adj);
-  // fvar, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, ffv_b, d_z).val_.d_.val(),
-                  a_adj + b_adj);
-  // fvar, double, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, d_b, d_z).val_.d_.val(), a_adj);
-  // fvar, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, d_b, ffv_z).val_.d_.val(),
-                  a_adj + z_adj);
-  // double, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffv_b, ffv_z).val_.d_.val(),
-                  b_adj + z_adj);
-  // double, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffv_b, d_z).val_.d_.val(), b_adj);
-  // double, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, d_b, ffv_z).val_.d_.val(), z_adj);
+  stan::test::expect_ad(f, std::vector<double>{1, -2.1},
+                           std::vector<double>{41},
+                           0.8);
+
+  stan::test::expect_ad(f, std::vector<double>{1, -1.6},
+                           std::vector<double>{10.6},
+                           -0.8);
+
+  stan::test::expect_ad(f, std::vector<double>{-3.1, -2.2},
+                           std::vector<double>{10.6},
+                           0.3);
+
+  stan::test::expect_ad(f, std::vector<double>{1, 31, -27},
+                           std::vector<double>{19, -41},
+                           1.0);
 }

@@ -4,6 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
+#include <stan/math/prim/fun/to_array_1d.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
+#include <stan/math/prim/fun/to_row_vector.hpp>
 #include <boost/math/special_functions/hypergeometric_pFq.hpp>
 
 namespace stan {
@@ -26,12 +29,13 @@ namespace math {
  * @return Generalised hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,
+          typename ScalarT = return_type_t<Ta, Tb, Tz>,
+          require_all_vector_st<std::is_arithmetic, Ta, Tb>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
 return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                              const Tz& z) {
-  plain_type_t<Ta> a_ref = a;
-  plain_type_t<Tb> b_ref = b;
+  std::vector<ScalarT> a_ref = to_array_1d(a);
+  std::vector<ScalarT> b_ref = to_array_1d(b);
   check_finite("hypergeometric_pFq", "a", a_ref);
   check_finite("hypergeometric_pFq", "b", b_ref);
   check_finite("hypergeometric_pFq", "z", z);
@@ -41,20 +45,19 @@ return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   check_not_nan("hypergeometric_pFq", "z", z);
 
   bool condition_1 = (a_ref.size() > (b_ref.size() + 1)) && (z != 0);
-  bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
+  bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1.0);
 
   if (condition_1 || condition_2) {
     std::stringstream msg;
     msg << "hypergeometric function pFq does not meet convergence "
-        << "conditions with given arguments. "
-        << "a: " << a_ref << ", b: " << b_ref << ", "
-        << ", z: " << z;
+        << "conditions with given arguments: \n"
+        << "a: [" << to_row_vector(a) << "]\n"
+        << "b: [" << to_row_vector(b) << "]\n"
+        << "z: " << z;
     throw std::domain_error(msg.str());
   }
 
-  return boost::math::hypergeometric_pFq(
-      std::vector<double>(a_ref.data(), a_ref.data() + a_ref.size()),
-      std::vector<double>(b_ref.data(), b_ref.data() + b_ref.size()), z);
+  return boost::math::hypergeometric_pFq(a_ref, b_ref, z);
 }
 }  // namespace math
 }  // namespace stan

@@ -86,8 +86,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   if (condition_1 || condition_2) {
     std::stringstream msg;
     msg << "hypergeometric pFq gradient does not meet convergence "
-        << "conditions with given arguments. "
-        << "a: " << a_ref << ", b: " << b_ref << ", "
+        << "conditions with given arguments: \n"
+        << "a: [" << to_row_vector(a) << "]\n"
+        << "b: [" << to_row_vector(b) << "]\n"
         << "z: " << z;
     throw std::domain_error(msg.str());
   }
