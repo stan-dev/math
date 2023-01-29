@@ -119,6 +119,14 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
 
   return {};
 }
+
+template <typename Ta1, typename Ta2, typename Tb, typename Tz,
+          typename RtnT = boost::optional<return_type_t<Ta1, Ta1, Tb, Tz>>,
+          require_any_autodiff_t<Ta1, Ta2, Tb, Tz>* = nullptr>
+inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
+                                    const Tz& z) {
+  return {};
+}
 }  // namespace internal
 
 /**
@@ -148,8 +156,7 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           typename ScalarT = return_type_t<Ta1, Ta1, Tb, Tz>,
-          typename OptT = boost::optional<ScalarT>,
-          require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
+          typename OptT = boost::optional<ScalarT>>
 inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
@@ -178,8 +185,8 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     return special_case_a2a1.get();
   }
 
-  Eigen::Matrix<double, 2, 1> a_args(2);
-  Eigen::Matrix<double, 1, 1> b_args(1);
+  Eigen::Matrix<ScalarT, 2, 1> a_args(2);
+  Eigen::Matrix<ScalarT, 1, 1> b_args(1);
 
   try {
     check_2F1_converges("hypergeometric_2F1", a1, a2, b, z);

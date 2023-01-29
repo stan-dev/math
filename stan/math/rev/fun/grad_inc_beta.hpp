@@ -15,7 +15,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/rev/fun/hypergeometric_2F1.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <cmath>
 
 namespace stan {

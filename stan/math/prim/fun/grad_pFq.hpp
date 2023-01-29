@@ -61,12 +61,18 @@ namespace internal {
  * @param[in] inner_steps Maximum number of iterations for infinite sum
  * @return Generalised hypergeometric function
  */
-template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
-          typename Tb, typename Tz,
+template <bool calc_a, bool calc_b,
+          typename Ta, typename Tb, typename Tz,
+          typename ScalarT = return_type_t<Ta, Tb, Tz>,
+          typename TupleT
+            = std::tuple<promote_scalar_t<ScalarT, plain_type_t<Ta>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tb>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tz>>>,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
-void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
+TupleT grad_pFq_ab_infsum(const Ta& a, const Tb& b, const Tz& z,
                    double precision, int max_steps) {
+  TupleT grad_tuple;
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using Ta_plain = plain_type_t<Ta>;
@@ -192,13 +198,101 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       std::get<1>(grad_tuple) = std::move(db);
     }
   }
+  return grad_tuple;
+}
+
+template <bool calc_a, bool calc_b, bool calc_z, typename Ta,
+          typename Tb, typename Tz,
+          typename ScalarT = return_type_t<Ta, Tb, Tz>,
+          typename TupleT
+            = std::tuple<promote_scalar_t<ScalarT, plain_type_t<Ta>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tb>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tz>>>,
+          require_all_eigen_vector_t<Ta, Tb>* = nullptr,
+          require_stan_scalar_t<Tz>* = nullptr>
+TupleT grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
+                   double precision, int max_steps) {
+  TupleT grad_tuple;
+  if (calc_a || calc_b) {
+    grad_tuple = grad_pFq_ab_infsum<calc_a, calc_b>(a, b, z, precision, max_steps);
+  }
 
   if (calc_z) {
     std::get<2>(grad_tuple)
-        = std::move((a_ref.prod() / b_ref.prod())
-          * hypergeometric_pFq((a_ref.array() + 1).matrix(), (b_ref.array() + 1).matrix(), z));
+        = std::move((a.prod() / b.prod())
+          * hypergeometric_pFq((a.array() + 1).matrix(), (b.array() + 1).matrix(), z));
   }
+
+  return grad_tuple;
 }
+
+template <bool calc_a, bool calc_b, bool calc_z, typename Ta,
+          typename Tb, typename Tz,
+          typename ScalarT = return_type_t<Ta, Tb, Tz>,
+          typename TupleT
+            = std::tuple<promote_scalar_t<ScalarT, plain_type_t<Ta>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tb>>,
+                         promote_scalar_t<ScalarT, plain_type_t<Tz>>>,
+          require_all_eigen_vector_t<Ta, Tb>* = nullptr,
+          require_stan_scalar_t<Tz>* = nullptr>
+TupleT grad_2F1_impl(const Ta& a, const Tb& b, const Tz& z,
+                   double precision, int max_steps) {
+  TupleT grad_tuple;
+  bool euler_transform = false;
+  try {
+    check_2F1_converges("hypergeometric_2F1", a[0], a[1], b[0], z);
+  } catch (const std::exception& e) {
+    // Apply Euler's hypergeometric transformation if function
+    // will not converge with current arguments
+    check_2F1_converges("hypergeometric_2F1 (euler transform)", b[0] - a[0], a[1], b[0],
+                        z / (z - 1));
+    euler_transform = true;
+  }
+  euler_transform = false;
+  if (euler_transform) {
+    promote_scalar_t<ScalarT, plain_type_t<Ta>> a_euler(2);
+    a_euler << a[1], b[0] - a[0];
+    ScalarT z_euler = z / (z - 1);
+    if (calc_a || calc_b) {
+      // 'b' gradients under Euler transform require gradients from 'a'
+      constexpr bool calc_a_euler = calc_a || calc_b;
+      TupleT grad_tuple_ab = grad_pFq_ab_infsum<calc_a_euler, calc_b>(
+          a_euler, b, z_euler, precision, max_steps);
+
+      auto pre_mult_ab = inv(pow(1.0 - z, a[1]));
+      if (calc_a) {
+        std::get<0>(grad_tuple)[0] = -pre_mult_ab * std::get<0>(grad_tuple_ab)[1];
+
+        auto hyper_da2 = hypergeometric_2F1(a_euler[0], a[1], b[0], z_euler);
+        std::get<0>(grad_tuple)[1]
+            = -pre_mult_ab * hyper_da2 * log1m(z)
+              + pre_mult_ab * std::get<0>(grad_tuple_ab)[0];
+      }
+      if (calc_b) {
+        std::get<1>(grad_tuple)[0]
+            = pre_mult_ab
+              * (std::get<0>(grad_tuple_ab)[1] + std::get<1>(grad_tuple_ab)[0]);
+      }
+    }
+    if (calc_z) {
+      auto hyper1 = hypergeometric_2F1(a_euler[0], a_euler[1], b[0], z_euler);
+      auto hyper2 = hypergeometric_2F1(1 + a[1], 1 - a[0] + b[0], 1 + b[0], z_euler);
+      auto pre_mult = a[1] * pow(1 - z, -1 - a[1]);
+      std::get<2>(grad_tuple)
+          = a[1] * pow(1 - z, -1 - a[1]) * hyper1
+            + (a[1] * (b[0] - a[0]) * pow(1 - z, -a[1])
+               * (inv(z - 1) - z / square(z - 1)) * hyper2)
+                  / b[0];
+    }
+  } else {
+    grad_tuple = grad_pFq_impl<calc_a, calc_b, calc_z>(
+      a, b, z, precision, max_steps
+    );
+  }
+
+  return grad_tuple;
+}
+
 }  // namespace internal
 
 /**
@@ -221,15 +315,14 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 template <typename Ta, typename Tb, typename Tz>
 auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-14,
               int max_steps = 1e6) {
-  using partials_t = partials_return_t<Ta, Tb, Tz>;
-  std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
-             promote_scalar_t<partials_t, plain_type_t<Tb>>,
-             promote_scalar_t<partials_t, plain_type_t<Tz>>>
-      ret_tuple;
-  internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
+  if (a.size() == 2 && b.size() == 1) {
+  return internal::grad_2F1_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z), precision, max_steps);
-  return ret_tuple;
+      value_of(a), value_of(b), value_of(z), precision, max_steps);
+  }
+  return internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
+                          !is_constant<Tz>::value>(
+      value_of(a), value_of(b), value_of(z), precision, max_steps);
 }
 
 }  // namespace math
