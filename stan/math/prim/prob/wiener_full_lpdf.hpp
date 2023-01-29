@@ -152,7 +152,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   T_partials_return abstol_wiener5 = 1e-12;     // eps_abs(wiener5)
   T_partials_return labstol_wiener5 = log(abstol_wiener5);
   // log(eps_abs(wiener5)
-  T_partials_return Meval = 6000;
+  int Meval = 6000;
   T_partials_return dens = 0.0;
   T_partials_return ld = 0.0;
   operands_and_partials<T_y_ref, T_alpha_ref, T_delta_ref, T_beta_ref, T_t0_ref,
