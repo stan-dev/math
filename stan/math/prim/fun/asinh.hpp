@@ -65,7 +65,6 @@ inline std::complex<V> complex_asinh(const std::complex<V>& z) {
   return copysign(y, y_d);
 }
 }  // namespace internal
-
 }  // namespace math
 }  // namespace stan
 

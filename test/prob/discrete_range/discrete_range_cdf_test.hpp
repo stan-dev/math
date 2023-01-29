@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Ints
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/discrete_range_cdf.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
