@@ -1,6 +1,8 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/poisson_log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
