@@ -164,7 +164,7 @@ TEST(mathPrimScalProbWienerFullPrecScal, invalid_st0) {
 
 // CHECK THAT ALL VALID SCALAR TYPES ARE ACCEPTED
 template <typename F>
-void check_scalar_types(F& f, double value, double res, double deriv) {
+void check_scalar_types_2(F& f, double value, double res, double deriv) {
   // - f: Function with a single parameter exposed, all others
   // have to be scalars
   // - value: value to be used for the parameter
@@ -229,48 +229,48 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
       return wiener_full_prec_lpdf(value, a[i], v[i], w[i], t0[i], sv[i], sw[i],
                                    st0[i], 1e-6);
     };
-    check_scalar_types(f_rt, rt[i], result[i], drt[i]);
+    check_scalar_types_2(f_rt, rt[i], result[i], drt[i]);
     // a
     auto f_a = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], value, v[i], w[i], t0[i], sv[i],
                                    sw[i], st0[i], 1e-6);
     };
-    check_scalar_types(f_a, a[i], result[i], da[i]);
+    check_scalar_types_2(f_a, a[i], result[i], da[i]);
     // v
     auto f_v = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], value, w[i], t0[i], sv[i],
                                    sw[i], st0[i], 1e-6);
     };
-    check_scalar_types(f_v, v[i], result[i], dv[i]);
+    check_scalar_types_2(f_v, v[i], result[i], dv[i]);
     // w
     auto f_w = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], v[i], value, t0[i], sv[i],
                                    sw[i], st0[i], 1e-6);
     };
-    check_scalar_types(f_w, w[i], result[i], dw[i]);
+    check_scalar_types_2(f_w, w[i], result[i], dw[i]);
     // t0
     auto f_t0 = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], v[i], w[i], value, sv[i], sw[i],
                                    st0[i], 1e-6);
     };
-    check_scalar_types(f_t0, t0[i], result[i], dt0[i]);
+    check_scalar_types_2(f_t0, t0[i], result[i], dt0[i]);
     // sv
     auto f_sv = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], v[i], w[i], t0[i], value, sw[i],
                                    st0[i], 1e-6);
     };
-    check_scalar_types(f_sv, sv[i], result[i], dsv[i]);
+    check_scalar_types_2(f_sv, sv[i], result[i], dsv[i]);
     // sw
     auto f_sw = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], v[i], w[i], t0[i], sv[i], value,
                                    st0[i], 1e-6);
     };
-    check_scalar_types(f_sw, sw[i], result[i], dsw[i]);
+    check_scalar_types_2(f_sw, sw[i], result[i], dsw[i]);
     // st0
     auto f_st0 = [=](auto value) {
       return wiener_full_prec_lpdf(rt[i], a[i], v[i], w[i], t0[i], sv[i], sw[i],
                                    value, 1e-6);
     };
-    check_scalar_types(f_st0, st0[i], result[i], dst0[i]);
+    check_scalar_types_2(f_st0, st0[i], result[i], dst0[i]);
   }
 }
