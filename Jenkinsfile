@@ -472,8 +472,13 @@ pipeline {
 
         stage ('Distribution tests') {
             when {
-                expression {
-                    !skipRemainingStages
+                allOf {
+                    expression {
+                        !skipRemainingStages
+                    }
+                    expression {
+                        !changedDistributionTests.isEmpty()
+                    }
                 }
             }
             agent { label 'linux && docker' }
