@@ -462,9 +462,9 @@ pipeline {
                 script {
                     retry(3) { checkout scm }
                     if (params.runAllDistributions || isBranch('develop') || isBranch('master')) {
-                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().split('\n').toList()
+                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().readLines()
                     } else {
-                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py", returnStdout:true).trim().split('\n').toList()
+                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py", returnStdout:true).trim().readLines()
                     }
                 }
             }
@@ -472,8 +472,13 @@ pipeline {
 
         stage ('Distribution tests') {
             when {
-                expression {
-                    !skipRemainingStages
+                allOf {
+                    expression {
+                        !skipRemainingStages
+                    }
+                    expression {
+                        !changedDistributionTests.isEmpty()
+                    }
                 }
             }
             agent { label 'linux && docker' }
