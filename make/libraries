@@ -86,7 +86,7 @@ $(STAN_SUNDIALS_HEADERS) : $(SUNDIALS_TARGETS)
 
 clean-sundials:
 	@echo '  cleaning sundials targets'
-	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(SUNDIALS_TARGETS)
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(SUNDIALS_TARGETS)))
 
 
 ############################################################
