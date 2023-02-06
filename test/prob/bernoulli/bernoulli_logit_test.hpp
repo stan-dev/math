@@ -1,5 +1,7 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/bernoulli_logit_log.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -82,7 +84,6 @@ class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
                                                      const T_prob& theta,
                                                      const T2&, const T3&,
                                                      const T4&, const T5&) {
-    using stan::math::log1m;
     using std::log;
     T_prob ntheta = (2 * n - 1) * theta;
     const static double cutoff = 20.0;

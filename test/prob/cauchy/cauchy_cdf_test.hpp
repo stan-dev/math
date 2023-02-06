@@ -1,5 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/cauchy_cdf.hpp>
+#include <stan/math/prim/fun/atan2.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

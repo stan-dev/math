@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/rayleigh_ccdf_log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
