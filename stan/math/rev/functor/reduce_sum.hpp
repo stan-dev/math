@@ -232,9 +232,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
     const std::size_t num_vars_shared_terms = count_vars(args...);
 
-    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+    vari** varis = ChainableStack::instance().memalloc_.alloc_array<vari*>(
         num_vars_sliced_terms + num_vars_shared_terms);
-    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
+    double* partials = ChainableStack::instance().memalloc_.alloc_array<double>(
         num_vars_sliced_terms + num_vars_shared_terms);
 
     save_varis(varis, vmapped);

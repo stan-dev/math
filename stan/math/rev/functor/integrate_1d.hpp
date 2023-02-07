@@ -66,9 +66,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     constexpr size_t num_vars_ab = is_var<T_a>::value + is_var<T_b>::value;
     size_t num_vars_args = count_vars(args...);
-    vari **varis = ChainableStack::instance_->memalloc_.alloc_array<vari *>(
+    vari **varis = ChainableStack::instance().memalloc_.alloc_array<vari *>(
         num_vars_ab + num_vars_args);
-    double *partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
+    double *partials = ChainableStack::instance().memalloc_.alloc_array<double>(
         num_vars_ab + num_vars_args);
     // We move this pointer up based on whether we a or b is a var type.
     double *partials_ptr = partials;

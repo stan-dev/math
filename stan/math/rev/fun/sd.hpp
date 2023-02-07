@@ -35,9 +35,9 @@ var sd(const T& x) {
   }
 
   vari** varis
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+      = ChainableStack::instance().memalloc_.alloc_array<vari*>(x.size());
   double* partials
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+      = ChainableStack::instance().memalloc_.alloc_array<double>(x.size());
   Eigen::Map<T_vi> varis_map(varis, x.rows(), x.cols());
   Eigen::Map<T_d> partials_map(partials, x.rows(), x.cols());
 

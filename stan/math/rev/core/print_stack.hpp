@@ -18,7 +18,7 @@ namespace math {
  * @param o ostream to modify
  */
 inline void print_stack(std::ostream& o) {
-  o << "STACK, size=" << ChainableStack::instance_->var_stack_.size()
+  o << "STACK, size=" << ChainableStack::instance().var_stack_.size()
     << std::endl;
 }
 

@@ -53,9 +53,9 @@ class profile_info {
   template <typename T>
   void fwd_pass_start() {
     if (!is_constant<T>::value) {
-      start_chain_stack_size_ = ChainableStack::instance_->var_stack_.size();
+      start_chain_stack_size_ = ChainableStack::instance().var_stack_.size();
       start_nochain_stack_size_
-          = ChainableStack::instance_->var_nochain_stack_.size();
+          = ChainableStack::instance().var_nochain_stack_.size();
     }
     fwd_pass_tp_ = std::chrono::steady_clock::now();
     active_ = true;
@@ -65,10 +65,10 @@ class profile_info {
   void fwd_pass_stop() {
     if (!is_constant<T>::value) {
       n_fwd_AD_passes_++;
-      chain_stack_size_sum_ += (ChainableStack::instance_->var_stack_.size()
+      chain_stack_size_sum_ += (ChainableStack::instance().var_stack_.size()
                                 - start_chain_stack_size_ - 1);
       nochain_stack_size_sum_
-          += (ChainableStack::instance_->var_nochain_stack_.size()
+          += (ChainableStack::instance().var_nochain_stack_.size()
               - start_nochain_stack_size_);
     } else {
       n_fwd_no_AD_passes_++;

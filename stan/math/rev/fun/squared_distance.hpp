@@ -66,9 +66,9 @@ class squared_distance_vv_vari : public vari {
                  .squaredNorm()),
         length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
   }
@@ -98,9 +98,9 @@ class squared_distance_vd_vari : public vari {
                  .squaredNorm()),
         length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<double*>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
+        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_d>(v2_, length_) = v2;
   }

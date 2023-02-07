@@ -39,7 +39,7 @@ BENCHMARK({benchmark_name})->RangeMultiplier({multi})->Range(1, {max_size})->Use
 CUSTOM_MAIN = """
 int main(int argc, char** argv)
 {{
-  stan::math::ChainableStack::instance_->memalloc_.alloc({});
+  stan::math::ChainableStack::instance().memalloc_.alloc({});
   stan::math::recover_memory();
 
   ::benchmark::Initialize(&argc, argv);

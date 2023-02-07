@@ -119,9 +119,9 @@ class precomputed_gradients_vari_template : public vari {
       const std::tuple<ContainerGrads...>& container_gradients = std::tuple<>())
       : vari(val),
         size_(vars.size()),
-        varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        varis_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             vars.size())),
-        gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        gradients_(ChainableStack::instance().memalloc_.alloc_array<double>(
             vars.size())),
         container_operands_(index_apply<N_containers>([&, this](auto... Is) {
           return std::make_tuple(to_arena(std::get<Is>(container_operands))...);

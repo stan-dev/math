@@ -413,7 +413,7 @@ TEST(RevFunctor, RecoverMemory) {
   }
   // depends on starting allocation of 65K not being exceeded
   // without recovery_memory in autodiff::apply_recover(), takes 67M
-  EXPECT_LT(stan::math::ChainableStack::instance_->memalloc_.bytes_allocated(),
+  EXPECT_LT(stan::math::ChainableStack::instance().memalloc_.bytes_allocated(),
             100000);
 }
 
@@ -433,7 +433,7 @@ TEST(RevFunctor, RecoverMemory_gradient_array) {
   }
   // depends on starting allocation of 65K not being exceeded
   // without recovery_memory in autodiff::apply_recover(), takes 67M
-  EXPECT_LT(stan::math::ChainableStack::instance_->memalloc_.bytes_allocated(),
+  EXPECT_LT(stan::math::ChainableStack::instance().memalloc_.bytes_allocated(),
             100000);
 }
 
