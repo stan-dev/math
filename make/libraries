@@ -79,14 +79,17 @@ $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
+SUNDIALS_TARGETS ?= $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
+
+# FIXME(dl, 02/2023): remove LIBSUNDIALS variable after replacing use in Stan and CmdStan with SUNDIALS_TARGETS
+LIBSUNDIALS = $(SUNDIALS_TARGETS)
 
 STAN_SUNDIALS_HEADERS :=  $(call findfiles,$(MATH)stan,*cvodes*.hpp) $(call findfiles,$(MATH)stan,*idas*.hpp) $(call findfiles,$(MATH)stan,*kinsol*.hpp)
-$(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
+$(STAN_SUNDIALS_HEADERS) : $(SUNDIALS_TARGETS)
 
 clean-sundials:
 	@echo '  cleaning sundials targets'
-	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(SUNDIALS_TARGETS)))
 
 
 ############################################################
