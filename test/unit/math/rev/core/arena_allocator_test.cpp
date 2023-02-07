@@ -17,8 +17,8 @@ inline void arena_allocator_test() {
     v.push_back(1);
   }
   EXPECT_TRUE(
-      stan::math::ChainableStack::instance_->memalloc_.in_stack(v.data()));
-  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
+      stan::math::ChainableStack::instance().memalloc_.in_stack(v.data()));
+  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(
       v.data() + v.size()));
 
   std::vector<int, stan::math::arena_allocator<int>> v2(2, 3);
@@ -26,8 +26,8 @@ inline void arena_allocator_test() {
     v2.push_back(2);
   }
   EXPECT_TRUE(
-      stan::math::ChainableStack::instance_->memalloc_.in_stack(v2.data()));
-  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
+      stan::math::ChainableStack::instance().memalloc_.in_stack(v2.data()));
+  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(
       v2.data() + v2.size()));
 
   std::vector<int, stan::math::arena_allocator<int>> v3(v2);
@@ -35,26 +35,26 @@ inline void arena_allocator_test() {
     v3.push_back(3);
   }
   EXPECT_TRUE(
-      stan::math::ChainableStack::instance_->memalloc_.in_stack(v3.data()));
-  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
+      stan::math::ChainableStack::instance().memalloc_.in_stack(v3.data()));
+  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(
       v3.data() + v3.size()));
 
   std::deque<int, stan::math::arena_allocator<int>> d(4, 1);
   for (auto it = d.begin(); it != d.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::list<int, stan::math::arena_allocator<int>> l(4, 1);
   for (auto it = l.begin(); it != l.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::forward_list<int, stan::math::arena_allocator<int>> fl(4, 1);
   for (auto it = fl.begin(); it != fl.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::set<int, std::less<int>, stan::math::arena_allocator<int>> s;
@@ -62,7 +62,7 @@ inline void arena_allocator_test() {
   s.insert(5);
   for (auto it = s.begin(); it != s.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::multiset<int, std::less<int>, stan::math::arena_allocator<int>> ms;
@@ -71,7 +71,7 @@ inline void arena_allocator_test() {
   ms.insert(5);
   for (auto it = ms.begin(); it != ms.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::unordered_set<int, std::hash<int>, std::equal_to<int>,
@@ -81,7 +81,7 @@ inline void arena_allocator_test() {
   u_s.insert(5);
   for (auto it = u_s.begin(); it != u_s.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::unordered_multiset<int, std::hash<int>, std::equal_to<int>,
@@ -92,7 +92,7 @@ inline void arena_allocator_test() {
   u_ms.insert(5);
   for (auto it = u_ms.begin(); it != u_ms.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::map<int, int, std::less<int>,
@@ -102,7 +102,7 @@ inline void arena_allocator_test() {
   m.insert(std::make_pair(4, 6));
   for (auto it = m.begin(); it != m.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::multimap<int, int, std::less<int>,
@@ -113,7 +113,7 @@ inline void arena_allocator_test() {
   mm.insert(std::make_pair(4, 8));
   for (auto it = mm.begin(); it != mm.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::unordered_map<int, int, std::hash<int>, std::equal_to<int>,
@@ -123,7 +123,7 @@ inline void arena_allocator_test() {
   u_m.insert(std::make_pair(4, 6));
   for (auto it = u_m.begin(); it != u_m.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 
   std::unordered_multimap<
@@ -135,7 +135,7 @@ inline void arena_allocator_test() {
   u_mm.insert(std::make_pair(4, 8));
   for (auto it = u_mm.begin(); it != u_mm.end(); ++it) {
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance().memalloc_.in_stack(&(*it)));
   }
 }
 

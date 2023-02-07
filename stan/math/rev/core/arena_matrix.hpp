@@ -36,7 +36,7 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
    */
   arena_matrix(Eigen::Index rows, Eigen::Index cols)
       : Base::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows * cols),
+          ChainableStack::instance().memalloc_.alloc_array<Scalar>(rows * cols),
           rows, cols) {}
 
   /**
@@ -46,7 +46,7 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
    */
   explicit arena_matrix(Eigen::Index size)
       : Base::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+          ChainableStack::instance().memalloc_.alloc_array<Scalar>(size),
           size) {}
 
  private:
@@ -72,9 +72,17 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
    */
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
-      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                      other.size()),
-                  get_rows(other), get_cols(other)) {
+      : Base::Map(
+          ChainableStack::instance().memalloc_.alloc_array<Scalar>(
+              other.size()),
+          (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+              ? other.cols()
+              : other.rows(),
+          (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+              ? other.rows()
+              : other.cols()) {
     *this = other;
   }
   /**
@@ -86,7 +94,7 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix& operator=(const T& other) {
     new (this) Base(
-        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(other.size()),
+        ChainableStack::instance().memalloc_.alloc_array<Scalar>(other.size()),
         get_rows(other), get_cols(other));
     Base::operator=(other);
     return *this;
@@ -222,7 +230,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   inline T* copy_vector(const T* ptr, Integral size) {
     if (size == 0)
       return nullptr;
-    T* ret = ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+    T* ret = ChainableStack::instance().memalloc_.alloc_array<T>(size);
     std::copy_n(ptr, size, ret);
     return ret;
   }

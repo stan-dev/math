@@ -230,12 +230,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
-        y_return_varis_(is_var_return_ ? ChainableStack::instance_->memalloc_
+        y_return_varis_(is_var_return_ ? ChainableStack::instance().memalloc_
                                              .alloc_array<vari*>(N_ * ts.size())
                                        : nullptr),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
           vari** vari_mem
-              = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+              = ChainableStack::instance().memalloc_.alloc_array<vari*>(
                   num_vars);
           save_varis(vari_mem, args...);
           return vari_mem;
@@ -356,7 +356,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
       t_init = t_final;
     }
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
  private:

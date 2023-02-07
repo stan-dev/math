@@ -45,7 +45,7 @@ class vari_base {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) noexcept {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+    return ChainableStack::instance().memalloc_.alloc(nbytes);
   }
 
   /**
@@ -104,7 +104,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x) {  // NOLINT
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   /**
@@ -125,9 +125,9 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance().var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance().var_nochain_stack_.push_back(this);
     }
   }
 
@@ -697,7 +697,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
                  ? x.rows()
                  : x.cols()) {
     adj_.setZero();
-    ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   /**
@@ -728,9 +728,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
                  : x.cols()) {
     adj_.setZero();
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance().var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance().var_nochain_stack_.push_back(this);
     }
   }
 
@@ -749,7 +749,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, typename K, require_assignable_t<T, S>* = nullptr,
             require_assignable_t<T, K>* = nullptr>
   explicit vari_value(const S& val, const K& adj) : val_(val), adj_(adj) {
-    ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    ChainableStack::instance().var_nochain_stack_.push_back(this);
   }
 
  protected:
@@ -868,13 +868,13 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
              val_.innerIndexPtr(),
              arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
              val_.innerNonZeroPtr()) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   vari_value(const arena_matrix<PlainObject>& val,
              const arena_matrix<PlainObject>& adj)
       : val_(val), adj_(adj) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   /**
@@ -902,9 +902,9 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
              arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
              val_.innerNonZeroPtr()) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance().var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance().var_nochain_stack_.push_back(this);
     }
   }
 

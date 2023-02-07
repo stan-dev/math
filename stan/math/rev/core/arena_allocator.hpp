@@ -37,7 +37,7 @@ struct arena_allocator {
    * @return pointer to allocated space
    */
   T* allocate(std::size_t n) {
-    return ChainableStack::instance_->memalloc_.alloc_array<T>(n);
+    return ChainableStack::instance().memalloc_.alloc_array<T>(n);
   }
 
   /**

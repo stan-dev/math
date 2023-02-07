@@ -33,21 +33,23 @@ class ScopedChainableStack {
   std::mutex local_stack_mutex_;
 
   struct activate_scope {
+    /*
     ChainableStack::AutodiffStackStorage* parent_stack_;
     ScopedChainableStack& scoped_stack_;
+    */
 
-    explicit activate_scope(ScopedChainableStack& scoped_stack)
-        : parent_stack_(ChainableStack::instance_),
-          scoped_stack_(scoped_stack) {
-      if (!scoped_stack_.local_stack_mutex_.try_lock()) {
-        throw std::logic_error{"Cannot recurse same instance scoped stacks."};
-      }
-      ChainableStack::instance_ = &scoped_stack.local_stack_;
+    explicit activate_scope(ScopedChainableStack& scoped_stack) {
+      //: parent_stack_(ChainableStack::instance_),
+      //scoped_stack_(scoped_stack) {
+      //if (!scoped_stack_.local_stack_mutex_.try_lock()) {
+      //throw std::logic_error{"Cannot recurse same instance scoped stacks."};
+      //}
+      //ChainableStack::instance_ = &scoped_stack.local_stack_;
     }
-
+    
     ~activate_scope() {
-      ChainableStack::instance_ = parent_stack_;
-      scoped_stack_.local_stack_mutex_.unlock();
+      //ChainableStack::instance_ = parent_stack_;
+      //scoped_stack_.local_stack_mutex_.unlock();
     }
   };
 

@@ -247,6 +247,6 @@ TEST_F(AgradRev, RevArenaMat_arena_matrix_move_test) {
   Eigen::VectorXd d = c;
   arena_matrix<Eigen::VectorXd> a(std::move(c));
   EXPECT_MATRIX_EQ(a, d);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
+  EXPECT_EQ(stan::math::ChainableStack::instance().var_alloc_stack_.size(), 1);
   stan::math::recover_memory();
 }
