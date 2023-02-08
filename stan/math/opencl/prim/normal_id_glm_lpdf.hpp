@@ -74,17 +74,18 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   const size_t M = x.cols();
 
   if (is_y_vector) {
-    check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
+                     math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
-                   size(beta));
+                   math::size(beta));
   if (is_sigma_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "sigma",
-                     size(sigma));
+                     math::size(sigma));
   }
   if (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
-                     size(alpha));
+                     math::size(alpha));
   }
   if (!include_summand<propto, T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
                        T_sigma_cl>::value) {
@@ -171,14 +172,13 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     // transposition of a vector can be done without copying
     const matrix_cl<double> mu_derivative_transpose_cl(
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
-    matrix_cl<double>& edge4_partials
-        = forward_as<matrix_cl<double>&>(ops_partials.edge4_.partials_);
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
-    edge4_partials = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
-                                       edge4_partials_transpose_cl.cols(), 1);
+    ops_partials.edge4_.partials_
+        = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
+                            edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      edge4_partials.add_write_event(
+      ops_partials.edge4_.partials_.add_write_event(
           edge4_partials_transpose_cl.write_events().back());
     }
   }

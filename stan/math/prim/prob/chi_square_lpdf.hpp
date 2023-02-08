@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -54,17 +54,10 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
                          "Degrees of freedom parameter", nu);
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& nu_col = as_column_vector_or_scalar(nu_ref);
 
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& nu_arr = as_array_or_scalar(nu_col);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) nu_val = to_ref(as_value_column_array_or_scalar(nu_ref));
 
-  ref_type_if_t<include_summand<propto, T_y>::value, decltype(value_of(y_arr))>
-      y_val = value_of(y_arr);
-  ref_type_if_t<include_summand<propto, T_dof>::value,
-                decltype(value_of(nu_arr))>
-      nu_val = value_of(nu_arr);
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);
 
@@ -81,12 +74,12 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   T_partials_return logp(0);
   if (include_summand<propto, T_dof>::value) {
-    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / size(nu);
+    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / math::size(nu);
   }
   logp += sum((half_nu - 1.0) * log_y);
 
   if (include_summand<propto, T_y>::value) {
-    logp -= 0.5 * sum(y_val) * N / size(y);
+    logp -= 0.5 * sum(y_val) * N / math::size(y);
   }
 
   operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);

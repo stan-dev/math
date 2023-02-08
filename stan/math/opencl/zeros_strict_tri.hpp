@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernels/fill_strict_tri.hpp>
 #include <stan/math/prim/meta.hpp>
 
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ namespace math {
  */
 template <typename T>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, require_arithmetic_t<T>>::zeros_strict_tri() try {
+inline void matrix_cl<T>::zeros_strict_tri() try {
   if (matrix_view == matrix_cl_view::Entire) {
     invalid_argument(
         "zeros_strict_tri", "matrix_view",
@@ -40,7 +40,7 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::zeros_strict_tri() try {
         "zeros_strict_tri", "matrix_view",
         "matrix_cl_view::Diagonal is not a valid template parameter value", "");
   }
-  if (size() == 0) {
+  if (this->size() == 0) {
     return;
   }
   this->view_ = both(this->view_, invert(matrix_view));

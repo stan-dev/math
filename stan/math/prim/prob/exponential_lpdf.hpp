@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -61,14 +62,8 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);
@@ -81,7 +76,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
 
   T_partials_return logp(0.0);
   if (include_summand<propto, T_inv_scale>::value) {
-    logp = sum(log(beta_val)) * max_size(y, beta) / size(beta);
+    logp = sum(log(beta_val)) * max_size(y, beta) / math::size(beta);
   }
   if (include_summand<propto, T_y, T_inv_scale>::value) {
     logp -= sum(beta_val * y_val);
@@ -92,7 +87,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
       ops_partials.edge1_.partials_ = T_partials_array::Constant(
-          size(y), -forward_as<beta_val_scalar>(beta_val));
+          math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if (is_vector<T_inv_scale>::value) {
       ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val);
     } else {
