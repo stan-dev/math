@@ -113,7 +113,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         // scope. In this case no need for zeroing adjoints, since the
         // fresh copy has all adjoints set to zero.
         local_args_tuple_scope_.stack_.execute([&]() {
-          apply(
+          math::apply((
               [&](auto&&... args) {
                 local_args_tuple_scope_.args_tuple_holder_ = std::make_unique<
                     typename scoped_args_tuple::args_tuple_t>(
@@ -140,7 +140,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       }
 
       // Perform calculation
-      var sub_sum_v = apply(
+      var sub_sum_v = math::apply((
           [&](auto&&... args) {
             return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
                                     &msgs_, args...);
@@ -158,7 +158,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                           std::move(local_sub_slice));
 
       // Accumulate adjoints of shared_arguments
-      apply(
+      math::apply((
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(), args...);
           },
