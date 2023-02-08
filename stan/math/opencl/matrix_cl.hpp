@@ -272,7 +272,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   matrix_cl(const int rows, const int cols,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(rows), cols_(cols), view_(partial_view) {
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
@@ -310,7 +310,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     using Mat_type = std::decay_t<ref_type_for_opencl_t<Mat>>;
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     initialize_buffer_no_heap_if<
@@ -489,7 +489,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   template <bool in_order = false>
   cl::Event initialize_buffer(const T* A) {
     cl::Event transfer_event;
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return transfer_event;
     }
     cl::Context& ctx = opencl_context.context();
@@ -509,7 +509,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   template <bool in_order = false>
   cl::Event initialize_buffer(T* A) {
     cl::Event transfer_event;
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return transfer_event;
     }
     cl::Context& ctx = opencl_context.context();
@@ -548,7 +548,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    */
   template <bool No_heap, typename U, std::enable_if_t<No_heap>* = nullptr>
   void initialize_buffer_no_heap_if(U&& obj) {
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     initialize_buffer(obj.data());
@@ -558,7 +558,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   template <bool No_heap, typename U, std::enable_if_t<!No_heap>* = nullptr>
   void initialize_buffer_no_heap_if(U&& obj) {
     using U_val = std::decay_t<ref_type_for_opencl_t<U>>;
-    if this->size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     auto* obj_heap = new U_val(std::move(obj));
