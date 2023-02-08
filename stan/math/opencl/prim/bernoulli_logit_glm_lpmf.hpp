@@ -66,8 +66,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   const size_t M = x.cols();
 
   if (is_y_vector) {
-    check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
-                     math::size(y));
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y", math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
                    math::size(beta));
@@ -121,7 +120,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
       logp_expr, calc_if<need_theta_derivative>(theta_derivative_expr),
       calc_if<need_theta_derivative_sum>(colwise_sum(theta_derivative_expr)));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
   if (!std::isfinite(logp)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "in the interval [0, 1]"),
@@ -153,13 +152,14 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
+    matrix_cl<double>& edge3_partials
+        = forward_as<matrix_cl<double>&>(ops_partials.edge3_.partials_);
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    ops_partials.edge3_.partials_
-        = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
-                            edge3_partials_transpose_cl.cols(), 1);
+    edge3_partials = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
+                                       edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      ops_partials.edge3_.partials_.add_write_event(
+      edge3_partials.add_write_event(
           edge3_partials_transpose_cl.write_events().back());
     }
   }
