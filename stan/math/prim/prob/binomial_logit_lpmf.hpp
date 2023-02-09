@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
@@ -34,9 +33,7 @@ namespace math {
  * @throw std::domain_error if N is negative or probability parameter is invalid
  * @throw std::invalid_argument if vector sizes do not match
  */
-template <bool propto, typename T_n, typename T_N, typename T_prob,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_n, T_N, T_prob>* = nullptr>
+template <bool propto, typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                                           const T_prob& alpha) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
@@ -52,11 +49,19 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   T_N_ref N_ref = N;
   T_alpha_ref alpha_ref = alpha;
 
-  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
-  decltype(auto) N_val = to_ref(as_value_column_array_or_scalar(N_ref));
-  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& N_col = as_column_vector_or_scalar(N_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
 
-  check_bounded(function, "Successes variable", value_of(n_val), 0, N_val);
+  const auto& n_arr = as_array_or_scalar(n_col);
+  const auto& N_arr = as_array_or_scalar(N_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+
+  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
+  ref_type_t<decltype(value_of(N_arr))> N_val = value_of(N_arr);
+  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+
+  check_bounded(function, "Successes variable", n_val, 0, N_val);
   check_nonnegative(function, "Population size parameter", N_val);
   check_finite(function, "Probability parameter", alpha_val);
 
@@ -90,8 +95,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
       T_partials_return sum_n = sum(n_val) * maximum_size / math::size(n);
       ops_partials.edge1_.partials_[0] = forward_as<T_partials_return>(
           sum_n * inv_logit_neg_alpha
-          - (sum(N_val) * maximum_size / math::size(N) - sum_n)
-                * inv_logit_alpha);
+          - (sum(N_val) * maximum_size / math::size(N) - sum_n) * inv_logit_alpha);
     }
   }
 
