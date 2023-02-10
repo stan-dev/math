@@ -63,19 +63,19 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 
   const size_t N_instances = x.rows();
   const size_t N_attributes = x.cols();
-  const size_t N_classes = size(cuts) + 1;
+  const size_t N_classes = math::size(cuts) + 1;
 
   if (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "rows of ", "y",
-                     size(y));
+                     math::size(y));
   }
   check_size_match(function, "Columns of ", "x", N_attributes, "Size of",
-                   "beta", size(beta));
+                   "beta", math::size(beta));
 
   const auto& cuts_val = eval(value_of(cuts));
   if (N_classes >= 2) {
-    auto cuts_head = block_zero_based(cuts_val, 0, 0, size(cuts) - 1, 1);
-    auto cuts_tail = block_zero_based(cuts_val, 1, 0, size(cuts) - 1, 1);
+    auto cuts_head = block_zero_based(cuts_val, 0, 0, math::size(cuts) - 1, 1);
+    auto cuts_tail = block_zero_based(cuts_val, 1, 0, math::size(cuts) - 1, 1);
     check_cl(function, "Cuts", cuts_head, "ordered and finite")
         = cuts_head < cuts_tail && isfinite(cuts_head) && isfinite(cuts_tail);
   } else {

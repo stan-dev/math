@@ -54,7 +54,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
   static const char* function = "ordered_probit";
 
   check_nonzero_size(function, "Cut-points", c);
-  int N = size(lambda);
+  int N = math::size(lambda);
   int C_l = size_mvt(c);
   vector_seq_view<T_cut> c_vec(c);
   int K = c_vec[0].size() + 1;

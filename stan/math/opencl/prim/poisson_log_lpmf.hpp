@@ -39,7 +39,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
 
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
-  const size_t N = is_n_vector ? size(n) : size(alpha);
+  const size_t N = is_n_vector ? math::size(n) : math::size(alpha);
   if (N == 0) {
     return 0.0;
   }
