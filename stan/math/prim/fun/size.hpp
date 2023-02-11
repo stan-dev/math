@@ -18,6 +18,8 @@ inline size_t size(const T& /*x*/) {
   return 1U;
 }
 
+#ifdef USE_STANC3
+
 /** \ingroup type_trait
  * Returns the size of the provided Eigen matrix, expression or std::vector.
  *
@@ -29,10 +31,38 @@ inline size_t size(const T& m) {
   return m.size();
 }
 
+#else
+
+/** \ingroup type_trait
+ * Returns the size of the provided Eigen matrix, expression or std::vector.
+ *
+ * @param m input  \c Eigen \c Matrix, expression or std::vector
+ * @tparam T type of m
+ */
+template <typename T, require_eigen_t<T>* = nullptr>
+inline size_t size(const T& m) {
+  return m.size();
+}
+
+/**
+ * Return the size of the specified standard vector.
+ *
+ * @tparam T Type of elements.
+ * @param[in] x Input vector.
+ * @return Size of input vector.
+ */
+template <typename T>
+inline size_t size(const std::vector<T>& x) {
+  return x.size();
+}
+
+#endif
+
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline size_t size(const T& m) {
   return m.size();
 }
+
 
 }  // namespace math
 }  // namespace stan
