@@ -29,30 +29,6 @@ namespace math {
  * Doing so will not interfere with the process (or thread) AD tape.
  */
 class ScopedChainableStack {
-  ChainableStack::AutodiffStackStorage local_stack_;
-  std::mutex local_stack_mutex_;
-
-  struct activate_scope {
-    /*
-    ChainableStack::AutodiffStackStorage* parent_stack_;
-    ScopedChainableStack& scoped_stack_;
-    */
-
-    explicit activate_scope(ScopedChainableStack& scoped_stack) {
-      //: parent_stack_(ChainableStack::instance_),
-      //scoped_stack_(scoped_stack) {
-      //if (!scoped_stack_.local_stack_mutex_.try_lock()) {
-      //throw std::logic_error{"Cannot recurse same instance scoped stacks."};
-      //}
-      //ChainableStack::instance_ = &scoped_stack.local_stack_;
-    }
-    
-    ~activate_scope() {
-      //ChainableStack::instance_ = parent_stack_;
-      //scoped_stack_.local_stack_mutex_.unlock();
-    }
-  };
-
  public:
   ScopedChainableStack() = default;
 
@@ -68,7 +44,7 @@ class ScopedChainableStack {
    */
   template <typename F, typename... Args>
   decltype(auto) execute(F&& f, Args&&... args) {
-    const activate_scope active_scope(*this);
+    nested_rev_autodiff nested;
     return std::forward<F>(f)(std::forward<Args>(args)...);
   }
 
