@@ -11,7 +11,7 @@ import sys
 import tempfile
 import threading
 
-from sig_utils import make, handle_function_list, get_signatures
+from sig_utils import make, exe_extension,handle_function_list, get_signatures
 from signature_parser import SignatureParser
 from code_generator import CodeGenerator
 
@@ -33,7 +33,7 @@ def run_command(command):
     """
     proc = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = proc.communicate()
-    
+
     if proc.poll() == 0:
         return (True, stdout, stderr)
     else:
@@ -56,12 +56,12 @@ def build_signature(prefix, cpp_code, debug):
 
     cpp_path = os.path.join(WORKING_FOLDER, os.path.basename(f.name))
 
-    object_path = cpp_path.replace(".cpp", ".o")
+    executable_path = cpp_path.replace(".cpp", exe_extension)
     dependency_path = cpp_path.replace(".cpp", ".d")
     stdout_path = cpp_path.replace(".cpp", ".stdout")
     stderr_path = cpp_path.replace(".cpp", ".stderr")
 
-    successful, stdout, stderr = run_command([make, object_path])
+    successful, stdout, stderr = run_command([make, executable_path])
 
     if successful or not debug:
         try:
@@ -75,7 +75,7 @@ def build_signature(prefix, cpp_code, debug):
             pass
 
         try:
-            os.remove(object_path)
+            os.remove(executable_path)
         except OSError:
             pass
     else:
@@ -85,7 +85,7 @@ def build_signature(prefix, cpp_code, debug):
 
             with open(stderr_path, "w") as stderr_f:
                 stderr_f.write(stderr.decode("utf-8"))
-        
+
     return successful
 
 def main(functions_or_sigs, results_file, cores, debug):
@@ -127,7 +127,7 @@ def main(functions_or_sigs, results_file, cores, debug):
 
         if len(requested_functions) > 0 and sp.function_name not in requested_functions:
             continue
-        
+
         signatures_to_check.add(signature)
 
     work_queue = Queue.Queue()
@@ -142,7 +142,7 @@ def main(functions_or_sigs, results_file, cores, debug):
 
         cpp_code = ""
         any_overload_uses_varmat = False
-        
+
         for m, overloads in enumerate(itertools.product(("Prim", "Rev", "RevVarmat"), repeat = sp.number_arguments())):
             cg = CodeGenerator()
 
@@ -153,7 +153,7 @@ def main(functions_or_sigs, results_file, cores, debug):
                 if arg.is_reverse_mode() and arg.is_varmat_compatible() and overload.endswith("Varmat"):
                     any_overload_uses_varmat = True
                     arg = cg.to_var_value(arg)
-                
+
                 arg_list.append(arg)
 
             cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
