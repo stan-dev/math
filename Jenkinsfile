@@ -38,7 +38,7 @@ pipeline {
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
         booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
         booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)')
-        booleanParam(defaultValue: true, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop')
+        booleanParam(defaultValue: false, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop')
     }
     options {
         skipDefaultCheckout()
@@ -180,271 +180,271 @@ pipeline {
             }
         }
 
-        // stage('Quick tests') {
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     failFast true
-        //     parallel {
-        //         stage('Headers check') {
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                 }
-        //             }
+        stage('Quick tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            failFast true
+            parallel {
+                stage('Headers check') {
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
 
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-        //                 sh "make -j${PARALLEL} test-headers"
-        //             }
-        //             post { always { deleteDir() } }
-        //         }
-        //         stage('Run changed unit tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 allOf {
-        //                     expression {
-        //                         env.BRANCH_NAME ==~ /PR-\d+/
-        //                     }
-        //                     expression {
-        //                         !skipRemainingStages
-        //                     }
-        //                 }
-        //             }
-        //             steps {
-        //                 retry(3) { checkout scm }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                        sh "make -j${PARALLEL} test-headers"
+                    }
+                    post { always { deleteDir() } }
+                }
+                stage('Run changed unit tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        allOf {
+                            expression {
+                                env.BRANCH_NAME ==~ /PR-\d+/
+                            }
+                            expression {
+                                !skipRemainingStages
+                            }
+                        }
+                    }
+                    steps {
+                        retry(3) { checkout scm }
 
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 sh "./runTests.py -j${PARALLEL} --changed --debug"
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "./runTests.py -j${PARALLEL} --changed --debug"
 
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //     }
-        // }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
 
-        // stage('Full Unit Tests') {
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     failFast true
-        //     parallel {
-        //         stage('Rev/Fwd Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+        stage('Full Unit Tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            failFast true
+            parallel {
+                stage('Rev/Fwd Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
 
-        //                 script {
-        //                     if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-        //                         sh "echo O=0 >> make/local"
-        //                     }
+                        script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
 
-        //                     runTests("test/unit/math/rev")
-        //                     runTests("test/unit/math/fwd")
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('Mix Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 script {
-        //                     if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-        //                         sh "echo O=1 >> make/local"
-        //                     }
-        //                     runTests("test/unit/math/mix", true)
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('Prim Unit Tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                     args '--cap-add SYS_PTRACE'
-        //                 }
-        //             }
-        //             when {
-        //                 expression {
-        //                     !skipRemainingStages
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //                 script {
-        //                     if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-        //                         sh "echo O=0 >> make/local"
-        //                     }
-        //                     runTests("test/unit/*_test.cpp", false)
-        //                     runTests("test/unit/math/*_test.cpp", false)
-        //                     runTests("test/unit/math/prim", true)
-        //                     runTests("test/unit/math/memory", false)
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('OpenCL GPU tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'v100'
-        //                     args '--gpus 1'
-        //                 }
-        //             }
-        //             steps {
-        //                 script {
-        //                     unstash 'MathSetup'
-        //                     sh """
-        //                         echo CXX=${CLANG_CXX} -Werror > make/local
-        //                         echo STAN_OPENCL=true >> make/local
-        //                         echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-        //                         echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-        //                     """
-        //                     if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-        //                         sh "echo O=1 >> make/local"
-        //                     }
-        //                     runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
-        //                     runTests("test/unit/multiple_translation_units_test.cpp")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('Always-run tests') {
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     failFast true
-        //     parallel {
-        //         stage('MPI tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 sh """
-        //                     echo CXX=${MPICXX} > make/local
-        //                     echo CXX_TYPE=gcc >> make/local
-        //                     echo STAN_MPI=true >> make/local
-        //                 """
-        //                 runTests("test/unit/math/prim/functor")
-        //                 runTests("test/unit/math/rev/functor")
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //         stage('Expressions test') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                 }
-        //             }
-        //             steps {
-        //                 unstash 'MathSetup'
-        //                 script {
-        //                     sh "echo O=0 > make/local"
-        //                     sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
-        //                     sh "python ./test/code_generator_test.py"
-        //                     sh "python ./test/signature_parser_test.py"
-        //                     sh "python ./test/statement_types_test.py"
-        //                     sh "python ./test/varmat_compatibility_summary_test.py"
-        //                     sh "python ./test/varmat_compatibility_test.py"
-        //                     withEnv(['PATH+TBB=./lib/tbb']) {
-        //                         sh "python ./test/expressions/test_expression_testing_framework.py"
-        //                         try { sh "./runTests.py -j${PARALLEL} test/expressions" }
-        //                         finally { junit 'test/**/*.xml' }
-        //                     }
-        //                     sh "make clean-all"
-        //                     sh "echo STAN_THREADS=true >> make/local"
-        //                     withEnv(['PATH+TBB=./lib/tbb']) {
-        //                         try {
-        //                             sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
-		// 		                }
-        //                         finally { junit 'test/**/*.xml' }
-        //                     }
-        //                 }
-        //             }
-        //             post { always { deleteDir() } }
-        //         }
+                            runTests("test/unit/math/rev")
+                            runTests("test/unit/math/fwd")
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mix Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
+                            runTests("test/unit/math/mix", true)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Prim Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
+                            runTests("test/unit/*_test.cpp", false)
+                            runTests("test/unit/math/*_test.cpp", false)
+                            runTests("test/unit/math/prim", true)
+                            runTests("test/unit/math/memory", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL GPU tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'v100'
+                            args '--gpus 1'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true >> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+                            """
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
+                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
+                            runTests("test/unit/multiple_translation_units_test.cpp")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Always-run tests') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            failFast true
+            parallel {
+                stage('MPI tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh """
+                            echo CXX=${MPICXX} > make/local
+                            echo CXX_TYPE=gcc >> make/local
+                            echo STAN_MPI=true >> make/local
+                        """
+                        runTests("test/unit/math/prim/functor")
+                        runTests("test/unit/math/rev/functor")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Expressions test') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        script {
+                            sh "echo O=0 > make/local"
+                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
+                            sh "python ./test/code_generator_test.py"
+                            sh "python ./test/signature_parser_test.py"
+                            sh "python ./test/statement_types_test.py"
+                            sh "python ./test/varmat_compatibility_summary_test.py"
+                            sh "python ./test/varmat_compatibility_test.py"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                                try { sh "./runTests.py -j${PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                            sh "make clean-all"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try {
+                                    sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+				                }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                        }
+                    }
+                    post { always { deleteDir() } }
+                }
 
-        //         stage('Threading tests') {
-        //             agent {
-        //                 docker {
-        //                     image 'stanorg/ci:gpu-cpp17'
-        //                     label 'linux'
-        //                 }
-        //             }
-        //             steps {
-        //                 script {
-        //                     unstash 'MathSetup'
-        //                     sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-        //                     sh "echo STAN_THREADS=true >> make/local"
-        //                     sh "export STAN_NUM_THREADS=4"
-        //                     if (isBranch('develop') || isBranch('master')) {
-        //                         runTests("test/unit")
-        //                         sh "find . -name *_test.xml | xargs rm"
-        //                     } else {
-        //                         runTests("test/unit -f thread")
-        //                         sh "find . -name *_test.xml | xargs rm"
-        //                         runTests("test/unit -f map_rect")
-        //                         sh "find . -name *_test.xml | xargs rm"
-        //                         runTests("test/unit -f reduce_sum")
-        //                     }
-        //                 }
-        //             }
-        //             post { always { retry(3) { deleteDir() } } }
-        //         }
-        //     }
-        // }
+                stage('Threading tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            sh "export STAN_NUM_THREADS=4"
+                            if (isBranch('develop') || isBranch('master')) {
+                                runTests("test/unit")
+                                sh "find . -name *_test.xml | xargs rm"
+                            } else {
+                                runTests("test/unit -f thread")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f reduce_sum")
+                            }
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
 
         stage ('Discover changed distribution tests') {
             when {
