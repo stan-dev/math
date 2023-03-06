@@ -506,9 +506,8 @@ pipeline {
                                     sh "./runTests.py -j${PARALLEL} ${names}"
                                 }
                                 deleteDir()
-                                }
-                            } }
-                        }
+                            }
+                        } }
                     }
                     tests.failFast = true
                     parallel tests
