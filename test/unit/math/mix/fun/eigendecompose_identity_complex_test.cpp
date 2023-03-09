@@ -1,12 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
 
-
 template <typename T>
 void expect_identity_matrix_complex(const T& x) {
   EXPECT_EQ(x.rows(), x.cols());
   for (int j = 0; j < x.cols(); ++j) {
     for (int i = 0; i < x.rows(); ++i) {
-      EXPECT_NEAR(i == j ? 1 : 0, stan::math::value_of_rec(x(i, j).real()), 1e-6);
+      EXPECT_NEAR(i == j ? 1 : 0, stan::math::value_of_rec(x(i, j).real()),
+                  1e-6);
     }
   }
 }
