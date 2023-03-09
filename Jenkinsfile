@@ -488,20 +488,24 @@ pipeline {
                     for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+                            deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
-                                unstash 'MathSetup'
-                                sh """
-                                    echo CXX=${CLANG_CXX} > make/local
-                                    echo O=0 >> make/local
-                                    echo N_TESTS=${N_TESTS} >> make/local
-                                    """
-                                script {
-                                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                                catchError {
+                                    unstash 'MathSetup'
+                                    sh """
+                                        echo CXX=${CLANG_CXX} > make/local
+                                        echo O=0 >> make/local
+                                        echo N_TESTS=${N_TESTS} >> make/local
+                                        """
+                                    script {
+                                        if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                            sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                            sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                                        }
                                     }
+                                    sh "./runTests.py -j${PARALLEL} ${names}"
                                 }
-                                sh "./runTests.py -j${PARALLEL} ${names}"
+                                deleteDir()
                             }
                         } }
                     }
