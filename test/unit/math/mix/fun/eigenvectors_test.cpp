@@ -28,4 +28,3 @@ TEST(mathMixFun, eigenvectorsComplex) {
   a32 << 3, -5, 7, -7.2, 9.1, -6.3;
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
-

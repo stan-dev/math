@@ -1,6 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
 
-
 template <typename T>
 void expect_identity_matrix(const T& x) {
   EXPECT_EQ(x.rows(), x.cols());
