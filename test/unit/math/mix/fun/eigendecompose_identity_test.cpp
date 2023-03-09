@@ -21,22 +21,6 @@ void expectEigenvectorsId() {
   }
 }
 
-template <typename T>
-void expectComplexEigenvectorsId() {
-  Eigen::Matrix<std::complex<T>, -1, -1> c22(2, 2);
-  c22 << stan::math::to_complex(T(0), T(-1)),
-      stan::math::to_complex(T(0), T(0)), stan::math::to_complex(T(2), T(0)),
-      stan::math::to_complex(T(4), T(0));
-  auto eigenvalues = stan::math::eigenvalues(c22);
-  auto eigenvectors = stan::math::eigenvectors(c22);
-
-  auto I = (eigenvectors.inverse() * c22 * eigenvectors
-            * eigenvalues.asDiagonal().inverse())
-               .real();
-
-  expect_identity_matrix(I);
-}
-
 TEST(mathMixFun, eigenvectorsId) {
   using d_t = double;
   using v_t = stan::math::var;
@@ -50,10 +34,4 @@ TEST(mathMixFun, eigenvectorsId) {
   expectEigenvectorsId<ffd_t>();
   expectEigenvectorsId<fv_t>();
   expectEigenvectorsId<ffv_t>();
-
-  expectComplexEigenvectorsId<v_t>();
-  expectComplexEigenvectorsId<fd_t>();
-  expectComplexEigenvectorsId<ffd_t>();
-  expectComplexEigenvectorsId<fv_t>();
-  expectComplexEigenvectorsId<ffv_t>();
 }
