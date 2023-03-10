@@ -90,7 +90,7 @@ TEST(prob_transform, ub_constrain_std_vector) {
   Eigen::VectorXd ub(2);
   ub << 2.0, stan::math::INFTY;
   Eigen::VectorXd ub2(2);
-  ub << stan::math::INFTY, 1.0;
+  ub2 << stan::math::INFTY, 1.0;
   double ubd = 2.0;
 
   Eigen::VectorXd ub_bad(3);
