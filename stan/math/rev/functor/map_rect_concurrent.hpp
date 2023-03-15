@@ -45,6 +45,18 @@ map_rect_concurrent(
   };
 
 #ifdef STAN_THREADS
+
+  // FIXME (DL): redo this without TBB.
+  std::vector<std::thread> threads;
+
+  for (int job = 0; job < num_jobs; ++job) {
+    threads.emplace_back(std::thread(execute_chunk, job, job+1));
+  }
+  for (auto& thread : threads) {
+    thread.join();
+  }
+
+  /*
   // we must use task isolation as described here:
   // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
   // this is to ensure that the thread local AD tape ressource is
@@ -56,7 +68,8 @@ map_rect_concurrent(
                       [&](const tbb::blocked_range<size_t>& r) {
                         execute_chunk(r.begin(), r.end());
                       });
-  });
+		      });*/
+  
 #else
   execute_chunk(0, num_jobs);
 #endif
