@@ -146,13 +146,3 @@ TEST(primFunFFT, invfft2) {
   y33_expected << 2, -1.4, 1, -9, 2, 3.9, 13, 1.3, -2.2;
   EXPECT_MATRIX_NEAR(y33_expected, y33, 1e-8);
 }
-
-// TEST(primFunFFT, roundtrip) {
-//     using stan::math::rfft2;
-//     using stan::math::inv_rfft2;
-//       for (const auto& m_d : stan::test::square_test_matrices(1, 6)) {
-//         auto fourier_space = rfft2(m_d);
-//         auto roundtripped = inv_rfft2(fourier_space);
-//         EXPECT_MATRIX_NEAR(roundtripped, m_d);
-//       }
-// }
