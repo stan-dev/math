@@ -436,7 +436,7 @@ struct kissfft_impl
       if ( (int)twidref.size() != ncfft2 ) {
         twidref.resize(ncfft2);
         int ncfft= ncfft2<<1;
-        Scalar pi =  acos( Scalar(-1) );
+        Scalar pi =  acos( -1 );
         for (int k=1;k<=ncfft2;++k) 
           twidref[k-1] = exp( Complex(0,-pi * (Scalar(k) / ncfft + Scalar(.5)) ) );
       }

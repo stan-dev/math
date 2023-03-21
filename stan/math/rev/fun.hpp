@@ -154,6 +154,7 @@
 #include <stan/math/rev/fun/rep_matrix.hpp>
 #include <stan/math/rev/fun/rep_row_vector.hpp>
 #include <stan/math/rev/fun/rep_vector.hpp>
+#include <stan/math/rev/fun/rfft.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
