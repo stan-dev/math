@@ -13,9 +13,8 @@ namespace math {
 namespace internal {
 
 // tools
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_t0, typename T_sv, typename T_sw, typename T_st0,
-          typename T_err>
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_t0,
+          typename T_sv, typename T_sw, typename T_st0, typename T_err>
 struct my_params {
   T_y y;
   T_a a;
@@ -29,9 +28,8 @@ struct my_params {
 };
 
 template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_w_lower, typename T_w_upper, typename T_t0,
-          typename T_sv, typename T_sw, typename T_sw_mean, typename T_st0,
-          typename T_err>
+          typename T_w_lower, typename T_w_upper, typename T_t0, typename T_sv,
+          typename T_sw, typename T_sw_mean, typename T_st0, typename T_err>
 struct my_params2 {
   T_y y;
   T_a a;
@@ -47,9 +45,9 @@ struct my_params2 {
   T_err lerr;
 };
 
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_t0, typename T_t0_mean, typename T_sv, typename T_sw,
-          typename T_st0, typename T_st0_mean, typename T_err>
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_t0,
+          typename T_t0_mean, typename T_sv, typename T_sw, typename T_st0,
+          typename T_st0_mean, typename T_err>
 struct my_params3 {
   T_y y;
   T_a a;
@@ -66,11 +64,10 @@ struct my_params3 {
 
 // calculate derivative of density of wiener5 with respect to y (version for
 // wiener7)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
 return_type_t<T_y, T_a, T_v, T_w, T_sv> dtdwiener5_for_7(
-    const T_y& y, const T_a& a, const T_v& v, const T_w& w,
-    const T_sv& sv, const double& err) {
+    const T_y& y, const T_a& a, const T_v& v, const T_w& w, const T_sv& sv,
+    const double& err) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type kll, kss, ans;
@@ -86,7 +83,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dtdwiener5_for_7(
            * (square(sv_sqr) * (y + square(a * w))
               + sv_sqr * (1 - 2 * a * v * w) + square(v))
            / square(one_plus_svsqr_y);
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0 / one_plus_svsqr_y
+    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+              / one_plus_svsqr_y
           - la - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -0.5 * square(v);
@@ -130,8 +128,10 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dtdwiener5_for_7(
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
         T_return_type w_plus_2k = w + 2.0 * k;
         T_return_type w_minus_2k = w - 2.0 * k;
-        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twot, fplus);
-        fminus = log_sum_exp(3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twot, fminus);
+        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twot,
+                            fplus);
+        fminus = log_sum_exp(
+            3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twot, fminus);
       }
     }
     fplus = log_sum_exp(3.0 * log(w) - w * w / twot, fplus);
@@ -154,13 +154,11 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dtdwiener5_for_7(
       T_return_type pi_k = pi() * k;
       T_return_type zwi = sin(pi_k * w);
       if (zwi > 0) {
-        fplus = log_sum_exp(3.0 * log(k) 
-                                - pi_k * pi_k * halfy + log(zwi),
-                            fplus);
+        fplus
+            = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
       }
       if (zwi < 0) {
-        fminus = log_sum_exp(3.0 * log(k)
-                                 - pi_k * pi_k * halfy + log(-zwi),
+        fminus = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(-zwi),
                              fminus);
       }
     }
@@ -290,8 +288,8 @@ return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
   } else {
     // prepare some variables for error estimation in density
     T_return_type sv_sqr = square(sv);
-    T_return_type ans0
-        = (v * (1 - omega) + sv_sqr * square(1 - omega) * a) / (1 + sv_sqr * (y - t0_));
+    T_return_type ans0 = (v * (1 - omega) + sv_sqr * square(1 - omega) * a)
+                         / (1 + sv_sqr * (y - t0_));
     T_return_type factor
         = max(ans0 + 1.0 / a, ans0 - 2.0 / a);  // factor from small and large
                                                 // representation, for same
@@ -378,7 +376,8 @@ return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
   } else {
     // prepare some variables for error estimation in density
     T_return_type sv_sqr = square(sv);
-    T_return_type ans0 = (v * a + sv_sqr * square(a) * (1 - omega)) / (1 + sv_sqr * (y - t0_));
+    T_return_type ans0
+        = (v * a + sv_sqr * square(a) * (1 - omega)) / (1 + sv_sqr * (y - t0_));
     // compute partial derivative
     retval = dwdwiener5(y - t0_, a, v, omega, sv, lerr, 1);
   }

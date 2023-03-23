@@ -11,12 +11,12 @@ namespace stan {
 namespace math {
 namespace internal {
 
-// calculate density in log 
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(
-    const T_y& y, const T_a& a, const T_v& vn, const T_w& wn,
-    const T_sv& sv, const double& err) {
+// calculate density in log
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(const T_y& y, const T_a& a,
+                                                 const T_v& vn, const T_w& wn,
+                                                 const T_sv& sv,
+                                                 const double& err) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type kll, kss, ans, v, w;
@@ -32,7 +32,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(
   if (sv != 0) {
     T_return_type sv_sqr = square(sv);
     T_return_type one_plus_svsqr_y = 1 + sv_sqr * y;
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0 / one_plus_svsqr_y
+    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+              / one_plus_svsqr_y
           - 2 * log(a) - 0.5 * log(one_plus_svsqr_y);
   } else {
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
@@ -67,7 +68,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(
         T_return_type w_minus_2k = w - 2.0 * k;
 
         fplus = log_sum_exp(log(w_plus_2k) - square(w_plus_2k) / twoy, fplus);
-        fminus = log_sum_exp(log(-w_minus_2k) - square(w_minus_2k) / twoy, fminus);
+        fminus
+            = log_sum_exp(log(-w_minus_2k) - square(w_minus_2k) / twoy, fminus);
       }
     }
     fplus = log_sum_exp(log(w) - square(w) / twoy, fplus);
@@ -83,22 +85,18 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(
       T_return_type pi_k = k * pi();
       T_return_type check = sin(pi_k * w);
       if (check > 0) {
-        fplus = log_sum_exp(log(k)
-                                - square(pi_k) * halfy + log(check),
-                            fplus);
-	  }
-      else {
-        fminus = log_sum_exp(log(k)
-                                 - square(pi_k) * halfy + log(-check),
-                             fminus);
-	  }
+        fplus = log_sum_exp(log(k) - square(pi_k) * halfy + log(check), fplus);
+      } else {
+        fminus
+            = log_sum_exp(log(k) - square(pi_k) * halfy + log(-check), fminus);
+      }
     }
     if (fplus < fminus) {
       ans = NEGATIVE_INFTY;
     } else {
       ans = lg1 + log_diff_exp(fplus, fminus) + LOG_PI;
     }
-  } 
+  }
   return ans;
 }
 //-----------------------------------------------
@@ -106,11 +104,11 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(
 // d/dt DENSITY
 // calculate derivative of density with respect to t (in log, ans =
 // d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(
-    const T_y& y, const T_a& a, const T_v& vn, const T_w& wn,
-    const T_sv& sv, const double& err) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
+                                                   const T_v& vn, const T_w& wn,
+                                                   const T_sv& sv,
+                                                   const double& err) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type kll, kss, ans, v, w;
@@ -129,7 +127,8 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(
            * (square(sv_sqr) * (y + square(a * w))
               + sv_sqr * (1 - 2 * a * v * w) + square(v))
            / square(one_plus_svsqr_y);
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0 / one_plus_svsqr_y
+    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+              / one_plus_svsqr_y
           - la - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -0.5 * square(v);
@@ -173,8 +172,10 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
         T_return_type w_plus_2k = w + 2.0 * k;
         T_return_type w_minus_2k = w - 2.0 * k;
-        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy, fplus);
-        fminus = log_sum_exp(3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twoy, fminus);
+        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy,
+                            fplus);
+        fminus = log_sum_exp(
+            3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twoy, fminus);
       }
     }
     fplus = log_sum_exp(3.0 * log(w) - w * w / twoy, fplus);
@@ -197,13 +198,11 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(
       T_return_type pi_k = pi() * k;
       T_return_type zwi = sin(pi_k * w);
       if (zwi > 0) {
-        fplus = log_sum_exp(3.0 * log(k)
-                                - pi_k * pi_k * halfy + log(zwi),
-                            fplus);
+        fplus
+            = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
       }
       if (zwi < 0) {
-        fminus = log_sum_exp(3.0 * log(k)
-                                 - pi_k * pi_k * halfy + log(-zwi),
+        fminus = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(-zwi),
                              fminus);
       }
     }
@@ -223,11 +222,12 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(
 // d/da DENSITY
 // calculate derivative of density with respect to a (in log, ans =
 // d/da(log(f))=d/da f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
-    const T_y& y, const T_a& a, const T_v& vn, const T_w& wn,
-    const T_sv& sv, const double& err, const int& normal_or_log) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
+                                                   const T_v& vn, const T_w& wn,
+                                                   const T_sv& sv,
+                                                   const double& err,
+                                                   const int& normal_or_log) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w>;
 
   T_return_type kll, kss, ans, v, w;
@@ -245,7 +245,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
     T_return_type sv_sqr = square(sv);
     T_return_type one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * w + sv_sqr * square(w) * a) / one_plus_svsqr_y;
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0 / one_plus_svsqr_y
+    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+              / one_plus_svsqr_y
           - 2 * la - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -v * w;
@@ -292,8 +293,10 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
         T_return_type w_plus_2k = w + 2.0 * k;
         T_return_type w_minus_2k = w - 2.0 * k;
-        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy, fplus);
-        fminus = log_sum_exp(3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twoy, fminus);
+        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy,
+                            fplus);
+        fminus = log_sum_exp(
+            3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twoy, fminus);
       }
     }
     fplus = log_sum_exp(3.0 * log(w) - w * w / twoy, fplus);
@@ -316,13 +319,11 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
       T_return_type pi_k = pi() * k;
       T_return_type zwi = sin(pi_k * w);
       if (zwi > 0) {
-        fplus = log_sum_exp(3.0 * log(k)
-                                - pi_k * pi_k * halfy + log(zwi),
-                            fplus);
+        fplus
+            = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
       }
       if (zwi < 0) {
-        fminus = log_sum_exp(3.0 * log(k)
-                                 - pi_k * pi_k * halfy + log(-zwi),
+        fminus = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(-zwi),
                              fminus);
       }
     }
@@ -337,8 +338,7 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
   }
   if (normal_or_log == 1) {
     return ans * exp(ld);  // derivative of f for hcubature
-  }
-  else {
+  } else {
     return ans;  // derivative of log(f)
   }
 }
@@ -347,13 +347,10 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(
 // d/dv DENSITY
 // calculate derivative of density with respect to v (in log, ans =
 // d/dv(log(f))=d/dv f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dvdwiener5(const T_y& y,
-                                                              const T_a& a,
-                                                              const T_v& vn,
-                                                              const T_w& wn,
-                                                              const T_sv& sv) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_w, T_sv> dvdwiener5(const T_y& y, const T_a& a,
+                                                   const T_v& vn, const T_w& wn,
+                                                   const T_sv& sv) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type ans;
@@ -370,11 +367,12 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dvdwiener5(const T_y& y,
 // d/dw DENSITY
 // calculate derivative of density with respect to w (in log, ans =
 // d/dw(log(f))=d/dw f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
-    const T_y& y, const T_a& a, const T_v& vn, const T_w& wn,
-    const T_sv& sv, const double& err, const int& normal_or_log) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
+                                                   const T_v& vn, const T_w& wn,
+                                                   const T_sv& sv,
+                                                   const double& err,
+                                                   const int& normal_or_log) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type kll, kss, ans, v, w;
@@ -390,7 +388,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
     T_return_type sv_sqr = square(sv);
     T_return_type one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0 / one_plus_svsqr_y
+    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+              / one_plus_svsqr_y
           - 2 * log(a) - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -v * a;
@@ -434,25 +433,24 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
       T_return_type wm2k_minusy = sqrt_w_minus_2k - y_asq;
       if (wp2k_minusy > 0) {
         fplus = log_sum_exp(log(wp2k_minusy) - sqrt_w_plus_2k / twoy, fplus);
-	  }
-      else if (wp2k_minusy < 0) {
-        fminus = log_sum_exp(log(-(wp2k_minusy)) - sqrt_w_plus_2k / twoy, fminus);
-	  }
+      } else if (wp2k_minusy < 0) {
+        fminus
+            = log_sum_exp(log(-(wp2k_minusy)) - sqrt_w_plus_2k / twoy, fminus);
+      }
       if (wm2k_minusy > 0) {
         fplus = log_sum_exp(log(wm2k_minusy) - sqrt_w_minus_2k / twoy, fplus);
-	  }
-      else if (wm2k_minusy < 0) {
-        fminus = log_sum_exp(log(-(wm2k_minusy)) - sqrt_w_minus_2k / twoy, fminus);
-	  }
+      } else if (wm2k_minusy < 0) {
+        fminus
+            = log_sum_exp(log(-(wm2k_minusy)) - sqrt_w_minus_2k / twoy, fminus);
+      }
     }
     T_return_type sqr_w = square(w);
     T_return_type sqrt_w_plus_2k = sqr_w - y_asq;
     if (sqrt_w_plus_2k > 0) {
       fplus = log_sum_exp(log(sqrt_w_plus_2k) - sqr_w / twoy, fplus);
-	}
-    else if (sqrt_w_plus_2k < 0) {
+    } else if (sqrt_w_plus_2k < 0) {
       fminus = log_sum_exp(log(-(sqrt_w_plus_2k)) - sqr_w / twoy, fminus);
-	}
+    }
 
     if (fplus < fminus) {
       newsign = -1;
@@ -473,15 +471,12 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
       T_return_type pi_k = pi() * k;
       T_return_type x = cos(pi_k * w);
       if (x > 0) {
-        fplus = log_sum_exp(2.0 * log(k)
-                                - square(pi_k) * halfy + log(x),
-                            fplus);
-	  }
-      else if (x < 0) {
-        fminus = log_sum_exp(2.0 * log(k)
-                                 - square(pi_k) * halfy + log(-x),
+        fplus
+            = log_sum_exp(2.0 * log(k) - square(pi_k) * halfy + log(x), fplus);
+      } else if (x < 0) {
+        fminus = log_sum_exp(2.0 * log(k) - square(pi_k) * halfy + log(-x),
                              fminus);
-	  }
+      }
     }
     if (fplus < fminus) {
       erg = log_diff_exp(fminus, fplus);
@@ -494,8 +489,7 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
   }
   if (normal_or_log == 1) {
     return ans * sign * exp(ld);  // derivative of f for hcubature
-  }
-  else {
+  } else {
     return ans * sign;  // derivative of log(f)
   }
 }
@@ -504,11 +498,11 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(
 // d/dsv DENSITY
 // calculate derivative of density with respect to sv (in log, ans =
 // d/dsv(log(f))=d/dsv f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dsvdwiener5(
-    const T_y& y, const T_a& a, const T_v& vn, const T_w& wn,
-    const T_sv& sv) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
+return_type_t<T_y, T_a, T_v, T_w, T_sv> dsvdwiener5(const T_y& y, const T_a& a,
+                                                    const T_v& vn,
+                                                    const T_w& wn,
+                                                    const T_sv& sv) {
   using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
 
   T_return_type v, w;
@@ -518,8 +512,8 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dsvdwiener5(
 
   T_return_type one_sqrsv_y = 1 + square(sv) * y;
   T_return_type t1 = -y / one_sqrsv_y;
-  T_return_type t2
-      = (square(a * w) + 2 * a * v * w * y + square(v * y)) / square(one_sqrsv_y);
+  T_return_type t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
+                     / square(one_sqrsv_y);
   return sv * (t1 + t2);
 }
 //-----------------------------------------------
