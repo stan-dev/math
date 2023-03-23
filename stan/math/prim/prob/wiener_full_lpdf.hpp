@@ -1,42 +1,30 @@
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 #ifndef STAN_MATH_PRIM_PROB_WIENER_FULL_LPDF_HPP
 #define STAN_MATH_PRIM_PROB_WIENER_FULL_LPDF_HPP
 
 #include <stan/math/prim/fun.hpp>
 
 namespace stan {
-namespace math {
-
+namespace math { 
 namespace internal {
 
-template <bool propto, typename T_y, typename T_alpha, typename T_delta,
-          typename T_beta, typename T_t0, typename T_sv, typename T_sw,
+template <bool propto, typename T_y, typename T_a, typename T_v,
+          typename T_w, typename T_t0, typename T_sv, typename T_sw,
           typename T_st0>
-inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
+inline return_type_t<T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw, T_st0>
 wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
-                           const T_alpha& a, const T_delta& v, const T_beta& w,
+                           const T_a& a, const T_v& v, const T_w& w,
                            const T_t0& t0, const T_sv& sv, const T_sw& sw,
                            const T_st0& st0, const double& prec) {
-  using T_partials_return = partials_return_t<T_y, T_alpha, T_delta, T_beta,
+  using T_partials_return = partials_return_t<T_y, T_a, T_v, T_w,
                                               T_t0, T_sv, T_sw, T_st0>;
   using T_y_ref = ref_type_t<T_y>;
-  using T_alpha_ref = ref_type_t<T_alpha>;
-  using T_delta_ref = ref_type_t<T_delta>;
-  using T_beta_ref = ref_type_t<T_beta>;
+  using T_a_ref = ref_type_t<T_a>;
+  using T_v_ref = ref_type_t<T_v>;
+  using T_w_ref = ref_type_t<T_w>;
   using T_t0_ref = ref_type_t<T_t0>;
   using T_sv_ref = ref_type_t<T_sv>;
   using T_sw_ref = ref_type_t<T_sw>;
   using T_st0_ref = ref_type_t<T_st0>;
-
-  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
-  static constexpr double LOG_POINT1 = -1;
 
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
@@ -58,9 +46,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                         "Inter-trial variability in Nondecision time", st0, 1);
 
   T_y_ref y_ref = y;
-  T_alpha_ref alpha_ref = a;
-  T_delta_ref delta_ref = v;
-  T_beta_ref beta_ref = w;
+  T_a_ref alpha_ref = a;
+  T_v_ref delta_ref = v;
+  T_w_ref beta_ref = w;
   T_t0_ref t0_ref = t0;
   T_sv_ref sv_ref = sv;
   T_sw_ref sw_ref = sw;
@@ -86,17 +74,19 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   check_finite(function_name, "Inter-trial variability in Nondecision time",
                value_of(st0_ref));
 
-  if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0))
+  if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0)) {
     return 0;
+  }
 
   size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
-  if (!N)
+  if (!N) {
     return 0;
+  }
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
-  scalar_seq_view<T_delta_ref> delta_vec(delta_ref);
-  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
+  scalar_seq_view<T_a_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_v_ref> delta_vec(delta_ref);
+  scalar_seq_view<T_w_ref> beta_vec(beta_ref);
   scalar_seq_view<T_t0_ref> t0_vec(t0_ref);
   scalar_seq_view<T_sv_ref> sv_vec(sv_ref);
   scalar_seq_view<T_sw_ref> sw_vec(sw_ref);
@@ -134,9 +124,10 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
     }
   }
 
-  if (!include_summand<propto, T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw,
-                       T_st0>::value)
+  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+                       T_st0>::value) {
     return 0;
+					   }
 
   // abstol_wiener5 z.B. 1e-12 on normal scale
   // T_partials_return error_bound = 1e-6;
@@ -155,10 +146,13 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
   int Meval = 6000;
   T_partials_return dens = 0.0;
   T_partials_return ld = 0.0;
-  operands_and_partials<T_y_ref, T_alpha_ref, T_delta_ref, T_beta_ref, T_t0_ref,
+  operands_and_partials<T_y_ref, T_a_ref, T_v_ref, T_w_ref, T_t0_ref,
                         T_sv_ref, T_sw_ref, T_st0_ref>
       ops_partials(y_ref, alpha_ref, delta_ref, beta_ref, t0_ref, sv_ref,
                    sw_ref, st0_ref);
+
+  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
+  static constexpr double LOG_POINT1 = -1;
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
@@ -175,10 +169,11 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
 
       dens = internal::dwiener5(y_val - t0_val, alpha_val, delta_val, beta_val,
                                 sv_val, labstol_wiener5);
-      if (labstol_wiener5 > fabs(dens) + lerror_bound_dens - LOG_TWO)
+      if (labstol_wiener5 > fabs(dens) + lerror_bound_dens - LOG_TWO) {
         dens = internal::dwiener5(y_val - t0_val, alpha_val, delta_val,
                                   beta_val, sv_val,
                                   fabs(dens) + lerror_bound_dens - LOG_TWO);
+	  }
       ld += dens;
 
       // computation of derivative for t and precision check in order to give
@@ -186,39 +181,42 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       T_partials_return deriv_t
           = internal::dtdwiener5(y_val - t0_val, alpha_val, delta_val, beta_val,
                                  sv_val, labstol_wiener5);
-      if (labstol_wiener5 > log(fabs(deriv_t)) + dens + lerror_bound - LOG_TWO)
+      if (labstol_wiener5 > log(fabs(deriv_t)) + dens + lerror_bound - LOG_TWO) {
         deriv_t = internal::dtdwiener5(
             y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
             log(fabs(deriv_t)) + dens + lerror_bound - LOG_FOUR);
+	  }
 
       // computation of derivatives and precision checks
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] = deriv_t;
       }
-      if (!is_constant_all<T_alpha>::value) {
+      if (!is_constant_all<T_a>::value) {
         T_partials_return deriv_a
             = internal::dadwiener5(y_val - t0_val, alpha_val, delta_val,
                                    beta_val, sv_val, labstol_wiener5, 0);
         if (labstol_wiener5
-            > log(fabs(deriv_a)) + dens + lerror_bound - LOG_TWO)
+            > log(fabs(deriv_a)) + dens + lerror_bound - LOG_TWO) {
           deriv_a = internal::dadwiener5(
               y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
               log(fabs(deriv_a)) + dens + lerror_bound - LOG_FOUR, 0);
+			}
         ops_partials.edge2_.partials_[i] = deriv_a;
       }
-      if (!is_constant_all<T_delta>::value) {
+      if (!is_constant_all<T_v>::value) {
         ops_partials.edge3_.partials_[i] = internal::dvdwiener5(
             y_val - t0_val, alpha_val, delta_val, beta_val, sv_val);
       }
-      if (!is_constant_all<T_beta>::value) {
+      if (!is_constant_all<T_w>::value) {
         T_partials_return deriv_w
             = internal::dwdwiener5(y_val - t0_val, alpha_val, delta_val,
                                    beta_val, sv_val, labstol_wiener5, 0);
         if (labstol_wiener5
-            > log(fabs(deriv_w)) + dens + lerror_bound - LOG_TWO)
+            > log(fabs(deriv_w)) + dens + lerror_bound - LOG_TWO) {
           deriv_w = internal::dwdwiener5(
               y_val - t0_val, alpha_val, delta_val, beta_val, sv_val,
               log(fabs(deriv_w)) + dens + lerror_bound - LOG_FOUR, 0);
+			}
         ops_partials.edge4_.partials_[i] = deriv_w;
       }
       if (!is_constant_all<T_t0>::value) {
@@ -260,8 +258,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       std::vector<T_partials_return> xmin(dim, 0);
       std::vector<T_partials_return> xmax(dim, 1);
 
-      if (st0_val)
+      if (st0_val) {
         xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
+	  }
 
       dens = hcubature(internal::int_ddiff<std::vector<double>, void*>, &params,
                        dim, xmin, xmax, Meval, abstol, reltol / 2);
@@ -310,7 +309,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] = deriv_t_7;
       }
-      if (!is_constant_all<T_alpha>::value) {
+      if (!is_constant_all<T_a>::value) {
         deriv
             = 1 / dens
               * hcubature(internal::int_daddiff<std::vector<double>, void*>,
@@ -333,7 +332,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
         }
         ops_partials.edge2_.partials_[i] = deriv;
       }
-      if (!is_constant_all<T_delta>::value) {
+      if (!is_constant_all<T_v>::value) {
         deriv
             = 1 / dens
               * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
@@ -356,7 +355,7 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
         }
         ops_partials.edge3_.partials_[i] = deriv;
       }
-      if (!is_constant_all<T_beta>::value) {
+      if (!is_constant_all<T_w>::value) {
         deriv
             = 1 / dens
               * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
@@ -484,11 +483,12 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
                                        delta_val, beta_val, sv_val,
                                        labstol_wiener5));
             if (labstol_wiener5 > log(fabs(f) + log(st0_val) - LOG_TWO
-                                      + lerror_bound - LOG_TWO))
+                                      + lerror_bound - LOG_TWO)) {
               f = exp(internal::dwiener5(y_val - (t0_val + st0_val), alpha_val,
                                          delta_val, beta_val, sv_val,
                                          lerror_bound - LOG_TWO + log(st0_val)
                                              - LOG_TWO + log(fabs(f))));
+									  }
             deriv = 1 / st0_val * f;
           } else {
             T_partials_return new_error = labstol_wiener5 - LOG_TWO;
@@ -585,9 +585,9 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * See \b Details below for more details on how to use \c wiener_full_lpdf().
  *
  * @tparam T_y type of scalar
- * @tparam T_alpha type of boundary
- * @tparam T_delta type of drift rate
- * @tparam T_beta type of relative starting point
+ * @tparam T_a type of boundary
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
  * @tparam T_t0 type of non-decision time
  * @tparam T_sv type of inter-trial variability of drift rate
  * @tparam T_sw type of inter-trial variability of relative starting point
@@ -678,25 +678,25 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * https://doi.org/10.1016/j.jmp.2009.02.003
  */
 
-template <bool propto, typename T_y, typename T_alpha, typename T_delta,
-          typename T_beta, typename T_t0, typename T_sv, typename T_sw,
+template <bool propto, typename T_y, typename T_a, typename T_v,
+          typename T_w, typename T_t0, typename T_sv, typename T_sw,
           typename T_st0>
-inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
-wiener_full_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
-                 const T_beta& w, const T_t0& t0, const T_sv& sv,
+inline return_type_t<T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw, T_st0>
+wiener_full_lpdf(const T_y& y, const T_a& a, const T_v& v,
+                 const T_w& w, const T_t0& t0, const T_sv& sv,
                  const T_sw& sw, const T_st0& st0) {
   double precision = 1e-4;
 
-  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_alpha, T_delta,
-                                              T_beta, T_t0, T_sv, T_sw, T_st0>(
+  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_a, T_v,
+                                              T_w, T_t0, T_sv, T_sw, T_st0>(
       "wiener_full_lpdf", y, a, v, w, t0, sv, sw, st0, precision);
 }
 
-template <typename T_y, typename T_alpha, typename T_delta, typename T_beta,
+template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_t0, typename T_sv, typename T_sw, typename T_st0>
-inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
-wiener_full_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
-                 const T_beta& w, const T_t0& t0, const T_sv& sv,
+inline return_type_t<T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw, T_st0>
+wiener_full_lpdf(const T_y& y, const T_a& a, const T_v& v,
+                 const T_w& w, const T_t0& t0, const T_sv& sv,
                  const T_sw& sw, const T_st0& st0) {
   double precision = 1e-4;
 
@@ -713,23 +713,23 @@ wiener_full_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
  * functions are the same excpet of the control over the precision.
  */
 
-template <bool propto, typename T_y, typename T_alpha, typename T_delta,
-          typename T_beta, typename T_t0, typename T_sv, typename T_sw,
+template <bool propto, typename T_y, typename T_a, typename T_v,
+          typename T_w, typename T_t0, typename T_sv, typename T_sw,
           typename T_st0>
-inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
-wiener_full_prec_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
-                      const T_beta& w, const T_t0& t0, const T_sv& sv,
+inline return_type_t<T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw, T_st0>
+wiener_full_prec_lpdf(const T_y& y, const T_a& a, const T_v& v,
+                      const T_w& w, const T_t0& t0, const T_sv& sv,
                       const T_sw& sw, const T_st0& st0, const double& prec) {
-  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_alpha, T_delta,
-                                              T_beta, T_t0, T_sv, T_sw, T_st0>(
+  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_a, T_v,
+                                              T_w, T_t0, T_sv, T_sw, T_st0>(
       "wiener_full_prec_lpdf", y, a, v, w, t0, sv, sw, st0, prec);
 }
 
-template <typename T_y, typename T_alpha, typename T_delta, typename T_beta,
+template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_t0, typename T_sv, typename T_sw, typename T_st0>
-inline return_type_t<T_y, T_alpha, T_delta, T_beta, T_t0, T_sv, T_sw, T_st0>
-wiener_full_prec_lpdf(const T_y& y, const T_alpha& a, const T_delta& v,
-                      const T_beta& w, const T_t0& t0, const T_sv& sv,
+inline return_type_t<T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw, T_st0>
+wiener_full_prec_lpdf(const T_y& y, const T_a& a, const T_v& v,
+                      const T_w& w, const T_t0& t0, const T_sv& sv,
                       const T_sw& sw, const T_st0& st0, const double& prec) {
   return internal::wiener_full_prec_impl_lpdf<false>(
       "wiener_full_prec_lpdf", y, a, v, w, t0, sv, sw, st0, prec);

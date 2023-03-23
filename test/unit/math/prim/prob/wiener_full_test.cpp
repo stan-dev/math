@@ -6,10 +6,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-// signature: wiener_full_lpdf(y, a, v, w, t0, sv, sw, st0);
-
-// CHECKING FOR (IN)VALID INPUT
-
 TEST(mathPrimScalProbWienerFullScal, valid) {
   using stan::math::INFTY;
   using stan::math::wiener_full_lpdf;
