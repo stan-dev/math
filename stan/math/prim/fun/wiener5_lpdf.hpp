@@ -13,45 +13,37 @@ namespace math {
 namespace internal {
 
 // calculate density in log
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(const T_y& y, const T_a& a,
-                                                 const T_v& vn, const T_w& wn,
-                                                 const T_sv& sv,
-                                                 const double& err) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
-
-  T_return_type kll, kss, ans, v, w;
-
+double dwiener5(const double& y, const double& a, const double& vn,
+                const double& wn, const double& sv, const double& err) {
+  double kll, kss, ans, v, w;
   w = 1.0 - wn;
   v = -vn;
-
-  T_return_type y_asq = y / square(a);
+  double y_asq = y / square(a);
   ans = 0.0;
 
   // calculate the number of terms needed for short t
-  T_return_type lg1;
+  double lg1;
   if (sv != 0) {
-    T_return_type sv_sqr = square(sv);
-    T_return_type one_plus_svsqr_y = 1 + sv_sqr * y;
+    double sv_sqr = square(sv);
+    double one_plus_svsqr_y = 1 + sv_sqr * y;
     lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
               / one_plus_svsqr_y
           - 2 * log(a) - 0.5 * log(one_plus_svsqr_y);
   } else {
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
   }
-  T_return_type es = (err - lg1);
-  T_return_type K1 = (sqrt(2.0 * y_asq) + w) / 2.0;
-  T_return_type u_eps
-      = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log(y_asq) + 2.0 * (es));
-  T_return_type arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
+  double es = (err - lg1);
+  double K1 = (sqrt(2.0 * y_asq) + w) / 2.0;
+  double u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log(y_asq) + 2.0 * (es));
+  double arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
   kss = ceil(fmax(K1, K2));
 
   // calculate the number of terms needed for large t
-  T_return_type el = es;
+  double el = es;
   K1 = 1.0 / (pi() * sqrt(y_asq));
   K2 = 0.0;
-  T_return_type two_log_piy = -2.0 * (log(pi() * y_asq) + el);
+  double two_log_piy = -2.0 * (log(pi() * y_asq) + el);
   static const double PISQ = square(pi());  // pi*pi
   if (two_log_piy >= 0) {
     K2 = sqrt(two_log_piy / (PISQ * y_asq));
@@ -60,13 +52,13 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(const T_y& y, const T_a& a,
 
   // if small t is better
   if (2 * kss <= kll) {
-    T_return_type fplus = NEGATIVE_INFTY;
-    T_return_type fminus = NEGATIVE_INFTY;
-    T_return_type twoy = 2.0 * y_asq;
+    double fplus = NEGATIVE_INFTY;
+    double fminus = NEGATIVE_INFTY;
+    double twoy = 2.0 * y_asq;
     if (static_cast<size_t>(kss) > 0) {
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
-        T_return_type w_plus_2k = w + 2.0 * k;
-        T_return_type w_minus_2k = w - 2.0 * k;
+        double w_plus_2k = w + 2.0 * k;
+        double w_minus_2k = w - 2.0 * k;
 
         fplus = log_sum_exp(log(w_plus_2k) - square(w_plus_2k) / twoy, fplus);
         fminus
@@ -79,12 +71,12 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(const T_y& y, const T_a& a,
              + log_diff_exp(fplus, fminus));
     // if large t is better
   } else {
-    T_return_type fplus = NEGATIVE_INFTY;
-    T_return_type fminus = NEGATIVE_INFTY;
-    T_return_type halfy = y_asq / 2.0;
+    double fplus = NEGATIVE_INFTY;
+    double fminus = NEGATIVE_INFTY;
+    double halfy = y_asq / 2.0;
     for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-      T_return_type pi_k = k * pi();
-      T_return_type check = sin(pi_k * w);
+      double pi_k = k * pi();
+      double check = sin(pi_k * w);
       if (check > 0) {
         fplus = log_sum_exp(log(k) - square(pi_k) * halfy + log(check), fplus);
       } else {
@@ -105,25 +97,19 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwiener5(const T_y& y, const T_a& a,
 // d/dt DENSITY
 // calculate derivative of density with respect to t (in log, ans =
 // d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
-                                                   const T_v& vn, const T_w& wn,
-                                                   const T_sv& sv,
-                                                   const double& err) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
-
-  T_return_type kll, kss, ans, v, w;
-
+double dtdwiener5(const double& y, const double& a, const double& vn,
+                  const double& wn, const double& sv, const double& err) {
+  double kll, kss, ans, v, w;
   w = 1.0 - wn;
   v = -vn;
 
   // prepare some variables
-  T_return_type y_asq = y / square(a);
-  T_return_type la = 2.0 * log(a);
-  T_return_type ans0, lg1;
+  double y_asq = y / square(a);
+  double la = 2.0 * log(a);
+  double ans0, lg1;
   if (sv != 0) {
-    T_return_type sv_sqr = square(sv);
-    T_return_type one_plus_svsqr_y = (1 + sv_sqr * y);
+    double sv_sqr = square(sv);
+    double one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = -0.5
            * (square(sv_sqr) * (y + square(a * w))
               + sv_sqr * (1 - 2 * a * v * w) + square(v))
@@ -135,44 +121,43 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
     ans0 = -0.5 * square(v);
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - la;
   }
-  T_return_type factor = lg1 - la;
-
-  T_return_type ld = dwiener5(y, a, vn, wn, sv,
-                              err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
+  double factor = lg1 - la;
+  double ld = dwiener5(y, a, vn, wn, sv,
+                       err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
 
   // calculate the number of terms kss needed for small t
-  T_return_type es = err - lg1;
+  double es = err - lg1;
   es = es + la;
-  T_return_type K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  T_return_type u_eps = fmin(
+  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
+  double u_eps = fmin(
       -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-  T_return_type arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
+  double arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
   kss = ceil(fmax(K1, K2));
 
   // calculate number of terms kll needed for large t
-  T_return_type el = err - lg1;
+  double el = err - lg1;
   el = el + la;
   K1 = sqrt(3.0 / y_asq) / pi();
   u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
   static const double PISQ = square(pi());  // pi*pi
   arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type kl = (arg > 0) ? sqrt(arg) : K1;
+  double kl = (arg > 0) ? sqrt(arg) : K1;
   kll = ceil(fmax(kl, K1));
 
-  T_return_type erg;
-  T_return_type newsign = 1;
-  T_return_type fplus = NEGATIVE_INFTY;
-  T_return_type fminus = NEGATIVE_INFTY;
+  double erg;
+  double newsign = 1;
+  double fplus = NEGATIVE_INFTY;
+  double fminus = NEGATIVE_INFTY;
 
   // if small t is better
   if (2 * kss < kll) {
     // calculate terms of the sum for small t
-    T_return_type twoy = 2.0 * y_asq;
+    double twoy = 2.0 * y_asq;
     if (static_cast<size_t>(kss) > 0) {
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
-        T_return_type w_plus_2k = w + 2.0 * k;
-        T_return_type w_minus_2k = w - 2.0 * k;
+        double w_plus_2k = w + 2.0 * k;
+        double w_minus_2k = w - 2.0 * k;
         fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy,
                             fplus);
         fminus = log_sum_exp(
@@ -186,7 +171,6 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-
     ans = ans0 - 1.5 / y
           + newsign
                 * exp(factor - 1.5 * LOG_TWO - LOG_SQRT_PI - 3.5 * log(y_asq)
@@ -194,10 +178,10 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
     // if large t is better
   } else {
     // calculate terms of the sum for large t
-    T_return_type halfy = y_asq / 2.0;
+    double halfy = y_asq / 2.0;
     for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-      T_return_type pi_k = pi() * k;
-      T_return_type zwi = sin(pi_k * w);
+      double pi_k = pi() * k;
+      double zwi = sin(pi_k * w);
       if (zwi > 0) {
         fplus
             = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
@@ -213,7 +197,6 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-
     ans = ans0 - newsign * exp(factor + 3.0 * LOG_PI - LOG_TWO + erg - ld);
   }
   return ans;
@@ -223,28 +206,22 @@ return_type_t<T_y, T_a, T_v, T_sv, T_w> dtdwiener5(const T_y& y, const T_a& a,
 // d/da DENSITY
 // calculate derivative of density with respect to a (in log, ans =
 // d/da(log(f))=d/da f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
-                                                   const T_v& vn, const T_w& wn,
-                                                   const T_sv& sv,
-                                                   const double& err,
-                                                   const int& normal_or_log) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w>;
+double dadwiener5(const double& y, const double& a, const double& vn,
+                  const double& wn, const double& sv, const double& err,
+                  const int& normal_or_log) {
+  double kll, kss, ans, v, w;
 
-  T_return_type kll, kss, ans, v, w;
-
-  T_return_type la = log(a);
-  T_return_type ly = log(y);
-
+  double la = log(a);
+  double ly = log(y);
   w = 1.0 - wn;
   v = -vn;
 
   // prepare some variables
-  T_return_type y_asq = y / square(a);
-  T_return_type ans0, lg1;
+  double y_asq = y / square(a);
+  double ans0, lg1;
   if (sv != 0) {
-    T_return_type sv_sqr = square(sv);
-    T_return_type one_plus_svsqr_y = (1 + sv_sqr * y);
+    double sv_sqr = square(sv);
+    double one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * w + sv_sqr * square(w) * a) / one_plus_svsqr_y;
     lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
               / one_plus_svsqr_y
@@ -253,47 +230,46 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
     ans0 = -v * w;
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * la;
   }
-  T_return_type factor = lg1 - 3 * la;
-
-  T_return_type ld
+  double factor = lg1 - 3 * la;
+  double ld
       = dwiener5(y, a, vn, wn, sv,
                  err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
 
   // calculate the number of terms kss needed for small t
-  T_return_type es = err - lg1;
+  double es = err - lg1;
   es = es + la;
   es = es - LOG_TWO + 2.0 * la - ly;
-  T_return_type K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  T_return_type u_eps = fmin(
+  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
+  double u_eps = fmin(
       -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-  T_return_type arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
+  double arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
   kss = ceil(fmax(K1, K2));
 
   // calculate number of terms kll needed for large t
-  T_return_type el = err - lg1;
+  double el = err - lg1;
   el = el + la;
   el = el - LOG_TWO + 2.0 * la - ly;
   K1 = sqrt(3.0 / y_asq) / pi();
   u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
   static const double PISQ = square(pi());  // pi*pi
   arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type kl = (arg > 0) ? sqrt(arg) : K1;
+  double kl = (arg > 0) ? sqrt(arg) : K1;
   kll = ceil(fmax(kl, K1));
 
-  T_return_type erg;
-  T_return_type newsign = 1;
-  T_return_type fplus = NEGATIVE_INFTY;
-  T_return_type fminus = NEGATIVE_INFTY;
+  double erg;
+  double newsign = 1;
+  double fplus = NEGATIVE_INFTY;
+  double fminus = NEGATIVE_INFTY;
 
   // if small t is better
   if (2 * kss < kll) {
     // calculate terms of the sum for short t
-    T_return_type twoy = 2.0 * y_asq;
+    double twoy = 2.0 * y_asq;
     if (static_cast<int>(kss) > 0) {
       for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
-        T_return_type w_plus_2k = w + 2.0 * k;
-        T_return_type w_minus_2k = w - 2.0 * k;
+        double w_plus_2k = w + 2.0 * k;
+        double w_minus_2k = w - 2.0 * k;
         fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twoy,
                             fplus);
         fminus = log_sum_exp(
@@ -307,7 +283,6 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-
     ans = ans0 + 1.0 / a
           - newsign
                 * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * ly + 4.0 * la + lg1
@@ -315,10 +290,10 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
     // if large t is better
   } else {
     // calculate terms of the sum for large t
-    T_return_type halfy = y_asq / 2.0;
+    double halfy = y_asq / 2.0;
     for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-      T_return_type pi_k = pi() * k;
-      T_return_type zwi = sin(pi_k * w);
+      double pi_k = pi() * k;
+      double zwi = sin(pi_k * w);
       if (zwi > 0) {
         fplus
             = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
@@ -334,7 +309,6 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
       erg = log_diff_exp(fminus, fplus);
       newsign = -1;
     }
-
     ans = ans0 - 2.0 / a + newsign * exp(ly + factor + 3.0 * LOG_PI + erg - ld);
   }
   if (normal_or_log == 1) {
@@ -348,13 +322,9 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dadwiener5(const T_y& y, const T_a& a,
 // d/dv DENSITY
 // calculate derivative of density with respect to v (in log, ans =
 // d/dv(log(f))=d/dv f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dvdwiener5(const T_y& y, const T_a& a,
-                                                   const T_v& vn, const T_w& wn,
-                                                   const T_sv& sv) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
-
-  T_return_type ans;
+double dvdwiener5(const double& y, const double& a, const double& vn,
+                  const double& wn, const double& sv) {
+  double ans;
   if (sv != 0) {
     ans = 1 + square(sv) * y;
     ans = (a * (1 - wn) - vn * y) / ans;
@@ -368,26 +338,20 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dvdwiener5(const T_y& y, const T_a& a,
 // d/dw DENSITY
 // calculate derivative of density with respect to w (in log, ans =
 // d/dw(log(f))=d/dw f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
-                                                   const T_v& vn, const T_w& wn,
-                                                   const T_sv& sv,
-                                                   const double& err,
-                                                   const int& normal_or_log) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
-
-  T_return_type kll, kss, ans, v, w;
-  T_return_type sign = -1;
-
+double dwdwiener5(const double& y, const double& a, const double& vn,
+                  const double& wn, const double& sv, const double& err,
+                  const int& normal_or_log) {
+  double kll, kss, ans, v, w;
+  double sign = -1;
   w = 1.0 - wn;
   v = -vn;
 
   // prepare some variables
-  T_return_type y_asq = y / square(a);
-  T_return_type ans0, lg1;
+  double y_asq = y / square(a);
+  double ans0, lg1;
   if (sv != 0) {
-    T_return_type sv_sqr = square(sv);
-    T_return_type one_plus_svsqr_y = (1 + sv_sqr * y);
+    double sv_sqr = square(sv);
+    double one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
     lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
               / one_plus_svsqr_y
@@ -396,17 +360,16 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
     ans0 = -v * a;
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
   }
-  T_return_type ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
-
-  T_return_type ls = -lg1 + ld;
-  T_return_type ll = -lg1 + ld;
+  double ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
+  double ls = -lg1 + ld;
+  double ll = -lg1 + ld;
 
   // calculate the number of terms kss needed for small t
-  T_return_type K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  T_return_type u_eps
+  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
+  double u_eps
       = fmin(-1.0, 2.0 * (err - lg1) + LOG_TWO + LOG_PI + 2.0 * log(y_asq));
-  T_return_type arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  T_return_type K2 = (arg > 0) ? 0.5 * (sqrt(arg) + w) : K1;
+  double arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) + w) : K1;
   kss = ceil(fmax(K1, K2));
 
   // calculate number of terms kll needed for large t
@@ -418,20 +381,20 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
   K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / y_asq) : K1;
   kll = ceil(fmax(K1, K2));
 
-  T_return_type erg;
-  T_return_type newsign = 1;
-  T_return_type fplus = NEGATIVE_INFTY;
-  T_return_type fminus = NEGATIVE_INFTY;
+  double erg;
+  double newsign = 1;
+  double fplus = NEGATIVE_INFTY;
+  double fminus = NEGATIVE_INFTY;
 
   // if small t is better
   if (2 * kss < kll) {
     // calculate terms of the sum for short t
-    T_return_type twoy = 2.0 * y_asq;
+    double twoy = 2.0 * y_asq;
     for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
-      T_return_type sqrt_w_plus_2k = square(w + 2 * k);
-      T_return_type sqrt_w_minus_2k = square(w - 2 * k);
-      T_return_type wp2k_minusy = sqrt_w_plus_2k - y_asq;
-      T_return_type wm2k_minusy = sqrt_w_minus_2k - y_asq;
+      double sqrt_w_plus_2k = square(w + 2 * k);
+      double sqrt_w_minus_2k = square(w - 2 * k);
+      double wp2k_minusy = sqrt_w_plus_2k - y_asq;
+      double wm2k_minusy = sqrt_w_minus_2k - y_asq;
       if (wp2k_minusy > 0) {
         fplus = log_sum_exp(log(wp2k_minusy) - sqrt_w_plus_2k / twoy, fplus);
       } else if (wp2k_minusy < 0) {
@@ -445,21 +408,19 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
             = log_sum_exp(log(-(wm2k_minusy)) - sqrt_w_minus_2k / twoy, fminus);
       }
     }
-    T_return_type sqr_w = square(w);
-    T_return_type sqrt_w_plus_2k = sqr_w - y_asq;
+    double sqr_w = square(w);
+    double sqrt_w_plus_2k = sqr_w - y_asq;
     if (sqrt_w_plus_2k > 0) {
       fplus = log_sum_exp(log(sqrt_w_plus_2k) - sqr_w / twoy, fplus);
     } else if (sqrt_w_plus_2k < 0) {
       fminus = log_sum_exp(log(-(sqrt_w_plus_2k)) - sqr_w / twoy, fminus);
     }
-
     if (fplus < fminus) {
       newsign = -1;
       erg = log_diff_exp(fminus, fplus);
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-
     ans = ans0
           - newsign
                 * exp(erg - ls - 2.5 * log(y_asq) - 0.5 * LOG_TWO
@@ -467,10 +428,10 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
     // if large t is better
   } else {
     // calculate terms of the sum for large t
-    T_return_type halfy = y_asq / 2.0;
+    double halfy = y_asq / 2.0;
     for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-      T_return_type pi_k = pi() * k;
-      T_return_type x = cos(pi_k * w);
+      double pi_k = pi() * k;
+      double x = cos(pi_k * w);
       if (x > 0) {
         fplus
             = log_sum_exp(2.0 * log(k) - square(pi_k) * halfy + log(x), fplus);
@@ -485,7 +446,6 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-
     ans = ans0 + newsign * exp(erg - ll + TWO_LOG_PI);
   }
   if (normal_or_log == 1) {
@@ -499,27 +459,183 @@ return_type_t<T_y, T_a, T_v, T_w, T_sv> dwdwiener5(const T_y& y, const T_a& a,
 // d/dsv DENSITY
 // calculate derivative of density with respect to sv (in log, ans =
 // d/dsv(log(f))=d/dsv f'/f; ans*exp(ld)=f' on normal scale)
-template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
-return_type_t<T_y, T_a, T_v, T_w, T_sv> dsvdwiener5(const T_y& y, const T_a& a,
-                                                    const T_v& vn,
-                                                    const T_w& wn,
-                                                    const T_sv& sv) {
-  using T_return_type = return_type_t<T_y, T_a, T_v, T_w, T_sv>;
-
-  T_return_type v, w;
-
+double dsvdwiener5(const double& y, const double& a, const double& vn,
+                   const double& wn, const double& sv) {
+  double v, w;
   v = -vn;
   w = 1 - wn;
-
-  T_return_type one_sqrsv_y = 1 + square(sv) * y;
-  T_return_type t1 = -y / one_sqrsv_y;
-  T_return_type t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
-                     / square(one_sqrsv_y);
+  double one_sqrsv_y = 1 + square(sv) * y;
+  double t1 = -y / one_sqrsv_y;
+  double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
+              / square(one_sqrsv_y);
   return sv * (t1 + t2);
 }
 //-----------------------------------------------
 
 }  // namespace internal
+
+template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
+          typename T_v, typename T_sv>
+inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
+    const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
+    const T_sv& sv, const double& prec) {
+  using T_y_ref = ref_type_t<T_y>;
+  using T_a_ref = ref_type_t<T_a>;
+  using T_t0_ref = ref_type_t<T_t0>;
+  using T_w_ref = ref_type_t<T_w>;
+  using T_v_ref = ref_type_t<T_v>;
+  using T_sv_ref = ref_type_t<T_sv>;
+
+  const char* function_name = "wiener5_lpdf";
+  check_consistent_sizes(function_name, "Random variable", y,
+                         "Boundary separation", a, "Drift rate", v,
+                         "A-priori bias", w, "Nondecision time", t0,
+                         "Inter-trial variability in drift rate", sv);
+  check_consistent_size(function_name, "Random variable", y, 1);
+  check_consistent_size(function_name, "Boundary separation", a, 1);
+  check_consistent_size(function_name, "Nondecision time", t0, 1);
+  check_consistent_size(function_name, "A-priori bias", w, 1);
+  check_consistent_size(function_name, "Drift rate", v, 1);
+  check_consistent_size(function_name, "Inter-trial variability in drift rate",
+                        sv, 1);
+
+  T_y_ref y_ref = y;
+  T_a_ref a_ref = a;
+  T_t0_ref t0_ref = t0;
+  T_w_ref w_ref = w;
+  T_v_ref v_ref = v;
+  T_sv_ref sv_ref = sv;
+
+  check_positive_finite(function_name, "Random variable", value_of(y_ref));
+  check_positive_finite(function_name, "Boundary separation", value_of(a_ref));
+  check_nonnegative(function_name, "Nondecision time", value_of(t0_ref));
+  check_finite(function_name, "Nondecision time", value_of(t0_ref));
+  check_less(function_name, "A-priori bias", value_of(w_ref), 1);
+  check_greater(function_name, "A-priori bias", value_of(w_ref), 0);
+  check_finite(function_name, "Drift rate", value_of(v_ref));
+  check_nonnegative(function_name, "Inter-trial variability in drift rate",
+                    value_of(sv_ref));
+  check_finite(function_name, "Inter-trial variability in drift rate",
+               value_of(sv_ref));
+
+  if (size_zero(y, a, t0, w, v) || size_zero(sv)) {
+    return 0;
+  }
+  size_t N = max_size(y, a, t0, w, v, sv);
+  if (!N) {
+    return 0;
+  }
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_a_ref> a_vec(a_ref);
+  scalar_seq_view<T_t0_ref> t0_vec(t0_ref);
+  scalar_seq_view<T_w_ref> w_vec(w_ref);
+  scalar_seq_view<T_v_ref> v_vec(v_ref);
+  scalar_seq_view<T_sv_ref> sv_vec(sv_ref);
+  size_t N_y_t0 = max_size(y, t0);
+
+  for (size_t i = 0; i < N_y_t0; ++i) {
+    if (y_vec[i] <= t0_vec[i]) {
+      std::stringstream msg;
+      msg << ", but must be greater than nondecision time = " << t0_vec[i];
+      std::string msg_str(msg.str());
+      throw_domain_error(function_name, "Random variable", y_vec[i], " = ",
+                         msg_str.c_str());
+    }
+  }
+
+  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
+    return 0;
+  }
+
+  double error_bound_dens = 1e-6;  // precision for density
+  double lerror_bound_dens = log(error_bound_dens);
+  double error_bound = prec;  // precision for
+  // derivatives (controllable by user)
+  double lerror_bound = log(error_bound);  // log(alpha)
+  double abstol = 0.0;
+  double reltol = .9 * error_bound;  // eps_rel(Integration)
+  double abstol_wiener5 = 1e-12;     // eps_abs(wiener5)
+  double labstol_wiener5 = log(abstol_wiener5);
+  // log(eps_abs(wiener5)
+  int Meval = 6000;
+  double dens = 0.0;
+  double ld = 0.0;
+  operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref>
+      ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
+
+  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
+  static constexpr double LOG_POINT1 = -1;
+
+  // calculate density and partials
+  for (size_t i = 0; i < N; i++) {
+    // Calculate 4-parameter model without inter-trial variabilities (if
+    // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
+    // drift rate (if sv_vec[i] != 0)
+    const double y_val = y_vec.val(i);
+    const double a_val = a_vec.val(i);
+    const double t0_val = t0_vec.val(i);
+    const double w_val = w_vec.val(i);
+    const double v_val = v_vec.val(i);
+    const double sv_val = sv_vec.val(i);
+
+    dens = internal::dwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val,
+                              labstol_wiener5);
+    if (labstol_wiener5 > fabs(dens) + lerror_bound_dens - LOG_TWO) {
+      dens = internal::dwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val,
+                                fabs(dens) + lerror_bound_dens - LOG_TWO);
+    }
+    ld += dens;
+
+    // computation of derivative for t and precision check in order to give
+    // the value as deriv_y to edge1 and as -deriv_y to edge5
+    double deriv_y = internal::dtdwiener5(y_val - t0_val, a_val, v_val, w_val,
+                                          sv_val, labstol_wiener5);
+    if (labstol_wiener5 > log(fabs(deriv_y)) + dens + lerror_bound - LOG_TWO) {
+      deriv_y = internal::dtdwiener5(
+          y_val - t0_val, a_val, v_val, w_val, sv_val,
+          log(fabs(deriv_y)) + dens + lerror_bound - LOG_FOUR);
+    }
+
+    // computation of derivatives and precision checks
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_[i] = deriv_y;
+    }
+    if (!is_constant_all<T_a>::value) {
+      double deriv_a = internal::dadwiener5(y_val - t0_val, a_val, v_val, w_val,
+                                            sv_val, labstol_wiener5, 0);
+      if (labstol_wiener5
+          > log(fabs(deriv_a)) + dens + lerror_bound - LOG_TWO) {
+        deriv_a = internal::dadwiener5(
+            y_val - t0_val, a_val, v_val, w_val, sv_val,
+            log(fabs(deriv_a)) + dens + lerror_bound - LOG_FOUR, 0);
+      }
+      ops_partials.edge2_.partials_[i] = deriv_a;
+    }
+    if (!is_constant_all<T_t0>::value) {
+      ops_partials.edge3_.partials_[i] = -deriv_y;
+    }
+    if (!is_constant_all<T_w>::value) {
+      double deriv_w = internal::dwdwiener5(y_val - t0_val, a_val, v_val, w_val,
+                                            sv_val, labstol_wiener5, 0);
+      if (labstol_wiener5
+          > log(fabs(deriv_w)) + dens + lerror_bound - LOG_TWO) {
+        deriv_w = internal::dwdwiener5(
+            y_val - t0_val, a_val, v_val, w_val, sv_val,
+            log(fabs(deriv_w)) + dens + lerror_bound - LOG_FOUR, 0);
+      }
+      ops_partials.edge4_.partials_[i] = deriv_w;
+    }
+    if (!is_constant_all<T_v>::value) {
+      ops_partials.edge5_.partials_[i]
+          = internal::dvdwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val);
+    }
+    if (!is_constant_all<T_sv>::value) {
+      ops_partials.edge6_.partials_[i]
+          = internal::dsvdwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val);
+    }
+  }  // end for loop
+  return ops_partials.build(ld);
+}  // end wiener5_lpdf
 }  // namespace math
 }  // namespace stan
 #endif
