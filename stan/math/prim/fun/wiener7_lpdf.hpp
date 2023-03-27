@@ -445,8 +445,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
   T_st0_ref st0_ref = st0;
 
   check_positive_finite(function_name, "Random variable", value_of(y_ref));
-  check_positive_finite(function_name, "Boundary separation",
-                        value_of(a_ref));
+  check_positive_finite(function_name, "Boundary separation", value_of(a_ref));
   check_finite(function_name, "Drift rate", value_of(v_ref));
   check_less(function_name, "A-priori bias", value_of(w_ref), 1);
   check_greater(function_name, "A-priori bias", value_of(w_ref), 0);
@@ -494,8 +493,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
   for (size_t i = 0; i < N_beta_sw; ++i) {
     if (w_vec[i] - .5 * sw_vec[i] <= 0) {
       std::stringstream msg;
-      msg << ", but must be smaller than 2*(A-priori bias) = "
-          << 2 * w_vec[i];
+      msg << ", but must be smaller than 2*(A-priori bias) = " << 2 * w_vec[i];
       std::string msg_str(msg.str());
       throw_domain_error(function_name,
                          "Inter-trial variability in A-priori bias", sw_vec[i],
@@ -531,8 +529,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
   double ld = 0.0;
   operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref,
                         T_sw_ref, T_st0_ref>
-      ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref,
-                   sw_ref, st0_ref);
+      ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref, sw_ref, st0_ref);
   static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
   static constexpr double LOG_POINT1 = -1;
 
@@ -546,10 +543,9 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     const double sv_val = sv_vec.val(i);
     const double sw_val = sw_vec.val(i);
     const double st0_val = st0_vec.val(i);
-    internal::my_params params
-        = {y_val,    a_val, v_val,
-           w_val, t0_val,    sv_val,
-           sw_val,   st0_val,   labstol_wiener5 - LOG_TWO};
+    internal::my_params params = {y_val,  a_val,   v_val,
+                                  w_val,  t0_val,  sv_val,
+                                  sw_val, st0_val, labstol_wiener5 - LOG_TWO};
     int dim = (sw_val != 0) + (st0_val != 0);
     check_positive(function_name,
                    "(Inter-trial variability in A-priori bias) + "
@@ -569,8 +565,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       double new_error
           = LOG_POINT1 + lerror_bound_dens - LOG_TWO + log(fabs(dens));
       internal::my_params params_new_error
-          = {y_val,  a_val, v_val, w_val, t0_val,
-             sv_val, sw_val,    st0_val,   new_error};
+          = {y_val,  a_val,  v_val,   w_val,    t0_val,
+             sv_val, sw_val, st0_val, new_error};
       dens = hcubature(internal::int_ddiff<std::vector<double>, void*>,
                        &params_new_error, dim, xmin, xmax, Meval, abstol,
                        reltol);
@@ -589,8 +585,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       double new_error
           = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv_t_7));
       internal::my_params params_new_error
-          = {y_val,  a_val, v_val, w_val, t0_val,
-             sv_val, sw_val,    st0_val,   new_error};
+          = {y_val,  a_val,  v_val,   w_val,    t0_val,
+             sv_val, sw_val, st0_val, new_error};
       deriv_t_7 = 1 / dens
                   * hcubature(internal::int_dtddiff<std::vector<double>, void*>,
                               &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -611,8 +607,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv));
         internal::my_params params_new_error
-            = {y_val,  a_val, v_val, w_val, t0_val,
-               sv_val, sw_val,    st0_val,   new_error};
+            = {y_val,  a_val,  v_val,   w_val,    t0_val,
+               sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_daddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -632,8 +628,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv));
         internal::my_params params_new_error
-            = {y_val,  a_val, v_val, w_val, t0_val,
-               sv_val, sw_val,    st0_val,   new_error};
+            = {y_val,  a_val,  v_val,   w_val,    t0_val,
+               sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -650,8 +646,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_TWO + log(fabs(deriv));
         internal::my_params params_new_error
-            = {y_val,  a_val, v_val, w_val, t0_val,
-               sv_val, sw_val,    st0_val,   new_error};
+            = {y_val,  a_val,  v_val,   w_val,    t0_val,
+               sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -668,8 +664,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_TWO + log(fabs(deriv));
         internal::my_params params_new_error
-            = {y_val,  a_val, v_val, w_val, t0_val,
-               sv_val, sw_val,    st0_val,   new_error};
+            = {y_val,  a_val,  v_val,   w_val,    t0_val,
+               sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dsvddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -690,27 +686,27 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
 
         int dim_ = (st0_val != 0);
         if (dim_ == 0) {
-          fl = exp(internal::dwiener5(y_val - t0_val, a_val, v_val,
-                                      lower, sv_val, labstol_wiener5));
-          fu = exp(internal::dwiener5(y_val - t0_val, a_val, v_val,
-                                      upper, sv_val, labstol_wiener5));
+          fl = exp(internal::dwiener5(y_val - t0_val, a_val, v_val, lower,
+                                      sv_val, labstol_wiener5));
+          fu = exp(internal::dwiener5(y_val - t0_val, a_val, v_val, upper,
+                                      sv_val, labstol_wiener5));
           if (labstol_wiener5 > log(fabs(fl + fu) + log(sw_val) - LOG_TWO
                                     + lerror_bound - LOG_TWO)) {
-            fl = exp(internal::dwiener5(y_val - t0_val, a_val, v_val,
-                                        lower, sv_val,
+            fl = exp(internal::dwiener5(y_val - t0_val, a_val, v_val, lower,
+                                        sv_val,
                                         lerror_bound - LOG_TWO + log(sw_val)
                                             - LOG_TWO + log(fabs(fl + fu))));
-            fu = exp(internal::dwiener5(y_val - t0_val, a_val, v_val,
-                                        upper, sv_val,
+            fu = exp(internal::dwiener5(y_val - t0_val, a_val, v_val, upper,
+                                        sv_val,
                                         lerror_bound - LOG_TWO + log(sw_val)
                                             - LOG_TWO + log(fabs(fl + fu))));
           }
           deriv = 1 / width * 0.5 * (fl + fu);
         } else {
           internal::my_params2 params_sw
-              = {y_val, a_val, v_val, w_val,
-                 lower, upper,     t0_val,    sv_val,
-                 0,     sw_val,    st0_val,   labstol_wiener5 - LOG_TWO};
+              = {y_val, a_val,  v_val,   w_val,
+                 lower, upper,  t0_val,  sv_val,
+                 0,     sw_val, st0_val, labstol_wiener5 - LOG_TWO};
           deriv = hcubature(internal::int_dswddiff<std::vector<double>, void*>,
                             &params_sw, dim_, xmin, xmax, Meval, abstol,
                             reltol / 2);
@@ -719,8 +715,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
             double new_error
                 = log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO;
             internal::my_params2 params_new_error_sw
-                = {y_val,  a_val, v_val, w_val, lower,   upper,
-                   t0_val, sv_val,    0,         sw_val,   st0_val, new_error};
+                = {y_val,  a_val,  v_val, w_val,  lower,   upper,
+                   t0_val, sv_val, 0,     sw_val, st0_val, new_error};
             deriv
                 = hcubature(internal::int_dswddiff<std::vector<double>, void*>,
                             &params_new_error_sw, dim_, xmin, xmax, Meval,
@@ -739,13 +735,12 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       } else {
         int dim_ = (sw_val != 0);
         if (dim_ == 0) {
-          f = exp(internal::dwiener5(y_val - (t0_val + st0_val), a_val,
-                                     v_val, w_val, sv_val,
-                                     labstol_wiener5));
+          f = exp(internal::dwiener5(y_val - (t0_val + st0_val), a_val, v_val,
+                                     w_val, sv_val, labstol_wiener5));
           if (labstol_wiener5 > log(fabs(f) + log(st0_val) - LOG_TWO
                                     + lerror_bound - LOG_TWO)) {
-            f = exp(internal::dwiener5(y_val - (t0_val + st0_val), a_val,
-                                       v_val, w_val, sv_val,
+            f = exp(internal::dwiener5(y_val - (t0_val + st0_val), a_val, v_val,
+                                       w_val, sv_val,
                                        lerror_bound - LOG_TWO + log(st0_val)
                                            - LOG_TWO + log(fabs(f))));
           }
@@ -753,10 +748,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         } else {
           double new_error = labstol_wiener5 - LOG_TWO;
           internal::my_params3 params_st
-              = {y_val,    a_val, v_val,
-                 w_val, t0_val,    t0_val + st0_val,
-                 sv_val,   sw_val,    st0_val,
-                 0,        new_error};
+              = {y_val,  a_val,  v_val,   w_val, t0_val,   t0_val + st0_val,
+                 sv_val, sw_val, st0_val, 0,     new_error};
           deriv = hcubature(internal::int_dst0ddiff<std::vector<double>, void*>,
                             &params_st, dim_, xmin, xmax, Meval, abstol,
                             reltol / 2);
@@ -765,10 +758,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
             double new_error
                 = log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO;
             internal::my_params3 params_new_error_st
-                = {y_val,    a_val, v_val,
-                   w_val, t0_val,    t0_val + st0_val,
-                   sv_val,   sw_val,    st0_val,
-                   0,        new_error};
+                = {y_val,  a_val,  v_val,   w_val, t0_val,   t0_val + st0_val,
+                   sv_val, sw_val, st0_val, 0,     new_error};
             deriv
                 = hcubature(internal::int_dst0ddiff<std::vector<double>, void*>,
                             &params_new_error_st, dim_, xmin, xmax, Meval,

@@ -55,7 +55,8 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
  * The log of the first passage time density function for a (Wiener)
  * drift diffusion model with up to 7 parameters, where
  * \f$y\in \mathbb{R}_{+}\f$ is the reacion time, \f$a \in \mathbb{R}_{+}\f$
- * the boundary separation, \f$t_0 \in \mathbb{R}_{\geq 0}\f$ the non-decision time,
+ * the boundary separation, \f$t_0 \in \mathbb{R}_{\geq 0}\f$ the non-decision
+ time,
  * \f$w \in (0, 1)\f$ the relative starting point (aka a-priori bias),
  * \f$v \in \mathbb{R}\f$ the drifte rate, \f$s_v \in
  * \mathbb{R}_{\geq 0}\f$ the inter-trial variability of the drift rate,
@@ -250,4 +251,3 @@ wiener_full_prec_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
 }  // namespace math
 }  // namespace stan
 #endif
-

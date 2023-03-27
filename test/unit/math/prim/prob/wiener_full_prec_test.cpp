@@ -234,7 +234,7 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
     check_scalar_types_2(f_a, a[i], result[i], da[i]);
     // v
     auto f_v = [=](auto value) {
-      return wiener_full_prec_lpdf(rt[i], a[i], t0[i], w[i],value, sv[i],
+      return wiener_full_prec_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i],
                                    sw[i], st0[i], 1e-6);
     };
     check_scalar_types_2(f_v, v[i], result[i], dv[i]);
