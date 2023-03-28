@@ -131,9 +131,9 @@ double dtdwiener5_for_7(const double& y, const double& a, const double& v,
 // integrand density (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_ddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -165,9 +165,9 @@ return_type_t<T_x, T_p> int_ddiff(const T_x& x, const T_p& p) {
 // integrand d/dt (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dtddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -199,9 +199,9 @@ return_type_t<T_x, T_p> int_dtddiff(const T_x& x, const T_p& p) {
 // integrand d/da (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -242,9 +242,9 @@ return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
 // integrand d/dv (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dvddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -277,9 +277,9 @@ return_type_t<T_x, T_p> int_dvddiff(const T_x& x, const T_p& p) {
 // integrand d/dw (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -316,9 +316,9 @@ return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
 // integrand d/dsv (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dsvddiff(const T_x& x, const T_p& p) {
-	struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+  struct my_params {
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   my_params* params = static_cast<my_params*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -351,9 +351,9 @@ return_type_t<T_x, T_p> int_dsvddiff(const T_x& x, const T_p& p) {
 // integrand d/dsw (on normal scale)
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dswddiff(const T_x& x, const T_p& p) {
-struct my_params2 {
-  double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
-};
+  struct my_params2 {
+    double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
+  };
   my_params2* params = static_cast<my_params2*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -388,8 +388,8 @@ struct my_params2 {
 template <typename T_x, typename T_p>
 return_type_t<T_x, T_p> int_dst0ddiff(const T_x& x, const T_p& p) {
   struct my_params3 {
-  double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
-};
+    double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
+  };
   my_params3* params = static_cast<my_params3*>(p);
   double y = (params->y);
   double a = (params->a);
@@ -553,14 +553,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
   static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
   static constexpr double LOG_POINT1 = -1;
   struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
+    double y, a, v, w, t0, sv, sw, st0, lerr;
+  };
   struct my_params2 {
-  double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
-};
+    double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
+  };
   struct my_params3 {
-  double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
-};
+    double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
+  };
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
@@ -573,8 +573,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     const double sw_val = sw_vec.val(i);
     const double st0_val = st0_vec.val(i);
     my_params params = {y_val,  a_val,   v_val,
-                                  w_val,  t0_val,  sv_val,
-                                  sw_val, st0_val, labstol_wiener5 - LOG_TWO};
+                        w_val,  t0_val,  sv_val,
+                        sw_val, st0_val, labstol_wiener5 - LOG_TWO};
     int dim = (sw_val != 0) + (st0_val != 0);
     check_positive(function_name,
                    "(Inter-trial variability in A-priori bias) + "
@@ -593,9 +593,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         > fabs(log(dens)) + LOG_POINT1 + lerror_bound_dens - LOG_TWO) {
       double new_error
           = LOG_POINT1 + lerror_bound_dens - LOG_TWO + log(fabs(dens));
-      my_params params_new_error
-          = {y_val,  a_val,  v_val,   w_val,    t0_val,
-             sv_val, sw_val, st0_val, new_error};
+      my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                    sv_val, sw_val, st0_val, new_error};
       dens = hcubature(internal::int_ddiff<std::vector<double>, void*>,
                        &params_new_error, dim, xmin, xmax, Meval, abstol,
                        reltol);
@@ -613,9 +612,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         > log(fabs(deriv_t_7)) + LOG_POINT1 + lerror_bound - LOG_TWO) {
       double new_error
           = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv_t_7));
-      my_params params_new_error
-          = {y_val,  a_val,  v_val,   w_val,    t0_val,
-             sv_val, sw_val, st0_val, new_error};
+      my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                    sv_val, sw_val, st0_val, new_error};
       deriv_t_7 = 1 / dens
                   * hcubature(internal::int_dtddiff<std::vector<double>, void*>,
                               &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -635,9 +633,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           > log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO) {
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv));
-        my_params params_new_error
-            = {y_val,  a_val,  v_val,   w_val,    t0_val,
-               sv_val, sw_val, st0_val, new_error};
+        my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                      sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_daddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -656,9 +653,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           > log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO) {
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_FOUR + log(fabs(deriv));
-        my_params params_new_error
-            = {y_val,  a_val,  v_val,   w_val,    t0_val,
-               sv_val, sw_val, st0_val, new_error};
+        my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                      sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dwddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -674,9 +670,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           > log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO) {
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_TWO + log(fabs(deriv));
-        my_params params_new_error
-            = {y_val,  a_val,  v_val,   w_val,    t0_val,
-               sv_val, sw_val, st0_val, new_error};
+        my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                      sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dvddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
@@ -692,9 +687,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           > log(fabs(deriv)) + LOG_POINT1 + lerror_bound - LOG_TWO) {
         double new_error
             = LOG_POINT1 + lerror_bound - LOG_TWO + log(fabs(deriv));
-        my_params params_new_error
-            = {y_val,  a_val,  v_val,   w_val,    t0_val,
-               sv_val, sw_val, st0_val, new_error};
+        my_params params_new_error = {y_val,  a_val,  v_val,   w_val,    t0_val,
+                                      sv_val, sw_val, st0_val, new_error};
         deriv = 1 / dens
                 * hcubature(internal::int_dsvddiff<std::vector<double>, void*>,
                             &params_new_error, dim, xmin, xmax, Meval, abstol,
