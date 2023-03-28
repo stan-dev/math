@@ -1,12 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_WIENER5_LPDF_HPP
 #define STAN_MATH_PRIM_FUN_WIENER5_LPDF_HPP
 
-#include <stan/math/prim/fun/ceil.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
-#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun.hpp>
 
 namespace stan {
 namespace math {
