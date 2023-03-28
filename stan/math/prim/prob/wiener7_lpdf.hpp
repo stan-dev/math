@@ -9,19 +9,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-// tools
-/*struct my_params {
-  double y, a, v, w, t0, sv, sw, st0, lerr;
-};
-
-/*struct my_params2 {
-  double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
-};
-
-struct my_params3 {
-  double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
-};*/
-
 // calculate derivative of density of wiener5 with respect to y (version for
 // wiener7)
 double dtdwiener5_for_7(const double& y, const double& a, const double& v,
