@@ -11,8 +11,9 @@ namespace internal {
 
 // calculate derivative of density of wiener5 with respect to y (version for
 // wiener7)
-inline double dtdwiener5_for_7(const double& y, const double& a, const double& v,
-                        const double& w, const double& sv, const double& err) {
+inline double dtdwiener5_for_7(const double& y, const double& a,
+                               const double& v, const double& w,
+                               const double& sv, const double& err) {
   double kll, kss, ans;
 
   // prepare some variables

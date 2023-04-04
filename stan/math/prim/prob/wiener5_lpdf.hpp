@@ -9,7 +9,7 @@ namespace internal {
 
 // calculate density in log
 inline double dwiener5(const double& y, const double& a, const double& vn,
-                const double& wn, const double& sv, const double& err) {
+                       const double& wn, const double& sv, const double& err) {
   double kll, kss, ans, v, w;
   w = 1.0 - wn;
   v = -vn;
@@ -93,7 +93,8 @@ inline double dwiener5(const double& y, const double& a, const double& vn,
 // calculate derivative of density with respect to t (in log, ans =
 // d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
 inline double dtdwiener5(const double& y, const double& a, const double& vn,
-                  const double& wn, const double& sv, const double& err) {
+                         const double& wn, const double& sv,
+                         const double& err) {
   double kll, kss, ans, v, w;
   w = 1.0 - wn;
   v = -vn;
@@ -202,8 +203,8 @@ inline double dtdwiener5(const double& y, const double& a, const double& vn,
 // calculate derivative of density with respect to a (in log, ans =
 // d/da(log(f))=d/da f'/f; ans*exp(ld)=f' on normal scale)
 inline double dadwiener5(const double& y, const double& a, const double& vn,
-                  const double& wn, const double& sv, const double& err,
-                  const int& normal_or_log) {
+                         const double& wn, const double& sv, const double& err,
+                         const int& normal_or_log) {
   double kll, kss, ans, v, w;
 
   double la = log(a);
@@ -318,7 +319,7 @@ inline double dadwiener5(const double& y, const double& a, const double& vn,
 // calculate derivative of density with respect to v (in log, ans =
 // d/dv(log(f))=d/dv f'/f; ans*exp(ld)=f' on normal scale)
 inline double dvdwiener5(const double& y, const double& a, const double& vn,
-                  const double& wn, const double& sv) {
+                         const double& wn, const double& sv) {
   double ans;
   if (sv != 0) {
     ans = 1 + square(sv) * y;
@@ -334,8 +335,8 @@ inline double dvdwiener5(const double& y, const double& a, const double& vn,
 // calculate derivative of density with respect to w (in log, ans =
 // d/dw(log(f))=d/dw f'/f; ans*exp(ld)=f' on normal scale)
 inline double dwdwiener5(const double& y, const double& a, const double& vn,
-                  const double& wn, const double& sv, const double& err,
-                  const int& normal_or_log) {
+                         const double& wn, const double& sv, const double& err,
+                         const int& normal_or_log) {
   double kll, kss, ans, v, w;
   double sign = -1;
   w = 1.0 - wn;
@@ -455,7 +456,7 @@ inline double dwdwiener5(const double& y, const double& a, const double& vn,
 // calculate derivative of density with respect to sv (in log, ans =
 // d/dsv(log(f))=d/dsv f'/f; ans*exp(ld)=f' on normal scale)
 inline double dsvdwiener5(const double& y, const double& a, const double& vn,
-                   const double& wn, const double& sv) {
+                          const double& wn, const double& sv) {
   double v, w;
   v = -vn;
   w = 1 - wn;
