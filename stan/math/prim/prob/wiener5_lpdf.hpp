@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_WIENER5_LPDF_HPP
-#define STAN_MATH_PRIM_FUN_WIENER5_LPDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_WIENER5_LPDF_HPP
+#define STAN_MATH_PRIM_PROB_WIENER5_LPDF_HPP
 
 #include <stan/math/prim/fun.hpp>
 
@@ -8,7 +8,7 @@ namespace math {
 namespace internal {
 
 // calculate density in log
-double dwiener5(const double& y, const double& a, const double& vn,
+inline double dwiener5(const double& y, const double& a, const double& vn,
                 const double& wn, const double& sv, const double& err) {
   double kll, kss, ans, v, w;
   w = 1.0 - wn;
@@ -92,7 +92,7 @@ double dwiener5(const double& y, const double& a, const double& vn,
 // d/dt DENSITY
 // calculate derivative of density with respect to t (in log, ans =
 // d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
-double dtdwiener5(const double& y, const double& a, const double& vn,
+inline double dtdwiener5(const double& y, const double& a, const double& vn,
                   const double& wn, const double& sv, const double& err) {
   double kll, kss, ans, v, w;
   w = 1.0 - wn;
@@ -201,7 +201,7 @@ double dtdwiener5(const double& y, const double& a, const double& vn,
 // d/da DENSITY
 // calculate derivative of density with respect to a (in log, ans =
 // d/da(log(f))=d/da f'/f; ans*exp(ld)=f' on normal scale)
-double dadwiener5(const double& y, const double& a, const double& vn,
+inline double dadwiener5(const double& y, const double& a, const double& vn,
                   const double& wn, const double& sv, const double& err,
                   const int& normal_or_log) {
   double kll, kss, ans, v, w;
@@ -317,7 +317,7 @@ double dadwiener5(const double& y, const double& a, const double& vn,
 // d/dv DENSITY
 // calculate derivative of density with respect to v (in log, ans =
 // d/dv(log(f))=d/dv f'/f; ans*exp(ld)=f' on normal scale)
-double dvdwiener5(const double& y, const double& a, const double& vn,
+inline double dvdwiener5(const double& y, const double& a, const double& vn,
                   const double& wn, const double& sv) {
   double ans;
   if (sv != 0) {
@@ -333,7 +333,7 @@ double dvdwiener5(const double& y, const double& a, const double& vn,
 // d/dw DENSITY
 // calculate derivative of density with respect to w (in log, ans =
 // d/dw(log(f))=d/dw f'/f; ans*exp(ld)=f' on normal scale)
-double dwdwiener5(const double& y, const double& a, const double& vn,
+inline double dwdwiener5(const double& y, const double& a, const double& vn,
                   const double& wn, const double& sv, const double& err,
                   const int& normal_or_log) {
   double kll, kss, ans, v, w;
@@ -454,7 +454,7 @@ double dwdwiener5(const double& y, const double& a, const double& vn,
 // d/dsv DENSITY
 // calculate derivative of density with respect to sv (in log, ans =
 // d/dsv(log(f))=d/dsv f'/f; ans*exp(ld)=f' on normal scale)
-double dsvdwiener5(const double& y, const double& a, const double& vn,
+inline double dsvdwiener5(const double& y, const double& a, const double& vn,
                    const double& wn, const double& sv) {
   double v, w;
   v = -vn;

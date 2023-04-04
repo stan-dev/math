@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_WIENER7_LPDF_HPP
-#define STAN_MATH_PRIM_FUN_WIENER7_LPDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_WIENER7_LPDF_HPP
+#define STAN_MATH_PRIM_PROB_WIENER7_LPDF_HPP
 
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
@@ -11,7 +11,7 @@ namespace internal {
 
 // calculate derivative of density of wiener5 with respect to y (version for
 // wiener7)
-double dtdwiener5_for_7(const double& y, const double& a, const double& v,
+inline double dtdwiener5_for_7(const double& y, const double& a, const double& v,
                         const double& w, const double& sv, const double& err) {
   double kll, kss, ans;
 
@@ -117,7 +117,7 @@ double dtdwiener5_for_7(const double& y, const double& a, const double& v,
 
 // integrand density (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_ddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_ddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -151,7 +151,7 @@ return_type_t<T_x, T_p> int_ddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dt (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dtddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dtddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -185,7 +185,7 @@ return_type_t<T_x, T_p> int_dtddiff(const T_x& x, const T_p& p) {
 
 // integrand d/da (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -228,7 +228,7 @@ return_type_t<T_x, T_p> int_daddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dv (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dvddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dvddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -263,7 +263,7 @@ return_type_t<T_x, T_p> int_dvddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dw (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -302,7 +302,7 @@ return_type_t<T_x, T_p> int_dwddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dsv (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dsvddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dsvddiff(const T_x& x, const T_p& p) {
   struct my_params {
     double y, a, v, w, t0, sv, sw, st0, lerr;
   };
@@ -337,7 +337,7 @@ return_type_t<T_x, T_p> int_dsvddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dsw (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dswddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dswddiff(const T_x& x, const T_p& p) {
   struct my_params2 {
     double y, a, v, w, w_lower, w_upper, t0, sv, sw, sw_mean, st0, lerr;
   };
@@ -373,7 +373,7 @@ return_type_t<T_x, T_p> int_dswddiff(const T_x& x, const T_p& p) {
 
 // integrand d/dst0 (on normal scale)
 template <typename T_x, typename T_p>
-return_type_t<T_x, T_p> int_dst0ddiff(const T_x& x, const T_p& p) {
+inline return_type_t<T_x, T_p> int_dst0ddiff(const T_x& x, const T_p& p) {
   struct my_params3 {
     double y, a, v, w, t0, t0_mean, sv, sw, st0, st0_mean, lerr;
   };
