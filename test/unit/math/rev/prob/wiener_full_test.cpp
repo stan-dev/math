@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 // CHECK THAT ALL VALID SCALAR TYPES ARE ACCEPTED
 template <typename F>
 void check_scalar_types(F& f, double value, double res, double deriv) {

@@ -157,5 +157,3 @@ TEST(mathPrimScalProbWienerFullScal, invalid_st0) {
   EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, NAN),
                std::domain_error);
 }
-
-
