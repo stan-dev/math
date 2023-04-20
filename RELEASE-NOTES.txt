@@ -1,6 +1,22 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.6.0 (20 April 2023)
+======================================================================
+
+- Updated to Eigen 3.4 (#2583)
+- operands_and_partials expanded to accept 8 parameters. (#2833)
+- Added new multidimensional integration routine `hcubature`. (#2838)
+- Added eigenvalues and eigenvectors overloads which accept matrices with complex values. (#2846)
+- Allowed Sundials to be linked to separately installed version. (#2861)
+- Fixed `is_nan` to compile under the Microsoft compiler suite. (#2870)
+- Fixed `csr_to_dense_matrix` to work in case of matrix with empty first row. (#2877)
+- Fixed a bug where `eigenvalues_sym` would return a matrix with a dynamic number of rows equal to 1, rather than a vector. (#2884)
+- Updated `eigenvalues_sym` return type for RcppEigen compatibility. (#2887)
+- Various testing improvements. (#2832, #2864, #2869, #2878, #2880)
+- Fixed an issue with building TBB on gcc 13. (#2890)
+
+======================================================================
 v4.5.0 (21 November 2022)
 ======================================================================
 
