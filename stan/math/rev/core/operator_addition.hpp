@@ -287,9 +287,9 @@ inline auto operator+(const VarMat1& a, const VarMat2& b) {
  * @param[in] y second argument
  * @return sum of arguments
  */
-inline std::complex<stan::math::var>
-operator+(const std::complex<stan::math::var>& x,
-          const std::complex<stan::math::var>& y) {
+inline std::complex<stan::math::var> operator+(
+    const std::complex<stan::math::var>& x,
+    const std::complex<stan::math::var>& y) {
   return internal::complex_add(x, y);
 }
 
@@ -301,9 +301,8 @@ operator+(const std::complex<stan::math::var>& x,
  * @param[in] y second argument
  * @return sum of arguments
  */
-inline std::complex<stan::math::var>
-operator+(const std::complex<double>& x,
-          const std::complex<stan::math::var>& y) {
+inline std::complex<stan::math::var> operator+(
+    const std::complex<double>& x, const std::complex<stan::math::var>& y) {
   return internal::complex_add(x, y);
 }
 
@@ -315,9 +314,8 @@ operator+(const std::complex<double>& x,
  * @param[in] y second argument
  * @return sum of arguments
  */
-inline std::complex<stan::math::var>
-operator+(const std::complex<stan::math::var>& x,
-          const std::complex<double>& y) {
+inline std::complex<stan::math::var> operator+(
+    const std::complex<stan::math::var>& x, const std::complex<double>& y) {
   return internal::complex_add(x, y);
 }
 

@@ -56,9 +56,9 @@ inline fvar<T> operator-(const fvar<T>& x1, double x2) {
  * @return subtraction of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator-(const std::complex<stan::math::fvar<T>>& x,
-          const std::complex<stan::math::fvar<T>>& y) {
+inline std::complex<stan::math::fvar<T>> operator-(
+    const std::complex<stan::math::fvar<T>>& x,
+    const std::complex<stan::math::fvar<T>>& y) {
   return internal::complex_subtract(x, y);
 }
 
@@ -72,9 +72,8 @@ operator-(const std::complex<stan::math::fvar<T>>& x,
  * @return subtraction of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator-(const std::complex<double>& x,
-          const std::complex<stan::math::fvar<T>>& y) {
+inline std::complex<stan::math::fvar<T>> operator-(
+    const std::complex<double>& x, const std::complex<stan::math::fvar<T>>& y) {
   return internal::complex_subtract(x, y);
 }
 
@@ -88,9 +87,8 @@ operator-(const std::complex<double>& x,
  * @return subtraction of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator-(const std::complex<stan::math::fvar<T>>& x,
-          const std::complex<double>& y) {
+inline std::complex<stan::math::fvar<T>> operator-(
+    const std::complex<stan::math::fvar<T>>& x, const std::complex<double>& y) {
   return internal::complex_subtract(x, y);
 }
 
