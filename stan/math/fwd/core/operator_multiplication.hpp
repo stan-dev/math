@@ -46,7 +46,6 @@ inline fvar<T> operator*(const fvar<T>& x, double y) {
   return fvar<T>(x.val_ * y, x.d_ * y);
 }
 
-
 /**
  * Return the product of the two complex fvar<T> arguments.
  *
@@ -56,9 +55,9 @@ inline fvar<T> operator*(const fvar<T>& x, double y) {
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator*(const std::complex<stan::math::fvar<T>>& x,
-          const std::complex<stan::math::fvar<T>>& y) {
+inline std::complex<stan::math::fvar<T>> operator*(
+    const std::complex<stan::math::fvar<T>>& x,
+    const std::complex<stan::math::fvar<T>>& y) {
   return internal::complex_multiply(x, y);
 }
 
@@ -72,9 +71,8 @@ operator*(const std::complex<stan::math::fvar<T>>& x,
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator*(const std::complex<double>& x,
-          const std::complex<stan::math::fvar<T>>& y) {
+inline std::complex<stan::math::fvar<T>> operator*(
+    const std::complex<double>& x, const std::complex<stan::math::fvar<T>>& y) {
   return internal::complex_multiply(x, y);
 }
 
@@ -88,9 +86,8 @@ operator*(const std::complex<double>& x,
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>>
-operator*(const std::complex<stan::math::fvar<T>>& x,
-          const std::complex<double>& y) {
+inline std::complex<stan::math::fvar<T>> operator*(
+    const std::complex<stan::math::fvar<T>>& x, const std::complex<double>& y) {
   return internal::complex_multiply(x, y);
 }
 
