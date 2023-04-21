@@ -3,14 +3,12 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/prim/core/operator_subtraction.hpp>
 
 namespace stan {
 namespace math {
@@ -310,45 +308,6 @@ template <typename VarMat1, typename VarMat2,
           require_any_var_matrix_t<VarMat1, VarMat2>* = nullptr>
 inline auto operator-(const VarMat1& a, const VarMat2& b) {
   return subtract(a, b);
-}
-
-/**
- * Return the difference of std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return subtraction of arguments
- */
-inline std::complex<stan::math::var> operator-(
-    const std::complex<stan::math::var>& x,
-    const std::complex<stan::math::var>& y) {
-  return internal::complex_subtract(x, y);
-}
-
-/**
- * Return the difference of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return subtraction of arguments
- */
-inline std::complex<stan::math::var> operator-(
-    const std::complex<double>& x, const std::complex<stan::math::var>& y) {
-  return internal::complex_subtract(x, y);
-}
-
-/**
- * Return the difference of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return subtraction of arguments
- */
-inline std::complex<stan::math::var> operator-(
-    const std::complex<stan::math::var>& x, const std::complex<double>& y) {
-  return internal::complex_subtract(x, y);
 }
 
 }  // namespace math

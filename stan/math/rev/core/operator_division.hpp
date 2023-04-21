@@ -256,41 +256,8 @@ inline auto operator/(const T1& dividend, const T2& divisor) {
   return divide(dividend, divisor);
 }
 
-/**
- * Return the division of std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return division of arguments
- */
 inline std::complex<var> operator/(const std::complex<var>& x1,
                                    const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-
-/**
- * Return the division of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return division of arguments
- */
-inline std::complex<var> operator/(const std::complex<double>& x1,
-                                   const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-
-/**
- * Return the division of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return division of arguments
- */
-inline std::complex<var> operator/(const std::complex<var>& x1,
-                                   const std::complex<double>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
