@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/operator_addition.hpp>
+#include <stan/math/rev/core/operator_subtraction.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/core/operator_multiplication.hpp>
