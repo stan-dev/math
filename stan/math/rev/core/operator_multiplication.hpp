@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/prim/core/operator_multiplication.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/isinf.hpp>
@@ -110,6 +111,21 @@ inline var operator*(Arith a, const var& b) {
     return b;
   }
   return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
+}
+
+inline std::complex<stan::math::var> operator*(const std::complex<stan::math::var>& x,
+                                              const std::complex<stan::math::var>& y) {
+  return internal::complex_multiply(x, y);
+}
+
+inline std::complex<stan::math::var> operator*(const std::complex<double>& x,
+                                              const std::complex<stan::math::var>& y) {
+  return internal::complex_multiply(x, y);
+}
+
+inline std::complex<stan::math::var> operator*(const std::complex<stan::math::var>& x,
+                                        const std::complex<double>& y) {
+  return internal::complex_multiply(x, y);
 }
 
 }  // namespace math

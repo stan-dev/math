@@ -222,3 +222,64 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+
+  clang-qual-non-mix:
+    name: Clang Qualification Version - non mix tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Clang qualification version
+      run: |
+        wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+        sudo apt-get update
+        sudo apt-get install clang lld
+        echo "CXX=clang++" > make/local
+
+    - name: Run non mix tests
+      run: |
+        python runTests.py -j2 test/unit/*_test.cpp
+        python runTests.py -j2 test/unit/math/*_test.cpp
+        python runTests.py -j2 test/unit/math/prim
+        python runTests.py -j2 test/unit/math/rev
+        python runTests.py -j2 test/unit/math/fwd
+        python runTests.py -j2 test/unit/math/memory
+
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
+
+  clang-qual-mix:
+    name: Clang Qualification Version - Mix tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Clang qualification version
+      run: |
+        wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+        sudo apt-get update
+        sudo apt-get install clang lld
+        echo "CXX=clang++" > make/local
+
+    - name: Run non mix tests
+      run: |
+        python runTests.py -j2 test/unit/math/mix
+
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
