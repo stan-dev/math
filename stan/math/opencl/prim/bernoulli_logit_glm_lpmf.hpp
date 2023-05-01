@@ -133,7 +133,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
         = isfinite(x_val);
   }
 
-  auto ops_partials = partials_propagator(x, alpha, beta);
+  auto ops_partials = make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x_cl>::value) {
     edge<0>(ops_partials).partials_

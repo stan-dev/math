@@ -84,7 +84,7 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
       = expressions(calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv));
 
-  auto ops_partials = partials_propagator(y_col, beta_col);
+  auto ops_partials = make_partials_propagator(y_col, beta_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

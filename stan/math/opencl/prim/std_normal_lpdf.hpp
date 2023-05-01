@@ -66,7 +66,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
 
-  auto ops_partials = partials_propagator(y_col);
+  auto ops_partials = make_partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

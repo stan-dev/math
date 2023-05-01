@@ -78,7 +78,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
                     n_bounded_expr, theta_not_nan_expr);
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = partials_propagator(theta_col);
+  auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
     edge<0>(ops_partials).partials_ = deriv_cl;

@@ -125,7 +125,7 @@ skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
     logp += N * LOG_TWO;
   }
 
-  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col, tau_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }

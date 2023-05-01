@@ -129,7 +129,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  auto ops_partials = partials_propagator(x, beta, cuts);
+  auto ops_partials = make_partials_propagator(x, beta, cuts);
   if (!is_constant_all<T_x>::value) {
     edge<0>(ops_partials).partials_
         = transpose(location_derivative_cl) * transpose(beta_val);

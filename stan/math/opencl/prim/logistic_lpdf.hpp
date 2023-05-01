@@ -60,7 +60,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
   const auto& mu_val = value_of(mu_col);
   const auto& sigma_val = value_of(sigma_col);
 
-  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
   auto check_y_finite = check_cl(function, "Random variable", y_val, "finite");
   auto y_finite = isfinite(y_val);

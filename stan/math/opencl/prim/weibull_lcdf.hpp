@@ -89,7 +89,7 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lcdf(
 
   T_partials_return lcdf = from_matrix_cl(lcdf_cl).sum();
 
-  auto ops_partials = partials_propagator(y_col, alpha_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, alpha_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

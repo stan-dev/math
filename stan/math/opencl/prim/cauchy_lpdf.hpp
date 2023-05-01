@@ -104,7 +104,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
   if (include_summand<propto>::value) {
     logp -= N * LOG_PI;
   }
-  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

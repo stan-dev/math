@@ -83,7 +83,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_cdf(
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
-  auto ops_partials = partials_propagator(y_col, mu_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
   if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl>::value) {
     auto cdf_div_sigma = elt_divide(cdf, sigma_val);
     auto y_deriv = select(cond, cdf_div_sigma,

@@ -68,7 +68,7 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
   const auto& alpha_val = value_of(alpha_col);
   const auto& beta_val = value_of(beta_col);
 
-  auto ops_partials = partials_propagator(y_col, alpha_col, beta_col);
+  auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
 
   auto check_alpha_pos_finite = check_cl(function, "First shape parameter",
                                          alpha_val, "positive finite");

@@ -99,7 +99,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
 
   T_partials_return cdf = from_matrix_cl(cdf_cl).prod();
 
-  auto ops_partials = partials_propagator(y_col, y_min_col, alpha_col);
+  auto ops_partials = make_partials_propagator(y_col, y_min_col, alpha_col);
   if (!is_constant_all<T_y_cl, T_scale_cl, T_shape_cl>::value) {
     results(y_min_deriv_cl, y_deriv_cl, alpha_deriv_cl) = expressions(
         calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv_cl * cdf),

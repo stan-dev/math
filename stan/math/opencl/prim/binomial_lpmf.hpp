@@ -107,7 +107,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
                     calc_if<need_deriv>(deriv_theta));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = partials_propagator(theta_col);
+  auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
     if (need_sums) {

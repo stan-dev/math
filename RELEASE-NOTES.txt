@@ -1,6 +1,46 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.6.0 (20 April 2023)
+======================================================================
+
+- Updated to Eigen 3.4 (#2583)
+- operands_and_partials expanded to accept 8 parameters. (#2833)
+- Added new multidimensional integration routine `hcubature`. (#2838)
+- Added eigenvalues and eigenvectors overloads which accept matrices with complex values. (#2846)
+- Allowed Sundials to be linked to separately installed version. (#2861)
+- Fixed `is_nan` to compile under the Microsoft compiler suite. (#2870)
+- Fixed `csr_to_dense_matrix` to work in case of matrix with empty first row. (#2877)
+- Fixed a bug where `eigenvalues_sym` would return a matrix with a dynamic number of rows equal to 1, rather than a vector. (#2884)
+- Updated `eigenvalues_sym` return type for RcppEigen compatibility. (#2887)
+- Various testing improvements. (#2832, #2864, #2869, #2878, #2880)
+- Fixed an issue with building TBB on gcc 13. (#2890)
+
+======================================================================
+v4.5.0 (21 November 2022)
+======================================================================
+
+ - Added the generalised hypergeometric function. (#2510)
+ - Added var<Matrix> overloads for  `pow()`, `owens_t()`, `log_inv_logit` . (#2546, #2787, #2806)
+ - Add tuple overload and cleanup code for promote_scalar. (#2706)
+ - New gradient function allows evaluated gradient to be stored into an array, enabling memory reuse when stan/math called via a FFI. (#2743)
+ - Added function for casting `double` and `std::vector<double>` types to `int` and `std::vector<int>` types(#2771)
+ - Added `hypergeometric_2F1` function. (#2792)
+ - Fix bug with vectorised `pow()` incorrectly forcing `Eigen::Matrix` return instead of `Eigen::Array`. (#2793)
+ - Exposed the `hypergeometric_3F2` function and improved its numerical stability. (#2797)
+ - Fixed incorrect return from `log_inv_logit_diff` with positive infinity first argument. (#2798)
+ - Added reverse-mode specializations for `fft2` and `inv_fft2`. (#2800)
+ - Removed the cause of the out-of-order initializer compiler warning.(#2808)
+ - Vectorized `atan2()`.(#2812)
+ - Added `complex_schur_decompose_t` and `complex_schur_decompose_u`.(#2814)
+ - Vectroized the `conj()` function. (#2817)
+ - Stan's algebraic solvers now support variadic arguments. (#2820)
+ - Fixed forward mode autodiff for FFT functions. (#2821)
+ - Added `log_sum_exp_signed` function for computing `log_sum_exp` while respecting signs of arguments and tracking the sign of the result. (#2829)
+ - `stan_print` can now print std::tuple types. (#2835)
+ - `stan::math::minus` can now accept `std::vector`. (#2840)
+
+======================================================================
 v4.4.0 (1 July 2022)
 ======================================================================
 

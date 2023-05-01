@@ -93,7 +93,7 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       calc_if<!is_constant_all<T_theta_cl, T_lambda_cl>::value>(logp_vec_expr),
       colwise_sum(logp_vec_expr));
 
-  auto ops_partials = partials_propagator(theta_col, lambda);
+  auto ops_partials = make_partials_propagator(theta_col, lambda);
   if (!is_constant_all<T_theta_cl, T_lambda_cl>::value) {
     auto derivs_expr = exp(lambda_val - colwise_broadcast(transpose(logp_vec)));
     if (!is_constant<T_lambda_cl>::value) {

@@ -122,7 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  auto ops_partials = partials_propagator(x, alpha, beta);
+  auto ops_partials = make_partials_propagator(x, alpha, beta);
   if (!is_constant_all<T_x>::value) {
     if (is_y_vector) {
       edge<0>(ops_partials).partials_

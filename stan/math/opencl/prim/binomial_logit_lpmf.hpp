@@ -82,7 +82,7 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
                     calc_if<!is_constant<T_prob_cl>::value>(alpha_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = partials_propagator(alpha_col);
+  auto ops_partials = make_partials_propagator(alpha_col);
   if (!is_constant<T_prob_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(alpha_deriv_cl);
   }

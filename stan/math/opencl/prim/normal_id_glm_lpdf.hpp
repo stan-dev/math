@@ -140,7 +140,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                     calc_if<need_log_sigma_sum>(log_sigma_sum_expr));
 
   double y_scaled_sq_sum = sum(from_matrix_cl(y_scaled_sq_sum_cl));
-  auto ops_partials = partials_propagator(y, x, alpha, beta, sigma);
+  auto ops_partials = make_partials_propagator(y, x, alpha, beta, sigma);
   double mu_derivative_sum;
   if (need_mu_derivative_sum) {
     mu_derivative_sum = sum(from_matrix_cl(mu_derivative_sum_cl));
