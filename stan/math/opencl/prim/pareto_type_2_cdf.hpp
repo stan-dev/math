@@ -105,7 +105,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_cdf(
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
-  auto ops_partials = make_partials_propagator(y_col, mu_col, lambda_col, alpha_col);
+  auto ops_partials
+      = make_partials_propagator(y_col, mu_col, lambda_col, alpha_col);
   if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>::value) {
     auto y_deriv = mu_deriv_cl * cdf;
     auto mu_deriv = -y_deriv;

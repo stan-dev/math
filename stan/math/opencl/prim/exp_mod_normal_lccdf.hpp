@@ -132,7 +132,8 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
 
   T_partials_return ccdf_log = (from_matrix_cl(ccdf_log_cl)).sum();
 
-  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
+  auto ops_partials
+      = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
