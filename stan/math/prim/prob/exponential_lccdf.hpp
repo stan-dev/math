@@ -46,24 +46,24 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     using beta_val_scalar = scalar_type_t<decltype(beta_val)>;
     using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      edge<0>(ops_partials).partials_ = T_partials_array::Constant(
+      partials<0>(ops_partials) = T_partials_array::Constant(
           math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if (is_vector<T_inv_scale>::value) {
-      edge<0>(ops_partials).partials_ = -forward_as<beta_val_array>(beta_val);
+      partials<0>(ops_partials) = -forward_as<beta_val_array>(beta_val);
     } else {
-      edge<0>(ops_partials).partials_[0] = -sum(beta_val);
+      partials<0>(ops_partials)[0] = -sum(beta_val);
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
     using y_val_scalar = scalar_type_t<decltype(y_val)>;
     using y_val_array = Eigen::Array<y_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_inv_scale>::value && !is_vector<T_y>::value) {
-      edge<1>(ops_partials).partials_ = T_partials_array::Constant(
+      partials<1>(ops_partials) = T_partials_array::Constant(
           math::size(beta), -forward_as<y_val_scalar>(y_val));
     } else if (is_vector<T_y>::value) {
-      edge<1>(ops_partials).partials_ = -forward_as<y_val_array>(y_val);
+      partials<1>(ops_partials) = -forward_as<y_val_array>(y_val);
     } else {
-      edge<1>(ops_partials).partials_[0] = -sum(y_val);
+      partials<1>(ops_partials)[0] = -sum(y_val);
     }
   }
   return ops_partials.build(ccdf_log);

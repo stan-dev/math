@@ -67,14 +67,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
                                 + !is_constant_all<T_loc>::value)
                                >= 2>(alpha_val / (y_val - mu_val + lambda_val));
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -rep_deriv;
+      partials<0>(ops_partials) = -rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_
           = rep_deriv * (y_val - mu_val) / lambda_val;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_ = std::move(rep_deriv);
+      partials<1>(ops_partials) = std::move(rep_deriv);
     }
   }
   size_t N = max_size(y, mu, lambda, alpha);
@@ -84,14 +84,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
       using Log_temp_array = Eigen::Array<Log_temp_scalar, Eigen::Dynamic, 1>;
       if (is_vector<T_y>::value || is_vector<T_loc>::value
           || is_vector<T_scale>::value) {
-        edge<3>(ops_partials).partials_ = -forward_as<Log_temp_array>(log_temp);
+        partials<3>(ops_partials) = -forward_as<Log_temp_array>(log_temp);
       } else {
-        edge<3>(ops_partials).partials_ = Log_temp_array::Constant(
+        partials<3>(ops_partials) = Log_temp_array::Constant(
             N, 1, -forward_as<Log_temp_scalar>(log_temp));
       }
     } else {
       forward_as<internal::broadcast_array<T_partials_return>>(
-          edge<3>(ops_partials).partials_)
+          partials<3>(ops_partials))
           = -log_temp * N / max_size(y, mu, lambda);
     }
   }

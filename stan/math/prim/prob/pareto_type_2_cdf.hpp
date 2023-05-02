@@ -79,18 +79,18 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
                           + !is_constant_all<T_y>::value
                       >= 2>(p1_pow_alpha / summed * alpha_val * P_div_Pn);
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = -grad_1_2;
+        partials<1>(ops_partials) = -grad_1_2;
       }
       if (!is_constant_all<T_scale>::value) {
         edge<2>(ops_partials).partials_
             = (mu_val - y_val) / lambda_val * grad_1_2;
       }
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = std::move(grad_1_2);
+        partials<0>(ops_partials) = std::move(grad_1_2);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<3>(ops_partials).partials_ = log(temp) * p1_pow_alpha * P_div_Pn;
+      partials<3>(ops_partials) = log(temp) * p1_pow_alpha * P_div_Pn;
     }
   }
   return ops_partials.build(P);

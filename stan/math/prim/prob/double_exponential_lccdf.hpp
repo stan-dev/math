@@ -87,13 +87,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n] -= rep_deriv;
+      partials<0>(ops_partials)[n] -= rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_[n] += rep_deriv;
+      partials<1>(ops_partials)[n] += rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_[n] += rep_deriv * scaled_diff;
+      partials<2>(ops_partials)[n] += rep_deriv * scaled_diff;
     }
   }
   return ops_partials.build(ccdf_log);

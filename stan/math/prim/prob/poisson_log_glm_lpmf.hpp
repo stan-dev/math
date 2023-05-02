@@ -138,7 +138,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
           = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
               theta_derivative.sum() * x_val);
     } else {
-      edge<2>(ops_partials).partials_ = x_val.transpose() * theta_derivative;
+      partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
     }
   }
   if (!is_constant_all<T_x>::value) {
@@ -153,9 +153,9 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   }
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value) {
-      edge<1>(ops_partials).partials_ = theta_derivative;
+      partials<1>(ops_partials) = theta_derivative;
     } else {
-      edge<1>(ops_partials).partials_[0] = theta_derivative_sum;
+      partials<1>(ops_partials)[0] = theta_derivative_sum;
     }
   }
   return ops_partials.build(logp);

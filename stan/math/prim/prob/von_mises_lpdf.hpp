@@ -72,10 +72,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -kappa_sin;
+      partials<0>(ops_partials) = -kappa_sin;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_ = std::move(kappa_sin);
+      partials<1>(ops_partials) = std::move(kappa_sin);
     }
   }
   if (!is_constant_all<T_scale>::value) {

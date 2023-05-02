@@ -109,14 +109,14 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   auto ops_partials = make_partials_propagator(theta_ref, alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      edge<0>(ops_partials).partials_vec_[t]
+      partials_vec<0>(ops_partials)[t]
           += (alpha_m_1.col(t) / theta_dbl.col(t)).matrix();
     }
   }
 
   if (!is_constant_all<T_prior_size>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      edge<1>(ops_partials).partials_vec_[t]
+      partials_vec<1>(ops_partials)[t]
           += (digamma(alpha_dbl.col(t).sum()) - digamma(alpha_dbl.col(t))
               + theta_log.col(t))
                  .matrix();

@@ -124,10 +124,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -deriv_y_mu;
+      partials<0>(ops_partials) = -deriv_y_mu;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<2>(ops_partials).partials_ = std::move(deriv_y_mu);
+      partials<2>(ops_partials) = std::move(deriv_y_mu);
     }
   }
   if (!is_constant_all<T_dof, T_scale>::value) {
@@ -144,7 +144,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                + rep_deriv / nu_val);
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<3>(ops_partials).partials_ = rep_deriv / sigma_val;
+      partials<3>(ops_partials) = rep_deriv / sigma_val;
     }
   }
   return ops_partials.build(logp);

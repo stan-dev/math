@@ -62,7 +62,7 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
           = y_dbl > 8.25
                 ? INFTY
                 : SQRT_TWO_OVER_SQRT_PI * exp(-scaled_y * scaled_y) / one_m_erf;
-      edge<0>(ops_partials).partials_[n] -= rep_deriv;
+      partials<0>(ops_partials)[n] -= rep_deriv;
     }
   }
 

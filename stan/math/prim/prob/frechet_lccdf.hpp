@@ -64,13 +64,13 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
 
     const T_partials_return rep_deriv = pow_n / (1.0 / exp_n - 1);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n] -= alpha_dbl / y_dbl * rep_deriv;
+      partials<0>(ops_partials)[n] -= alpha_dbl / y_dbl * rep_deriv;
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<1>(ops_partials).partials_[n] -= log(y_dbl / sigma_dbl) * rep_deriv;
+      partials<1>(ops_partials)[n] -= log(y_dbl / sigma_dbl) * rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_[n] += alpha_dbl / sigma_dbl * rep_deriv;
+      partials<2>(ops_partials)[n] += alpha_dbl / sigma_dbl * rep_deriv;
     }
   }
   return ops_partials.build(ccdf_log);

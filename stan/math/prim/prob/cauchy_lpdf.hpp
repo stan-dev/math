@@ -97,17 +97,17 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
           2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if (!is_constant_all<T_y>::value) {
         if (is_vector<T_y>::value) {
-          edge<0>(ops_partials).partials_ = -mu_deriv;
+          partials<0>(ops_partials) = -mu_deriv;
         } else {
-          edge<0>(ops_partials).partials_[0] = -sum(mu_deriv);
+          partials<0>(ops_partials)[0] = -sum(mu_deriv);
         }
       }
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = std::move(mu_deriv);
+        partials<1>(ops_partials) = std::move(mu_deriv);
       }
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_ = (y_minus_mu_squared - sigma_squared)
+      partials<2>(ops_partials) = (y_minus_mu_squared - sigma_squared)
                                         * inv_sigma
                                         / (sigma_squared + y_minus_mu_squared);
     }

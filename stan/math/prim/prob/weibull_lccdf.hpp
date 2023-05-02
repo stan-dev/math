@@ -67,13 +67,13 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
   T_partials_return ccdf_log = -sum(pow_n);
 
   if (!is_constant_all<T_y>::value) {
-    edge<0>(ops_partials).partials_ = -alpha_val / y_val * pow_n;
+    partials<0>(ops_partials) = -alpha_val / y_val * pow_n;
   }
   if (!is_constant_all<T_shape>::value) {
-    edge<1>(ops_partials).partials_ = -log(y_val / sigma_val) * pow_n;
+    partials<1>(ops_partials) = -log(y_val / sigma_val) * pow_n;
   }
   if (!is_constant_all<T_scale>::value) {
-    edge<2>(ops_partials).partials_ = alpha_val / sigma_val * pow_n;
+    partials<2>(ops_partials) = alpha_val / sigma_val * pow_n;
   }
   return ops_partials.build(ccdf_log);
 }

@@ -108,7 +108,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_[n]
+        partials<0>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -120,16 +120,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        edge<1>(ops_partials).partials_[n]
+        partials<1>(ops_partials)[n]
             -= zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        edge<2>(ops_partials).partials_[n]
+        partials<2>(ops_partials)[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<3>(ops_partials).partials_[n]
+        partials<3>(ops_partials)[n]
             -= zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
 
@@ -146,7 +146,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_[n]
+        partials<0>(ops_partials)[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -158,16 +158,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        edge<1>(ops_partials).partials_[n]
+        partials<1>(ops_partials)[n]
             -= zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        edge<2>(ops_partials).partials_[n]
+        partials<2>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<3>(ops_partials).partials_[n]
+        partials<3>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
     }

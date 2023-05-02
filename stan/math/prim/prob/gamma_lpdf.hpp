@@ -99,7 +99,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
         = to_ref_if<!is_constant_all<T_shape>::value>(log(beta_val));
     logp += sum(alpha_val * log_beta) * N / max_size(alpha, beta);
     if (!is_constant_all<T_shape>::value) {
-      edge<1>(ops_partials).partials_ = log_beta + log_y - digamma(alpha_val);
+      partials<1>(ops_partials) = log_beta + log_y - digamma(alpha_val);
     }
   }
   if (include_summand<propto, T_y, T_shape>::value) {
@@ -110,10 +110,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    edge<0>(ops_partials).partials_ = (alpha_val - 1) / y_val - beta_val;
+    partials<0>(ops_partials) = (alpha_val - 1) / y_val - beta_val;
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    edge<2>(ops_partials).partials_ = alpha_val / beta_val - y_val;
+    partials<2>(ops_partials) = alpha_val / beta_val - y_val;
   }
   return ops_partials.build(logp);
 }

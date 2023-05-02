@@ -220,9 +220,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       }
       if (!is_constant_all<T_alpha>::value) {
         if (is_vector<T_alpha>::value) {
-          edge<1>(ops_partials).partials_ = std::move(theta_derivative);
+          partials<1>(ops_partials) = std::move(theta_derivative);
         } else {
-          edge<1>(ops_partials).partials_[0] = sum(theta_derivative);
+          partials<1>(ops_partials)[0] = sum(theta_derivative);
         }
       }
     }
@@ -232,7 +232,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
               - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);
       } else {
-        edge<3>(ops_partials).partials_[0]
+        partials<3>(ops_partials)[0]
             = N_instances
               + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
                     - logsumexp_theta_logphi + digamma(y_plus_phi)

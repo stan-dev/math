@@ -87,10 +87,10 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
                         + !is_constant_all<T_y>::value
                     >= 2>(inv_beta * exp_y_m_mu_over_beta - inv_beta);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = scaled_diff;
+      partials<0>(ops_partials) = scaled_diff;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_ = -scaled_diff;
+      partials<1>(ops_partials) = -scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_

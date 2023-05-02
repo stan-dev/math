@@ -84,14 +84,14 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-    edge<0>(ops_partials).partials_ = (half_nu - 1.0) / y_val - 0.5;
+    partials<0>(ops_partials) = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {
-      edge<1>(ops_partials).partials_ = forward_as<T_partials_array>(
+      partials<1>(ops_partials) = forward_as<T_partials_array>(
           (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
     } else {
-      edge<1>(ops_partials).partials_[0]
+      partials<1>(ops_partials)[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;
     }
   }

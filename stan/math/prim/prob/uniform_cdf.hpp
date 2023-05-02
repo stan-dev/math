@@ -76,7 +76,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
             = (y_val - beta_val) * deriv_y / b_minus_a;
       }
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = std::move(deriv_y);
+        partials<0>(ops_partials) = std::move(deriv_y);
       }
     }
     if (!is_constant_all<T_high>::value) {
@@ -85,7 +85,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
         edge<2>(ops_partials).partials_
             = -rep_deriv * max_size(y, alpha, beta) / max_size(alpha, beta);
       } else {
-        edge<2>(ops_partials).partials_ = -rep_deriv;
+        partials<2>(ops_partials) = -rep_deriv;
       }
     }
   }

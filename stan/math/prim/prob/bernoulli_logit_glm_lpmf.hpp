@@ -141,7 +141,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 theta_derivative.sum() * x_val);
       } else {
-        edge<2>(ops_partials).partials_ = x_val.transpose() * theta_derivative;
+        partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
     }
     if (!is_constant_all<T_x>::value) {
@@ -155,7 +155,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       }
     }
     if (!is_constant_all<T_alpha>::value) {
-      edge<1>(ops_partials).partials_ = theta_derivative;
+      partials<1>(ops_partials) = theta_derivative;
     }
   }
   return ops_partials.build(logp);

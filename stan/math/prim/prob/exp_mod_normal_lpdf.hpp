@@ -99,10 +99,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                           && !is_constant_all<T_loc>::value
                                  > (lambda_val + deriv_logerfc * inv_sigma);
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = -deriv;
+        partials<0>(ops_partials) = -deriv;
       }
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = deriv;
+        partials<1>(ops_partials) = deriv;
       }
     }
     if (!is_constant_all<T_scale>::value) {
@@ -111,7 +111,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
             + deriv_logerfc * (lambda_val - mu_minus_y / sigma_sq);
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      edge<3>(ops_partials).partials_ = inv(lambda_val) + lambda_sigma_sq
+      partials<3>(ops_partials) = inv(lambda_val) + lambda_sigma_sq
                                         + mu_minus_y
                                         + deriv_logerfc * sigma_val;
     }

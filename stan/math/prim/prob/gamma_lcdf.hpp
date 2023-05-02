@@ -88,14 +88,14 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
       const T_partials_return d = exp(d_num - d_den);
 
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_[n] += beta_dbl * d;
+        partials<0>(ops_partials)[n] += beta_dbl * d;
       }
       if (!is_constant_all<T_inv_scale>::value) {
-        edge<2>(ops_partials).partials_[n] += y_dbl * d;
+        partials<2>(ops_partials)[n] += y_dbl * d;
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<1>(ops_partials).partials_[n]
+      partials<1>(ops_partials)[n]
           += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
     }
   }

@@ -71,10 +71,10 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
         !is_constant_all<T_y>::value && !is_constant_all<T_inv_scale>::value)>(
         exp_val / one_m_exp * cdf);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = beta_val * rep_deriv;
+      partials<0>(ops_partials) = beta_val * rep_deriv;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      edge<1>(ops_partials).partials_ = y_val * rep_deriv;
+      partials<1>(ops_partials) = y_val * rep_deriv;
     }
   }
   return ops_partials.build(cdf);

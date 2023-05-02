@@ -120,10 +120,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
         if (!is_constant_all<T_y>::value) {
-          edge<0>(ops_partials).partials_ = deriv;
+          partials<0>(ops_partials) = deriv;
         }
         if (!is_constant_all<T_loc>::value) {
-          edge<1>(ops_partials).partials_ = -deriv;
+          partials<1>(ops_partials) = -deriv;
         }
       }
       if (!is_constant_all<T_scale>::value) {

@@ -87,32 +87,32 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n]
+      partials<0>(ops_partials)[n]
           += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_[n]
+      partials<1>(ops_partials)[n]
           += -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_[n]
+      partials<2>(ops_partials)[n]
           += -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      edge<0>(ops_partials).partials_[n] *= P;
+      partials<0>(ops_partials)[n] *= P;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      edge<1>(ops_partials).partials_[n] *= P;
+      partials<1>(ops_partials)[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      edge<2>(ops_partials).partials_[n] *= P;
+      partials<2>(ops_partials)[n] *= P;
     }
   }
   return ops_partials.build(P);

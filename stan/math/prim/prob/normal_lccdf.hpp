@@ -80,13 +80,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
                 : SQRT_TWO_OVER_SQRT_PI * exp(-scaled_diff * scaled_diff)
                       / one_m_erf / sigma_dbl;
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_[n] -= rep_deriv_div_sigma;
+        partials<0>(ops_partials)[n] -= rep_deriv_div_sigma;
       }
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_[n] += rep_deriv_div_sigma;
+        partials<1>(ops_partials)[n] += rep_deriv_div_sigma;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<2>(ops_partials).partials_[n]
+        partials<2>(ops_partials)[n]
             += rep_deriv_div_sigma * scaled_diff * SQRT_TWO;
       }
     }

@@ -121,10 +121,10 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
         * diff);
     if (!is_constant_all<T_loc>::value) {
-      edge<2>(ops_partials).partials_ = -common_derivative;
+      partials<2>(ops_partials) = -common_derivative;
     }
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = std::move(common_derivative);
+      partials<0>(ops_partials) = std::move(common_derivative);
     }
   }
   if (!is_constant_all<T_s>::value) {
@@ -136,11 +136,11 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
           = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
     } else {
       if (is_vector<T_s>::value) {
-        edge<1>(ops_partials).partials_ = T_sigma_value_vector::Constant(
+        partials<1>(ops_partials) = T_sigma_value_vector::Constant(
             N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
-            edge<1>(ops_partials).partials_)
+            partials<1>(ops_partials))
             = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }

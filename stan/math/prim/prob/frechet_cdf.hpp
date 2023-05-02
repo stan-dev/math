@@ -64,29 +64,29 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
     cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n] += pow_n * alpha_dbl / y_dbl;
+      partials<0>(ops_partials)[n] += pow_n * alpha_dbl / y_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<1>(ops_partials).partials_[n] += pow_n * log(y_dbl / sigma_dbl);
+      partials<1>(ops_partials)[n] += pow_n * log(y_dbl / sigma_dbl);
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_[n] -= pow_n * alpha_dbl / sigma_dbl;
+      partials<2>(ops_partials)[n] -= pow_n * alpha_dbl / sigma_dbl;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      edge<0>(ops_partials).partials_[n] *= cdf;
+      partials<0>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      edge<1>(ops_partials).partials_[n] *= cdf;
+      partials<1>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      edge<2>(ops_partials).partials_[n] *= cdf;
+      partials<2>(ops_partials)[n] *= cdf;
     }
   }
   return ops_partials.build(cdf);

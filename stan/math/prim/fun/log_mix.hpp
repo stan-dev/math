@@ -100,10 +100,10 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   if (!is_constant_all<T_lam, T_theta>::value) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
     if (!is_constant_all<T_lam>::value) {
-      edge<1>(ops_partials).partials_ = theta_deriv.cwiseProduct(theta_dbl);
+      partials<1>(ops_partials) = theta_deriv.cwiseProduct(theta_dbl);
     }
     if (!is_constant_all<T_theta>::value) {
-      edge<0>(ops_partials).partials_ = std::move(theta_deriv);
+      partials<0>(ops_partials) = std::move(theta_deriv);
     }
   }
   return ops_partials.build(logp);
@@ -180,11 +180,11 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
   if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {
-      edge<0>(ops_partials).partials_ = derivs.rowwise().sum();
+      partials<0>(ops_partials) = derivs.rowwise().sum();
     }
     if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n) {
-        as_column_vector_or_scalar(edge<1>(ops_partials).partials_vec_[n])
+        as_column_vector_or_scalar(partials_vec<1>(ops_partials)[n])
             = derivs.col(n).cwiseProduct(theta_dbl);
       }
     }

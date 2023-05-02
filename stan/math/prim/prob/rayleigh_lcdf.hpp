@@ -58,10 +58,10 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   if (!is_constant_all<T_y, T_scale>::value) {
     auto common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
     if (!is_constant_all<T_scale>::value) {
-      edge<1>(ops_partials).partials_ = -y_val * inv_sigma * common_deriv;
+      partials<1>(ops_partials) = -y_val * inv_sigma * common_deriv;
     }
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = std::move(common_deriv);
+      partials<0>(ops_partials) = std::move(common_deriv);
     }
   }
 

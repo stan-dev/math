@@ -124,12 +124,12 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
     if (!is_constant_all<T_size1>::value) {
       const T_partials_return g
           = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
-      edge<0>(ops_partials).partials_[i] += g / Pi;
+      partials<0>(ops_partials)[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
       const T_partials_return g
           = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
-      edge<1>(ops_partials).partials_[i] += g / Pi;
+      partials<1>(ops_partials)[i] += g / Pi;
     }
   }
 

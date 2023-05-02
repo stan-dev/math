@@ -90,10 +90,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                                   && !is_constant_all<T_loc>::value)>(
           inv_sum + alpha_div_sum);
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = -deriv_1_2;
+        partials<0>(ops_partials) = -deriv_1_2;
       }
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = std::move(deriv_1_2);
+        partials<1>(ops_partials) = std::move(deriv_1_2);
       }
     }
     if (!is_constant_all<T_scale>::value) {
@@ -102,7 +102,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    edge<3>(ops_partials).partials_ = inv(alpha_val) - log1p_scaled_diff;
+    partials<3>(ops_partials) = inv(alpha_val) - log1p_scaled_diff;
   }
 
   return ops_partials.build(logp);

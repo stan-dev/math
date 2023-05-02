@@ -78,14 +78,14 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
           !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
           rep_deriv * alpha_val);
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = deriv_y_sigma / y_val;
+        partials<0>(ops_partials) = deriv_y_sigma / y_val;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<2>(ops_partials).partials_ = -deriv_y_sigma / sigma_val;
+        partials<2>(ops_partials) = -deriv_y_sigma / sigma_val;
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<1>(ops_partials).partials_ = rep_deriv * log(y_val / sigma_val);
+      partials<1>(ops_partials) = rep_deriv * log(y_val / sigma_val);
     }
   }
   return ops_partials.build(cdf_log);

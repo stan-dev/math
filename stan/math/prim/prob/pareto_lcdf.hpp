@@ -81,14 +81,14 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
                                       && !is_constant_all<T_scale>::value)>(
           -alpha_val * y_min_inv * common_deriv);
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = -common_deriv2 * exp(log_quot);
+        partials<0>(ops_partials) = -common_deriv2 * exp(log_quot);
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<1>(ops_partials).partials_ = std::move(common_deriv2);
+        partials<1>(ops_partials) = std::move(common_deriv2);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<2>(ops_partials).partials_ = -common_deriv * log_quot;
+      partials<2>(ops_partials) = -common_deriv * log_quot;
     }
   }
 

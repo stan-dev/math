@@ -52,10 +52,10 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   T_partials_return ccdf_log = -0.5 * sum(y_square_div_sigma_square);
 
   if (!is_constant_all<T_y>::value) {
-    edge<0>(ops_partials).partials_ = -y_div_sigma_square;
+    partials<0>(ops_partials) = -y_div_sigma_square;
   }
   if (!is_constant_all<T_scale>::value) {
-    edge<1>(ops_partials).partials_ = y_square_div_sigma_square * inv_sigma;
+    partials<1>(ops_partials) = y_square_div_sigma_square * inv_sigma;
   }
 
   return ops_partials.build(ccdf_log);

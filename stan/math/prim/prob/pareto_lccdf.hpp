@@ -72,7 +72,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
         !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
         alpha_val / y_min_val);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -alpha_div_y_min * exp(log_quot);
+      partials<0>(ops_partials) = -alpha_div_y_min * exp(log_quot);
     }
     if (!is_constant_all<T_scale>::value) {
       edge<1>(ops_partials).partials_
@@ -87,12 +87,12 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
         edge<2>(ops_partials).partials_
             = forward_as<Log_quot_array>(std::move(log_quot));
       } else {
-        edge<2>(ops_partials).partials_ = Log_quot_array::Constant(
+        partials<2>(ops_partials) = Log_quot_array::Constant(
             N, 1, forward_as<Log_quot_scalar>(log_quot));
       }
     } else {
       forward_as<internal::broadcast_array<T_partials_return>>(
-          edge<2>(ops_partials).partials_)
+          partials<2>(ops_partials))
           = log_quot * N / max_size(y, y_min);
     }
   }

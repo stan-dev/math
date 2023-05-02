@@ -192,10 +192,10 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         int c = y_seq[i];
         if (c != N_classes) {
-          edge<2>(ops_partials).partials_[c - 1] += d2.coeff(i);
+          partials<2>(ops_partials)[c - 1] += d2.coeff(i);
         }
         if (c != 1) {
-          edge<2>(ops_partials).partials_[c - 2] -= d1.coeff(i);
+          partials<2>(ops_partials)[c - 2] -= d1.coeff(i);
         }
       }
     }

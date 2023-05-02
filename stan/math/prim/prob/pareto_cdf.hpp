@@ -76,32 +76,32 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n]
+      partials<0>(ops_partials)[n]
           += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<1>(ops_partials).partials_[n]
+      partials<1>(ops_partials)[n]
           += -alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<2>(ops_partials).partials_[n]
+      partials<2>(ops_partials)[n]
           += -exp(alpha_dbl * log_dbl) * log_dbl / Pn;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      edge<0>(ops_partials).partials_[n] *= P;
+      partials<0>(ops_partials)[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(y_min); ++n) {
-      edge<1>(ops_partials).partials_[n] *= P;
+      partials<1>(ops_partials)[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      edge<2>(ops_partials).partials_[n] *= P;
+      partials<2>(ops_partials)[n] *= P;
     }
   }
   return ops_partials.build(P);

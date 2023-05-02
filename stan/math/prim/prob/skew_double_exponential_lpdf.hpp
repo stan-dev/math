@@ -109,14 +109,14 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -deriv;
+      partials<0>(ops_partials) = -deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_ = deriv;
+      partials<1>(ops_partials) = deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    edge<2>(ops_partials).partials_ = -inv_sigma + 2.0 * expo * inv_sigma;
+    partials<2>(ops_partials) = -inv_sigma + 2.0 * expo * inv_sigma;
   }
   if (!is_constant_all<T_skewness>::value) {
     edge<3>(ops_partials).partials_

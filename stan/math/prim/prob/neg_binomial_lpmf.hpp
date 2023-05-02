@@ -107,12 +107,12 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];
 
     if (!is_constant_all<T_shape>::value) {
-      edge<0>(ops_partials).partials_[i] += digamma(alpha_dbl + n_vec[i])
+      partials<0>(ops_partials)[i] += digamma(alpha_dbl + n_vec[i])
                                             - digamma_alpha[i]
                                             - log1p_inv_beta[i];
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      edge<1>(ops_partials).partials_[i]
+      partials<1>(ops_partials)[i]
           += lambda_m_alpha_over_1p_beta[i] - n_vec[i] / (beta_dbl + 1.0);
     }
   }

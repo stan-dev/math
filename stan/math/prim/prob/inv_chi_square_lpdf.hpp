@@ -89,7 +89,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     const auto& inv_y = to_ref_if<!is_constant_all<T_y>::value>(inv(y_val));
     logp -= 0.5 * sum(inv_y) * N / math::size(y);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = (0.5 * inv_y - half_nu - 1.0) * inv_y;
+      partials<0>(ops_partials) = (0.5 * inv_y - half_nu - 1.0) * inv_y;
     }
   }
 

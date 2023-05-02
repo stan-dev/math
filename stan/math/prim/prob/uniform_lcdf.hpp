@@ -67,9 +67,9 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   if (!is_constant_all<T_y>::value) {
     if (!is_vector<T_y>::value && is_vector<T_high>::value
         && !is_vector<T_low>::value) {
-      edge<0>(ops_partials).partials_ = math::size(beta) * inv(y_minus_alpha);
+      partials<0>(ops_partials) = math::size(beta) * inv(y_minus_alpha);
     } else {
-      edge<0>(ops_partials).partials_ = inv(y_minus_alpha);
+      partials<0>(ops_partials) = inv(y_minus_alpha);
     }
   }
   if (!is_constant_all<T_low>::value) {
@@ -79,9 +79,9 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   if (!is_constant_all<T_high>::value) {
     if (is_vector<T_y>::value && !is_vector<T_low>::value
         && !is_vector<T_high>::value) {
-      edge<2>(ops_partials).partials_ = inv(-b_minus_a) * math::size(y);
+      partials<2>(ops_partials) = inv(-b_minus_a) * math::size(y);
     } else {
-      edge<2>(ops_partials).partials_ = inv(-b_minus_a);
+      partials<2>(ops_partials) = inv(-b_minus_a);
     }
   }
   return ops_partials.build(cdf_log);

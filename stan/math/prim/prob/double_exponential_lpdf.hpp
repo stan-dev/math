@@ -92,14 +92,14 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_ = -rep_deriv;
+      partials<0>(ops_partials) = -rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_ = rep_deriv;
+      partials<1>(ops_partials) = rep_deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    edge<2>(ops_partials).partials_ = inv_sigma * (scaled_diff - 1);
+    partials<2>(ops_partials) = inv_sigma * (scaled_diff - 1);
   }
 
   return ops_partials.build(logp);

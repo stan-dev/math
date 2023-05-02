@@ -120,11 +120,11 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
       grad_F32(dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
     }
     if (!is_constant_all<T_size1>::value) {
-      edge<0>(ops_partials).partials_[i]
+      partials<0>(ops_partials)[i]
           += digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F;
     }
     if (!is_constant_all<T_size2>::value) {
-      edge<1>(ops_partials).partials_[i]
+      partials<1>(ops_partials)[i]
           += digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F;
     }
   }

@@ -84,13 +84,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
           (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
           * exp_m_scaled_diff_square / (sigma_val * cdf_log_));
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = -rep_deriv;
+        partials<1>(ops_partials) = -rep_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
-        edge<2>(ops_partials).partials_ = -rep_deriv * diff;
+        partials<2>(ops_partials) = -rep_deriv * diff;
       }
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = std::move(rep_deriv);
+        partials<0>(ops_partials) = std::move(rep_deriv);
       }
     }
     if (!is_constant_all<T_shape>::value) {

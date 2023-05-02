@@ -116,37 +116,37 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     cdf *= cdfn;
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[i] += rep_deriv;
+      partials<0>(ops_partials)[i] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      edge<1>(ops_partials).partials_[i] -= rep_deriv;
+      partials<1>(ops_partials)[i] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_[i] += sig_deriv;
+      partials<2>(ops_partials)[i] += sig_deriv;
     }
     if (!is_constant_all<T_skewness>::value) {
-      edge<3>(ops_partials).partials_[i] += skew_deriv;
+      partials<3>(ops_partials)[i] += skew_deriv;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      edge<0>(ops_partials).partials_[n] *= cdf;
+      partials<0>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      edge<1>(ops_partials).partials_[n] *= cdf;
+      partials<1>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      edge<2>(ops_partials).partials_[n] *= cdf;
+      partials<2>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_skewness>::value) {
     for (size_t n = 0; n < stan::math::size(tau); ++n) {
-      edge<3>(ops_partials).partials_[n] *= cdf;
+      partials<3>(ops_partials)[n] *= cdf;
     }
   }
 

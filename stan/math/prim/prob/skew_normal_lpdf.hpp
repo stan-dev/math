@@ -95,10 +95,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                                     && !is_constant_all<T_loc>::value)>(
           (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
       if (!is_constant_all<T_y>::value) {
-        edge<0>(ops_partials).partials_ = -deriv_y_loc;
+        partials<0>(ops_partials) = -deriv_y_loc;
       }
       if (!is_constant_all<T_loc>::value) {
-        edge<1>(ops_partials).partials_ = std::move(deriv_y_loc);
+        partials<1>(ops_partials) = std::move(deriv_y_loc);
       }
     }
     if (!is_constant_all<T_scale>::value) {
@@ -109,7 +109,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
             * inv_sigma;
     }
     if (!is_constant_all<T_shape>::value) {
-      edge<3>(ops_partials).partials_ = deriv_logerf * y_minus_mu_over_sigma;
+      partials<3>(ops_partials) = deriv_logerf * y_minus_mu_over_sigma;
     }
   }
   return ops_partials.build(logp);

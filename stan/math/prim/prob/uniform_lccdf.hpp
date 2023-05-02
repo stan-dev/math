@@ -68,17 +68,17 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
   T_partials_return ccdf_log = sum(log(ccdf_log_n));
 
   if (!is_constant_all<T_y>::value) {
-    edge<0>(ops_partials).partials_ = inv(-b_minus_a * ccdf_log_n);
+    partials<0>(ops_partials) = inv(-b_minus_a * ccdf_log_n);
   }
   if (!is_constant_all<T_low, T_high>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_low>::value
                                        && !is_constant_all<T_high>::value)>(
         inv(b_minus_a * b_minus_a * ccdf_log_n));
     if (!is_constant_all<T_low>::value) {
-      edge<1>(ops_partials).partials_ = (beta_val - y_val) * rep_deriv;
+      partials<1>(ops_partials) = (beta_val - y_val) * rep_deriv;
     }
     if (!is_constant_all<T_high>::value) {
-      edge<2>(ops_partials).partials_ = (y_val - alpha_val) * rep_deriv;
+      partials<2>(ops_partials) = (y_val - alpha_val) * rep_deriv;
     }
   }
   return ops_partials.build(ccdf_log);
