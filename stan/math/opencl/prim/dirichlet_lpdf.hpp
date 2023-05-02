@@ -273,8 +273,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
           = colwise_broadcast(tmp_cl) + rowwise_sum(alpha_deriv_cl);
     } else {
       matrix_cl<double> tmp_cl = digamma(alpha_csum_cl);
-      partials<1>(ops_partials)
-          = colwise_broadcast(tmp_cl) + alpha_deriv_cl;
+      partials<1>(ops_partials) = colwise_broadcast(tmp_cl) + alpha_deriv_cl;
     }
   }
   return ops_partials.build(lp);

@@ -133,8 +133,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
     }
   }
   if (!is_constant_all<T_covar_cl>::value) {
-    partials<2>(ops_partials)
-        = scaled_diff * half - N_cases * transpose(inv_L);
+    partials<2>(ops_partials) = scaled_diff * half - N_cases * transpose(inv_L);
   }
 
   return ops_partials.build(logp);
