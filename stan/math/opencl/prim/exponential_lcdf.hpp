@@ -79,10 +79,10 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
   auto ops_partials = make_partials_propagator(y_col, beta_col);
 
   if (!is_constant<T_y_cl>::value) {
-    edge<0>(ops_partials).partials_ = std::move(y_deriv);
+    partials<0>(ops_partials) = std::move(y_deriv);
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(beta_deriv);
+    partials<1>(ops_partials) = std::move(beta_deriv);
   }
   return ops_partials.build(lcdf);
 }

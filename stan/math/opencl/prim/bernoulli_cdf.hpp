@@ -71,7 +71,7 @@ return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
   auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
-    edge<0>(ops_partials).partials_ = elt_divide(-P, Pi_cl);
+    partials<0>(ops_partials) = elt_divide(-P, Pi_cl);
   }
 
   return ops_partials.build(P);

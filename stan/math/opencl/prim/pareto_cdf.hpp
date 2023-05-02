@@ -107,13 +107,13 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
         calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_cl * cdf));
 
     if (!is_constant<T_y_cl>::value) {
-      edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+      partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
     if (!is_constant<T_scale_cl>::value) {
-      edge<1>(ops_partials).partials_ = std::move(y_min_deriv_cl);
+      partials<1>(ops_partials) = std::move(y_min_deriv_cl);
     }
     if (!is_constant<T_shape_cl>::value) {
-      edge<2>(ops_partials).partials_ = std::move(alpha_deriv_cl);
+      partials<2>(ops_partials) = std::move(alpha_deriv_cl);
     }
   }
   return ops_partials.build(cdf);

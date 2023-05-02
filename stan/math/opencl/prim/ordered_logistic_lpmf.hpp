@@ -145,13 +145,13 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   auto ops_partials = make_partials_propagator(lambda, cuts);
 
   if (!is_constant_all<T_loc_cl>::value) {
-    edge<0>(ops_partials).partials_ = lambda_derivative_cl;
+    partials<0>(ops_partials) = lambda_derivative_cl;
   }
   if (!is_constant_all<T_cuts_cl>::value) {
     if (need_broadcasting) {
-      edge<1>(ops_partials).partials_ = rowwise_sum(cuts_derivative_cl);
+      partials<1>(ops_partials) = rowwise_sum(cuts_derivative_cl);
     } else {
-      edge<1>(ops_partials).partials_ = std::move(cuts_derivative_cl);
+      partials<1>(ops_partials) = std::move(cuts_derivative_cl);
     }
   }
   return ops_partials.build(logp);

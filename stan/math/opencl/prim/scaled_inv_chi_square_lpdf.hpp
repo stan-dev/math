@@ -129,13 +129,13 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
   auto ops_partials = make_partials_propagator(y_col, nu_col, s_col);
 
   if (!is_constant<T_y_cl>::value) {
-    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_dof_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(nu_deriv_cl);
+    partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    edge<2>(ops_partials).partials_ = std::move(s_deriv_cl);
+    partials<2>(ops_partials) = std::move(s_deriv_cl);
   }
   return ops_partials.build(logp);
 }

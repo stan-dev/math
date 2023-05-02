@@ -74,7 +74,7 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
                 std::decay_t<T>,
                 std::decay_t<ops_partials_edge<
                     ViewElt, Op, require_st_arithmetic<Op>>>>* = nullptr>
-  explicit ops_partials_edge(T&& /* op */) noexcept {}
+  constexpr explicit ops_partials_edge(T&& /* op */) noexcept {}
 
   /**
    * Get the operand for the edge. For doubles this is a compile time

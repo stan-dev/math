@@ -75,7 +75,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     logp = sum(from_matrix_cl(logp_cl));
 
     if (!is_constant_all<T_prob_cl>::value) {
-      edge<0>(ops_partials).partials_ = deriv_cl;
+      partials<0>(ops_partials) = deriv_cl;
     }
   } else {
     auto n_sum_expr = rowwise_sum(forward_as<matrix_cl<int>>(n));
@@ -96,7 +96,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     }
     if (!is_constant_all<T_prob_cl>::value) {
       double& edge1_partial = forward_as<internal::broadcast_array<double>>(
-          edge<0>(ops_partials).partials_)[0];
+          partials<0>(ops_partials))[0];
       if (n_sum == N) {
         edge1_partial += N / theta_val_scal;
       } else if (n_sum == 0) {

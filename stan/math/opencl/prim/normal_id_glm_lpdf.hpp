@@ -147,23 +147,23 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   }
   if (!is_constant<T_y_cl>::value) {
     if (is_y_vector) {
-      edge<0>(ops_partials).partials_ = -mu_derivative_cl;
+      partials<0>(ops_partials) = -mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          edge<0>(ops_partials).partials_)[0]
+          partials<0>(ops_partials))[0]
           = -mu_derivative_sum;
     }
   }
   if (!is_constant<T_x_cl>::value) {
-    edge<1>(ops_partials).partials_
+    partials<1>(ops_partials)
         = transpose(beta_val * transpose(mu_derivative_cl));
   }
   if (!is_constant<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      edge<2>(ops_partials).partials_ = mu_derivative_cl;
+      partials<2>(ops_partials) = mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          edge<2>(ops_partials).partials_)[0]
+          partials<2>(ops_partials))[0]
           = mu_derivative_sum;
     }
   }
@@ -173,7 +173,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
-    edge<3>(ops_partials).partials_
+    partials<3>(ops_partials)
         = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
                             edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
@@ -183,7 +183,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     }
   }
   if (!is_constant<T_sigma_cl>::value) {
-    edge<4>(ops_partials).partials_ = sigma_derivative_cl;
+    partials<4>(ops_partials) = sigma_derivative_cl;
   }
 
   if (!std::isfinite(y_scaled_sq_sum)) {

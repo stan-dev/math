@@ -112,13 +112,13 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, kappa_col);
   if (!is_constant<T_y_cl>::value) {
-    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
+    partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_prec_cl>::value) {
-    edge<2>(ops_partials).partials_ = std::move(kappa_deriv_cl);
+    partials<2>(ops_partials) = std::move(kappa_deriv_cl);
   }
 
   return ops_partials.build(logp);

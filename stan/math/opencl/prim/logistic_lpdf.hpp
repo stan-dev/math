@@ -108,13 +108,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant<T_y_cl>::value) {
-    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
+    partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    edge<2>(ops_partials).partials_ = std::move(sigma_deriv_cl);
+    partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
 
   return ops_partials.build(logp);

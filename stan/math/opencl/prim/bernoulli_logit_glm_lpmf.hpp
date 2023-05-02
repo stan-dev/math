@@ -136,15 +136,15 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x_cl>::value) {
-    edge<0>(ops_partials).partials_
+    partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
   if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      edge<1>(ops_partials).partials_ = theta_derivative_cl;
+      partials<1>(ops_partials) = theta_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          edge<1>(ops_partials).partials_)[0]
+          partials<1>(ops_partials))[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
@@ -154,7 +154,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    edge<2>(ops_partials).partials_
+    partials<2>(ops_partials)
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {

@@ -87,7 +87,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant_all<T_rate_cl>::value) {
-    edge<0>(ops_partials).partials_ = deriv_cl;
+    partials<0>(ops_partials) = deriv_cl;
   }
 
   return ops_partials.build(logp);

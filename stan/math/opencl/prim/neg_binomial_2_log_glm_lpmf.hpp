@@ -181,7 +181,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
   if (!is_constant<T_x_cl>::value) {
-    edge<0>(ops_partials).partials_
+    partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
   if (!is_constant_all<T_beta_cl>::value) {
@@ -190,7 +190,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    edge<2>(ops_partials).partials_
+    partials<2>(ops_partials)
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
@@ -201,19 +201,19 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   }
   if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      edge<1>(ops_partials).partials_ = std::move(theta_derivative_cl);
+      partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
-          edge<1>(ops_partials).partials_)[0]
+          partials<1>(ops_partials))[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_phi_cl>::value) {
     if (is_phi_vector) {
-      edge<3>(ops_partials).partials_ = std::move(phi_derivative_cl);
+      partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
-          edge<3>(ops_partials).partials_)[0]
+          partials<3>(ops_partials))[0]
           = sum(from_matrix_cl(phi_derivative_cl));
     }
   }

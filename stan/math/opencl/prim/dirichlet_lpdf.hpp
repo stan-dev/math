@@ -260,20 +260,20 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
 
   if (!is_constant<T_prob_cl>::value) {
     if (theta.cols() < alpha.cols()) {
-      edge<0>(ops_partials).partials_ = rowwise_sum(theta_deriv_cl);
+      partials<0>(ops_partials) = rowwise_sum(theta_deriv_cl);
     } else {
-      edge<0>(ops_partials).partials_ = std::move(theta_deriv_cl);
+      partials<0>(ops_partials) = std::move(theta_deriv_cl);
     }
   }
   if (!is_constant<T_prior_size_cl>::value) {
     if (theta.cols() > alpha.cols()) {
       matrix_cl<double> tmp_cl
           = digamma(alpha_csum_cl) * static_cast<double>(theta.cols());
-      edge<1>(ops_partials).partials_
+      partials<1>(ops_partials)
           = colwise_broadcast(tmp_cl) + rowwise_sum(alpha_deriv_cl);
     } else {
       matrix_cl<double> tmp_cl = digamma(alpha_csum_cl);
-      edge<1>(ops_partials).partials_
+      partials<1>(ops_partials)
           = colwise_broadcast(tmp_cl) + alpha_deriv_cl;
     }
   }

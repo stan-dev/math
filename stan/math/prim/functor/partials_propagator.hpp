@@ -86,6 +86,18 @@ inline constexpr auto& edge(
 };
 
 /**
+ * Access the partials for an edge of an `partials_propagator`
+ * @tparam I The index of the edge to access
+ * @tparam Types The types inside of the operands and partials.
+ * @param x An `partials_propagator` type whose edge will be accessed.
+ */
+template <std::size_t I, class... Types>
+inline constexpr auto& partials(
+    internal::partials_propagator<Types...>& x) noexcept {
+  return std::get<I>(x.edges_).partials_;
+};
+
+/**
  * Construct an `partials_propagator`.
  * @tparam Ops The type of the operands used in the edges of the
  * `partials_propagator`.

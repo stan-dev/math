@@ -120,20 +120,20 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
 
   if (!is_constant_all<T_y_cl>::value) {
     if (y_val.cols() == 1) {
-      edge<0>(ops_partials).partials_ = -rowwise_sum(scaled_diff);
+      partials<0>(ops_partials) = -rowwise_sum(scaled_diff);
     } else {
-      edge<0>(ops_partials).partials_ = -scaled_diff;
+      partials<0>(ops_partials) = -scaled_diff;
     }
   }
   if (!is_constant_all<T_loc_cl>::value) {
     if (mu_val.cols() == 1) {
-      edge<1>(ops_partials).partials_ = rowwise_sum(scaled_diff);
+      partials<1>(ops_partials) = rowwise_sum(scaled_diff);
     } else {
-      edge<1>(ops_partials).partials_ = scaled_diff;
+      partials<1>(ops_partials) = scaled_diff;
     }
   }
   if (!is_constant_all<T_covar_cl>::value) {
-    edge<2>(ops_partials).partials_
+    partials<2>(ops_partials)
         = scaled_diff * half - N_cases * transpose(inv_L);
   }
 
