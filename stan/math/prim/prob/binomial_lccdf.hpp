@@ -96,9 +96,9 @@ return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
 
     if (!is_constant_all<T_prob>::value) {
       const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
-      partials<0>(ops_partials)[i]
-          += pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-             / denom;
+      partials<0>(ops_partials)[i] += pow(theta_dbl, n_dbl)
+                                      * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
+                                      / denom;
     }
   }
 

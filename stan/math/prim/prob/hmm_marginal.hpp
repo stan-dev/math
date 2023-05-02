@@ -170,8 +170,8 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
 
       if (!is_constant_all<T_rho>::value) {
         partials<2>(ops_partials) = grad_corr_boundary
-                                          * C.cwiseProduct(omegas.col(0))
-                                          / unnormed_marginal;
+                                    * C.cwiseProduct(omegas.col(0))
+                                    / unnormed_marginal;
       }
     }
   }

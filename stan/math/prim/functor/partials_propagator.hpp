@@ -109,7 +109,6 @@ inline constexpr auto& partials_vec(
   return std::get<I>(x.edges_).partials_vec_;
 };
 
-
 /**
  * Construct an `partials_propagator`.
  * @tparam Ops The type of the operands used in the edges of the

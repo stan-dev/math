@@ -108,8 +108,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
 
     if (!is_constant_all<T_shape>::value) {
       partials<0>(ops_partials)[i] += digamma(alpha_dbl + n_vec[i])
-                                            - digamma_alpha[i]
-                                            - log1p_inv_beta[i];
+                                      - digamma_alpha[i] - log1p_inv_beta[i];
     }
     if (!is_constant_all<T_inv_scale>::value) {
       partials<1>(ops_partials)[i]

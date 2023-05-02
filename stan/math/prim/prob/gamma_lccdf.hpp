@@ -91,9 +91,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[n]
-          -= beta_dbl * exp(-beta_dbl * y_dbl)
-             * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
+      partials<0>(ops_partials)[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
+                                      * pow(beta_dbl * y_dbl, alpha_dbl - 1)
+                                      / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
       partials<1>(ops_partials)[n]
@@ -102,9 +102,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
              / Pn;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      partials<2>(ops_partials)[n]
-          -= y_dbl * exp(-beta_dbl * y_dbl)
-             * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
+      partials<2>(ops_partials)[n] -= y_dbl * exp(-beta_dbl * y_dbl)
+                                      * pow(beta_dbl * y_dbl, alpha_dbl - 1)
+                                      / tgamma(alpha_dbl) / Pn;
     }
   }
   return ops_partials.build(P);

@@ -221,8 +221,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
         partials<1>(ops_partials)[n] -= dncdf_log / sigma_sqrt2;
       }
       if (!is_constant_all<T_scale>::value) {
-        partials<2>(ops_partials)[n]
-            -= dncdf_log * scaled_diff / sigma_dbl;
+        partials<2>(ops_partials)[n] -= dncdf_log * scaled_diff / sigma_dbl;
       }
     }
   }

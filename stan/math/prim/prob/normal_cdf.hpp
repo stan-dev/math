@@ -97,8 +97,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
         partials<1>(ops_partials)[n] -= rep_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
-        partials<2>(ops_partials)[n]
-            -= rep_deriv * scaled_diff * SQRT_TWO;
+        partials<2>(ops_partials)[n] -= rep_deriv * scaled_diff * SQRT_TWO;
       }
     }
   }

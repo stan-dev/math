@@ -84,8 +84,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
           += -alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      partials<2>(ops_partials)[n]
-          += -exp(alpha_dbl * log_dbl) * log_dbl / Pn;
+      partials<2>(ops_partials)[n] += -exp(alpha_dbl * log_dbl) * log_dbl / Pn;
     }
   }
 

@@ -116,8 +116,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
     }
     if (!is_constant_all<T_inv_scale>::value) {
       partials<1>(ops_partials)[i] += d_dbl * pow(1 - p_dbl, n_dbl)
-                                            * pow(p_dbl, alpha_dbl - 1)
-                                            / (beta_func * Pi);
+                                      * pow(p_dbl, alpha_dbl - 1)
+                                      / (beta_func * Pi);
     }
   }
 

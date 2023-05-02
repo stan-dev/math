@@ -159,8 +159,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       partials<2>(ops_partials) -= size_vec * inv_L_val.transpose();
 
       for (size_t i = 0; i < size_vec; i++) {
-        partials_vec<2>(ops_partials)[i]
-            += scaled_diff.col(i) * half.row(i);
+        partials_vec<2>(ops_partials)[i] += scaled_diff.col(i) * half.row(i);
       }
     }
 

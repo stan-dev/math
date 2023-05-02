@@ -115,9 +115,8 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
         = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
   if (!is_constant_all<T_lambda2>::value) {
-    partials<2>(ops_partials)[0]
-        = one_m_t_prod_exp_lam2_m_lam1
-          * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
+    partials<2>(ops_partials)[0] = one_m_t_prod_exp_lam2_m_lam1
+                                   * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
 
   return ops_partials.build(log_mix_function_value);

@@ -107,8 +107,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[n] += pow(1 - y_dbl, beta_dbl - 1)
-                                            * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                            / betafunc_dbl;
+                                      * pow(y_dbl, alpha_dbl - 1) * inv_Pn
+                                      / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;

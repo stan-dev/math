@@ -99,10 +99,10 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[n]
-          -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
-             * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
-             / Pn;
+      partials<0>(ops_partials)[n] -= 0.5 * y_inv_dbl * y_inv_dbl
+                                      * exp(-0.5 * y_inv_dbl)
+                                      * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1)
+                                      / tgamma(0.5 * nu_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
       partials<1>(ops_partials)[n]
