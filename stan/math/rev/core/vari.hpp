@@ -702,6 +702,21 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
+  template <typename S, require_assignable_t<T, S>* = nullptr>
+  explicit vari_value(const S& x, const S& /* y */)
+      : val_(x),
+        adj_((RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.cols()
+                 : x.rows(),
+             (RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.rows()
+                 : x.cols()) {
+    adj_.setZero();
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
   /**
    * Construct a dense Eigen variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari

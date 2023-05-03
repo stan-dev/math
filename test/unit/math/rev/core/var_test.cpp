@@ -677,6 +677,36 @@ TEST_F(AgradRev, var_matrix_view_row_plain_assignment) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
+TEST_F(AgradRev, var_matrix_empty_assign) {
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  stan::math::var_value<Eigen::MatrixXd> A_v(A);
+  stan::math::var_value<Eigen::MatrixXd> B_v;
+  B_v = A_v.block(0, 0, 3, 3);
+  stan::math::var b_v(0);
+  for (int i = 0; i < 3; ++i) {
+    b_v += stan::math::sum(B_v.col(i));
+  }
+  stan::math::var_value<Eigen::MatrixXd> C_v;
+  C_v = A_v.block(1, 1, 2, 2);
+  for (int i = 0; i < 2; ++i) {
+    b_v += stan::math::sum(C_v.col(i));
+  }
+  b_v.grad();
+  Eigen::MatrixXd deriv(4, 4);
+  deriv << 1, 1, 1, 0, 1, 2, 2, 0, 1, 2, 2, 0, 0, 0, 0, 0;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+}
+
+TEST_F(AgradRev, var_matrix_fixed_size_assignments) {
+  Eigen::Matrix<double, 4, 4> A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  stan::math::var_value<Eigen::MatrixXd> A_v(A);
+  stan::math::var_value<Eigen::Matrix<double, 4, 4>> B_v(A_v);
+  stan::math::var_value<Eigen::Matrix<double, 4, 4>> C_v(A_v);
+  stan::math::var_value<Eigen::Matrix<double, 3, 3>> D_v = A_v.block(0, 0, 3, 3);
+}
+
 TEST_F(AgradRev, var_matrix_array) {
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;

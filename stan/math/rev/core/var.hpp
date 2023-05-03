@@ -372,8 +372,26 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return this
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr,
-            require_all_plain_type_t<T, S>* = nullptr>
+            require_all_plain_type_t<T, S>* = nullptr,
+            require_assignable_t<vari_type*, typename var_value<S>::vari_type*>* = nullptr>
   var_value(const var_value<S>& other) : vi_(other.vi_) {}
+
+  /**
+   * Copy constructor for var_val.
+   * This constructor is only valid when `vari_type`s are not the same.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, require_assignable_t<value_type, S>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr,
+            require_not_assignable_t<vari_type*, typename var_value<S>::vari_type*>* = nullptr>
+  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+          other_vi->adj_ += this_vi->adj_;
+        });
+  }
 
   /**
    * Construct a `var_value` with a plain type
@@ -385,7 +403,28 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
             require_not_plain_type_t<S>* = nullptr,
-            require_plain_type_t<T_>* = nullptr>
+            require_plain_type_t<T_>* = nullptr,
+            require_assignable_t<vari_type*, typename var_value<S>::vari_type*>* = nullptr>
+  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+          other_vi->adj_ += this_vi->adj_;
+        });
+  }
+
+  /**
+   * Construct a `var_value` with a plain type
+   *  from another `var_value` containing an expression.
+   * This constructor is only valid when `vari_type`s are not the same.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
+            require_not_plain_type_t<S>* = nullptr,
+            require_plain_type_t<T_>* = nullptr,
+            require_not_assignable_t<vari_type*, typename var_value<S>::vari_type*>* = nullptr>
   var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_]() mutable {
@@ -1040,26 +1079,66 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
-            require_any_not_plain_type_t<T_, S>* = nullptr>
+            require_any_not_plain_type_t<T_, S>* = nullptr,
+            require_plain_type_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    arena_t<plain_type_t<T>> prev_val = vi_->val_;
-    vi_->val_ = other.val();
-    // no need to change any adjoints - these are just zeros before the reverse
-    // pass
+    if (vi_ == nullptr) {
+      vi_ = new vari_type(other.vi_->val_, other.vi_->adj_);
+      reverse_pass_callback(
+          [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+            other_vi->adj_ += this_vi->adj_;
+          });
+      return *this;
+    } else {
+      arena_t<plain_type_t<T>> prev_val = vi_->val_;
+      vi_->val_ = other.val();
+      // no need to change any adjoints - these are just zeros before the reverse
+      // pass
 
-    reverse_pass_callback(
-        [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
-          this_vi->val_ = prev_val;
+      reverse_pass_callback(
+          [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
+            this_vi->val_ = prev_val;
 
-          // we have no way of detecting aliasing between this->vi_->adj_ and
-          // other.vi_->adj_, so we must copy adjoint before reseting to zero
+            // we have no way of detecting aliasing between this->vi_->adj_ and
+            // other.vi_->adj_, so we must copy adjoint before reseting to zero
 
-          // we can reuse prev_val instead of allocating a new matrix
-          prev_val = this_vi->adj_;
-          this_vi->adj_.setZero();
-          other_vi->adj_ += prev_val;
-        });
-    return *this;
+            // we can reuse prev_val instead of allocating a new matrix
+            prev_val = this_vi->adj_;
+            this_vi->adj_.setZero();
+            other_vi->adj_ += prev_val;
+          });
+      return *this;
+    }
+  }
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
+            require_any_not_plain_type_t<T_, S>* = nullptr,
+            require_not_plain_type_t<T_>* = nullptr>
+  inline var_value<T>& operator=(const var_value<S>& other) {
+    if (vi_ == nullptr) {
+      throw std::invalid_argument(
+          "Cannot assign a var_value containing a non-plain type to an "
+          "uninitialized var_value.");
+    } else {
+      arena_t<plain_type_t<T>> prev_val = vi_->val_;
+      vi_->val_ = other.val();
+      // no need to change any adjoints - these are just zeros before the reverse
+      // pass
+
+      reverse_pass_callback(
+          [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
+            this_vi->val_ = prev_val;
+
+            // we have no way of detecting aliasing between this->vi_->adj_ and
+            // other.vi_->adj_, so we must copy adjoint before reseting to zero
+
+            // we can reuse prev_val instead of allocating a new matrix
+            prev_val = this_vi->adj_;
+            this_vi->adj_.setZero();
+            other_vi->adj_ += prev_val;
+          });
+      return *this;
+    }
   }
 
   /**
