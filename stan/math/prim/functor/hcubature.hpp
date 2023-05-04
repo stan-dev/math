@@ -189,23 +189,30 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
  * @param pars parameters for the integrand
  * @return numeric integral of the integrand and error
  */
-template <typename F, typename T_pars>
+template <typename F, typename ParsTupleT>
 std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
-                                         const double& b, T_pars& pars) {
+                                         const double& b, ParsTupleT& pars_tuple) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
   c[0] = 0.5 * (a + b);
   double delta = 0.5 * (b - a);
-  double f0 = integrand(c, pars);
+  double f0 = math::apply([&](auto&&... args) {
+                            return integrand(c, args...);
+                          }, pars_tuple);
+
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
   for (std::size_t i = 0; i != 7; i++) {
     double deltax = delta * xd7[i];
     cp[0] = c[0] + deltax;
     cm[0] = c[0] - deltax;
-    double fx = integrand(cp, pars);
-    double temp = integrand(cm, pars);
+    double fx = math::apply([&](auto&&... args) {
+                            return integrand(cp, args...);
+                          }, pars_tuple);
+    double temp = math::apply([&](auto&&... args) {
+                            return integrand(cm, args...);
+                          }, pars_tuple);
     fx += temp;
     I += fx * wd7[i];
     if (i % 2 == 1) {
@@ -270,11 +277,11 @@ inline void make_GenzMalik(const int& dim,
  * @return numeric integral of the integrand, error, and suggested coordinate to
  * subdivide next
  */
-template <typename F, typename T_pars>
+template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
     const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
     std::vector<double>& w, std::vector<double>& wd, const int& dim,
-    const std::vector<double>& a, const std::vector<double>& b, T_pars& pars) {
+    const std::vector<double>& a, const std::vector<double>& b, ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim);
 
@@ -294,7 +301,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
     return std::make_tuple(0.0, 0.0, 0);
   }
 
-  double f1 = integrand(c, pars);
+  double f1 = math::apply([&](auto&&... args) {
+                            return integrand(c, args...);
+                          }, pars_tuple);
   double f2 = 0.0;
   double f3 = 0.0;
   double twelvef1 = 12 * f1;
@@ -313,11 +322,15 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p2[j];
     }
-    double f2i = integrand(cc, pars);
+    double f2i = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p2[j];
     }
-    double temp = integrand(cc, pars);
+    double temp = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -326,11 +339,15 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
     }
-    double f3i = integrand(cc, pars);
+    double f3i = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p3[j];
     }
-    temp = integrand(cc, pars);
+    temp = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     f3i += temp;
     f2 += f2i;
     f3 += f3i;
@@ -345,7 +362,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
     }
-    double temp = integrand(cc, pars);
+    double temp = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     f4 += temp;
   }
   double f5 = 0.0;
@@ -358,7 +377,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p5[j];
     }
-    double temp = integrand(cc, pars);
+    double temp = math::apply([&](auto&&... args) {
+                            return integrand(cc, args...);
+                          }, pars_tuple);
     f5 += temp;
   }
 
@@ -438,8 +459,8 @@ struct Box {
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename F, typename T_pars>
-double hcubature(const F& integrand, const T_pars& pars, const int& dim,
+template <typename F, typename ParsTuple>
+double hcubature(const F& integrand, const ParsTuple& pars, const int& dim,
                  const std::vector<double>& a, const std::vector<double>& b,
                  int& maxEval, const double& reqAbsError,
                  const double& reqRelError) {
