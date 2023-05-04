@@ -1,6 +1,0 @@
-.. _utilities:
-
-Utilities
-=========
-
-*TODO*
