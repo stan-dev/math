@@ -1,0 +1,131 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:multi_function Multi-function operations]
+[nochunk]
+
+Multi-function operations allow running operations as a set of separate
+steps, which gives you better control over execution. They work by splitting
+some of the reads and writes into several function calls.
+You can use multi-function operations to execute text queries and prepared statements.
+
+[heading Protocol primer]
+
+To make a good use of multi-function operations, you should have a basic understanding
+of the underlying protocol.
+
+The protocol uses ['messages] to communicate. These are delimited by headers containing the message length.
+All operations are initiated by the client, by sending a single ['request message], to which
+the server responds with a set of ['response messages].
+
+The diagram below shows the message exchange between client and server for text queries and statement
+executions. Each arrow represents a message.
+
+[$mysql/images/protocol.svg [align center]]
+
+
+The message exchange is similar for text queries and prepared statements. The wire format varies, but the semantics
+are the same.
+
+There are two separate cases:
+
+* If your query retrieved at least one column (even if no rows were generated), we're in ['case 1]. The server sends:
+    * An initial packet informing that the query executed correctly, and that we're in ['case 1].
+    * Some matadata packets describing the columns that the query retrieved. These become available
+      under [refmem results meta] and [refmem execution_state meta], and are necessary to parse the rows.
+    * The actual rows.
+    * An OK packet, which marks the end of the resultset and contains information like `last_insert_id` and
+      `affected_rows`.
+* If your query didn't retrieve any column, we're in ['case 2]. The server will just send an OK packet,
+  with the same information as in ['case 1].
+
+[refmem connection query] and [refmem connection execute_statement] handle the full message exchange. In contrast,
+[refmem connection start_query] and [refmem connection start_statement_execution] will not read the rows, if any.
+
+Some takeaways:
+
+* The distinction between single-function and multi-function operations exists only
+  in the client. The wire messages exchanged by both are the same.
+* There is no way to tell how many rows a resultset has upfront. You need to read row by row until
+  you find the OK packet marking the end of the resultset.
+* When the server processes the request message, [*it sends all the response messages immediately].
+  These responses will be waiting in the client to be read. If you don't read [*all] of them,
+  subsequent operations will mistakenly read them as their response, causing packet mismatches.
+  Be careful and don't let this happen!
+
+[heading Starting a multi-function operation]
+
+Given the following setup:
+
+[multi_function_setup]
+
+You can start a multi-function operation using [refmem connection start_query]
+or [refmem connection start_statement_execution]:
+
+[table
+    [
+        [Text queries]
+        [Prepared statements]
+    ]
+    [
+        [[multi_function_start_query]]
+        [[multi_function_start_statement_execution]]
+    ]
+]
+
+[heading Reading rows]
+
+Once the operation has been started, you [*must] read all the generated rows
+by calling [refmem connection read_some_rows], which will return a batch of an unspecified size.
+
+This is the typical use of `read_some_rows`:
+
+[multi_function_read_some_rows]
+
+Some remarks:
+
+* If there are rows to be read, `read_some_rows` will return at least one, but may return more.
+* [refmem execution_state complete] returns `true` after we've read the final OK packet for this operation.
+* The final `row_batch` may or may not be empty, depending on the number of rows and their size.
+* Calling `read_some_rows` after reading the final OK packet returns an empty batch.
+
+`read_some_rows` returns a [reflink rows_view] object pointing into the connection's internal buffers.
+This view is valid until the connection performs any other operation involving a network transfer. 
+
+Note that there is no need to distinguish between ['case 1] and ['case 2] in the diagram above in our code,
+as reading rows for a complete operation is well defined.
+
+[heading Accessing metadata and OK packet data]
+
+You can access metadata at any point, using [refmem execution_state meta]. This function returns a collection of [reflink metadata]
+objects. There is one object for each column retrieved by the SQL query, and in the same order as in the query. You can find a bunch
+of useful information in this object, like the column name, its type, whether it's a key or not, and so on.
+
+You can access OK packet data using functions like [refmem execution_state last_insert_id]
+and [refmem execution_state affected_rows]. As this information is contained in the OK packet,
+[*these functions have `st.complete() == true` as precondition].
+
+
+[heading:read_some_rows More on read_some_rows]
+
+To properly understand `read_some_rows`, we need to know that every [reflink connection]
+owns an internal *read buffer*, where packets sent by the server are stored.
+It is a single, flat buffer, and you can configure its initial size when creating
+a `connection`, passing a [reflink buffer_params] object as the first argument to `connection`'s constructor.
+The read buffer may be grown under certain circumstances to accomodate large messages.
+
+`read_some_rows` gets the maximum number of rows that fit in the read buffer (without growing it)
+performing a single `read_some` operation on the stream (or using cached data).
+If there are rows to read, `read_some_rows` guarantees to read at least one. This means that,
+if doing what we described yields no rows (e.g. because of a large row that doesn't fit
+into the read buffer), `read_some_rows` will grow the buffer or perform more reads until at least
+one row has been read.
+
+If you want to get the most of `read_some_rows`, customize the initial read buffer size
+to maximize the number of rows that each batch retrieves.
+
+[endsect]

@@ -1,0 +1,93 @@
+[/
+    Copyright (c) 2022 Dmitry Arkhipov (grisumbras@yandex.ru)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/cppalliance/json
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Custom conversions]
+
+Boost.JSON uses two mechanisms to customize conversion between __value__ and
+user types. One mechanism involves specializing type traits. The other one is
+more powerful and requires defining overloads of `tag_invoke`. Both mechanisms
+will be further explained in this section.
+
+[heading Conversion traits]
+
+Previously a number of conversion type traits, like __is_tuple_like__ or
+__is_sequence_like__,  were introduced. The library tries the traits one after
+another and uses the implementation that corresponds to the first matching
+trait. In some cases, though, a type would match a trait with a higher
+priority, but the user intends for it to belong to a lower priority category.
+If this happens the user can specialize the trait that's not supposed to match
+for that type to be an equivalent of `std::false_type`.
+
+Consider this type:
+
+[snippet_conv_spec_trait1]
+
+It exposes both a sequence API and a tuple API. But converting from __value__
+to `user_ns::ip_address` would not be able to use implementation for sequences,
+since those are constructed empty and then populated one element at a time,
+while `ip_address` has a fixed size of 4. The tuple conversion would fit,
+though. The only problem is that __is_tuple_like__ has a lower priority than
+__is_sequence_like__. In order to circumvent this, the user only needs to
+specialize __is_sequence_like__ to not match `ip_address`.
+
+[snippet_conv_spec_trait2]
+
+[heading `tag_invoke` overloads]
+
+The second, more powerful approach, is to provide the conversion implementation
+yourself. With Boost.JSON this is done by defining an overload of `tag_invoke`
+function (the benefits of this mechanism are outlined in
+[@http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1895r0.pdf C++
+proposal P1895]). In essence, `tag_invoke` provides a uniform interface for
+defining customization points by using argument-dependent lookup to find a
+viable overload from the point at which it is called. As the name suggests, a
+tag type is passed as an argument in order to:
+
+* discard candidates that are unrelated to that particular
+customization point, and
+
+* embed the user-defined type into the arguments list (e.g. by using a tag
+type template such as `value_to_tag<T>`) so that its
+[@http://eel.is/c++draft/basic.lookup.argdep#2 associated namespaces and
+entities] are examined when name lookup is performed.
+
+This has the effect of finding user-provided `tag_invoke` overloads, even if
+they are declared (lexically) after the definition of the calling function.
+
+Overloads of `tag_invoke` called by __value_from__ take the form:
+
+```
+void tag_invoke( const value_from_tag&, value&, T );
+```
+
+While overloads of `tag_invoke` called by __value_to__ take the form:
+
+```
+T tag_invoke( const value_to_tag< T >&, const value& );
+```
+
+If we implemented conversion for `user_ns::ip_address` manually with this
+approach, it would look like this:
+
+[snippet_tag_invoke_1]
+
+Since the type being converted is embedded into the function's signature,
+user-provided overloads are visible to argument-dependent lookup and will be
+candidates when a conversion is performed:
+
+[snippet_tag_invoke_2]
+
+Users can freely combine types with custom conversions with types with
+library-provided conversions. The library handles them correctly:
+
+[snippet_tag_invoke_3]
+
+[endsect]

@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+import sequence ;
+
+# Integration test filtering
+local test_exclusions = "" ;
+if [ os.environ BOOST_MYSQL_NO_UNIX_SOCKET_TESTS ] != "" {
+    test_exclusions += "!@unix" ;
+}
+local test_db = [ os.environ BOOST_MYSQL_TEST_DB ] ;
+if $(test_db) = "" {
+    test_db = "mysql8" ;
+}
+test_exclusions += "!@skip_$(test_db)" ;
+
+local test_filter = [ sequence.join $(test_exclusions) : ":" ] ;
+
+local test_command = "-t $(test_filter)" ;
+
+# Integration tests
+lib integrationtests_entry_point :
+        entry_point.cpp
+        /boost/mysql/test//test_common
+    :
+        <link>static
+    ;
+
+# Boost.Context causes failures with warnings-as-errors
+# under libc++, because it builds objects that raise a -stdlib=libc++ unused warning
+local context_lib = /boost/context//boost_context/<warnings-as-errors>off ;
+
+cpp-pch integrationtests_pch
+    :
+        pch.hpp
+        $(context_lib)
+        integrationtests_entry_point
+    :
+        <include>integration
+    ;
+
+
+unit-test boost_mysql_integrationtests
+    :
+        integrationtests_pch
+        $(context_lib)
+        integrationtests_entry_point
+
+        # Utilities
+        utils/src/get_endpoint.cpp
+        utils/src/metadata_validator.cpp
+        utils/src/er_network_variant.cpp
+        utils/src/sync_errc.cpp
+        utils/src/sync_exc.cpp
+        utils/src/async_callback.cpp
+        utils/src/async_coroutines.cpp
+        utils/src/async_coroutinescpp20.cpp
+
+        # Actual tests
+        spotchecks.cpp
+        crud.cpp
+        handshake.cpp
+        prepared_statements.cpp
+        reconnect.cpp
+        db_specific.cpp
+        database_types.cpp
+    :
+        <testing.arg>$(test_command)
+        <include>utils/include
+        <toolset>msvc:<cxxflags>-FI"pch.hpp" # https://github.com/boostorg/boost/issues/711
+    ;
+
+explicit boost_mysql_integrationtests ;

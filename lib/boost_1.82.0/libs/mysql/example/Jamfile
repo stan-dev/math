@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+
+# The hostname to use for examples
+local hostname = [ os.environ BOOST_MYSQL_SERVER_HOST ] ;
+if $(hostname) = ""
+{
+    hostname = "localhost" ;
+}
+
+# Example list
+local examples_no_unix =
+    snippets
+    tutorial
+    text_queries
+    prepared_statements
+    async_callbacks
+    async_coroutines
+    async_coroutinescpp20
+    async_futures
+    default_completion_tokens
+    metadata
+    ssl
+    timeouts
+;
+
+local example_targets ;
+
+# Non-UNIX
+for local example in $(examples_no_unix)
+{
+    local example_name = "boost_mysql_example_$(example)" ;
+    unit-test $(example_name)
+        :
+            "$(example).cpp"
+            /boost/mysql/test//mysql
+            /boost/context//boost_context
+        :
+            <testing.arg>"example_user example_password $(hostname)"
+        ;
+    explicit $(example_name) ;
+    example_targets += $(example_name) ;
+}
+
+# UNIX. Honor BOOST_MYSQL_NO_UNIX_SOCKET_TESTS for homogeneity with cmake
+if [ os.environ BOOST_MYSQL_NO_UNIX_SOCKET_TESTS ] = "" {
+    unit-test boost_mysql_example_unix_socket
+        :
+            unix_socket.cpp
+            /boost/mysql/test//mysql
+        :
+            <testing.arg>"example_user example_password"
+        ;
+    explicit boost_mysql_example_unix_socket ;
+    example_targets += boost_mysql_example_unix_socket ;
+}
+
+# Helper to run all of them in one go
+alias boost_mysql_all_examples : $(example_targets) ;
+explicit boost_mysql_all_examples ;

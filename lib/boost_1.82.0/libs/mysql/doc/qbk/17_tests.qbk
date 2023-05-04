@@ -1,0 +1,67 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+
+[section:tests Building and running the tests]
+
+[teletype]
+
+This section explains how to build and run this library's tests. It is not intended
+for the regular user.
+
+This library has both unit and integration tests. Considering the different flavors
+the MySQL server has (v5.x, v8.x and MariaDB, with sutile differences) and the complex nature
+of the client/server protocol, we have given certain weight to the latter. Additionally, all
+examples are also built and run as integration tests, too (as they require access to a real database server).
+
+By default, the build will only compile and run unit tests (i.e. if you run `b2 libs/mysql/test` or `cmake`
+with no special args). If you want to run the integration tests and the examples, you need a real database server.
+
+If you are using `docker`, you can use one of the following images:
+
+* `ghcr.io/anarthal-containers/mysql8`
+* `ghcr.io/anarthal-containers/mysql5`
+* `ghcr.io/anarthal-containers/mariadb`
+
+You can run the containers as follows:
+```
+    # If you're on a system supporting UNIX sockets. Note that /var/run/mysqld
+    # should be empty for this to work; you can specify a different directory, if it's not
+    > docker run -p 3306:3306 -v /var/run/mysqld:/var/run/mysqld -d <IMAGE_NAME> # replace by the image you've chosen
+
+    # If you're on a system that does not support UNIX sockets
+    > docker run -p 3306:3306 -d ghcr.io/anarthal-containers/mysql8
+```
+
+You then need to run the following setup files, e.g. by running `mysql -u root < path/to/setup.sql`:
+
+* `example/db_setup.sql`
+* `test/integration/db_setup.sql`
+* If you are running a MySQL 8.x server, run also `test/integration/db_setup_sha256.sql`.
+
+
+If you are using your own database server, you will need to install the SSL certificates in `tools/ssl`
+in your MySQL server and change your config file so that your server uses them.
+More information [mysqllink using-encrypted-connections.html here].
+
+Next, define the following environment variables:
+
+* If your database server is NOT running in `localhost`, define `BOOST_MYSQL_SERVER_HOST` to the host where it is running.
+  If you are using the Docker image as provided in this document, you don't need this.
+* If your system does not support UNIX sockets or your socket path is different than MySQL's default (`/var/run/mysqld/mysqld.sock`),
+  define `BOOST_MYSQL_NO_UNIX_SOCKET_TESTS=1`.
+* Define `BOOST_MYSQL_TEST_DB` to either `mysql5`, `mysql8` or `mariadb`, depending on the server you're running.
+
+If you are using `b2`, you can build the targets `boost/mysql/example//boost_mysql_all_examples`,
+`boost/mysql/test/integration//boost_mysql_integrationtests` and `boost/mysql/test` to build and run the tests.
+
+If you are using `cmake`, add `-DBOOST_MYSQL_INTEGRATION_TESTS=ON` to enable building and running integration tests
+and examples, and then test regularly with `ctest`.
+
+[c++]
+
+[endsect]

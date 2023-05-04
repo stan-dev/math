@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="result_of.reference"><title>Reference</title><header name="boost/utility/result_of.hpp">
+<namespace name="boost">
+<struct name="result_of"><template>
+      <template-type-parameter name="F"/>
+    </template></struct><struct name="tr1_result_of"><template>
+      <template-type-parameter name="F"/>
+    </template></struct></namespace>
+</header>
+</library-reference>

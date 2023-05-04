@@ -1,0 +1,190 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>UNIX sockets and other stream types</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="ssl.html" title="SSL/TLS">
+<link rel="next" href="error_handling.html" title="Error handling and available overloads">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ssl.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_handling.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.other_streams"></a><a class="link" href="other_streams.html" title="UNIX sockets and other stream types">UNIX sockets and other stream types</a>
+</h2></div></div></div>
+<p>
+      The <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      class is templatized on the stream type. Any object fulfilling the <a class="link" href="ref/boost__mysql__Stream.html" title="Stream concept"><code class="literal"><span class="emphasis"><em>Stream</em></span></code></a>
+      concept may be used as template argument.
+    </p>
+<h4>
+<a name="mysql.other_streams.h0"></a>
+      <span class="phrase"><a name="mysql.other_streams.convenience_type_aliases"></a></span><a class="link" href="other_streams.html#mysql.other_streams.convenience_type_aliases">Convenience
+      type aliases</a>
+    </h4>
+<p>
+      This library provides helper type aliases for the most common cases:
+    </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Transport
+              </p>
+            </th>
+<th>
+              <p>
+                Stream type
+              </p>
+            </th>
+<th>
+              <p>
+                Type alias
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                SSL over TCP
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">stream</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Plaintext TCP
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                UNIX sockets
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">local</span><span class="special">::</span><span class="identifier">stream_protocol</span><span class="special">::</span><span class="identifier">socket</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>
+              </p>
+              <p>
+                Only available if <code class="computeroutput"><span class="identifier">BOOST_ASIO_HAS_LOCAL_SOCKETS</span></code>
+                is defined.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+      <a class="link" href="examples/unix_socket.html" title="UNIX sockets">This example</a> employs a UNIX
+      domain socket to establish a connection to a MySQL server.
+    </p>
+<h4>
+<a name="mysql.other_streams.h1"></a>
+      <span class="phrase"><a name="mysql.other_streams.non_sockets"></a></span><a class="link" href="other_streams.html#mysql.other_streams.non_sockets">Streams
+      that are not sockets</a>
+    </h4>
+<p>
+      When the <code class="computeroutput"><span class="identifier">Stream</span></code> template argument
+      for your <code class="computeroutput"><span class="identifier">connection</span></code> fulfills
+      the <a class="link" href="ref/boost__mysql__SocketStream.html" title="SocketStream concept"><code class="literal"><span class="emphasis"><em>SocketStream</em></span></code></a>
+      type requirements, you can use the member functions <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>
+      to establish and finish connections with the MySQL server. If you are using
+      any of the convenience type aliases (TCP or UNIX, either over TLS or not),
+      then this is your case.
+    </p>
+<p>
+      If your stream type is not based on a socket, you can't use those convenience
+      member functions. This would be the case if you are using Windows named pipes
+      (i.e. <a href="../../../../../doc/html/boost_asio/reference/windows__stream_handle.html" target="_top"><code class="literal">boost::asio::windows::stream_handle</code></a>).
+      Instead, to establish a connection, you should follow these two steps, roughly
+      equivalent to what <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+      does for sockets:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Connect the underlying stream. You can access it using <a class="link" href="ref/boost__mysql__connection/stream.html" title="connection::stream"><code class="literal">connection::stream</code></a>.
+          Use whatever connection establishment mechanism the stream implements.
+          If you are using TLS, you should <span class="bold"><strong>not</strong></span> perform
+          the TLS handshake yourself, as the library will do it as part of the MySQL
+          handshake.
+        </li>
+<li class="listitem">
+          Perform the MySQL handshake by calling <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+          or <a class="link" href="ref/boost__mysql__connection/async_handshake.html" title="connection::async_handshake"><code class="literal">connection::async_handshake</code></a>.
+          If the handshake operation fails, close the stream.
+        </li>
+</ul></div>
+<p>
+      To clean up a connection, follow these two steps, roughly equivalent to <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Inform the MySQL server that you are quitting the connection by calling
+          <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+          or <a class="link" href="ref/boost__mysql__connection/async_quit.html" title="connection::async_quit"><code class="literal">connection::async_quit</code></a>.
+          This will also shutdown TLS, if it's being used.
+        </li>
+<li class="listitem">
+          Close the underlying stream.
+        </li>
+</ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ssl.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_handling.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

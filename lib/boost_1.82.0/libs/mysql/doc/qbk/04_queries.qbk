@@ -1,0 +1,50 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:queries Text queries]
+
+To run a text query, use any of the following functions:
+
+* [refmem connection query] or [refmem connection async_query], which execute the query and
+  read the generated results.
+* [refmem connection start_query] and [refmem connection async_start_query], which initiate a
+  text query as a multi-function operation.
+
+Almost any query that may be issued in the `mysql` command line
+can be executed using this method. This includes `SELECT`s,
+`UPDATE`s, `INSERT`s, `DELETE`s, `CREATE TABLE`s...
+In particular, you may start transactions issuing a `START TRANSACTION`,
+commit them using `COMMIT` and rolling them back using `ROLLBACK`.
+
+[heading Limitations]
+
+* You can only execute a single query at a time. Passing in several queries separated by semicolons
+  will produce an error.
+* At the moment, there is no equivalent to
+  [@https://dev.mysql.com/doc/c-api/8.0/en/mysql-real-escape-string.html `mysql_real_escape_string`]
+  to sanitize user provided input. This limits text queries to queries without parameters.
+  Doing composition by hand can lead to SQL injection vulnerabilities.
+  Please use [link mysql.prepared_statements prepared statements]
+  instead, which perform composition server-side in a safe way. 
+
+[warning
+    [*SQL injection warning]: if you compose queries by concatenating strings without sanitization,
+    your code is vulnerable to SQL injection attacks. Use prepared statements when possible!
+]
+
+[heading Use cases]
+
+You should generally prefer prepared statements over text queries. Text queries can be useful for simple,
+non-parametrized queries:
+
+* `"START TRANSACTION"`, `"COMMIT"` and `"ROLLBACK"` queries, for transactions.
+* `"SET NAMES utf8mb4"` and similar, to set variables for encoding, time zones and similar configuration options.
+* `"CREATE TABLE ..."` and similar DDL statements.
+
+Avoid text queries involving user input.
+
+[endsect]

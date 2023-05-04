@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/url
+#
+
+import testing ;
+
+project
+    : requirements
+      $(c11-requires)
+      <source>../../extra/test_main.cpp
+      <include>.
+      <include>../../extra
+    ;
+
+run limits.cpp ../../extra/test_main.cpp /boost/url//url_sources
+    : requirements
+        <define>BOOST_URL_MAX_SIZE=16
+        <define>BOOST_URL_NO_LIB
+        <define>BOOST_URL_STATIC_LINK
+    ;

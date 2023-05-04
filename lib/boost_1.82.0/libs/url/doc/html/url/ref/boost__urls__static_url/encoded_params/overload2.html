@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>static_url::encoded_params (2 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../encoded_params.html" title="static_url::encoded_params">
+<link rel="prev" href="overload1.html" title="static_url::encoded_params (1 of 2 overloads)">
+<link rel="next" href="../set_params.html" title="static_url::set_params">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../encoded_params.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../set_params.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2"></a><a class="link" href="overload2.html" title="static_url::encoded_params (2 of 2 overloads)">static_url::encoded_params
+          (2 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            (Inherited from <a class="link" href="../../boost__urls__url_base.html" title="url_base"><code class="computeroutput"><span class="identifier">url_base</span></code></a>)
+          </p>
+<p>
+            Return the query as a container of parameters.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h0"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.synopsis"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">params_encoded_ref</span>
+<span class="identifier">encoded_params</span><span class="special">();</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h1"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.description"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.description">Description</a>
+          </h6>
+<p>
+            This function returns a bidirectional view of key/value pairs over the
+            query. The returned view references the same underlying character buffer;
+            ownership is not transferred. Strings returned when iterating the range
+            may contain percent escapes. The container is modifiable; changes to
+            the container are reflected in the underlying URL.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h2"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.example"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.example">Example</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">params_encoded_ref</span> <span class="identifier">pv</span> <span class="special">=</span> <span class="identifier">url</span><span class="special">(</span> <span class="string">"/sql?id=42&amp;name=jane%2Ddoe&amp;page+size=20"</span> <span class="special">).</span><span class="identifier">encoded_params</span><span class="special">();</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h3"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.complexity"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.complexity">Complexity</a>
+          </h6>
+<p>
+            Constant.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h4"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.exception_safety"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.exception_safety">Exception
+            Safety</a>
+          </h6>
+<p>
+            Throws nothing.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h5"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.bnf"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.bnf">BNF</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">query</span>           <span class="special">=</span> <span class="special">*(</span> <span class="identifier">pchar</span> <span class="special">/</span> <span class="string">"/"</span> <span class="special">/</span> <span class="string">"?"</span> <span class="special">)</span>
+
+<span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span>     <span class="special">=</span> <span class="identifier">key</span> <span class="special">[</span> <span class="string">"="</span> <span class="identifier">value</span> <span class="special">]</span>
+<span class="identifier">query</span><span class="special">-</span><span class="identifier">params</span>    <span class="special">=</span> <span class="special">[</span> <span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span> <span class="special">]</span> <span class="special">*(</span> <span class="string">"&amp;"</span> <span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span> <span class="special">)</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h6"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.specification"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.specification">Specification</a>
+          </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4" target="_top">3.4.
+                Query (rfc3986)</a>
+              </li>
+<li class="listitem">
+                <a href="https://en.wikipedia.org/wiki/Query_string" target="_top">Query string
+                (Wikipedia)</a>
+              </li>
+</ul></div>
+<h6>
+<a name="url.ref.boost__urls__static_url.encoded_params.overload2.h7"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__static_url.encoded_params.overload2.see_also"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__static_url.encoded_params.overload2.see_also">See
+            Also</a>
+          </h6>
+<p>
+            <a class="link" href="../params.html" title="static_url::params"><code class="computeroutput"><span class="identifier">params</span></code></a>, <a class="link" href="../../boost__urls__static_url_base/remove_query.html" title="static_url_base::remove_query"><code class="computeroutput"><span class="identifier">remove_query</span></code></a>, <a class="link" href="../../boost__urls__static_url_base/set_encoded_query.html" title="static_url_base::set_encoded_query"><code class="computeroutput"><span class="identifier">set_encoded_query</span></code></a>, <a class="link" href="../../boost__urls__static_url_base/set_query.html" title="static_url_base::set_query"><code class="computeroutput"><span class="identifier">set_query</span></code></a>.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../encoded_params.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../set_params.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
