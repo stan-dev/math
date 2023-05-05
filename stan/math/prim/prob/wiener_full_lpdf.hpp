@@ -9,46 +9,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
-          typename T_v, typename T_sv, typename T_sw, typename T_st0>
-inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
-wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
-                           const T_a& a, const T_t0& t0, const T_w& w,
-                           const T_v& v, const T_sv& sv, const T_sw& sw,
-                           const T_st0& st0, const double& prec) {
-  using T_sw_ref = ref_type_t<T_sw>;
-  using T_st0_ref = ref_type_t<T_st0>;
 
-  check_consistent_size(function_name,
-                        "Inter-trial variability in A-priori bias", sw, 1);
-  check_consistent_size(function_name,
-                        "Inter-trial variability in Nondecision time", st0, 1);
-
-  T_sw_ref sw_ref = sw;
-  T_st0_ref st0_ref = st0;
-
-  size_t N = max_size(y, a, t0, w, v, sv, sw, st0);
-  if (!N) {
-    return 0;
-  }
-
-  scalar_seq_view<T_sw_ref> sw_vec(sw_ref);
-  scalar_seq_view<T_st0_ref> st0_vec(st0_ref);
-
-  // calculate density and partials
-  for (size_t i = 0; i < N; i++) {
-    // Calculate 4-parameter model without inter-trial variabilities (if
-    // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
-    // drift rate (if sv_vec[i] != 0)
-    if (sw_vec[i] == 0 && st0_vec[i] == 0) {
-      return wiener5_lpdf<propto>(y, a, t0, w, v, sv, prec);
-      // Calculate 6-, or 7-parameter model
-    } else {
-      return wiener7_lpdf<propto>(y, a, t0, w, v, sv, sw, st0, prec);
-    }
-  }
-  return 0;
-}
 //-----------------------------------------------
 
 }  // namespace internal
@@ -198,14 +159,44 @@ wiener_full_prec_impl_lpdf(const char* function_name, const T_y& y,
 template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
           typename T_v, typename T_sv, typename T_sw, typename T_st0>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
-wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
-                 const T_v& v, const T_sv& sv, const T_sw& sw,
-                 const T_st0& st0) {
-  double precision = 1e-4;
+wiener_full_lpdf(const T_y& y,
+                           const T_a& a, const T_t0& t0, const T_w& w,
+                           const T_v& v, const T_sv& sv, const T_sw& sw,
+                           const T_st0& st0,
+                           double precision = 1e-4) {
+  const char* function_name = "wiener_full_lpdf";
+  using T_sw_ref = ref_type_t<T_sw>;
+  using T_st0_ref = ref_type_t<T_st0>;
 
-  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_a, T_t0, T_w, T_v,
-                                              T_sv, T_sw, T_st0>(
-      "wiener_full_lpdf", y, a, t0, w, v, sv, sw, st0, precision);
+  check_consistent_size(function_name,
+                        "Inter-trial variability in A-priori bias", sw, 1);
+  check_consistent_size(function_name,
+                        "Inter-trial variability in Nondecision time", st0, 1);
+
+  T_sw_ref sw_ref = sw;
+  T_st0_ref st0_ref = st0;
+
+  size_t N = max_size(y, a, t0, w, v, sv, sw, st0);
+  if (!N) {
+    return 0;
+  }
+
+  scalar_seq_view<T_sw_ref> sw_vec(sw_ref);
+  scalar_seq_view<T_st0_ref> st0_vec(st0_ref);
+
+  // calculate density and partials
+  for (size_t i = 0; i < N; i++) {
+    // Calculate 4-parameter model without inter-trial variabilities (if
+    // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
+    // drift rate (if sv_vec[i] != 0)
+    if (sw_vec[i] == 0 && st0_vec[i] == 0) {
+      return wiener5_lpdf<propto>(y, a, t0, w, v, sv, precision);
+      // Calculate 6-, or 7-parameter model
+    } else {
+      return wiener7_lpdf<propto>(y, a, t0, w, v, sv, sw, st0, precision);
+    }
+  }
+  return 0;
 }
 
 template <typename T_y, typename T_a, typename T_t0, typename T_w, typename T_v,
@@ -213,43 +204,9 @@ template <typename T_y, typename T_a, typename T_t0, typename T_w, typename T_v,
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
 wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
                  const T_v& v, const T_sv& sv, const T_sw& sw,
-                 const T_st0& st0) {
-  double precision = 1e-4;
-
-  return internal::wiener_full_prec_impl_lpdf<false>(
-      "wiener_full_lpdf", y, a, t0, w, v, sv, sw, st0, precision);
+                 const T_st0& st0, double precision = 1e-4) {
+  return wiener_full_lpdf<false>(y, a, t0, w, v, sv, sw, st0, precision);
 }
-
-/** \ingroup prob_dists
- * The log of the first passage time density function for a (Wiener)
- * drift diffusion model with up to 7 parameters with the option
- * to control for the precision in the estimation of the partial derivatives.
- *
- * For \b Details see \c wiener_full_lpdf(). The usage and behavior of these
- * functions are the same excpet of the control over the precision.
- */
-
-template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
-          typename T_v, typename T_sv, typename T_sw, typename T_st0>
-inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
-wiener_full_prec_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
-                      const T_v& v, const T_sv& sv, const T_sw& sw,
-                      const T_st0& st0, const double& prec) {
-  return internal::wiener_full_prec_impl_lpdf<propto, T_y, T_a, T_t0, T_w, T_v,
-                                              T_sv, T_sw, T_st0>(
-      "wiener_full_prec_lpdf", y, a, t0, w, v, sv, sw, st0, prec);
-}
-
-template <typename T_y, typename T_a, typename T_t0, typename T_w, typename T_v,
-          typename T_sv, typename T_sw, typename T_st0>
-inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
-wiener_full_prec_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
-                      const T_v& v, const T_sv& sv, const T_sw& sw,
-                      const T_st0& st0, const double& prec) {
-  return internal::wiener_full_prec_impl_lpdf<false>(
-      "wiener_full_prec_lpdf", y, a, t0, w, v, sv, sw, st0, prec);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

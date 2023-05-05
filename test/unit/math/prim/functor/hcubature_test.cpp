@@ -60,7 +60,8 @@ stan::return_type_t<T_x> f6(const T_x& x) {
 template <typename T_x>
 stan::return_type_t<T_x, double> f7(const T_x& x, double a) {
   const auto& x_arr = stan::math::as_array_or_scalar(x);
-  return stan::math::prod(a / (a + 1) * stan::math::square((a + 1) / (a + x_arr)));
+  return stan::math::prod(a / (a + 1)
+                          * stan::math::square((a + 1) / (a + x_arr)));
 }
 }  // namespace hcubature_test
 
@@ -124,15 +125,17 @@ TEST(StanMath_hcubature_prim, test1) {
   std::vector<double> a = {0.0};
   std::vector<double> b = {1.0};
   std::vector<double> reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f1<std::vector<double>>, std::make_tuple(), dim,
-                   a, b, 6000, 0.0, reqRelError, 0.841471);
+  test_integration(hcubature_test::f1<std::vector<double>>,
+                    std::make_tuple(), dim,
+                    a, b, 6000, 0.0, reqRelError, 0.841471);
 
   dim = 2;
   a = {0.0, 0.0};
   b = {1.0, 1.0};
   reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f2<std::vector<double>>, std::make_tuple(), dim,
-                   a, b, 6000, 0.0, reqRelError, 0.7080734);
+  test_integration(hcubature_test::f2<std::vector<double>>,
+                    std::make_tuple(), dim,
+                    a, b, 6000, 0.0, reqRelError, 0.7080734);
 
   reqRelError = {1e-4};
   test_integration(hcubature_test::f3<std::vector<double>>,
@@ -141,19 +144,22 @@ TEST(StanMath_hcubature_prim, test1) {
 
   // (Gaussian centered at 1/2)
   reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f4<std::vector<double>>, std::make_tuple(0.1), dim,
-                   a, b, 6000, 0.0, reqRelError, 1);
+  test_integration(hcubature_test::f4<std::vector<double>>,
+                    std::make_tuple(0.1), dim,
+                    a, b, 6000, 0.0, reqRelError, 1);
 
   dim = 3;
   a = {0.0, 0.0, 0.0};
   b = {1.0, 1.0, 1.0};
   reqRelError = {1e-4, 1e-6};
-  test_integration(hcubature_test::f5<std::vector<double>>, std::make_tuple(), dim,
-                   a, b, 6000, 0.0, reqRelError, 1.00001);
+  test_integration(hcubature_test::f5<std::vector<double>>,
+                    std::make_tuple(), dim,
+                    a, b, 6000, 0.0, reqRelError, 1.00001);
 
   reqRelError = {1e-4, 1e-6, 1e-8};
-  test_integration(hcubature_test::f6<std::vector<double>>, std::make_tuple(), dim,
-                   a, b, 6000, 0.0, reqRelError, 1);
+  test_integration(hcubature_test::f6<std::vector<double>>,
+                    std::make_tuple(), dim,
+                    a, b, 6000, 0.0, reqRelError, 1);
 
   // (Tsuda's example)
   dim = 4;

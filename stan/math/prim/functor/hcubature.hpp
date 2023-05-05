@@ -23,6 +23,7 @@
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <queue>
 #include <tuple>
 
@@ -191,7 +192,8 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
-                                         const double& b, ParsTupleT& pars_tuple) {
+                                         const double& b,
+                                         ParsTupleT& pars_tuple) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
@@ -281,7 +283,8 @@ template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
     const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
     std::vector<double>& w, std::vector<double>& wd, const int& dim,
-    const std::vector<double>& a, const std::vector<double>& b, ParsTupleT& pars_tuple) {
+    const std::vector<double>& a, const std::vector<double>& b,
+    ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim);
 
