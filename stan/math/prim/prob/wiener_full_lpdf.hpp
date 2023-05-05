@@ -7,11 +7,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-//-----------------------------------------------
-
-}  // namespace internal
 
 /** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)

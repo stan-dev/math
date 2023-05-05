@@ -117,10 +117,10 @@ inline double dtdwiener5_for_7(const double& y, const double& a,
 //-----------------------------------------------
 
 template <typename... TArgs>
-void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
+inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
   std::get<8>(args_tuple) = err;
 }
-void assign_err(double arg, double err) { arg = err; }
+inline void assign_err(double arg, double err) { arg = err; }
 
 template <size_t ErrIndex, typename F, typename ArgsTupleT>
 double estimate_with_err_check(const F& functor, double err,
@@ -163,45 +163,45 @@ auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
   return estimate_with_err_check<0>(functor, err, std::make_tuple(args...));
 }
 
-double wiener7_lpdf_impl(double t0_, double omega, double y, double a, double v,
+inline double wiener7_lpdf_impl(double t0_, double omega, double y, double a, double v,
                          double w, double t0, double sv, double sw, double st0,
                          double lerr) {
   return exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-double int_dtddiff(double t0_, double omega, double y, double a, double v,
+inline double int_dtddiff(double t0_, double omega, double y, double a, double v,
                    double w, double t0, double sv, double sw, double st0,
                    double lerr) {
   return dtdwiener5_for_7(y - t0_, a, -v, 1 - omega, sv, lerr);
 }
 
-double int_daddiff(double t0_, double omega, double y, double a, double v,
+inline double int_daddiff(double t0_, double omega, double y, double a, double v,
                    double w, double t0, double sv, double sw, double st0,
                    double lerr) {
   return dadwiener5(y - t0_, a, v, omega, sv, lerr, 1);
 }
 
-double int_dvddiff(double t0_, double omega, double y, double a, double v,
+inline double int_dvddiff(double t0_, double omega, double y, double a, double v,
                    double w, double t0, double sv, double sw, double st0,
                    double lerr) {
   return dvdwiener5(y - t0_, a, v, omega, sv)
          * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-double int_dwddiff(double t0_, double omega, double y, double a, double v,
+inline double int_dwddiff(double t0_, double omega, double y, double a, double v,
                    double w, double t0, double sv, double sw, double st0,
                    double lerr) {
   return dwdwiener5(y - t0_, a, v, omega, sv, lerr, 1);
 }
 
-double int_dsvddiff(double t0_, double omega, double y, double a, double v,
+inline double int_dsvddiff(double t0_, double omega, double y, double a, double v,
                     double w, double t0, double sv, double sw, double st0,
                     double lerr) {
   return dsvdwiener5(y - t0_, a, v, omega, sv)
          * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-double int_dswddiff(double t0_, double omega, double y, double a, double v,
+inline double int_dswddiff(double t0_, double omega, double y, double a, double v,
                     double w, double t0, double sv, double sw, double st0,
                     double lerr, double w_lower, double w_upper,
                     double sw_mean) {
