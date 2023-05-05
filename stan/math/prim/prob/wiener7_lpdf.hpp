@@ -163,48 +163,48 @@ auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
   return estimate_with_err_check<0>(functor, err, std::make_tuple(args...));
 }
 
-inline double wiener7_lpdf_impl(double t0_, double omega, double y, double a, double v,
-                         double w, double t0, double sv, double sw, double st0,
-                         double lerr) {
+inline double wiener7_lpdf_impl(double t0_, double omega, double y, double a,
+                                double v, double w, double t0, double sv,
+                                double sw, double st0, double lerr) {
   return exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-inline double int_dtddiff(double t0_, double omega, double y, double a, double v,
-                   double w, double t0, double sv, double sw, double st0,
-                   double lerr) {
+inline double int_dtddiff(double t0_, double omega, double y, double a,
+                          double v, double w, double t0, double sv, double sw,
+                          double st0, double lerr) {
   return dtdwiener5_for_7(y - t0_, a, -v, 1 - omega, sv, lerr);
 }
 
-inline double int_daddiff(double t0_, double omega, double y, double a, double v,
-                   double w, double t0, double sv, double sw, double st0,
-                   double lerr) {
+inline double int_daddiff(double t0_, double omega, double y, double a,
+                          double v, double w, double t0, double sv, double sw,
+                          double st0, double lerr) {
   return dadwiener5(y - t0_, a, v, omega, sv, lerr, 1);
 }
 
-inline double int_dvddiff(double t0_, double omega, double y, double a, double v,
-                   double w, double t0, double sv, double sw, double st0,
-                   double lerr) {
+inline double int_dvddiff(double t0_, double omega, double y, double a,
+                          double v, double w, double t0, double sv, double sw,
+                          double st0, double lerr) {
   return dvdwiener5(y - t0_, a, v, omega, sv)
          * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-inline double int_dwddiff(double t0_, double omega, double y, double a, double v,
-                   double w, double t0, double sv, double sw, double st0,
-                   double lerr) {
+inline double int_dwddiff(double t0_, double omega, double y, double a,
+                          double v, double w, double t0, double sv, double sw,
+                          double st0, double lerr) {
   return dwdwiener5(y - t0_, a, v, omega, sv, lerr, 1);
 }
 
-inline double int_dsvddiff(double t0_, double omega, double y, double a, double v,
-                    double w, double t0, double sv, double sw, double st0,
-                    double lerr) {
+inline double int_dsvddiff(double t0_, double omega, double y, double a,
+                           double v, double w, double t0, double sv, double sw,
+                           double st0, double lerr) {
   return dsvdwiener5(y - t0_, a, v, omega, sv)
          * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
 }
 
-inline double int_dswddiff(double t0_, double omega, double y, double a, double v,
-                    double w, double t0, double sv, double sw, double st0,
-                    double lerr, double w_lower, double w_upper,
-                    double sw_mean) {
+inline double int_dswddiff(double t0_, double omega, double y, double a,
+                           double v, double w, double t0, double sv, double sw,
+                           double st0, double lerr, double w_lower,
+                           double w_upper, double sw_mean) {
   double fl = exp(internal::dwiener5(y - t0_, a, v, w_lower, sv, lerr));
   double fu = exp(internal::dwiener5(y - t0_, a, v, w_upper, sv, lerr));
   return 0.5 * (fl + fu) / sw_mean;
