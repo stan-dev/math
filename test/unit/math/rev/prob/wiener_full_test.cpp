@@ -160,49 +160,49 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
     // rt
     auto f_rt = [=](auto value) {
       return wiener_full_lpdf(value, a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                                   st0[i], 1e-6);
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_rt, rt[i], result[i], drt[i]);
     // a
     auto f_a = [=](auto value) {
-      return wiener_full_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i],
-                                   sw[i], st0[i], 1e-6);
+      return wiener_full_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i], sw[i],
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_a, a[i], result[i], da[i]);
     // v
     auto f_v = [=](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i],
-                                   sw[i], st0[i], 1e-6);
+      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i], sw[i],
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_v, v[i], result[i], dv[i]);
     // w
     auto f_w = [=](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i],
-                                   sw[i], st0[i], 1e-6);
+      return wiener_full_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i], sw[i],
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_w, w[i], result[i], dw[i]);
     // t0
     auto f_t0 = [=](auto value) {
       return wiener_full_lpdf(rt[i], a[i], value, w[i], v[i], sv[i], sw[i],
-                                   st0[i], 1e-6);
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_t0, t0[i], result[i], dt0[i]);
     // sv
     auto f_sv = [=](auto value) {
       return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], value, sw[i],
-                                   st0[i], 1e-6);
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_sv, sv[i], result[i], dsv[i]);
     // sw
     auto f_sw = [=](auto value) {
       return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], value,
-                                   st0[i], 1e-6);
+                              st0[i], 1e-6);
     };
     check_scalar_types(f_sw, sw[i], result[i], dsw[i]);
     // st0
     auto f_st0 = [=](auto value) {
       return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                                   value, 1e-6);
+                              value, 1e-6);
     };
     check_scalar_types(f_st0, st0[i], result[i], dst0[i]);
   }

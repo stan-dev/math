@@ -9,7 +9,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-
 //-----------------------------------------------
 
 }  // namespace internal
@@ -159,11 +158,9 @@ namespace internal {
 template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
           typename T_v, typename T_sv, typename T_sw, typename T_st0>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
-wiener_full_lpdf(const T_y& y,
-                           const T_a& a, const T_t0& t0, const T_w& w,
-                           const T_v& v, const T_sv& sv, const T_sw& sw,
-                           const T_st0& st0,
-                           double precision = 1e-4) {
+wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
+                 const T_v& v, const T_sv& sv, const T_sw& sw, const T_st0& st0,
+                 double precision = 1e-4) {
   const char* function_name = "wiener_full_lpdf";
   using T_sw_ref = ref_type_t<T_sw>;
   using T_st0_ref = ref_type_t<T_st0>;
@@ -203,8 +200,8 @@ template <typename T_y, typename T_a, typename T_t0, typename T_w, typename T_v,
           typename T_sv, typename T_sw, typename T_st0>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>
 wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0, const T_w& w,
-                 const T_v& v, const T_sv& sv, const T_sw& sw,
-                 const T_st0& st0, double precision = 1e-4) {
+                 const T_v& v, const T_sv& sv, const T_sw& sw, const T_st0& st0,
+                 double precision = 1e-4) {
   return wiener_full_lpdf<false>(y, a, t0, w, v, sv, sw, st0, precision);
 }
 }  // namespace math

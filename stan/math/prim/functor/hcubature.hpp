@@ -199,9 +199,8 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
   std::vector<double> cm(1, 0);
   c[0] = 0.5 * (a + b);
   double delta = 0.5 * (b - a);
-  double f0 = math::apply([&](auto&&... args) {
-                            return integrand(c, args...);
-                          }, pars_tuple);
+  double f0 = math::apply([&](auto&&... args) { return integrand(c, args...); },
+                          pars_tuple);
 
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
@@ -209,12 +208,10 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
     double deltax = delta * xd7[i];
     cp[0] = c[0] + deltax;
     cm[0] = c[0] - deltax;
-    double fx = math::apply([&](auto&&... args) {
-                            return integrand(cp, args...);
-                          }, pars_tuple);
-    double temp = math::apply([&](auto&&... args) {
-                            return integrand(cm, args...);
-                          }, pars_tuple);
+    double fx = math::apply(
+        [&](auto&&... args) { return integrand(cp, args...); }, pars_tuple);
+    double temp = math::apply(
+        [&](auto&&... args) { return integrand(cm, args...); }, pars_tuple);
     fx += temp;
     I += fx * wd7[i];
     if (i % 2 == 1) {
@@ -304,9 +301,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
     return std::make_tuple(0.0, 0.0, 0);
   }
 
-  double f1 = math::apply([&](auto&&... args) {
-                            return integrand(c, args...);
-                          }, pars_tuple);
+  double f1 = math::apply([&](auto&&... args) { return integrand(c, args...); },
+                          pars_tuple);
   double f2 = 0.0;
   double f3 = 0.0;
   double twelvef1 = 12 * f1;
@@ -325,15 +321,13 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p2[j];
     }
-    double f2i = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    double f2i = math::apply(
+        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p2[j];
     }
-    double temp = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    double temp = math::apply(
+        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -342,15 +336,13 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
     }
-    double f3i = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    double f3i = math::apply(
+        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p3[j];
     }
-    temp = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    temp = math::apply([&](auto&&... args) { return integrand(cc, args...); },
+                       pars_tuple);
     f3i += temp;
     f2 += f2i;
     f3 += f3i;
@@ -365,9 +357,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
     }
-    double temp = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    double temp = math::apply(
+        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
     f4 += temp;
   }
   double f5 = 0.0;
@@ -380,9 +371,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p5[j];
     }
-    double temp = math::apply([&](auto&&... args) {
-                            return integrand(cc, args...);
-                          }, pars_tuple);
+    double temp = math::apply(
+        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
     f5 += temp;
   }
 
