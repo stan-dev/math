@@ -170,7 +170,7 @@ inline double wiener7_impl(double t0_, double omega, double y, double a,
                                 double v, double w, double t0, double sv,
                                 double sw, double st0, double lerr) {
   double result;
-  switch(FunTypeEnum) {
+  switch (FunTypeEnum) {
     case FunType::Density:
       result = exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
       break;
