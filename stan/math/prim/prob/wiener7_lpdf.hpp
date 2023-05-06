@@ -163,8 +163,6 @@ auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
   return estimate_with_err_check<0>(functor, err, std::make_tuple(args...));
 }
 
-enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV };
-
 template <FunType FunTypeEnum>
 inline double wiener7_impl(double t0_, double omega, double y, double a,
                            double v, double w, double t0, double sv, double sw,

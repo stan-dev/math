@@ -7,14 +7,13 @@ namespace stan {
 namespace math {
 namespace internal {
 
-// calculate density in log
-inline double dwiener5(const double& y, const double& a, const double& vn,
-                       const double& wn, const double& sv, const double& err) {
-  double kll, kss, ans, v, w;
-  w = 1.0 - wn;
-  v = -vn;
+enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV };
+template <FunType FunTypeEnum>
+inline auto wiener5_helper(const double& y, const double& a, const double& vn,
+                          const double& wn, const double& sv, const double& err) {
+  double w = 1.0 - wn;
+  double v = -vn;
   double y_asq = y / square(a);
-  ans = 0.0;
 
   // calculate the number of terms needed for short t
   double lg1;
@@ -27,23 +26,68 @@ inline double dwiener5(const double& y, const double& a, const double& vn,
   } else {
     lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
   }
+
   double es = (err - lg1);
-  double K1 = (sqrt(2.0 * y_asq) + w) / 2.0;
-  double u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log(y_asq) + 2.0 * (es));
-  double arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  if (FunTypeEnum == FunType::GradT) {
+    es += 2.0 * log(a);
+  }
+  double K1, u_eps, arg;
+  if (FunTypeEnum == FunType::Density) {
+    K1 = (sqrt(2.0 * y_asq) + w) / 2.0;
+    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log(y_asq) + 2.0 * (es));
+    arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  } else {
+    K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
+    if (FunTypeEnum == FunType::GradW) {
+      u_eps
+          = fmin(-1.0, 2.0 * (err - lg1) + LOG_TWO + LOG_PI + 2.0 * log(y_asq));
+    } else {
+      u_eps = fmin(
+          -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
+    }
+    arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  }
+
   double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-  kss = ceil(fmax(K1, K2));
+  double kss = ceil(fmax(K1, K2));
 
   // calculate the number of terms needed for large t
   double el = es;
-  K1 = 1.0 / (pi() * sqrt(y_asq));
-  K2 = 0.0;
-  double two_log_piy = -2.0 * (log(pi() * y_asq) + el);
   static const double PISQ = square(pi());  // pi*pi
-  if (two_log_piy >= 0) {
-    K2 = sqrt(two_log_piy / (PISQ * y_asq));
+  if (FunTypeEnum == FunType::Density) {
+    K1 = 1.0 / (pi() * sqrt(y_asq));
+    double two_log_piy = -2.0 * (log(pi() * y_asq) + el);
+    K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PISQ * y_asq)) : 0.0;
+  } else if (FunTypeEnum == FunType::GradT) {
+    K1 = sqrt(3.0 / y_asq) / pi();
+    u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
+    arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    K2 = (arg > 0) ? sqrt(arg) : K1;
+  } else if (FunTypeEnum == FunType::GradW) {
+    K1 = sqrt(2.0 / y_asq) / pi();
+    static const double TWO_LOG_PI = 2.0 * LOG_PI;
+    u_eps = fmin(
+        -1.0, log(4.0 / 9.0) + TWO_LOG_PI + 3.0 * log(y_asq) + 2.0 * (err - lg1));
+    arg = -(u_eps - sqrt(-2.0 * u_eps - 2.0));
+    K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / y_asq) : K1;
   }
-  kll = ceil(fmax(K1, K2));
+  double kll = ceil(fmax(K1, K2));
+  return std::make_tuple(kss, kll, lg1);
+}
+
+// calculate density in log
+inline double dwiener5(const double& y, const double& a, const double& vn,
+                       const double& wn, const double& sv, const double& err) {
+  double kll, kss, ans, v, w;
+  w = 1.0 - wn;
+  v = -vn;
+  double y_asq = y / square(a);
+  ans = 0.0;
+
+  // calculate the number of terms needed for short t
+  double lg1;
+
+  std::forward_as_tuple(kss, kll, lg1) = wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err);
 
   // if small t is better
   if (2 * kss <= kll) {
@@ -110,44 +154,22 @@ inline double dtdwiener5(const double& y, const double& a, const double& vn,
            * (square(sv_sqr) * (y + square(a * w))
               + sv_sqr * (1 - 2 * a * v * w) + square(v))
            / square(one_plus_svsqr_y);
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
-              / one_plus_svsqr_y
-          - la - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -0.5 * square(v);
-    lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - la;
   }
-  double factor = lg1 - la;
-  double ld = dwiener5(y, a, vn, wn, sv,
-                       err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-
-  // calculate the number of terms kss needed for small t
-  double es = err - lg1;
-  es = es + la;
-  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  double u_eps = fmin(
-      -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-  double arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-  kss = ceil(fmax(K1, K2));
-
-  // calculate number of terms kll needed for large t
-  double el = err - lg1;
-  el = el + la;
-  K1 = sqrt(3.0 / y_asq) / pi();
-  u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
-  static const double PISQ = square(pi());  // pi*pi
-  arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double kl = (arg > 0) ? sqrt(arg) : K1;
-  kll = ceil(fmax(kl, K1));
 
   double erg;
   double newsign = 1;
   double fplus = NEGATIVE_INFTY;
   double fminus = NEGATIVE_INFTY;
 
+  std::forward_as_tuple(kss, kll, lg1) = wiener5_helper<FunType::GradT>(y, a, vn, wn, sv, err);
+  double factor = lg1 - la;
+  double ld = dwiener5(y, a, vn, wn, sv,
+                       err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
+
   // if small t is better
-  if (2 * kss < kll) {
+  if (2 * kss <= kll) {
     // calculate terms of the sum for small t
     double twoy = 2.0 * y_asq;
     if (static_cast<size_t>(kss) > 0) {
@@ -219,47 +241,25 @@ inline double dadwiener5(const double& y, const double& a, const double& vn,
     double sv_sqr = square(sv);
     double one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * w + sv_sqr * square(w) * a) / one_plus_svsqr_y;
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
-              / one_plus_svsqr_y
-          - 2 * la - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -v * w;
-    lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * la;
   }
-  double factor = lg1 - 3 * la;
-  double ld
-      = dwiener5(y, a, vn, wn, sv,
-                 err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
-
-  // calculate the number of terms kss needed for small t
-  double es = err - lg1;
-  es = es + la;
-  es = es - LOG_TWO + 2.0 * la - ly;
-  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  double u_eps = fmin(
-      -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-  double arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-  kss = ceil(fmax(K1, K2));
-
-  // calculate number of terms kll needed for large t
-  double el = err - lg1;
-  el = el + la;
-  el = el - LOG_TWO + 2.0 * la - ly;
-  K1 = sqrt(3.0 / y_asq) / pi();
-  u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
-  static const double PISQ = square(pi());  // pi*pi
-  arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double kl = (arg > 0) ? sqrt(arg) : K1;
-  kll = ceil(fmax(kl, K1));
 
   double erg;
   double newsign = 1;
   double fplus = NEGATIVE_INFTY;
   double fminus = NEGATIVE_INFTY;
 
+  double lg2;
+  bool small_t;
+  std::forward_as_tuple(kss, kll, lg1) = wiener5_helper<FunType::GradA>(y, a, vn, wn, sv, err);
+  double factor = lg1 - 3 * la;
+  double ld
+      = dwiener5(y, a, vn, wn, sv,
+                 err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
+
   // if small t is better
-  if (2 * kss < kll) {
+  if (2 * kss <= kll) {
     // calculate terms of the sum for short t
     double twoy = 2.0 * y_asq;
     if (static_cast<int>(kss) > 0) {
@@ -349,41 +349,23 @@ inline double dwdwiener5(const double& y, const double& a, const double& vn,
     double sv_sqr = square(sv);
     double one_plus_svsqr_y = (1 + sv_sqr * y);
     ans0 = (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
-              / one_plus_svsqr_y
-          - 2 * log(a) - 0.5 * log(one_plus_svsqr_y);
   } else {
     ans0 = -v * a;
-    lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
   }
-  double ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
-  double ls = -lg1 + ld;
-  double ll = -lg1 + ld;
 
-  // calculate the number of terms kss needed for small t
-  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  double u_eps
-      = fmin(-1.0, 2.0 * (err - lg1) + LOG_TWO + LOG_PI + 2.0 * log(y_asq));
-  double arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) + w) : K1;
-  kss = ceil(fmax(K1, K2));
-
-  // calculate number of terms kll needed for large t
-  K1 = sqrt(2.0 / y_asq) / pi();
-  static const double TWO_LOG_PI = 2.0 * LOG_PI;
-  u_eps = fmin(
-      -1.0, log(4.0 / 9.0) + TWO_LOG_PI + 3.0 * log(y_asq) + 2.0 * (err - lg1));
-  arg = -(u_eps - sqrt(-2.0 * u_eps - 2.0));
-  K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / y_asq) : K1;
-  kll = ceil(fmax(K1, K2));
 
   double erg;
   double newsign = 1;
   double fplus = NEGATIVE_INFTY;
   double fminus = NEGATIVE_INFTY;
 
+  std::forward_as_tuple(kss, kll, lg1) = wiener5_helper<FunType::GradW>(y, a, vn, wn, sv, err);
+  double ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
+  double ls = -lg1 + ld;
+  double ll = -lg1 + ld;
+
   // if small t is better
-  if (2 * kss < kll) {
+  if (2 * kss <= kll) {
     // calculate terms of the sum for short t
     double twoy = 2.0 * y_asq;
     for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
@@ -442,7 +424,7 @@ inline double dwdwiener5(const double& y, const double& a, const double& vn,
     } else {
       erg = log_diff_exp(fplus, fminus);
     }
-    ans = ans0 + newsign * exp(erg - ll + TWO_LOG_PI);
+    ans = ans0 + newsign * exp(erg - ll + 2 * LOG_PI);
   }
   if (normal_or_log == 1) {
     return ans * sign * exp(ld);  // derivative of f for hcubature
