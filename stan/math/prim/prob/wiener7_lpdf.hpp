@@ -445,8 +445,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       } else if (y_val - (t0_val + st0_val) <= 0) {
         ops_partials.edge8_.partials_[i] = -1 / st0_val;
       } else {
+        double t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
-          double t0_st0 = t0_val + st0_val;
           f = internal::estimate_with_err_check<8>(
               internal::wiener7_impl<internal::FunType::Density>,
               lerror_bound + log(st0_val),
