@@ -167,8 +167,8 @@ enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV };
 
 template <FunType FunTypeEnum>
 inline double wiener7_impl(double t0_, double omega, double y, double a,
-                                double v, double w, double t0, double sv,
-                                double sw, double st0, double lerr) {
+                           double v, double w, double t0, double sv, double sw,
+                           double st0, double lerr) {
   double result;
   switch (FunTypeEnum) {
     case FunType::Density:
@@ -185,11 +185,11 @@ inline double wiener7_impl(double t0_, double omega, double y, double a,
       break;
     case FunType::GradV:
       result = dvdwiener5(y - t0_, a, v, omega, sv)
-                * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
+               * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
       break;
     case FunType::GradSV:
       result = dsvdwiener5(y - t0_, a, v, omega, sv)
-                * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
+               * exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
       break;
   }
   return result;
@@ -362,20 +362,18 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     }
 
     dens = internal::wiener7_integrand(
-        internal::wiener7_impl<internal::FunType::Density>,
-        labstol_wiener5, lerror_bound_dens, params,
-        dim, xmin, xmax, Meval, abstol, reltol / 2);
+        internal::wiener7_impl<internal::FunType::Density>, labstol_wiener5,
+        lerror_bound_dens, params, dim, xmin, xmax, Meval, abstol, reltol / 2);
     double log_dens = log(dens);
     ld += log_dens;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    double deriv_t_7
-        = internal::wiener7_integrand(
-            internal::wiener7_impl<internal::FunType::GradT>,
-            labstol_wiener5, lerror_bound + log_dens, params, dim, xmin, xmax,
-            Meval, abstol, reltol / 2)
-          / dens;
+    double deriv_t_7 = internal::wiener7_integrand(
+                           internal::wiener7_impl<internal::FunType::GradT>,
+                           labstol_wiener5, lerror_bound + log_dens, params,
+                           dim, xmin, xmax, Meval, abstol, reltol / 2)
+                       / dens;
 
     // computation of derivatives and precision checks
     double deriv;
@@ -385,9 +383,9 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i]
           = internal::wiener7_integrand(
-              internal::wiener7_impl<internal::FunType::GradA>,
-              labstol_wiener5, lerror_bound + log_dens, params, dim,
-              xmin, xmax, Meval, abstol, reltol / 2)
+                internal::wiener7_impl<internal::FunType::GradA>,
+                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_t0>::value) {
@@ -396,25 +394,25 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i]
           = internal::wiener7_integrand(
-              internal::wiener7_impl<internal::FunType::GradW>,
-              labstol_wiener5, lerror_bound + log_dens, params, dim,
-              xmin, xmax, Meval, abstol, reltol / 2)
+                internal::wiener7_impl<internal::FunType::GradW>,
+                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
           = internal::wiener7_integrand(
-              internal::wiener7_impl<internal::FunType::GradV>,
-              labstol_wiener5, lerror_bound + log_dens, params, dim,
-              xmin, xmax, Meval, abstol, reltol / 2)
+                internal::wiener7_impl<internal::FunType::GradV>,
+                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
           = internal::wiener7_integrand(
-              internal::wiener7_impl<internal::FunType::GradSV>,
-              labstol_wiener5, lerror_bound + log_dens, params, dim,
-              xmin, xmax, Meval, abstol, reltol / 2)
+                internal::wiener7_impl<internal::FunType::GradSV>,
+                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sw>::value) {
@@ -450,19 +448,18 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         if (sw_val == 0) {
           double t0_st0 = t0_val + st0_val;
           f = internal::estimate_with_err_check<8>(
-                internal::wiener7_impl<internal::FunType::Density>,
-                lerror_bound + log(st0_val),
-                std::tuple_cat(std::make_tuple(t0_st0, w_val), params));
+              internal::wiener7_impl<internal::FunType::Density>,
+              lerror_bound + log(st0_val),
+              std::tuple_cat(std::make_tuple(t0_st0, w_val), params));
         } else {
           double new_error = labstol_wiener5 - LOG_TWO;
 
-          const auto& params_st
-              = std::make_tuple(y_val, a_val, v_val, w_val, t0_st0,
-                                sv_val, sw_val, 0, new_error);
+          const auto& params_st = std::make_tuple(
+              y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
           f = internal::wiener7_integrand(
-                internal::wiener7_impl<internal::FunType::Density>,
-                labstol_wiener5, lerror_bound, params_st, 1, xmin,
-                xmax, Meval, abstol, reltol / 2);
+              internal::wiener7_impl<internal::FunType::Density>,
+              labstol_wiener5, lerror_bound, params_st, 1, xmin, xmax, Meval,
+              abstol, reltol / 2);
         }
         ops_partials.edge8_.partials_[i] = -1 / st0_val + f / st0_val / dens;
       }
