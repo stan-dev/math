@@ -116,27 +116,6 @@ inline double dtdwiener5_for_7(const double& y, const double& a,
 }
 //-----------------------------------------------
 
-template <typename... TArgs>
-inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
-  std::get<8>(args_tuple) = err;
-}
-inline void assign_err(double arg, double err) { arg = err; }
-
-template <size_t ErrIndex, typename F, typename ArgsTupleT>
-double estimate_with_err_check(const F& functor, double err,
-                               ArgsTupleT&& args_tuple) {
-  double result = math::apply([&](auto&&... args) { return functor(args...); },
-                              args_tuple);
-  double lfabs_result = log(fabs(result));
-  if (lfabs_result < err) {
-    ArgsTupleT err_args_tuple = args_tuple;
-    assign_err(std::get<ErrIndex>(err_args_tuple), err + lfabs_result);
-    result = math::apply([&](auto&&... args) { return functor(args...); },
-                         err_args_tuple);
-  }
-  return result;
-}
-
 template <typename F, typename... TArgs>
 auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
                        double lerr_bound, TArgs&&... args) {
