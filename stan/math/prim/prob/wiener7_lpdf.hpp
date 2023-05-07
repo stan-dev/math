@@ -42,28 +42,30 @@ inline double wiener7_impl(double t0_, double omega, double y, double a,
   double result;
   switch (FunTypeEnum) {
     case FunType::Density:
-      result
-        = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
+      result = exp(
+          wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
       break;
     case FunType::GradT:
       result
-        = wiener5_helper<FunType::GradT>(y - t0_, a, v, omega, sv, lerr, 1);
+          = wiener5_helper<FunType::GradT>(y - t0_, a, v, omega, sv, lerr, 1);
       break;
     case FunType::GradA:
       result
-        = wiener5_helper<FunType::GradA>(y - t0_, a, v, omega, sv, lerr, 1);
+          = wiener5_helper<FunType::GradA>(y - t0_, a, v, omega, sv, lerr, 1);
       break;
     case FunType::GradW:
       result
-        = wiener5_helper<FunType::GradW>(y - t0_, a, v, omega, sv, lerr, 1);
+          = wiener5_helper<FunType::GradW>(y - t0_, a, v, omega, sv, lerr, 1);
       break;
     case FunType::GradV:
       result = wiener5_helper<FunType::GradV>(y - t0_, a, v, omega, sv)
-        * exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
+               * exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv,
+                                                      lerr));
       break;
     case FunType::GradSV:
       result = wiener5_helper<FunType::GradSV>(y - t0_, a, v, omega, sv)
-        * exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
+               * exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv,
+                                                      lerr));
       break;
   }
   return result;
@@ -74,9 +76,9 @@ inline double int_dswddiff(double t0_, double omega, double y, double a,
                            double st0, double lerr, double w_lower,
                            double w_upper, double sw_mean) {
   double fl
-    = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_lower, sv, lerr));
+      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_lower, sv, lerr));
   double fu
-    = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_upper, sv, lerr));
+      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_upper, sv, lerr));
   return 0.5 * (fl + fu) / sw_mean;
 }
 }  // namespace internal
