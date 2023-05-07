@@ -285,8 +285,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   }
 
   double lerror_bound_dens = log(1e-6);  // precision for density
-  double lerror_bound = log(prec);  // precision for derivatives
-  double labstol_wiener5 = log(1e-12);  // eps_abs(wiener5)
+  double lerror_bound = log(prec);       // precision for derivatives
+  double labstol_wiener5 = log(1e-12);   // eps_abs(wiener5)
   double dens = 0.0;
   double ld = 0.0;
   operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref>

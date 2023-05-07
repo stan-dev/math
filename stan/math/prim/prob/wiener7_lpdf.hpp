@@ -44,7 +44,7 @@ inline double wiener7_impl(double t0_, double omega, double y, double a,
     return wiener5_helper<FunTypeEnum>(y - t0_, a, v, omega, sv, lerr, 1);
   }
   double dens
-    = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
+      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
   if (FunTypeEnum == FunType::Density) {
     return dens;
   } else {
@@ -57,9 +57,9 @@ inline double int_dswddiff(double t0_, double omega, double y, double a,
                            double st0, double lerr, double w_lower,
                            double w_upper, double sw_mean) {
   double fl
-    = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_lower, sv, lerr));
+      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_lower, sv, lerr));
   double fu
-    = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_upper, sv, lerr));
+      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_upper, sv, lerr));
   return 0.5 * (fl + fu) / sw_mean;
 }
 }  // namespace internal
