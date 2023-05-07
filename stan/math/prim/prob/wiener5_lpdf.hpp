@@ -178,13 +178,11 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
                           - 0.5 * LOG_PI));
     }
   } else {
-    double mult;
+    double mult = 3;
     if (FunTypeEnum == FunType::Density) {
       mult = 1;
     } else if (FunTypeEnum == FunType::GradW) {
       mult = 2;
-    } else {
-      mult = 3;
     }
     for (size_t k = kll; k >= 1; k--) {
       double pi_k = k * pi();
@@ -286,24 +284,15 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     return 0;
   }
 
-  double error_bound_dens = 1e-6;  // precision for density
-  double lerror_bound_dens = log(error_bound_dens);
-  double error_bound = prec;  // precision for
-  // derivatives (controllable by user)
-  double lerror_bound = log(error_bound);  // log(alpha)
-  double abstol = 0.0;
-  double reltol = .9 * error_bound;  // eps_rel(Integration)
-  double abstol_wiener5 = 1e-12;     // eps_abs(wiener5)
-  double labstol_wiener5 = log(abstol_wiener5);
-  // log(eps_abs(wiener5)
-  int Meval = 6000;
+  double lerror_bound_dens = log(1e-6);  // precision for density
+  double lerror_bound = log(prec);  // precision for derivatives
+  double labstol_wiener5 = log(1e-12);  // eps_abs(wiener5)
   double dens = 0.0;
   double ld = 0.0;
   operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref>
       ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
 
   static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
-  static constexpr double LOG_POINT1 = -1;
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
