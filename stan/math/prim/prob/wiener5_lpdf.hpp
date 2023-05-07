@@ -31,105 +31,6 @@ double estimate_with_err_check(const F& functor, double err,
 
 enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV };
 
-inline auto erg_sign(double fminus, double fplus) {
-  double erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
-                                : log_diff_exp(fplus, fminus);
-  int newsign = (fplus < fminus) ? -1 : 1;
-  return std::make_tuple(erg, newsign);
-}
-
-template <FunType FunTypeEnum>
-inline auto calc_erg_kss(const double& y, const double& a, const double& vn,
-                         const double& wn, size_t kss) {
-  double w = 1.0 - wn;
-  double v = -vn;
-  double y_asq = y / square(a);
-
-  double fplus = NEGATIVE_INFTY;
-  double fminus = NEGATIVE_INFTY;
-  double twoy = 2.0 * y_asq;
-
-  if (FunTypeEnum != FunType::GradW) {
-    double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
-    if (kss > 0) {
-      for (size_t k = kss; k >= 1; k--) {
-        double w_plus_2k = w + 2.0 * k;
-        double w_minus_2k = w - 2.0 * k;
-
-        fplus = log_sum_exp(mult * log(w_plus_2k) - square(w_plus_2k) / twoy,
-                            fplus);
-        fminus = log_sum_exp(
-            mult * log(-w_minus_2k) - square(w_minus_2k) / twoy, fminus);
-      }
-    }
-    fplus = log_sum_exp(mult * log(w) - square(w) / twoy, fplus);
-  } else {
-    for (size_t k = kss; k >= 1; k--) {
-      double sqrt_w_plus_2k = square(w + 2 * k);
-      double sqrt_w_minus_2k = square(w - 2 * k);
-      double wp2k_minusy = sqrt_w_plus_2k - y_asq;
-      double wm2k_minusy = sqrt_w_minus_2k - y_asq;
-      if (wp2k_minusy > 0) {
-        fplus = log_sum_exp(log(wp2k_minusy) - sqrt_w_plus_2k / twoy, fplus);
-      } else if (wp2k_minusy < 0) {
-        fminus
-            = log_sum_exp(log(-(wp2k_minusy)) - sqrt_w_plus_2k / twoy, fminus);
-      }
-      if (wm2k_minusy > 0) {
-        fplus = log_sum_exp(log(wm2k_minusy) - sqrt_w_minus_2k / twoy, fplus);
-      } else if (wm2k_minusy < 0) {
-        fminus
-            = log_sum_exp(log(-(wm2k_minusy)) - sqrt_w_minus_2k / twoy, fminus);
-      }
-    }
-    double sqr_w = square(w);
-    double sqrt_w_plus_2k = sqr_w - y_asq;
-    if (sqrt_w_plus_2k > 0) {
-      fplus = log_sum_exp(log(sqrt_w_plus_2k) - sqr_w / twoy, fplus);
-    } else if (sqrt_w_plus_2k < 0) {
-      fminus = log_sum_exp(log(-(sqrt_w_plus_2k)) - sqr_w / twoy, fminus);
-    }
-  }
-  return erg_sign(fminus, fplus);
-}
-
-template <FunType FunTypeEnum>
-inline auto calc_erg_kll(const double& y, const double& a, const double& vn,
-                         const double& wn, size_t kll) {
-  double w = 1.0 - wn;
-  double v = -vn;
-  double y_asq = y / square(a);
-
-  double fplus = NEGATIVE_INFTY;
-  double fminus = NEGATIVE_INFTY;
-  double twoy = 2.0 * y_asq;
-  double erg;
-  int newsign = 1;
-
-  double mult;
-  if (FunTypeEnum == FunType::Density) {
-    mult = 1;
-  } else if (FunTypeEnum == FunType::GradW) {
-    mult = 2;
-  } else {
-    mult = 3;
-  }
-  double halfy = y_asq / 2.0;
-  for (size_t k = kll; k >= 1; k--) {
-    double pi_k = k * pi();
-    double check
-        = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
-    if (check > 0) {
-      fplus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(check),
-                          fplus);
-    } else {
-      fminus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(-check),
-                           fminus);
-    }
-  }
-  return erg_sign(fminus, fplus);
-}
-
 template <FunType FunTypeEnum, typename KSSFuncType, typename KLLFuncType>
 inline auto wiener5_helper(const double& y, const double& a, const double& vn,
                            const double& wn, const double& sv,
@@ -211,13 +112,78 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
 
   double erg;
   int newsign;
+  double fplus = NEGATIVE_INFTY;
+  double fminus = NEGATIVE_INFTY;
+  double twoy = 2.0 * y_asq;
   if (2 * kss <= kll) {
-    std::forward_as_tuple(erg, newsign)
-        = calc_erg_kss<FunTypeEnum>(y, a, vn, wn, kss);
+    double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
+    double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
+    double sqrt_offset = sqrt(offset);
+    if (kss > 0) {
+      for (size_t k = kss; k >= 1; k--) {
+        double wp2k = w + 2.0 * k;
+        double wm2k = w - 2.0 * k;
+
+        if (wp2k > sqrt_offset) {
+          fplus = log_sum_exp(
+            mult * log(wp2k - offset) - (square(wp2k) - offset)
+              / twoy,
+            fplus);
+        } else {
+          fminus = log_sum_exp(
+            mult * log(-(wp2k - offset)) - (square(wp2k) - offset)
+              / twoy,
+            fminus);
+        }
+
+        if (wm2k > sqrt_offset) {
+          fplus = log_sum_exp(
+            mult * log(wm2k - offset) - (square(wm2k) - offset)
+              / twoy,
+            fplus);
+        } else {
+          fminus = log_sum_exp(
+            mult * log(-(wm2k - offset)) - (square(wm2k) - offset)
+              / twoy,
+            fminus);
+        }
+      }
+    }
+    if (w > sqrt_offset) {
+      fplus = log_sum_exp(mult * log(w - offset) - square(w) / twoy, fplus);
+    } else {
+      fminus = log_sum_exp(mult * log(-(w - offset)) - square(w) / twoy,
+                          fminus);
+    }
+    erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
+                                  : log_diff_exp(fplus, fminus);
+    newsign = (fplus < fminus) ? -1 : 1;
     return kss_functor(erg, newsign, lg1, ans0);
   } else {
-    std::forward_as_tuple(erg, newsign)
-        = calc_erg_kll<FunTypeEnum>(y, a, vn, wn, kll);
+    double mult;
+    if (FunTypeEnum == FunType::Density) {
+      mult = 1;
+    } else if (FunTypeEnum == FunType::GradW) {
+      mult = 2;
+    } else {
+      mult = 3;
+    }
+    double halfy = y_asq / 2.0;
+    for (size_t k = kll; k >= 1; k--) {
+      double pi_k = k * pi();
+      double check
+          = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
+      if (check > 0) {
+        fplus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(check),
+                            fplus);
+      } else {
+        fminus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(-check),
+                            fminus);
+      }
+    }
+    erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
+                                  : log_diff_exp(fplus, fminus);
+    newsign = (fplus < fminus) ? -1 : 1;
     return kll_functor(erg, newsign, lg1, ans0);
   }
 }
