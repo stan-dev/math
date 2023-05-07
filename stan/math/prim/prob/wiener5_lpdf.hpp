@@ -186,7 +186,8 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
 
 // calculate density in log
 inline double dwiener5(const double& y, const double& a, const double& vn,
-                       const double& wn, const double& sv, const double& err) {
+                       const double& wn, const double& sv, const double& err,
+                       int normal_or_log = 0) {
   const auto& kss_functor = [&](double erg, int newsign, double lg1,
                                 double ans0) {
     return lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log(y / square(a)) + erg;
@@ -204,23 +205,25 @@ inline double dwiener5(const double& y, const double& a, const double& vn,
 // d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
 inline double dtdwiener5(const double& y, const double& a, const double& vn,
                          const double& wn, const double& sv,
-                         const double& err) {
+                         const double& err, int normal_or_log = 0) {
   const auto& kss_functor = [&](double erg, int newsign, double lg1,
                                 double ans0) {
     double ld = dwiener5(y, a, vn, wn, sv,
                          err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-    return ans0 - 1.5 / y
+    double ans = ans0 - 1.5 / y
            + newsign
                  * exp(lg1 - 2.0 * log(a) - 1.5 * LOG_TWO - LOG_SQRT_PI
                        - 3.5 * log(y / square(a)) + erg - ld);
+    return (normal_or_log == 1) ? ans * exp(ld) : ans;
   };
   const auto& kll_functor = [&](double erg, int newsign, double lg1,
                                 double ans0) {
     double ld = dwiener5(y, a, vn, wn, sv,
                          err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-    return ans0
+    double ans = ans0
            - newsign
                  * exp(lg1 - 2.0 * log(a) + 3.0 * LOG_PI - LOG_TWO + erg - ld);
+    return (normal_or_log == 1) ? ans * exp(ld) : ans;
   };
 
   return wiener5_helper<FunType::GradT>(y, a, vn, wn, sv, err, kss_functor,
@@ -430,7 +433,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const double sv_val = sv_vec.val(i);
 
     const auto params = std::make_tuple(y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, labstol_wiener5);
+                                        sv_val, labstol_wiener5, 0);
 
     dens = internal::estimate_with_err_check<5>(
         internal::dwiener5, lerror_bound_dens - LOG_TWO, params, true);
@@ -448,7 +451,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<5>(
           internal::dadwiener5, dens + lerror_bound - LOG_FOUR,
-          std::tuple_cat(params, std::make_tuple(0)));
+          params);
     }
     if (!is_constant_all<T_t0>::value) {
       ops_partials.edge3_.partials_[i] = -deriv_y;
@@ -456,7 +459,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<5>(
           internal::dwdwiener5, dens + lerror_bound - LOG_FOUR,
-          std::tuple_cat(params, std::make_tuple(0)));
+          params);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]

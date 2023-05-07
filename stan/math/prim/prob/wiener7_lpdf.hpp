@@ -9,113 +9,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-// calculate derivative of density of wiener5 with respect to y (version for
-// wiener7)
-inline double dtdwiener5_for_7(const double& y, const double& a,
-                               const double& v, const double& w,
-                               const double& sv, const double& err) {
-  double kll, kss, ans;
-
-  // prepare some variables
-  double y_asq = y / square(a);
-  double la = 2.0 * log(a);
-  double ans0, lg1;
-  if (sv != 0) {
-    double sv_sqr = square(sv);
-    double one_plus_svsqr_y = (1 + sv_sqr * y);
-    ans0 = -0.5
-           * (square(sv_sqr) * (y + square(a * w))
-              + sv_sqr * (1 - 2 * a * v * w) + square(v))
-           / square(one_plus_svsqr_y);
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
-              / one_plus_svsqr_y
-          - la - 0.5 * log(one_plus_svsqr_y);
-  } else {
-    ans0 = -0.5 * square(v);
-    lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - la;
-  }
-  double factor = lg1 - la;
-  double ld = dwiener5(y, a, -v, 1 - w, sv,
-                       err - log(max(fabs(ans0), fabs(ans0 - 1.5 / y))));
-
-  // calculate the number of terms kss needed for small y
-  double es = err - lg1;
-  es = es + la;
-  double K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-  double u_eps = fmin(
-      -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-  double arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-  kss = ceil(fmax(K1, K2));
-
-  // calculate number of terms kll needed for large y
-  double el = err - lg1;
-  el = el + la;
-  K1 = sqrt(3.0 / y_asq) / pi();
-  u_eps = fmin(-1.0, el + log(0.6) + LOG_PI + 2.0 * log(y_asq));
-  static const double PISQ = square(pi());  // pi*pi
-  arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  double kl = (arg > 0) ? sqrt(arg) : K1;
-  kll = ceil(fmax(kl, K1));
-
-  double erg;
-  double newsign = 1;
-  double fplus = NEGATIVE_INFTY;
-  double fminus = NEGATIVE_INFTY;
-
-  // if small y is better
-  if (2 * kss < kll) {
-    // calculate terms of the sum for small y
-    double twot = 2.0 * y_asq;
-    if (static_cast<size_t>(kss) > 0) {
-      for (size_t k = static_cast<size_t>(kss); k >= 1; k--) {
-        double w_plus_2k = w + 2.0 * k;
-        double w_minus_2k = w - 2.0 * k;
-        fplus = log_sum_exp(3.0 * log(w_plus_2k) - w_plus_2k * w_plus_2k / twot,
-                            fplus);
-        fminus = log_sum_exp(
-            3.0 * log(-w_minus_2k) - w_minus_2k * w_minus_2k / twot, fminus);
-      }
-    }
-    fplus = log_sum_exp(3.0 * log(w) - w * w / twot, fplus);
-    if (fplus < fminus) {
-      newsign = -1;
-      erg = log_diff_exp(fminus, fplus);
-    } else {
-      erg = log_diff_exp(fplus, fminus);
-    }
-    ans = ans0 - 1.5 / y
-          + newsign
-                * exp(factor - 1.5 * LOG_TWO - LOG_SQRT_PI - 3.5 * log(y_asq)
-                      + erg - ld);
-    // if large y is better
-  } else {
-    // calculate terms of the sum for large y
-    double halfy = y_asq / 2.0;
-    for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-      double pi_k = pi() * k;
-      double zwi = sin(pi_k * w);
-      if (zwi > 0) {
-        fplus
-            = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(zwi), fplus);
-      }
-      if (zwi < 0) {
-        fminus = log_sum_exp(3.0 * log(k) - pi_k * pi_k * halfy + log(-zwi),
-                             fminus);
-      }
-    }
-    if (fplus < fminus) {
-      erg = log_diff_exp(fminus, fplus);
-      newsign = -1;
-    } else {
-      erg = log_diff_exp(fplus, fminus);
-    }
-    ans = ans0 - newsign * exp(factor + 3.0 * LOG_PI - LOG_TWO + erg - ld);
-  }
-  return ans * exp(ld);
-}
-//-----------------------------------------------
-
 template <typename F, typename... TArgs>
 auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
                        double lerr_bound, TArgs&&... args) {
@@ -152,7 +45,7 @@ inline double wiener7_impl(double t0_, double omega, double y, double a,
       result = exp(dwiener5(y - t0_, a, v, omega, sv, lerr));
       break;
     case FunType::GradT:
-      result = dtdwiener5_for_7(y - t0_, a, -v, 1 - omega, sv, lerr);
+      result = dtdwiener5(y - t0_, a, v, omega, sv, lerr, 1);
       break;
     case FunType::GradA:
       result = dadwiener5(y - t0_, a, v, omega, sv, lerr, 1);
