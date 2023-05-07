@@ -47,21 +47,23 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
   double v = -vn;
   double sv_sqr = square(sv);
   double one_plus_svsqr_y = 1 + sv_sqr * y;
+  double two_avw = 2 * a * v * w;
+  double two_log_a = 2 * log(a);
 
   if (FunTypeEnum == FunType::GradSV) {
     double t1 = -y / one_plus_svsqr_y;
-    double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
+    double t2 = (square(a * w) + two_avw * y + square(v * y))
                 / square(one_plus_svsqr_y);
     return sv * (t1 + t2);
   }
 
   double lg1;
   if (sv != 0) {
-    lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
+    lg1 = (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
               / one_plus_svsqr_y
-          - 2 * log(a) - 0.5 * log(one_plus_svsqr_y);
+          - two_log_a - 0.5 * log(one_plus_svsqr_y);
   } else {
-    lg1 = (-2 * a * v * w - square(v) * y) / 2.0 - 2 * log(a);
+    lg1 = (-two_avw - square(v) * y) / 2.0 - two_log_a;
   }
   double ans0 = 0;
   if (FunTypeEnum != FunType::Density) {
@@ -71,7 +73,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
       if (FunTypeEnum == FunType::GradT) {
         ans0 = -0.5
                * (square(sv_sqr) * (y + square(a * w))
-                  + sv_sqr * (1 - 2 * a * v * w) + square(v))
+                  + sv_sqr * (1 - two_avw) + square(v))
                / square(one_plus_svsqr_y);
       } else {
         ans0 = (-v * var_a + sv_sqr * square(var_a) * var_b) / one_plus_svsqr_y;
@@ -81,27 +83,22 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     }
   }
 
-  double es = (err - lg1);
-  if (FunTypeEnum == FunType::GradT) {
-    es += 2.0 * log(a);
-  }
+  double es = (err - lg1) + (FunTypeEnum == FunType::GradT) * two_log_a;
+  double two_es = 2.0 * es;
   double y_asq = y / square(a);
+  double log_y_asq = log(y) - two_log_a;
 
   double K1, u_eps, arg;
-  if (FunTypeEnum == FunType::Density) {
-    K1 = (sqrt(2.0 * y_asq) + w) / 2.0;
-    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log(y_asq) + 2.0 * (es));
-    arg = -y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double K1_mult = (FunTypeEnum == FunType::Density) ? 2 : 3;
+  K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
+  if (FunTypeEnum == FunType::Density || FunTypeEnum == FunType::GradW) {
+    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
   } else {
-    K1 = (sqrt(3.0 * y_asq) + w) / 2.0;
-    if (FunTypeEnum == FunType::GradW) {
-      u_eps = fmin(-1.0, 2.0 * es + LOG_TWO + LOG_PI + 2.0 * log(y_asq));
-    } else {
-      u_eps = fmin(
-          -1.0, (log(8.0 / 27.0) + LOG_PI + 4.0 * log(y_asq) + 2.0 * es) / 3.0);
-    }
-    arg = -3.0 * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    u_eps
+      = fmin(-3.0, (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
   }
+  double arg_mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
+  arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
 
   double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
   size_t kss = static_cast<size_t>(ceil(fmax(K1, K2)));
@@ -109,111 +106,74 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
   static const double PISQ = square(pi());  // pi*pi
   if (FunTypeEnum == FunType::Density) {
     K1 = 1.0 / (pi() * sqrt(y_asq));
-    double two_log_piy = -2.0 * (log(pi() * y_asq) + es);
+    double two_log_piy = -2.0 * (LOG_PI + log_y_asq + es);
     K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PISQ * y_asq)) : 0.0;
-  } else if (FunTypeEnum == FunType::GradT) {
-    K1 = sqrt(3.0 / y_asq) / pi();
-    u_eps = fmin(-1.0, es + log(0.6) + LOG_PI + 2.0 * log(y_asq));
-    arg = -2.0 / PISQ / y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-    K2 = (arg > 0) ? sqrt(arg) : K1;
-  } else if (FunTypeEnum == FunType::GradW) {
-    K1 = sqrt(2.0 / y_asq) / pi();
-    u_eps = fmin(-1.0,
-                 log(4.0 / 9.0) + 2.0 * LOG_PI + 3.0 * log(y_asq) + 2.0 * es);
-    arg = -(u_eps - sqrt(-2.0 * u_eps - 2.0));
-    K2 = (arg > 0) ? 1.0 / pi() * sqrt(arg / y_asq) : K1;
+  } else {
+    K1_mult = (FunTypeEnum == FunType::GradT) ? 2 : 3;
+    K1 = sqrt(K1_mult / y_asq) / pi();
+    u_eps = (FunTypeEnum == FunType::GradT)
+          ? fmin(-1, log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es)
+          : fmin(-1, log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq
+                      + two_es);
+    arg_mult = (FunTypeEnum == FunType::GradT) ? (2.0 / PISQ / y_asq) : 1;
+    arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    K2 = (FunTypeEnum == FunType::GradT)
+          ? (arg > 0) ? sqrt(arg) : K1
+          : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
   }
+
   size_t kll = static_cast<size_t>(ceil(fmax(K1, K2)));
 
-  double erg;
-  int newsign;
-  double fplus = NEGATIVE_INFTY;
-  double fminus = NEGATIVE_INFTY;
-  double twoy = 2.0 * y_asq;
-  double result;
-  double ld;
+  double ld = 0;
+  double ld_err;
+  if (FunTypeEnum != FunType::Density) {
+    if (FunTypeEnum == FunType::GradT) {
+      ld_err = log(max(fabs(ans0 - 1.5 / y), fabs(ans0)));
+    } else if (FunTypeEnum == FunType::GradA) {
+      ld_err = log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a)));
+    } else if (FunTypeEnum == FunType::GradW) {
+      ld_err = log(fabs(ans0));
+    }
+    ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err - ld_err);
+  }
+
+  double erg = NEGATIVE_INFTY;
+  int newsign = 1;
+  double scaling = (2 * kss <= kll) ? inv(2.0 * y_asq) : y_asq / 2.0;
   double ans;
-  double la, ly, factor, ls;
   if (2 * kss <= kll) {
     double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
     double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
     double sqrt_offset = sqrt(offset);
-    if (kss > 0) {
-      for (size_t k = kss; k >= 1; k--) {
-        double wp2k = w + 2.0 * k;
-        double wm2k = w - 2.0 * k;
-
-        if (wp2k > sqrt_offset) {
-          fplus = log_sum_exp(
-              mult * log(wp2k - offset) - (square(wp2k) - offset) / twoy,
-              fplus);
-        } else {
-          fminus = log_sum_exp(
-              mult * log(-(wp2k - offset)) - (square(wp2k) - offset) / twoy,
-              fminus);
-        }
-
-        if (wm2k > sqrt_offset) {
-          fplus = log_sum_exp(
-              mult * log(wm2k - offset) - (square(wm2k) - offset) / twoy,
-              fplus);
-        } else {
-          fminus = log_sum_exp(
-              mult * log(-(wm2k - offset)) - (square(wm2k) - offset) / twoy,
-              fminus);
-        }
-      }
+    for (size_t k = kss; k >= 0; k--) {
+      double wp2k = w + 2.0 * k;
+      double wm2k = w - 2.0 * k;
+      int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
+      int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
+      double wp2k_quant = log(wp2k_sign * (wp2k - offset))
+                          - (square(wp2k) - offset) * scaling;
+      double wm2k_quant = log(wm2k_sign * (wm2k - offset))
+                          - (square(wm2k) - offset) * scaling;
+      std::forward_as_tuple(erg, newsign)
+        = log_sum_exp_signed(erg, newsign, mult * wp2k_quant, wp2k_sign);
+      std::forward_as_tuple(erg, newsign)
+        = log_sum_exp_signed(erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
     }
-    if (w > sqrt_offset) {
-      fplus = log_sum_exp(mult * log(w - offset) - square(w) / twoy, fplus);
-    } else {
-      fminus
-          = log_sum_exp(mult * log(-(w - offset)) - square(w) / twoy, fminus);
-    }
-    erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
-                           : log_diff_exp(fplus, fminus);
-    newsign = (fplus < fminus) ? -1 : 1;
-    switch (FunTypeEnum) {
-      case FunType::Density:
-        result = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log(y / square(a))
-                 + erg;
-        break;
-      case FunType::GradT:
-        ld = wiener5_helper<FunType::Density>(
-            y, a, vn, wn, sv, err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
+    if (FunTypeEnum == FunType::Density) {
+        ans = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log_y_asq + erg;
+    } else if (FunTypeEnum == FunType::GradT) {
         ans = ans0 - 1.5 / y
-              + newsign
-                    * exp(lg1 - 2.0 * log(a) - 1.5 * LOG_TWO - LOG_SQRT_PI
-                          - 3.5 * log(y / square(a)) + erg - ld);
-        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
-        break;
-      case FunType::GradA:
-        la = log(a);
-        ly = log(y);
-        factor = lg1 - 3 * la;
-        ld = wiener5_helper<FunType::Density>(
-            y, a, vn, wn, sv,
-            err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
+                    + newsign
+                          * exp(lg1 - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
+                                - 3.5 * log_y_asq + erg - ld);
+    } else if (FunTypeEnum == FunType::GradA) {
         ans = ans0 + 1.0 / a
-              - newsign
-                    * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * ly + 4.0 * la
-                          + lg1 + erg - ld);
-        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
-        break;
-      case FunType::GradW:
-        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
-                                              err - log(fabs(ans0)));
-        ls = -lg1 + ld;
-        ans = ans0
-              - newsign
-                    * exp(erg - ls - 2.5 * log(y / square(a)) - 0.5 * LOG_TWO
-                          - 0.5 * LOG_PI);
-        result = (normal_or_log == 1) ? -ans * exp(ld) : -ans;
-        break;
-      case FunType::GradV:
-        break;
-      case FunType::GradSV:
-        break;
+                      - newsign
+                            * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
+                                  + 2.0 * two_log_a + lg1 + erg - ld);
+    } else if (FunTypeEnum == FunType::GradW) {
+        ans = -(ans0 - newsign * exp(erg - (ld - lg1) - 2.5 * log_y_asq
+                                  - 0.5 * LOG_TWO - 0.5 * LOG_PI));
     }
   } else {
     double mult;
@@ -224,60 +184,29 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     } else {
       mult = 3;
     }
-    double halfy = y_asq / 2.0;
     for (size_t k = kll; k >= 1; k--) {
       double pi_k = k * pi();
       double check
           = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
-      if (check > 0) {
-        fplus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(check),
-                            fplus);
-      } else {
-        fminus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(-check),
-                             fminus);
-      }
+      int check_sign = sign(check);
+      double kll_quant = mult * log(k) - square(pi_k) * scaling
+                          + log(fabs(check));
+      std::forward_as_tuple(erg, newsign)
+        = log_sum_exp_signed(erg, newsign, kll_quant, check_sign);
     }
-    erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
-                           : log_diff_exp(fplus, fminus);
-    newsign = (fplus < fminus) ? -1 : 1;
-    switch (FunTypeEnum) {
-      case FunType::Density:
-        result = lg1 + erg + LOG_PI;
-        break;
-      case FunType::GradT:
-        ld = wiener5_helper<FunType::Density>(
-            y, a, vn, wn, sv, err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-        ans = ans0
-              - newsign
-                    * exp(lg1 - 2.0 * log(a) + 3.0 * LOG_PI - LOG_TWO + erg
-                          - ld);
-        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
-        break;
-      case FunType::GradA:
-        la = log(a);
-        ly = log(y);
-        factor = lg1 - 3 * la;
-        ld = wiener5_helper<FunType::Density>(
-            y, a, vn, wn, sv,
-            err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
+    if (FunTypeEnum == FunType::Density) {
+        ans = lg1 + erg + LOG_PI;
+    } else if (FunTypeEnum == FunType::GradT) {
+        ans = ans0 - newsign
+                * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
+    } else if (FunTypeEnum == FunType::GradA) {
         ans = ans0 - 2.0 / a
-              + newsign * exp(ly + factor + 3.0 * LOG_PI + erg - ld);
-        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
-        break;
-      case FunType::GradW:
-        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
-                                              err - log(fabs(ans0)));
-        ls = -lg1 + ld;
-        ans = ans0 + newsign * exp(erg - ls + 2 * LOG_PI);
-        result = (normal_or_log == 1) ? -ans * exp(ld) : -ans;
-        break;
-      case FunType::GradV:
-        break;
-      case FunType::GradSV:
-        break;
+              + newsign * exp(log(y) + lg1 - 3 * (log(a) - LOG_PI) + erg - ld);
+    } else if (FunTypeEnum == FunType::GradW) {
+        ans = -(ans0 + newsign * exp(erg - (ld - lg1) + 2 * LOG_PI));
     }
   }
-  return result;
+  return (normal_or_log == 1) ? ans * exp(ld) : ans;
 }
 }  // namespace internal
 
