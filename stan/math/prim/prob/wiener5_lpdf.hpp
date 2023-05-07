@@ -31,15 +31,30 @@ double estimate_with_err_check(const F& functor, double err,
 
 enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV };
 
-template <FunType FunTypeEnum, typename KSSFuncType, typename KLLFuncType>
-inline auto wiener5_helper(const double& y, const double& a, const double& vn,
+template <FunType FunTypeEnum>
+inline double wiener5_helper(const double& y, const double& a, const double& vn,
                            const double& wn, const double& sv,
-                           const double& err, const KSSFuncType& kss_functor,
-                           const KLLFuncType& kll_functor) {
+                           const double& err = log(1e-12),
+                           int normal_or_log = 0) {
+  if (FunTypeEnum == FunType::GradV) {
+    double ans = (a * (1 - wn) - vn * y);
+    if (sv != 0) {
+      ans /= 1 + square(sv) * y;
+    }
+    return ans;
+  }
   double w = 1.0 - wn;
   double v = -vn;
   double sv_sqr = square(sv);
   double one_plus_svsqr_y = 1 + sv_sqr * y;
+
+  if (FunTypeEnum == FunType::GradSV) {
+    double t1 = -y / one_plus_svsqr_y;
+    double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
+                / square(one_plus_svsqr_y);
+    return sv * (t1 + t2);
+  }
+
   double lg1;
   if (sv != 0) {
     lg1 = (sv_sqr * square(a * w) - 2 * a * v * w - square(v) * y) / 2.0
@@ -115,6 +130,10 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
   double fplus = NEGATIVE_INFTY;
   double fminus = NEGATIVE_INFTY;
   double twoy = 2.0 * y_asq;
+  double result;
+  double ld;
+  double ans;
+  double la, ly, factor, ls;
   if (2 * kss <= kll) {
     double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
     double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
@@ -154,7 +173,48 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
     erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
                            : log_diff_exp(fplus, fminus);
     newsign = (fplus < fminus) ? -1 : 1;
-    return kss_functor(erg, newsign, lg1, ans0);
+    switch (FunTypeEnum) {
+      case FunType::Density:
+        result = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log(y / square(a))
+                  + erg;
+        break;
+      case FunType::GradT:
+        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
+                            err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
+        ans = ans0 - 1.5 / y
+                    + newsign
+                          * exp(lg1 - 2.0 * log(a) - 1.5 * LOG_TWO - LOG_SQRT_PI
+                                - 3.5 * log(y / square(a)) + erg - ld);
+        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
+        break;
+      case FunType::GradA:
+        la = log(a);
+        ly = log(y);
+        factor = lg1 - 3 * la;
+        ld = wiener5_helper<FunType::Density>(
+            y, a, vn, wn, sv,
+            err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
+        ans = ans0 + 1.0 / a
+                      - newsign
+                            * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * ly
+                                  + 4.0 * la + lg1 + erg - ld);
+        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
+        break;
+      case FunType::GradW:
+        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
+                                              err - log(fabs(ans0)));
+        ls = -lg1 + ld;
+        ans = ans0
+                      - newsign
+                            * exp(erg - ls - 2.5 * log(y / square(a))
+                                  - 0.5 * LOG_TWO - 0.5 * LOG_PI);
+        result = (normal_or_log == 1) ? -ans * exp(ld) : -ans;
+        break;
+      case FunType::GradV:
+        break;
+      case FunType::GradSV:
+        break;
+    }
   } else {
     double mult;
     if (FunTypeEnum == FunType::Density) {
@@ -180,153 +240,43 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
     erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
                            : log_diff_exp(fplus, fminus);
     newsign = (fplus < fminus) ? -1 : 1;
-    return kll_functor(erg, newsign, lg1, ans0);
-  }
-}
-
-// calculate density in log
-inline double dwiener5(const double& y, const double& a, const double& vn,
-                       const double& wn, const double& sv, const double& err,
-                       int normal_or_log = 0) {
-  const auto& kss_functor = [&](double erg, int newsign, double lg1,
-                                double ans0) {
-    return lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log(y / square(a)) + erg;
-  };
-  const auto& kll_functor = [&](double erg, int newsign, double lg1,
-                                double ans0) { return lg1 + erg + LOG_PI; };
-
-  return wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err, kss_functor,
-                                          kll_functor);
-}
-//-----------------------------------------------
-
-// d/dt DENSITY
-// calculate derivative of density with respect to t (in log, ans =
-// d/dt(log(f))=d/dt f'/f; ans*exp(ld)=f' on normal scale)
-inline double dtdwiener5(const double& y, const double& a, const double& vn,
-                         const double& wn, const double& sv, const double& err,
-                         int normal_or_log = 0) {
-  const auto& kss_functor = [&](double erg, int newsign, double lg1,
-                                double ans0) {
-    double ld = dwiener5(y, a, vn, wn, sv,
-                         err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-    double ans = ans0 - 1.5 / y
-                 + newsign
-                       * exp(lg1 - 2.0 * log(a) - 1.5 * LOG_TWO - LOG_SQRT_PI
-                             - 3.5 * log(y / square(a)) + erg - ld);
-    return (normal_or_log == 1) ? ans * exp(ld) : ans;
-  };
-  const auto& kll_functor = [&](double erg, int newsign, double lg1,
-                                double ans0) {
-    double ld = dwiener5(y, a, vn, wn, sv,
-                         err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
-    double ans
-        = ans0
-          - newsign
+    switch (FunTypeEnum) {
+      case FunType::Density:
+        result = lg1 + erg + LOG_PI;
+        break;
+      case FunType::GradT:
+        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
+                            err - log(max(fabs(ans0 - 1.5 / y), fabs(ans0))));
+        ans = ans0 - newsign
                 * exp(lg1 - 2.0 * log(a) + 3.0 * LOG_PI - LOG_TWO + erg - ld);
-    return (normal_or_log == 1) ? ans * exp(ld) : ans;
-  };
-
-  return wiener5_helper<FunType::GradT>(y, a, vn, wn, sv, err, kss_functor,
-                                        kll_functor);
-}
-//-----------------------------------------------
-
-// d/da DENSITY
-// calculate derivative of density with respect to a (in log, ans =
-// d/da(log(f))=d/da f'/f; ans*exp(ld)=f' on normal scale)
-inline double dadwiener5(const double& y, const double& a, const double& vn,
-                         const double& wn, const double& sv, const double& err,
-                         const int& normal_or_log) {
-  double la = log(a);
-  double ly = log(y);
-
-  const auto& kss_functor
-      = [&](double erg, int newsign, double lg1, double ans0) {
-          double factor = lg1 - 3 * la;
-          double ld = dwiener5(
-              y, a, vn, wn, sv,
-              err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
-          double ans = ans0 + 1.0 / a
-                       - newsign
-                             * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * ly
-                                   + 4.0 * la + lg1 + erg - ld);
-          return (normal_or_log == 1) ? ans * exp(ld) : ans;
-        };
-  const auto& kll_functor = [&](double erg, int newsign, double lg1,
-                                double ans0) {
-    double factor = lg1 - 3 * la;
-    double ld
-        = dwiener5(y, a, vn, wn, sv,
-                   err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
-    double ans
-        = ans0 - 2.0 / a + newsign * exp(ly + factor + 3.0 * LOG_PI + erg - ld);
-    return (normal_or_log == 1) ? ans * exp(ld) : ans;
-  };
-
-  return wiener5_helper<FunType::GradA>(y, a, vn, wn, sv, err, kss_functor,
-                                        kll_functor);
-}
-//-----------------------------------------------
-
-// d/dv DENSITY
-// calculate derivative of density with respect to v (in log, ans =
-// d/dv(log(f))=d/dv f'/f; ans*exp(ld)=f' on normal scale)
-inline double dvdwiener5(const double& y, const double& a, const double& vn,
-                         const double& wn, const double& sv) {
-  double ans = (a * (1 - wn) - vn * y);
-  if (sv != 0) {
-    ans /= 1 + square(sv) * y;
+        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
+        break;
+      case FunType::GradA:
+        la = log(a);
+        ly = log(y);
+        factor = lg1 - 3 * la;
+        ld = wiener5_helper<FunType::Density>(
+            y, a, vn, wn, sv,
+            err - log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a))));
+        ans = ans0 - 2.0 / a
+              + newsign * exp(ly + factor + 3.0 * LOG_PI + erg - ld);
+        result = (normal_or_log == 1) ? ans * exp(ld) : ans;
+        break;
+      case FunType::GradW:
+        ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv,
+                                              err - log(fabs(ans0)));
+        ls = -lg1 + ld;
+        ans = ans0 + newsign * exp(erg - ls + 2 * LOG_PI);
+        result = (normal_or_log == 1) ? -ans * exp(ld) : -ans;
+        break;
+      case FunType::GradV:
+        break;
+      case FunType::GradSV:
+        break;
+    }
   }
-  return ans;
+  return result;
 }
-//-----------------------------------------------
-
-// d/dw DENSITY
-// calculate derivative of density with respect to w (in log, ans =
-// d/dw(log(f))=d/dw f'/f; ans*exp(ld)=f' on normal scale)
-inline double dwdwiener5(const double& y, const double& a, const double& vn,
-                         const double& wn, const double& sv, const double& err,
-                         const int& normal_or_log) {
-  const auto& kss_functor
-      = [&](double erg, int newsign, double lg1, double ans0) {
-          double ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
-          double ls = -lg1 + ld;
-          double ans = ans0
-                       - newsign
-                             * exp(erg - ls - 2.5 * log(y / square(a))
-                                   - 0.5 * LOG_TWO - 0.5 * LOG_PI);
-          return (normal_or_log == 1) ? -ans * exp(ld) : -ans;
-        };
-  const auto& kll_functor
-      = [&](double erg, int newsign, double lg1, double ans0) {
-          double ld = dwiener5(y, a, vn, wn, sv, err - log(fabs(ans0)));
-          double ll = -lg1 + ld;
-          double ans = ans0 + newsign * exp(erg - ll + 2 * LOG_PI);
-          return (normal_or_log == 1) ? -ans * exp(ld) : -ans;
-        };
-
-  return wiener5_helper<FunType::GradW>(y, a, vn, wn, sv, err, kss_functor,
-                                        kll_functor);
-}
-//-----------------------------------------------
-
-// d/dsv DENSITY
-// calculate derivative of density with respect to sv (in log, ans =
-// d/dsv(log(f))=d/dsv f'/f; ans*exp(ld)=f' on normal scale)
-inline double dsvdwiener5(const double& y, const double& a, const double& vn,
-                          const double& wn, const double& sv) {
-  double v, w;
-  v = -vn;
-  w = 1 - wn;
-  double one_sqrsv_y = 1 + square(sv) * y;
-  double t1 = -y / one_sqrsv_y;
-  double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
-              / square(one_sqrsv_y);
-  return sv * (t1 + t2);
-}
-//-----------------------------------------------
-
 }  // namespace internal
 
 template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
@@ -437,13 +387,15 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
                                         sv_val, labstol_wiener5, 0);
 
     dens = internal::estimate_with_err_check<5>(
-        internal::dwiener5, lerror_bound_dens - LOG_TWO, params, true);
+        internal::wiener5_helper<internal::FunType::Density>,
+        lerror_bound_dens - LOG_TWO, params, true);
     ld += dens;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
     double deriv_y = internal::estimate_with_err_check<5>(
-        internal::dtdwiener5, dens + lerror_bound - LOG_TWO, params);
+        internal::wiener5_helper<internal::FunType::GradT>,
+        dens + lerror_bound - LOG_TWO, params);
 
     // computation of derivatives and precision checks
     if (!is_constant_all<T_y>::value) {
@@ -451,22 +403,26 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     }
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::dadwiener5, dens + lerror_bound - LOG_FOUR, params);
+          internal::wiener5_helper<internal::FunType::GradA>,
+          dens + lerror_bound - LOG_FOUR, params);
     }
     if (!is_constant_all<T_t0>::value) {
       ops_partials.edge3_.partials_[i] = -deriv_y;
     }
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::dwdwiener5, dens + lerror_bound - LOG_FOUR, params);
+          internal::wiener5_helper<internal::FunType::GradW>,
+          dens + lerror_bound - LOG_FOUR, params);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
-          = internal::dvdwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val);
+          = internal::wiener5_helper<internal::FunType::GradV>(
+              y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
-          = internal::dsvdwiener5(y_val - t0_val, a_val, v_val, w_val, sv_val);
+          = internal::wiener5_helper<internal::FunType::GradSV>(
+              y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
   }  // end for loop
   return ops_partials.build(ld);
