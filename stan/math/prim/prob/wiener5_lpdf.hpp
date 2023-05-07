@@ -126,37 +126,33 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
 
         if (wp2k > sqrt_offset) {
           fplus = log_sum_exp(
-            mult * log(wp2k - offset) - (square(wp2k) - offset)
-              / twoy,
-            fplus);
+              mult * log(wp2k - offset) - (square(wp2k) - offset) / twoy,
+              fplus);
         } else {
           fminus = log_sum_exp(
-            mult * log(-(wp2k - offset)) - (square(wp2k) - offset)
-              / twoy,
-            fminus);
+              mult * log(-(wp2k - offset)) - (square(wp2k) - offset) / twoy,
+              fminus);
         }
 
         if (wm2k > sqrt_offset) {
           fplus = log_sum_exp(
-            mult * log(wm2k - offset) - (square(wm2k) - offset)
-              / twoy,
-            fplus);
+              mult * log(wm2k - offset) - (square(wm2k) - offset) / twoy,
+              fplus);
         } else {
           fminus = log_sum_exp(
-            mult * log(-(wm2k - offset)) - (square(wm2k) - offset)
-              / twoy,
-            fminus);
+              mult * log(-(wm2k - offset)) - (square(wm2k) - offset) / twoy,
+              fminus);
         }
       }
     }
     if (w > sqrt_offset) {
       fplus = log_sum_exp(mult * log(w - offset) - square(w) / twoy, fplus);
     } else {
-      fminus = log_sum_exp(mult * log(-(w - offset)) - square(w) / twoy,
-                          fminus);
+      fminus
+          = log_sum_exp(mult * log(-(w - offset)) - square(w) / twoy, fminus);
     }
     erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
-                                  : log_diff_exp(fplus, fminus);
+                           : log_diff_exp(fplus, fminus);
     newsign = (fplus < fminus) ? -1 : 1;
     return kss_functor(erg, newsign, lg1, ans0);
   } else {
@@ -178,11 +174,11 @@ inline auto wiener5_helper(const double& y, const double& a, const double& vn,
                             fplus);
       } else {
         fminus = log_sum_exp(mult * log(k) - square(pi_k) * halfy + log(-check),
-                            fminus);
+                             fminus);
       }
     }
     erg = (fplus < fminus) ? log_diff_exp(fminus, fplus)
-                                  : log_diff_exp(fplus, fminus);
+                           : log_diff_exp(fplus, fminus);
     newsign = (fplus < fminus) ? -1 : 1;
     return kll_functor(erg, newsign, lg1, ans0);
   }
