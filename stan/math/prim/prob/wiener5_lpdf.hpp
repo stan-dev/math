@@ -153,7 +153,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
     double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
     double sqrt_offset = sqrt(offset);
-    for (size_t k = kss; k >= std::fmax(0, kss - 1e4); k--) {
+    for (size_t k = kss; k >= std::fmax(0, kss - 1e3); k--) {
       double wp2k = w + 2.0 * k;
       double wm2k = w - 2.0 * k;
       int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
@@ -192,7 +192,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     } else if (FunTypeEnum == FunType::GradW) {
       mult = 2;
     }
-    for (size_t k = kll; k >= std::fmax(1, kll - 1e4); k--) {
+    for (size_t k = kll; k >= std::fmax(1, kll - 1e3); k--) {
       double pi_k = k * pi();
       double check
           = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
