@@ -41,9 +41,10 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     if (sv != 0) {
       ans /= 1 + square(sv) * y;
     }
-    return (normal_or_log == 1)
-            ? ans * wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err, 1)
-            : ans;
+    return (normal_or_log == 1) ? ans
+                                      * wiener5_helper<FunType::Density>(
+                                          y, a, vn, wn, sv, err, 1)
+                                : ans;
   }
   double w = 1.0 - wn;
   double v = -vn;
@@ -58,9 +59,10 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
                 / square(one_plus_svsqr_y);
     double ans = sv * (t1 + t2);
 
-    return (normal_or_log == 1)
-            ? ans * wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err, 1)
-            : ans;
+    return (normal_or_log == 1) ? ans
+                                      * wiener5_helper<FunType::Density>(
+                                          y, a, vn, wn, sv, err, 1)
+                                : ans;
   }
 
   double lg1;

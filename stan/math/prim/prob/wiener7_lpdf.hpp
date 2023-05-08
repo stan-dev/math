@@ -11,8 +11,8 @@ namespace internal {
 
 template <FunType FunTypeEnum>
 inline double wiener7_helper(double t0_, double omega, double y, double a,
-                           double v, double w, double t0, double sv, double sw,
-                           double st0, double lerr) {
+                             double v, double w, double t0, double sv,
+                             double sw, double st0, double lerr) {
   double ymt0 = y - t0_;
   if (FunTypeEnum == FunType::GradSW) {
     double low = w - sw / 2;
@@ -29,7 +29,7 @@ inline double wiener7_helper(double t0_, double omega, double y, double a,
 
 template <FunType FunTypeEnum, typename... TArgs>
 auto wiener7_integrand(double labstol_wiener5, double lerr_bound,
-                        TArgs&&... args) {
+                       TArgs&&... args) {
   const auto& wiener7_integrand_impl
       = [&](std::vector<double> x, double y, double a, double v, double w,
             double t0, double sv, double sw, double st0, double lerr) {
@@ -42,7 +42,7 @@ auto wiener7_integrand(double labstol_wiener5, double lerr_bound,
             return 0.0;
           } else {
             return wiener7_helper<FunTypeEnum>(t0_, omega, y, a, v, w, t0, sv,
-                                                sw, st0, lerr);
+                                               sw, st0, lerr);
           }
         };
 
@@ -211,8 +211,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     }
 
     dens = internal::wiener7_integrand<internal::FunType::Density>(
-        labstol_wiener5,
-        lerror_bound_dens, params, dim, xmin, xmax, Meval, abstol, reltol / 2);
+        labstol_wiener5, lerror_bound_dens, params, dim, xmin, xmax, Meval,
+        abstol, reltol / 2);
     double log_dens = log(dens);
     ld += log_dens;
 
@@ -270,8 +270,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
               std::tuple_cat(std::make_tuple(t0_val, 0), params));
         } else {
           deriv = internal::wiener7_integrand<internal::FunType::GradSW>(
-              labstol_wiener5, lerror_bound, params,
-              1, xmin, xmax, Meval, abstol, reltol / 2);
+              labstol_wiener5, lerror_bound, params, 1, xmin, xmax, Meval,
+              abstol, reltol / 2);
         }
         ops_partials.edge7_.partials_[i] = deriv / dens - 1 / sw_val;
       }
