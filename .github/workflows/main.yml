@@ -68,6 +68,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+
   fwd-non-fun-mix:
     name: fwd tests and non-fun mix tests
     runs-on: windows-latest
@@ -121,6 +122,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+
   mix-fun-1:
     name: mix/fun tests 1
     runs-on: windows-latest
@@ -169,6 +171,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+        
   mix-fun-2:
     name: mix/fun tests 2
     runs-on: windows-latest
