@@ -9,22 +9,40 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename F, typename... TArgs>
-auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
-                       double lerr_bound, TArgs&&... args) {
+template <FunType FunTypeEnum>
+inline double wiener7_helper(double t0_, double omega, double y, double a,
+                           double v, double w, double t0, double sv, double sw,
+                           double st0, double lerr) {
+  double ymt0 = y - t0_;
+  if (FunTypeEnum == FunType::GradSW) {
+    double low = w - sw / 2;
+    low = (0 > low) ? 0 : low;
+    double high = w + sw / 2;
+    high = (1 < high) ? 1 : high;
+    double fl = wiener5_helper<FunType::Density>(ymt0, a, v, low, sv, lerr, 1);
+    double fu = wiener5_helper<FunType::Density>(ymt0, a, v, high, sv, lerr, 1);
+    return 0.5 * (fl + fu) / sw;
+  } else {
+    return wiener5_helper<FunTypeEnum>(ymt0, a, v, omega, sv, lerr, 1);
+  }
+}
+
+template <FunType FunTypeEnum, typename... TArgs>
+auto wiener7_integrand(double labstol_wiener5, double lerr_bound,
+                        TArgs&&... args) {
   const auto& wiener7_integrand_impl
       = [&](std::vector<double> x, double y, double a, double v, double w,
-            double t0, double sv, double sw, double st0, double lerr,
-            auto&&... args_int) {
+            double t0, double sv, double sw, double st0, double lerr) {
           scalar_seq_view<decltype(x)> x_vec(x);
-          double omega = sw ? w + sw * (x_vec[0] - 0.5) : w;
-          double t0_ = sw ? (st0 ? t0 + st0 * x_vec[1] : t0)
-                          : (st0 ? t0 + st0 * x_vec[0] : t0);
+          double sw_val = (FunTypeEnum == FunType::GradSW) ? 0 : sw;
+          double omega = sw_val ? w + sw_val * (x_vec[0] - 0.5) : w;
+          double t0_ = sw_val ? (st0 ? t0 + st0 * x_vec[1] : t0)
+                              : (st0 ? t0 + st0 * x_vec[0] : t0);
           if (y - t0_ <= 0) {
             return 0.0;
           } else {
-            return integrand_fun(t0_, omega, y, a, v, w, t0, sv, sw, st0, lerr,
-                                 args_int...);
+            return wiener7_helper<FunTypeEnum>(t0_, omega, y, a, v, w, t0, sv,
+                                                sw, st0, lerr);
           }
         };
 
@@ -33,34 +51,6 @@ auto wiener7_integrand(const F& integrand_fun, double labstol_wiener5,
     return hcubature(wiener7_integrand_impl, int_args...);
   };
   return estimate_with_err_check<0>(functor, err, std::make_tuple(args...));
-}
-
-template <FunType FunTypeEnum>
-inline double wiener7_impl(double t0_, double omega, double y, double a,
-                           double v, double w, double t0, double sv, double sw,
-                           double st0, double lerr) {
-  if (FunTypeEnum == FunType::GradT || FunTypeEnum == FunType::GradA
-      || FunTypeEnum == FunType::GradW) {
-    return wiener5_helper<FunTypeEnum>(y - t0_, a, v, omega, sv, lerr, 1);
-  }
-  double dens
-      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, omega, sv, lerr));
-  if (FunTypeEnum == FunType::Density) {
-    return dens;
-  } else {
-    return wiener5_helper<FunTypeEnum>(y - t0_, a, v, omega, sv) * dens;
-  }
-}
-
-inline double int_dswddiff(double t0_, double omega, double y, double a,
-                           double v, double w, double t0, double sv, double sw,
-                           double st0, double lerr, double w_lower,
-                           double w_upper, double sw_mean) {
-  double fl
-      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_lower, sv, lerr));
-  double fu
-      = exp(wiener5_helper<FunType::Density>(y - t0_, a, v, w_upper, sv, lerr));
-  return 0.5 * (fl + fu) / sw_mean;
 }
 }  // namespace internal
 
@@ -220,16 +210,15 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
     }
 
-    dens = internal::wiener7_integrand(
-        internal::wiener7_impl<internal::FunType::Density>, labstol_wiener5,
+    dens = internal::wiener7_integrand<internal::FunType::Density>(
+        labstol_wiener5,
         lerror_bound_dens, params, dim, xmin, xmax, Meval, abstol, reltol / 2);
     double log_dens = log(dens);
     ld += log_dens;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    double deriv_t_7 = internal::wiener7_integrand(
-                           internal::wiener7_impl<internal::FunType::GradT>,
+    double deriv_t_7 = internal::wiener7_integrand<internal::FunType::GradT>(
                            labstol_wiener5, lerror_bound + log_dens, params,
                            dim, xmin, xmax, Meval, abstol, reltol / 2)
                        / dens;
@@ -241,8 +230,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     }
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i]
-          = internal::wiener7_integrand(
-                internal::wiener7_impl<internal::FunType::GradA>,
+          = internal::wiener7_integrand<internal::FunType::GradA>(
                 labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
@@ -252,24 +240,21 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     }
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i]
-          = internal::wiener7_integrand(
-                internal::wiener7_impl<internal::FunType::GradW>,
+          = internal::wiener7_integrand<internal::FunType::GradW>(
                 labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
-          = internal::wiener7_integrand(
-                internal::wiener7_impl<internal::FunType::GradV>,
+          = internal::wiener7_integrand<internal::FunType::GradV>(
                 labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
-          = internal::wiener7_integrand(
-                internal::wiener7_impl<internal::FunType::GradSV>,
+          = internal::wiener7_integrand<internal::FunType::GradSV>(
                 labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
@@ -278,20 +263,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       if (sw_val == 0) {
         ops_partials.edge7_.partials_[i] = 0;
       } else {
-        double lower = w_val - sw_val / 2;
-        double upper = w_val + sw_val / 2;
-
-        const auto& params_sw = std::make_tuple(
-            y_val, a_val, v_val, w_val, t0_val, sv_val, 0, st0_val,
-            labstol_wiener5 - LOG_TWO, (0 > lower) ? 0 : lower,
-            (1 < upper) ? 1 : upper, sw_val);
         if (st0_val == 0) {
           deriv = internal::estimate_with_err_check<8>(
-              internal::int_dswddiff, lerror_bound - LOG_TWO,
-              std::tuple_cat(std::make_tuple(t0_val, 0), params_sw));
+              internal::wiener7_helper<internal::FunType::GradSW>,
+              lerror_bound - LOG_TWO,
+              std::tuple_cat(std::make_tuple(t0_val, 0), params));
         } else {
-          deriv = internal::wiener7_integrand(
-              internal::int_dswddiff, labstol_wiener5, lerror_bound, params_sw,
+          deriv = internal::wiener7_integrand<internal::FunType::GradSW>(
+              labstol_wiener5, lerror_bound, params,
               1, xmin, xmax, Meval, abstol, reltol / 2);
         }
         ops_partials.edge7_.partials_[i] = deriv / dens - 1 / sw_val;
@@ -307,7 +286,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
         double t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
           f = internal::estimate_with_err_check<8>(
-              internal::wiener7_impl<internal::FunType::Density>,
+              internal::wiener7_helper<internal::FunType::Density>,
               lerror_bound + log(st0_val),
               std::tuple_cat(std::make_tuple(t0_st0, w_val), params));
         } else {
@@ -315,8 +294,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
 
           const auto& params_st = std::make_tuple(
               y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
-          f = internal::wiener7_integrand(
-              internal::wiener7_impl<internal::FunType::Density>,
+          f = internal::wiener7_integrand<internal::FunType::Density>(
               labstol_wiener5, lerror_bound, params_st, 1, xmin, xmax, Meval,
               abstol, reltol / 2);
         }
