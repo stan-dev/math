@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/prob_reducer.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,12 +39,11 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale,
+template <bool propto, ProbReturnType RetType = ProbReturnType::Scalar,
+          typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
@@ -62,12 +62,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", sigma_val);
-
+  using ret_t = prob_return_t<RetType, T_partials_return>;
+  const size_t N = max_size(y, mu, sigma);
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return ret_t::template zero<T_y, T_loc, T_scale>(N);
   }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
+    return ret_t::template zero<T_y, T_loc, T_scale>(N);
   }
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
@@ -79,13 +80,20 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   const auto& y_scaled_sq
       = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
 
-  size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = -0.5 * sum(y_scaled_sq);
+  prob_return_t<RetType, T_partials_return> logp(-0.5 * y_scaled_sq, N);
   if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * N;
+    if (RetType == ProbReturnType::Scalar) {
+      logp += NEG_LOG_SQRT_TWO_PI * N;
+    } else {
+      logp += NEG_LOG_SQRT_TWO_PI;
+    }
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / math::size(sigma);
+    if (RetType == ProbReturnType::Scalar) {
+      logp -= sum(log(sigma_val)) * N / math::size(sigma);
+    } else {
+      logp -= log(sigma_val);
+    }
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
@@ -103,13 +111,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
       ops_partials.edge2_.partials_ = std::move(scaled_diff);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(logp.ret());
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return normal_lpdf<false>(y, mu, sigma);
 }
 
