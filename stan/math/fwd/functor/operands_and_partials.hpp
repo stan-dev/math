@@ -6,6 +6,9 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/elt_multiply.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/apply.hpp>
@@ -101,11 +104,8 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
 
   const Op& operands_;
   inline Dx dx() {
-    Dx derivative(0);
-    for (size_t i = 0; i < this->operands_.size(); ++i) {
-      derivative += this->partials_[i] * this->operands_[i].d_;
-    }
-    return derivative;
+    return dot_product(as_column_vector_or_scalar(this->partials_), 
+     as_column_vector_or_scalar(this->operands_).d());
   }
 };
 
@@ -137,11 +137,7 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   Op operands_;
 
   inline Dx dx() {
-    Dx derivative(0);
-    for (int i = 0; i < this->operands_.size(); ++i) {
-      derivative += this->partials_(i) * this->operands_(i).d_;
-    }
-    return derivative;
+    return sum(elt_multiply(this->partials_, this->operands_.d()));
   }
 };
 
@@ -164,9 +160,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
-      for (int j = 0; j < this->operands_[i].size(); ++j) {
-        derivative += this->partials_vec_[i](j) * this->operands_[i](j).d_;
-      }
+        derivative += sum(elt_multiply(this->partials_vec_[i], this->operands_[i].d()));
     }
     return derivative;
   }

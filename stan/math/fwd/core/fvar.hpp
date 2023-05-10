@@ -65,13 +65,6 @@ struct fvar {
    *
    * @return tangent of this variable
    */
-  Scalar tangent() const { return d_; }
-
-  /**
-   * Return the tangent (derivative) of this variable.
-   *
-   * @return tangent of this variable
-   */
   Scalar d() const { return d_; }
 
   /**
