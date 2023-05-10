@@ -77,7 +77,6 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
         ans0 = (FunTypeEnum == FunType::GradT) ? -0.5 * square(v) : -v * var_a;
       }
     }
-
     double es = (err - lg1) + (FunTypeEnum == FunType::GradT) * two_log_a;
     double two_es = 2.0 * es;
     double y_asq = y / square(a);
@@ -96,7 +95,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
 
     double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-    size_t kss = static_cast<size_t>(ceil(fmax(K1, K2)));
+    double kss = ceil(fmax(K1, K2));
 
     static const double PISQ = square(pi());  // pi*pi
     if (FunTypeEnum == FunType::Density) {
@@ -118,7 +117,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
                : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
     }
 
-    size_t kll = static_cast<size_t>(ceil(fmax(K1, K2)));
+    double kll = ceil(fmax(K1, K2));
 
     double ld_err = 0;
     if (FunTypeEnum != FunType::Density) {
@@ -137,12 +136,13 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     double scaling = (2 * kss <= kll) ? inv(2.0 * y_asq) : y_asq / 2.0;
 
     bool kss_comp
-        = (FunTypeEnum == FunType::Density) ? 2 * kss <= kll : 2 * kss < kll;
+        = (FunTypeEnum == FunType::Density) ? (2 * kss <= kll)
+                                            : (2 * kss < kll);
     if (kss_comp) {
       double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
       double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
       double sqrt_offset = sqrt(offset);
-      for (size_t k = kss; k >= std::fmax(0, kss - 1e3); k--) {
+      for (size_t k = static_cast<size_t>(kss); k >= 0; k--) {
         double wp2k = w + 2.0 * k;
         double wm2k = w - 2.0 * k;
         int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
@@ -181,7 +181,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
       } else if (FunTypeEnum == FunType::GradW) {
         mult = 2;
       }
-      for (size_t k = kll; k >= std::fmax(1, kll - 1e3); k--) {
+      for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
         double pi_k = k * pi();
         double check
             = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
@@ -252,6 +252,7 @@ double estimate_with_err_check(const F& functor, double err,
                               args_tuple);
   double lfabs_result = log_result ? log(fabs(result)) : fabs(result);
   if (lfabs_result < err) {
+    lfabs_result = std::isinf(lfabs_result) ? 0 : lfabs_result;
     ArgsTupleT err_args_tuple = args_tuple;
     assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple),
                             err + lfabs_result);
