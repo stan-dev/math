@@ -136,8 +136,8 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     int newsign = 1;
     double scaling = (2 * kss <= kll) ? inv(2.0 * y_asq) : y_asq / 2.0;
 
-    bool kss_comp = (FunTypeEnum == FunType::Density) ? 2 * kss <= kll
-                                                      : 2 * kss < kll;
+    bool kss_comp
+        = (FunTypeEnum == FunType::Density) ? 2 * kss <= kll : 2 * kss < kll;
     if (kss_comp) {
       double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
       double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
