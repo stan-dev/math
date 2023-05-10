@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
+    - uses: n1hility/cancel-previous-runs@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         workflow: c-cpp.yml
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
+    - uses: n1hility/cancel-previous-runs@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         workflow: c-cpp.yml
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
+    - uses: n1hility/cancel-previous-runs@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         workflow: c-cpp.yml

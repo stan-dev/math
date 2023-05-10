@@ -1,5 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_lccdf.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

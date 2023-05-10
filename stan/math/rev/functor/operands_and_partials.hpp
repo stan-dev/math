@@ -34,7 +34,8 @@ class ops_partials_edge<double, var> {
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   var operand_;
   static constexpr int size() noexcept { return 1; }
@@ -109,15 +110,22 @@ inline void update_adjoints(StdVec1& x, const Vec2& y, const vari& z) {
  * @tparam Op3 type of the third operand
  * @tparam Op4 type of the fourth operand
  * @tparam Op5 type of the fifth operand
+ * @tparam Op6 type of the sixth operand
+ * @tparam Op7 type of the seventh operand
+ * @tparam Op8 type of the eighth operand
  */
-template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
+template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
+          typename Op6, typename Op7, typename Op8>
+class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, var> {
  public:
   internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
   internal::ops_partials_edge<double, std::decay_t<Op2>> edge2_;
   internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
   internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
   internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
+  internal::ops_partials_edge<double, std::decay_t<Op6>> edge6_;
+  internal::ops_partials_edge<double, std::decay_t<Op7>> edge7_;
+  internal::ops_partials_edge<double, std::decay_t<Op8>> edge8_;
 
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
@@ -130,6 +138,35 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
   operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
                         const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4, const Op5& o5, const Op6& o6)
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
+        edge6_(o6) {}
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4, const Op5& o5, const Op6& o6,
+                        const Op7& o7)
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
+        edge6_(o6),
+        edge7_(o7) {}
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4, const Op5& o5, const Op6& o6,
+                        const Op7& o7, const Op8& o8)
+      : edge1_(o1),
+        edge2_(o2),
+        edge3_(o3),
+        edge4_(o4),
+        edge5_(o5),
+        edge6_(o6),
+        edge7_(o7),
+        edge8_(o8) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -150,8 +187,11 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
                 operand2 = edge2_.operand(), partial2 = edge2_.partial(),
                 operand3 = edge3_.operand(), partial3 = edge3_.partial(),
                 operand4 = edge4_.operand(), partial4 = edge4_.partial(),
-                operand5 = edge5_.operand(),
-                partial5 = edge5_.partial()](const auto& vi) mutable {
+                operand5 = edge5_.operand(), partial5 = edge5_.partial(),
+                operand6 = edge6_.operand(), partial6 = edge6_.partial(),
+                operand7 = edge7_.operand(), partial7 = edge7_.partial(),
+                operand8 = edge8_.operand(),
+                partial8 = edge8_.partial()](const auto& vi) mutable {
           if (!is_constant<Op1>::value) {
             internal::update_adjoints(operand1, partial1, vi);
           }
@@ -166,6 +206,15 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
           }
           if (!is_constant<Op5>::value) {
             internal::update_adjoints(operand5, partial5, vi);
+          }
+          if (!is_constant<Op6>::value) {
+            internal::update_adjoints(operand6, partial6, vi);
+          }
+          if (!is_constant<Op7>::value) {
+            internal::update_adjoints(operand7, partial7, vi);
+          }
+          if (!is_constant<Op8>::value) {
+            internal::update_adjoints(operand8, partial8, vi);
           }
         });
   }
@@ -186,7 +235,8 @@ class ops_partials_edge<double, std::vector<var>> {
         operands_(op.begin(), op.end()) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   Op operands_;
 
@@ -207,7 +257,8 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   arena_t<Op> operands_;
   inline int size() const noexcept { return this->operands_.size(); }
@@ -228,7 +279,8 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   var_value<Op> operands_;
 
@@ -256,7 +308,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   Op operands_;
 
@@ -286,7 +339,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   Op operands_;
   inline int size() const noexcept {
@@ -311,7 +365,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename, typename, typename>
   friend class stan::math::operands_and_partials;
   std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
 
