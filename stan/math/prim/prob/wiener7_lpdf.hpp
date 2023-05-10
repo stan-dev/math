@@ -9,6 +9,26 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * Implementation function for delegating computation to the correct density
+ * or derivative function. For all gradients except the sw parameter, the
+ * respective wiener5 function is called.
+ *
+ * @tparam FunTypeEnum An enum value indicating the function required
+ * @param t0_ See wiener7_integrand function for definition
+ * @param omega See wiener7_integrand function for definition
+ * @param y A scalar variable; the reaction time in seconds
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @param t0 The non-decision time
+ * @param sv The inter-trial variability of the drift rate
+ * @param sw The inter-trial variability of the relative starting point
+ * @param st0 The inter-trial variability of the non-decision time
+ * @param lerr Error tolerance
+ *
+ * @return Log-density or gradient for wiener7_lpdf
+*/
 template <FunType FunTypeEnum>
 inline double wiener7_helper(double t0_, double omega, double y, double a,
                              double v, double w, double t0, double sv,
@@ -19,17 +39,29 @@ inline double wiener7_helper(double t0_, double omega, double y, double a,
     low = (0 > low) ? 0 : low;
     double high = w + sw / 2;
     high = (1 < high) ? 1 : high;
-    double fl = wiener5_helper<FunType::Density>(ymt0, a, v, low, sv, lerr, 1);
-    double fu = wiener5_helper<FunType::Density>(ymt0, a, v, high, sv, lerr, 1);
+    double fl
+      = wiener5_helper<FunType::Density>(ymt0, a, v, low, sv, lerr, true);
+    double fu
+      = wiener5_helper<FunType::Density>(ymt0, a, v, high, sv, lerr, true);
     return 0.5 * (fl + fu) / sw;
   } else {
-    return wiener5_helper<FunTypeEnum>(ymt0, a, v, omega, sv, lerr, 1);
+    return wiener5_helper<FunTypeEnum>(ymt0, a, v, omega, sv, lerr, true);
   }
 }
 
+/**
+ * Implementation function for preparing arguments and functor to be passed
+ * to the hcubature() function for calculating wiener7 parameters via
+ * integration
+ *
+ * @tparam FunTypeEnum An enum value indicating the function required
+ * @tparam Targs... Types of arguments in parameter pack
+ * @param hcubature_err Error tolerance for calculation
+ * @param args Additional arguments to be passed to the hcubature function
+ * @return Wiener7 density or gradient calculated by integration
+*/
 template <FunType FunTypeEnum, typename... TArgs>
-auto wiener7_integrand(double labstol_wiener5, double lerr_bound,
-                       TArgs&&... args) {
+auto wiener7_integrand(double hcubature_err, TArgs&&... args) {
   const auto& wiener7_integrand_impl
       = [&](std::vector<double> x, double y, double a, double v, double w,
             double t0, double sv, double sw, double st0, double lerr) {
@@ -45,15 +77,43 @@ auto wiener7_integrand(double labstol_wiener5, double lerr_bound,
                                                sw, st0, lerr);
           }
         };
-
-  double err = labstol_wiener5 - lerr_bound + LOG_TWO + 1;
   const auto& functor = [&](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
-  return estimate_with_err_check<0>(functor, err, std::make_tuple(args...));
+  return estimate_with_err_check<0, 8>(functor, hcubature_err,
+                                        std::make_tuple(args...));
 }
 }  // namespace internal
 
+
+/**
+ * Log-density function for the 7-parameter Wiener density.
+ * See 'wiener_full_lpdf' for more comprehensive documentation
+ *
+ * @tparam T_y type of scalar
+ * @tparam T_a type of boundary
+ * @tparam T_t0 type of non-decision time
+ * @tparam T_w type of relative starting point
+ * @tparam T_v type of drift rate
+ * @tparam T_sv type of inter-trial variability of drift rate
+ * @tparam T_sw type of inter-trial variability of relative starting point
+ * @tparam T_st0 type of inter-trial variability of non-decision time
+ *
+ * @param y A scalar variable; the reaction time in seconds
+ * @param a The boundary separation
+ * @param t0 The non-decision time
+ * @param w The relative starting point
+ * @param v The drift rate
+ * @param sv The inter-trial variability of the drift rate
+ * @param sw The inter-trial variability of the relative starting point
+ * @param st0 The inter-trial variability of the non-decision time
+ * @return The log of the Wiener first passage time density with
+ *  the specified arguments for upper boundary responses
+ * @throw std::domain_error if non-decision time \c t0 is greater than reaction
+ time \c y.
+ * @throw std::domain_error if \c 1-sw/2 is smaller than or equal to \c w.
+ * @throw std::domain_error if \c sw/2 is larger than or equal to \c w.
+*/
 template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
           typename T_v, typename T_sv, typename T_sw, typename T_st0>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
@@ -210,16 +270,20 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
       xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
     }
 
+    double hcubature_err = labstol_wiener5 - lerror_bound_dens + LOG_TWO + 1;
+
     dens = internal::wiener7_integrand<internal::FunType::Density>(
-        labstol_wiener5, lerror_bound_dens, params, dim, xmin, xmax, Meval,
+        hcubature_err, params, dim, xmin, xmax, Meval,
         abstol, reltol / 2);
     double log_dens = log(dens);
     ld += log_dens;
 
+    hcubature_err = labstol_wiener5 - (lerror_bound + log_dens) + LOG_TWO + 1;
+
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
     double deriv_t_7 = internal::wiener7_integrand<internal::FunType::GradT>(
-                           labstol_wiener5, lerror_bound + log_dens, params,
+                           hcubature_err, params,
                            dim, xmin, xmax, Meval, abstol, reltol / 2)
                        / dens;
 
@@ -231,7 +295,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradA>(
-                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                hcubature_err, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
@@ -241,21 +305,21 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradW>(
-                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                hcubature_err, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradV>(
-                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                hcubature_err, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradSV>(
-                labstol_wiener5, lerror_bound + log_dens, params, dim, xmin,
+                hcubature_err, params, dim, xmin,
                 xmax, Meval, abstol, reltol / 2)
             / dens;
     }
@@ -270,7 +334,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
               std::tuple_cat(std::make_tuple(t0_val, 0), params));
         } else {
           deriv = internal::wiener7_integrand<internal::FunType::GradSW>(
-              labstol_wiener5, lerror_bound, params, 1, xmin, xmax, Meval,
+              hcubature_err, params, 1, xmin, xmax, Meval,
               abstol, reltol / 2);
         }
         ops_partials.edge7_.partials_[i] = deriv / dens - 1 / sw_val;
@@ -295,7 +359,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           const auto& params_st = std::make_tuple(
               y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
           f = internal::wiener7_integrand<internal::FunType::Density>(
-              labstol_wiener5, lerror_bound, params_st, 1, xmin, xmax, Meval,
+              hcubature_err, params_st, 1, xmin, xmax, Meval,
               abstol, reltol / 2);
         }
         ops_partials.edge8_.partials_[i] = -1 / st0_val + f / st0_val / dens;
