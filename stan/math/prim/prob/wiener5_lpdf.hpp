@@ -22,7 +22,7 @@ enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV, GradSW };
  * @param err The error tolerance for estimation
  * @param use_log Whether to return calculation w.r.t. the log value
  *
-*/
+ */
 template <FunType FunTypeEnum>
 inline double wiener5_helper(const double& y, const double& a, const double& vn,
                              const double& wn, const double& sv,
@@ -66,12 +66,12 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
       if (sv != 0) {
         if (FunTypeEnum == FunType::GradT) {
           ans0 = -0.5
-                * (square(sv_sqr) * (y + square(a * w)) + sv_sqr * (1 - two_avw)
-                    + square(v))
-                / square(one_plus_svsqr_y);
+                 * (square(sv_sqr) * (y + square(a * w))
+                    + sv_sqr * (1 - two_avw) + square(v))
+                 / square(one_plus_svsqr_y);
         } else {
           ans0 = (-v * var_a + sv_sqr * square(var_a) * var_b)
-                  / one_plus_svsqr_y;
+                 / one_plus_svsqr_y;
         }
       } else {
         ans0 = (FunTypeEnum == FunType::GradT) ? -0.5 * square(v) : -v * var_a;
@@ -90,7 +90,7 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
       u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
     } else {
       u_eps = fmin(-3.0,
-                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
+                   (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
     }
     double arg_mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
     arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
@@ -106,16 +106,16 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
     } else {
       K1_mult = (FunTypeEnum == FunType::GradT) ? 2 : 3;
       K1 = sqrt(K1_mult / y_asq) / pi();
-      double u_eps_arg = (FunTypeEnum == FunType::GradT)
-                  ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
-                  : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq
-                    + two_es;
+      double u_eps_arg
+          = (FunTypeEnum == FunType::GradT)
+                ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
+                : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
       u_eps = fmin(-1, u_eps_arg);
       arg_mult = (FunTypeEnum == FunType::GradT) ? (2.0 / PISQ / y_asq) : 1;
       arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
       K2 = (FunTypeEnum == FunType::GradT)
-              ? (arg > 0) ? sqrt(arg) : K1
-              : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
+               ? (arg > 0) ? sqrt(arg) : K1
+               : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
     }
 
     size_t kll = static_cast<size_t>(ceil(fmax(K1, K2)));
@@ -150,9 +150,8 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
                             - (square(wm2k) - offset) * scaling;
         std::forward_as_tuple(erg, newsign)
             = log_sum_exp_signed(erg, newsign, mult * wp2k_quant, wp2k_sign);
-        std::forward_as_tuple(erg, newsign)
-            = log_sum_exp_signed(erg, newsign,
-                                  mult * wm2k_quant, -1 * wm2k_sign);
+        std::forward_as_tuple(erg, newsign) = log_sum_exp_signed(
+            erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
       }
       if (FunTypeEnum == FunType::Density) {
         ans = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log_y_asq + erg;
@@ -211,14 +210,16 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
 
 /**
  * Utility function for replacing a value with a specified error value
-*/
+ */
 template <size_t NestedIndex>
-inline void assign_err(double arg, double err) { arg = err; }
+inline void assign_err(double arg, double err) {
+  arg = err;
+}
 
 /**
  * Utility function for replacing a value with a specified error value,
  * overload for use when the value is stored within a tuple.
-*/
+ */
 template <size_t NestedIndex, typename... TArgs>
 inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
   std::get<NestedIndex>(args_tuple) = err;
@@ -238,7 +239,7 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
  * @param err Error value to check against
  * @param args_tuple Tuple of arguments to pass to functor
  * @param log_result Whether the function result is already on the log-scale
-*/
+ */
 template <size_t ErrIndex, size_t NestedIndex = 0, typename F,
           typename ArgsTupleT>
 double estimate_with_err_check(const F& functor, double err,
@@ -277,7 +278,7 @@ double estimate_with_err_check(const F& functor, double err,
  * @param sv The inter-trial variability of the drift rate
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
-*/
+ */
 template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
           typename T_v, typename T_sv>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
@@ -386,8 +387,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
     double deriv_y = internal::estimate_with_err_check<5>(
-        internal::wiener5_helper<internal::FunType::GradT>,
-        new_est_err, params);
+        internal::wiener5_helper<internal::FunType::GradT>, new_est_err,
+        params);
 
     // computation of derivatives and precision checks
     if (!is_constant_all<T_y>::value) {
@@ -395,16 +396,16 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     }
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::wiener5_helper<internal::FunType::GradA>,
-          new_est_err, params);
+          internal::wiener5_helper<internal::FunType::GradA>, new_est_err,
+          params);
     }
     if (!is_constant_all<T_t0>::value) {
       ops_partials.edge3_.partials_[i] = -deriv_y;
     }
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::wiener5_helper<internal::FunType::GradW>,
-          new_est_err, params);
+          internal::wiener5_helper<internal::FunType::GradW>, new_est_err,
+          params);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]

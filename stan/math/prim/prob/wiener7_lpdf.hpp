@@ -28,7 +28,7 @@ namespace internal {
  * @param lerr Error tolerance
  *
  * @return Log-density or gradient for wiener7_lpdf
-*/
+ */
 template <FunType FunTypeEnum>
 inline double wiener7_helper(double t0_, double omega, double y, double a,
                              double v, double w, double t0, double sv,
@@ -40,9 +40,9 @@ inline double wiener7_helper(double t0_, double omega, double y, double a,
     double high = w + sw / 2;
     high = (1 < high) ? 1 : high;
     double fl
-      = wiener5_helper<FunType::Density>(ymt0, a, v, low, sv, lerr, true);
+        = wiener5_helper<FunType::Density>(ymt0, a, v, low, sv, lerr, true);
     double fu
-      = wiener5_helper<FunType::Density>(ymt0, a, v, high, sv, lerr, true);
+        = wiener5_helper<FunType::Density>(ymt0, a, v, high, sv, lerr, true);
     return 0.5 * (fl + fu) / sw;
   } else {
     return wiener5_helper<FunTypeEnum>(ymt0, a, v, omega, sv, lerr, true);
@@ -59,7 +59,7 @@ inline double wiener7_helper(double t0_, double omega, double y, double a,
  * @param hcubature_err Error tolerance for calculation
  * @param args Additional arguments to be passed to the hcubature function
  * @return Wiener7 density or gradient calculated by integration
-*/
+ */
 template <FunType FunTypeEnum, typename... TArgs>
 auto wiener7_integrand(double hcubature_err, TArgs&&... args) {
   const auto& wiener7_integrand_impl
@@ -81,10 +81,9 @@ auto wiener7_integrand(double hcubature_err, TArgs&&... args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
   return estimate_with_err_check<0, 8>(functor, hcubature_err,
-                                        std::make_tuple(args...));
+                                       std::make_tuple(args...));
 }
 }  // namespace internal
-
 
 /**
  * Log-density function for the 7-parameter Wiener density.
@@ -273,8 +272,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     double hcubature_err = labstol_wiener5 - lerror_bound_dens + LOG_TWO + 1;
 
     dens = internal::wiener7_integrand<internal::FunType::Density>(
-        hcubature_err, params, dim, xmin, xmax, Meval,
-        abstol, reltol / 2);
+        hcubature_err, params, dim, xmin, xmax, Meval, abstol, reltol / 2);
     double log_dens = log(dens);
     ld += log_dens;
 
@@ -282,10 +280,10 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    double deriv_t_7 = internal::wiener7_integrand<internal::FunType::GradT>(
-                           hcubature_err, params,
-                           dim, xmin, xmax, Meval, abstol, reltol / 2)
-                       / dens;
+    double deriv_t_7
+        = internal::wiener7_integrand<internal::FunType::GradT>(
+              hcubature_err, params, dim, xmin, xmax, Meval, abstol, reltol / 2)
+          / dens;
 
     // computation of derivatives and precision checks
     double deriv;
@@ -295,8 +293,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradA>(
-                hcubature_err, params, dim, xmin,
-                xmax, Meval, abstol, reltol / 2)
+                hcubature_err, params, dim, xmin, xmax, Meval, abstol,
+                reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_t0>::value) {
@@ -305,22 +303,22 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradW>(
-                hcubature_err, params, dim, xmin,
-                xmax, Meval, abstol, reltol / 2)
+                hcubature_err, params, dim, xmin, xmax, Meval, abstol,
+                reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradV>(
-                hcubature_err, params, dim, xmin,
-                xmax, Meval, abstol, reltol / 2)
+                hcubature_err, params, dim, xmin, xmax, Meval, abstol,
+                reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
           = internal::wiener7_integrand<internal::FunType::GradSV>(
-                hcubature_err, params, dim, xmin,
-                xmax, Meval, abstol, reltol / 2)
+                hcubature_err, params, dim, xmin, xmax, Meval, abstol,
+                reltol / 2)
             / dens;
     }
     if (!is_constant_all<T_sw>::value) {
@@ -334,8 +332,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
               std::tuple_cat(std::make_tuple(t0_val, 0), params));
         } else {
           deriv = internal::wiener7_integrand<internal::FunType::GradSW>(
-              hcubature_err, params, 1, xmin, xmax, Meval,
-              abstol, reltol / 2);
+              hcubature_err, params, 1, xmin, xmax, Meval, abstol, reltol / 2);
         }
         ops_partials.edge7_.partials_[i] = deriv / dens - 1 / sw_val;
       }
@@ -359,8 +356,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0> wiener7_lpdf(
           const auto& params_st = std::make_tuple(
               y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
           f = internal::wiener7_integrand<internal::FunType::Density>(
-              hcubature_err, params_st, 1, xmin, xmax, Meval,
-              abstol, reltol / 2);
+              hcubature_err, params_st, 1, xmin, xmax, Meval, abstol,
+              reltol / 2);
         }
         ops_partials.edge8_.partials_[i] = -1 / st0_val + f / st0_val / dens;
       }
