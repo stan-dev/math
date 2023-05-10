@@ -80,13 +80,17 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * Get the operand for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double operand() noexcept { return static_cast<double>(0.0); }
+  static constexpr double operand() noexcept {
+    return static_cast<double>(0.0);
+  }
 
   /**
    * Get the partial for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double partial() noexcept { return static_cast<double>(0.0); }
+  static constexpr double partial() noexcept {
+    return static_cast<double>(0.0);
+  }
   /**
    * Return the tangent for the edge. For doubles this is a comple time
    * expression returning zero.

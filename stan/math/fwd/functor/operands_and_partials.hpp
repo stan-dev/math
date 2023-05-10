@@ -104,8 +104,8 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
 
   const Op& operands_;
   inline Dx dx() {
-    return dot_product(as_column_vector_or_scalar(this->partials_), 
-     as_column_vector_or_scalar(this->operands_).d());
+    return dot_product(as_column_vector_or_scalar(this->partials_),
+                       as_column_vector_or_scalar(this->operands_).d());
   }
 };
 
@@ -160,7 +160,8 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
-        derivative += sum(elt_multiply(this->partials_vec_[i], this->operands_[i].d()));
+      derivative
+          += sum(elt_multiply(this->partials_vec_[i], this->operands_[i].d()));
     }
     return derivative;
   }
