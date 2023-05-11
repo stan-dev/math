@@ -27,7 +27,12 @@ inline auto select(const bool c, const T_true y_true, const T_false y_false) {
 
 /**
  * Return the second argument if the first argument is true
- * and otherwise return the third argument.
+ * and otherwise return the third argument. Eigen expressions are
+ * evaluated so that the return type is the same for both branches.
+ *
+ * Both containers must have the same plain type. The scalar type
+ * of the return is determined by the return_type_t<> type trait.
+ *
  * Overload for use with two containers.
  *
  * @tparam T_true type of the true argument
@@ -56,8 +61,11 @@ inline T_true_plain select(const bool c, const T_true y_true,
 /**
  * Return the second Eigen argument if the first argument is true
  * and otherwise return the second Eigen argument. Overload for use with one
- * scalar and one Eigen object. If chosen, the scalar is returned as an Eigen
- * object of the same size and type as the provided argument.
+ * scalar and one Eigen object.
+ *
+ * If chosen, the scalar is returned as an Eigen object of the same size and
+ * plain type as the provided argument. Consequently, any Eigen expressions are
+ * evaluated so that the return type is the same for both branches.
  *
  * @tparam T_true type of the true argument
  * @tparam T_false type of the false argument
@@ -86,8 +94,11 @@ inline ReturnT select(const bool c, const T_true& y_true,
 /**
  * Return the second Eigen argument if the first argument is true
  * and otherwise return the second Eigen argument. Overload for use with one
- * scalar and one Eigen object. If chosen, the scalar is returned as an Eigen
- * object of the same size and type as the provided argument.
+ * scalar and one Eigen object.
+ *
+ * If chosen, the scalar is returned as an Eigen object of the same size and
+ * plain type as the provided argument. Consequently, any Eigen expressions are
+ * evaluated so that the return type is the same for both branches.
  *
  * @tparam T_true type of the true argument
  * @tparam T_false type of the false argument
@@ -116,8 +127,10 @@ inline ReturnT select(const bool c, const T_true y_true,
 /**
  * Return the second argument if the first argument is true
  * and otherwise return the third argument. Overload for use with an Eigen
- * object of booleans, and two scalars. The chosen scalar is returned as an
- * Eigen object of the same dimension as the input Eigen argument
+ * object of booleans, and two scalars.
+ *
+ * The chosen scalar is returned as an Eigen object of the same dimension
+ * as the input Eigen argument
  *
  * @tparam T_bool type of Eigen boolean object
  * @tparam T_true type of the true argument

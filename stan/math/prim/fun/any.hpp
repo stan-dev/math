@@ -20,20 +20,6 @@ inline bool any(bool x) { return x; }
 /**
  * Return true if any values in the input are true.
  *
- * Overload for a std::vector<bool> input. The Eigen::Map/apply_vector_unary
- * approach cannot be used as std::vector<bool> types do not have a .data()
- * member and are not always stored contiguously.
- *
- * @param x std::vector of boolean inputs
- * @return Boolean indicating whether any elements are true
- */
-inline bool any(const std::vector<bool>& x) {
-  return std::any_of(x.begin(), x.end(), [](bool i) { return i; });
-}
-
-/**
- * Return true if any values in the input are true.
- *
  * Overload for Eigen types
  *
  * @tparam Eigen type of the input
@@ -49,14 +35,17 @@ inline bool any(const ContainerT& x) {
 /**
  * Return true if any values in the input are true.
  *
- * Overload for nested containers
+ * Overload for a std::vector/nested inputs. The Eigen::Map/apply_vector_unary
+ * approach cannot be used as std::vector<bool> types do not have a .data()
+ * member and are not always stored contiguously.
  *
  * @tparam Type of container within std::vector
  * @param x Nested container of boolean inputs
  * @return Boolean indicating whether any elements are true
  */
-template <typename ContainerT, require_container_t<ContainerT>* = nullptr>
-inline bool any(const std::vector<ContainerT>& x) {
+template <typename ContainerT,
+          require_std_vector_st<std::is_integral, ContainerT>* = nullptr>
+inline bool any(const ContainerT& x) {
   return std::any_of(x.begin(), x.end(), [](const auto& i) { return any(i); });
 }
 
