@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -106,18 +106,17 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
     lp += (theta_log * alpha_m_1).sum();
   }
 
-  operands_and_partials<T_theta_ref, T_alpha_ref> ops_partials(theta_ref,
-                                                               alpha_ref);
+  auto ops_partials = make_partials_propagator(theta_ref, alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge1_.partials_vec_[t]
+      partials_vec<0>(ops_partials)[t]
           += (alpha_m_1.col(t) / theta_dbl.col(t)).matrix();
     }
   }
 
   if (!is_constant_all<T_prior_size>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge2_.partials_vec_[t]
+      partials_vec<1>(ops_partials)[t]
           += (digamma(alpha_dbl.col(t).sum()) - digamma(alpha_dbl.col(t))
               + theta_log.col(t))
                  .matrix();

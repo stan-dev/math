@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 #include <cmath>
 
@@ -191,8 +191,8 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref, T_phi_ref>
-      ops_partials(x_ref, alpha_ref, beta_ref, phi_ref);
+  auto ops_partials
+      = make_partials_propagator(x_ref, alpha_ref, beta_ref, phi_ref);
   if (!is_constant_all<T_x, T_beta, T_alpha, T_precision>::value) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
     if (!is_constant_all<T_x, T_beta, T_alpha>::value) {
@@ -200,38 +200,39 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
       if (!is_constant_all<T_beta>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge3_.partials_
+          edge<2>(ops_partials).partials_
               = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                   theta_derivative.sum() * x_val);
         } else {
-          ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+          edge<2>(ops_partials).partials_
+              = x_val.transpose() * theta_derivative;
         }
       }
       if (!is_constant_all<T_x>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge1_.partials_
+          edge<0>(ops_partials).partials_
               = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                   beta_val_vec * theta_derivative.sum());
         } else {
-          ops_partials.edge1_.partials_
+          edge<0>(ops_partials).partials_
               = (beta_val_vec * theta_derivative.transpose()).transpose();
         }
       }
       if (!is_constant_all<T_alpha>::value) {
         if (is_vector<T_alpha>::value) {
-          ops_partials.edge2_.partials_ = std::move(theta_derivative);
+          partials<1>(ops_partials) = std::move(theta_derivative);
         } else {
-          ops_partials.edge2_.partials_[0] = sum(theta_derivative);
+          partials<1>(ops_partials)[0] = sum(theta_derivative);
         }
       }
     }
     if (!is_constant_all<T_precision>::value) {
       if (is_vector<T_precision>::value) {
-        ops_partials.edge4_.partials_
+        edge<3>(ops_partials).partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
               - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);
       } else {
-        ops_partials.edge4_.partials_[0]
+        partials<3>(ops_partials)[0]
             = N_instances
               + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
                     - logsumexp_theta_logphi + digamma(y_plus_phi)

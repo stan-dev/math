@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -49,8 +49,7 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lpdf(const T_y_cl& y,
   const auto& y_val = value_of(y_col);
   const auto& sigma_val = value_of(sigma_col);
 
-  operands_and_partials<decltype(y_col), decltype(sigma_col)> ops_partials(
-      y_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, sigma_col);
 
   auto check_y_positive
       = check_cl(function, "Random variable", y_val, "positive");
@@ -87,10 +86,10 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lpdf(const T_y_cl& y,
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(sigma_deriv_cl);
+    partials<1>(ops_partials) = std::move(sigma_deriv_cl);
   }
 
   return ops_partials.build(logp);
