@@ -228,11 +228,12 @@ auto wiener7_integrand(double hcubature_err, TArgs&&... args) {
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
           typename T_st0,
-          typename ReturnT = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv,
-                                            T_sw, T_st0>>
-inline ReturnT wiener_full_lpdf(
-    const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
-    const T_sv& sv, const T_sw& sw, const T_st0& st0, double prec = 1e-4) {
+          typename ReturnT
+          = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>>
+inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
+                                const T_w& w, const T_v& v, const T_sv& sv,
+                                const T_sw& sw, const T_st0& st0,
+                                double prec = 1e-4) {
   using T_y_ref = ref_type_t<T_y>;
   using T_a_ref = ref_type_t<T_a>;
   using T_v_ref = ref_type_t<T_v>;
@@ -364,7 +365,7 @@ inline ReturnT wiener_full_lpdf(
   for (size_t i = 0; i < N; i++) {
     if (sw_vec[i] == 0 && st0_vec[i] == 0) {
       result += wiener5_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
-                                      v_vec[i], sv_vec[i], prec);
+                                     v_vec[i], sv_vec[i], prec);
       continue;
     }
     const double y_val = y_vec.val(i);
