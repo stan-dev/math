@@ -20,7 +20,6 @@ struct counterOp {
   }
 };
 
-
 template <typename T, stan::math::require_not_tuple_t<T>* = nullptr>
 auto recursive_sum(const T& a) {
   return math::sum(a);
