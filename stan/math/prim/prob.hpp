@@ -367,7 +367,6 @@
 #include <stan/math/prim/prob/weibull_lpdf.hpp>
 #include <stan/math/prim/prob/weibull_rng.hpp>
 #include <stan/math/prim/prob/wiener5_lpdf.hpp>
-#include <stan/math/prim/prob/wiener7_lpdf.hpp>
 #include <stan/math/prim/prob/wiener_full_lpdf.hpp>
 #include <stan/math/prim/prob/wiener_log.hpp>
 #include <stan/math/prim/prob/wiener_lpdf.hpp>

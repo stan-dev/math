@@ -133,10 +133,10 @@ inline double wiener5_helper(const double& y, const double& a, const double& vn,
 
     double erg = NEGATIVE_INFTY;
     int newsign = 1;
-    double scaling = (2 * kss <= kll) ? inv(2.0 * y_asq) : y_asq / 2.0;
 
-    bool kss_comp = (FunTypeEnum == FunType::Density) ? (2 * kss <= kll)
-                                                      : (2 * kss < kll);
+    bool kss_comp
+        = (FunTypeEnum == FunType::Density) ? 2 * kss <= kll : 2 * kss < kll;
+    double scaling = kss_comp ? inv(2.0 * y_asq) : y_asq / 2.0;
     if (kss_comp) {
       double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
       double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
@@ -282,8 +282,8 @@ double estimate_with_err_check(const F& functor, double err,
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
  */
-template <bool propto, typename T_y, typename T_a, typename T_t0, typename T_w,
-          typename T_v, typename T_sv>
+template <bool propto = false, typename T_y, typename T_a, typename T_t0,
+          typename T_w, typename T_v, typename T_sv>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
     const T_sv& sv, const double& prec) {
