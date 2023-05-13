@@ -16,21 +16,16 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   windows:
-    permissions:
-      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
-      contents: read  # for actions/checkout to fetch code
     name: Windows
     runs-on: windows-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
@@ -53,19 +48,10 @@ jobs:
       run: make -j2 test-headers
 
   opencl:
-    permissions:
-      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
-      contents: read  # for actions/checkout to fetch code
     name: OpenCL
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
     - uses: actions/checkout@v3
 
     - name: Run header tests
@@ -73,19 +59,10 @@ jobs:
         echo "STAN_OPENCL=true" > make/local
         make -j2 test-headers
   no_range_checks:
-    permissions:
-      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
-      contents: read  # for actions/checkout to fetch code
     name: NoRange
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
     - uses: actions/checkout@v3
 
     - name: Run header tests

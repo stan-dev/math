@@ -2,33 +2,196 @@
 #define STAN_MATH_FWD_META_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/elt_multiply.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 namespace internal {
 
-template <typename Dx>
-class ops_partials_edge<Dx, fvar<Dx>> {
+/**
+ * End of recursion for summing `.dx()` for `fvar<T>` ops and partials.
+ */
+static constexpr auto sum_dx() { return static_cast<double>(0.0); }
+
+/**
+ * End of recursion for summing `.dx()` for `fvar<T>` ops and partials.
+ * @tparam T1 a type with a `.dx()` method.
+ * @param a an edge from `operands_and_partials_impl`
+ */
+template <typename T1>
+inline auto sum_dx(T1& a) {
+  return a.dx();
+}
+
+/**
+ * Accumulate the `.dx()` from each of the edges in `ops_and_partials_impl`.
+ * @tparam T1 a type with a `.dx()` method.
+ * @tparam T2 a type with a `.dx()` method.
+ * @tparam Types a type with a `.dx()` method.
+ * @param a an edge from `operands_and_partials_impl`
+ * @param b an edge from `operands_and_partials_impl`
+ * @param args edges from `operands_and_partials_impl`
+ */
+template <typename T1, typename T2, typename... Types>
+inline auto sum_dx(T1& a, T2& b, Types&... args) {
+  return a.dx() + b.dx() + sum_dx(args...);
+}
+
+template <typename InnerType, typename T>
+class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
  public:
-  using Op = fvar<Dx>;
-  Dx partial_;
-  broadcast_array<Dx> partials_;
-  explicit ops_partials_edge(const Op& op)
-      : partial_(0), partials_(partial_), operand_(op) {}
+  using Op = std::decay_t<T>;
+  using Dx = std::decay_t<InnerType>;
+  Dx partial_{0};
+  broadcast_array<Dx> partials_{partial_};
 
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const Op& operand_;
+  explicit ops_partials_edge(const T& op)
+      : partial_(0), partials_(partial_), operands_(op) {}
 
-  Dx dx() { return this->partials_[0] * this->operand_.d_; }
+  explicit ops_partials_edge(
+      const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other)
+      : partial_(other.partial_),
+        partials_(partial_),
+        operands_(other.operands_) {}
+
+  explicit ops_partials_edge(
+      ops_partials_edge<InnerType, T, require_fvar_t<T>>&& other)
+      : partial_(other.partial_),
+        partials_(partial_),
+        operands_(other.operands_) {}
+
+  const Op& operands_;
+
+  inline Dx dx() { return this->partial_ * this->operands_.d_; }
 };
+
+// Vectorized Univariate
+template <typename InnerType, typename T>
+class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
+ public:
+  using Op = std::decay_t<T>;
+  using Dx = std::decay_t<InnerType>;
+  using partials_t = Eigen::Matrix<Dx, -1, 1>;
+  partials_t partials_;  // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
+  explicit ops_partials_edge(const Op& ops)
+      : partials_(partials_t::Zero(ops.size()).eval()), operands_(ops) {}
+
+  explicit ops_partials_edge(
+      const ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&
+          other)
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  explicit ops_partials_edge(
+      ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&&
+          other)
+      : partials_(std::move(other.partials_)),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  const Op& operands_;
+  inline Dx dx() {
+    return dot_product(as_column_vector_or_scalar(this->partials_),
+                       as_column_vector_or_scalar(this->operands_).d());
+  }
+};
+
+template <typename Dx, typename ViewElt>
+class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
+ public:
+  using partials_t = promote_scalar_t<Dx, ViewElt>;
+  using Op = plain_type_t<ViewElt>;
+  partials_t partials_;  // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
+  template <typename OpT, require_eigen_vt<is_fvar, OpT>* = nullptr>
+  explicit ops_partials_edge(const OpT& ops)
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(ops) {}
+
+  explicit ops_partials_edge(
+      const ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&
+          other)
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  explicit ops_partials_edge(
+      ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&&
+          other)
+      : partials_(std::move(other.partials_)),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  Op operands_;
+
+  inline Dx dx() {
+    return sum(elt_multiply(this->partials_, this->operands_.d()));
+  }
+};
+
+// Multivariate; vectors of eigen types
+template <typename Dx, int R, int C>
+class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
+ public:
+  using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
+  using partial_t = Eigen::Matrix<Dx, R, C>;
+  std::vector<partial_t> partials_vec_;
+  explicit ops_partials_edge(const Op& ops)
+      : partials_vec_(ops.size()), operands_(ops) {
+    for (size_t i = 0; i < ops.size(); ++i) {
+      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+    }
+  }
+
+  Op operands_;
+
+  inline Dx dx() {
+    Dx derivative(0);
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      derivative
+          += sum(elt_multiply(this->partials_vec_[i], this->operands_[i].d()));
+    }
+    return derivative;
+  }
+};
+
+template <typename Dx>
+class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
+ public:
+  using Op = std::vector<std::vector<fvar<Dx>>>;
+  using partial_t = std::vector<Dx>;
+  std::vector<partial_t> partials_vec_;
+  explicit ops_partials_edge(const Op& ops)
+      : partials_vec_(stan::math::size(ops)), operands_(ops) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
+    }
+  }
+
+  Op operands_;
+  inline Dx dx() {
+    Dx derivative(0);
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      for (size_t j = 0; j < this->operands_[i].size(); ++j) {
+        derivative += this->partials_vec_[i][j] * this->operands_[i][j].d_;
+      }
+    }
+    return derivative;
+  }
+};
+
 }  // namespace internal
 
 /** \ingroup type_trait
@@ -144,125 +307,6 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, fvar<Dx>> {
   }
 };
 
-namespace internal {
-
-// Vectorized Univariate
-template <typename Dx>
-class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
- public:
-  using Op = std::vector<fvar<Dx>>;
-  using partials_t = Eigen::Matrix<Dx, -1, 1>;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.size())),
-        partials_vec_(partials_),
-        operands_(ops) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const Op& operands_;
-
-  Dx dx() {
-    Dx derivative(0);
-    for (size_t i = 0; i < this->operands_.size(); ++i) {
-      derivative += this->partials_[i] * this->operands_[i].d_;
-    }
-    return derivative;
-  }
-};
-
-template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
- public:
-  using partials_t = Eigen::Matrix<Dx, R, C>;
-  using Op = Eigen::Matrix<fvar<Dx>, R, C>;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_),
-        operands_(ops) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const Op& operands_;
-
-  Dx dx() {
-    Dx derivative(0);
-    for (int i = 0; i < this->operands_.size(); ++i) {
-      derivative += this->partials_(i) * this->operands_(i).d_;
-    }
-    return derivative;
-  }
-};
-
-// Multivariate; vectors of eigen types
-template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
- public:
-  using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
-  using partial_t = Eigen::Matrix<Dx, R, C>;
-  std::vector<partial_t> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(ops.size()), operands_(ops) {
-    for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
-    }
-  }
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const Op& operands_;
-
-  Dx dx() {
-    Dx derivative(0);
-    for (size_t i = 0; i < this->operands_.size(); ++i) {
-      for (int j = 0; j < this->operands_[i].size(); ++j) {
-        derivative += this->partials_vec_[i](j) * this->operands_[i](j).d_;
-      }
-    }
-    return derivative;
-  }
-};
-
-template <typename Dx>
-class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
- public:
-  using Op = std::vector<std::vector<fvar<Dx>>>;
-  using partial_t = std::vector<Dx>;
-  std::vector<partial_t> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(stan::math::size(ops)), operands_(ops) {
-    for (size_t i = 0; i < stan::math::size(ops); ++i) {
-      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
-    }
-  }
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const Op& operands_;
-
-  Dx dx() {
-    Dx derivative(0);
-    for (size_t i = 0; i < this->operands_.size(); ++i) {
-      for (size_t j = 0; j < this->operands_[i].size(); ++j) {
-        derivative += this->partials_vec_[i][j] * this->operands_[i][j].d_;
-      }
-    }
-    return derivative;
-  }
-};
-
-}  // namespace internal
 }  // namespace math
 }  // namespace stan
 #endif

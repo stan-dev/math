@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/rev.hpp>
 #include <stan/math/fwd.hpp>
 #include <vector>
@@ -18,7 +20,7 @@ struct counterOp {
   }
 };
 
-template <typename T>
+template <typename T, stan::math::require_not_tuple_t<T>* = nullptr>
 auto recursive_sum(const T& a) {
   return math::sum(a);
 }
@@ -30,6 +32,13 @@ auto recursive_sum(const std::vector<T>& a) {
     res += recursive_sum(a[i]);
   }
   return res;
+}
+
+template <typename T, stan::math::require_tuple_t<T>* = nullptr>
+auto recursive_sum(const T& t1) {
+  stan::value_type_t<decltype(std::get<0>(t1))> val = 0;
+  stan::math::for_each([&val](auto&& elt1) { val += recursive_sum(elt1); }, t1);
+  return val;
 }
 
 template <typename T, require_integral_t<T>* = nullptr>
@@ -158,6 +167,12 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
   for (int i = 0; i < a.size(); i++) {
     expect_eq(a[i], b[i], msg);
   }
+}
+
+template <typename T, stan::math::require_tuple_t<T>* = nullptr>
+void expect_eq(const T& t1, const T& t2, const char* msg) {
+  stan::math::for_each(
+      [&msg](auto&& elt1, auto&& elt2) { expect_eq(elt1, elt2, msg); }, t1, t2);
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_OPERANDS_AND_PARTIALS_HPP
-#define STAN_MATH_PRIM_META_OPERANDS_AND_PARTIALS_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_OPERANDS_AND_PARTIALS_HPP
+#define STAN_MATH_PRIM_FUNCTOR_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
@@ -11,6 +11,7 @@
 
 namespace stan {
 namespace math {
+
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double, typename Op6 = double,
           typename Op7 = double, typename Op8 = double,
@@ -19,8 +20,30 @@ template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
-template <typename ViewElt, typename Op, typename = void>
+
+/** \ingroup type_trait
+ * \callergraph
+ * An edge holds both the operands and its associated
+ * partial derivatives. They're held together in the
+ * same class because then we can keep the templating logic that
+ * specializes on type of operand in one place.
+ *
+ * This is the base template class that ends up getting instantiated
+ * for arithmetic primitives (doubles and ints).
+ *
+ * NB: since ops_partials_edge.partials_ and ops_partials_edge.partials_vec
+ * are sometimes represented internally as a broadcast_array, we need to take
+ * care with assignments to them. Indeed, we can assign any right hand side
+ * which allows for indexing to a broadcast_array. The resulting behaviour is
+ * that the entry for the first index is what gets assigned. The most common
+ * use-case should be where the rhs is some container of length 1.
+ *
+ * @tparam ViewElt the type we expect to be at partials_[i]
+ * @tparam Op the type of the operand
+ */
+template <typename ViewElt, typename Op, typename Enable = void>
 class ops_partials_edge;
+
 /**
  * Class representing an edge with an inner type of double. This class
  *  should never be used by the program and only exists so that
@@ -28,11 +51,10 @@ class ops_partials_edge;
  *  double, vars, and fvar types.
  * @tparam ViewElt One of `double`, `var`, `fvar`.
  * @tparam Op The type of the input operand. It's scalar type
- *  for this specialization must be an `Arithmetic`
+ *  for this specialization must be a `Arithmetic`
  */
 template <typename ViewElt, typename Op>
-class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
- public:
+struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
                                       value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;
@@ -45,40 +67,46 @@ class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   partials_t partials_;
   empty_broadcast_array<partials_t, inner_op> partials_vec_;
   static constexpr double operands_{0};
-  ops_partials_edge() {}
-  template <typename T>
-  explicit ops_partials_edge(T&& /* op */) noexcept {}
+  ops_partials_edge() = default;
+
+  template <typename T,
+            require_not_same_t<
+                std::decay_t<T>,
+                std::decay_t<ops_partials_edge<
+                    ViewElt, Op, require_st_arithmetic<Op>>>>* = nullptr>
+  constexpr explicit ops_partials_edge(T&& /* op */) noexcept {}
 
   /**
    * Get the operand for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double operand() noexcept { return 0.0; }
+  static constexpr double operand() noexcept {
+    return static_cast<double>(0.0);
+  }
 
   /**
    * Get the partial for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double partial() noexcept { return 0.0; }
+  static constexpr double partial() noexcept {
+    return static_cast<double>(0.0);
+  }
   /**
-   * Return the tangent for the edge. For doubles this is a compile time
+   * Return the tangent for the edge. For doubles this is a comple time
    * expression returning zero.
    */
-  static constexpr double dx() noexcept { return 0.0; }
+  static constexpr double dx() noexcept { return static_cast<double>(0); }
   /**
-   * Return the size of the operand for the edge. For doubles this is a compile
+   * Return the size of the operand for the edge. For doubles this is a comple
    * time expression returning zero.
    */
   static constexpr int size() noexcept { return 0; }  // reverse mode
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
 };
+
 template <typename ViewElt, typename Op>
 constexpr double
     ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
+
 }  // namespace internal
 
 /** \ingroup type_trait
