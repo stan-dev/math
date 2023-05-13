@@ -12,26 +12,31 @@ TEST(MathFunctions, all) {
   Eigen::ArrayXd inp(2);
   inp << 1, 2;
 
-  EXPECT_FALSE(all(inp < 2));
+  Eigen::Array<bool, -1, 1> bool_array(4);
+  bool_array << true, true, true, true;
 
-  Eigen::Array<bool, -1, 1> bool_input(4);
-  bool_input << true, true, true, true;
-
-  EXPECT_TRUE(all(bool_input));
-
-  bool_input(2) = false;
-
-  EXPECT_FALSE(all(bool_input));
-
-  bool_input(2) = true;
+  std::vector<bool> bool_stdvector{true, true};
 
   std::vector<Eigen::Array<bool, -1, 1>> nested_bool(2);
-  nested_bool[0] = bool_input;
-  nested_bool[1] = bool_input;
+  nested_bool[0] = bool_array;
+  nested_bool[1] = bool_array;
 
+  auto bool_tuple = std::make_tuple(true, bool_stdvector,
+                                    bool_array, nested_bool);
+
+  EXPECT_FALSE(all(inp < 2));
+  EXPECT_TRUE(all(bool_stdvector));
+  EXPECT_TRUE(all(bool_array));
   EXPECT_TRUE(all(nested_bool));
+  EXPECT_TRUE(all(bool_tuple));
 
+  bool_array(2) = false;
   nested_bool[1](3) = false;
+  bool_stdvector[1] = false;
+  std::get<3>(bool_tuple) = nested_bool;
 
+  EXPECT_FALSE(all(bool_array));
   EXPECT_FALSE(all(nested_bool));
+  EXPECT_FALSE(all(bool_stdvector));
+  EXPECT_FALSE(all(bool_tuple));
 }
