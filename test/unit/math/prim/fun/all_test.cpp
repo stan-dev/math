@@ -21,8 +21,8 @@ TEST(MathFunctions, all) {
   nested_bool[0] = bool_array;
   nested_bool[1] = bool_array;
 
-  auto bool_tuple = std::make_tuple(true, bool_stdvector,
-                                    bool_array, nested_bool);
+  auto bool_tuple
+      = std::make_tuple(true, bool_stdvector, bool_array, nested_bool);
 
   EXPECT_FALSE(all(inp < 2));
   EXPECT_TRUE(all(bool_stdvector));

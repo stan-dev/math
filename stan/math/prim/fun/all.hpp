@@ -61,9 +61,9 @@ inline bool all(const ContainerT& x) {
  */
 template <typename... Types>
 inline bool all(const std::tuple<Types...>& x) {
-  return math::apply([](const auto&... args) {
-    return all(std::vector<bool>{ all(args)... });
-  }, x);
+  return math::apply(
+      [](const auto&... args) { return all(std::vector<bool>{all(args)...}); },
+      x);
 }
 
 }  // namespace math
