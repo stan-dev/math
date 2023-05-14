@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_ANY_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <algorithm>
 
 namespace stan {
@@ -61,9 +61,12 @@ inline bool any(const ContainerT& x) {
  */
 template <typename... Types>
 inline bool any(const std::tuple<Types...>& x) {
-  return math::apply(
-      [](const auto&... args) { return any(std::vector<bool>{any(args)...}); },
-      x);
+  bool any_true = false;
+  math::for_each([&any_true](const auto& i){
+    any_true = any_true || any(i);
+    return;
+  }, x);
+  return any_true;
 }
 
 }  // namespace math

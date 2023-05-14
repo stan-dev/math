@@ -52,20 +52,22 @@ inline T_true_plain select(const bool c, const T_true y_true,
                            const T_false y_false) {
   check_matching_dims("select", "y_true", y_true, "y_false", y_false);
   if (c) {
-    return y_true;
+    return T_true_plain(y_true);
   } else {
-    return y_false;
+    return T_true_plain(y_false);
   }
 }
 
 /**
- * Return the second Eigen argument if the first argument is true
- * and otherwise return the second Eigen argument. Overload for use with one
- * scalar and one Eigen object.
+ * Return the second argument if the first argument is true
+ * and otherwise return the third argument.
  *
- * If chosen, the scalar is returned as an Eigen object of the same size and
+ * Overload for use when the 'true' return is a container and the 'false'
+ * return is a scalar
+ *
+ * If chosen, the scalar is returned as a container of the same size and
  * plain type as the provided argument. Consequently, any Eigen expressions are
- * evaluated so that the return type is the same for both branches.
+ * evaluated.
  *
  * @tparam T_true type of the true argument
  * @tparam T_false type of the false argument
@@ -92,13 +94,15 @@ inline ReturnT select(const bool c, const T_true& y_true,
 }
 
 /**
- * Return the second Eigen argument if the first argument is true
- * and otherwise return the second Eigen argument. Overload for use with one
- * scalar and one Eigen object.
+ * Return the second argument if the first argument is true
+ * and otherwise return the third argument.
  *
- * If chosen, the scalar is returned as an Eigen object of the same size and
+ * Overload for use when the 'true' return is a scalar and the 'false'
+ * return is a container
+ *
+ * If chosen, the scalar is returned as a container of the same size and
  * plain type as the provided argument. Consequently, any Eigen expressions are
- * evaluated so that the return type is the same for both branches.
+ * evaluated.
  *
  * @tparam T_true type of the true argument
  * @tparam T_false type of the false argument
