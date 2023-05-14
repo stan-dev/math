@@ -62,10 +62,12 @@ inline bool all(const ContainerT& x) {
 template <typename... Types>
 inline bool all(const std::tuple<Types...>& x) {
   bool all_true = true;
-  math::for_each([&all_true](const auto& i){
-    all_true = all_true && all(i);
-    return;
-  }, x);
+  math::for_each(
+      [&all_true](const auto& i) {
+        all_true = all_true && all(i);
+        return;
+      },
+      x);
   return all_true;
 }
 

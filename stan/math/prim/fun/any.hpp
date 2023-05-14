@@ -62,10 +62,12 @@ inline bool any(const ContainerT& x) {
 template <typename... Types>
 inline bool any(const std::tuple<Types...>& x) {
   bool any_true = false;
-  math::for_each([&any_true](const auto& i){
-    any_true = any_true || any(i);
-    return;
-  }, x);
+  math::for_each(
+      [&any_true](const auto& i) {
+        any_true = any_true || any(i);
+        return;
+      },
+      x);
   return any_true;
 }
 
