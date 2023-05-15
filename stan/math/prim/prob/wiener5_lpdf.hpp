@@ -7,207 +7,293 @@ namespace stan {
 namespace math {
 namespace internal {
 
-enum class FunType { Density, GradT, GradA, GradV, GradW, GradSV, GradSW };
-
-/**
- * Implementation function for calculating the density or gradient w.r.t. a
- * specified parameter of the 5-parameter Wiener distribution
- *
- * @tparam FunTypeEnum An enum value indicating the quantity required
- * @param y A scalar variable; the reaction time in seconds
- * @param a The boundary separation
- * @param vn The drift rate
- * @param wn The relative starting point
- * @param sv The inter-trial variability of the drift rate
- * @param err The error tolerance for estimation
- * @param use_log Whether to return calculation w.r.t. the log value
- *
- */
-template <FunType FunTypeEnum>
-inline double wiener5_helper(const double& y, const double& a, const double& vn,
-                             const double& wn, const double& sv,
-                             const double& err = log(1e-12),
-                             bool use_log = false) {
+double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
   double w = 1.0 - wn;
   double v = -vn;
   double sv_sqr = square(sv);
   double one_plus_svsqr_y = 1 + sv_sqr * y;
   double two_avw = 2 * a * v * w;
   double two_log_a = 2 * log(a);
-  double ans;
-  double ld = 0;
+  if (sv != 0) {
+    return (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
+              / one_plus_svsqr_y
+          - two_log_a - 0.5 * log(one_plus_svsqr_y);
+  } else {
+    return (-two_avw - square(v) * y) / 2.0 - two_log_a;
+  }
+}
 
-  if (FunTypeEnum == FunType::GradSV || FunTypeEnum == FunType::GradV) {
-    ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err);
-    if (FunTypeEnum == FunType::GradV) {
-      ans = (a * (1 - wn) - vn * y);
-      if (sv != 0) {
-        ans /= 1 + sv_sqr * y;
-      }
+template <bool GradA, bool GradT>
+double wiener5_ans0(double y, double a, double vn, double wn, double sv) {
+  double w = 1.0 - wn;
+  double v = -vn;
+  double sv_sqr = square(sv);
+  double one_plus_svsqr_y = 1 + sv_sqr * y;
+  double two_avw = 2 * a * v * w;
+
+  double var_a = GradA ? w : a;
+  double var_b = GradA ? a : w;
+
+  if (GradT) {
+    if (sv != 0) {
+      return -0.5
+              * (square(sv_sqr) * (y + square(a * w))
+                + sv_sqr * (1 - two_avw) + square(v))
+              / square(one_plus_svsqr_y);
     } else {
-      double t1 = -y / one_plus_svsqr_y;
-      double t2 = (square(a * w) + two_avw * y + square(v * y))
-                  / square(one_plus_svsqr_y);
-      ans = sv * (t1 + t2);
+      return -0.5 * square(v);
+    }
+  }
+
+  if (sv != 0) {
+    return (-v * var_a + sv_sqr * square(var_a) * var_b)
+              / one_plus_svsqr_y;
+  } else {
+    return -v * var_a;
+  }
+}
+
+template <bool Density, bool GradW>
+double wiener5_kss(double y, double a, double wn, double es) {
+  double two_es = 2.0 * es;
+  double y_asq = y / square(a);
+  double two_log_a = 2 * log(a);
+  double log_y_asq = log(y) - two_log_a;
+  double w = 1.0 - wn;
+
+  double K1, u_eps, arg;
+  double K1_mult = Density ? 2 : 3;
+  K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
+  if (Density || GradW) {
+    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
+  } else {
+    u_eps = fmin(-3.0,
+                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
+  }
+  double arg_mult = Density ? 1 : 3;
+  arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+
+  double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
+  return ceil(fmax(K1, K2));
+}
+
+template <bool Density, bool GradT>
+double wiener5_kll(double y, double a, double wn, double es) {
+  double two_es = 2.0 * es;
+  double y_asq = y / square(a);
+  double two_log_a = 2 * log(a);
+  double log_y_asq = log(y) - two_log_a;
+  double w = 1.0 - wn;
+
+  double K1, K2, u_eps, arg;
+  double K1_mult = GradT ? 2 : 3;
+  static const double PISQ = square(pi());  // pi*pi
+
+  if (Density) {
+    K1 = 1.0 / (pi() * sqrt(y_asq));
+    double two_log_piy = -2.0 * (LOG_PI + log_y_asq + es);
+    K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PISQ * y_asq)) : 0.0;
+  } else {
+    K1 = sqrt(K1_mult / y_asq) / pi();
+    double u_eps_arg
+        = GradT
+              ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
+              : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
+    u_eps = fmin(-1, u_eps_arg);
+    double arg_mult = GradT ? (2.0 / PISQ / y_asq) : 1;
+    arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    K2 = GradT ? (arg > 0) ? sqrt(arg) : K1
+                : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
+  }
+
+  return ceil(fmax(K1, K2));
+}
+
+template <bool Density, bool GradW>
+std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
+                                        size_t kss, size_t kll) {
+  double y_asq = y / square(a);
+  double w = 1.0 - wn;
+  bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
+  double scaling = small_kss ? inv(2.0 * y_asq) : y_asq / 2.0;
+
+  double erg = NEGATIVE_INFTY;
+  int newsign = 1;
+
+  if (small_kss) {
+    double mult = Density ? 1 : 3;
+    double offset = GradW ? y_asq : 0;
+    double sqrt_offset = sqrt(offset);
+    for (size_t k = kss; k >= 0; k--) {
+      double wp2k = w + 2.0 * k;
+      double wm2k = w - 2.0 * k;
+      int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
+      int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
+      double wp2k_quant = log(wp2k_sign * (wp2k - offset))
+                          - (square(wp2k) - offset) * scaling;
+      double wm2k_quant = log(wm2k_sign * (wm2k - offset))
+                          - (square(wm2k) - offset) * scaling;
+      std::forward_as_tuple(erg, newsign)
+          = log_sum_exp_signed(erg, newsign, mult * wp2k_quant, wp2k_sign);
+      std::forward_as_tuple(erg, newsign) = log_sum_exp_signed(
+          erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
     }
   } else {
-    double lg1;
-    if (sv != 0) {
-      lg1 = (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
-                / one_plus_svsqr_y
-            - two_log_a - 0.5 * log(one_plus_svsqr_y);
-    } else {
-      lg1 = (-two_avw - square(v) * y) / 2.0 - two_log_a;
+    double mult = 3;
+    if (Density) {
+      mult = 1;
+    } else if (GradW) {
+      mult = 2;
     }
-    double ans0 = 0;
-    if (FunTypeEnum != FunType::Density) {
-      double var_a = (FunTypeEnum == FunType::GradA) ? w : a;
-      double var_b = (FunTypeEnum == FunType::GradA) ? a : w;
-      if (sv != 0) {
-        if (FunTypeEnum == FunType::GradT) {
-          ans0 = -0.5
-                 * (square(sv_sqr) * (y + square(a * w))
-                    + sv_sqr * (1 - two_avw) + square(v))
-                 / square(one_plus_svsqr_y);
-        } else {
-          ans0 = (-v * var_a + sv_sqr * square(var_a) * var_b)
-                 / one_plus_svsqr_y;
-        }
-      } else {
-        ans0 = (FunTypeEnum == FunType::GradT) ? -0.5 * square(v) : -v * var_a;
-      }
-    }
-    double es = (err - lg1) + (FunTypeEnum == FunType::GradT) * two_log_a;
-    double two_es = 2.0 * es;
-    double y_asq = y / square(a);
-    double log_y_asq = log(y) - two_log_a;
-
-    double K1, u_eps, arg;
-    double K1_mult = (FunTypeEnum == FunType::Density) ? 2 : 3;
-    K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
-    if (FunTypeEnum == FunType::Density || FunTypeEnum == FunType::GradW) {
-      u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
-    } else {
-      u_eps = fmin(-3.0,
-                   (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
-    }
-    double arg_mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
-    arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-
-    double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
-    double kss = ceil(fmax(K1, K2));
-
-    static const double PISQ = square(pi());  // pi*pi
-    if (FunTypeEnum == FunType::Density) {
-      K1 = 1.0 / (pi() * sqrt(y_asq));
-      double two_log_piy = -2.0 * (LOG_PI + log_y_asq + es);
-      K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PISQ * y_asq)) : 0.0;
-    } else {
-      K1_mult = (FunTypeEnum == FunType::GradT) ? 2 : 3;
-      K1 = sqrt(K1_mult / y_asq) / pi();
-      double u_eps_arg
-          = (FunTypeEnum == FunType::GradT)
-                ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
-                : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
-      u_eps = fmin(-1, u_eps_arg);
-      arg_mult = (FunTypeEnum == FunType::GradT) ? (2.0 / PISQ / y_asq) : 1;
-      arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-      K2 = (FunTypeEnum == FunType::GradT)
-               ? (arg > 0) ? sqrt(arg) : K1
-               : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
-    }
-
-    double kll = ceil(fmax(K1, K2));
-
-    double ld_err = 0;
-    if (FunTypeEnum != FunType::Density) {
-      if (FunTypeEnum == FunType::GradT) {
-        ld_err = log(max(fabs(ans0 - 1.5 / y), fabs(ans0)));
-      } else if (FunTypeEnum == FunType::GradA) {
-        ld_err = log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a)));
-      } else {
-        ld_err = log(fabs(ans0));
-      }
-      ld = wiener5_helper<FunType::Density>(y, a, vn, wn, sv, err - ld_err);
-    }
-
-    double erg = NEGATIVE_INFTY;
-    int newsign = 1;
-
-    bool kss_comp
-        = (FunTypeEnum == FunType::Density) ? 2 * kss <= kll : 2 * kss < kll;
-    double scaling = kss_comp ? inv(2.0 * y_asq) : y_asq / 2.0;
-    if (kss_comp) {
-      double mult = (FunTypeEnum == FunType::Density) ? 1 : 3;
-      double offset = (FunTypeEnum == FunType::GradW) ? y_asq : 0;
-      double sqrt_offset = sqrt(offset);
-      for (size_t k = static_cast<size_t>(kss); k >= 0; k--) {
-        double wp2k = w + 2.0 * k;
-        double wm2k = w - 2.0 * k;
-        int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
-        int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
-        double wp2k_quant = log(wp2k_sign * (wp2k - offset))
-                            - (square(wp2k) - offset) * scaling;
-        double wm2k_quant = log(wm2k_sign * (wm2k - offset))
-                            - (square(wm2k) - offset) * scaling;
-        std::forward_as_tuple(erg, newsign)
-            = log_sum_exp_signed(erg, newsign, mult * wp2k_quant, wp2k_sign);
-        std::forward_as_tuple(erg, newsign) = log_sum_exp_signed(
-            erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
-      }
-      if (FunTypeEnum == FunType::Density) {
-        ans = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * log_y_asq + erg;
-      } else if (FunTypeEnum == FunType::GradT) {
-        ans = ans0 - 1.5 / y
-              + newsign
-                    * exp(lg1 - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
-                          - 3.5 * log_y_asq + erg - ld);
-      } else if (FunTypeEnum == FunType::GradA) {
-        ans = ans0 + 1.0 / a
-              - newsign
-                    * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
-                          + 2.0 * two_log_a + lg1 + erg - ld);
-      } else if (FunTypeEnum == FunType::GradW) {
-        ans = -(ans0
-                - newsign
-                      * exp(erg - (ld - lg1) - 2.5 * log_y_asq - 0.5 * LOG_TWO
-                            - 0.5 * LOG_PI));
-      }
-    } else {
-      double mult = 3;
-      if (FunTypeEnum == FunType::Density) {
-        mult = 1;
-      } else if (FunTypeEnum == FunType::GradW) {
-        mult = 2;
-      }
-      for (size_t k = static_cast<size_t>(kll); k >= 1; k--) {
-        double pi_k = k * pi();
-        double check
-            = (FunTypeEnum == FunType::GradW) ? cos(pi_k * w) : sin(pi_k * w);
-        int check_sign = sign(check);
-        double kll_quant
-            = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
-        std::forward_as_tuple(erg, newsign)
-            = log_sum_exp_signed(erg, newsign, kll_quant, check_sign);
-      }
-      if (FunTypeEnum == FunType::Density) {
-        ans = lg1 + erg + LOG_PI;
-      } else if (FunTypeEnum == FunType::GradT) {
-        ans = ans0
-              - newsign
-                    * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
-      } else if (FunTypeEnum == FunType::GradA) {
-        ans = ans0 - 2.0 / a
-              + newsign * exp(log(y) + lg1 - 3 * (log(a) - LOG_PI) + erg - ld);
-      } else if (FunTypeEnum == FunType::GradW) {
-        ans = -(ans0 + newsign * exp(erg - (ld - lg1) + 2 * LOG_PI));
-      }
+    for (size_t k = kll; k >= 1; k--) {
+      double pi_k = k * pi();
+      double check
+          = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
+      int check_sign = sign(check);
+      double kll_quant
+          = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
+      std::forward_as_tuple(erg, newsign)
+          = log_sum_exp_signed(erg, newsign, kll_quant, check_sign);
     }
   }
-  if (FunTypeEnum == FunType::Density && use_log) {
-    return exp(ans);
+  return std::make_tuple(erg, newsign);
+}
+
+template <bool WrtLog = false>
+double wiener5_density(double y, double a, double vn, double wn,
+                        double sv, double err = log(1e-12)) {
+  double lg1 = wiener5_lg1(y, a, vn, wn, sv);
+  double es = (err - lg1);
+  double kss = wiener5_kss<true, false>(y, a, wn, es);
+  double kll = wiener5_kll<true, false>(y, a, wn, es);
+
+  double erg;
+  int newsign;
+  double ld;
+  std::forward_as_tuple(erg, newsign)
+    = wiener5_ergsign<true, false>(y, a, wn, kss, kll);
+  if (2 * kss <= kll) {
+    ld = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * (log(y) - 2 * log(a)) + erg;
+  } else {
+    ld = lg1 + erg + LOG_PI;
   }
-  return use_log ? ans * exp(ld) : ans;
+
+  return WrtLog ? exp(ld) : ld;
+}
+
+template <bool WrtLog = false>
+double grad_wiener5_t(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  double two_log_a = 2 * log(a);
+  double log_y_asq = log(y) - two_log_a;
+  double lg1 = wiener5_lg1(y, a, vn, wn, sv);
+  double ans0 = wiener5_ans0<false, true>(y, a, vn, wn, sv);
+  double es = (err - lg1) + two_log_a;
+
+  double kss = wiener5_kss<false, false>(y, a, wn, es);
+  double kll = wiener5_kll<false, true>(y, a, wn, es);
+  double erg;
+  int newsign;
+  std::forward_as_tuple(erg, newsign)
+    = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+
+  double ld_err = log(max(fabs(ans0 - 1.5 / y), fabs(ans0)));
+  double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
+  double ans;
+  if (2 * kss < kll) {
+    ans = ans0 - 1.5 / y
+          + newsign
+                * exp(lg1 - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
+                      - 3.5 * log_y_asq + erg - ld);
+  } else {
+    ans = ans0
+          - newsign
+                * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
+  }
+  return WrtLog ? ans * exp(ld) : ans;
+}
+
+template <bool WrtLog = false>
+double grad_wiener5_a(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  double two_log_a = 2 * log(a);
+  double log_y_asq = log(y) - two_log_a;
+  double lg1 = wiener5_lg1(y, a, vn, wn, sv);
+  double ans0 = wiener5_ans0<true, false>(y, a, vn, wn, sv);
+  double es = (err - lg1);
+
+  double kss = wiener5_kss<false, false>(y, a, wn, es);
+  double kll = wiener5_kll<false, false>(y, a, wn, es);
+  double erg;
+  int newsign;
+  std::forward_as_tuple(erg, newsign)
+    = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+
+  double ld_err = log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a)));
+  double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
+  double ans;
+  if (2 * kss < kll) {
+    ans = ans0 + 1.0 / a
+          - newsign
+                * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
+                      + 2.0 * two_log_a + lg1 + erg - ld);
+  } else {
+    ans = ans0 - 2.0 / a
+          + newsign * exp(log(y) + lg1 - 3 * (log(a) - LOG_PI) + erg - ld);
+  }
+  return WrtLog ? ans * exp(ld) : ans;
+}
+
+template <bool WrtLog = false>
+double grad_wiener5_v(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  double ans = (a * (1 - wn) - vn * y);
+  if (sv != 0) {
+    ans /= 1 + square(sv) * y;
+  }
+  return WrtLog ? ans * wiener5_density<true>(y, a, vn, wn, sv, err) : ans;
+}
+
+template <bool WrtLog = false>
+double grad_wiener5_w(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  double two_log_a = 2 * log(a);
+  double log_y_asq = log(y) - two_log_a;
+  double lg1 = wiener5_lg1(y, a, vn, wn, sv);
+  double ans0 = wiener5_ans0<false, false>(y, a, vn, wn, sv);
+  double es = (err - lg1);
+
+  double kss = wiener5_kss<false, true>(y, a, wn, es);
+  double kll = wiener5_kll<false, false>(y, a, wn, es);
+  double erg;
+  int newsign;
+  std::forward_as_tuple(erg, newsign)
+    = wiener5_ergsign<false, true>(y, a, wn, kss, kll);
+
+  double ld = wiener5_density(y, a, vn, wn, sv, err - log(fabs(ans0)));
+  double ans;
+  if (2 * kss < kll) {
+    ans = -(ans0
+            - newsign
+                  * exp(erg - (ld - lg1) - 2.5 * log_y_asq - 0.5 * LOG_TWO
+                        - 0.5 * LOG_PI));
+  } else {
+    ans = -(ans0 + newsign * exp(erg - (ld - lg1) + 2 * LOG_PI));
+  }
+  return WrtLog ? ans * exp(ld) : ans;
+}
+
+template <bool WrtLog = false>
+double grad_wiener5_sv(double y, double a, double vn, double wn,
+                        double sv, double err = log(1e-12)) {
+  double one_plus_svsqr_y = 1 + square(sv) * y;
+  double w = 1.0 - wn;
+  double v = -vn;
+  double t1 = -y / one_plus_svsqr_y;
+  double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
+              / square(one_plus_svsqr_y);
+  double ans = sv * (t1 + t2);
+  return WrtLog ? ans * wiener5_density<true>(y, a, vn, wn, sv, err) : ans;
 }
 
 /**
@@ -378,10 +464,10 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const double sv_val = sv_vec.val(i);
 
     const auto params = std::make_tuple(y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, labstol_wiener5, false);
+                                        sv_val, labstol_wiener5);
 
     dens = internal::estimate_with_err_check<5>(
-        internal::wiener5_helper<internal::FunType::Density>,
+        [&](auto&&... args) { return internal::wiener5_density(args...); },
         lerror_bound_dens - LOG_TWO, params, true);
     ld += dens;
 
@@ -390,8 +476,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
     double deriv_y = internal::estimate_with_err_check<5>(
-        internal::wiener5_helper<internal::FunType::GradT>, new_est_err,
-        params);
+        [&](auto&&... args) { return internal::grad_wiener5_t(args...); },
+        new_est_err, params);
 
     // computation of derivatives and precision checks
     if (!is_constant_all<T_y>::value) {
@@ -399,25 +485,25 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     }
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::wiener5_helper<internal::FunType::GradA>, new_est_err,
-          params);
+          [&](auto&&... args) { return internal::grad_wiener5_a(args...); },
+          new_est_err, params);
     }
     if (!is_constant_all<T_t0>::value) {
       ops_partials.edge3_.partials_[i] = -deriv_y;
     }
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<5>(
-          internal::wiener5_helper<internal::FunType::GradW>, new_est_err,
-          params);
+          [&](auto&&... args) { return internal::grad_wiener5_w(args...); },
+          new_est_err, params);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i]
-          = internal::wiener5_helper<internal::FunType::GradV>(
+          = internal::grad_wiener5_v(
               y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i]
-          = internal::wiener5_helper<internal::FunType::GradSV>(
+          = internal::grad_wiener5_sv(
               y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
   }  // end for loop
