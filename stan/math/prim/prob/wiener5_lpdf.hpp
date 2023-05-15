@@ -16,8 +16,8 @@ double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
   double two_log_a = 2 * log(a);
   if (sv != 0) {
     return (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
-              / one_plus_svsqr_y
-          - two_log_a - 0.5 * log(one_plus_svsqr_y);
+               / one_plus_svsqr_y
+           - two_log_a - 0.5 * log(one_plus_svsqr_y);
   } else {
     return (-two_avw - square(v) * y) / 2.0 - two_log_a;
   }
@@ -37,17 +37,16 @@ double wiener5_ans0(double y, double a, double vn, double wn, double sv) {
   if (GradT) {
     if (sv != 0) {
       return -0.5
-              * (square(sv_sqr) * (y + square(a * w))
-                + sv_sqr * (1 - two_avw) + square(v))
-              / square(one_plus_svsqr_y);
+             * (square(sv_sqr) * (y + square(a * w)) + sv_sqr * (1 - two_avw)
+                + square(v))
+             / square(one_plus_svsqr_y);
     } else {
       return -0.5 * square(v);
     }
   }
 
   if (sv != 0) {
-    return (-v * var_a + sv_sqr * square(var_a) * var_b)
-              / one_plus_svsqr_y;
+    return (-v * var_a + sv_sqr * square(var_a) * var_b) / one_plus_svsqr_y;
   } else {
     return -v * var_a;
   }
@@ -68,7 +67,7 @@ double wiener5_kss(double y, double a, double wn, double es) {
     u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
   } else {
     u_eps = fmin(-3.0,
-                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
+                 (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
   }
   double arg_mult = Density ? 1 : 3;
   arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
@@ -96,14 +95,13 @@ double wiener5_kll(double y, double a, double wn, double es) {
   } else {
     K1 = sqrt(K1_mult / y_asq) / pi();
     double u_eps_arg
-        = GradT
-              ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
-              : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
+        = GradT ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
+                : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
     u_eps = fmin(-1, u_eps_arg);
     double arg_mult = GradT ? (2.0 / PISQ / y_asq) : 1;
     arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
     K2 = GradT ? (arg > 0) ? sqrt(arg) : K1
-                : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
+               : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
   }
 
   return ceil(fmax(K1, K2));
@@ -135,8 +133,8 @@ std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
                           - (square(wm2k) - offset) * scaling;
       std::forward_as_tuple(erg, newsign)
           = log_sum_exp_signed(erg, newsign, mult * wp2k_quant, wp2k_sign);
-      std::forward_as_tuple(erg, newsign) = log_sum_exp_signed(
-          erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
+      std::forward_as_tuple(erg, newsign)
+          = log_sum_exp_signed(erg, newsign, mult * wm2k_quant, -1 * wm2k_sign);
     }
   } else {
     double mult = 3;
@@ -147,8 +145,7 @@ std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
     }
     for (size_t k = kll; k >= 1; k--) {
       double pi_k = k * pi();
-      double check
-          = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
+      double check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
       int check_sign = sign(check);
       double kll_quant
           = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
@@ -160,8 +157,8 @@ std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
 }
 
 template <bool WrtLog = false>
-double wiener5_density(double y, double a, double vn, double wn,
-                        double sv, double err = log(1e-12)) {
+double wiener5_density(double y, double a, double vn, double wn, double sv,
+                       double err = log(1e-12)) {
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
   double es = (err - lg1);
   double kss = wiener5_kss<true, false>(y, a, wn, es);
@@ -171,7 +168,7 @@ double wiener5_density(double y, double a, double vn, double wn,
   int newsign;
   double ld;
   std::forward_as_tuple(erg, newsign)
-    = wiener5_ergsign<true, false>(y, a, wn, kss, kll);
+      = wiener5_ergsign<true, false>(y, a, wn, kss, kll);
   if (2 * kss <= kll) {
     ld = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * (log(y) - 2 * log(a)) + erg;
   } else {
@@ -182,8 +179,8 @@ double wiener5_density(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_t(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_t(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   double two_log_a = 2 * log(a);
   double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -195,7 +192,7 @@ double grad_wiener5_t(double y, double a, double vn, double wn,
   double erg;
   int newsign;
   std::forward_as_tuple(erg, newsign)
-    = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+      = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
 
   double ld_err = log(max(fabs(ans0 - 1.5 / y), fabs(ans0)));
   double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
@@ -207,15 +204,14 @@ double grad_wiener5_t(double y, double a, double vn, double wn,
                       - 3.5 * log_y_asq + erg - ld);
   } else {
     ans = ans0
-          - newsign
-                * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
+          - newsign * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
   }
   return WrtLog ? ans * exp(ld) : ans;
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_a(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_a(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   double two_log_a = 2 * log(a);
   double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -227,7 +223,7 @@ double grad_wiener5_a(double y, double a, double vn, double wn,
   double erg;
   int newsign;
   std::forward_as_tuple(erg, newsign)
-    = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+      = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
 
   double ld_err = log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a)));
   double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
@@ -245,8 +241,8 @@ double grad_wiener5_a(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_v(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_v(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   double ans = (a * (1 - wn) - vn * y);
   if (sv != 0) {
     ans /= 1 + square(sv) * y;
@@ -255,8 +251,8 @@ double grad_wiener5_v(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_w(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_w(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   double two_log_a = 2 * log(a);
   double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -268,7 +264,7 @@ double grad_wiener5_w(double y, double a, double vn, double wn,
   double erg;
   int newsign;
   std::forward_as_tuple(erg, newsign)
-    = wiener5_ergsign<false, true>(y, a, wn, kss, kll);
+      = wiener5_ergsign<false, true>(y, a, wn, kss, kll);
 
   double ld = wiener5_density(y, a, vn, wn, sv, err - log(fabs(ans0)));
   double ans;
@@ -284,8 +280,8 @@ double grad_wiener5_w(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_sv(double y, double a, double vn, double wn,
-                        double sv, double err = log(1e-12)) {
+double grad_wiener5_sv(double y, double a, double vn, double wn, double sv,
+                       double err = log(1e-12)) {
   double one_plus_svsqr_y = 1 + square(sv) * y;
   double w = 1.0 - wn;
   double v = -vn;
@@ -497,14 +493,12 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
           new_est_err, params);
     }
     if (!is_constant_all<T_v>::value) {
-      ops_partials.edge5_.partials_[i]
-          = internal::grad_wiener5_v(
-              y_val - t0_val, a_val, v_val, w_val, sv_val);
+      ops_partials.edge5_.partials_[i] = internal::grad_wiener5_v(
+          y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
     if (!is_constant_all<T_sv>::value) {
-      ops_partials.edge6_.partials_[i]
-          = internal::grad_wiener5_sv(
-              y_val - t0_val, a_val, v_val, w_val, sv_val);
+      ops_partials.edge6_.partials_[i] = internal::grad_wiener5_sv(
+          y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
   }  // end for loop
   return ops_partials.build(ld);
