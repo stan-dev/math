@@ -178,6 +178,7 @@ pipeline {
 
                 }
             }
+            post { always { retry(3) { deleteDir() } } }
         }
 
         stage('Quick tests') {

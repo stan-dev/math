@@ -2,10 +2,9 @@
 #define STAN_MATH_OPENCL_REV_OPERANDS_AND_PARTIALS_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
@@ -25,15 +24,10 @@ class ops_partials_edge<double, var_value<Op>,
       : partials_(constant(0.0, ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  inline auto& partial() noexcept { return partials_; }
+  inline auto& operand() const noexcept { return operands_; }
   var_value<Op> operands_;
-  static constexpr int size() noexcept { return 0; }
-  inline auto& operand() noexcept { return this->operands_; }
-  inline auto& partial() noexcept { return this->partials_; }
+  static constexpr int size() { return 0; }
 };
 
 }  // namespace internal

@@ -14,21 +14,16 @@ on:
       - 'RELEASE-NOTES.txt'
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   prim-rev:
-    permissions:
-      actions: write  # for n1hility/cancel-previous-runs to create & stop workflow runs
-      contents: read  # for actions/checkout to fetch code
     name: prim and rev tests
     runs-on: windows-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
@@ -73,6 +68,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+
   fwd-non-fun-mix:
     name: fwd tests and non-fun mix tests
     runs-on: windows-latest
@@ -126,6 +122,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+
   mix-fun-1:
     name: mix/fun tests 1
     runs-on: windows-latest
@@ -174,6 +171,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
+        
   mix-fun-2:
     name: mix/fun tests 2
     runs-on: windows-latest
