@@ -96,9 +96,8 @@ double wiener5_kll(double y, double a, double wn, double es) {
   } else {
     K1 = sqrt(K1_mult / y_asq) / pi();
     double u_eps_arg
-        = GradT
-              ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
-              : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
+        = GradT ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
+                : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
     double u_eps = fmin(-1, u_eps_arg);
     double arg_mult = GradT ? (2.0 / PI_SQUARED / y_asq) : 1;
     double arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
@@ -181,8 +180,8 @@ double wiener5_density(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_t(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_t(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -212,8 +211,8 @@ double grad_wiener5_t(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_a(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_a(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -253,8 +252,8 @@ double grad_wiener5_v(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_w(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+double grad_wiener5_w(double y, double a, double vn, double wn, double sv,
+                      double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -282,8 +281,8 @@ double grad_wiener5_w(double y, double a, double vn, double wn,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_sv(double y, double a, double vn, double wn,
-                        double sv, double err = log(1e-12)) {
+double grad_wiener5_sv(double y, double a, double vn, double wn, double sv,
+                       double err = log(1e-12)) {
   const double one_plus_svsqr_y = 1 + square(sv) * y;
   const double w = 1.0 - wn;
   const double v = -vn;

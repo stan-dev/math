@@ -200,8 +200,8 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
   c[0] = 0.5 * (a + b);
   double delta = 0.5 * (b - a);
   double f0 = math::apply(
-    [&integrand, &c](auto&&... args) { return integrand(c, args...); },
-    pars_tuple);
+      [&integrand, &c](auto&&... args) { return integrand(c, args...); },
+      pars_tuple);
 
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
@@ -305,8 +305,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
 
   double f1 = math::apply(
-    [&integrand, &c](auto&&... args) { return integrand(c, args...); },
-    pars_tuple);
+      [&integrand, &c](auto&&... args) { return integrand(c, args...); },
+      pars_tuple);
   double f2 = 0.0;
   double f3 = 0.0;
   double twelvef1 = 12 * f1;
@@ -349,8 +349,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
       cc[j] = c[j] - p3[j];
     }
     temp = math::apply(
-      [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
-      pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     f3i += temp;
     f2 += f2i;
     f3 += f3i;
