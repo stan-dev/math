@@ -20,9 +20,10 @@ namespace math {
  * @param y_false Value to return if condition is false.
  */
 template <typename T_true, typename T_false,
+          typename ReturnT = return_type_t<T_true, T_false>,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
-inline auto select(const bool c, const T_true y_true, const T_false y_false) {
-  return c ? y_true : y_false;
+inline ReturnT select(const bool c, const T_true y_true, const T_false y_false) {
+  return c ? ReturnT(y_true) : ReturnT(y_false);
 }
 
 /**
@@ -51,11 +52,7 @@ template <
 inline T_true_plain select(const bool c, const T_true y_true,
                            const T_false y_false) {
   check_matching_dims("select", "y_true", y_true, "y_false", y_false);
-  if (c) {
-    return T_true_plain(y_true);
-  } else {
-    return T_true_plain(y_false);
-  }
+  return c ? T_true_plain(y_true) : T_true_plain(y_false);
 }
 
 /**
@@ -144,7 +141,7 @@ inline ReturnT select(const bool c, const T_true y_true,
  * @param y_false Value to return if condition is false.
  */
 template <typename T_bool, typename T_true, typename T_false,
-          require_eigen_array_t<T_bool>* = nullptr,
+          require_eigen_array_vt<std::is_integral, T_bool>* = nullptr,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
   return c.unaryExpr([&](bool cond) { return cond ? y_true : y_false; }).eval();
