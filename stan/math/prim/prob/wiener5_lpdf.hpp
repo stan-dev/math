@@ -8,12 +8,12 @@ namespace math {
 namespace internal {
 
 double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
-  double w = 1.0 - wn;
-  double v = -vn;
-  double sv_sqr = square(sv);
-  double one_plus_svsqr_y = 1 + sv_sqr * y;
-  double two_avw = 2 * a * v * w;
-  double two_log_a = 2 * log(a);
+  const double w = 1.0 - wn;
+  const double v = -vn;
+  const double sv_sqr = square(sv);
+  const double one_plus_svsqr_y = 1 + sv_sqr * y;
+  const double two_avw = 2 * a * v * w;
+  const double two_log_a = 2 * log(a);
   if (sv != 0) {
     return (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
                / one_plus_svsqr_y
@@ -25,14 +25,14 @@ double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
 
 template <bool GradA, bool GradT>
 double wiener5_ans0(double y, double a, double vn, double wn, double sv) {
-  double w = 1.0 - wn;
-  double v = -vn;
-  double sv_sqr = square(sv);
-  double one_plus_svsqr_y = 1 + sv_sqr * y;
-  double two_avw = 2 * a * v * w;
+  const double w = 1.0 - wn;
+  const double v = -vn;
+  const double sv_sqr = square(sv);
+  const double one_plus_svsqr_y = 1 + sv_sqr * y;
+  const double two_avw = 2 * a * v * w;
 
-  double var_a = GradA ? w : a;
-  double var_b = GradA ? a : w;
+  const double var_a = GradA ? w : a;
+  const double var_b = GradA ? a : w;
 
   if (GradT) {
     if (sv != 0) {
@@ -54,15 +54,15 @@ double wiener5_ans0(double y, double a, double vn, double wn, double sv) {
 
 template <bool Density, bool GradW>
 double wiener5_kss(double y, double a, double wn, double es) {
-  double two_es = 2.0 * es;
-  double y_asq = y / square(a);
-  double two_log_a = 2 * log(a);
-  double log_y_asq = log(y) - two_log_a;
-  double w = 1.0 - wn;
+  const double two_es = 2.0 * es;
+  const double y_asq = y / square(a);
+  const double two_log_a = 2 * log(a);
+  const double log_y_asq = log(y) - two_log_a;
+  const double w = 1.0 - wn;
 
-  double K1, u_eps, arg;
-  double K1_mult = Density ? 2 : 3;
-  K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
+  const double K1_mult = Density ? 2 : 3;
+  double K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
+  double u_eps;
   if (Density || GradW) {
     u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
   } else {
@@ -70,7 +70,7 @@ double wiener5_kss(double y, double a, double wn, double es) {
                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
   }
   double arg_mult = Density ? 1 : 3;
-  arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  double arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
 
   double K2 = (arg > 0) ? 0.5 * (sqrt(arg) - w) : K1;
   return ceil(fmax(K1, K2));
@@ -78,28 +78,30 @@ double wiener5_kss(double y, double a, double wn, double es) {
 
 template <bool Density, bool GradT>
 double wiener5_kll(double y, double a, double wn, double es) {
-  double two_es = 2.0 * es;
-  double y_asq = y / square(a);
-  double two_log_a = 2 * log(a);
-  double log_y_asq = log(y) - two_log_a;
-  double w = 1.0 - wn;
+  const double two_es = 2.0 * es;
+  const double y_asq = y / square(a);
+  const double two_log_a = 2 * log(a);
+  const double log_y_asq = log(y) - two_log_a;
+  const double w = 1.0 - wn;
 
-  double K1, K2, u_eps, arg;
-  double K1_mult = GradT ? 2 : 3;
-  static const double PISQ = square(pi());  // pi*pi
+  const double K1_mult = GradT ? 2 : 3;
+  static constexpr double PI_SQUARED = pi() * pi();  // pi*pi
 
+  double K1;
+  double K2;
   if (Density) {
     K1 = 1.0 / (pi() * sqrt(y_asq));
     double two_log_piy = -2.0 * (LOG_PI + log_y_asq + es);
-    K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PISQ * y_asq)) : 0.0;
+    K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PI_SQUARED * y_asq)) : 0.0;
   } else {
     K1 = sqrt(K1_mult / y_asq) / pi();
     double u_eps_arg
-        = GradT ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
-                : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
-    u_eps = fmin(-1, u_eps_arg);
-    double arg_mult = GradT ? (2.0 / PISQ / y_asq) : 1;
-    arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+        = GradT
+              ? log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es
+              : log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es;
+    double u_eps = fmin(-1, u_eps_arg);
+    double arg_mult = GradT ? (2.0 / PI_SQUARED / y_asq) : 1;
+    double arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
     K2 = GradT ? (arg > 0) ? sqrt(arg) : K1
                : (arg > 0) ? sqrt(arg / y_asq) / pi() : K1;
   }
@@ -110,10 +112,10 @@ double wiener5_kll(double y, double a, double wn, double es) {
 template <bool Density, bool GradW>
 std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
                                         size_t kss, size_t kll) {
-  double y_asq = y / square(a);
-  double w = 1.0 - wn;
-  bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
-  double scaling = small_kss ? inv(2.0 * y_asq) : y_asq / 2.0;
+  const double y_asq = y / square(a);
+  const double w = 1.0 - wn;
+  const bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
+  const double scaling = small_kss ? inv(2.0 * y_asq) : y_asq / 2.0;
 
   double erg = NEGATIVE_INFTY;
   int newsign = 1;
@@ -179,10 +181,10 @@ double wiener5_density(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_t(double y, double a, double vn, double wn, double sv,
-                      double err = log(1e-12)) {
-  double two_log_a = 2 * log(a);
-  double log_y_asq = log(y) - two_log_a;
+double grad_wiener5_t(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  const double two_log_a = 2 * log(a);
+  const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
   double ans0 = wiener5_ans0<false, true>(y, a, vn, wn, sv);
   double es = (err - lg1) + two_log_a;
@@ -210,10 +212,10 @@ double grad_wiener5_t(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_a(double y, double a, double vn, double wn, double sv,
-                      double err = log(1e-12)) {
-  double two_log_a = 2 * log(a);
-  double log_y_asq = log(y) - two_log_a;
+double grad_wiener5_a(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  const double two_log_a = 2 * log(a);
+  const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
   double ans0 = wiener5_ans0<true, false>(y, a, vn, wn, sv);
   double es = (err - lg1);
@@ -251,10 +253,10 @@ double grad_wiener5_v(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_w(double y, double a, double vn, double wn, double sv,
-                      double err = log(1e-12)) {
-  double two_log_a = 2 * log(a);
-  double log_y_asq = log(y) - two_log_a;
+double grad_wiener5_w(double y, double a, double vn, double wn,
+                      double sv, double err = log(1e-12)) {
+  const double two_log_a = 2 * log(a);
+  const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
   double ans0 = wiener5_ans0<false, false>(y, a, vn, wn, sv);
   double es = (err - lg1);
@@ -280,11 +282,11 @@ double grad_wiener5_w(double y, double a, double vn, double wn, double sv,
 }
 
 template <bool WrtLog = false>
-double grad_wiener5_sv(double y, double a, double vn, double wn, double sv,
-                       double err = log(1e-12)) {
-  double one_plus_svsqr_y = 1 + square(sv) * y;
-  double w = 1.0 - wn;
-  double v = -vn;
+double grad_wiener5_sv(double y, double a, double vn, double wn,
+                        double sv, double err = log(1e-12)) {
+  const double one_plus_svsqr_y = 1 + square(sv) * y;
+  const double w = 1.0 - wn;
+  const double v = -vn;
   double t1 = -y / one_plus_svsqr_y;
   double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
               / square(one_plus_svsqr_y);
@@ -377,6 +379,13 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   using T_sv_ref = ref_type_t<T_sv>;
 
   const char* function_name = "wiener5_lpdf";
+  if (size_zero(y, a, t0, w, v, sv)) {
+    return 0;
+  }
+  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
+    return 0;
+  }
+
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
                          "A-priori bias", w, "Nondecision time", t0,
@@ -408,13 +417,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   check_finite(function_name, "Inter-trial variability in drift rate",
                value_of(sv_ref));
 
-  if (size_zero(y, a, t0, w, v) || size_zero(sv)) {
-    return 0;
-  }
   size_t N = max_size(y, a, t0, w, v, sv);
-  if (!N) {
-    return 0;
-  }
+
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_a_ref> a_vec(a_ref);
   scalar_seq_view<T_t0_ref> t0_vec(t0_ref);
@@ -431,10 +435,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
       throw_domain_error(function_name, "Random variable", y_vec[i], " = ",
                          msg_str.c_str());
     }
-  }
-
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
-    return 0;
   }
 
   double lerror_bound_dens = log(1e-6);  // precision for density

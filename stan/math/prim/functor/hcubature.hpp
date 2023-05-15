@@ -68,8 +68,8 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline void combination(std::vector<int>& c, const int& dim, const int& p,
-                        const int& x) {
+inline void combination(std::vector<int>& c, const int dim, const int p,
+                        const int x) {
   size_t r, k = 0;
   for (std::size_t i = 0; i < p - 1; i++) {
     c[i] = (i != 0) ? c[i - 1] : 0;
@@ -96,7 +96,7 @@ inline void combination(std::vector<int>& c, const int& dim, const int& p,
  * @param dim dimension
  * @param p vector of vectors
  */
-inline void combos(const int& k, const double& lambda, const int& dim,
+inline void combos(const int k, const double lambda, const int dim,
                    std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
@@ -119,8 +119,8 @@ inline void combos(const int& k, const double& lambda, const int& dim,
  * @param c ordered vector
  * @param temp helper vector
  */
-inline void increment(std::vector<bool>& index, const int& k,
-                      const double& lambda, const std::vector<int>& c,
+inline void increment(std::vector<bool>& index, const int k,
+                      const double lambda, const std::vector<int>& c,
                       std::vector<double>& temp) {
   if (index.size() == 0) {
     index.push_back(false);
@@ -162,7 +162,7 @@ inline void increment(std::vector<bool>& index, const int& k,
  * @param dim dimension
  * @param p vector of vectors
  */
-inline void signcombos(const int& k, const double& lambda, const int& dim,
+inline void signcombos(const int k, const double lambda, const int dim,
                        std::vector<std::vector<double>>& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
@@ -191,16 +191,17 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
  * @return numeric integral of the integrand and error
  */
 template <typename F, typename ParsTupleT>
-std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
-                                         const double& b,
-                                         ParsTupleT& pars_tuple) {
+std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
+                                         const double b,
+                                         const ParsTupleT& pars_tuple) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
   c[0] = 0.5 * (a + b);
   double delta = 0.5 * (b - a);
-  double f0 = math::apply([&](auto&&... args) { return integrand(c, args...); },
-                          pars_tuple);
+  double f0 = math::apply(
+    [&integrand, &c](auto&&... args) { return integrand(c, args...); },
+    pars_tuple);
 
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
@@ -209,9 +210,11 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
     cp[0] = c[0] + deltax;
     cm[0] = c[0] - deltax;
     double fx = math::apply(
-        [&](auto&&... args) { return integrand(cp, args...); }, pars_tuple);
+        [&integrand, &cp](auto&&... args) { return integrand(cp, args...); },
+        pars_tuple);
     double temp = math::apply(
-        [&](auto&&... args) { return integrand(cm, args...); }, pars_tuple);
+        [&integrand, &cm](auto&&... args) { return integrand(cm, args...); },
+        pars_tuple);
     fx += temp;
     I += fx * wd7[i];
     if (i % 2 == 1) {
@@ -233,7 +236,7 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
  * @param w weights for the 5 terms in the GenzMalik rule
  * @param wd weights for the embedded lower-degree rule
  */
-inline void make_GenzMalik(const int& dim,
+inline void make_GenzMalik(const int dim,
                            std::vector<std::vector<std::vector<double>>>& p,
                            std::vector<double>& w, std::vector<double>& wd) {
   double l4 = std::sqrt(9 * 1.0 / 10);
@@ -279,11 +282,11 @@ inline void make_GenzMalik(const int& dim,
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
     const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
-    std::vector<double>& w, std::vector<double>& wd, const int& dim,
+    std::vector<double>& w, std::vector<double>& wd, const int dim,
     const std::vector<double>& a, const std::vector<double>& b,
-    ParsTupleT& pars_tuple) {
+    const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
-  std::vector<double> deltac(dim);
+  std::vector<double> deltac(dim, 0);
 
   for (std::size_t i = 0; i != dim; i++) {
     c[i] = (a[i] + b[i]) / 2;
@@ -301,8 +304,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
     return std::make_tuple(0.0, 0.0, 0);
   }
 
-  double f1 = math::apply([&](auto&&... args) { return integrand(c, args...); },
-                          pars_tuple);
+  double f1 = math::apply(
+    [&integrand, &c](auto&&... args) { return integrand(c, args...); },
+    pars_tuple);
   double f2 = 0.0;
   double f3 = 0.0;
   double twelvef1 = 12 * f1;
@@ -322,12 +326,14 @@ std::tuple<double, double, int> integrate_GenzMalik(
       cc[j] = c[j] + p2[j];
     }
     double f2i = math::apply(
-        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p2[j];
     }
     double temp = math::apply(
-        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -337,12 +343,14 @@ std::tuple<double, double, int> integrate_GenzMalik(
       cc[j] = c[j] + p3[j];
     }
     double f3i = math::apply(
-        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] - p3[j];
     }
-    temp = math::apply([&](auto&&... args) { return integrand(cc, args...); },
-                       pars_tuple);
+    temp = math::apply(
+      [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+      pars_tuple);
     f3i += temp;
     f2 += f2i;
     f3 += f3i;
@@ -358,7 +366,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
       cc[j] = c[j] + p4[j];
     }
     double temp = math::apply(
-        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     f4 += temp;
   }
   double f5 = 0.0;
@@ -372,7 +381,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
       cc[j] = c[j] + p5[j];
     }
     double temp = math::apply(
-        [&](auto&&... args) { return integrand(cc, args...); }, pars_tuple);
+        [&integrand, &cc](auto&&... args) { return integrand(cc, args...); },
+        pars_tuple);
     f5 += temp;
   }
 
@@ -453,10 +463,10 @@ struct Box {
  * @throw std::domain_error no errors will be thrown.
  */
 template <typename F, typename ParsTuple>
-double hcubature(const F& integrand, const ParsTuple& pars, const int& dim,
+double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
                  const std::vector<double>& a, const std::vector<double>& b,
-                 int& maxEval, const double& reqAbsError,
-                 const double& reqRelError) {
+                 int& maxEval, const double reqAbsError,
+                 const double reqRelError) {
   if (maxEval <= 0) {
     maxEval = 1000000;
   }
