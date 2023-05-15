@@ -22,7 +22,8 @@ namespace math {
 template <typename T_true, typename T_false,
           typename ReturnT = return_type_t<T_true, T_false>,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
-inline ReturnT select(const bool c, const T_true y_true, const T_false y_false) {
+inline ReturnT select(const bool c, const T_true y_true,
+                      const T_false y_false) {
   return c ? ReturnT(y_true) : ReturnT(y_false);
 }
 
