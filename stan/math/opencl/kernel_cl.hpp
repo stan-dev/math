@@ -109,17 +109,17 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
  * @return A vector of OpenCL events.
  */
 template <typename T, require_not_matrix_cl_t<T>* = nullptr>
-inline std::vector<cl::Event> select_events(const T& m) {
-  return {};
+inline tbb::concurrent_vector<cl::Event> select_events(const T& m) {
+  return tbb::concurrent_vector<cl::Event>{};
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_same_t<T, in_buffer>* = nullptr>
-inline const std::vector<cl::Event>& select_events(const K& m) {
+inline const tbb::concurrent_vector<cl::Event>& select_events(const K& m) {
   return m.write_events();
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
-inline std::vector<cl::Event> select_events(K& m) {
+inline tbb::concurrent_vector<cl::Event> select_events(K& m) {
   static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
   return m.read_write_events();
 }
@@ -205,7 +205,7 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{}, internal::select_events<Args>(args)...),
                           global_thread_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);
@@ -232,7 +232,7 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{}, internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);
