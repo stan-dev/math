@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -58,8 +58,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, sigma_ref);
 
   const auto& log_y
       = to_ref_if<(include_summand<propto, T_y, T_shape>::value
@@ -82,16 +81,16 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
         = to_ref_if<!is_constant_all<T_shape>::value>(log(sigma_val));
     logp += sum(alpha_val * log_sigma) * N / max_size(alpha, sigma);
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = inv(alpha_val) + (1 - sigma_div_y_pow_alpha) * (log_sigma - log_y);
     }
   }
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (alpha_val * sigma_div_y_pow_alpha - (alpha_val + 1)) / y_val;
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_
+    edge<2>(ops_partials).partials_
         = alpha_val / sigma_val * (1 - sigma_div_y_pow_alpha);
   }
   return ops_partials.build(logp);

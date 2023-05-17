@@ -87,13 +87,13 @@ def processCLIArgs():
         default=-1,
         help="number of files to split expressions tests in",
     )
-    tests_help_msg = "The path(s) to the test case(s) to run.\n"
-    tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
-    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
-    parser.add_argument("tests", nargs="+", type=str, help=tests_help_msg)
     f_help_msg = "Only tests with file names matching these will be executed.\n"
     f_help_msg += "Example: '-f chol', '-f opencl', '-f prim'"
     parser.add_argument("-f", type=str, default=[], action="append", help=f_help_msg)
+    changed_help = (
+        "Use git to determine which tests may have changed, and run only those"
+    )
+    parser.add_argument("--changed", action="store_true", help=changed_help)
     parser.add_argument(
         "-d",
         "--debug",
@@ -127,6 +127,11 @@ def processCLIArgs():
         action="store_true",
         help="Build/run jumbo tests.",
     )
+
+    tests_help_msg = "The path(s) to the test case(s) to run.\n"
+    tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
+    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
+    parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
     # And parse the command line against those rules
     return parser.parse_args()
 
@@ -146,6 +151,8 @@ def isWin():
 
 batchSize = 20 if isWin() else 200
 jumboSize = 5 if isWin() else 12
+maxChangedTests = 20
+
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -306,6 +313,38 @@ def findTests(base_path, filter_names, do_jumbo=False):
     return tests
 
 
+def findChangedTests(debug):
+    import subprocess
+
+    changed_files = subprocess.run(
+        ["git", "diff", "--name-only", "origin/develop...HEAD"], text=True, capture_output=True
+    ).stdout.splitlines()
+    if debug:
+        print("Changed files:", changed_files)
+
+    # changes in prim should also test other non-prim signatures
+    test_deps = {"prim/": ["prim/", "rev/", "mix/", "fwd/"], "rev/": ["rev/", "mix/"], "fwd/": ["fwd/", "mix/"]}
+
+    changed_tests = set()
+    for f in changed_files:
+        if 'stan/' in f and f.endswith('.hpp') and 'opencl' not in f: # changed fn
+            maybe_test = f.replace('stan/', 'test/unit/').replace('.hpp', testsfx)
+            for (path, replacements) in test_deps.items():
+                if path in maybe_test:
+                    for rep in replacements:
+                        maybe_test = maybe_test.replace(path, rep)
+                        if os.path.exists(maybe_test):
+                            changed_tests.add(maybe_test)
+
+        if f.endswith(testsfx) and 'opencl' not in f:
+            changed_tests.add(f)
+
+    if len(changed_tests) > maxChangedTests:
+        stopErr("Number of changed tests excluded maximum, not running priority tests", 0)
+
+    return list(map(mungeName, changed_tests))
+
+
 def batched(tests):
     return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
 
@@ -357,15 +396,18 @@ def main():
             stan_mpi = "STAN_MPI" in f.read()
     except IOError:
         stan_mpi = False
-    # pass 0: generate all auto-generated tests
-    if any("test/prob" in arg for arg in inputs.tests):
-        generateTests(inputs.j)
-    tests = inputs.tests
 
     jumboFiles = []
-    if inputs.do_jumbo:
-        jumboFiles = generateJumboTests(tests, debug=inputs.debug)
-    try:
+
+    if inputs.changed:
+        tests = findChangedTests(inputs.debug)
+    else:
+        # pass 0: generate all auto-generated tests
+        if any("test/prob" in arg for arg in inputs.tests):
+            generateTests(inputs.j)
+
+        if inputs.do_jumbo:
+            jumboFiles = generateJumboTests(inputs.tests)
         if inputs.e == -1:
             if inputs.j == 1:
                 num_expr_test_files = 1
@@ -373,14 +415,18 @@ def main():
                 num_expr_test_files = inputs.j * 4
         else:
             num_expr_test_files = inputs.e
-        handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
+        handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
 
         tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
-        if not tests:
-            stopErr("No matching tests found.", -1)
-        if inputs.debug:
-            print("Collected the following tests:\n", tests)
+    if not tests:
+        if inputs.changed:
+            stopErr("No changed tests were found!", 0)
+        stopErr(
+            "No matching tests found. Check the path passed on the command line", -1
+        )
+
+    try:
         # pass 1: make test executables
         for batch in batched(tests):
             if inputs.debug:
@@ -398,6 +444,7 @@ def main():
     finally:
         cleanupJumboTests(jumboFiles)
         pass
+
 
 if __name__ == "__main__":
     main()

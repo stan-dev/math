@@ -1,5 +1,6 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/cauchy_ccdf_log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

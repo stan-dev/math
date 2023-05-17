@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_beta_ref> ops_partials(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
 
   T_partials_return ccdf_log = -sum(beta_val * y_val);
 
@@ -46,24 +46,24 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     using beta_val_scalar = scalar_type_t<decltype(beta_val)>;
     using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_ = T_partials_array::Constant(
+      partials<0>(ops_partials) = T_partials_array::Constant(
           math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if (is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val);
+      partials<0>(ops_partials) = -forward_as<beta_val_array>(beta_val);
     } else {
-      ops_partials.edge1_.partials_[0] = -sum(beta_val);
+      partials<0>(ops_partials)[0] = -sum(beta_val);
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
     using y_val_scalar = scalar_type_t<decltype(y_val)>;
     using y_val_array = Eigen::Array<y_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_inv_scale>::value && !is_vector<T_y>::value) {
-      ops_partials.edge2_.partials_ = T_partials_array::Constant(
+      partials<1>(ops_partials) = T_partials_array::Constant(
           math::size(beta), -forward_as<y_val_scalar>(y_val));
     } else if (is_vector<T_y>::value) {
-      ops_partials.edge2_.partials_ = -forward_as<y_val_array>(y_val);
+      partials<1>(ops_partials) = -forward_as<y_val_array>(y_val);
     } else {
-      ops_partials.edge2_.partials_[0] = -sum(y_val);
+      partials<1>(ops_partials)[0] = -sum(y_val);
     }
   }
   return ops_partials.build(ccdf_log);
