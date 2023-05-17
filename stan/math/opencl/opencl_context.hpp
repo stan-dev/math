@@ -14,6 +14,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 
 #include <CL/opencl.hpp>
+#include <tbb/concurrent_vector.h>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -207,7 +208,7 @@ class opencl_context_base {
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
-  std::vector<cl::Kernel*> kernel_caches_;
+  tbb::concurrent_vector<cl::Kernel*> kernel_caches_;
 
  public:
   opencl_context() = default;
