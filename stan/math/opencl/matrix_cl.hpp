@@ -617,19 +617,18 @@ class matrix_cl : public matrix_cl_base {
    */
   void initialize_buffer_cl(const matrix_cl<T>& A) {
     cl::Event cstr_event;
-    std::vector<cl::Event>* dep_events = 
-      new std::vector<cl::Event>(A.write_events().begin(), 
-      A.write_events().end()); 
+    std::vector<cl::Event>* dep_events = new std::vector<cl::Event>(
+        A.write_events().begin(), A.write_events().end());
     try {
       opencl_context.queue().enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                                               A.size() * sizeof(T),
-                                               dep_events, &cstr_event);
+                                               A.size() * sizeof(T), dep_events,
+                                               &cstr_event);
       if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
         buffer_cl_.setDestructorCallback(
-          &delete_it_destructor<std::vector<cl::Event>>, dep_events);
+            &delete_it_destructor<std::vector<cl::Event>>, dep_events);
       } else {
-        cstr_event.setCallback(CL_COMPLETE, 
-          &delete_it_event<std::vector<cl::Event>>, dep_events);
+        cstr_event.setCallback(
+            CL_COMPLETE, &delete_it_event<std::vector<cl::Event>>, dep_events);
       }
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);

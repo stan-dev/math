@@ -89,7 +89,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
 
-  T_partials_return lccdf = LOG_HALF * lccdf_cl.size() + sum(from_matrix_cl(lccdf_cl));
+  T_partials_return lccdf
+      = LOG_HALF * lccdf_cl.size() + sum(from_matrix_cl(lccdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 

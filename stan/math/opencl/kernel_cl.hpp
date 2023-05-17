@@ -205,7 +205,8 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(std::vector<cl::Event>{}, internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{},
+                                     internal::select_events<Args>(args)...),
                           global_thread_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);
@@ -232,7 +233,8 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(std::vector<cl::Event>{}, internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{},
+                                     internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);
