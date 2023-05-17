@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 
 namespace stan {
@@ -116,25 +116,24 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
   matrix_cl<double> scaled_diff = transpose(half * inv_L);
   logp -= 0.5 * dot_self(half);
 
-  operands_and_partials<T_y_cl, T_loc_cl, T_covar_cl> ops_partials(y, mu, L);
+  auto ops_partials = make_partials_propagator(y, mu, L);
 
   if (!is_constant_all<T_y_cl>::value) {
     if (y_val.cols() == 1) {
-      ops_partials.edge1_.partials_ = -rowwise_sum(scaled_diff);
+      partials<0>(ops_partials) = -rowwise_sum(scaled_diff);
     } else {
-      ops_partials.edge1_.partials_ = -scaled_diff;
+      partials<0>(ops_partials) = -scaled_diff;
     }
   }
   if (!is_constant_all<T_loc_cl>::value) {
     if (mu_val.cols() == 1) {
-      ops_partials.edge2_.partials_ = rowwise_sum(scaled_diff);
+      partials<1>(ops_partials) = rowwise_sum(scaled_diff);
     } else {
-      ops_partials.edge2_.partials_ = scaled_diff;
+      partials<1>(ops_partials) = scaled_diff;
     }
   }
   if (!is_constant_all<T_covar_cl>::value) {
-    ops_partials.edge3_.partials_
-        = scaled_diff * half - N_cases * transpose(inv_L);
+    partials<2>(ops_partials) = scaled_diff * half - N_cases * transpose(inv_L);
   }
 
   return ops_partials.build(logp);

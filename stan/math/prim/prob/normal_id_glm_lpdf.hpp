@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -132,52 +132,52 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                * inv_sigma;
   }
 
-  operands_and_partials<T_y_ref, T_x_ref, T_alpha_ref, T_beta_ref, T_sigma_ref>
-      ops_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
-        ops_partials.edge1_.partials_ = -mu_derivative;
+        partials<0>(ops_partials) = -mu_derivative;
       } else {
-        ops_partials.edge1_.partials_[0] = -mu_derivative.sum();
+        partials<0>(ops_partials)[0] = -mu_derivative.sum();
       }
     }
     if (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge2_.partials_
+        edge<1>(ops_partials).partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * sum(mu_derivative));
       } else {
-        ops_partials.edge2_.partials_
+        edge<1>(ops_partials).partials_
             = (beta_val_vec * mu_derivative.transpose()).transpose();
       }
     }
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge4_.partials_
+        edge<3>(ops_partials).partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
-        ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
+        partials<3>(ops_partials) = mu_derivative.transpose() * x_val;
       }
     }
     if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value) {
-        ops_partials.edge3_.partials_ = mu_derivative;
+        partials<2>(ops_partials) = mu_derivative;
       } else {
-        ops_partials.edge3_.partials_[0] = sum(mu_derivative);
+        partials<2>(ops_partials)[0] = sum(mu_derivative);
       }
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
         y_scaled_sq_sum = sum(y_scaled_sq);
-        ops_partials.edge5_.partials_ = (y_scaled_sq - 1) * inv_sigma;
+        partials<4>(ops_partials) = (y_scaled_sq - 1) * inv_sigma;
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
-        ops_partials.edge5_.partials_[0]
+        partials<4>(ops_partials)[0]
             = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
     } else {

@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,7 +53,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
@@ -69,12 +69,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     if (sum == N) {
       logp += N * log(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += N / theta_dbl;
+        partials<0>(ops_partials)[0] += N / theta_dbl;
       }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += N / (theta_dbl - 1);
+        partials<0>(ops_partials)[0] += N / (theta_dbl - 1);
       }
     } else {
       const T_partials_return log_theta = log(theta_dbl);
@@ -84,8 +84,8 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       logp += (N - sum) * log1m_theta;
 
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += sum * inv(theta_dbl);
-        ops_partials.edge1_.partials_[0] += (N - sum) * inv(theta_dbl - 1);
+        partials<0>(ops_partials)[0] += sum * inv(theta_dbl);
+        partials<0>(ops_partials)[0] += (N - sum) * inv(theta_dbl - 1);
       }
     }
   } else {
@@ -101,9 +101,9 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 
       if (!is_constant_all<T_prob>::value) {
         if (n_int == 1) {
-          ops_partials.edge1_.partials_[n] += inv(theta_dbl);
+          partials<0>(ops_partials)[n] += inv(theta_dbl);
         } else {
-          ops_partials.edge1_.partials_[n] += inv(theta_dbl - 1);
+          partials<0>(ops_partials)[n] += inv(theta_dbl - 1);
         }
       }
     }
