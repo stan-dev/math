@@ -39,8 +39,8 @@ inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
  * @tparam T1 Type of the matrix
  * @tparam T2 Type of sigma
  * @param x input matrix
+ * @param y input matrix
  * @param sigma standard deviation
- * @param length_scale length scale
  *
  * @return dot product covariance matrix
  */

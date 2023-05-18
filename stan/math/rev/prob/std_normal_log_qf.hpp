@@ -14,7 +14,7 @@ namespace math {
  * Return the elementwise inverse of unit normal cumulative density function.
  *
  * @tparam T a `var_value` with inner Eigen type
- * @param p log probability vector
+ * @param log_p log probability vector
  * @return Elementwise unit normal inverse cdf
  */
 template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
