@@ -61,12 +61,12 @@ namespace internal {
  * @param[in] inner_steps Maximum number of iterations for infinite sum
  * @return Generalised hypergeometric function
  */
-template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
+template <bool calc_a, bool calc_b, bool calc_z, typename Ta,
           typename Tb, typename Tz,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
-void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
-                   double precision, int outer_steps, int inner_steps) {
+auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
+                   double precision, int max_iter) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using Ta_plain = plain_type_t<Ta>;
@@ -74,13 +74,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
   ref_type_t<Ta> a_ref_in = a;
   ref_type_t<Tb> b_ref_in = b;
+  std::tuple<promote_scalar_t<scalar_t, Ta_plain>,
+              promote_scalar_t<scalar_t, Tb_plain>,
+              scalar_t> grad_tuple;
 
-  // Replace any zero inputs with the smallest number representable, so that
-  // taking log and aggregating does not return -Inf
-  Ta_plain a_ref
-      = (a_ref_in.array() == 0).select(EPSILON, a_ref_in.array()).matrix();
-  Tb_plain b_ref
-      = (b_ref_in.array() == 0).select(EPSILON, b_ref_in.array()).matrix();
   int a_size = a.size();
   int b_size = b.size();
 
@@ -97,217 +94,38 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         << "z: " << z;
     throw std::domain_error(msg.str());
   }
-
-  // As the gradients will be aggregating on the log scale, we will track the
-  // the values and the signs separately - to avoid taking the log of a
-  // negative input
-  Eigen::VectorXi a_signs = sign(value_of_rec(a_ref));
-  Eigen::VectorXi b_signs = sign(value_of_rec(b_ref));
-  int z_sign = sign(value_of_rec(z));
-
-  Ta_plain ap1 = (a.array() + 1).matrix();
-  Tb_plain bp1 = (b.array() + 1).matrix();
-  scalar_type_t<Tz> log_z = log(fabs(z));
-  scalar_type_t<Ta> a_prod = prod(a_ref);
-  scalar_type_t<Tb> b_prod = prod(b_ref);
+  int k = 0;
 
   // Only need the infinite sum for partials wrt a & b
   if (calc_a || calc_b) {
-    double log_precision = log(precision);
-
-    T_vec da_mn = T_vec::Constant(a_size, NEGATIVE_INFTY);
-    T_vec db_mn = T_vec::Constant(b_size, NEGATIVE_INFTY);
-    T_vec da = T_vec::Constant(a_size, 0.0);
-    T_vec db = T_vec::Constant(b_size, 0.0);
-
-    int m = 0;
-    int n_iter = 2;
-
-    double lgamma_mp1 = 0;
-    double log_phammer_1m = 0;
-    double log_phammer_2m = 0;
-    T_vec log_phammer_ap1_m = T_vec::Zero(ap1.size());
-    T_vec log_phammer_bp1_m = T_vec::Zero(bp1.size());
-    Tz log_z_m = 0;
-    Ta_plain ap1m = ap1;
-    Tb_plain bp1m = bp1;
-
-    Ta_plain ap1n = ap1;
-    Tb_plain bp1n = bp1;
-    Ta_plain an = a_ref;
-    Tb_plain bn = b_ref;
-    Ta_plain ap1mn = ap1m;
-    Tb_plain bp1mn = bp1m;
-
-    double log_phammer_1n;
-    double log_phammer_2_mpn;
-    double lgamma_np1;
-    T_vec log_phammer_an(a_size);
-    T_vec log_phammer_ap1_n(a_size);
-    T_vec log_phammer_bp1_n(b_size);
-    T_vec log_phammer_bn(b_size);
-    T_vec log_phammer_ap1_mpn(a_size);
-    T_vec log_phammer_bp1_mpn(b_size);
-
-    int z_pow_m_sign = 1;
-    Eigen::VectorXi curr_signs_da(a_size);
-    Eigen::VectorXi curr_signs_db(b_size);
-    Eigen::VectorXi log_phammer_an_sign(a_size);
-    Eigen::VectorXi log_phammer_ap1n_sign(a_size);
-    Eigen::VectorXi log_phammer_bp1n_sign(b_size);
-    Eigen::VectorXi log_phammer_bn_sign(b_size);
-    Eigen::VectorXi log_phammer_ap1mpn_sign(a_size);
-    Eigen::VectorXi log_phammer_bp1mpn_sign(b_size);
-    Eigen::VectorXi log_phammer_ap1m_sign = Eigen::VectorXi::Ones(a_size);
-    Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b_size);
-
-    // If the inner loop converges in 1 iteration, then the sum has coverged
-    // and another iteration of the outer loop is not needed
-    while ((n_iter > 1) && (m < outer_steps)) {
-      ap1n = ap1;
-      bp1n = bp1;
-      an = a_ref;
-      bn = b_ref;
-      ap1mn = ap1m;
-      bp1mn = bp1m;
-
-      int n = 0;
-      Tz log_z_mn = log_z_m;
-      int z_pow_mn_sign = z_pow_m_sign;
-      scalar_t inner_diff = 0;
-      lgamma_np1 = 0;
-
-      log_phammer_1n = 0;
-      log_phammer_an.setZero();
-      log_phammer_ap1_n.setZero();
-      log_phammer_bp1_n.setZero();
-      log_phammer_bn.setZero();
-      log_phammer_ap1_mpn = log_phammer_ap1_m;
-      log_phammer_bp1_mpn = log_phammer_bp1_m;
-      log_phammer_2_mpn = log_phammer_2m;
-      log_phammer_an_sign.setOnes();
-      log_phammer_ap1n_sign.setOnes();
-      log_phammer_bp1n_sign.setOnes();
-      log_phammer_bn_sign.setOnes();
-      log_phammer_ap1mpn_sign = log_phammer_ap1m_sign;
-      log_phammer_bp1mpn_sign = log_phammer_bp1m_sign;
-
-      while ((inner_diff > log_precision) && (n < inner_steps)) {
-        // Numerator term
-        scalar_t term1_mn = log_z_mn + sum(log_phammer_ap1_mpn) + log_phammer_1m
-                            + log_phammer_1n;
-        // Denominator term
-        scalar_t term2_mn = lgamma_mp1 + lgamma_np1 + sum(log_phammer_bp1_mpn)
-                            + log_phammer_2_mpn;
-        int base_sign = z_pow_mn_sign * log_phammer_ap1mpn_sign.prod()
-                        * log_phammer_bp1mpn_sign.prod();
-
-        if (calc_a) {
-          // Division (on log scale) for the a & b partials
-          // Determine signs of each element
-          curr_signs_da = (base_sign * log_phammer_an_sign.array()
-                           * log_phammer_ap1n_sign.array())
-                              .matrix();
-          da_mn = (term1_mn + log_phammer_an.array())
-                  - (term2_mn + log_phammer_ap1_n.array());
-
-          // Aggregate the sums on the natural scale, so that the sign can be
-          // applied before aggregation
-          da += exp(da_mn).cwiseProduct(curr_signs_da);
-        }
-
-        if (calc_b) {
-          curr_signs_db = (base_sign * log_phammer_bn_sign.array()
-                           * log_phammer_bp1n_sign.array())
-                              .matrix();
-          db_mn = (term1_mn + log_phammer_bn.array())
-                  - (term2_mn + log_phammer_bp1_n.array());
-          db += exp(db_mn).cwiseProduct(curr_signs_db);
-        }
-
-        // Series convergence assessed by whether the maximum term is
-        //   smaller than the specified criteria (precision)
-        inner_diff = max(da_mn.maxCoeff(), db_mn.maxCoeff());
-
-        // Increment the input arguments and rising factorials
-        log_z_mn += log_z;
-        log_phammer_1n += log1p(n);
-        log_phammer_2_mpn += log(2 + m + n);
-
-        log_phammer_ap1_n.array()
-            += log(math::fabs((ap1n.array() == 0).select(1.0, ap1n.array())));
-        log_phammer_bp1_n.array()
-            += log(math::fabs((bp1n.array() == 0).select(1.0, bp1n.array())));
-        log_phammer_an.array()
-            += log(math::fabs((an.array() == 0).select(1.0, an.array())));
-        log_phammer_bn.array()
-            += log(math::fabs((bn.array() == 0).select(1.0, bn.array())));
-        log_phammer_ap1_mpn.array()
-            += log(math::fabs((ap1mn.array() == 0).select(1.0, ap1mn.array())));
-        log_phammer_bp1_mpn.array()
-            += log(math::fabs((bp1mn.array() == 0).select(1.0, bp1mn.array())));
-
-        z_pow_mn_sign *= z_sign;
-        log_phammer_ap1n_sign.array() *= sign(value_of_rec(ap1n)).array();
-        log_phammer_bp1n_sign.array() *= sign(value_of_rec(bp1n)).array();
-        log_phammer_an_sign.array() *= sign(value_of_rec(an)).array();
-        log_phammer_bn_sign.array() *= sign(value_of_rec(bn)).array();
-        log_phammer_ap1mpn_sign.array() *= sign(value_of_rec(ap1mn)).array();
-        log_phammer_bp1mpn_sign.array() *= sign(value_of_rec(bp1mn)).array();
-
-        n += 1;
-        lgamma_np1 += log(n);
-        ap1n.array() += 1;
-        bp1n.array() += 1;
-        an.array() += 1;
-        bn.array() += 1;
-        ap1mn.array() += 1;
-        bp1mn.array() += 1;
+    while ((inner_diff > log_precision) && (k < max_iter)) {
+      if (calc_a) {
       }
 
-      z_pow_m_sign *= z_sign;
-
-      n_iter = n;
-
-      log_z_m += log_z;
-      log_phammer_1m += log1p(m);
-      log_phammer_2m += log(2 + m);
-      log_phammer_ap1_m += log(math::fabs(ap1m));
-      log_phammer_ap1m_sign.array() *= sign(value_of_rec(ap1m)).array();
-      log_phammer_bp1_m += log(math::fabs(bp1m));
-      log_phammer_bp1m_sign.array() *= sign(value_of_rec(bp1m)).array();
-
-      m += 1;
-
-      lgamma_mp1 += log(m);
-      ap1m.array() += 1;
-      bp1m.array() += 1;
-      ap1mn.array() += 1;
-      bp1mn.array() += 1;
+      if (calc_b) {
+      }
     }
 
-    if (m == outer_steps) {
-      throw_domain_error("grad_pFq", "k (internal counter)", outer_steps,
+    if (k == max_iter) {
+      throw_domain_error("grad_pFq", "k (internal counter)", max_iter,
                          "exceeded ",
                          " iterations, hypergeometric function gradient "
                          "did not converge.");
     }
 
     if (calc_a) {
-      auto pre_mult_a = (z * a_prod / a_ref.array() / b_prod).matrix();
-      std::get<0>(grad_tuple) = std::move(pre_mult_a.cwiseProduct(da));
+      std::get<0>(grad_tuple) = ;
     }
 
     if (calc_b) {
-      auto pre_mult_b = ((z * a_prod) / (b.array() * b_prod)).matrix();
-      std::get<1>(grad_tuple) = std::move(-pre_mult_b.cwiseProduct(db));
+      std::get<1>(grad_tuple) = ;
     }
   }
 
   if (calc_z) {
-    std::get<2>(grad_tuple)
-        = std::move((a_prod / b_prod) * hypergeometric_pFq(ap1, bp1, z));
+    std::get<2>(grad_tuple) =
   }
+  return grad_tuple;
 }
 }  // namespace internal
 
@@ -330,17 +148,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  */
 template <typename Ta, typename Tb, typename Tz>
 auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-10,
-              int outer_steps = 1e6, int inner_steps = 1e6) {
-  using partials_t = partials_return_t<Ta, Tb, Tz>;
-  std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
-             promote_scalar_t<partials_t, plain_type_t<Tb>>,
-             promote_scalar_t<partials_t, plain_type_t<Tz>>>
-      ret_tuple;
-  internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
+              int max_iter = 1e6) {
+  return internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z), precision, outer_steps,
-      inner_steps);
-  return ret_tuple;
+      value_of(a), value_of(b), value_of(z), precision, max_iter);
 }
 
 }  // namespace math
