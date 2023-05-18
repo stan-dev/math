@@ -291,7 +291,8 @@ struct mrrr_task {
  * @param[out] eigenvectors Eigenvectors.
  * @param min_rel_sep Minimal relative separation of eigenvalues before
  * computing eigenvectors.
- * @param maximum_ele_growth Maximal desired element growth of LDL decompositions.
+ * @param maximum_ele_growth Maximal desired element growth of LDL
+ * decompositions.
  */
 template <bool need_eigenvectors = true>
 inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
