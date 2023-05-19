@@ -226,6 +226,11 @@ class matrix_exp_action_handler {
   }
 };
 
+// C++-11 requires definition of the static member in addition
+// to the declaration. This is fixed in C++-17.
+constexpr int matrix_exp_action_handler::p_max;
+constexpr int matrix_exp_action_handler::m_max;
+  
 }  // namespace math
 }  // namespace stan
 
