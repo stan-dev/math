@@ -193,8 +193,8 @@ class matrix_exp_action_handler {
     const std::vector<double>& theta = theta_m_double;
 
     Eigen::VectorXd alpha(p_max - 1);
-    if (normA
-	< 4.0 * theta[m_max] * p_max * (p_max + 3) / (m_max * b.cols())) {
+    if (normA * (m_max * b.cols())
+	< 4.0 * theta[m_max] * p_max * (p_max + 3)) {
       alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
     } else {
       Eigen::VectorXd eta(p_max);
