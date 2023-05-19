@@ -96,10 +96,10 @@ class matrix_exp_action_handler {
     Eigen::MatrixXd f = b_eval;
     Eigen::MatrixXd bi = b_eval;
 
-    for (auto i = 0; i < s; ++i) {
+    for (int i = 0; i < s; ++i) {
       //  maximum absolute row sum, aka inf-norm of matrix operator
       double c1 = matrix_operator_inf_norm(bi);
-      for (auto j = 0; j < m; ++j) {
+      for (int j = 0; j < m; ++j) {
         bi = (t / (s * (j + 1))) * (A * bi);
         f += bi;
         double c2 = matrix_operator_inf_norm(bi);
