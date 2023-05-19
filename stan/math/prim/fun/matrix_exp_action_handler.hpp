@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 
+#include <iostream>
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/ceil.hpp>
@@ -174,55 +176,61 @@ class matrix_exp_action_handler {
             require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
   inline void set_approx_order(const EigMat1& mat, const EigMat2& b,
                                const double& t, int& m, int& s) {
-    // L1 norm
-    double normA = mat.colwise().template lpNorm<1>().maxCoeff();
-
-    if (normA < tol || t < tol) {
+    if (t < tol) {
       m = 0;
       s = 1;
-    } else {
-      const std::vector<double>& theta = theta_m_double;
-      Eigen::VectorXd alpha(p_max - 1);
-
-      if (normA
-          < 4.0 * theta[m_max] * p_max * (p_max + 3) / (m_max * b.cols())) {
-        alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
-      } else {
-        Eigen::VectorXd eta(p_max);
-        for (auto p = 0; p < p_max; ++p) {
-          double c = mat_power_1_norm(mat, p + 2);
-          c = std::pow(c, 1.0 / (p + 2.0));
-          eta[p] = c;
-        }
-        for (auto p = 0; p < p_max - 1; ++p) {
-          alpha[p] = std::max(eta[p], eta(p + 1));
-        }
-      }
-
-      Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max - 1, m_max);
-      for (auto p = 1; p < p_max; ++p) {
-        for (auto i = p * (p + 1) - 2; i < m_max; ++i) {
-          mt(p - 1, i) = alpha[p - 1] / theta[i];
-        }
-      }
-
-      Eigen::Matrix<int, -1, 1> u(m_max);
-      for (auto i = 0; i < m_max; ++i) {
-        u(i) = i + 1;
-      }
-
-      Eigen::MatrixXd c = stan::math::ceil(mt) * u.asDiagonal();
-      for (auto i = 0; i < c.size(); ++i) {
-        if (c(i) <= 1.e-16) {
-          c(i) = std::numeric_limits<double>::infinity();
-        }
-      }
-
-      int cost = c.colwise().minCoeff().minCoeff(&m);
-      if (std::isinf(cost))
-        cost = 0;
-      s = std::max(cost / m, 1);
+      return;
     }
+    
+    // L1 norm
+    double normA = mat.colwise().template lpNorm<1>().maxCoeff();
+    if (normA < tol) {
+      m = 0;
+      s = 1;
+      return;
+    }
+
+    const std::vector<double>& theta = theta_m_double;
+
+    Eigen::VectorXd alpha(p_max - 1);
+    if (normA
+	< 4.0 * theta[m_max] * p_max * (p_max + 3) / (m_max * b.cols())) {
+      alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
+    } else {
+      Eigen::VectorXd eta(p_max);
+      for (auto p = 0; p < p_max; ++p) {
+	double c = mat_power_1_norm(mat, p + 2);
+	c = std::pow(c, 1.0 / (p + 2.0));
+	eta[p] = c;
+      }
+      for (auto p = 0; p < p_max - 1; ++p) {
+	alpha[p] = std::max(eta[p], eta(p + 1));
+      }
+    }
+
+    Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max - 1, m_max);
+    for (auto p = 1; p < p_max; ++p) {
+      for (auto i = p * (p + 1) - 2; i < m_max; ++i) {
+	mt(p - 1, i) = alpha[p - 1] / theta[i];
+      }
+    }
+
+    Eigen::Matrix<int, -1, 1> u(m_max);
+    for (auto i = 0; i < m_max; ++i) {
+      u(i) = i + 1;
+    }
+
+    Eigen::MatrixXd c = stan::math::ceil(mt) * u.asDiagonal();
+    for (auto i = 0; i < c.size(); ++i) {
+      if (c(i) <= 1.e-16) {
+	c(i) = std::numeric_limits<double>::infinity();
+      }
+    }
+
+    int cost = c.colwise().minCoeff().minCoeff(&m);
+    if (std::isinf(cost))
+      cost = 0;
+    s = std::max(cost / m, 1);
   }
 };
 
