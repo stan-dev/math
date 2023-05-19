@@ -190,11 +190,9 @@ class matrix_exp_action_handler {
       return;
     }
 
-    const std::vector<double>& theta = theta_m_double;
-
     Eigen::VectorXd alpha(p_max - 1);
     if (normA * (m_max * b.cols())
-	< 4.0 * theta[m_max] * p_max * (p_max + 3)) {
+	< 4.0 * theta_m_double[m_max] * p_max * (p_max + 3)) {
       alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
     } else {
       Eigen::VectorXd eta(p_max);
@@ -211,7 +209,7 @@ class matrix_exp_action_handler {
     Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max - 1, m_max);
     for (auto p = 1; p < p_max; ++p) {
       for (auto i = p * (p + 1) - 2; i < m_max; ++i) {
-	mt(p - 1, i) = alpha[p - 1] / theta[i];
+	mt(p - 1, i) = alpha[p - 1] / theta_m_double[i];
       }
     }
 
