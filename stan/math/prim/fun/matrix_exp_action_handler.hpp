@@ -206,14 +206,14 @@ class matrix_exp_action_handler {
     }
 
     Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max - 1, m_max);
-    for (auto p = 1; p < p_max; ++p) {
-      for (auto i = p * (p + 1) - 2; i < m_max; ++i) {
+    for (int p = 1; p < p_max; ++p) {
+      for (int i = p * (p + 1) - 2; i < m_max; ++i) {
 	mt(p - 1, i) = alpha[p - 1] / theta_m_double[i];
       }
     }
 
     Eigen::Matrix<int, -1, 1> u(m_max);
-    for (auto i = 0; i < m_max; ++i) {
+    for (int i = 0; i < m_max; ++i) {
       u(i) = i + 1;
     }
 
