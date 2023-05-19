@@ -196,10 +196,9 @@ class matrix_exp_action_handler {
       alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
     } else {
       Eigen::VectorXd eta(p_max);
-      for (auto p = 0; p < p_max; ++p) {
-	double c = mat_power_1_norm(mat, p + 2);
-	c = std::pow(c, 1.0 / (p + 2.0));
-	eta[p] = c;
+      for (int p = 0; p < p_max; ++p) {
+	eta[p] = std::pow(mat_power_1_norm(mat, p + 2),
+			  1.0 / (p + 2));
       }
       for (auto p = 0; p < p_max - 1; ++p) {
 	alpha[p] = std::max(eta[p], eta[p + 1]);
