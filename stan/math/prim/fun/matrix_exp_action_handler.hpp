@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 
-#include <iostream>
-
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/ceil.hpp>
@@ -167,9 +165,10 @@ class matrix_exp_action_handler {
    * (paragraph between eq. 3.11 & eq. 3.12).
    *
    * @param [in] mat matrix A
+   * @param [in] b matrix B
    * @param [in] t double t in exp(A*t)*B
-   * @param [out] m int parameter m
-   * @param [out] s int parameter s
+   * @param [out] m int parameter m; m >= 0, m < m_max
+   * @param [out] s int parameter s; s >= 1
    */
   template <typename EigMat1, typename EigMat2,
             require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
@@ -212,18 +211,18 @@ class matrix_exp_action_handler {
       }
     }
 
-    Eigen::VectorXd u = Eigen::VectorXd::LinSpaced(Eigen::Sequential, m_max, 1, m_max);
-
+    Eigen::VectorXd u = Eigen::VectorXd::LinSpaced(m_max, 1, m_max);
     Eigen::MatrixXd c = stan::math::ceil(mt) * u.asDiagonal();
-    for (auto i = 0; i < c.size(); ++i) {
+    for (Eigen::MatrixXd::Index i = 0; i < c.size(); ++i) {
       if (c(i) <= 1.e-16) {
 	c(i) = std::numeric_limits<double>::infinity();
       }
     }
-
     int cost = c.colwise().minCoeff().minCoeff(&m);
-    if (std::isinf(cost))
-      cost = 0;
+    if (std::isinf(cost)) {
+      s = 1;
+      return;
+    } 
     s = std::max(cost / m, 1);
   }
 };
