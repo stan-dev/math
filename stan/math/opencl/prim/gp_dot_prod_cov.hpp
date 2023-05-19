@@ -36,8 +36,9 @@ inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
 /** \ingroup opencl
  * Dot product kernel on the GPU.
  *
- * @tparam T1 Type of the matrix
- * @tparam T2 Type of sigma
+ * @tparam T_x Type of the first input matrix
+ * @tparam T_y Type of the second input matrix
+ * @tparam T_sigma Type of the standard deviation
  * @param x input matrix
  * @param y input matrix
  * @param sigma standard deviation
