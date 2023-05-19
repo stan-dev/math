@@ -212,10 +212,7 @@ class matrix_exp_action_handler {
       }
     }
 
-    Eigen::Matrix<int, -1, 1> u(m_max);
-    for (int i = 0; i < m_max; ++i) {
-      u(i) = i + 1;
-    }
+    Eigen::VectorXd u = Eigen::VectorXd::LinSpaced(Eigen::Sequential, m_max, 1, m_max);
 
     Eigen::MatrixXd c = stan::math::ceil(mt) * u.asDiagonal();
     for (auto i = 0; i < c.size(); ++i) {
