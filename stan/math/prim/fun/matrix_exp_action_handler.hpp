@@ -230,6 +230,7 @@ class matrix_exp_action_handler {
 // to the declaration. This is fixed in C++-17.
 constexpr int matrix_exp_action_handler::p_max;
 constexpr int matrix_exp_action_handler::m_max;
+constexpr double matrix_exp_action_handler::tol;
 
 }  // namespace math
 }  // namespace stan
