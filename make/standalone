@@ -23,7 +23,7 @@ MATH ?= $(realpath $(MATH_MAKE)..)/
 # The sundials libraries are only needed for
 # programs using the stiff ode solver or the
 # algebra solver
-MATH_LIBS ?= $(LIBSUNDIALS) $(MPI_TARGETS) $(TBB_TARGETS)
+MATH_LIBS ?= $(SUNDIALS_TARGETS) $(MPI_TARGETS) $(TBB_TARGETS)
 
 LDLIBS += $(MATH_LIBS)
 

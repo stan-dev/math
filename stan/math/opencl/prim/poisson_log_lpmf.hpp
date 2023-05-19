@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -51,7 +51,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   const auto& alpha_val = value_of(alpha_col);
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype(alpha_col)> ops_partials(alpha_col);
+  auto ops_partials = make_partials_propagator(alpha_col);
 
   auto check_n_nonnegative
       = check_cl(function, "Random variable", n, "nonnegative");
@@ -88,7 +88,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant_all<T_log_rate_cl>::value) {
-    ops_partials.edge1_.partials_ = deriv_cl;
+    partials<0>(ops_partials) = deriv_cl;
   }
 
   return ops_partials.build(logp);

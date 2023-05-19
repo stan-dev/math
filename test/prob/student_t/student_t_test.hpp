@@ -1,5 +1,10 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/student_t_log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

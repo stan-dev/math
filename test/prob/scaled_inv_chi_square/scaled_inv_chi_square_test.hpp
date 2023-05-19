@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/scaled_inv_chi_square_log.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

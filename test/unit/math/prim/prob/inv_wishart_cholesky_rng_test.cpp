@@ -16,7 +16,8 @@ TEST(ProbDistributionsInvWishartCholesky, rng) {
   boost::random::mt19937 rng;
 
   MatrixXd omega(3, 4);
-  EXPECT_THROW(inv_wishart_cholesky_rng(3.0, omega, rng), std::domain_error);
+  EXPECT_THROW(inv_wishart_cholesky_rng(3.0, omega, rng),
+               std::invalid_argument);
 
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;

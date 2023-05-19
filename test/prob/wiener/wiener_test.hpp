@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/wiener_log.hpp>
 #include <limits>
 #include <vector>
 

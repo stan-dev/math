@@ -5,6 +5,8 @@
 #include <test/unit/math/rev/functor/test_fixture_dae_chem.hpp>
 #include <test/unit/math/rev/functor/dae_test_functors.hpp>
 
+namespace chem_dae_sens_typed_test {
+
 /**
  *
  * Use same solver functor type for both w & w/o tolerance control
@@ -30,3 +32,4 @@ TYPED_TEST_P(chemical_kinetics_test, sens) { this->test_sens(0.0); }
 REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_test, value, sens);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, chemical_kinetics_test,
                                chemical_kinetics_sens_test_types);
+}  // namespace chem_dae_sens_typed_test
