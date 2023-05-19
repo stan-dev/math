@@ -200,7 +200,7 @@ class matrix_exp_action_handler {
 	eta[p] = std::pow(mat_power_1_norm(mat, p + 2),
 			  1.0 / (p + 2));
       }
-      for (auto p = 0; p < p_max - 1; ++p) {
+      for (int p = 0; p < p_max - 1; ++p) {
 	alpha[p] = std::max(eta[p], eta[p + 1]);
       }
     }
