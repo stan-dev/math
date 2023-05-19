@@ -202,7 +202,7 @@ class matrix_exp_action_handler {
 	eta[p] = c;
       }
       for (auto p = 0; p < p_max - 1; ++p) {
-	alpha[p] = std::max(eta[p], eta(p + 1));
+	alpha[p] = std::max(eta[p], eta[p + 1]);
       }
     }
 
