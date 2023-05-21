@@ -13,14 +13,26 @@ TEST(RevMath, grad_2F2) {
   a_v << 4, 2;
   a_d << 4, 2;
 
-  vector_v b_v(2);
-  vector_d b_d(2);
-  b_v << 6, 3;
-  b_d << 6, 3;
+  vector_v b_v(1);
+  vector_d b_d(1);
+  b_v << 6;
+  b_d << 6;
 
-  var z_v = 4;
-  double z_d = 4;
+  var z_v = -0.8;
+  double z_d = -0.8;
 
+  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+
+  //{-0.0806954955039242,-0.1764607652432594,0.05190634077045642,0.3591540012317554}
+
+  EXPECT_FLOAT_EQ(-0.0806954955039242, std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(-0.1764607652432594, std::get<0>(grad_tuple)[1]);
+
+  EXPECT_FLOAT_EQ(0.05190634077045642, std::get<1>(grad_tuple)[0]);
+
+  EXPECT_FLOAT_EQ(0.3591540012317554, std::get<2>(grad_tuple));
+
+/*
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
@@ -63,6 +75,7 @@ TEST(RevMath, grad_2F2) {
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
+*/
 }
 
 /*

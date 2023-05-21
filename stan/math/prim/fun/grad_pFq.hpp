@@ -115,7 +115,9 @@ auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
     ArrayTb log_phammer_b = log(b_array_abs);
     ArrayTb digamma_b_term = inv(b_array_abs);
 
+    int base_sign = 1;
     int z_sign = sign(value_of_rec(z));
+    bool neg_z = z_sign == -1;
     Tz log_z = log(z_sign * z);
     Tz log_z_pow_kp1 = log_z;
 
@@ -136,11 +138,16 @@ auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
     while (((inner_diff > log(precision)) && (k < max_iter))) {
       scalar_t base_sum = (sum(log_phammer_a) - sum(log_phammer_b))
                           + (log_z_pow_kp1 - log_factorial_kp1);
+
+      if (neg_z && (k % 2) == 0) {
+        base_sign *= -1;
+      }
+
       if (calc_a) {
         da_k = log(digamma_a_term) + base_sum;
         for (int i = 0; i < a.size(); i++) {
           std::forward_as_tuple(da(i), da_signs(i))
-            = log_sum_exp_signed(da(i), da_signs(i), da_k(i), 1);
+            = log_sum_exp_signed(da(i), da_signs(i), da_k(i), base_sign);
         }
         inner_diff = math::min(1.0, da_k.maxCoeff());
       }
@@ -149,9 +156,13 @@ auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
         db_k = log(digamma_b_term) + base_sum;
         for (int i = 0; i < b.size(); i++) {
           std::forward_as_tuple(db(i), db_signs(i))
-            = log_sum_exp_signed(db(i), db_signs(i), db_k(i), -1);
+            = log_sum_exp_signed(db(i), db_signs(i), db_k(i), -base_sign);
         }
         inner_diff = math::min(1.0, db_k.maxCoeff());
+      }
+
+      if (neg_z && (k % 2) == 0) {
+        base_sign = 1;
       }
 
       a_array_abs += 1;
