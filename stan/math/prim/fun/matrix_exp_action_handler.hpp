@@ -23,27 +23,10 @@ namespace math {
  * and t is double.
  */
 class matrix_exp_action_handler {
-  static constexpr int p_max = 8;
-  static constexpr int m_max = 55;
-  static constexpr double tol = 1.0e-16;
-
-  const std::vector<double> theta_m_single{
-      1.19209280e-07, 5.97885889e-04, 1.12338647e-02, 5.11661936e-02,
-      1.30848716e-01, 2.49528932e-01, 4.01458242e-01, 5.80052463e-01,
-      7.79511337e-01, 9.95184079e-01, 1.22347954e+00, 1.46166151e+00,
-      1.70764853e+00, 1.95985059e+00, 2.21704439e+00, 2.47828088e+00,
-      2.74281711e+00, 3.01006636e+00, 3.27956121e+00, 3.55092621e+00,
-      3.82385743e+00, 4.09810697e+00, 4.37347131e+00, 4.64978222e+00,
-      4.92689984e+00, 5.20470723e+00, 5.48310609e+00, 5.76201341e+00,
-      6.04135876e+00, 6.32108213e+00, 6.60113218e+00, 6.88146485e+00,
-      7.16204215e+00, 7.44283129e+00, 7.72380381e+00, 8.00493499e+00,
-      8.28620327e+00, 8.56758983e+00, 8.84907819e+00, 9.13065388e+00,
-      9.41230420e+00, 9.69401796e+00, 9.97578527e+00, 1.02575974e+01,
-      1.05394467e+01, 1.08213263e+01, 1.11032302e+01, 1.13851530e+01,
-      1.16670899e+01, 1.19490366e+01, 1.22309896e+01, 1.25129453e+01,
-      1.27949008e+01, 1.30768536e+01, 1.33588011e+01, 1.36407415e+01,
-      1.39226727e+01, 1.42045932e+01, 1.44865015e+01, 1.47683963e+01};
-  const std::vector<double> theta_m_double{
+  const int _p_max = 8;
+  const int _m_max = 55;
+  const double _tol = 1.1e-16;  // from the paper, double precision: 2^-53
+  const std::vector<double> _theta_m{
       2.22044605e-16, 2.58095680e-08, 1.38634787e-05, 3.39716884e-04,
       2.40087636e-03, 9.06565641e-03, 2.38445553e-02, 4.99122887e-02,
       8.95776020e-02, 1.44182976e-01, 2.14235807e-01, 2.99615891e-01,
@@ -103,7 +86,7 @@ class matrix_exp_action_handler {
         bi = (t / (s * (j + 1))) * (A * bi);
         f += bi;
         double c2 = matrix_operator_inf_norm(bi);
-        if (c1 + c2 < tol * matrix_operator_inf_norm(f))
+        if (c1 + c2 < _tol * matrix_operator_inf_norm(f))
           break;
         c1 = c2;
       }
@@ -167,7 +150,7 @@ class matrix_exp_action_handler {
    * @param [in] mat matrix A
    * @param [in] b matrix B
    * @param [in] t double t in exp(A*t)*B
-   * @param [out] m int parameter m; m >= 0, m < m_max
+   * @param [out] m int parameter m; m >= 0, m < _m_max
    * @param [out] s int parameter s; s >= 1
    */
   template <typename EigMat1, typename EigMat2,
@@ -175,7 +158,7 @@ class matrix_exp_action_handler {
             require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
   inline void set_approx_order(const EigMat1& mat, const EigMat2& b,
                                const double& t, int& m, int& s) {
-    if (t < tol) {
+    if (t < _tol) {
       m = 0;
       s = 1;
       return;
@@ -183,34 +166,34 @@ class matrix_exp_action_handler {
 
     // L1 norm
     double normA = mat.colwise().template lpNorm<1>().maxCoeff();
-    if (normA < tol) {
+    if (normA < _tol) {
       m = 0;
       s = 1;
       return;
     }
 
-    Eigen::VectorXd alpha(p_max - 1);
-    if (normA * (m_max * b.cols())
-        < 4.0 * theta_m_double[m_max] * p_max * (p_max + 3)) {
-      alpha = Eigen::VectorXd::Constant(p_max - 1, normA);
+    Eigen::VectorXd alpha(_p_max - 1);
+    if (normA * (_m_max * b.cols())
+        < 4.0 * _theta_m[_m_max] * _p_max * (_p_max + 3)) {
+      alpha = Eigen::VectorXd::Constant(_p_max - 1, normA);
     } else {
-      Eigen::VectorXd eta(p_max);
-      for (int p = 0; p < p_max; ++p) {
+      Eigen::VectorXd eta(_p_max);
+      for (int p = 0; p < _p_max; ++p) {
         eta[p] = std::pow(mat_power_1_norm(mat, p + 2), 1.0 / (p + 2));
       }
-      for (int p = 0; p < p_max - 1; ++p) {
+      for (int p = 0; p < _p_max - 1; ++p) {
         alpha[p] = std::max(eta[p], eta[p + 1]);
       }
     }
 
-    Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max - 1, m_max);
-    for (int p = 1; p < p_max; ++p) {
-      for (int i = p * (p + 1) - 2; i < m_max; ++i) {
-        mt(p - 1, i) = alpha[p - 1] / theta_m_double[i];
+    Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(_p_max - 1, _m_max);
+    for (int p = 1; p < _p_max; ++p) {
+      for (int i = p * (p + 1) - 2; i < _m_max; ++i) {
+        mt(p - 1, i) = alpha[p - 1] / _theta_m[i];
       }
     }
 
-    Eigen::VectorXd u = Eigen::VectorXd::LinSpaced(m_max, 1, m_max);
+    Eigen::VectorXd u = Eigen::VectorXd::LinSpaced(_m_max, 1, _m_max);
     Eigen::MatrixXd c = stan::math::ceil(mt) * u.asDiagonal();
     for (Eigen::MatrixXd::Index i = 0; i < c.size(); ++i) {
       if (c(i) <= 1.e-16) {
@@ -225,12 +208,6 @@ class matrix_exp_action_handler {
     s = std::max(cost / m, 1);
   }
 };
-
-// C++-11 requires definition of the static member in addition
-// to the declaration. This is fixed in C++-17.
-constexpr int matrix_exp_action_handler::p_max;
-constexpr int matrix_exp_action_handler::m_max;
-constexpr double matrix_exp_action_handler::tol;
 
 }  // namespace math
 }  // namespace stan
