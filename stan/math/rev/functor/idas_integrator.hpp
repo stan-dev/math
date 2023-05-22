@@ -45,6 +45,7 @@ class idas_integrator {
    * stream contained in the DAE system.
    *
    * @tparam DAE type of DAE system
+   * @param[in] func Calling function name (for printing debugging messages)
    * @param[in] dae DAE system
    * @param[in] t0 initial time.
    * @param[in] ts times of the desired solutions, in strictly
@@ -89,14 +90,13 @@ class idas_integrator {
   }
 
   /**
-   *
    * Solve DAE system, no sensitivity
    *
-   * @tparam F DAE functor type
+   * @tparam dae_type DAE functor type
+   * @param yy
+   * @param yys
    * @param[out] dae DAE system
-   * @param[in] t0 initial time
-   * @param[in] ts times of the desired solutions
-   * @param[out] res_yy DAE solutions
+   * @param[out] y DAE solutions
    */
   template <typename dae_type>
   void collect(N_Vector const& yy, N_Vector const* yys, dae_type& dae,
