@@ -30,7 +30,7 @@ inline EigMat to_matrix(EigMat&& x) {
  *
  * @tparam EigMat type of the vector/row vector
  *
- * @param x input vector/row vector
+ * @param matrix input vector/row vector
  * @return the matrix representation of the input
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>

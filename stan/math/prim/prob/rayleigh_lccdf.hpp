@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -41,7 +41,7 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_sigma_ref> ops_partials(y_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
@@ -52,10 +52,10 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   T_partials_return ccdf_log = -0.5 * sum(y_square_div_sigma_square);
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = -y_div_sigma_square;
+    partials<0>(ops_partials) = -y_div_sigma_square;
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge2_.partials_ = y_square_div_sigma_square * inv_sigma;
+    partials<1>(ops_partials) = y_square_div_sigma_square * inv_sigma;
   }
 
   return ops_partials.build(ccdf_log);

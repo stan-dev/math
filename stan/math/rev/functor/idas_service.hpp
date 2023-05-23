@@ -18,7 +18,8 @@
 namespace stan {
 namespace math {
 
-/** For each type of Ode(with different rhs functor F and
+/**
+ * For each type of Ode(with different rhs functor F and
  * senstivity parameters), we allocate mem and workspace for
  * idas. This service manages the
  * allocation/deallocation, so ODE systems only request
@@ -42,9 +43,8 @@ struct idas_service {
   /**
    * Construct IDAS ODE mem & workspace
    *
-   * @param[in] n ODE system size
-   * @param[in] m length of parameter theta
-   * @param[in] f ODE RHS function
+   * @param t0 initial time
+   * @param dae differential-algebraic system of equations
    */
   idas_service(double t0, dae_type& dae)
       : sundials_context_(),

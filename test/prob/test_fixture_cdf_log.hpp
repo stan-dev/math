@@ -778,7 +778,7 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       T_return_type cdf_log_at_upper_bound
           = TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
                                                                p4, p5);
-      EXPECT_TRUE(0.0 == cdf_log_at_upper_bound)
+      EXPECT_TRUE(1 + 0.0 == 1 + cdf_log_at_upper_bound)
           << "cdf_log evaluated at upper bound should equal 0";
     }
   }

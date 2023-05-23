@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/von_mises_log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/modified_bessel_first_kind.hpp>>
 
 using stan::math::var;
 using std::numeric_limits;

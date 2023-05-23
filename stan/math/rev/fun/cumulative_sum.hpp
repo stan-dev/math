@@ -23,7 +23,7 @@ namespace math {
  *  `T` deriving from `Eigen::EigenBase` with one compile time dimension
  *   equal to 1
  *
- * @param m Vector of values.
+ * @param x Vector of values.
  * @return Cumulative sum of values.
  */
 template <typename EigVec, require_rev_vector_t<EigVec>* = nullptr>

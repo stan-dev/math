@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,7 +53,7 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_beta_ref> ops_partials(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
 
   constexpr bool any_derivatives = !is_constant_all<T_y, T_inv_scale>::value;
   const auto& exp_val = to_ref_if<any_derivatives>(exp(-beta_val * y_val));
@@ -71,10 +71,10 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
         !is_constant_all<T_y>::value && !is_constant_all<T_inv_scale>::value)>(
         exp_val / one_m_exp * cdf);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = beta_val * rep_deriv;
+      partials<0>(ops_partials) = beta_val * rep_deriv;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_ = y_val * rep_deriv;
+      partials<1>(ops_partials) = y_val * rep_deriv;
     }
   }
   return ops_partials.build(cdf);

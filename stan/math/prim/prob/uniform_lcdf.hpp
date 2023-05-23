@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,8 +54,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
     return negative_infinity();
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
       = to_ref_if<!is_constant_all<T_y, T_low, T_high>::value>(beta_val
@@ -68,21 +67,21 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   if (!is_constant_all<T_y>::value) {
     if (!is_vector<T_y>::value && is_vector<T_high>::value
         && !is_vector<T_low>::value) {
-      ops_partials.edge1_.partials_ = math::size(beta) * inv(y_minus_alpha);
+      partials<0>(ops_partials) = math::size(beta) * inv(y_minus_alpha);
     } else {
-      ops_partials.edge1_.partials_ = inv(y_minus_alpha);
+      partials<0>(ops_partials) = inv(y_minus_alpha);
     }
   }
   if (!is_constant_all<T_low>::value) {
-    ops_partials.edge2_.partials_
+    edge<1>(ops_partials).partials_
         = (y_val - beta_val) / (b_minus_a * y_minus_alpha);
   }
   if (!is_constant_all<T_high>::value) {
     if (is_vector<T_y>::value && !is_vector<T_low>::value
         && !is_vector<T_high>::value) {
-      ops_partials.edge3_.partials_ = inv(-b_minus_a) * math::size(y);
+      partials<2>(ops_partials) = inv(-b_minus_a) * math::size(y);
     } else {
-      ops_partials.edge3_.partials_ = inv(-b_minus_a);
+      partials<2>(ops_partials) = inv(-b_minus_a);
     }
   }
   return ops_partials.build(cdf_log);

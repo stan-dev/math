@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/normal_lpdf.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -113,18 +113,18 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     logp -= sum(n_obs_val * log(sigma_val)) * N / max_size(n_obs, sigma);
   }
 
-  operands_and_partials<T_y_ref, T_s_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, s_squared_ref, mu_ref, sigma_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, s_squared_ref, mu_ref, sigma_ref);
   if (!is_constant_all<T_y, T_loc>::value) {
     auto common_derivative = to_ref_if<(!is_constant_all<T_loc>::value
                                         && !is_constant_all<T_y>::value)>(
         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
         * diff);
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge3_.partials_ = -common_derivative;
+      partials<2>(ops_partials) = -common_derivative;
     }
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = std::move(common_derivative);
+      partials<0>(ops_partials) = std::move(common_derivative);
     }
   }
   if (!is_constant_all<T_s>::value) {
@@ -132,21 +132,21 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     using T_sigma_value_vector
         = Eigen::Array<T_sigma_value_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_scale>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
     } else {
       if (is_vector<T_s>::value) {
-        ops_partials.edge2_.partials_ = T_sigma_value_vector::Constant(
+        partials<1>(ops_partials) = T_sigma_value_vector::Constant(
             N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
-            ops_partials.edge2_.partials_)
+            partials<1>(ops_partials))
             = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge4_.partials_
+    edge<3>(ops_partials).partials_
         = (cons_expr / sigma_squared - n_obs_val) / sigma_val;
   }
   return ops_partials.build(logp);
