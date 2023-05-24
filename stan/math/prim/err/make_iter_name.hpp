@@ -27,7 +27,7 @@ inline auto make_iter_name(const char* name) { return std::string(name); }
  * Given a name and index, generate a new name with the index attached.
  * This will produce strings of the form `<name>[<i>]`.
  * @param name The name of the argument.
- * @param i The index.
+ * @param idxs The index.
  */
 template <typename... Idxs>
 inline auto make_iter_name(const char* name, Idxs... idxs) {
