@@ -97,16 +97,15 @@ inline void combination(std::vector<int>& c, const int dim, const int p,
  * @param p vector of vectors
  */
 inline void combos(const int k, const double lambda, const int dim,
-                   std::vector<std::vector<double>>& p) {
+                   Eigen::MatrixXd& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
-  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-    std::vector<double> temp(dim, 0.0);
-    combination(c, dim, k, i);
-    for (std::size_t j = 0; j != k; j++) {
-      temp[c[j] - 1] = lambda;
+  p = Eigen::MatrixXd::Zero(dim, choose_dimk);
+  for (size_t i = 0; i < choose_dimk; i++) {
+    combination(c, dim, k, i + 1);
+    for (size_t j = 0; j < k; j++) {
+      p(c[j] - 1, i) = lambda;
     }
-    p.push_back(temp);
   }
 }
 
@@ -121,7 +120,7 @@ inline void combos(const int k, const double lambda, const int dim,
  */
 inline void increment(std::vector<bool>& index, const int k,
                       const double lambda, const std::vector<int>& c,
-                      std::vector<double>& temp) {
+                      Eigen::VectorXd& temp) {
   if (index.size() == 0) {
     index.push_back(false);
     for (std::size_t j = 0; j != k; j++) {
@@ -163,17 +162,21 @@ inline void increment(std::vector<bool>& index, const int k,
  * @param p vector of vectors
  */
 inline void signcombos(const int k, const double lambda, const int dim,
-                       std::vector<std::vector<double>>& p) {
+                       Eigen::MatrixXd& p) {
   std::vector<int> c(k);
   const auto choose_dimk = choose(dim, k);
+  p.resize(dim, choose_dimk * std::pow(2, k));
+  p.setZero();
+  int col = 0;
   for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-    std::vector<double> temp(dim, 0.0);
+    Eigen::VectorXd temp = Eigen::VectorXd::Zero(dim);
     combination(c, dim, k, i);
     std::vector<bool> index;
     index.clear();
     for (std::size_t j = 0; j != std::pow(2, k); j++) {
       increment(index, k, lambda, c, temp);
-      p.push_back(temp);
+      p.col(col) = temp;
+      col += 1;
     }
   }
 }
@@ -237,7 +240,7 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
  * @param wd weights for the embedded lower-degree rule
  */
 inline void make_GenzMalik(const int dim,
-                           std::vector<std::vector<std::vector<double>>>& p,
+                           std::vector<Eigen::MatrixXd>& p,
                            std::vector<double>& w, std::vector<double>& wd) {
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
@@ -281,7 +284,7 @@ inline void make_GenzMalik(const int dim,
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
+    const F& integrand, std::vector<Eigen::MatrixXd>& p,
     std::vector<double>& w, std::vector<double>& wd, const int dim,
     const std::vector<double>& a, const std::vector<double>& b,
     const ParsTupleT& pars_tuple) {
@@ -289,6 +292,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
   std::vector<double> deltac(dim, 0);
 
   for (std::size_t i = 0; i != dim; i++) {
+    if (a[i] == b[i]) {
+      return std::make_tuple(0.0, 0.0, 0);
+    }
     c[i] = (a[i] + b[i]) / 2;
   }
 
@@ -298,10 +304,6 @@ std::tuple<double, double, int> integrate_GenzMalik(
   double v = 1.0;
   for (std::size_t i = 0; i != dim; i++) {
     v *= deltac[i];
-  }
-
-  if (v == 0.0) {
-    return std::make_tuple(0.0, 0.0, 0);
   }
 
   double f1 = math::apply(
@@ -319,7 +321,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
 
   for (std::size_t i = 0; i != dim; i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p2[j] = deltac[j] * p[0][i][j];
+      p2[j] = deltac[j] * p[0](j, i);
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -337,7 +339,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
-      p3[j] = deltac[j] * p[1][i][j];
+      p3[j] = deltac[j] * p[1](j, i);
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
@@ -358,9 +360,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   std::vector<double> p4(dim);
   double f4 = 0.0;
-  for (std::size_t i = 0; i != p[2].size(); i++) {
+  for (std::size_t i = 0; i != p[2].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p4[j] = deltac[j] * p[2][i][j];
+      p4[j] = deltac[j] * p[2](j, i);
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
@@ -372,9 +374,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   double f5 = 0.0;
   std::vector<double> p5(dim);
-  for (std::size_t i = 0; i != p[3].size(); i++) {
+  for (std::size_t i = 0; i != p[3].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p5[j] = deltac[j] * p[3][i][j];
+      p5[j] = deltac[j] * p[3](j, i);;
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -474,7 +476,7 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   double result, err;
   int kdivide = 0;
 
-  std::vector<std::vector<std::vector<double>>> p(4);
+  std::vector<Eigen::MatrixXd> p(4);
   std::vector<double> w_five(5);
   std::vector<double> wd_four(4);
 

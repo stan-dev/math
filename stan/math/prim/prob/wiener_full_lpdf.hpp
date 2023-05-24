@@ -9,6 +9,18 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * Calculate the derivative of the wiener7 density w.r.t. 'sw'
+ *
+ * @param y A scalar variable; the reaction time in seconds
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @param sv The inter-trial variability of the drift rate
+ * @param sw The inter-trial variability of the relative starting point
+ * @param lerr The log error tolerance
+ * @return Gradient w.r.t. sw
+*/
 inline double grad_wiener7_sw(double y, double a, double v, double w, double sv,
                               double sw, double lerr) {
   double low = w - sw / 2;
@@ -21,6 +33,28 @@ inline double grad_wiener7_sw(double y, double a, double v, double w, double sv,
   return 0.5 * (fl + fu) / sw;
 }
 
+/**
+ * Helper function for agnostically calling wiener5 functions
+ * (to be integrated over) or directly calling wiener7 functions,
+ * accounting for the different number of arguments.
+ *
+ * Specialisation for wiener5 functions
+ *
+ * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam F Type of Gradient/density functor
+ *
+ * @param functor Gradient/density functor to apply
+ * @param y A scalar variable; the reaction time in seconds
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @param t0 The non-decision time
+ * @param sv The inter-trial variability of the drift rate
+ * @param sw The inter-trial variability of the relative starting point
+ * @param st0 The inter-trial variability of the non-decision time
+ * @param lerr The log error tolerance
+ * @return Functor applied to arguments
+*/
 template <bool GradSW, typename F, std::enable_if_t<!GradSW>* = nullptr>
 inline double call_wiener7_function(const F& functor, double y, double a,
                                     double v, double w, double t0, double sv,
@@ -28,6 +62,28 @@ inline double call_wiener7_function(const F& functor, double y, double a,
   return functor(y - t0, a, v, w, sv, lerr);
 }
 
+/**
+ * Helper function for agnostically calling wiener5 functions
+ * (to be integrated over) or directly calling wiener7 functions,
+ * accounting for the different number of arguments.
+ *
+ * Specialisation for wiener7 functions
+ *
+ * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam F Type of Gradient/density functor
+ *
+ * @param functor Gradient/density functor to apply
+ * @param y A scalar variable; the reaction time in seconds
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @param t0 The non-decision time
+ * @param sv The inter-trial variability of the drift rate
+ * @param sw The inter-trial variability of the relative starting point
+ * @param st0 The inter-trial variability of the non-decision time
+ * @param lerr The log error tolerance
+ * @return Functor applied to arguments
+*/
 template <bool GradSW, typename F, std::enable_if_t<GradSW>* = nullptr>
 inline double call_wiener7_function(const F& functor, double y, double a,
                                     double v, double w, double t0, double sv,
