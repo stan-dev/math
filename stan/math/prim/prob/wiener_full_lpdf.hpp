@@ -96,8 +96,11 @@ inline double call_wiener7_function(const F& functor, double y, double a,
  * to the hcubature() function for calculating wiener7 parameters via
  * integration
  *
- * @tparam FunTypeEnum An enum value indicating the function required
+ * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam Wiener7FunctorT Type of functor
  * @tparam Targs... Types of arguments in parameter pack
+ *
+ * @param wiener7_functor Gradient/density functor to apply
  * @param hcubature_err Error tolerance for calculation
  * @param args Additional arguments to be passed to the hcubature function
  * @return Wiener7 density or gradient calculated by integration
@@ -193,6 +196,7 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * @param sv The inter-trial variability of the drift rate
  * @param sw The inter-trial variability of the relative starting point
  * @param st0 The inter-trial variability of the non-decision time
+ * @param prec Level of precision in estimation
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
  * @throw std::domain_error if non-decision time \c t0 is greater than reaction

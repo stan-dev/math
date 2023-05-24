@@ -186,11 +186,11 @@ inline void signcombos(const int k, const double lambda, const int dim,
  * for one dimension.
  *
  * @tparam F type of the integrand
- * @tparam T_pars type of the parameters for the integrand
+ * @tparam ParsTupleT type of the tuple of parameters for the integrand
  * @param integrand function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param pars parameters for the integrand
+ * @param pars_tuple Tuple of parameters for the integrand
  * @return numeric integral of the integrand and error
  */
 template <typename F, typename ParsTupleT>
@@ -269,7 +269,7 @@ inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
  * for more than one dimensions.
  *
  * @tparam F type of the integrand
- * @tparam T_pars type of the parameters for the integrand
+ * @tparam ParsTupleT type of the tuple of parameters for the integrand
  * @param integrand function to be integrated
  * @param p
  * @param w
@@ -277,7 +277,7 @@ inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
  * @param dim dimension of the multidimensional integral
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param pars parameters for the integrand
+ * @param pars_tuple Tuple of parameters for the integrand
  * @return numeric integral of the integrand, error, and suggested coordinate to
  * subdivide next
  */
@@ -375,7 +375,6 @@ std::tuple<double, double, int> integrate_GenzMalik(
   for (std::size_t i = 0; i != p[3].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
       p5[j] = deltac[j] * p[3](j, i);
-      ;
     }
 
     for (std::size_t j = 0; j != dim; j++) {

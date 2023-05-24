@@ -513,6 +513,7 @@ double estimate_with_err_check(const F& functor, double err,
  * @param w The relative starting point
  * @param v The drift rate
  * @param sv The inter-trial variability of the drift rate
+ * @param prec Level of precision in estimation
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
  */
