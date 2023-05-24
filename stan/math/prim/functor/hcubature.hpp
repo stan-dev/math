@@ -239,8 +239,7 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
  * @param w weights for the 5 terms in the GenzMalik rule
  * @param wd weights for the embedded lower-degree rule
  */
-inline void make_GenzMalik(const int dim,
-                           std::vector<Eigen::MatrixXd>& p,
+inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
                            std::vector<double>& w, std::vector<double>& wd) {
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
@@ -284,10 +283,9 @@ inline void make_GenzMalik(const int dim,
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, std::vector<Eigen::MatrixXd>& p,
-    std::vector<double>& w, std::vector<double>& wd, const int dim,
-    const std::vector<double>& a, const std::vector<double>& b,
-    const ParsTupleT& pars_tuple) {
+    const F& integrand, std::vector<Eigen::MatrixXd>& p, std::vector<double>& w,
+    std::vector<double>& wd, const int dim, const std::vector<double>& a,
+    const std::vector<double>& b, const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim, 0);
 
@@ -376,7 +374,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
   std::vector<double> p5(dim);
   for (std::size_t i = 0; i != p[3].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p5[j] = deltac[j] * p[3](j, i);;
+      p5[j] = deltac[j] * p[3](j, i);
+      ;
     }
 
     for (std::size_t j = 0; j != dim; j++) {

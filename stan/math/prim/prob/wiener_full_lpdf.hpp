@@ -20,7 +20,7 @@ namespace internal {
  * @param sw The inter-trial variability of the relative starting point
  * @param lerr The log error tolerance
  * @return Gradient w.r.t. sw
-*/
+ */
 inline double grad_wiener7_sw(double y, double a, double v, double w, double sv,
                               double sw, double lerr) {
   double low = w - sw / 2;
@@ -54,7 +54,7 @@ inline double grad_wiener7_sw(double y, double a, double v, double w, double sv,
  * @param st0 The inter-trial variability of the non-decision time
  * @param lerr The log error tolerance
  * @return Functor applied to arguments
-*/
+ */
 template <bool GradSW, typename F, std::enable_if_t<!GradSW>* = nullptr>
 inline double call_wiener7_function(const F& functor, double y, double a,
                                     double v, double w, double t0, double sv,
@@ -83,7 +83,7 @@ inline double call_wiener7_function(const F& functor, double y, double a,
  * @param st0 The inter-trial variability of the non-decision time
  * @param lerr The log error tolerance
  * @return Functor applied to arguments
-*/
+ */
 template <bool GradSW, typename F, std::enable_if_t<GradSW>* = nullptr>
 inline double call_wiener7_function(const F& functor, double y, double a,
                                     double v, double w, double t0, double sv,

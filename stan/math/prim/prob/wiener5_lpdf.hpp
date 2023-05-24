@@ -15,7 +15,7 @@ namespace internal {
  * @param wn The drift rate
  * @param sv The inter-trial variability of the drift rate
  * @return 'lg1' term
-*/
+ */
 inline double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
   const double w = 1.0 - wn;
   const double v = -vn;
@@ -44,10 +44,10 @@ inline double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
  * @param wn The drift rate
  * @param sv The inter-trial variability of the drift rate
  * @return 'ans0' term
-*/
+ */
 template <bool GradA, bool GradT>
-inline double wiener5_ans0(double y, double a, double vn,
-                            double wn, double sv) {
+inline double wiener5_ans0(double y, double a, double vn, double wn,
+                           double sv) {
   const double w = 1.0 - wn;
   const double v = -vn;
   const double sv_sqr = square(sv);
@@ -86,7 +86,7 @@ inline double wiener5_ans0(double y, double a, double vn,
  * @param wn The drift rate
  * @param es The error tolerance
  * @return 'kss' term
-*/
+ */
 template <bool Density, bool GradW>
 inline double wiener5_kss(double y, double a, double wn, double es) {
   const double two_es = 2.0 * es;
@@ -122,7 +122,7 @@ inline double wiener5_kss(double y, double a, double wn, double es) {
  * @param wn The drift rate
  * @param es The error tolerance
  * @return 'kll' term
-*/
+ */
 template <bool Density, bool GradT>
 inline double wiener5_kll(double y, double a, double wn, double es) {
   const double two_es = 2.0 * es;
@@ -167,10 +167,10 @@ inline double wiener5_kll(double y, double a, double wn, double es) {
  * @param kss The kss term
  * @param kll The kll term
  * @return 'erg' sum and its sign
-*/
+ */
 template <bool Density, bool GradW>
 inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
-                                                size_t kss, size_t kll) {
+                                               size_t kss, size_t kll) {
   const double y_asq = y / square(a);
   const double w = 1.0 - wn;
   const bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
@@ -196,9 +196,8 @@ inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
                           - (square(wm2k) - offset) * scaling;
       double k_term;
       int k_sign;
-      std::forward_as_tuple(k_term, k_sign)
-          = log_sum_exp_signed(mult * wm2k_quant, -1 * wm2k_sign,
-                                mult * wp2k_quant, wp2k_sign);
+      std::forward_as_tuple(k_term, k_sign) = log_sum_exp_signed(
+          mult * wm2k_quant, -1 * wm2k_sign, mult * wp2k_quant, wp2k_sign);
       std::forward_as_tuple(current_val, current_sign)
           = log_sum_exp_signed(k_term, k_sign, prev_val, prev_sign);
       prev_val = current_val;
@@ -238,7 +237,7 @@ inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return density
-*/
+ */
 template <bool NaturalScale = false>
 inline double wiener5_density(double y, double a, double vn, double wn,
                               double sv, double err = log(1e-12)) {
@@ -274,10 +273,10 @@ inline double wiener5_density(double y, double a, double vn, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. t
-*/
+ */
 template <bool WrtLog = false>
 inline double grad_wiener5_t(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -319,10 +318,10 @@ inline double grad_wiener5_t(double y, double a, double vn, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. a
-*/
+ */
 template <bool WrtLog = false>
 inline double grad_wiener5_a(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -364,10 +363,10 @@ inline double grad_wiener5_a(double y, double a, double vn, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. v
-*/
+ */
 template <bool WrtLog = false>
 inline double grad_wiener5_v(double y, double a, double vn, double wn,
-                              double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) {
   double ans = (a * (1 - wn) - vn * y);
   if (sv != 0) {
     ans /= 1 + square(sv) * y;
@@ -388,10 +387,10 @@ inline double grad_wiener5_v(double y, double a, double vn, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. w
-*/
+ */
 template <bool WrtLog = false>
 inline double grad_wiener5_w(double y, double a, double vn, double wn,
-                      double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -431,10 +430,10 @@ inline double grad_wiener5_w(double y, double a, double vn, double wn,
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. sv
-*/
+ */
 template <bool WrtLog = false>
 inline double grad_wiener5_sv(double y, double a, double vn, double wn,
-                        double sv, double err = log(1e-12)) {
+                              double sv, double err = log(1e-12)) {
   const double one_plus_svsqr_y = 1 + square(sv) * y;
   const double w = 1.0 - wn;
   const double v = -vn;
