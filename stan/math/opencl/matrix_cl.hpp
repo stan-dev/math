@@ -481,8 +481,8 @@ class matrix_cl : public matrix_cl_base {
 
   /**
    * Assignment of `arena_matrix_cl<T>`.
-   * @tparam Expr type of the expression
-   * @param expression expression
+   * @tparam T type of matrix
+   * @param other matrix
    */
   // defined in rev/arena_matrix_cl.hpp
   matrix_cl<T>& operator=(const arena_matrix_cl<T>& other);

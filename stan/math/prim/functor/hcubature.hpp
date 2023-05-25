@@ -424,14 +424,14 @@ struct Box {
  * @tparam F Type of f
  * @tparam T_pars Type of paramete-struct
  *
- * @param f a functor with signature given above
+ * @param integrand a functor with signature given above
+ * @param pars parameters to be passed to f as a struct
  * @param dim dimension of the integral
  * @param a lower limit of integration as vector
  * @param b upper limit of integration as vector
  * @param maxEval maximal number of evaluations
  * @param reqAbsError absolute error
  * @param reqRelError relative error as vector
- * @param pars parameters to be passed to f as a struct
  * @param val correct value of integral
  *
  * @return The value of the dim-dimensional integral of \f$f\f$ from \f$a\f$ to
