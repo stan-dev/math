@@ -119,8 +119,8 @@ inline void combos(const int k, const double lambda, const int dim,
  * @param inp Input vector to be incremented
  */
 inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
-                      const double lambda, const Eigen::VectorXi& c,
-                      const Eigen::VectorXd& inp) {
+                                 const double lambda, const Eigen::VectorXi& c,
+                                 const Eigen::VectorXd& inp) {
   Eigen::VectorXd temp = inp;
   if (index.size() == 0) {
     index.push_back(false);

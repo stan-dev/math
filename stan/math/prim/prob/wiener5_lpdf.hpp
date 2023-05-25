@@ -16,8 +16,8 @@ namespace internal {
  * @param sv The inter-trial variability of the drift rate
  * @return 'lg1' term
  */
-inline double wiener5_lg1(double y, double a, double vn,
-                          double wn, double sv) noexcept {
+inline double wiener5_lg1(double y, double a, double vn, double wn,
+                          double sv) noexcept {
   const double w = 1.0 - wn;
   const double v = -vn;
   const double sv_sqr = square(sv);
@@ -171,7 +171,8 @@ inline double wiener5_kll(double y, double a, double wn, double es) noexcept {
  */
 template <bool Density, bool GradW>
 inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
-                                            size_t kss, size_t kll) noexcept {
+                                               size_t kss,
+                                               size_t kll) noexcept {
   const double y_asq = y / square(a);
   const double w = 1.0 - wn;
   const bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
