@@ -68,7 +68,7 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline void combination(std::vector<int>& c, const int dim, const int p,
+inline void combination(Eigen::VectorXi& c, const int dim, const int p,
                         const int x) {
   size_t r, k = 0;
   for (std::size_t i = 0; i < p - 1; i++) {
@@ -98,13 +98,13 @@ inline void combination(std::vector<int>& c, const int dim, const int p,
  */
 inline void combos(const int k, const double lambda, const int dim,
                    Eigen::MatrixXd& p) {
-  std::vector<int> c(k);
+  Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p = Eigen::MatrixXd::Zero(dim, choose_dimk);
   for (size_t i = 0; i < choose_dimk; i++) {
     combination(c, dim, k, i + 1);
     for (size_t j = 0; j < k; j++) {
-      p(c[j] - 1, i) = lambda;
+      p.coeffRef(c.coeff(j) - 1, i) = lambda;
     }
   }
 }
@@ -116,17 +116,18 @@ inline void combos(const int k, const double lambda, const int dim,
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param c ordered vector
- * @param temp helper vector
+ * @param inp Input vector to be incremented
  */
-inline void increment(std::vector<bool>& index, const int k,
-                      const double lambda, const std::vector<int>& c,
-                      Eigen::VectorXd& temp) {
+inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
+                      const double lambda, const Eigen::VectorXi& c,
+                      const Eigen::VectorXd& inp) {
+  Eigen::VectorXd temp = inp;
   if (index.size() == 0) {
     index.push_back(false);
     for (std::size_t j = 0; j != k; j++) {
       temp[c[j] - 1] = lambda;
     }
-    return;
+    return temp;
   }
   int first_zero = 0;
   while ((first_zero < index.size()) && index[first_zero]) {
@@ -149,6 +150,7 @@ inline void increment(std::vector<bool>& index, const int k,
       temp[c[i] - 1] *= -1;
     }
   }
+  return temp;
 }
 
 /**
@@ -163,20 +165,19 @@ inline void increment(std::vector<bool>& index, const int k,
  */
 inline void signcombos(const int k, const double lambda, const int dim,
                        Eigen::MatrixXd& p) {
-  std::vector<int> c(k);
+  Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p.resize(dim, choose_dimk * std::pow(2, k));
   p.setZero();
-  int col = 0;
+  int current_col = 0;
   for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-    Eigen::VectorXd temp = Eigen::VectorXd::Zero(dim);
     combination(c, dim, k, i);
     std::vector<bool> index;
     index.clear();
     for (std::size_t j = 0; j != std::pow(2, k); j++) {
-      increment(index, k, lambda, c, temp);
-      p.col(col) = temp;
-      col += 1;
+      size_t prev_col = j == 0 ? current_col : current_col - 1;
+      p.col(current_col) = increment(index, k, lambda, c, p.col(prev_col));
+      current_col += 1;
     }
   }
 }

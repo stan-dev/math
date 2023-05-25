@@ -16,7 +16,8 @@ namespace internal {
  * @param sv The inter-trial variability of the drift rate
  * @return 'lg1' term
  */
-inline double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
+inline double wiener5_lg1(double y, double a, double vn,
+                          double wn, double sv) noexcept {
   const double w = 1.0 - wn;
   const double v = -vn;
   const double sv_sqr = square(sv);
@@ -47,7 +48,7 @@ inline double wiener5_lg1(double y, double a, double vn, double wn, double sv) {
  */
 template <bool GradA, bool GradT>
 inline double wiener5_ans0(double y, double a, double vn, double wn,
-                           double sv) {
+                           double sv) noexcept {
   const double w = 1.0 - wn;
   const double v = -vn;
   const double sv_sqr = square(sv);
@@ -88,7 +89,7 @@ inline double wiener5_ans0(double y, double a, double vn, double wn,
  * @return 'kss' term
  */
 template <bool Density, bool GradW>
-inline double wiener5_kss(double y, double a, double wn, double es) {
+inline double wiener5_kss(double y, double a, double wn, double es) noexcept {
   const double two_es = 2.0 * es;
   const double y_asq = y / square(a);
   const double two_log_a = 2 * log(a);
@@ -124,7 +125,7 @@ inline double wiener5_kss(double y, double a, double wn, double es) {
  * @return 'kll' term
  */
 template <bool Density, bool GradT>
-inline double wiener5_kll(double y, double a, double wn, double es) {
+inline double wiener5_kll(double y, double a, double wn, double es) noexcept {
   const double two_es = 2.0 * es;
   const double y_asq = y / square(a);
   const double two_log_a = 2 * log(a);
@@ -170,7 +171,7 @@ inline double wiener5_kll(double y, double a, double wn, double es) {
  */
 template <bool Density, bool GradW>
 inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
-                                               size_t kss, size_t kll) {
+                                            size_t kss, size_t kll) noexcept {
   const double y_asq = y / square(a);
   const double w = 1.0 - wn;
   const bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
@@ -240,7 +241,7 @@ inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
  */
 template <bool NaturalScale = false>
 inline double wiener5_density(double y, double a, double vn, double wn,
-                              double sv, double err = log(1e-12)) {
+                              double sv, double err = log(1e-12)) noexcept {
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
   double es = (err - lg1);
   double kss = wiener5_kss<true, false>(y, a, wn, es);
@@ -276,7 +277,7 @@ inline double wiener5_density(double y, double a, double vn, double wn,
  */
 template <bool WrtLog = false>
 inline double grad_wiener5_t(double y, double a, double vn, double wn,
-                             double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -321,7 +322,7 @@ inline double grad_wiener5_t(double y, double a, double vn, double wn,
  */
 template <bool WrtLog = false>
 inline double grad_wiener5_a(double y, double a, double vn, double wn,
-                             double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -366,7 +367,7 @@ inline double grad_wiener5_a(double y, double a, double vn, double wn,
  */
 template <bool WrtLog = false>
 inline double grad_wiener5_v(double y, double a, double vn, double wn,
-                             double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) noexcept {
   double ans = (a * (1 - wn) - vn * y);
   if (sv != 0) {
     ans /= 1 + square(sv) * y;
@@ -390,7 +391,7 @@ inline double grad_wiener5_v(double y, double a, double vn, double wn,
  */
 template <bool WrtLog = false>
 inline double grad_wiener5_w(double y, double a, double vn, double wn,
-                             double sv, double err = log(1e-12)) {
+                             double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
   double lg1 = wiener5_lg1(y, a, vn, wn, sv);
@@ -433,7 +434,7 @@ inline double grad_wiener5_w(double y, double a, double vn, double wn,
  */
 template <bool WrtLog = false>
 inline double grad_wiener5_sv(double y, double a, double vn, double wn,
-                              double sv, double err = log(1e-12)) {
+                              double sv, double err = log(1e-12)) noexcept {
   const double one_plus_svsqr_y = 1 + square(sv) * y;
   const double w = 1.0 - wn;
   const double v = -vn;
