@@ -101,6 +101,27 @@ TEST(MathFunctions, select_scalar_container) {
   EXPECT_STD_VECTOR_EQ(promoted_b_nested, select(true, 10.55, std_b_nested));
 }
 
+TEST(MathFunctions, select_scalar_nested_eig) {
+  using stan::math::select;
+
+  Eigen::MatrixXd eigmat_a = Eigen::MatrixXd::Random(2, 2);
+  std::vector<std::vector<Eigen::MatrixXd>> nested_eigmat_a
+    = {{eigmat_a}, {eigmat_a}};
+
+  double dbl_a = -1.25;
+  Eigen::MatrixXd dbl_a_promoted = Eigen::MatrixXd::Constant(eigmat_a.rows(),
+                                                              eigmat_a.cols(),
+                                                              dbl_a);
+  std::vector<std::vector<Eigen::MatrixXd>> nested_dbl_a_promoted
+    = {{dbl_a_promoted}, {dbl_a_promoted}};
+
+  EXPECT_STD_VECTOR_EQ(nested_dbl_a_promoted, select(true, dbl_a, nested_eigmat_a));
+  EXPECT_STD_VECTOR_EQ(nested_dbl_a_promoted, select(false, nested_eigmat_a, dbl_a));
+
+  EXPECT_STD_VECTOR_EQ(nested_eigmat_a, select(false, dbl_a, nested_eigmat_a));
+  EXPECT_STD_VECTOR_EQ(nested_eigmat_a, select(true, nested_eigmat_a, dbl_a));
+}
+
 TEST(MathFunctions, select_array_bool_scalar_scalar) {
   using stan::math::select;
 
