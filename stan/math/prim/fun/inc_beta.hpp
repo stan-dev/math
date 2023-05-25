@@ -30,7 +30,7 @@ inline double inc_beta(double a, double b, double x) {
 }
 
 /**
- * Enables the vectorised application of the inc_beta function, when
+ * Enables the vectorized application of the inc_beta function, when
  *  any arguments are containers.
  *
  * @tparam T1 type of first input
@@ -39,7 +39,7 @@ inline double inc_beta(double a, double b, double x) {
  * @param a First input
  * @param b Second input
  * @param c Third input
- * @return Incomplete Beta function applied to the two inputs.
+ * @return Incomplete Beta function applied to the three inputs.
  */
 template <typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2, T3>* = nullptr,

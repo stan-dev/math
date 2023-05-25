@@ -214,17 +214,5 @@ inline CwiseUnaryView<vi_Op, Derived>
 vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
-template <typename CustomTernaryOp, typename OtherDerived1,
-          typename OtherDerived2>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-const CwiseTernaryOp<CustomTernaryOp, const Derived,
-                     const OtherDerived1, const OtherDerived2>
-  ternaryExpr(const OtherDerived1& other1, const OtherDerived2& other2,
-              const CustomTernaryOp& func) const {
-    return CwiseTernaryOp<CustomTernaryOp, const Derived,
-                          const OtherDerived1, const OtherDerived2>(
-      derived(), other1.derived(), other2.derived(), func);
-}
-
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
 #define EIGEN_STAN_ARRAYBASE_PLUGIN

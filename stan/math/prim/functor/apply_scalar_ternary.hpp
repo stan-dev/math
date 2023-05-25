@@ -61,10 +61,13 @@ template <typename F, typename T1, typename T2, typename T3,
 inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   check_matching_dims("Ternary function", "x", x, "y", y);
   check_matching_dims("Ternary function", "y", y, "z", z);
-  check_matching_dims("Ternary function", "x", x, "z", z);
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner, auto& z_inner) {
-        return x_inner.ternaryExpr(y_inner, z_inner, f_inner);
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner, auto&& z_inner) {
+        return Eigen::CwiseTernaryOp<std::decay_t<decltype(f_inner)>,
+                                      std::decay_t<decltype(x_inner)>,
+                                      std::decay_t<decltype(y_inner)>,
+                                      std::decay_t<decltype(z_inner)>
+                                    >(x_inner, y_inner, z_inner, f_inner);
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y),
       std::forward<T3>(z));
@@ -95,14 +98,13 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
                                  const T3& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
-  check_matching_sizes("Ternary function", "x", x, "z", z);
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
   decltype(auto) z_vec = as_column_vector_or_scalar(z);
   using T_return = std::decay_t<decltype(f(x[0], y[0], z[0]))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = x_vec.ternaryExpr(y_vec, z_vec, f);
+      = apply_scalar_ternary(f, x_vec, y_vec, z_vec);
   return result;
 }
 
@@ -129,7 +131,6 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
                                  const T3& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
-  check_matching_sizes("Ternary function", "x", x, "z", z);
   using T_return
       = plain_type_t<decltype(apply_scalar_ternary(f, x[0], y[0], z[0]))>;
   size_t y_size = y.size();
