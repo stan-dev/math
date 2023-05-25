@@ -100,7 +100,7 @@ class matrix_exp_action_handler {
   /**
    * Eigen expression for matrix operator infinity norm
    *
-   * @param mat matrix
+   * @param x matrix
    */
   double matrix_operator_inf_norm(Eigen::MatrixXd const& x) {
     return x.cwiseAbs().rowwise().sum().maxCoeff();
