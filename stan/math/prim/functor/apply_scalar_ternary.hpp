@@ -19,7 +19,7 @@ namespace math {
  * defined by applying a functor to a combination of scalars,
  * containers of matching sizes, or a combination of a scalar and a container.
  * These containers can be a standard library vector, Eigen dense
- * matrix expression template, or container of these. For each specialisation,
+ * matrix expression template, or container of these. For each specialization,
  * the same type as the largest (dimension) input is returned.
  *
  * This base template function takes (and returns) scalars.
@@ -42,7 +42,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 }
 
 /**
- * Specialisation for use with three Eigen inputs. Eigen's ternaryExpr framework
+ * Specialization for use with three Eigen inputs. Eigen's ternaryExpr framework
  * is used for more efficient indexing of both row- and column-major inputs
  * without separate loops.
  *
@@ -73,7 +73,7 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
 }
 
 /**
- * Specialisation for use with (non-nested) std::vectors. Inputs are mapped
+ * Specialization for use with (non-nested) std::vectors. Inputs are mapped
  * to Eigen column vectors and then the result is evaluated directly into the
  * returned std::vector (via Eigen::Map).
  *
@@ -108,7 +108,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 }
 
 /**
- * Specialisation for use with three nested containers (std::vectors).
+ * Specialization for use with three nested containers (std::vectors).
  * The returned scalar type is deduced to allow for cases where the input and
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
@@ -141,7 +141,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 }
 
 /**
- * Specialisation for use where the third argument is a scalar.
+ * Specialization for use where the third argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
@@ -166,7 +166,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 }
 
 /**
- * Specialisation for use where the second argument is a scalar.
+ * Specialization for use where the second argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
@@ -191,7 +191,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 }
 
 /**
- * Specialisation for use where the first argument is a scalar.
+ * Specialization for use where the first argument is a scalar.
  *
  * The implementation is delegated to apply_scalar_binary to handle both Eigen
  * and std::vector inputs, as well as nested containers.
