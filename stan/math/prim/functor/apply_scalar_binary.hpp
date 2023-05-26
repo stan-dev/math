@@ -19,7 +19,7 @@ namespace math {
  * defined by applying a functor to a combination of scalars,
  * containers of matching sizes, or a combination of a scalar and a container.
  * These containers can be a standard library vector, Eigen dense
- * matrix expression template, or container of these. For each specialisation,
+ * matrix expression template, or container of these. For each specialization,
  * the same type as the largest (dimension) input is returned.
  *
  * This base template function takes (and returns) scalars.
@@ -39,7 +39,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with two Eigen inputs. Eigen's binaryExpr framework
+ * Specialization for use with two Eigen inputs. Eigen's binaryExpr framework
  * is used for more efficient indexing of both row- and column-major inputs
  * without separate loops.
  *
@@ -63,7 +63,7 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
 }
 
 /**
- * Specialisation for use with one Eigen vector (row or column) and
+ * Specialization for use with one Eigen vector (row or column) and
  * a one-dimensional std::vector of integer types
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -90,7 +90,7 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
 }
 
 /**
- * Specialisation for use with a one-dimensional std::vector of integer types
+ * Specialization for use with a one-dimensional std::vector of integer types
  * and one Eigen vector (row or column).
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -117,7 +117,7 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
 }
 
 /**
- * Specialisation for use with one Eigen matrix and
+ * Specialization for use with one Eigen matrix and
  * a two-dimensional std::vector of integer types
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -150,7 +150,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with a two-dimensional std::vector of integer types
+ * Specialization for use with a two-dimensional std::vector of integer types
  * and one Eigen matrix.
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -183,7 +183,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is an Eigen type and the second
+ * Specialization for use when the first input is an Eigen type and the second
  * is a scalar. Eigen's unaryExpr framework is used for more efficient indexing
  * of both row- and column-major inputs. The unaryExpr framework also allows
  * for the scalar to be captured and applied to each element in the Eigen
@@ -209,7 +209,7 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
 }
 
 /**
- * Specialisation for use when the first input is an scalar and the second is
+ * Specialization for use when the first input is an scalar and the second is
  * an Eigen type. Eigen's unaryExpr framework is used for more efficient
  * indexing of both row- and column-major inputs. The unaryExpr framework also
  * allows for the scalar to be captured and applied to each element in the
@@ -235,7 +235,7 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
 }
 
 /**
- * Specialisation for use with (non-nested) std::vectors. Inputs are mapped
+ * Specialization for use with (non-nested) std::vectors. Inputs are mapped
  * to Eigen column vectors and then the result is evaluated directly into the
  * returned std::vector (via Eigen::Map).
  *
@@ -265,7 +265,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is a (non-nested) std::vector
+ * Specialization for use when the first input is a (non-nested) std::vector
  * and the second is a scalar. The std::vector input is mapped to an Eigen
  * column vector and then the result is evaluated directly into the returned
  * std::vector (via Eigen::Map).
@@ -295,7 +295,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is a scalar and the second is a
+ * Specialization for use when the first input is a scalar and the second is a
  * (non-nested) std::vector. The std::vector input is mapped to an Eigen
  * column vector and then the result is evaluated directly into the returned
  * std::vector (via Eigen::Map).
@@ -325,7 +325,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with two nested containers (std::vectors).
+ * Specialization for use with two nested containers (std::vectors).
  * The returned scalar type is deduced to allow for cases where the input and
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
@@ -353,7 +353,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is a nested std::vector and the
+ * Specialization for use when the first input is a nested std::vector and the
  * second is a scalar. The returned scalar type is deduced to allow for cases
  * where the input and return scalar types differ (e.g., functions implicitly
  * promoting integers).
@@ -380,7 +380,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is a scalar and the second is a
+ * Specialization for use when the first input is a scalar and the second is a
  * nested std::vector. The returned scalar type is deduced to allow for cases
  * where the input and return scalar types differ (e.g., functions implicitly
  * promoting integers).

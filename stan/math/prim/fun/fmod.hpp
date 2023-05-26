@@ -24,7 +24,7 @@ inline double fmod(const T1& a, const T2& b) {
 }
 
 /**
- * Enables the vectorised application of the fmod function,
+ * Enables the vectorized application of the fmod function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input
