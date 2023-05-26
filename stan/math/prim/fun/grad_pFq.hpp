@@ -55,8 +55,7 @@ namespace internal {
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
- * @param[in] outer_precision Convergence criteria for infinite sum
- * @param[in] inner_precision Convergence criteria for infinite sum
+ * @param[in] precision Convergence criteria for infinite sum
  * @param[in] outer_steps Maximum number of iterations for infinite sum
  * @param[in] inner_steps Maximum number of iterations for infinite sum
  * @return Generalised hypergeometric function
@@ -325,7 +324,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
  * @param[in] precision Convergence criteria for infinite sum
- * @param[in] max_steps Maximum number of iterations for infinite sum
+ * @param[in] outer_steps Maximum number of iterations for outer_steps
+ * @param[in] inner_steps Maximum number of iterations for inner_steps
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>

@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -64,7 +64,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     }
   }
 
-  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
+  auto ops_partials = make_partials_propagator(lambda_ref);
 
   T_partials_return logp = stan::math::sum(multiply_log(n_val, lambda_val));
   if (include_summand<propto, T_rate>::value) {
@@ -75,7 +75,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   }
 
   if (!is_constant_all<T_rate>::value) {
-    ops_partials.edge1_.partials_ = n_val / lambda_val - 1.0;
+    partials<0>(ops_partials) = n_val / lambda_val - 1.0;
   }
 
   return ops_partials.build(logp);

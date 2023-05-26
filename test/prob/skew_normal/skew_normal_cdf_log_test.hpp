@@ -1,5 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/skew_normal_cdf_log.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math/prim/fun/owens_t.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

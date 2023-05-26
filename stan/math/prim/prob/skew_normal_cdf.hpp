@@ -18,7 +18,7 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,8 +54,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_alpha_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
 
   const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff
@@ -86,19 +86,19 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
                       >= 2>((erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
                             * cdf_quot / sigma_val * exp_m_scaled_diff_square);
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = -rep_deriv;
+        partials<1>(ops_partials) = -rep_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_ = -rep_deriv * diff;
+        partials<2>(ops_partials) = -rep_deriv * diff;
       }
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = std::move(rep_deriv);
+        partials<0>(ops_partials) = std::move(rep_deriv);
       }
     }
     if (!is_constant_all<T_shape>::value) {
       const auto& alpha_square = square(alpha_val);
       const auto& exp_tmp = exp(-0.5 * diff_square * (1.0 + alpha_square));
-      ops_partials.edge4_.partials_
+      edge<3>(ops_partials).partials_
           = -2.0 * exp_tmp / ((1 + alpha_square) * TWO_PI) * cdf_quot;
     }
   }

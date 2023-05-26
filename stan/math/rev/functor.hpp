@@ -26,6 +26,7 @@
 #include <stan/math/rev/functor/map_rect_concurrent.hpp>
 #include <stan/math/rev/functor/map_rect_reduce.hpp>
 #include <stan/math/rev/functor/operands_and_partials.hpp>
+#include <stan/math/rev/functor/partials_propagator.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
 #include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
 

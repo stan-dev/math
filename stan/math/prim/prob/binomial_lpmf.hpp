@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -64,7 +64,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   T_partials_return logp = 0;
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
@@ -107,11 +107,11 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
       const T_partials_return theta_dbl = theta_vec.val(0);
       if (sum_N != 0) {
         if (sum_n == 0) {
-          ops_partials.edge1_.partials_[0] -= sum_N / (1.0 - theta_dbl);
+          partials<0>(ops_partials)[0] -= sum_N / (1.0 - theta_dbl);
         } else if (sum_n == sum_N) {
-          ops_partials.edge1_.partials_[0] += sum_n / theta_dbl;
+          partials<0>(ops_partials)[0] += sum_n / theta_dbl;
         } else {
-          ops_partials.edge1_.partials_[0]
+          partials<0>(ops_partials)[0]
               += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
         }
       }
@@ -120,11 +120,11 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         const T_partials_return theta_dbl = theta_vec.val(i);
         if (N_vec[i] != 0) {
           if (n_vec[i] == 0) {
-            ops_partials.edge1_.partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
+            partials<0>(ops_partials)[i] -= N_vec[i] / (1.0 - theta_dbl);
           } else if (n_vec[i] == N_vec[i]) {
-            ops_partials.edge1_.partials_[i] += n_vec[i] / theta_dbl;
+            partials<0>(ops_partials)[i] += n_vec[i] / theta_dbl;
           } else {
-            ops_partials.edge1_.partials_[i]
+            partials<0>(ops_partials)[i]
                 += n_vec[i] / theta_dbl
                    - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
           }

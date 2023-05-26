@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/von_mises_lccdf.hpp>
+#include <stan/math/prim/fun/floor.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

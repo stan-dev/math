@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -63,8 +63,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   check_bounded(function, "Random variable", value_of(y_ref), 0, 1);
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
@@ -107,9 +106,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     ccdf_log += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, beta_dbl - 1)
-                                          * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                          / betafunc_dbl;
+      partials<0>(ops_partials)[n] -= pow(1 - y_dbl, beta_dbl - 1)
+                                      * pow(y_dbl, alpha_dbl - 1) * inv_Pn
+                                      / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;
@@ -120,10 +119,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
                         digamma_beta[n], digamma_sum[n], betafunc_dbl);
     }
     if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n] -= g1 * inv_Pn;
+      partials<1>(ops_partials)[n] -= g1 * inv_Pn;
     }
     if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n] -= g2 * inv_Pn;
+      partials<2>(ops_partials)[n] -= g2 * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);

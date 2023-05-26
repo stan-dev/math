@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -66,10 +66,10 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
 
-  operands_and_partials<decltype(y_col)> ops_partials(y_col);
+  auto ops_partials = make_partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   return ops_partials.build(logp);
 }
