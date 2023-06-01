@@ -105,6 +105,8 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_chain_func_stack_.push_back(
+        [&]() { this->chain(); });
   }
 
   /**
@@ -126,6 +128,8 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   vari_value(S x, bool stacked) noexcept : val_(x) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_chain_func_stack_.push_back(
+          [&]() { this->chain(); });
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
@@ -243,16 +247,16 @@ class vari_view_eigen {
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) const {
-    using inner_type = decltype(
-        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    using inner_type = decltype(derived().val_.block(start_row, start_col,
+                                                     num_rows, num_cols));
     return vari_view<inner_type>(
         derived().val_.block(start_row, start_col, num_rows, num_cols),
         derived().adj_.block(start_row, start_col, num_rows, num_cols));
   }
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
-    using inner_type = decltype(
-        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    using inner_type = decltype(derived().val_.block(start_row, start_col,
+                                                     num_rows, num_cols));
     return vari_view<inner_type>(
         derived().val_.block(start_row, start_col, num_rows, num_cols),
         derived().adj_.block(start_row, start_col, num_rows, num_cols));
@@ -700,6 +704,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
                  : x.cols()) {
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_chain_func_stack_.push_back(
+        [&]() { this->chain(); });
   }
 
   /**
@@ -731,6 +737,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     adj_.setZero();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_chain_func_stack_.push_back(
+          [&]() { this->chain(); });
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
@@ -851,6 +859,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_chain_func_stack_.push_back(
+        [&]() { this->chain(); });
   }
   /**
    * Construct an sparse Eigen variable implementation from a value. The
@@ -875,6 +885,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_chain_func_stack_.push_back(
+          [&]() { this->chain(); });
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }

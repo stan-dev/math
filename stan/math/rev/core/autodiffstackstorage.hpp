@@ -104,6 +104,7 @@ struct AutodiffStackSingleton {
     std::vector<ChainableT *> var_stack_;
     std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
+    std::vector<std::function<void()>> var_chain_func_stack_;
     stack_alloc memalloc_;
 
     // nested positions

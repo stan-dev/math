@@ -208,6 +208,8 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
       : chainable_alloc(),
         vari_cl_base<T>(std::forward<S>(x), constant(0, x.rows(), x.cols())) {
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_chain_func_stack_.push_back(
+        [&]() { this->chain(); });
   }
 
   /**
@@ -228,6 +230,8 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
   explicit vari_value(const S& x)
       : chainable_alloc(), vari_cl_base<T>(x, constant(0, x.rows(), x.cols())) {
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_chain_func_stack_.push_back(
+        [&]() { this->chain(); });
   }
 
   /**
@@ -254,6 +258,8 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
         vari_cl_base<T>(std::forward<S>(x), constant(0, x.rows(), x.cols())) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_chain_func_stack_.push_back(
+          [&]() { this->chain(); });
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }

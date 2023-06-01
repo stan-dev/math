@@ -29,6 +29,8 @@ static inline void recover_memory_nested() {
 
   ChainableStack::instance_->var_stack_.resize(
       ChainableStack::instance_->nested_var_stack_sizes_.back());
+  ChainableStack::instance_->var_chain_func_stack_.resize(
+      ChainableStack::instance_->nested_var_stack_sizes_.back());
   ChainableStack::instance_->nested_var_stack_sizes_.pop_back();
 
   ChainableStack::instance_->var_nochain_stack_.resize(
