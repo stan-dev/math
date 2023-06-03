@@ -105,23 +105,18 @@ auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
 
   // Only need the infinite sum for partials wrt a & b
   if (calc_a || calc_b) {
-    ArrayInt a_signs = sign(value_of_rec(a_array));
-    ArrayTa a_array_abs = a_signs * a_array;
-    ArrayTa log_phammer_a = log(a_array_abs);
-    ArrayTa digamma_a_term = inv(a_array_abs);
+    ArrayTa a_array_inf = a_array;
+    ArrayTa log_phammer_a = log(a_array);
+    ArrayTa digamma_a_term = inv(a_array);
 
-    ArrayInt b_signs = sign(value_of_rec(b_array));
-    ArrayTb b_array_abs = b_signs * b_array;
-    ArrayTb log_phammer_b = log(b_array_abs);
-    ArrayTb digamma_b_term = inv(b_array_abs);
+    ArrayTb b_array_inf = b_array;
+    ArrayTb log_phammer_b = log(b_array);
+    ArrayTb digamma_b_term = inv(b_array);
 
-    int base_sign = 1;
-    int z_sign = sign(value_of_rec(z));
-    bool neg_z = z_sign == -1;
-    Tz log_z = log(z_sign * z);
-    Tz log_z_pow_kp1 = log_z;
+    Tz log_z = log(z);
+    Tz log_z_pow_k = log_z;
 
-    double log_factorial_kp1 = 0;
+    double log_factorial_k = 0;
 
     ArrayTa da = ArrayTa::Constant(a.size(), NEGATIVE_INFTY);
     ArrayTb db = ArrayTb::Constant(b.size(), NEGATIVE_INFTY);
@@ -131,49 +126,47 @@ auto grad_pFq_impl(const Ta& a, const Tb& b, const Tz& z,
     ArrayInt da_signs = ArrayInt::Ones(a.size());
     ArrayInt db_signs = ArrayInt::Ones(b.size());
 
-    int k = 0;
+    int k = 1;
     int min_iter = 10;
     scalar_t inner_diff = 1;
 
     while (((inner_diff > log(precision)) && (k < max_iter))) {
-      scalar_t base_sum = (sum(log_phammer_a) - sum(log_phammer_b))
-                          + (log_z_pow_kp1 - log_factorial_kp1);
+      scalar_t base_sum = (sum(log_phammer_a) + log_z_pow_k)
+                          - (sum(log_phammer_b) + log_factorial_k);
 
-      if (neg_z && (k % 2) == 0) {
-        base_sign *= -1;
-      }
-
+      std::cout << "k: " << k  << std::endl;
+      std::cout << "  base: " << base_sum << std::endl;
       if (calc_a) {
         da_k = log(digamma_a_term) + base_sum;
+        std::cout << "  da_k: " << da_k.matrix().transpose() << std::endl;
         for (int i = 0; i < a.size(); i++) {
           std::forward_as_tuple(da(i), da_signs(i))
-            = log_sum_exp_signed(da(i), da_signs(i), da_k(i), base_sign);
+            = log_sum_exp_signed(da(i), da_signs(i), da_k(i), 1);
         }
         inner_diff = math::min(1.0, da_k.maxCoeff());
       }
 
       if (calc_b) {
         db_k = log(digamma_b_term) + base_sum;
+        std::cout << "  db_k: " << db_k.matrix().transpose() << std::endl;
         for (int i = 0; i < b.size(); i++) {
           std::forward_as_tuple(db(i), db_signs(i))
-            = log_sum_exp_signed(db(i), db_signs(i), db_k(i), -base_sign);
+            = log_sum_exp_signed(db(i), db_signs(i), db_k(i), -1);
         }
         inner_diff = math::min(1.0, db_k.maxCoeff());
       }
 
-      if (neg_z && (k % 2) == 0) {
-        base_sign = 1;
-      }
+      a_array_inf += 1;
+      b_array_inf += 1;
 
-      a_array_abs += 1;
-      b_array_abs += 1;
-      log_phammer_a += log(a_array_abs);
-      log_phammer_b += log(b_array_abs);
-      log_z_pow_kp1 += log_z;
-      digamma_a_term += inv(a_array_abs);
-      digamma_b_term += inv(b_array_abs);
+      log_phammer_a += log(a_array_inf);
+      log_phammer_b += log(b_array_inf);
+      log_z_pow_k += log_z;
+      digamma_a_term += inv(a_array_inf);
+      digamma_b_term += inv(b_array_inf);
+
       k += 1;
-      log_factorial_kp1 += log1p(k);
+      log_factorial_k += log(k);
     }
 
     if (k == max_iter) {

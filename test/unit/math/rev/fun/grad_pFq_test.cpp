@@ -18,19 +18,19 @@ TEST(RevMath, grad_2F2) {
   b_v << 6;
   b_d << 6;
 
-  var z_v = -0.8;
-  double z_d = -0.8;
+  var z_v = 0.8;
+  double z_d = 0.8;
 
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
 
-  //{-0.0806954955039242,-0.1764607652432594,0.05190634077045642,0.3591540012317554}
+  //{3.722350517598229,6.143511078966846,-2.727452549149507,28.31871368550805}
 
-  EXPECT_FLOAT_EQ(-0.0806954955039242, std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(-0.1764607652432594, std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(3.722350517598229, std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(6.143511078966846, std::get<0>(grad_tuple)[1]);
 
-  EXPECT_FLOAT_EQ(0.05190634077045642, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(-2.727452549149507, std::get<1>(grad_tuple)[0]);
 
-  EXPECT_FLOAT_EQ(0.3591540012317554, std::get<2>(grad_tuple));
+  EXPECT_FLOAT_EQ(28.31871368550805, std::get<2>(grad_tuple));
 
 /*
   auto grad_tuple = grad_pFq(a_v, b_v, z_v);
