@@ -27,10 +27,10 @@ namespace internal {
  * <p>For details of the algorithm, see
  * https://justindomke.wordpress.com/2009/01/17/hessian-vector-products/
  *
- * <p>Step size for dimension `i` is set automatically using
- * `stan::math::finite_diff_stepsize(v.normalized()(i))`.
+ * <p>Step size is set automatically using
+ * `sqrt(epsilon) * (1 + max(x)) * max(grad(f(x)))`.
  *
- * 2 gradient calls are needed for the algorithm.
+ * 3 gradient calls are needed for the algorithm.
  *
  * @tparam F Type of function
  * @param[in] f Function
@@ -43,14 +43,15 @@ template <typename F>
 void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
                                            const Eigen::VectorXd& v, double& fx,
                                            Eigen::VectorXd& hvp) {
-  fx = f(x);
+  Eigen::VectorXd grad;
+  gradient(f, x, fx, grad);
+
+  double epsilon = std::sqrt(EPSILON) * (1 + x.maxCoeff()) * grad.maxCoeff();
 
   double v_norm = v.norm();
   auto v_normalized = v / v_norm;
 
   int d = x.size();
-
-  double epsilon = std::cbrt(EPSILON);
 
   auto v_eps = epsilon * v_normalized;
 
