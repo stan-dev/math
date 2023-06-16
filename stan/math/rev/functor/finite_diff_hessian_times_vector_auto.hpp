@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_REV_FUNCTOR_HESSIAN_TIMES_VECTOR_HPP
 #define STAN_MATH_REV_FUNCTOR_HESSIAN_TIMES_VECTOR_HPP
 
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/functor.hpp>
-#include <stan/math/prim/fun/finite_diff_stepsize.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -48,12 +49,10 @@ void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
   auto v_normalized = v / v_norm;
 
   int d = x.size();
-  Eigen::VectorXd epsilons(d);
-  for (size_t i = 0; i < d; ++i) {
-    epsilons[i] = finite_diff_stepsize(v_normalized(i));
-  }
 
-  auto v_eps = (epsilons.array() * v_normalized.array()).matrix();
+  double epsilon = std::cbrt(EPSILON);
+
+  auto v_eps = epsilon * v_normalized;
 
   double tmp;
   Eigen::VectorXd grad_forward(d);
@@ -63,9 +62,7 @@ void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
   gradient(f, x - v_eps, tmp, grad_backward);
 
   hvp.resize(d);
-  hvp = (v_norm * (grad_forward - grad_backward).array()
-         / (2 * epsilons).array())
-            .matrix();
+  hvp = v_norm * (grad_forward - grad_backward) / (2 * epsilon);
 }
 }  // namespace internal
 }  // namespace math

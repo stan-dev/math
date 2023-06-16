@@ -17,7 +17,7 @@ struct fun1 {
   }
 };
 
-TEST(MixFunctor, hessianTimesVector) {
+TEST(RevFunctor, finiteDiffHessianTimesVector) {
   using stan::math::internal::finite_diff_hessian_times_vector_auto;
 
   fun1 f;
