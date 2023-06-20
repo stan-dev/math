@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -126,8 +126,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     check_finite(function, "Matrix of independent variables", ytheta);
   }
 
-  operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      x_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
@@ -138,25 +137,25 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 theta_derivative.sum() * x_val);
       } else {
-        ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+        partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
     }
     if (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge1_.partials_
+        edge<0>(ops_partials).partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * theta_derivative.sum());
       } else {
-        ops_partials.edge1_.partials_
+        edge<0>(ops_partials).partials_
             = (beta_val_vec * theta_derivative.transpose()).transpose();
       }
     }
     if (!is_constant_all<T_alpha>::value) {
-      ops_partials.edge2_.partials_ = theta_derivative;
+      partials<1>(ops_partials) = theta_derivative;
     }
   }
   return ops_partials.build(logp);

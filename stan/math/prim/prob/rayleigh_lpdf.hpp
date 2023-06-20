@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -46,7 +46,7 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_sigma_ref> ops_partials(y_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_scale>::value>(inv(sigma_val));
@@ -67,10 +67,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
                                          && !is_constant_all<T_scale>::value)>(
         inv_sigma * y_over_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = inv(y_val) - scaled_diff;
+      partials<0>(ops_partials) = inv(y_val) - scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = y_over_sigma * scaled_diff - 2.0 * inv_sigma;
     }
   }

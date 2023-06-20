@@ -272,6 +272,7 @@
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/pseudo_eigenvalues.hpp>
 #include <stan/math/prim/fun/pseudo_eigenvectors.hpp>
+#include <stan/math/prim/fun/qr.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
 #include <stan/math/prim/fun/qr_R.hpp>
 #include <stan/math/prim/fun/qr_thin_Q.hpp>

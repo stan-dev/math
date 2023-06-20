@@ -14,6 +14,8 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 #include <tuple>
 
@@ -22,39 +24,35 @@ namespace math {
 
 namespace internal {
 
-/** \ingroup type_trait
- * \callergraph
- */
-template <>
-class ops_partials_edge<double, var> {
- public:
-  double partial_;
-  broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var& op) noexcept
-      : partial_(0), partials_(partial_), operand_(op) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  var operand_;
-  static constexpr int size() noexcept { return 1; }
-  inline auto operand() const noexcept { return this->operand_; }
-  inline auto partial() const noexcept { return this->partial_; }
-};
-
+// OpenCL
 template <typename T1, typename T2,
           require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr>
 inline void update_adjoints(var_value<T1>& x, const T2& y, const vari& z) {
   x.adj() += z.adj() * y;
 }
 
+template <typename T1, typename T2,
+          require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr>
+inline void update_adjoints(var_value<T1>& x, const T2& y, const var& z) {
+  x.adj() += z.adj() * y;
+}
+
+// Scalars
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr,
           require_arithmetic_t<Scalar2>* = nullptr>
 inline void update_adjoints(Scalar1 x, Scalar2 y, const vari& z) noexcept {
   x.adj() += z.adj() * y;
 }
+
+template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
+          require_not_var_matrix_t<Scalar1>* = nullptr,
+          require_arithmetic_t<Scalar2>* = nullptr>
+inline void update_adjoints(Scalar1 x, Scalar2 y, const var& z) noexcept {
+  x.adj() += z.adj() * y;
+}
+
+// Matrix
 template <typename Matrix1, typename Matrix2,
           require_rev_matrix_t<Matrix1>* = nullptr,
           require_st_arithmetic<Matrix2>* = nullptr>
@@ -62,10 +60,22 @@ inline void update_adjoints(Matrix1& x, const Matrix2& y, const vari& z) {
   x.adj().array() += z.adj() * y.array();
 }
 
+template <typename Matrix1, typename Matrix2,
+          require_rev_matrix_t<Matrix1>* = nullptr,
+          require_st_arithmetic<Matrix2>* = nullptr>
+inline void update_adjoints(Matrix1& x, const Matrix2& y, const var& z) {
+  x.adj().array() += z.adj() * y.array();
+}
+
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
 inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
                                       const vari& /* z */) noexcept {}
 
+template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
+inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
+                                      const var& /* z */) noexcept {}
+
+// Vectors
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
           require_st_arithmetic<Vec2>* = nullptr>
@@ -75,6 +85,175 @@ inline void update_adjoints(StdVec1& x, const Vec2& y, const vari& z) {
   }
 }
 
+template <typename StdVec1, typename Vec2,
+          require_std_vector_t<StdVec1>* = nullptr,
+          require_st_arithmetic<Vec2>* = nullptr>
+inline void update_adjoints(StdVec1& x, const Vec2& y, const var& z) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    update_adjoints(x[i], y[i], z);
+  }
+}
+
+/** \ingroup type_trait
+ * \callergraph
+ */
+template <>
+class ops_partials_edge<double, var> {
+ public:
+  double partial_{0};
+  broadcast_array<double> partials_{partial_};
+  explicit ops_partials_edge(const var& op) noexcept : operands_(op) {}
+  explicit ops_partials_edge(const ops_partials_edge<double, var>& other)
+      : partial_(other.partial_),
+        partials_(partial_),
+        operands_(other.operands_) {}
+  inline auto& partial() { return partial_; }
+  inline auto& operand() noexcept { return operands_; }
+
+  var operands_;
+  static constexpr int size() { return 1; }
+};
+// Vectorized Univariate
+// Vectorized Univariate
+template <>
+class ops_partials_edge<double, std::vector<var>> {
+ public:
+  using Op = std::vector<var, arena_allocator<var>>;
+  using partials_t = arena_t<Eigen::VectorXd>;
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  explicit ops_partials_edge(const std::vector<var>& op)
+      : partials_(partials_t::Zero(op.size())),
+        partials_vec_(partials_),
+        operands_(op.begin(), op.end()) {}
+
+  Op operands_;
+
+  inline int size() const noexcept { return this->operands_.size(); }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto& partial() noexcept { return this->partials_; }
+};
+
+template <typename Op>
+class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
+ public:
+  using partials_t = arena_t<promote_scalar_t<double, Op>>;
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  explicit ops_partials_edge(const Op& ops)
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
+        partials_vec_(partials_),
+        operands_(to_arena(ops)) {}
+
+  explicit ops_partials_edge(
+      const ops_partials_edge<double, Op, require_eigen_st<is_var, Op>>& other)
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  inline auto& partial() noexcept { return partials_; }
+  inline auto& operand() noexcept { return operands_; }
+  arena_t<Op> operands_;
+  inline auto size() const noexcept { return this->operands_.size(); }
+};
+
+template <typename Op>
+class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
+ public:
+  using partials_t = arena_t<Op>;
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  explicit ops_partials_edge(const var_value<Op>& ops)
+      : partials_(
+          plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
+        partials_vec_(partials_),
+        operands_(ops) {}
+
+  explicit ops_partials_edge(
+      const ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>>&
+          other)
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
+
+  inline auto& partial() noexcept { return partials_; }
+  inline auto& operand() noexcept { return operands_; }
+
+  var_value<Op> operands_;
+  static constexpr int size() { return 0; }
+};
+
+// SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
+// (i.e. nested containers)
+template <int R, int C>
+class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
+ public:
+  using inner_op = arena_t<Eigen::Matrix<var, R, C>>;
+  using Op = std::vector<inner_op, arena_allocator<inner_op>>;
+  using partial_t = arena_t<Eigen::Matrix<double, R, C>>;
+  std::vector<partial_t, arena_allocator<partial_t>> partials_vec_;
+  explicit ops_partials_edge(const std::vector<Eigen::Matrix<var, R, C>>& ops)
+      : partials_vec_(ops.size()), operands_(ops.begin(), ops.end()) {
+    for (size_t i = 0; i < ops.size(); ++i) {
+      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+    }
+  }
+
+  Op operands_;
+
+  inline int size() const noexcept {
+    if (unlikely(this->operands_.size() == 0)) {
+      return 0;
+    }
+    return this->operands_.size() * this->operands_[0].size();
+  }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto& partial() noexcept { return this->partials_vec_; }
+};
+
+template <>
+class ops_partials_edge<double, std::vector<std::vector<var>>> {
+ public:
+  using inner_vec = std::vector<var, arena_allocator<var>>;
+  using Op = std::vector<inner_vec, arena_allocator<inner_vec>>;
+  using partial_t = std::vector<double, arena_allocator<double>>;
+  std::vector<partial_t, arena_allocator<partial_t>> partials_vec_;
+  explicit ops_partials_edge(const std::vector<std::vector<var>>& ops)
+      : partials_vec_(stan::math::size(ops)), operands_(ops.size()) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      operands_[i] = inner_vec(ops[i].begin(), ops[i].end());
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
+    }
+  }
+
+  Op operands_;
+  inline int size() const noexcept {
+    return this->operands_.size() * this->operands_[0].size();
+  }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+};
+
+template <typename Op>
+class ops_partials_edge<double, std::vector<var_value<Op>>,
+                        require_eigen_t<Op>> {
+ public:
+  using partials_t = std::vector<arena_t<Op>, arena_allocator<arena_t<Op>>>;
+  partials_t partials_vec_;
+  explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
+      : partials_vec_(ops.size()), operands_(ops.begin(), ops.end()) {
+    for (size_t i = 0; i < ops.size(); ++i) {
+      partials_vec_[i]
+          = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
+    }
+  }
+
+  std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
+
+  static constexpr int size() noexcept { return 0; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+};
 }  // namespace internal
 
 /** \ingroup type_trait
@@ -220,161 +399,6 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, var> {
   }
 };
 
-namespace internal {
-// Vectorized Univariate
-template <>
-class ops_partials_edge<double, std::vector<var>> {
- public:
-  using Op = std::vector<var, arena_allocator<var>>;
-  using partials_t = arena_t<Eigen::VectorXd>;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const std::vector<var>& op)
-      : partials_(partials_t::Zero(op.size())),
-        partials_vec_(partials_),
-        operands_(op.begin(), op.end()) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  Op operands_;
-
-  inline int size() const noexcept { return this->operands_.size(); }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto& partial() noexcept { return this->partials_; }
-};
-
-template <typename Op>
-class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
- public:
-  using partials_t = arena_t<promote_scalar_t<double, Op>>;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_),
-        operands_(ops) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  arena_t<Op> operands_;
-  inline int size() const noexcept { return this->operands_.size(); }
-  inline auto operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return this->partials_; }
-};
-
-template <typename Op>
-class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
- public:
-  using partials_t = arena_t<Op>;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const var_value<Op>& ops)
-      : partials_(
-          plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
-        partials_vec_(partials_),
-        operands_(ops) {}
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  var_value<Op> operands_;
-
-  static constexpr void dump_operands(vari** varis) {}
-  static constexpr void dump_partials(double* partials) {}
-  static constexpr int size() noexcept { return 0; }
-  inline auto operand() { return this->operands_; }
-  inline auto partial() { return this->partials_; }
-};
-
-// SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
-// (i.e. nested containers)
-template <int R, int C>
-class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
- public:
-  using inner_op = arena_t<Eigen::Matrix<var, R, C>>;
-  using Op = std::vector<inner_op, arena_allocator<inner_op>>;
-  using partial_t = arena_t<Eigen::Matrix<double, R, C>>;
-  std::vector<partial_t, arena_allocator<partial_t>> partials_vec_;
-  explicit ops_partials_edge(const std::vector<Eigen::Matrix<var, R, C>>& ops)
-      : partials_vec_(ops.size()), operands_(ops.begin(), ops.end()) {
-    for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
-    }
-  }
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  Op operands_;
-
-  inline int size() const noexcept {
-    if (unlikely(this->operands_.size() == 0)) {
-      return 0;
-    }
-    return this->operands_.size() * this->operands_[0].size();
-  }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto& partial() noexcept { return this->partials_vec_; }
-};
-
-template <>
-class ops_partials_edge<double, std::vector<std::vector<var>>> {
- public:
-  using inner_vec = std::vector<var, arena_allocator<var>>;
-  using Op = std::vector<inner_vec, arena_allocator<inner_vec>>;
-  using partial_t = std::vector<double, arena_allocator<double>>;
-  std::vector<partial_t, arena_allocator<partial_t>> partials_vec_;
-  explicit ops_partials_edge(const std::vector<std::vector<var>>& ops)
-      : partials_vec_(stan::math::size(ops)), operands_(ops.size()) {
-    for (size_t i = 0; i < stan::math::size(ops); ++i) {
-      operands_[i] = inner_vec(ops[i].begin(), ops[i].end());
-      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
-    }
-  }
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  Op operands_;
-  inline int size() const noexcept {
-    return this->operands_.size() * this->operands_[0].size();
-  }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
-};
-
-template <typename Op>
-class ops_partials_edge<double, std::vector<var_value<Op>>,
-                        require_eigen_t<Op>> {
- public:
-  using partials_t = std::vector<arena_t<Op>, arena_allocator<arena_t<Op>>>;
-  partials_t partials_vec_;
-  explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
-      : partials_vec_(ops.size()), operands_(ops.begin(), ops.end()) {
-    for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i]
-          = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
-    }
-  }
-
- private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
-
-  static constexpr int size() noexcept { return 0; }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
-};
-}  // namespace internal
 }  // namespace math
 }  // namespace stan
 #endif
