@@ -172,9 +172,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       }
     } else {
       logp += N_instances
-              * (multiply_log(forward_as<scalar_type_t<decltype(phi_val)>>(phi_val),
-                              forward_as<scalar_type_t<decltype(phi_val)>>(phi_val))
-                 - lgamma(forward_as<scalar_type_t<decltype(phi_val)>>(phi_val)));
+              * (multiply_log(forward_as<decltype(phi_val)>(phi_val),
+                              forward_as<decltype(phi_val)>(phi_val))
+                 - lgamma(forward_as<decltype(phi_val)>(phi_val)));
     }
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);
