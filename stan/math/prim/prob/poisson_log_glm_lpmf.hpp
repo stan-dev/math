@@ -7,11 +7,12 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -88,11 +89,11 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_val = value_of_rec(y_ref);
+  const auto& y_val = value_of(y_ref);
   const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
-  const auto& alpha_val = value_of_rec(alpha_ref);
-  const auto& beta_val = value_of_rec(beta_ref);
+      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& alpha_val = value_of(alpha_ref);
+  const auto& beta_val = value_of(beta_ref);
 
   const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
@@ -111,8 +112,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative
       = as_array_or_scalar(y_val_vec) - exp(theta.array());
-  double theta_derivative_sum = sum(theta_derivative);
-  if (!std::isfinite(theta_derivative_sum)) {
+  T_partials_return theta_derivative_sum = sum(theta_derivative);
+  if (is_inf(theta_derivative_sum)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", theta);

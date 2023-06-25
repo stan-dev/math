@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -52,7 +53,6 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::exp;
-  using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return = partials_return_t<T_y, T_x, T_beta, T_cuts>;
   typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
@@ -117,7 +117,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
 
   T_location location = x_val * beta_val_vec;
-  if (!isfinite(sum(location))) {
+  if (is_inf(sum(location))) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Matrix of independent variables", x);
   }
