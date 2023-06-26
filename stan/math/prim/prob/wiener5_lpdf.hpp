@@ -7,19 +7,19 @@ namespace stan {
 namespace math {
 namespace internal {
 /**
- * Calculate the 'lg1' term for a wiener5 density or gradient
+ * Calculate the 'error_term' term for a wiener5 density or gradient
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
- * @return 'lg1' term
+ * @return 'error_term' term
  */
-inline double wiener5_lg1(double y, double a, double vn, double wn,
-                          double sv) noexcept {
-  const double w = 1.0 - wn;
-  const double v = -vn;
+inline double wiener5_compute_error_term(double y, double a, double v_value,
+                                         double w_value, double sv) noexcept {
+  const double w = 1.0 - w_value;
+  const double v = -v_value;
   const double sv_sqr = square(sv);
   const double one_plus_svsqr_y = 1 + sv_sqr * y;
   const double two_avw = 2 * a * v * w;
@@ -34,23 +34,23 @@ inline double wiener5_lg1(double y, double a, double vn, double wn,
 }
 
 /**
- * Calculate the 'ans0' term for a wiener5 density or gradient
+ * Calculate the 'density_part_one' term for a wiener5 density or gradient
  *
  * @tparam GradA Whether the calculation is for gradient w.r.t. 'a'
  * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
- * @return 'ans0' term
+ * @return 'density_part_one' term
  */
 template <bool GradA, bool GradT>
-inline double wiener5_ans0(double y, double a, double vn, double wn,
-                           double sv) noexcept {
-  const double w = 1.0 - wn;
-  const double v = -vn;
+inline double wiener5_density_part_one(double y, double a, double v_value,
+                                       double w_value, double sv) noexcept {
+  const double w = 1.0 - w_value;
+  const double v = -v_value;
   const double sv_sqr = square(sv);
   const double one_plus_svsqr_y = 1 + sv_sqr * y;
   const double two_avw = 2 * a * v * w;
@@ -77,145 +77,150 @@ inline double wiener5_ans0(double y, double a, double vn, double wn,
 }
 
 /**
- * Calculate the 'kss' term for a wiener5 density or gradient
+ * Calculate the 'n_terms_small_t' term for a wiener5 density or gradient
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param wn The drift rate
- * @param es The error tolerance
- * @return 'kss' term
+ * @param w_value The relative starting point
+ * @param error The error tolerance
+ * @return 'n_terms_small_t' term
  */
 template <bool Density, bool GradW>
-inline double wiener5_kss(double y, double a, double wn, double es) noexcept {
-  const double two_es = 2.0 * es;
+inline double wiener5_n_terms_small_t(double y, double a, double w_value,
+                                      double error) noexcept {
+  const double two_error = 2.0 * error;
   const double y_asq = y / square(a);
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
-  const double w = 1.0 - wn;
+  const double w = 1.0 - w_value;
 
-  const double K1_mult = Density ? 2 : 3;
-  const double K1 = (sqrt(K1_mult * y_asq) + w) / 2.0;
+  const double n_1_factor = Density ? 2 : 3;
+  const double n_1 = (sqrt(n_1_factor * y_asq) + w) / 2.0;
   double u_eps;
   if (Density || GradW) {
-    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_es);
+    u_eps = fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_error);
   } else {
     u_eps = fmin(-3.0,
-                 (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_es));
+                 (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_error));
   }
   const double arg_mult = (Density || GradW) ? 1 : 3;
   const double arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
 
-  const double K2 = (arg > 0) ? GradW ? 0.5 * (sqrt(arg) + w) : 0.5 * (sqrt(arg) - w) : K1;
-  return ceil(fmax(K1, K2));
+  const double n_2
+      = (arg > 0) ? GradW ? 0.5 * (sqrt(arg) + w) : 0.5 * (sqrt(arg) - w) : n_1;
+  return ceil(fmax(n_1, n_2));
 }
 
 /**
- * Calculate the 'kss' term for a wiener5 density or gradient
+ * Calculate the 'n_terms_small_t' term for a wiener5 density or gradient
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param wn The drift rate
- * @param es The error tolerance
- * @return 'kll' term
+ * @param w_value The relative starting point
+ * @param error The error tolerance
+ * @return 'n_terms_large_t' term
  */
 template <bool Density, bool GradW>
-inline double wiener5_kll(double y, double a, double wn, double es) noexcept {
-  const double two_es = 2.0 * es;
+inline double wiener5_n_terms_largel_t(double y, double a, double w_value,
+                                       double error) noexcept {
+  const double two_error = 2.0 * error;
   const double y_asq = y / square(a);
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
-  const double w = 1.0 - wn;
+  const double w = 1.0 - w_value;
 
-  const double K1_mult = GradW ? 2 : 3;
-  static constexpr double PI_SQUARED = pi() * pi();  // pi*pi
+  const double n_1_factor = GradW ? 2 : 3;
+  static constexpr double PI_SQUARED = pi() * pi();
 
-  double K1;
-  double K2;
+  double n_1;
+  double n_2;
   if (Density) {
-    K1 = 1.0 / (pi() * sqrt(y_asq));
-    const double two_log_piy = -2.0 * (LOG_PI + log_y_asq + es);
-    K2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PI_SQUARED * y_asq)) : 0.0;
+    n_1 = 1.0 / (pi() * sqrt(y_asq));
+    const double two_log_piy = -2.0 * (LOG_PI + log_y_asq + error);
+    n_2 = (two_log_piy >= 0) ? sqrt(two_log_piy / (PI_SQUARED * y_asq)) : 0.0;
   } else {
-    K1 = sqrt(K1_mult / y_asq) / pi();
+    n_1 = sqrt(n_1_factor / y_asq) / pi();
     const double u_eps_arg
-		= GradW ? log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_es
-                : log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + es;
+        = GradW
+              ? log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_error
+              : log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + error;
     const double u_eps = fmin(-1, u_eps_arg);
-    const double arg_mult = GradW ? 1 : (2.0 / PI_SQUARED / y_asq); 
+    const double arg_mult = GradW ? 1 : (2.0 / PI_SQUARED / y_asq);
     const double arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-    K2 = GradW ? (arg > 0) ? sqrt(arg / y_asq) / pi() : K1
-               : (arg > 0) ? sqrt(arg) : K1;
+    n_2 = GradW ? (arg > 0) ? sqrt(arg / y_asq) / pi() : n_1
+                : (arg > 0) ? sqrt(arg) : n_1;
   }
 
-  return ceil(fmax(K1, K2));
+  return ceil(fmax(n_1, n_2));
 }
 
 /**
- * Calculate the 'erg' term and its sign for a wiener5 density or gradient
+ * Calculate the 'result' term and its sign for a wiener5 density or gradient
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param wn The drift rate
- * @param kss The kss term
- * @param kll The kll term
- * @return 'erg' sum and its sign
+ * @param w_value The relative starting point
+ * @param n_terms_small_t The n_terms_small_t term
+ * @param n_terms_large_t The n_terms_large_t term
+ * @return 'result' sum and its sign
  */
 template <bool Density, bool GradW>
-inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
-                                               size_t kss,
-                                               size_t kll) noexcept {
+inline std::tuple<double, int> wiener5_log_sum_exp(
+    double y, double a, double w_value, size_t n_terms_small_t,
+    size_t n_terms_large_t) noexcept {
   const double y_asq = y / square(a);
-  const double w = 1.0 - wn;
-  const bool small_kss = Density ? (2 * kss <= kll) : (2 * kss < kll);
-  const double scaling = small_kss ? inv(2.0 * y_asq) : y_asq / 2.0;
+  const double w = 1.0 - w_value;
+  const bool small_n_terms_small_t
+      = Density ? (2 * n_terms_small_t <= n_terms_large_t)
+                : (2 * n_terms_small_t < n_terms_large_t);
+  const double scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
 
   double prev_val = NEGATIVE_INFTY;
   double current_val = NEGATIVE_INFTY;
   int prev_sign = 1;
   int current_sign = 1;
 
-  if (small_kss) {
+  if (small_n_terms_small_t) {
     const double mult = Density ? 1 : 3;
     const double offset = GradW ? y_asq : 0;
     const double sqrt_offset = sqrt(offset);
-    for (size_t k = kss; k >= 1; k--) {
-	  const double wp2k = w + 2.0 * k;
+    for (size_t k = n_terms_small_t; k >= 1; k--) {
+      const double wp2k = w + 2.0 * k;
       const double wm2k = w - 2.0 * k;
-      int wp2k_sign = (wp2k > sqrt_offset) ? : 1 - 1;
-	  int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
-      double wp2k_quant = GradW ? log( fabs((square(wp2k) - offset))) 
-                          - square(wp2k) * scaling :
-						  mult * log(wp2k_sign * wp2k)
-                          - square(wp2k) * scaling; 
-      double wm2k_quant = GradW ? log( fabs((square(wm2k) - offset)) )
-                          - square(wm2k) * scaling :
-						  mult * log(wm2k_sign * wm2k) 
-                          - square(wm2k) * scaling; 
+      int wp2k_sign = (wp2k > sqrt_offset) ?: 1 - 1;
+      int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
+      double wp2k_quant
+          = GradW ? log(fabs((square(wp2k) - offset))) - square(wp2k) * scaling
+                  : mult * log(wp2k_sign * wp2k) - square(wp2k) * scaling;
+      double wm2k_quant
+          = GradW ? log(fabs((square(wm2k) - offset))) - square(wm2k) * scaling
+                  : mult * log(wm2k_sign * wm2k) - square(wm2k) * scaling;
       double k_term;
       int k_sign;
       std::forward_as_tuple(k_term, k_sign) = log_sum_exp_signed(
-          wm2k_quant, -1 * wm2k_sign, wp2k_quant, wp2k_sign); 
+          wm2k_quant, -1 * wm2k_sign, wp2k_quant, wp2k_sign);
       std::forward_as_tuple(current_val, current_sign)
           = log_sum_exp_signed(k_term, k_sign, prev_val, prev_sign);
       prev_val = current_val;
       prev_sign = current_sign;
     }
-	double new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling : 
-						mult*log(w)-square(w)*scaling; 
-    int new_val_sign = GradW ? ( w > sqrt_offset ? 1 : -1) 
-								: (new_val > 0 ? 1 : -1);
-	int factor_sign = GradW ? 1 : -1; 
-	std::forward_as_tuple(current_val, current_sign) 
-         = log_sum_exp_signed(new_val, factor_sign * new_val_sign, current_val, factor_sign * current_sign); 
+    double new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling
+                           : mult * log(w) - square(w) * scaling;
+    int new_val_sign
+        = GradW ? (w > sqrt_offset ? 1 : -1) : (new_val > 0 ? 1 : -1);
+    int factor_sign = GradW ? 1 : -1;
+    std::forward_as_tuple(current_val, current_sign)
+        = log_sum_exp_signed(new_val, factor_sign * new_val_sign, current_val,
+                             factor_sign * current_sign);
   } else {
     double mult = 3;
     if (Density) {
@@ -223,14 +228,14 @@ inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
     } else if (GradW) {
       mult = 2;
     }
-    for (size_t k = kll; k >= 1; k--) {
+    for (size_t k = n_terms_large_t; k >= 1; k--) {
       const double pi_k = k * pi();
       const double check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
       int check_sign = sign(check);
-      double kll_quant
+      double n_terms_large_t_quant
           = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
-      std::forward_as_tuple(current_val, current_sign)
-          = log_sum_exp_signed(prev_val, prev_sign, kll_quant, check_sign);
+      std::forward_as_tuple(current_val, current_sign) = log_sum_exp_signed(
+          prev_val, prev_sign, n_terms_large_t_quant, check_sign);
       prev_val = current_val;
       prev_sign = current_sign;
     }
@@ -241,220 +246,251 @@ inline std::tuple<double, int> wiener5_ergsign(double y, double a, double wn,
 /**
  * Calculate the wiener5 density
  *
- * @tparam NaturalScale Whether to return the density on natural or log-scale
+ * @tparam NaturalScale Whether to return the density on natural (true) or
+ * log-scale (false)
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return density
  */
 template <bool NaturalScale = false>
-inline double wiener5_density(double y, double a, double vn, double wn,
-                              double sv, double err = log(1e-12)) noexcept {
-  const double lg1 = wiener5_lg1(y, a, vn, wn, sv);
-  const double es = (err - lg1);
-  const double kss = wiener5_kss<true, false>(y, a, wn, es);
-  const double kll = wiener5_kll<true, false>(y, a, wn, es);
+inline double wiener5_density(double y, double a, double v_value,
+                              double w_value, double sv,
+                              double err = log(1e-12)) noexcept {
+  const double error_term
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
+  const double error = (err - error_term);
+  const double n_terms_small_t
+      = wiener5_n_terms_small_t<true, false>(y, a, w_value, error);
+  const double n_terms_large_t
+      = wiener5_n_terms_largel_t<true, false>(y, a, w_value, error);
 
-  double erg;
+  double result;
   int newsign;
-  double ld;
-  std::forward_as_tuple(erg, newsign)
-      = wiener5_ergsign<true, false>(y, a, wn, kss, kll);
-  if (2 * kss <= kll) {
-    ld = lg1 - 0.5 * LOG_TWO - LOG_SQRT_PI - 1.5 * (log(y) - 2 * log(a)) + erg;
+  double log_density;
+  std::forward_as_tuple(result, newsign) = wiener5_log_sum_exp<true, false>(
+      y, a, w_value, n_terms_small_t, n_terms_large_t);
+  if (2 * n_terms_small_t <= n_terms_large_t) {
+    log_density = error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
+                  - 1.5 * (log(y) - 2 * log(a)) + result;
   } else {
-    ld = lg1 + erg + LOG_PI;
+    log_density = error_term + result + LOG_PI;
   }
 
-  return NaturalScale ? exp(ld) : ld;
+  return NaturalScale ? exp(log_density) : log_density;
 }
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 't'
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
- *                  the natural or log-scale density
+ *                  the natural (true) or log-scale (false) density
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. t
  */
 template <bool WrtLog = false>
-inline double grad_wiener5_t(double y, double a, double vn, double wn,
+inline double grad_wiener5_t(double y, double a, double v_value, double w_value,
                              double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
-  const double lg1 = wiener5_lg1(y, a, vn, wn, sv);
-  const double ans0 = wiener5_ans0<false, true>(y, a, vn, wn, sv);
-  const double es = (err - lg1) + two_log_a;
+  const double error_term
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
+  const double density_part_one
+      = wiener5_density_part_one<false, true>(y, a, v_value, w_value, sv);
+  const double error = (err - error_term) + two_log_a;
 
-  const double kss = wiener5_kss<false, false>(y, a, wn, es);
-  const double kll = wiener5_kll<false, false>(y, a, wn, es); 
-  double erg;
+  const double n_terms_small_t
+      = wiener5_n_terms_small_t<false, false>(y, a, w_value, error);
+  const double n_terms_large_t
+      = wiener5_n_terms_largel_t<false, false>(y, a, w_value, error);
+  double result;
   int newsign;
-  std::forward_as_tuple(erg, newsign)
-      = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+  std::forward_as_tuple(result, newsign) = wiener5_log_sum_exp<false, false>(
+      y, a, w_value, n_terms_small_t, n_terms_large_t);
 
-  const double ld_err = log(max(fabs(ans0 - 1.5 / y), fabs(ans0)));
-  const double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
+  const double error_log_density
+      = log(max(fabs(density_part_one - 1.5 / y), fabs(density_part_one)));
+  const double log_density
+      = wiener5_density(y, a, v_value, w_value, sv, err - error_log_density);
   double ans;
-  if (2 * kss < kll) {
-    ans = ans0 - 1.5 / y
+  if (2 * n_terms_small_t < n_terms_large_t) {
+    ans = density_part_one - 1.5 / y
           + newsign
-                * exp(lg1 - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
-                      - 3.5 * log_y_asq + erg - ld);
+                * exp(error_term - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
+                      - 3.5 * log_y_asq + result - log_density);
   } else {
-    ans = ans0
-          - newsign * exp(lg1 - two_log_a + 3.0 * LOG_PI - LOG_TWO + erg - ld);
+    ans = density_part_one
+          - newsign
+                * exp(error_term - two_log_a + 3.0 * LOG_PI - LOG_TWO + result
+                      - log_density);
   }
-  return WrtLog ? ans * exp(ld) : ans;
+  return WrtLog ? ans * exp(log_density) : ans;
 }
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'a'
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
- *                  the natural or log-scale density
+ *                  the natural (true) or log-scale (false) density
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. a
  */
 template <bool WrtLog = false>
-inline double grad_wiener5_a(double y, double a, double vn, double wn,
+inline double grad_wiener5_a(double y, double a, double v_value, double w_value,
                              double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
-  const double lg1 = wiener5_lg1(y, a, vn, wn, sv);
-  const double ans0 = wiener5_ans0<true, false>(y, a, vn, wn, sv);
-  const double es = err - lg1 + 3*log(a) - log(y) - LOG_TWO; 
+  const double error_term
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
+  const double density_part_one
+      = wiener5_density_part_one<true, false>(y, a, v_value, w_value, sv);
+  const double error = err - error_term + 3 * log(a) - log(y) - LOG_TWO;
 
-  const double kss = wiener5_kss<false, false>(y, a, wn, es);
-  const double kll = wiener5_kll<false, false>(y, a, wn, es);
-  double erg;
+  const double n_terms_small_t
+      = wiener5_n_terms_small_t<false, false>(y, a, w_value, error);
+  const double n_terms_large_t
+      = wiener5_n_terms_largel_t<false, false>(y, a, w_value, error);
+  double result;
   int newsign;
-  std::forward_as_tuple(erg, newsign)
-      = wiener5_ergsign<false, false>(y, a, wn, kss, kll);
+  std::forward_as_tuple(result, newsign) = wiener5_log_sum_exp<false, false>(
+      y, a, w_value, n_terms_small_t, n_terms_large_t);
 
-  const double ld_err = log(max(fabs(ans0 + 1.0 / a), fabs(ans0 - 2.0 / a)));
-  const double ld = wiener5_density(y, a, vn, wn, sv, err - ld_err);
+  const double error_log_density = log(
+      max(fabs(density_part_one + 1.0 / a), fabs(density_part_one - 2.0 / a)));
+  const double log_density
+      = wiener5_density(y, a, v_value, w_value, sv, err - error_log_density);
   double ans;
-  if (2 * kss < kll) {
-    ans = ans0 + 1.0 / a
+  if (2 * n_terms_small_t < n_terms_large_t) {
+    ans = density_part_one + 1.0 / a
           - newsign
                 * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
-                      + 2.0 * two_log_a + lg1 + erg - ld);
+                      + 2.0 * two_log_a + error_term + result - log_density);
   } else {
-    ans = ans0 - 2.0 / a
-          + newsign * exp(log(y) + lg1 - 3 * (log(a) - LOG_PI) + erg - ld);
+    ans = density_part_one - 2.0 / a
+          + newsign
+                * exp(log(y) + error_term - 3 * (log(a) - LOG_PI) + result
+                      - log_density);
   }
-  return WrtLog ? ans * exp(ld) : ans;
+  return WrtLog ? ans * exp(log_density) : ans;
 }
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'v'
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
- *                  the natural or log-scale density
+ *                  the natural (true) or log-scale (false) density
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. v
  */
 template <bool WrtLog = false>
-inline double grad_wiener5_v(double y, double a, double vn, double wn,
+inline double grad_wiener5_v(double y, double a, double v_value, double w_value,
                              double sv, double err = log(1e-12)) noexcept {
-  double ans = (a * (1 - wn) - vn * y);
+  double ans = (a * (1 - w_value) - v_value * y);
   if (sv != 0) {
     ans /= 1 + square(sv) * y;
   }
-  return WrtLog ? ans * wiener5_density<true>(y, a, vn, wn, sv, err) : ans;
+  return WrtLog ? ans * wiener5_density<true>(y, a, v_value, w_value, sv, err)
+                : ans;
 }
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'w'
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
- *                  the natural or log-scale density
+ *                  the natural (true) or log-scale (false) density
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. w
  */
 template <bool WrtLog = false>
-inline double grad_wiener5_w(double y, double a, double vn, double wn,
+inline double grad_wiener5_w(double y, double a, double v_value, double w_value,
                              double sv, double err = log(1e-12)) noexcept {
   const double two_log_a = 2 * log(a);
   const double log_y_asq = log(y) - two_log_a;
-  const double lg1 = wiener5_lg1(y, a, vn, wn, sv);
-  const double ans0 = wiener5_ans0<false, false>(y, a, vn, wn, sv);
-  const double es = (err - lg1);
+  const double error_term
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
+  const double density_part_one
+      = wiener5_density_part_one<false, false>(y, a, v_value, w_value, sv);
+  const double error = (err - error_term);
 
-  const double kss = wiener5_kss<false, true>(y, a, wn, es);
-  const double kll = wiener5_kll<false, true>(y, a, wn, es);  
-  double erg;
+  const double n_terms_small_t
+      = wiener5_n_terms_small_t<false, true>(y, a, w_value, error);
+  const double n_terms_large_t
+      = wiener5_n_terms_largel_t<false, true>(y, a, w_value, error);
+  double result;
   int newsign;
-  std::forward_as_tuple(erg, newsign)
-      = wiener5_ergsign<false, true>(y, a, wn, kss, kll);
+  std::forward_as_tuple(result, newsign) = wiener5_log_sum_exp<false, true>(
+      y, a, w_value, n_terms_small_t, n_terms_large_t);
 
-  const double ld = wiener5_density(y, a, vn, wn, sv, err - log(fabs(ans0)));
+  const double log_density = wiener5_density(y, a, v_value, w_value, sv,
+                                             err - log(fabs(density_part_one)));
   double ans;
-  if (2 * kss < kll) {
-    ans = -(ans0
+  if (2 * n_terms_small_t < n_terms_large_t) {
+    ans = -(density_part_one
             - newsign
-                  * exp(erg - (ld - lg1) - 2.5 * log_y_asq - 0.5 * LOG_TWO
-                        - 0.5 * LOG_PI));
+                  * exp(result - (log_density - error_term) - 2.5 * log_y_asq
+                        - 0.5 * LOG_TWO - 0.5 * LOG_PI));
   } else {
-    ans = -(ans0 + newsign * exp(erg - (ld - lg1) + 2 * LOG_PI));
+    ans = -(density_part_one
+            + newsign * exp(result - (log_density - error_term) + 2 * LOG_PI));
   }
-  return WrtLog ? ans * exp(ld) : ans;
+  return WrtLog ? ans * exp(log_density) : ans;
 }
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'sv'
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
- *                  the natural or log-scale density
+ *                  the natural (true) or log-scale (false) density
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
- * @param vn The relative starting point
- * @param wn The drift rate
+ * @param v_value The drift rate
+ * @param w_value The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param err The log error tolerance
  * @return Gradient w.r.t. sv
  */
 template <bool WrtLog = false>
-inline double grad_wiener5_sv(double y, double a, double vn, double wn,
-                              double sv, double err = log(1e-12)) noexcept {
+inline double grad_wiener5_sv(double y, double a, double v_value,
+                              double w_value, double sv,
+                              double err = log(1e-12)) noexcept {
   const double one_plus_svsqr_y = 1 + square(sv) * y;
-  const double w = 1.0 - wn;
-  const double v = -vn;
+  const double w = 1.0 - w_value;
+  const double v = -v_value;
   const double t1 = -y / one_plus_svsqr_y;
   const double t2 = (square(a * w) + 2 * a * v * w * y + square(v * y))
-              / square(one_plus_svsqr_y);
+                    / square(one_plus_svsqr_y);
   const double ans = sv * (t1 + t2);
-  return WrtLog ? ans * wiener5_density<true>(y, a, vn, wn, sv, err) : ans;
+  return WrtLog ? ans * wiener5_density<true>(y, a, v_value, w_value, sv, err)
+                : ans;
 }
 
 /**
@@ -489,20 +525,20 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
  * @param args_tuple Tuple of arguments to pass to functor
  * @param log_result Whether the function result is already on the log-scale
  */
-template <size_t ErrIndex, bool GradW7 = false, size_t NestedIndex = 0, typename F,
-          typename ArgsTupleT>
+template <size_t ErrIndex, bool GradW7 = false, size_t NestedIndex = 0,
+          typename F, typename ArgsTupleT>
 double estimate_with_err_check(const F& functor, double err,
                                ArgsTupleT&& args_tuple,
                                bool log_result = true) {
   double result = math::apply([&](auto&&... args) { return functor(args...); },
                               args_tuple);
-  double lfabs_result = log_result ? log(fabs(result)) : fabs(result);
-  if (lfabs_result < err) {
-    lfabs_result = std::isinf(lfabs_result) ? 0 : lfabs_result;
+  double log_fabs_result = log_result ? log(fabs(result)) : fabs(result);
+  if (log_fabs_result < err) {
+    log_fabs_result = std::isinf(log_fabs_result) ? 0 : log_fabs_result;
     ArgsTupleT err_args_tuple = args_tuple;
-	const double new_error = GradW7 ? err + lfabs_result + LOG_TWO : err + lfabs_result;
-    assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple),
-                            new_error);
+    const double new_error
+        = GradW7 ? err + log_fabs_result + LOG_TWO : err + log_fabs_result;
+    assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple), new_error);
     result = math::apply([&](auto&&... args) { return functor(args...); },
                          err_args_tuple);
   }
@@ -527,7 +563,7 @@ double estimate_with_err_check(const F& functor, double err,
  * @param w The relative starting point
  * @param v The drift rate
  * @param sv The inter-trial variability of the drift rate
- * @param prec Level of precision in estimation
+ * @param precision_derivatives Level of precision in estimation
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
  */
@@ -535,7 +571,7 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
-    const T_sv& sv, const double& prec) {
+    const T_sv& sv, const double& precision_derivatives) {
   using T_y_ref = ref_type_t<T_y>;
   using T_a_ref = ref_type_t<T_a>;
   using T_t0_ref = ref_type_t<T_t0>;
@@ -602,11 +638,11 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     }
   }
 
-  const double lerror_bound_dens = log(1e-6);  // precision for density
-  const double lerror_bound = log(prec);       // precision for derivatives
-  const double labstol_wiener5 = log(1e-12);   // eps_abs(wiener5)
-  double dens = 0.0;
-  double ld = 0.0;
+  const double log_error_density = log(1e-6);
+  const double log_error_derivative = log(precision_derivatives);
+  const double log_error_absolute = log(1e-12);
+  double density = 0.0;
+  double log_density = 0.0;
   operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref>
       ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
 
@@ -625,14 +661,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const double sv_val = sv_vec.val(i);
 
     const auto params = std::make_tuple(y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, labstol_wiener5);
+                                        sv_val, log_error_absolute);
 
-    dens = internal::estimate_with_err_check<5>(
+    density = internal::estimate_with_err_check<5>(
         [&](auto&&... args) { return internal::wiener5_density(args...); },
-        lerror_bound_dens - LOG_TWO, params, false);
-    ld += dens;
+        log_error_density - LOG_TWO, params, false);
+    log_density += density;
 
-    const double new_est_err = dens + lerror_bound - LOG_FOUR;
+    const double new_est_err = density + log_error_derivative - LOG_FOUR;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
@@ -666,7 +702,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
           y_val - t0_val, a_val, v_val, w_val, sv_val);
     }
   }  // end for loop
-  return ops_partials.build(ld);
+  return ops_partials.build(log_density);
 }  // end wiener5_lpdf
 }  // namespace math
 }  // namespace stan
