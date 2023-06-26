@@ -28,9 +28,10 @@ namespace internal {
  * https://justindomke.wordpress.com/2009/01/17/hessian-vector-products/
  *
  * <p>Step size is set automatically using
- * `sqrt(epsilon) * (1 + max(x)) * max(grad(f(x)))`.
+ * `sqrt(epsilon) * (1 + ||x||) / ||v||`,
+ * as suggested in https://doi.org/10.1016/j.cam.2008.12.024
  *
- * 3 gradient calls are needed for the algorithm.
+ * 2 gradient calls are needed for the algorithm.
  *
  * @tparam F Type of function
  * @param[in] f Function
@@ -43,17 +44,15 @@ template <typename F>
 void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
                                            const Eigen::VectorXd& v, double& fx,
                                            Eigen::VectorXd& hvp) {
-  Eigen::VectorXd grad;
-  gradient(f, x, fx, grad);
-
-  double epsilon = std::sqrt(EPSILON) * (1 + x.maxCoeff()) * grad.maxCoeff();
+  fx = f(x);
 
   double v_norm = v.norm();
-  auto v_normalized = v / v_norm;
+
+  double epsilon = std::sqrt(EPSILON) * (1 + x.norm()) / v_norm;
 
   int d = x.size();
 
-  auto v_eps = epsilon * v_normalized;
+  auto v_eps = epsilon * v;
 
   double tmp;
   Eigen::VectorXd grad_forward(d);
@@ -63,7 +62,7 @@ void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
   gradient(f, x - v_eps, tmp, grad_backward);
 
   hvp.resize(d);
-  hvp = v_norm * (grad_forward - grad_backward) / (2 * epsilon);
+  hvp = (grad_forward - grad_backward) / (2 * epsilon);
 }
 }  // namespace internal
 }  // namespace math
