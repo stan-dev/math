@@ -104,8 +104,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of(y_ref);
-  const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val = value_of(beta_ref);
 
