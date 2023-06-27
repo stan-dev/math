@@ -31,7 +31,6 @@ struct fun2 {
     return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1) + 5.0 * x(0) * x(1)
            + sin(x(0));
   }
-
 };
 
 TEST(RevFunctor, finiteDiffHessianTimesVector) {
@@ -56,8 +55,8 @@ TEST(RevFunctor, finiteDiffHessianTimesVector) {
   EXPECT_FLOAT_EQ(2 * x(0) * v(0) + 6 * v(1), Hv(1));
 }
 
-TEST(RevFunctor, finiteDiffHessianTimesVector2){
-using stan::math::internal::finite_diff_hessian_times_vector_auto;
+TEST(RevFunctor, finiteDiffHessianTimesVector2) {
+  using stan::math::internal::finite_diff_hessian_times_vector_auto;
 
   fun2 f;
 
@@ -74,7 +73,8 @@ using stan::math::internal::finite_diff_hessian_times_vector_auto;
   EXPECT_FLOAT_EQ(13 * 13 * -4 + 3 * -4 * -4 + 5 * 13 * -4 + std::sin(13), fx);
 
   EXPECT_EQ(2, Hv.size());
-  EXPECT_FLOAT_EQ((2 * x(1) - std::sin(x(0))) * v(0) + (2 * x(0) + 5) * v(1), Hv(0));
+  EXPECT_FLOAT_EQ((2 * x(1) - std::sin(x(0))) * v(0) + (2 * x(0) + 5) * v(1),
+                  Hv(0));
   EXPECT_FLOAT_EQ((2 * x(0) + 5) * v(0) + 6 * v(1), Hv(1));
 }
 
