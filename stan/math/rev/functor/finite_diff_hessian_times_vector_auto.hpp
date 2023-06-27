@@ -46,14 +46,11 @@ void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
                                            Eigen::VectorXd& hvp) {
   fx = f(x);
 
-  double v_norm = v.norm();
+  double epsilon = std::sqrt(EPSILON) * (1 + x.norm()) / v.norm();
 
-  double epsilon = std::sqrt(EPSILON) * (1 + x.norm()) / v_norm;
+  Eigen::VectorXd v_eps = epsilon * v;
 
   int d = x.size();
-
-  auto v_eps = epsilon * v;
-
   double tmp;
   Eigen::VectorXd grad_forward(d);
   gradient(f, x + v_eps, tmp, grad_forward);
