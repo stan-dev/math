@@ -105,7 +105,7 @@ endif
 O ?= 3
 
 ## setup includes
-INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -isystem $(BOOST) $(INC_SUNDIALS)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS)/src/sundials
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
@@ -252,12 +252,12 @@ endif
 ifdef TBB_LIB
 
 ifdef TBB_INC
-CXXFLAGS_TBB ?= -I $(TBB_INC)
+CXXFLAGS_TBB ?= -isystem $(TBB_INC)
 else
-CXXFLAGS_TBB ?= -I $(TBB)/include
+CXXFLAGS_TBB ?= -isystem $(TBB)/include
 endif
 
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags -ltbb
+LDFLAGS_TBB ?= -Wno-unused-command-line-argument -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags -ltbb
 LDLIBS_TBB ?= $(LDFLAGS_TBB)
 
 else
@@ -274,8 +274,8 @@ ifeq ($(OS),Linux)
   TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
 endif
 
-CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
+CXXFLAGS_TBB ?= -isystem $(TBB)/include
+LDFLAGS_TBB ?= -Wno-unused-command-line-argument -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
 LDLIBS_TBB ?= $(LDFLAGS_TBB)
 
 endif
