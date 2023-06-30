@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_vt_complex<EigMat>* = nullptr>
-inline Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, 1, -1> eigenvalues(
+inline Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, 1> eigenvalues(
     const EigMat& m) {
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
@@ -39,7 +39,7 @@ inline Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, 1, -1> eigenvalues(
 template <typename EigCplxMat,
           require_eigen_matrix_dynamic_t<EigCplxMat>* = nullptr,
           require_vt_complex<EigCplxMat>* = nullptr>
-inline Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, 1, -1>
+inline Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>
 eigenvalues(const EigCplxMat& m) {
   using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
   const PlainMat& m_eval = m;
