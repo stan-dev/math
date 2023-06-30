@@ -84,8 +84,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val
       = to_ref_if<!is_constant<T_x>::value>(value_of(beta_ref));
@@ -170,7 +169,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     }
     if (!is_constant_all<T_beta>::value) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
-        = x_val.transpose().template cast<T_partials_return>()
+          = x_val.transpose().template cast<T_partials_return>()
             * neg_softmax_lin.matrix();
       if (T_x_rows == 1) {
         beta_derivative *= N_instances;
