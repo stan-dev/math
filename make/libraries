@@ -122,7 +122,7 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 # Set c compiler used for the TBB
 ifeq (clang,$(CXX_TYPE))
   TBB_CC ?= $(subst clang++,clang,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy  -Wno-unused-but-set-variable -Wno-unused-command-line-argument $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy  -Wno-unused-but-set-variable $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
