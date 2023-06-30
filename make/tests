@@ -20,7 +20,7 @@ benchmarks/%$(EXE) : benchmarks/%.cpp $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(
 ##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
-test/% : CXXFLAGS += $(CXXFLAGS_GTEST) -ftemplate-backtrace-limit=0
+test/% : CXXFLAGS += $(CXXFLAGS_GTEST)
 test/% : CPPFLAGS += $(CPPFLAGS_GTEST)
 test/% : INC += $(INC_GTEST)
 
