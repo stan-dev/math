@@ -88,7 +88,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   T_sigma_ref sigma_ref = sigma;
-  const auto& sigma_val = value_of_rec(sigma_ref);
+  const auto& sigma_val = value_of(sigma_ref);
   const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
   check_positive_finite(function, "Scale vector", sigma_val_vec);
 
