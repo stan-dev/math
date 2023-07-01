@@ -21,8 +21,12 @@ TEST(mathMixScalFun, neg_binomial_2_log_glm_lpmf) {
   double phi = 1.5;
 
   stan::test::expect_ad(f(y[0], x), alpha, beta, phi);
+  stan::test::expect_ad(f(y[0], x), alpha[0], beta, phi);
   stan::test::expect_ad(f(y[0], x_rowvec), alpha, beta, phi);
+  stan::test::expect_ad(f(y[0], x_rowvec), alpha[0], beta, phi);
 
   stan::test::expect_ad(f2(y, phi), x, alpha, beta);
+  stan::test::expect_ad(f2(y, phi), x, alpha[0], beta);
   stan::test::expect_ad(f2(y, phi), x_rowvec, alpha, beta);
+  stan::test::expect_ad(f2(y, phi), x_rowvec, alpha[0], beta);
 }

@@ -21,7 +21,18 @@ TEST(mathMixScalFun, normal_id_glm_lpdf) {
   Eigen::VectorXd sigma = Eigen::VectorXd::Random(2);
 
   stan::test::expect_ad(f(y, x), alpha, beta, sigma);
+  stan::test::expect_ad(f(y, x), alpha[0], beta, sigma);
+  stan::test::expect_ad(f(y, x), alpha, beta, sigma[0]);
+
   stan::test::expect_ad(f(y, x_rowvec), alpha, beta, sigma);
+  stan::test::expect_ad(f(y, x_rowvec), alpha[0], beta, sigma);
+  stan::test::expect_ad(f(y, x_rowvec), alpha, beta, sigma[0]);
+
   stan::test::expect_ad(f2(beta, sigma), y, x, alpha);
+  stan::test::expect_ad(f2(beta, sigma[0]), y, x, alpha);
+  stan::test::expect_ad(f2(beta, sigma), y, x, alpha[0]);
+
   stan::test::expect_ad(f2(beta, sigma), y, x_rowvec, alpha);
+  stan::test::expect_ad(f2(beta, sigma[0]), y, x_rowvec, alpha);
+  stan::test::expect_ad(f2(beta, sigma), y, x_rowvec, alpha[0]);
 }

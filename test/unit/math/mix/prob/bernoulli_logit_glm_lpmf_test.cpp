@@ -15,7 +15,11 @@ TEST(mathMixScalFun, bernoulli_logit_glm_lpmf) {
   Eigen::VectorXd beta = Eigen::VectorXd::Random(2);
 
   stan::test::expect_ad(f(y[0]), x, alpha, beta);
+  stan::test::expect_ad(f(y[0]), x, alpha[0], beta);
   stan::test::expect_ad(f(y[1]), x_rowvec, alpha, beta);
+  stan::test::expect_ad(f(y[1]), x_rowvec, alpha[0], beta);
   stan::test::expect_ad(f(y), x, alpha, beta);
+  stan::test::expect_ad(f(y), x, alpha[0], beta);
   stan::test::expect_ad(f(y), x_rowvec, alpha, beta);
+  stan::test::expect_ad(f(y), x_rowvec, alpha[0], beta);
 }
