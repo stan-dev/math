@@ -58,8 +58,9 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using T_cuts_partials = partials_return_t<T_cuts>;
   using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_y, T_x, T_beta, T_cuts>;
-  typedef typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
-                            Eigen::Matrix<T_xbeta_partials, Eigen::Dynamic, 1>>
+  typedef typename std::conditional_t<
+      T_x_rows == 1, T_xbeta_partials,
+      Eigen::Matrix<T_xbeta_partials, Eigen::Dynamic, 1>>
       T_location;
   using T_y_ref = ref_type_t<T_y>;
   using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
@@ -97,8 +98,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   T_x_ref x_ref = x;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
   const auto& beta_val = value_of(beta_ref);
 
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
@@ -127,9 +127,9 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
 
   Array<T_partials_return, Dynamic, 1> cut2
-    = as_array_or_scalar(location) - cuts_y2;
+      = as_array_or_scalar(location) - cuts_y2;
   Array<T_partials_return, Dynamic, 1> cut1
-    = as_array_or_scalar(location) - cuts_y1;
+      = as_array_or_scalar(location) - cuts_y1;
 
   // Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1
