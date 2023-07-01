@@ -57,10 +57,14 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using std::exp;
   using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
+  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
   using T_ytheta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
+  using T_xbeta_tmp =
+      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
+                                  Array<T_xbeta_partials, Dynamic, 1>>;
   using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
   using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
@@ -105,7 +109,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
   if (T_x_rows == 1) {
     T_ytheta_tmp ytheta_tmp
-        = forward_as<T_ytheta_tmp>((x_val * beta_val_vec)(0, 0));
+        = forward_as<T_xbeta_tmp>((x_val * beta_val_vec)(0, 0));
     ytheta = signs * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
   } else {
     ytheta = (x_val * beta_val_vec).array();
@@ -135,7 +139,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
                       (ytheta < -cutoff)
-                          .select(signs * 1.0,
+                          .select(signs * T_partials_return(1.0),
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {

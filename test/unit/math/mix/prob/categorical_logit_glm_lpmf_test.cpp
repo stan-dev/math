@@ -8,10 +8,14 @@ TEST(mathMixScalFun, categorical_logit_glm_lpmf) {
     };
   };
 
+  std::vector<int> y{0, 1};
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
+  Eigen::RowVectorXd x_rowvec = x.row(0);
   Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
   Eigen::VectorXd beta = Eigen::VectorXd::Random(2);
 
-  stan::test::expect_ad(f(0), x, alpha, beta);
-  stan::test::expect_ad(f(1), x, alpha, beta);
+  stan::test::expect_ad(f(y[0]), x, alpha, beta);
+  stan::test::expect_ad(f(y[1]), x_rowvec, alpha, beta);
+  stan::test::expect_ad(f(y), x, alpha, beta);
+  stan::test::expect_ad(f(y), x_rowvec, alpha, beta);
 }
