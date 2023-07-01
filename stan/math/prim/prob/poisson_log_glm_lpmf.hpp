@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -58,6 +58,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
+  using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
   using T_theta_tmp =
@@ -90,7 +91,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of(y_ref);
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val = value_of(beta_ref);
 
@@ -112,7 +114,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   Matrix<T_partials_return, Dynamic, 1> theta_derivative
       = as_array_or_scalar(y_val_vec) - exp(theta.array());
   T_partials_return theta_derivative_sum = sum(theta_derivative);
-  if (is_inf(theta_derivative_sum)) {
+  if (!isfinite(theta_derivative_sum)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", theta);
@@ -120,11 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   T_partials_return logp(0);
   if (include_summand<propto>::value) {
-    if (is_vector<T_y>::value) {
-      logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
-    } else {
-      logp -= lgamma(forward_as<double>(y_val) + 1);
-    }
+    logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
   }
 
   logp += sum(as_array_or_scalar(y_val_vec) * theta.array()

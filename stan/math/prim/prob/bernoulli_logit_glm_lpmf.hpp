@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -55,6 +55,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using Eigen::log1p;
   using Eigen::Matrix;
   using std::exp;
+  using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
   using T_ytheta_tmp =
@@ -88,7 +89,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of(y_ref);
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val = value_of(beta_ref);
 
@@ -120,7 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
           .select(-exp_m_ytheta,
                   (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
 
-  if (is_inf(logp)) {
+  if (!isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", ytheta);
@@ -133,7 +135,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
                       (ytheta < -cutoff)
-                          .select(signs,
+                          .select(signs * 1.0,
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {

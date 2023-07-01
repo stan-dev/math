@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -60,6 +60,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
+  using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return
       = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
@@ -187,7 +188,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     y_scaled_sq_sum = sum(y_scaled * y_scaled);
   }
 
-  if (is_inf(y_scaled_sq_sum)) {
+  if (!isfinite(y_scaled_sq_sum)) {
     check_finite(function, "Vector of dependent variables", y_val_vec);
     check_finite(function, "Weight vector", beta_val_vec);
     check_finite(function, "Intercept", alpha_val_vec);

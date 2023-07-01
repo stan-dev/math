@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -51,6 +51,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
+  using std::isfinite;
   using std::log;
   using T_y_ref = ref_type_t<T_y>;
   using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
@@ -118,7 +119,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // when we have newer Eigen  T_partials_return logp =
   // lin(Eigen::all,y-1).sum() + log(inv_sum_exp_lin).sum() - lin_max.sum();
 
-  if (is_inf(logp)) {
+  if (!isfinite(logp)) {
     check_finite(function, "Weight vector", beta_ref);
     check_finite(function, "Intercept", alpha_ref);
     check_finite(function, "Matrix of independent variables", x_ref);
