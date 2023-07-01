@@ -1,10 +1,9 @@
-#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_1D_HPP
-#define STAN_MATH_REV_FUNCTOR_INTEGRATE_1D_HPP
+#ifndef STAN_MATH_FWD_FUNCTOR_INTEGRATE_1D_HPP
+#define STAN_MATH_FWD_FUNCTOR_INTEGRATE_1D_HPP
 
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/core/precomputed_gradients.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/is_nan.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -37,26 +36,30 @@ namespace math {
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename... Args,
-          require_any_st_var<T_a, T_b, Args...> * = nullptr>
+          require_any_st_fvar<T_a, T_b, Args...> * = nullptr>
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
   static constexpr const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
-  double a_val = value_of(a);
-  double b_val = value_of(b);
+  using FvarT = return_type_t<T_a, T_b, Args...>;
+  using FvarInnerT = partials_return_t<T_a, T_b, Args...>;
+
+  auto a_val = value_of(a);
+  auto b_val = value_of(b);
+
+  FvarT res(0.0);
 
   if (unlikely(a_val == b_val)) {
     if (is_inf(a_val)) {
       throw_domain_error(function, "Integration endpoints are both", a_val, "",
                          "");
     }
-    return var(0.0);
   } else {
     auto args_val_tuple = std::make_tuple(value_of(args)...);
 
-    double integral = integrate(
+    res.val_ = integrate(
         [&](const auto &x, const auto &xc) {
           return math::apply(
               [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
@@ -64,96 +67,29 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
         },
         a_val, b_val, relative_tolerance);
 
-    constexpr size_t num_vars_ab = is_var<T_a>::value + is_var<T_b>::value;
-    size_t num_vars_args = count_vars(args...);
-    vari **varis = ChainableStack::instance_->memalloc_.alloc_array<vari *>(
-        num_vars_ab + num_vars_args);
-    double *partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-        num_vars_ab + num_vars_args);
-    // We move this pointer up based on whether we a or b is a var type.
-    double *partials_ptr = partials;
+    res.d_ = integrate(
+        [&](const auto &x, const auto &xc) {
+          FvarT res = f(x, xc, msgs, args...);
+          return res.d();
+        }, a_val, b_val, relative_tolerance);
 
-    save_varis(varis, a, b, args...);
-
-    for (size_t i = 0; i < num_vars_ab + num_vars_args; ++i) {
-      partials[i] = 0.0;
-    }
-
-    if (is_var<T_a>::value && !is_inf(a)) {
-      *partials_ptr = math::apply(
+    if (is_fvar<T_a>::value && !is_inf(a)) {
+      res.d_ += math::apply(
           [&f, a_val, msgs](auto &&... val_args) {
             return -f(a_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
-      partials_ptr++;
     }
 
-    if (!is_inf(b) && is_var<T_b>::value) {
-      *partials_ptr = math::apply(
+    if (!is_inf(b) && is_fvar<T_b>::value) {
+      res.d_ += math::apply(
           [&f, b_val, msgs](auto &&... val_args) {
             return f(b_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
-      partials_ptr++;
     }
-
-    {
-      nested_rev_autodiff argument_nest;
-      // The arguments copy is used multiple times in the following nests, so
-      // do it once in a separate nest for efficiency
-      auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
-
-      // Save the varis so it's easy to efficiently access the nth adjoint
-      std::vector<vari *> local_varis(num_vars_args);
-      math::apply(
-          [&](const auto &... args) {
-            save_varis(local_varis.data(), args...);
-          },
-          args_tuple_local_copy);
-
-      for (size_t n = 0; n < num_vars_args; ++n) {
-        // This computes the integral of the gradient of f with respect to the
-        // nth parameter in args using a nested nested reverse mode autodiff
-        *partials_ptr = integrate(
-            [&](const auto &x, const auto &xc) {
-              argument_nest.set_zero_all_adjoints();
-
-              nested_rev_autodiff gradient_nest;
-              var fx = math::apply(
-                  [&f, &x, &xc, msgs](auto &&... local_args) {
-                    return f(x, xc, msgs, local_args...);
-                  },
-                  args_tuple_local_copy);
-              fx.grad();
-
-              double gradient = local_varis[n]->adj();
-
-              // Gradients that evaluate to NaN are set to zero if the function
-              // itself evaluates to zero. If the function is not zero and the
-              // gradient evaluates to NaN, a std::domain_error is thrown
-              if (is_nan(gradient)) {
-                if (fx.val() == 0) {
-                  gradient = 0;
-                } else {
-                  throw_domain_error("gradient_of_f", "The gradient of f", n,
-                                     "is nan for parameter ", "");
-                }
-              }
-              return gradient;
-            },
-            a_val, b_val, relative_tolerance);
-        partials_ptr++;
-      }
-    }
-
-    return make_callback_var(
-        integral,
-        [total_vars = num_vars_ab + num_vars_args, varis, partials](auto &vi) {
-          for (size_t i = 0; i < total_vars; ++i) {
-            varis[i]->adj_ += partials[i] * vi.adj();
-          }
-        });
   }
+  return res;
 }
 
 /**
@@ -212,7 +148,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta,
-          typename = require_any_var_t<T_a, T_b, T_theta>>
+          typename = require_any_fvar_t<T_a, T_b, T_theta>>
 inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
