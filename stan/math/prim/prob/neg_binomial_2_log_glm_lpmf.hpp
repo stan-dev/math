@@ -72,6 +72,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using Eigen::log1p;
   using Eigen::Matrix;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
+  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return
       = partials_return_t<T_y, T_x, T_alpha, T_beta, T_precision>;
   using T_precision_val = typename std::conditional_t<
@@ -85,6 +86,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using T_theta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
+  using T_xbeta_tmp =
+      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
+                                  Array<T_xbeta_partials, Dynamic, 1>>;
   using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
   using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
@@ -139,7 +143,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if (T_x_rows == 1) {
     T_theta_tmp theta_tmp
-        = forward_as<T_theta_tmp>((x_val * beta_val_vec)(0, 0));
+        = forward_as<T_xbeta_tmp>((x_val * beta_val_vec)(0, 0));
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = (x_val * beta_val_vec).array();

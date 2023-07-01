@@ -15,10 +15,13 @@ TEST(mathMixScalFun, normal_id_glm_lpdf) {
 
   Eigen::VectorXd y = Eigen::VectorXd::Random(2);
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
+  Eigen::RowVectorXd x_rowvec = x.row(0);
   Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
   Eigen::VectorXd beta = Eigen::VectorXd::Random(2);
   Eigen::VectorXd sigma = Eigen::VectorXd::Random(2);
 
   stan::test::expect_ad(f(y, x), alpha, beta, sigma);
+  stan::test::expect_ad(f(y, x_rowvec), alpha, beta, sigma);
   stan::test::expect_ad(f2(beta, sigma), y, x, alpha);
+  stan::test::expect_ad(f2(beta, sigma), y, x_rowvec, alpha);
 }
