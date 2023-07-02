@@ -15,6 +15,14 @@
 
 namespace stan {
 namespace math {
+
+namespace internal {
+  template <typename F, typename... ArgsT>
+  using integrate_return_t = decltype(std::declval<F>()(std::declval<double>(),
+                                      std::declval<double>(),
+                                      std::declval<std::ostream*>(),
+                                      std::declval<ArgsT>()...));
+}
 /**
  * Integrate a single variable function f from a to b to within a specified
  * relative tolerance. This function assumes a is less than b.
@@ -171,7 +179,8 @@ inline double integrate(const F& f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F, typename... Args,
-          require_all_not_st_autodiff<Args...>* = nullptr>
+          typename FuncReturnT = internal::integrate_return_t<F, Args...>,
+          require_arithmetic_t<FuncReturnT>* = nullptr>
 inline double integrate_1d_impl(const F& f, double a, double b,
                                 double relative_tolerance, std::ostream* msgs,
                                 const Args&... args) {

@@ -36,59 +36,64 @@ namespace math {
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename... Args,
-          require_any_st_fvar<T_a, T_b, Args...> * = nullptr>
-inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
+          typename FuncReturnT = internal::integrate_return_t<F, Args...>,
+          typename ReturnT = return_type_t<T_a, T_b, FuncReturnT>,
+          require_fvar_t<ReturnT>* = nullptr>
+inline ReturnT integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
   static constexpr const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
-  using FvarT = return_type_t<T_a, T_b, Args...>;
-  using FvarInnerT = partials_return_t<T_a, T_b, Args...>;
-
   auto a_val = value_of(a);
   auto b_val = value_of(b);
-
-  FvarT res(0.0);
 
   if (unlikely(a_val == b_val)) {
     if (is_inf(a_val)) {
       throw_domain_error(function, "Integration endpoints are both", a_val, "",
                          "");
     }
-  } else {
-    auto args_val_tuple = std::make_tuple(value_of(args)...);
-
-    res.val_ = integrate(
-        [&](const auto &x, const auto &xc) {
-          return math::apply(
-              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
-              args_val_tuple);
-        },
-        a_val, b_val, relative_tolerance);
-
-    res.d_ = integrate(
-        [&](const auto &x, const auto &xc) {
-          FvarT res = f(x, xc, msgs, args...);
-          return res.d();
-        }, a_val, b_val, relative_tolerance);
-
-    if (is_fvar<T_a>::value && !is_inf(a)) {
-      res.d_ += math::apply(
-          [&f, a_val, msgs](auto &&... val_args) {
-            return -f(a_val, 0.0, msgs, val_args...);
-          },
-          args_val_tuple);
-    }
-
-    if (!is_inf(b) && is_fvar<T_b>::value) {
-      res.d_ += math::apply(
-          [&f, b_val, msgs](auto &&... val_args) {
-            return f(b_val, 0.0, msgs, val_args...);
-          },
-          args_val_tuple);
-    }
+    return 0.0;
   }
+
+  ReturnT res(0.0);
+  auto args_val_tuple = std::make_tuple(value_of(args)...);
+
+  res.val_ = math::apply(
+    [&](const auto&... val_args) {
+      return integrate_1d_impl(
+          [&f](const auto &x, const auto &xc, std::ostream* msgs,
+                const auto&... val_args) {
+            return f(x, xc, msgs, val_args...);
+          }, a_val, b_val, relative_tolerance, msgs, val_args...);
+    }, args_val_tuple);
+
+  if (is_fvar<FuncReturnT>::value) {
+    res.d_ += integrate_1d_impl(
+        [&f](const auto &x, const auto &xc, std::ostream* msgs,
+              const auto&... args) {
+          auto ret_val = f(x, xc, msgs, args...);
+          using FvarRetT = fvar<partials_return_t<decltype(ret_val)>>;
+          return (forward_as<FvarRetT>(ret_val)).d();
+        }, a_val, b_val, relative_tolerance, msgs, args...);
+  }
+
+  if (is_fvar<T_a>::value && !is_inf(a)) {
+    res.d_ += math::apply(
+        [&f, a_val, msgs](auto &&... val_args) {
+          return -f(a_val, 0.0, msgs, val_args...);
+        },
+        args_val_tuple);
+  }
+
+  if (!is_inf(b) && is_fvar<T_b>::value) {
+    res.d_ += math::apply(
+        [&f, b_val, msgs](auto &&... val_args) {
+          return f(b_val, 0.0, msgs, val_args...);
+        },
+        args_val_tuple);
+  }
+
   return res;
 }
 
@@ -148,11 +153,11 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta,
-          typename = require_any_fvar_t<T_a, T_b, T_theta>>
-inline return_type_t<T_a, T_b, T_theta> integrate_1d(
+          require_any_fvar_t<T_a, T_b, T_theta>* = nullptr>
+inline auto integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON)) {
+    std::ostream *msgs, const double relative_tolerance) {
   return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, relative_tolerance,
                            msgs, theta, x_r, x_i);
 }
