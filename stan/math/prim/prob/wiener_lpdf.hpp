@@ -140,15 +140,13 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   static constexpr double WIENER_ERR = 0.000001;
   static constexpr double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
-  static constexpr double LOG_PI_LOG_WIENER_ERR
-      = LOG_PI + -13.81551055796427410410794872810618524;
+  static constexpr double LOG_PI_LOG_WIENER_ERR = LOG_PI - 6 * LOG_TEN;
   static constexpr double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
       = 2.0 * SQRT_TWO_PI * WIENER_ERR;
   static constexpr double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
       = LOG_TWO / 2 + LOG_SQRT_PI;
   // square(pi()) * 0.5
-  static constexpr double SQUARE_PI_OVER_TWO
-      = 9.869604401089358618834490999876151135 * 0.5;
+  static constexpr double SQUARE_PI_OVER_TWO = (pi() * pi()) / 2;
   static constexpr double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
   for (size_t i = 0; i < N; i++) {

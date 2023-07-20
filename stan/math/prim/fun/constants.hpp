@@ -77,8 +77,7 @@ const double LOG_EPSILON = std::log(EPSILON);
  * The natural logarithm of \f$ \pi \f$,
  * \f$ \log \pi \f$.
  */
-static constexpr double LOG_PI
-    = 1.14472988584940017414342735135305871164729481291531157151362;
+static constexpr double LOG_PI = 2 * boost::math::constants::log_root_two_pi<double>() - LOG_TWO;
 
 /**
  * The natural logarithm of 2,
@@ -108,8 +107,7 @@ static constexpr double LOG_PI_OVER_FOUR = 0.25 * LOG_PI;
  * The natural logarithm of the square root of \f$ \pi \f$,
  * \f$ \log(sqrt{\pi}) \f$.
  */
-static constexpr double LOG_SQRT_PI
-    = 0.5723649429247000870717136756765293558236474064576557857568115357;
+static constexpr double LOG_SQRT_PI = LOG_PI / 2;
 
 /**
  * The natural logarithm of 10,
