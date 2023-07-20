@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,7 +54,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
   }
 
   T_partials_return cdf(1.0);
-  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
@@ -97,12 +97,12 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
     cdf *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      partials<0>(ops_partials)[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+                                      * pow(beta_dbl * y_dbl, alpha_dbl - 1)
+                                      / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      partials<1>(ops_partials)[n]
           -= 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                   digamma_vec[n])
@@ -112,12 +112,12 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      partials<0>(ops_partials)[n] *= cdf;
     }
   }
   if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::math::size(nu); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      partials<1>(ops_partials)[n] *= cdf;
     }
   }
   return ops_partials.build(cdf);

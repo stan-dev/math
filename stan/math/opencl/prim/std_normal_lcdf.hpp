@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -217,10 +217,10 @@ return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
 
   double lcdf = from_matrix_cl(lcdf_cl).sum();
 
-  operands_and_partials<decltype(y_col)> ops_partials(y_col);
+  auto ops_partials = make_partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   return ops_partials.build(lcdf);
 }

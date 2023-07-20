@@ -19,7 +19,7 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -61,8 +61,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
@@ -110,21 +110,21 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
                                        && !is_constant_all<T_y>::value)>(
             (deriv_1 - deriv_2 + deriv_3) / ccdf_n);
         if (!is_constant_all<T_y>::value) {
-          ops_partials.edge1_.partials_ = -deriv;
+          partials<0>(ops_partials) = -deriv;
         }
         if (!is_constant_all<T_loc>::value) {
-          ops_partials.edge2_.partials_ = deriv;
+          partials<1>(ops_partials) = deriv;
         }
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = ((deriv_1 - deriv_2) * v
                + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
               / ccdf_n;
       }
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_
+      edge<3>(ops_partials).partials_
           = exp_term
             * ((v * sigma_val - diff) * erf_calc
                - INV_SQRT_TWO_PI * sigma_val * exp_term_2)

@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -52,8 +52,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   check_positive_finite(function, "Scale parameter", y_min_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
 
-  operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
-      y_ref, y_min_ref, alpha_ref);
+  auto ops_partials = make_partials_propagator(y_ref, y_min_ref, alpha_ref);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -82,14 +81,14 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
                                       && !is_constant_all<T_scale>::value)>(
           -alpha_val * y_min_inv * common_deriv);
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = -common_deriv2 * exp(log_quot);
+        partials<0>(ops_partials) = -common_deriv2 * exp(log_quot);
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge2_.partials_ = std::move(common_deriv2);
+        partials<1>(ops_partials) = std::move(common_deriv2);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_ = -common_deriv * log_quot;
+      partials<2>(ops_partials) = -common_deriv * log_quot;
     }
   }
 

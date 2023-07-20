@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -69,8 +69,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
                         beta_ref);
 
   T_partials_return P(0.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
-                                                              beta_ref);
+  auto ops_partials = make_partials_propagator(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
@@ -121,11 +120,11 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
       grad_F32(dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
     }
     if (!is_constant_all<T_size1>::value) {
-      ops_partials.edge1_.partials_[i]
+      partials<0>(ops_partials)[i]
           += digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F;
     }
     if (!is_constant_all<T_size2>::value) {
-      ops_partials.edge2_.partials_[i]
+      partials<1>(ops_partials)[i]
           += digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F;
     }
   }

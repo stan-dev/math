@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -44,7 +44,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
@@ -70,13 +70,13 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
     P *= Pi;
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] += -1 / Pi;
+      partials<0>(ops_partials)[i] += -1 / Pi;
     }
   }
 
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      partials<0>(ops_partials)[i] *= P;
     }
   }
   return ops_partials.build(P);

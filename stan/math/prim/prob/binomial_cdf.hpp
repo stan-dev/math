@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -59,7 +59,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
@@ -92,15 +92,15 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
 
     if (!is_constant_all<T_prob>::value) {
       const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
-      ops_partials.edge1_.partials_[i]
-          -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-             / denom;
+      partials<0>(ops_partials)[i] -= pow(theta_dbl, n_dbl)
+                                      * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
+                                      / denom;
     }
   }
 
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      partials<0>(ops_partials)[i] *= P;
     }
   }
 

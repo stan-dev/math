@@ -39,46 +39,38 @@ namespace math {
 template <typename T>
 struct fvar {
   /**
-   * The value of this variable.
-   */
-  T val_;
-
-  /**
-   * The tangent (derivative) of this variable.
-   */
-  T d_;
-
-  /**
    * The type of values and tangents.
    */
-  using Scalar = T;
+  using Scalar = std::decay_t<T>;
+
+  /**
+   * The value of this variable.
+   */
+  Scalar val_;
 
   /**
    * Return the value of this variable.
    *
    * @return value of this variable
    */
-  T val() const { return val_; }
+  Scalar val() const { return val_; }
+
+  /**
+   * The tangent (derivative) of this variable.
+   */
+  Scalar d_;
 
   /**
    * Return the tangent (derivative) of this variable.
    *
    * @return tangent of this variable
    */
-  T d() const { return d_; }
+  Scalar d() const { return d_; }
 
   /**
    * Construct a forward variable with zero value and tangent.
    */
-  fvar() : fvar(0, 0) {}
-
-  /**
-   * Construct a forward variable with value and tangent set to
-   * the value and tangent of the specified variable.
-   *
-   * @param[in] x variable to be copied
-   */
-  fvar(const fvar<T>& x) : fvar(x.val_, x.d_) {}
+  fvar() : val_(0.0), d_(0.0) {}  // NOLINT
 
   /**
    * Construct a forward variable with the specified value and
@@ -87,7 +79,8 @@ struct fvar {
    * @tparam V type of value (must be assignable to T)
    * @param[in] v value
    */
-  template <typename V, typename = std::enable_if_t<ad_promotable<V, T>::value>>
+  template <typename V, std::enable_if_t<ad_promotable<V, T>::value>* = nullptr,
+            require_not_same_t<V, fvar<T>>* = nullptr>
   fvar(const V& v) : val_(v), d_(0) {}  // NOLINT(runtime/explicit)
 
   /**

@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -48,8 +48,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y_ref, T_nu_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, nu_ref, mu_ref, sigma_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, nu_ref, mu_ref, sigma_ref);
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -110,7 +110,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n]
+        partials<0>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -122,16 +122,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n]
+        partials<1>(ops_partials)[n]
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[n]
+        partials<2>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge4_.partials_[n]
+        partials<3>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
 
@@ -148,7 +148,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n]
+        partials<0>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -160,16 +160,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n]
+        partials<1>(ops_partials)[n]
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[n]
+        partials<2>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge4_.partials_[n]
+        partials<3>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
     }

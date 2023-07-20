@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -62,8 +62,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_beta_ref> ops_partials(
-      y_ref, mu_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, beta_ref);
 
   const auto& scaled_diff
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>((y_val - mu_val)
@@ -90,13 +89,13 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
                         + !is_constant_all<T_y>::value
                     >= 2>(cdf * rep_deriv_tmp / (beta_val * cdf_n));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = rep_deriv;
+      partials<0>(ops_partials) = rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = -rep_deriv;
+      partials<1>(ops_partials) = -rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = -rep_deriv * scaled_diff;
+      partials<2>(ops_partials) = -rep_deriv * scaled_diff;
     }
   }
   return ops_partials.build(cdf);

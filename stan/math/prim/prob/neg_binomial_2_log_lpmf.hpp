@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,7 +54,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_eta_ref, T_phi_ref> ops_partials(eta_ref, phi_ref);
+  auto ops_partials = make_partials_propagator(eta_ref, phi_ref);
 
   scalar_seq_view<T_n> n_vec(n_ref);
   scalar_seq_view<T_eta_ref> eta_vec(eta_ref);
@@ -118,11 +118,11 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
             - n_vec[i] * (log_phi[i] + log1p_exp_eta_m_logphi[i]);
 
     if (!is_constant_all<T_log_location>::value) {
-      ops_partials.edge1_.partials_[i]
+      partials<0>(ops_partials)[i]
           += n_vec[i] - n_plus_phi[i] * exp_eta_over_exp_eta_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
+      partials<1>(ops_partials)[i]
           += exp_eta_over_exp_eta_phi[i] - n_vec[i] / (exp_eta[i] + phi_val[i])
              - log1p_exp_eta_m_logphi[i]
              - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));

@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 #include <vector>
 
@@ -37,9 +38,9 @@ namespace internal {
 template <typename F, typename T_shared_param, typename T_job_param,
           require_eigen_col_vector_t<T_shared_param>* = nullptr>
 class map_rect_combine {
-  using ops_partials_t
-      = operands_and_partials<T_shared_param,
-                              Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>;
+  using ops_partials_t = internal::partials_propagator<
+      return_type_t<T_shared_param, T_job_param>, void, T_shared_param,
+      Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>;
   std::vector<ops_partials_t> ops_partials_;
 
   const std::size_t num_shared_operands_;
@@ -76,12 +77,12 @@ class map_rect_combine {
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (int j = 0; j != world_f_out[i]; ++j, ++ij) {
         if (!is_constant_all<T_shared_param>::value) {
-          ops_partials_[i].edge1_.partials_
+          edge<0>(ops_partials_[i]).partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
         }
 
         if (!is_constant_all<T_job_param>::value) {
-          ops_partials_[i].edge2_.partials_
+          edge<1>(ops_partials_[i]).partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
         }
 
