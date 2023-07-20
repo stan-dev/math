@@ -50,13 +50,17 @@ csr_to_dense_matrix(int m, int n, const T& w, const std::vector<int>& v,
   Matrix<value_type_t<T>, Dynamic, Dynamic> result(m, n);
   result.setZero();
   for (int row = 0; row < m; ++row) {
-    int row_end_in_w = (u[row] - stan::error_index::value) + csr_u_to_z(u, row);
-    check_range("csr_to_dense_matrix", "w", w.size(), row_end_in_w);
-    for (int nze = u[row] - stan::error_index::value; nze < row_end_in_w;
-         ++nze) {
-      // row is row index, v[nze] is column index. w[nze] is entry value.
-      check_range("csr_to_dense_matrix", "j", n, v[nze]);
-      result(row, v[nze] - stan::error_index::value) = w_ref.coeff(nze);
+    int row_nnz = csr_u_to_z(u, row);
+
+    if (row_nnz > 0) {
+      int row_end_in_w = (u[row] - stan::error_index::value) + row_nnz;
+      check_range("csr_to_dense_matrix", "w", w.size(), row_end_in_w);
+      for (int nze = u[row] - stan::error_index::value; nze < row_end_in_w;
+           ++nze) {
+        // row is row index, v[nze] is column index. w[nze] is entry value.
+        check_range("csr_to_dense_matrix", "j", n, v[nze]);
+        result(row, v[nze] - stan::error_index::value) = w_ref.coeff(nze);
+      }
     }
   }
   return result;

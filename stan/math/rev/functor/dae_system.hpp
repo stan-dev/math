@@ -74,6 +74,9 @@ class dae_system {
    *                  derivative variables, 0 for algebraic variables).
    * @param[in] yy0 initial condition
    * @param[in] yp0 initial condition for derivatives
+   * @param[in, out] msgs the print stream for warning messages
+   * @param args Extra arguments passed unmodified through to DAE right hand
+   * side
    */
   dae_system(const F& f, const Tyy& yy0, const Typ& yp0, std::ostream* msgs,
              const T_par&... args)

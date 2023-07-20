@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -62,8 +62,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -98,19 +97,19 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
           2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if (!is_constant_all<T_y>::value) {
         if (is_vector<T_y>::value) {
-          ops_partials.edge1_.partials_ = -mu_deriv;
+          partials<0>(ops_partials) = -mu_deriv;
         } else {
-          ops_partials.edge1_.partials_[0] = -sum(mu_deriv);
+          partials<0>(ops_partials)[0] = -sum(mu_deriv);
         }
       }
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = std::move(mu_deriv);
+        partials<1>(ops_partials) = std::move(mu_deriv);
       }
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = (y_minus_mu_squared - sigma_squared)
-                                      * inv_sigma
-                                      / (sigma_squared + y_minus_mu_squared);
+      partials<2>(ops_partials) = (y_minus_mu_squared - sigma_squared)
+                                  * inv_sigma
+                                  / (sigma_squared + y_minus_mu_squared);
     }
   }
   return ops_partials.build(logp);

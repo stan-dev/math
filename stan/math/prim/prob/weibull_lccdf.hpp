@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -60,21 +60,20 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, sigma_ref);
 
   const auto& pow_n = to_ref_if<!is_constant_all<T_y, T_shape, T_scale>::value>(
       pow(y_val / sigma_val, alpha_val));
   T_partials_return ccdf_log = -sum(pow_n);
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = -alpha_val / y_val * pow_n;
+    partials<0>(ops_partials) = -alpha_val / y_val * pow_n;
   }
   if (!is_constant_all<T_shape>::value) {
-    ops_partials.edge2_.partials_ = -log(y_val / sigma_val) * pow_n;
+    partials<1>(ops_partials) = -log(y_val / sigma_val) * pow_n;
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = alpha_val / sigma_val * pow_n;
+    partials<2>(ops_partials) = alpha_val / sigma_val * pow_n;
   }
   return ops_partials.build(ccdf_log);
 }

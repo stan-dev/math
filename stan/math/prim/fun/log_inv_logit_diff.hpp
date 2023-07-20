@@ -42,7 +42,7 @@ inline return_type_t<T1, T2> log_inv_logit_diff(const T1& x, const T2& y) {
 }
 
 /**
- * Enables the vectorised application of the log_inv_logit_diff function,
+ * Enables the vectorized application of the log_inv_logit_diff function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

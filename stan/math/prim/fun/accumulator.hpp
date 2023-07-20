@@ -74,7 +74,7 @@ class accumulator {
   /**
    * Sum each entry and then push to the buffer.
    * @tparam S A Type inheriting from `matrix_cl_base`
-   * @param x An OpenCL matrix
+   * @param xs An OpenCL matrix
    */
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>

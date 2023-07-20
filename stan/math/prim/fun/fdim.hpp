@@ -25,7 +25,7 @@ inline double fdim(T1 x, T2 y) {
 }
 
 /**
- * Enables the vectorised application of the fdim function,
+ * Enables the vectorized application of the fdim function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

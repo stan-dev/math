@@ -1,5 +1,6 @@
 // Arguments: Ints, Ints, Ints, Ints
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/hypergeometric_log.hpp>
+#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

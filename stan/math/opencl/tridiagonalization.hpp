@@ -87,9 +87,10 @@ inline void block_householder_tridiag_cl(const matrix_cl<double>& A,
 /**
  * Calculates Q*A in-place. To construct Q pass an appropriate identity matrix
  * as input A.
- * @param packed Packed result of tridiagonalization that contains householder
- * vectors that define Q in columns bellow the diagonal. Usually result of a
- * call to `block_householder_tridiag_cl`.
+ *
+ * @param packed_cl Packed result of tridiagonalization that contains
+ * householder vectors that define Q in columns bellow the diagonal. Usually
+ * result of a call to `block_householder_tridiag_cl`.
  * @param[in,out] A On input a matrix to multiply with Q. On output the product
  * Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value

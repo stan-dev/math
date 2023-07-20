@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Ints, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/normal_sufficient_lpdf.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/pow.hpp>
+#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
