@@ -33,7 +33,7 @@ inline T binary_log_loss(int y, const T& y_hat) {
 }
 
 /**
- * Enables the vectorised application of the binary log loss function, when
+ * Enables the vectorized application of the binary log loss function, when
  * the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

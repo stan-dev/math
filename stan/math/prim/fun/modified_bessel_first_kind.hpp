@@ -53,7 +53,7 @@ inline double modified_bessel_first_kind(int v, int z) {
 }
 
 /**
- * Enables the vectorised application of the modified_bessel_first_kind
+ * Enables the vectorized application of the modified_bessel_first_kind
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

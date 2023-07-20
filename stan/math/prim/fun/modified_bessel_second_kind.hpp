@@ -45,7 +45,7 @@ inline T2 modified_bessel_second_kind(int v, const T2 z) {
 }
 
 /**
- * Enables the vectorised application of the modified_bessel_second_kind
+ * Enables the vectorized application of the modified_bessel_second_kind
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

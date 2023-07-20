@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the input scalar as an integer type. Specialisation for integral
+ * Returns the input scalar as an integer type. Specialization for integral
  * types which do not need conversion, reduces to a no-op.
  *
  * @tparam T type of integral argument

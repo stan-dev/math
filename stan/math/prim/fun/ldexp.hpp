@@ -24,7 +24,7 @@ inline double ldexp(T1 a, int b) {
 }
 
 /**
- * Enables the vectorised application of the ldexp function,
+ * Enables the vectorized application of the ldexp function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

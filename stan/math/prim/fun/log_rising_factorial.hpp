@@ -60,7 +60,7 @@ inline return_type_t<T1, T2> log_rising_factorial(const T1& x, const T2& n) {
 }
 
 /**
- * Enables the vectorised application of the log_rising_factorial
+ * Enables the vectorized application of the log_rising_factorial
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

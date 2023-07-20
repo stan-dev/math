@@ -11,7 +11,7 @@ namespace math {
  * Return an integer array of zeros.
  *
  * @param K size of the array
- * @return an integer array of size K with all elements initialised to 0.
+ * @return an integer array of size K with all elements initialized to 0.
  * @throw std::domain_error if K is negative.
  */
 inline std::vector<int> zeros_int_array(int K) {

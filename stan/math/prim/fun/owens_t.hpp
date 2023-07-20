@@ -58,7 +58,7 @@ namespace math {
 inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
 
 /**
- * Enables the vectorised application of the owens_t
+ * Enables the vectorized application of the owens_t
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input
