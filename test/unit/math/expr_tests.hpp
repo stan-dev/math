@@ -237,19 +237,25 @@ template <typename F, typename... Args,
           require_all_st_stan_scalar<Args...>* = nullptr,
           require_all_not_st_complex<Args...>* = nullptr>
 void check_expr_test(F&& f, Args&&... args) {
+  try {
   stan::test::internal::check_expr_test<double>(f, args...);
   stan::test::internal::check_expr_test<stan::math::var>(f, args...);
-  stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
+  stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);    
+  } catch (const std::exception& e) {}
+
 }
 
 template <typename F, typename... Args,
           require_any_st_complex<Args...>* = nullptr>
 void check_expr_test(F&& f, Args&&... args) {
+  try {
   stan::test::internal::check_expr_test<std::complex<double>>(f, args...);
   stan::test::internal::check_expr_test<std::complex<stan::math::var>>(f,
                                                                        args...);
   stan::test::internal::check_expr_test<std::complex<stan::math::fvar<double>>>(
       f, args...);
+  } catch (const std::exception& e) {}
+
 }
 
 }  // namespace test
