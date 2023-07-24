@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the generalised hypergeometric function (pFq) applied to the
+ * Returns the generalized hypergeometric function (pFq) applied to the
  * input arguments.
  *
  * @tparam Ta Type of Eigen vector with scalar type var or arithmetic
@@ -19,7 +19,7 @@ namespace math {
  * @param[in] a Vector of 'a' arguments (of length p)
  * @param[in] b Vector of 'b' arguments (of length q)
  * @param[in] z Scalar z argument
- * @return Generalised hypergeometric function
+ * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
           require_all_matrix_t<Ta, Tb>* = nullptr,

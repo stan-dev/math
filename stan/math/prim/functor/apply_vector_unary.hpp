@@ -12,14 +12,14 @@
 
 namespace stan {
 namespace math {
-// Forward declaration to allow specialisations
+// Forward declaration to allow specializations
 template <typename T, typename Enable = void>
 struct apply_vector_unary {};
 
 /**
  * Base template class for vectorization of unary vector functions
  * defined by applying a functor to a standard library vector, Eigen dense
- * matrix expression template, or container of these. For each specialisation,
+ * matrix expression template, or container of these. For each specialization,
  * the same vector type as the input is returned.
  *
  * Two taxonomies of unary vector functions are implemented:
@@ -95,7 +95,7 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
 };
 
 /**
- * Specialisation for use with (non-nested) std::vectors. Inputs are mapped
+ * Specialization for use with (non-nested) std::vectors. Inputs are mapped
  * to Eigen column vectors and then the result is evaluated directly into the
  * returned std::vector (via Eigen::Map).
  *
@@ -160,7 +160,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
 };
 
 /**
- * Specialisation for use with nested containers (std::vectors).
+ * Specialization for use with nested containers (std::vectors).
  * For each of the member functions, an std::vector with the appropriate
  * type (vector or scalar) is returned.
  *

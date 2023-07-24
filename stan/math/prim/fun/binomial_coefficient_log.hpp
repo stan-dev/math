@@ -151,7 +151,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
 }
 
 /**
- * Enables the vectorised application of the binomial coefficient log function,
+ * Enables the vectorized application of the binomial coefficient log function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

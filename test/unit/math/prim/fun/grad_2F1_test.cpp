@@ -156,3 +156,17 @@ TEST(MathPrimScalFun, grad2F1_11) {
   EXPECT_NEAR(-30843032.10697079073015067426929807, std::get<2>(grad_tuple),
               1e-1);  // reference: discrete diff in mathematica
 }
+
+TEST(MathPrimScalFun, grad2F1_early_stop) {
+  using stan::math::internal::grad_2F1_impl;
+  double a1 = -0.5;
+  double a2 = -4.5;
+  double b1 = 11.0;
+  double z = 0.3;
+
+  // Algorithm will falsely converge early when only calculating w.r.t a1
+  // with these inputs. The minimum number of iterations (5) will take effect
+  auto grad_tuple = grad_2F1_impl<true, false, false, false>(a1, a2, b1, z);
+
+  EXPECT_NEAR(-0.1227022810085707, std::get<0>(grad_tuple), 1e-8);
+}
