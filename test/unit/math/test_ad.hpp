@@ -472,6 +472,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
   try {
+    stan::test::check_expr_test(f, xs...);
     auto y1 = eval(f(xs...));  // original types, including int
     auto y2 = eval(g(x));      // all int cast to double
     auto y1_serial = serialize<double>(y1);
@@ -529,7 +530,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
 
   // if f throws on int, must throw everywhere with double
   try {
-    f(x);
+    stan::test::check_expr_test(f, x);
   } catch (...) {
     expect_all_throw(f, x_dbl);
     return;
@@ -589,7 +590,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
 template <typename F, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   try {
-    f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -611,7 +612,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
 template <typename F, typename T1>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   try {
-    f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -634,7 +635,7 @@ template <typename F>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // this one needs throw test because it's not handled by recursion
   try {
-    f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -739,7 +740,7 @@ template <typename F, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -768,7 +769,7 @@ template <typename F, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -792,7 +793,7 @@ template <typename F, typename T1, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -816,7 +817,7 @@ template <typename F, typename T1, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -840,7 +841,7 @@ template <typename F, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -869,7 +870,7 @@ template <typename F, typename T1>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -899,7 +900,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    int x3) {
   // test exception behavior; other exception cases tested recursively
   try {
-    f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -1152,7 +1153,6 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T>
 void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
-  stan::test::check_expr_test(f, x);
   internal::expect_ad_v(tols, f, x);
 }
 
@@ -1190,7 +1190,6 @@ void expect_ad(const F& f, const T& x) {
 template <typename F, typename T1, typename T2>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2) {
-  stan::test::check_expr_test(f, x1, x2);
   internal::expect_ad_vv(tols, f, x1, x2);
 }
 
@@ -1231,7 +1230,6 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2, const T3& x3) {
-  stan::test::check_expr_test(f, x1, x2, x3);
   internal::expect_ad_vvv(tols, f, x1, x2, x3);
 }
 
