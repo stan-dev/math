@@ -252,7 +252,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
 template <int N, typename... T_results>
 template <typename... T_expressions>
 std::unordered_map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
-    N, T_results...>::inner<T_expressions...>::kernel_cache_;
+    N, T_results...>::inner<T_expressions...>::kernel_cache_{20};
 
 }  // namespace internal
 
