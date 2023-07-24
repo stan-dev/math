@@ -133,9 +133,9 @@ inline tbb::concurrent_vector<cl::Event> select_events(K& m) {
  * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
  */
-inline auto compile_kernel(const char* name,
-                           const std::vector<std::string>& sources,
-                           const std::unordered_map<std::string, int>& options) {
+inline auto compile_kernel(
+    const char* name, const std::vector<std::string>& sources,
+    const std::unordered_map<std::string, int>& options) {
   auto base_opts = opencl_context.base_opts();
   for (auto& it : options) {
     if (base_opts[it.first] > it.second) {

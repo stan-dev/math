@@ -110,9 +110,10 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::unordered_map<const void*, const char*>& generated,
-                       std::unordered_map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     generated[this] = "";
     arg_.set_args(generated, generated_all, kernel, arg_num);
     kernel.setArg(arg_num++, buffer_.buffer());

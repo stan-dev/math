@@ -128,8 +128,9 @@ struct multi_result_kernel_internal {
      */
     static kernel_parts generate(
         std::unordered_map<const void*, const char*>& generated,
-        std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
-        const std::string& row_index_name, const std::string& col_index_name,
+        std::unordered_map<const void*, const char*>& generated_all,
+        name_generator& ng, const std::string& row_index_name,
+        const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       kernel_parts parts
@@ -157,8 +158,8 @@ struct multi_result_kernel_internal {
      */
     static void set_args(
         std::unordered_map<const void*, const char*>& generated,
-        std::unordered_map<const void*, const char*>& generated_all, cl::Kernel& kernel,
-        int& arg_num,
+        std::unordered_map<const void*, const char*>& generated_all,
+        cl::Kernel& kernel, int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       next::set_args(generated, generated_all, kernel, arg_num,
@@ -221,8 +222,9 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
     static kernel_parts generate(
         std::unordered_map<const void*, const char*>& generated,
-        std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
-        const std::string& row_index_name, const std::string& col_index_name,
+        std::unordered_map<const void*, const char*>& generated_all,
+        name_generator& ng, const std::string& row_index_name,
+        const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       return {};
@@ -230,8 +232,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
     static void set_args(
         std::unordered_map<const void*, const char*>& generated,
-        std::unordered_map<const void*, const char*>& generated_all, cl::Kernel& kernel,
-        int& arg_num,
+        std::unordered_map<const void*, const char*>& generated_all,
+        cl::Kernel& kernel, int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
 

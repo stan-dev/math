@@ -129,9 +129,10 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::unordered_map<const void*, const char*>& generated,
-                       std::unordered_map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       this->template get_arg<0>().set_args(generated, generated_all, kernel,
@@ -291,9 +292,10 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::unordered_map<const void*, const char*>& generated,
-                       std::unordered_map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       this->template get_arg<0>().set_args(generated, generated_all, kernel,

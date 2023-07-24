@@ -181,12 +181,11 @@ class opencl_code_ : public operation_cl_base {
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
-  auto get_kernel_parts(std::unordered_map<const void*, const char*>& generated,
-                        std::unordered_map<const void*, const char*>& generated_all,
-                        name_generator& name_gen,
-                        const std::string& row_index_name,
-                        const std::string& col_index_name,
-                        bool view_handled) const {
+  auto get_kernel_parts(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     return impl_->get_kernel_parts(generated, generated_all, name_gen,
                                    row_index_name, col_index_name,
                                    view_handled);

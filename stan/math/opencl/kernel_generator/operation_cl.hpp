@@ -194,9 +194,9 @@ class operation_cl : public operation_cl_base {
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
       std::unordered_map<const void*, const char*>& generated,
-      std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
-      const std::string& row_index_name, const std::string& col_index_name,
-      const T_result& result) const {
+      std::unordered_map<const void*, const char*>& generated_all,
+      name_generator& ng, const std::string& row_index_name,
+      const std::string& col_index_name, const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(
         generated, generated_all, ng, row_index_name, col_index_name, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(
@@ -293,9 +293,10 @@ class operation_cl : public operation_cl_base {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::unordered_map<const void*, const char*>& generated,
-                       std::unordered_map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       // parameter pack expansion returns a comma-separated list of values,
@@ -433,9 +434,9 @@ class operation_cl : public operation_cl_base {
    * @param[in,out] id_map map from memory addresses to unique ids
    * @param[in,out] next_id neqt unique id to use
    */
-  inline void get_unique_matrix_accesses(std::vector<int>& uids,
-                                         std::unordered_map<const void*, int>& id_map,
-                                         int& next_id) const {
+  inline void get_unique_matrix_accesses(
+      std::vector<int>& uids, std::unordered_map<const void*, int>& id_map,
+      int& next_id) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{(
           this->get_arg<Is>().get_unique_matrix_accesses(uids, id_map, next_id),
