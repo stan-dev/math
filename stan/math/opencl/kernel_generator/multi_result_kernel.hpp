@@ -33,7 +33,7 @@ template <int N, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
   struct inner {
-    static std::unordered_map<std::vector<int>, cl::Kernel> kernel_cache_;
+    static std::map<std::vector<int>, cl::Kernel> kernel_cache_;
     using next = typename multi_result_kernel_internal<
         N - 1, T_results...>::template inner<T_expressions...>;
     using T_current_result = std::remove_reference_t<
@@ -251,8 +251,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
 template <int N, typename... T_results>
 template <typename... T_expressions>
-std::unordered_map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
-    N, T_results...>::inner<T_expressions...>::kernel_cache_{20};
+std::map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
+    N, T_results...>::inner<T_expressions...>::kernel_cache_;
 
 }  // namespace internal
 
