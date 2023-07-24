@@ -68,8 +68,8 @@ class load_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -137,8 +137,8 @@ class load_
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated_all.count(&a_) == 0) {
@@ -184,8 +184,8 @@ class load_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
+  inline void set_args(std::unordered_map<const void*, const char*>& generated,
+                       std::unordered_map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated_all.count(&a_) == 0) {
       generated_all[&a_] = "";
@@ -316,7 +316,7 @@ class load_
    * @param[in,out] next_id neqt unique id to use
    */
   inline void get_unique_matrix_accesses(std::vector<int>& uids,
-                                         std::map<const void*, int>& id_map,
+                                         std::unordered_map<const void*, int>& id_map,
                                          int& next_id) const {
     if (id_map.count(&a_) == 0) {
       id_map[&a_] = next_id;

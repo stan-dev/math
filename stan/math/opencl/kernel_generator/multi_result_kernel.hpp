@@ -33,7 +33,7 @@ template <int N, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
   struct inner {
-    static std::map<std::vector<int>, cl::Kernel> kernel_cache_;
+    static std::unordered_map<std::vector<int>, cl::Kernel> kernel_cache_;
     using next = typename multi_result_kernel_internal<
         N - 1, T_results...>::template inner<T_expressions...>;
     using T_current_result = std::remove_reference_t<
@@ -127,8 +127,8 @@ struct multi_result_kernel_internal {
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
-        std::map<const void*, const char*>& generated,
-        std::map<const void*, const char*>& generated_all, name_generator& ng,
+        std::unordered_map<const void*, const char*>& generated,
+        std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -156,8 +156,8 @@ struct multi_result_kernel_internal {
      * @param assignment_pairs pairs of result and expression
      */
     static void set_args(
-        std::map<const void*, const char*>& generated,
-        std::map<const void*, const char*>& generated_all, cl::Kernel& kernel,
+        std::unordered_map<const void*, const char*>& generated,
+        std::unordered_map<const void*, const char*>& generated_all, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -191,7 +191,7 @@ struct multi_result_kernel_internal {
      * @param assignment_pairs pairs of result and expression
      */
     static void get_unique_matrix_accesses(
-        std::vector<int>& uids, std::map<const void*, int>& id_map,
+        std::vector<int>& uids, std::unordered_map<const void*, int>& id_map,
         int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -220,8 +220,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
             assignment_pairs) {}
 
     static kernel_parts generate(
-        std::map<const void*, const char*>& generated,
-        std::map<const void*, const char*>& generated_all, name_generator& ng,
+        std::unordered_map<const void*, const char*>& generated,
+        std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -229,8 +229,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
     }
 
     static void set_args(
-        std::map<const void*, const char*>& generated,
-        std::map<const void*, const char*>& generated_all, cl::Kernel& kernel,
+        std::unordered_map<const void*, const char*>& generated,
+        std::unordered_map<const void*, const char*>& generated_all, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
@@ -240,7 +240,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
                          assignment_pairs) {}
 
     static void get_unique_matrix_accesses(
-        std::vector<int>& uids, std::map<const void*, int>& id_map,
+        std::vector<int>& uids, std::unordered_map<const void*, int>& id_map,
         int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
@@ -249,7 +249,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
 template <int N, typename... T_results>
 template <typename... T_expressions>
-std::map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
+std::unordered_map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
     N, T_results...>::inner<T_expressions...>::kernel_cache_;
 
 }  // namespace internal
@@ -380,8 +380,8 @@ class results_cl {
         {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
 
     name_generator ng;
-    std::map<const void*, const char*> generated;
-    std::map<const void*, const char*> generated_all;
+    std::unordered_map<const void*, const char*> generated;
+    std::unordered_map<const void*, const char*> generated_all;
     kernel_parts parts = impl::generate(generated, generated_all, ng, "i", "j",
                                         assignment_pairs);
     std::string src;
@@ -470,7 +470,7 @@ class results_cl {
     }
 
     std::vector<int> uids;
-    std::map<const void*, int> id_map;
+    std::unordered_map<const void*, int> id_map;
     int next_id = 0;
     impl::get_unique_matrix_accesses(uids, id_map, next_id, assignment_pairs);
 
@@ -486,8 +486,8 @@ class results_cl {
       cl::Kernel& kernel = impl::kernel_cache_[uids];
       int arg_num = 0;
 
-      std::map<const void*, const char*> generated;
-      std::map<const void*, const char*> generated_all;
+      std::unordered_map<const void*, const char*> generated;
+      std::unordered_map<const void*, const char*> generated_all;
       impl::set_args(generated, generated_all, kernel, arg_num,
                      assignment_pairs);
 

@@ -47,8 +47,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
@@ -59,7 +59,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
     std::string col_index_name_arg = col_index_name;
     derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       return std::array<kernel_parts, N>{
           this->template get_arg<Is>().get_kernel_parts_lhs(
               &Derived::modify_argument_indices

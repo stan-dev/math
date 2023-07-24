@@ -115,7 +115,7 @@ class profile_info {
 
 using profile_key = std::pair<std::string, std::thread::id>;
 
-using profile_map = std::map<profile_key, profile_info>;
+using profile_map = std::unordered_map<profile_key, profile_info>;
 
 /**
  * Profiles C++ lines where the object is in scope.

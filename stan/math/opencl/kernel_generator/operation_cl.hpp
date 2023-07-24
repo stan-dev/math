@@ -193,8 +193,8 @@ class operation_cl : public operation_cl_base {
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all, name_generator& ng,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(
@@ -219,8 +219,8 @@ class operation_cl : public operation_cl_base {
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -231,7 +231,7 @@ class operation_cl : public operation_cl_base {
       std::string col_index_name_arg = col_index_name;
       derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
-        std::map<const void*, const char*> generated2;
+        std::unordered_map<const void*, const char*> generated2;
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
             &Derived::modify_argument_indices
                     == &operation_cl::modify_argument_indices
@@ -293,8 +293,8 @@ class operation_cl : public operation_cl_base {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
+  inline void set_args(std::unordered_map<const void*, const char*>& generated,
+                       std::unordered_map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
@@ -304,7 +304,7 @@ class operation_cl : public operation_cl_base {
       // initializer_list from. Cast to voids avoids warnings about unused
       // expression.
       index_apply<N>([&](auto... Is) {
-        std::map<const void*, const char*> generated2;
+        std::unordered_map<const void*, const char*> generated2;
         static_cast<void>(std::initializer_list<int>{
             (this->get_arg<Is>().set_args(
                  &Derived::modify_argument_indices
@@ -434,7 +434,7 @@ class operation_cl : public operation_cl_base {
    * @param[in,out] next_id neqt unique id to use
    */
   inline void get_unique_matrix_accesses(std::vector<int>& uids,
-                                         std::map<const void*, int>& id_map,
+                                         std::unordered_map<const void*, int>& id_map,
                                          int& next_id) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{(
