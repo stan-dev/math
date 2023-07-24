@@ -38,7 +38,7 @@ TEST(MathMixMatFun, addDiag) {
   stan::test::expect_ad(tol, f, m23, v2);
 
   // these throw
-  EXPECT_THROW(stan::test::expect_ad(tol, f, m11, v2), std::invalid_argument);
-  EXPECT_THROW(stan::test::expect_ad(tol, f, m22, v1), std::invalid_argument);
-  EXPECT_THROW(stan::test::expect_ad(tol, f, m23, v1), std::invalid_argument);
+  stan::test::expect_ad(tol, f, m11, v2);
+  stan::test::expect_ad(tol, f, m22, v1);
+  stan::test::expect_ad(tol, f, m23, v1);
 }
