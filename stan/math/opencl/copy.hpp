@@ -97,7 +97,7 @@ inline auto from_matrix_cl(const T& src) {
   } else {
     try {
       cl::Event copy_event;
-      const cl::CommandQueue queue = opencl_context.queue();
+      const cl::CommandQueue& queue = opencl_context.queue();
       std::vector<cl::Event> copy_write_events(src.write_events().begin(),
                                                src.write_events().end());
       queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
@@ -152,7 +152,7 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
                    "dst.cols()", 1);
   try {
     cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     std::vector<cl::Event> copy_write_events(src.write_events().begin(),
                                              src.write_events().end());
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
@@ -186,7 +186,7 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   }
   try {
     cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     std::vector<cl::Event> copy_write_events(src.write_events().begin(),
                                              src.write_events().end());
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
@@ -257,7 +257,7 @@ inline auto packed_copy(const T& src) {
     return dst;
   }
   try {
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     matrix_cl<T_val> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
@@ -310,7 +310,7 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   try {
     matrix_cl<Vec_scalar> packed(packed_size, 1);
     cl::Event packed_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(
         packed.buffer(),
         opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
