@@ -1,10 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stdexcept>
 
-TEST(mathMixFun, eigenvalues) {
+TEST(mathMixFun, eigenvaluesComplex) {
   auto f = [](const auto& x) {
     using stan::math::eigenvalues;
-    return eigenvalues(x);
+    return eigenvalues(stan::math::to_complex(x, 0));
   };
   for (const auto& x : stan::test::square_test_matrices(0, 2)) {
     stan::test::expect_ad(f, x);
