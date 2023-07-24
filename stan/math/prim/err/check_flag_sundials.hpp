@@ -16,7 +16,7 @@ namespace math {
 
 /**
  * Map cvodes error flag to acutally error msg. The most frequent
- * errors are put at the top. An alternative would be to use std::unordered_map
+ * errors are put at the top. An alternative would be to use std::map
  * but in our case the difference would be negligible. Note that we
  * don't use CVGetReturnFlagName function to retrieve the constant
  * because sanitizer indicates it contains mem leak.
