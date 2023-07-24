@@ -4,7 +4,7 @@
 TEST(mathMixScalFun, fma_row_vector) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     auto ret = stan::math::fma(x1, x2, x3).eval();
-    using ret_t = std::decay_t<decltype(ret)>;
+    using ret_t = stan::plain_type_t<std::decay_t<decltype(ret)>>;
     constexpr bool is_correct_return_type
         = stan::is_var_matrix<ret_t>::value
           || stan::is_eigen_dense_base<ret_t>::value;
