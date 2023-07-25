@@ -68,7 +68,7 @@ void stan_print(std::ostream* o, const T& x) {
   *o << ']';
 }
 
-template <typename T, require_tuple_t<T>* = nullptr>
+template <typename T, require_tuple_t<T>*>
 void stan_print(std::ostream* o, const T& x) {
   *o << '(';
   constexpr auto tuple_size = std::tuple_size<std::decay_t<T>>::value;
