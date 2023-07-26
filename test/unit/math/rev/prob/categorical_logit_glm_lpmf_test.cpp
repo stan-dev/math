@@ -19,8 +19,9 @@ stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
 
   auto tmp = stan::math::to_ref(
       stan::math::multiply(x, beta)
-      + stan::math::rep_matrix<stan::plain_type_t<std::decay_t<decltype(alpha_row)>>>(alpha_row,
-                                                                  x.rows()));
+      + stan::math::rep_matrix<
+          stan::plain_type_t<std::decay_t<decltype(alpha_row)>>>(alpha_row,
+                                                                 x.rows()));
 
   T_return lpmf = 0;
   // iterate overt instances
