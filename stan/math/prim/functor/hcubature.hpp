@@ -73,14 +73,14 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
   int r = 0;
   int k = 0;
   c[0] = 0;
-  for (;k < x; k = k + r) {
-	c[0]++;
-	r = choose(dim - c[0], p - 1);
+  for (; k < x; k = k + r) {
+    c[0]++;
+    r = choose(dim - c[0], p - 1);
   }
   k = k - r;
   for (int i = 1; i < p - 1; i++) {
     c[i] = c[i - 1];
-    for (;k < x; k = k + r) {
+    for (; k < x; k = k + r) {
       c[i]++;
       r = choose(dim - c[i], p - (i + 1));
     };
@@ -102,8 +102,8 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
  * @param lambda scalar
  * @param dim dimension
  */
-inline void combos(Eigen::MatrixXd& p, const int k, const double lambda, 
-					const int dim) {
+inline void combos(Eigen::MatrixXd& p, const int k, const double lambda,
+                   const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p = Eigen::MatrixXd::Zero(dim, choose_dimk);
@@ -172,8 +172,8 @@ inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
  * @param lambda scalar
  * @param dim dimension
  */
-inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda, 
-						const int dim) {
+inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda,
+                       const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p.resize(dim, choose_dimk * std::pow(2, k));
@@ -204,8 +204,8 @@ inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda,
  */
 template <typename F, typename ParsPairT>
 std::pair<double, double> gauss_kronrod(const F& integrand, const double a,
-                                         const double b,
-                                         const ParsPairT& pars_pair) {
+                                        const double b,
+                                        const ParsPairT& pars_pair) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
@@ -248,8 +248,9 @@ std::pair<double, double> gauss_kronrod(const F& integrand, const double a,
  * @param[in,out] wd weights for the embedded lower-degree rule
  * @param dim dimension
  */
-inline std::tuple<std::vector<Eigen::MatrixXd>, Eigen::VectorXd, 
-			Eigen::VectorXd> make_GenzMalik(const int dim) {
+inline std::tuple<std::vector<Eigen::MatrixXd>, Eigen::VectorXd,
+                  Eigen::VectorXd>
+make_GenzMalik(const int dim) {
   std::vector<Eigen::MatrixXd> p(4);
   Eigen::VectorXd w(5);
   Eigen::VectorXd wd(4);
@@ -296,8 +297,8 @@ inline std::tuple<std::vector<Eigen::MatrixXd>, Eigen::VectorXd,
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    std::vector<Eigen::MatrixXd>& p, Eigen::VectorXd& w,
-    Eigen::VectorXd& wd, const F& integrand, const int dim, const std::vector<double>& a,
+    std::vector<Eigen::MatrixXd>& p, Eigen::VectorXd& w, Eigen::VectorXd& wd,
+    const F& integrand, const int dim, const std::vector<double>& a,
     const std::vector<double>& b, const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim, 0);
