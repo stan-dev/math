@@ -63,21 +63,27 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
  * Vol. 3, No. 2, June 1977. User lucaroni from
  * https://stackoverflow.com/questions/561/how-to-use-combinations-of-sets-as-test-data#794
  *
- * @param c output vector
+ * @param[out] c output vector
  * @param dim dimension
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
 inline void combination(Eigen::VectorXi& c, const int dim, const int p,
                         const int x) {
-  size_t r, k = 0;
-  for (std::size_t i = 0; i < p - 1; i++) {
-    c[i] = (i != 0) ? c[i - 1] : 0;
-    do {
+  int r = 0;
+  int k = 0;
+  c[0] = 0;
+  for (;k < x; k = k + r) {
+	c[0]++;
+	r = choose(dim - c[0], p - 1);
+  }
+  k = k - r;
+  for (int i = 1; i < p - 1; i++) {
+    c[i] = c[i - 1];
+    for (;k < x; k = k + r) {
       c[i]++;
       r = choose(dim - c[i], p - (i + 1));
-      k = k + r;
-    } while (k < x);
+    };
     k = k - r;
   }
   if (p > 1) {
@@ -91,13 +97,13 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
  * Compute a vector [p] of all [dim]-component vectors
  * with [k] components equal to [lambda] and other components equal to zero.
  *
+ * @param[in,out] p vector of vectors
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
- * @param p vector of vectors
  */
-inline void combos(const int k, const double lambda, const int dim,
-                   Eigen::MatrixXd& p) {
+inline void combos(Eigen::MatrixXd& p, const int k, const double lambda, 
+					const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p = Eigen::MatrixXd::Zero(dim, choose_dimk);
@@ -110,13 +116,16 @@ inline void combos(const int k, const double lambda, const int dim,
 }
 
 /**
- * Helper function for signcombos
+ * Helper function for signcombos. Create vector temp with k components equal
+ * to [±lambda] and other components equal to zero (with all possible signs),
+ * depending on the input vector inp.
  *
- * @param index helper vector
+ * @param index boolsher helper vector to walk through temp, remembers which
+ * positions already were considered
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param c ordered vector
- * @param inp Input vector to be incremented
+ * @param[in] inp Input vector to be incremented
  */
 inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
                                  const double lambda, const Eigen::VectorXi& c,
@@ -124,7 +133,7 @@ inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
   Eigen::VectorXd temp = inp;
   if (index.size() == 0) {
     index.push_back(false);
-    for (std::size_t j = 0; j != k; j++) {
+    for (int j = 0; j != k; j++) {
       temp[c[j] - 1] = lambda;
     }
     return temp;
@@ -135,13 +144,13 @@ inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
   }
   if (first_zero == index.size()) {
     index.flip();
-    for (std::size_t j = 0; j != index.size(); j++) {
+    for (int j = 0; j != index.size(); j++) {
       temp[c[j] - 1] *= -1;
     }
     index.push_back(true);
     temp[c[index.size() - 1] - 1] = -lambda;
   } else {
-    for (std::size_t i = 0; i != first_zero + 1; i++) {
+    for (int i = 0; i != first_zero + 1; i++) {
       if (index[i]) {
         index[i] = 0;
       } else {
@@ -158,24 +167,23 @@ inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
  * with [k] components equal to [±lambda] and other components equal to zero
  * (with all possible signs).
  *
+ * @param[in,out] p vector of vectors
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
- * @param p vector of vectors
  */
-inline void signcombos(const int k, const double lambda, const int dim,
-                       Eigen::MatrixXd& p) {
+inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda, 
+						const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   p.resize(dim, choose_dimk * std::pow(2, k));
   p.setZero();
   int current_col = 0;
-  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
+  for (int i = 1; i != choose_dimk + 1; i++) {
     combination(c, dim, k, i);
     std::vector<bool> index;
-    index.clear();
-    for (std::size_t j = 0; j != std::pow(2, k); j++) {
-      size_t prev_col = j == 0 ? current_col : current_col - 1;
+    for (int j = 0; j != std::pow(2, k); j++) {
+      int prev_col = (j == 0) ? current_col : current_col - 1;
       p.col(current_col) = increment(index, k, lambda, c, p.col(prev_col));
       current_col += 1;
     }
@@ -187,17 +195,17 @@ inline void signcombos(const int k, const double lambda, const int dim,
  * for one dimension.
  *
  * @tparam F type of the integrand
- * @tparam ParsTupleT type of the tuple of parameters for the integrand
+ * @tparam ParsPairT type of the pair of parameters for the integrand
  * @param integrand function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param pars_tuple Tuple of parameters for the integrand
+ * @param pars_pair Pair of parameters for the integrand
  * @return numeric integral of the integrand and error
  */
-template <typename F, typename ParsTupleT>
-std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
+template <typename F, typename ParsPairT>
+std::pair<double, double> gauss_kronrod(const F& integrand, const double a,
                                          const double b,
-                                         const ParsTupleT& pars_tuple) {
+                                         const ParsPairT& pars_pair) {
   std::vector<double> c(1, 0);
   std::vector<double> cp(1, 0);
   std::vector<double> cm(1, 0);
@@ -205,7 +213,7 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
   double delta = 0.5 * (b - a);
   double f0 = math::apply(
       [&integrand, &c](auto&&... args) { return integrand(c, args...); },
-      pars_tuple);
+      pars_pair);
 
   double I = f0 * wd7[7];
   double Idash = f0 * gwd7[3];
@@ -215,10 +223,10 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
     cm[0] = c[0] - deltax;
     double fx = math::apply(
         [&integrand, &cp](auto&&... args) { return integrand(cp, args...); },
-        pars_tuple);
+        pars_pair);
     double temp = math::apply(
         [&integrand, &cm](auto&&... args) { return integrand(cm, args...); },
-        pars_tuple);
+        pars_pair);
     fx += temp;
     I += fx * wd7[i];
     if (i % 2 == 1) {
@@ -228,20 +236,23 @@ std::tuple<double, double> gauss_kronrod(const F& integrand, const double a,
   double V = fabs(delta);
   I *= V;
   Idash *= V;
-  return std::make_tuple(I, fabs(I - Idash));
+  return std::make_pair(I, fabs(I - Idash));
 }
 
 /**
  * Compute the points and weights corresponding to a [dim]-dimensional
  * Genz-Malik cubature rule
  *
+ * @param[in,out] p points for the last 4 GenzMalik weights
+ * @param[in,out] w weights for the 5 terms in the GenzMalik rule
+ * @param[in,out] wd weights for the embedded lower-degree rule
  * @param dim dimension
- * @param p points for the last 4 GenzMalik weights
- * @param w weights for the 5 terms in the GenzMalik rule
- * @param wd weights for the embedded lower-degree rule
  */
-inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
-                           std::vector<double>& w, std::vector<double>& wd) {
+inline std::tuple<std::vector<Eigen::MatrixXd>, Eigen::VectorXd, 
+			Eigen::VectorXd> make_GenzMalik(const int dim) {
+  std::vector<Eigen::MatrixXd> p(4);
+  Eigen::VectorXd w(5);
+  Eigen::VectorXd wd(4);
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
   double l3 = l4;
@@ -259,10 +270,11 @@ inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
   wd[1] = twopn * (245.0 / 486);
   wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
 
-  combos(1, l2, dim, p[0]);
-  combos(1, l3, dim, p[1]);
-  signcombos(2, l4, dim, p[2]);
-  signcombos(dim, l5, dim, p[3]);
+  combos(p[0], 1, l2, dim);
+  combos(p[1], 1, l3, dim);
+  signcombos(p[2], 2, l4, dim);
+  signcombos(p[3], dim, l5, dim);
+  return std::make_tuple(p, w, wd);
 }
 
 /**
@@ -271,10 +283,10 @@ inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
  *
  * @tparam F type of the integrand
  * @tparam ParsTupleT type of the tuple of parameters for the integrand
- * @param integrand function to be integrated
- * @param p
- * @param w
- * @param wd
+ * @param[out] integrand function to be integrated
+ * @param[in] p
+ * @param[in] w
+ * @param[in] wd
  * @param dim dimension of the multidimensional integral
  * @param a lower limit of integration
  * @param b upper limit of integration
@@ -284,8 +296,8 @@ inline void make_GenzMalik(const int dim, std::vector<Eigen::MatrixXd>& p,
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, std::vector<Eigen::MatrixXd>& p, std::vector<double>& w,
-    std::vector<double>& wd, const int dim, const std::vector<double>& a,
+    std::vector<Eigen::MatrixXd>& p, Eigen::VectorXd& w,
+    Eigen::VectorXd& wd, const F& integrand, const int dim, const std::vector<double>& a,
     const std::vector<double>& b, const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim, 0);
@@ -472,20 +484,21 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     maxEval = 1000000;
   }
 
-  double result, err;
+  double result;
+  double err;
   int kdivide = 0;
 
   std::vector<Eigen::MatrixXd> p(4);
-  std::vector<double> w_five(5);
-  std::vector<double> wd_four(4);
+  Eigen::VectorXd w_five(5);
+  Eigen::VectorXd wd_four(4);
 
   if (dim == 1) {
     std::tie(result, err)
         = internal::gauss_kronrod(integrand, a[0], b[0], pars);
   } else {
-    internal::make_GenzMalik(dim, p, w_five, wd_four);
+    std::tie(p, w_five, wd_four) = internal::make_GenzMalik(dim);
     std::tie(result, err, kdivide) = internal::integrate_GenzMalik(
-        integrand, p, w_five, wd_four, dim, a, b, pars);
+        p, w_five, wd_four, integrand, dim, a, b, pars);
   }
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
@@ -525,9 +538,9 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
           = internal::gauss_kronrod(integrand, box.a[0], mb[0], pars);
     } else {
       std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
-          integrand, p, w_five, wd_four, dim, ma, box.b, pars);
+          p, w_five, wd_four, integrand, dim, ma, box.b, pars);
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
-          integrand, p, w_five, wd_four, dim, box.a, mb, pars);
+          p, w_five, wd_four, integrand, dim, box.a, mb, pars);
     }
     internal::Box box1(ma, box.b, result_1, err_1, kdivide_1);
     ms.push(box1);
