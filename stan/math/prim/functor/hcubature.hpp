@@ -116,53 +116,6 @@ inline void combos(Eigen::MatrixXd& p, const int k, const double lambda,
 }
 
 /**
- * Helper function for signcombos. Create vector temp with k components equal
- * to [±lambda] and other components equal to zero (with all possible signs),
- * depending on the input vector inp.
- *
- * @param index boolsher helper vector to walk through temp, remembers which
- * positions already were considered
- * @param k number of components equal to lambda
- * @param lambda scalar
- * @param c ordered vector
- * @param[in] inp Input vector to be incremented
- */
-inline Eigen::VectorXd increment(std::vector<bool>& index, const int k,
-                                 const double lambda, const Eigen::VectorXi& c,
-                                 const Eigen::VectorXd& inp) {
-  Eigen::VectorXd temp = inp;
-  if (index.size() == 0) {
-    index.push_back(false);
-    for (int j = 0; j != k; j++) {
-      temp[c[j] - 1] = lambda;
-    }
-    return temp;
-  }
-  int first_zero = 0;
-  while ((first_zero < index.size()) && index[first_zero]) {
-    first_zero++;
-  }
-  if (first_zero == index.size()) {
-    index.flip();
-    for (int j = 0; j != index.size(); j++) {
-      temp[c[j] - 1] *= -1;
-    }
-    index.push_back(true);
-    temp[c[index.size() - 1] - 1] = -lambda;
-  } else {
-    for (int i = 0; i != first_zero + 1; i++) {
-      if (index[i]) {
-        index[i] = 0;
-      } else {
-        index[i] = 1;
-      }
-      temp[c[i] - 1] *= -1;
-    }
-  }
-  return temp;
-}
-
-/**
  * Compute a vector [p] of all [dim]-component vectors
  * with [k] components equal to [±lambda] and other components equal to zero
  * (with all possible signs).
@@ -184,7 +137,36 @@ inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda,
     std::vector<bool> index;
     for (int j = 0; j != std::pow(2, k); j++) {
       int prev_col = (j == 0) ? current_col : current_col - 1;
-      p.col(current_col) = increment(index, k, lambda, c, p.col(prev_col));
+      p.col(current_col) = p.col(prev_col);
+
+      if (index.size() == 0) {
+        index.push_back(false);
+        for (int h = 0; h != k; h++) {
+          p.col(current_col)[c[h] - 1] = lambda;
+        }
+      } else {
+        int first_zero = 0;
+        while ((first_zero < index.size()) && index[first_zero]) {
+          first_zero++;
+        }
+        if (first_zero == index.size()) {
+          index.flip();
+          for (int h = 0; h != index.size(); h++) {
+            p.col(current_col)[c[h] - 1] *= -1;
+          }
+          index.push_back(true);
+          p.col(current_col)[c[index.size() - 1] - 1] = -lambda;
+        } else {
+          for (int h = 0; h != first_zero + 1; h++) {
+            if (index[h]) {
+              index[h] = 0;
+            } else {
+              index[h] = 1;
+            }
+            p.col(current_col)[c[h] - 1] *= -1;
+          }
+        }
+      }
       current_col += 1;
     }
   }
