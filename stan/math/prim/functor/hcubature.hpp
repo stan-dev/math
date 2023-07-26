@@ -83,7 +83,7 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
     for (; k < x; k = k + r) {
       c[i]++;
       r = choose(dim - c[i], p - (i + 1));
-    };
+    }
     k = k - r;
   }
   if (p > 1) {
