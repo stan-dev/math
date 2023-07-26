@@ -56,7 +56,7 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
 }
 
 /**
- * Enables the vectorised application of the multiply_log
+ * Enables the vectorized application of the multiply_log
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

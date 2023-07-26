@@ -42,7 +42,7 @@ inline T2 bessel_first_kind(int v, const T2 z) {
 }
 
 /**
- * Enables the vectorised application of the bessel first kind function, when
+ * Enables the vectorized application of the bessel first kind function, when
  * the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

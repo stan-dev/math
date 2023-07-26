@@ -112,7 +112,7 @@ git commit -m "upgrading to boost v${boost_version}; adding unmodified boost lib
 cd boost_${boost_version}
 
 git rm -rf boost.css boost.png index.htm index.html INSTALL rst.css --ignore-unmatch
-git rm -rf doc/ libs/*/test/ libs/*/example/ libs/*/doc/ --ignore-unmatch
+git rm -rf doc/ libs/*/test/ libs/*/example/ libs/*/doc/ libs/*/*/doc/ --ignore-unmatch
 git rm -rf boost/leaf/ libs/leaf/ boost/nowide/ libs/nowide --ignore-unmatch 
 git rm -rf boost/pfr libs/pfr boost/json/ libs/json/ --ignore-unmatch
 git rm -rf boost/static_string libs/static_string --ignore-unmatch

@@ -117,7 +117,7 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
 }
 
 /**
- * Enables the vectorised application of the lbeta function,
+ * Enables the vectorized application of the lbeta function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

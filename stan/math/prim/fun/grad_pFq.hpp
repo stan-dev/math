@@ -22,7 +22,7 @@ namespace stan {
 namespace math {
 namespace internal {
 /**
- * Returns the gradient of generalised hypergeometric function wrt to the
+ * Returns the gradient of generalized hypergeometric function wrt to the
  * input arguments:
  * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
  *
@@ -58,7 +58,7 @@ namespace internal {
  * @param[in] precision Convergence criteria for infinite sum
  * @param[in] outer_steps Maximum number of iterations for infinite sum
  * @param[in] inner_steps Maximum number of iterations for infinite sum
- * @return Generalised hypergeometric function
+ * @return Generalized hypergeometric function
  */
 template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
           typename Tb, typename Tz,

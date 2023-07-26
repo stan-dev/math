@@ -77,7 +77,7 @@ inline auto as_array_or_scalar(T&& v) {
  * Converts an std::vector<std::vector> to an Eigen Array.
  * @tparam T A standard vector with inner container of a standard vector
  *  with an inner stan scalar.
- * @param v specified vector of vectorised
+ * @param v specified vector of vectorized
  * @return An Eigen Array with dynamic rows and columns.
  */
 template <typename T, require_std_vector_vt<is_std_vector, T>* = nullptr,
