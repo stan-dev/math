@@ -26,13 +26,14 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <queue>
 #include <tuple>
+#include <iostream>
 
 namespace stan {
 namespace math {
 
 namespace internal {
 
-static constexpr double xd7[8] = {-9.9145537112081263920685469752598e-01,
+static constexpr std::array<double, 8> xd7{-9.9145537112081263920685469752598e-01,
                                   -9.4910791234275852452618968404809e-01,
                                   -8.6486442335976907278971278864098e-01,
                                   -7.415311855993944398638647732811e-01,
@@ -41,7 +42,7 @@ static constexpr double xd7[8] = {-9.9145537112081263920685469752598e-01,
                                   -2.0778495500789846760068940377309e-01,
                                   0.0};
 
-static constexpr double wd7[8] = {2.2935322010529224963732008059913e-02,
+static constexpr std::array<double, 8> wd7{2.2935322010529224963732008059913e-02,
                                   6.3092092629978553290700663189093e-02,
                                   1.0479001032225018383987632254189e-01,
                                   1.4065325971552591874518959051021e-01,
@@ -50,7 +51,7 @@ static constexpr double wd7[8] = {2.2935322010529224963732008059913e-02,
                                   2.0443294007529889241416199923466e-01,
                                   2.0948214108472782801299917489173e-01};
 
-static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
+static constexpr std::array<double, 4> gwd7{1.2948496616886969327061143267787e-01,
                                    2.797053914892766679014677714229e-01,
                                    3.8183005050511894495036977548818e-01,
                                    4.1795918367346938775510204081658e-01};
@@ -102,17 +103,18 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
  * @param lambda scalar
  * @param dim dimension
  */
-inline void combos(Eigen::MatrixXd& p, const int k, const double lambda,
+inline Eigen::MatrixXd combos(const int k, const double lambda,
                    const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
-  p = Eigen::MatrixXd::Zero(dim, choose_dimk);
+  Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk);
   for (size_t i = 0; i < choose_dimk; i++) {
     combination(c, dim, k, i + 1);
     for (size_t j = 0; j < k; j++) {
       p.coeffRef(c.coeff(j) - 1, i) = lambda;
     }
-  }
+  } 
+  return p;
 }
 
 /**
@@ -125,12 +127,11 @@ inline void combos(Eigen::MatrixXd& p, const int k, const double lambda,
  * @param lambda scalar
  * @param dim dimension
  */
-inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda,
+inline Eigen::MatrixXd signcombos(const int k, const double lambda,
                        const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
-  p.resize(dim, choose_dimk * std::pow(2, k));
-  p.setZero();
+  Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
   int current_col = 0;
   for (int i = 1; i != choose_dimk + 1; i++) {
     combination(c, dim, k, i);
@@ -170,6 +171,7 @@ inline void signcombos(Eigen::MatrixXd& p, const int k, const double lambda,
       current_col += 1;
     }
   }
+  return p;
 }
 
 /**
@@ -252,12 +254,11 @@ make_GenzMalik(const int dim) {
   wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
   wd[1] = twopn * (245.0 / 486);
   wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
-
-  combos(p[0], 1, l2, dim);
-  combos(p[1], 1, l3, dim);
-  signcombos(p[2], 2, l4, dim);
-  signcombos(p[3], dim, l5, dim);
-  return std::make_tuple(p, w, wd);
+  p[0] = combos(1, l2, dim);
+  p[1] = combos(1, l3, dim);
+  p[2] = signcombos(2, l4, dim);
+  p[3] = signcombos(dim, l5, dim);
+  return std::make_tuple(std::move(p), std::move(w), std::move(wd));
 }
 
 /**
@@ -279,8 +280,8 @@ make_GenzMalik(const int dim) {
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    std::vector<Eigen::MatrixXd>& p, Eigen::VectorXd& w, Eigen::VectorXd& wd,
-    const F& integrand, const int dim, const std::vector<double>& a,
+    const F& integrand, const std::vector<Eigen::MatrixXd>& p, const Eigen::VectorXd& w, const Eigen::VectorXd& wd,
+    const int dim, const std::vector<double>& a,
     const std::vector<double>& b, const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim, 0);
@@ -399,17 +400,17 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   return std::make_tuple(I, E, kdivide);
 }
-
+// DOCUMENT THIS
 struct Box {
-  Box(const std::vector<double>& a, const std::vector<double>& b, double I,
-      double err, int kdivide)
-      : a(a), b(b), I(I), E(err), kdiv(kdivide) {}
-  bool operator<(const Box& box) const { return E < box.E; }
-  std::vector<double> a;
-  std::vector<double> b;
-  double I;
-  double E;
-  int kdiv;
+  template <typename Vec1, typename Vec2>
+  Box(Vec1&& a, Vec2&& b, double I, double err, int kdivide)
+      : a_(std::forward<Vec1>(a)), b_(std::forward<Vec2>(b)), I_(I), E_(err), kdiv_(kdivide) {}
+  bool operator<(const Box& box) const { return E_ < box.E_; }
+  std::vector<double> a_;
+  std::vector<double> b_;
+  double I_;
+  double E_;
+  int kdiv_;
 };
 
 }  // namespace internal
@@ -481,7 +482,7 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   } else {
     std::tie(p, w_five, wd_four) = internal::make_GenzMalik(dim);
     std::tie(result, err, kdivide) = internal::integrate_GenzMalik(
-        p, w_five, wd_four, integrand, dim, a, b, pars);
+        integrand, p, w_five, wd_four, dim, a, b, pars);
   }
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
@@ -494,52 +495,58 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       || (numevals >= maxEval)) {
     return val;
   }
-  std::priority_queue<internal::Box> ms;
-  internal::Box box(a, b, result, err, kdivide);
-  ms.push(box);
-
   numevals += 2 * evals_per_box;
+  std::vector<internal::Box> ms;
+  ms.reserve(numevals);
+  ms.emplace_back(std::move(a), std::move(b), result, err, kdivide);
+  auto get_largest_box_idx = [](auto&& box_vec) {
+    auto max_it = std::max_element(box_vec.begin(), box_vec.end());
+    return std::distance(box_vec.begin(), max_it);
+  };
   while ((numevals < maxEval)
          && (error > max(reqRelError * fabs(val), reqAbsError))
          && std::isfinite(val)) {
-    internal::Box box = ms.top();
-    ms.pop();
+    auto box_idx = get_largest_box_idx(ms);
+    auto&& box = ms[box_idx];
 
-    double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
-    std::vector<double> ma(box.a);
+    double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
+    std::vector<double> ma(box.a_);
 
-    ma[box.kdiv] += w;
-    std::vector<double> mb(box.b);
-    mb[box.kdiv] -= w;
+    ma[box.kdiv_] += w;
+    std::vector<double> mb(box.b_);
+    mb[box.kdiv_] -= w;
 
     double result_1, result_2, err_1, err_2, kdivide_1, kdivide_2;
 
     if (dim == 1) {
       std::tie(result_1, err_1)
-          = internal::gauss_kronrod(integrand, ma[0], box.b[0], pars);
+          = internal::gauss_kronrod(integrand, ma[0], box.b_[0], pars);
       std::tie(result_2, err_2)
-          = internal::gauss_kronrod(integrand, box.a[0], mb[0], pars);
+          = internal::gauss_kronrod(integrand, box.a_[0], mb[0], pars);
     } else {
       std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
-          p, w_five, wd_four, integrand, dim, ma, box.b, pars);
+          integrand, p, w_five, wd_four, dim, ma, box.b_, pars);
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
-          p, w_five, wd_four, integrand, dim, box.a, mb, pars);
+          integrand, p, w_five, wd_four, dim, box.a_, mb, pars);
     }
-    internal::Box box1(ma, box.b, result_1, err_1, kdivide_1);
-    ms.push(box1);
-    internal::Box box2(box.a, mb, result_2, err_2, kdivide_2);
-    ms.push(box2);
-    val += box1.I + box2.I - box.I;
-    error += box1.E + box2.E - box.E;
+    internal::Box box1(ma, box.b_, result_1, err_1, kdivide_1);
+    internal::Box box2(box.a_, mb, result_2, err_2, kdivide_2);
+    val += box1.I_ + box2.I_ - box.I_;
+    error += box1.E_ + box2.E_ - box.E_;
+    ms[box_idx].E_ = 0;
+    ms[box_idx].I_ = 0;
+    ms.push_back(std::move(box1));
+    ms.push_back(std::move(box2));
+    
+    //std::sort(ms.begin(), ms.end());
     numevals += 2 * evals_per_box;
-  }
+ }
   val = 0.0;
   error = 0.0;
 
-  for (; !ms.empty(); ms.pop()) {
-    internal::Box box = ms.top();
-    val += box.I;
-    error += box.E;
+  for (auto&& box : ms) {
+    val += box.I_;
+    error += box.E_;
   }
   return val;
 }  // hcubature
