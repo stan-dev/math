@@ -11,7 +11,7 @@ std::vector<T> vectorize_softmax(const std::vector<T>& y) {
 }
 
 template <typename T, stan::require_not_std_vector_t<T>* = nullptr>
-T vectorize_softmax(const T& y) {
+auto vectorize_softmax(const T& y) {
   return stan::math::softmax(y);
 }
 }  // namespace dirichlet_test

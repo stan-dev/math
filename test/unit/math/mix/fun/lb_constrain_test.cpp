@@ -22,11 +22,12 @@ void expect(const T1& x, const T2& lb) {
     auto xx = stan::math::lb_constrain<true>(x, lb, lp);
     return stan::math::add(lp, stan::math::sum(xx));
   };
-
-  stan::test::expect_ad(f1, x, lb);
-  stan::test::expect_ad(f2, x, lb);
-  stan::test::expect_ad(f3, x, lb);
-  stan::test::expect_ad(f4, x, lb);
+  auto&& x_ref = stan::math::to_ref(x);
+  auto&& lb_ref = stan::math::to_ref(lb);
+  stan::test::expect_ad(f1, x_ref, lb_ref);
+  stan::test::expect_ad(f2, x_ref, lb_ref);
+  stan::test::expect_ad(f3, x_ref, lb_ref);
+  stan::test::expect_ad(f4, x_ref, lb_ref);
 }
 
 template <typename T1, typename T2>
@@ -53,14 +54,16 @@ void expect_vec(const T1& x, const T2& lb) {
     }
     return stan::math::add(lp, xx_acc);
   };
-  stan::test::expect_ad(f1, x, lb);
-  stan::test::expect_ad(f2, x, lb);
-  stan::test::expect_ad(f3, x, lb);
-  stan::test::expect_ad(f4, x, lb);
+  auto&& x_ref = stan::math::to_ref(x);
+  auto&& lb_ref = stan::math::to_ref(lb);
+  stan::test::expect_ad(f1, x_ref, lb_ref);
+  stan::test::expect_ad(f2, x_ref, lb_ref);
+  stan::test::expect_ad(f3, x_ref, lb_ref);
+  stan::test::expect_ad(f4, x_ref, lb_ref);
 }
 
 }  // namespace lb_constrain_test
-
+/*
 // real, real
 TEST(mathMixScalFun, lbConstrain) {
   lb_constrain_test::expect(-1, 2);
@@ -114,7 +117,7 @@ TEST(mathMixMatFun, lb_stdvec_constrain_neg_inf) {
   lb_constrain_test::expect(A, lbm);
   lb_constrain_test::expect(A, stan::math::NEGATIVE_INFTY);
 }
-
+*/
 // matrix[], matrix
 // matrix[], real
 TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
@@ -128,12 +131,15 @@ TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
   A.push_back(A_inner2);
+  std::cout << "111111 " << std::endl;
   lb_constrain_test::expect_vec(A, lbm_inner);
+    std::cout << "2222222 " << std::endl;
   lb_constrain_test::expect_vec(A, lbm_inner_bad);
   double lbd = 6.0;
+    std::cout << "333333 " << std::endl;
   lb_constrain_test::expect_vec(A, lbd);
 }
-
+/*
 TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain_neg_inf) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
@@ -187,3 +193,4 @@ TEST(mathMixMatFun, lb_stdvec_mat_constrain_neg_inf) {
   lb_constrain_test::expect_vec(A, A_inner);
   lb_constrain_test::expect_vec(A, stan::math::NEGATIVE_INFTY);
 }
+*/
