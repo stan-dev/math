@@ -6,7 +6,8 @@ TEST(mathMixMatFun, read_cov_L_lp) {
     return [K, rx2](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;
       auto&& x1_ref = stan::math::to_ref(x1);
-      stan::plain_type_t<std::decay_t<decltype(x1)>> x2 = stan::math::add(x1_ref.head(K), rx2);
+      stan::plain_type_t<std::decay_t<decltype(x1)>> x2
+          = stan::math::add(x1_ref.head(K), rx2);
       return stan::math::read_cov_L(x1_ref, x2, lp);
     };
   };
@@ -16,7 +17,7 @@ TEST(mathMixMatFun, read_cov_L_lp) {
         = (Eigen::VectorXd::Random(K).array() * 0.0 + 2.0).matrix();
     return [K, rx2](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;
-            auto&& x1_ref = stan::math::to_ref(x1);
+      auto&& x1_ref = stan::math::to_ref(x1);
       auto x2 = stan::math::eval(stan::math::add(x1_ref.head(K), rx2));
       stan::math::read_cov_L(x1_ref, x2, lp);
       return lp;

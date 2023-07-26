@@ -8,10 +8,12 @@ namespace stan {
 namespace math {
 
 template <typename EigMat, require_eigen_matrix_base_t<EigMat>* = nullptr>
-inline Eigen::Matrix<scalar_type_t<EigMat>, -1, -1> pseudo_eigenvectors(EigMat&& m) {
+inline Eigen::Matrix<scalar_type_t<EigMat>, -1, -1> pseudo_eigenvectors(
+    EigMat&& m) {
   check_nonzero_size("pseudo_eigenvectors", "m", m);
   check_square("pseudo_eigenvectors", "m", m);
-  Eigen::EigenSolver<Eigen::Matrix<scalar_type_t<EigMat>, -1, -1>> solver(to_ref(std::forward<EigMat>(m)));
+  Eigen::EigenSolver<Eigen::Matrix<scalar_type_t<EigMat>, -1, -1>> solver(
+      to_ref(std::forward<EigMat>(m)));
   return solver.pseudoEigenvectors();
 }
 
