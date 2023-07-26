@@ -59,9 +59,11 @@ inline auto promote_scalar(UnPromotedType&& x) {
 
 // Forward decl for iterating over tuples used in std::vector<tuple>
 template <typename PromotionScalars, typename UnPromotedTypes,
-          require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr>
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr,
+          require_not_same_t<PromotionScalars, UnPromotedTypes>* = nullptr>
 inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
 promote_scalar(UnPromotedTypes&& x);
+
 /**
  * Promote the scalar type of an standard vector to the requested type.
  *
@@ -93,7 +95,8 @@ inline auto promote_scalar(UnPromotedType&& x) {
  * @param x input
  */
 template <typename PromotionScalars, typename UnPromotedTypes,
-          require_all_tuple_t<PromotionScalars, UnPromotedTypes>*>
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>*,
+          require_not_same_t<PromotionScalars, UnPromotedTypes>*>
 inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
 promote_scalar(UnPromotedTypes&& x) {
   return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
