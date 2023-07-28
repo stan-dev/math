@@ -403,13 +403,11 @@ std::tuple<double, double, int> integrate_GenzMalik(
 // DOCUMENT THIS
 struct Box {
   template <typename Vec1, typename Vec2>
-  Box(Vec1&& a, Vec2&& b, double I, double err, int kdivide)
-      : a_(std::forward<Vec1>(a)), b_(std::forward<Vec2>(b)), I_(I), E_(err), kdiv_(kdivide) {}
-  bool operator<(const Box& box) const { return E_ < box.E_; }
+  Box(Vec1&& a, Vec2&& b, double I, int kdivide)
+      : a_(std::forward<Vec1>(a)), b_(std::forward<Vec2>(b)), I_(I), kdiv_(kdivide) {}
   std::vector<double> a_;
   std::vector<double> b_;
   double I_;
-  double E_;
   int kdiv_;
 };
 
@@ -487,27 +485,26 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
   int evals_per_box = numevals;
-  int kdiv = kdivide;
-  double error = err;
-  double val = result;
-
-  if ((error <= fmax(reqRelError * fabs(val), reqAbsError))
+  if ((err <= fmax(reqRelError * fabs(result), reqAbsError))
       || (numevals >= maxEval)) {
-    return val;
+    return result;
   }
   numevals += 2 * evals_per_box;
   std::vector<internal::Box> ms;
   ms.reserve(numevals);
-  ms.emplace_back(std::move(a), std::move(b), result, err, kdivide);
+  ms.emplace_back(std::move(a), std::move(b), result, kdivide);
   auto get_largest_box_idx = [](auto&& box_vec) {
     auto max_it = std::max_element(box_vec.begin(), box_vec.end());
     return std::distance(box_vec.begin(), max_it);
   };
+  std::vector<double> err_vec;
+  err_vec.reserve(numevals);
+  err_vec.push_back(err);
   while ((numevals < maxEval)
-         && (error > max(reqRelError * fabs(val), reqAbsError))
-         && std::isfinite(val)) {
-    auto box_idx = get_largest_box_idx(ms);
-    auto&& box = ms[box_idx];
+         && (err > max(reqRelError * fabs(result), reqAbsError))
+         && std::isfinite(result)) {
+    auto err_idx = get_largest_box_idx(err_vec);
+    auto&& box = ms[err_idx];
 
     double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
     std::vector<double> ma(box.a_);
@@ -516,7 +513,12 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     std::vector<double> mb(box.b_);
     mb[box.kdiv_] -= w;
 
-    double result_1, result_2, err_1, err_2, kdivide_1, kdivide_2;
+    double result_1;
+    double result_2;
+    double err_1;
+    double err_2;
+    double kdivide_1{0};
+    double kdivide_2{0};
 
     if (dim == 1) {
       std::tie(result_1, err_1)
@@ -529,26 +531,28 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
           integrand, p, w_five, wd_four, dim, box.a_, mb, pars);
     }
-    internal::Box box1(ma, box.b_, result_1, err_1, kdivide_1);
-    internal::Box box2(box.a_, mb, result_2, err_2, kdivide_2);
-    val += box1.I_ + box2.I_ - box.I_;
-    error += box1.E_ + box2.E_ - box.E_;
-    ms[box_idx].E_ = 0;
-    ms[box_idx].I_ = 0;
+    internal::Box box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
+    internal::Box box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
+    result += result_1 + result_2 - box.I_;
+    err += err_1 + err_2 - err_vec[err_idx];
+    ms[err_idx].I_ = 0;
+    err_vec[err_idx] = 0;
     ms.push_back(std::move(box1));
     ms.push_back(std::move(box2));
-    
-    //std::sort(ms.begin(), ms.end());
+    err_vec.push_back(err_1);
+    err_vec.push_back(err_2);
     numevals += 2 * evals_per_box;
  }
-  val = 0.0;
-  error = 0.0;
+  result = 0.0;
+  err = 0.0;
 
   for (auto&& box : ms) {
-    val += box.I_;
-    error += box.E_;
+    result += box.I_;
   }
-  return val;
+  for (auto err_i : err_vec) {
+    err += err_i;
+  }
+  return result;
 }  // hcubature
 
 }  // namespace math
