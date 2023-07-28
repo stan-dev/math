@@ -460,12 +460,9 @@ struct Box {
 template <typename F, typename ParsTuple>
 double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
                  const std::vector<double>& a, const std::vector<double>& b,
-                 int& maxEval, const double reqAbsError,
+                 const int max_eval, const double reqAbsError,
                  const double reqRelError) {
-  if (maxEval <= 0) {
-    maxEval = 1000000;
-  }
-
+  const auto maxEval = max_eval <= 0 ? 1000000 : max_eval;
   double result;
   double err;
   int kdivide = 0;
