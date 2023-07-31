@@ -470,7 +470,7 @@ struct Box {
  * @param dim dimension of the integral
  * @param a lower limit of integration as vector
  * @param b upper limit of integration as vector
- * @param maxEval maximal number of evaluations
+ * @param max_eval maximal number of evaluations
  * @param reqAbsError absolute error
  * @param reqRelError relative error as vector
  * @param val correct value of integral
