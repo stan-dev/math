@@ -33,28 +33,30 @@ namespace math {
 
 namespace internal {
 
-static constexpr std::array<double, 8> xd7{-9.9145537112081263920685469752598e-01,
-                                  -9.4910791234275852452618968404809e-01,
-                                  -8.6486442335976907278971278864098e-01,
-                                  -7.415311855993944398638647732811e-01,
-                                  -5.8608723546769113029414483825842e-01,
-                                  -4.0584515137739716690660641207707e-01,
-                                  -2.0778495500789846760068940377309e-01,
-                                  0.0};
+static constexpr std::array<double, 8> xd7{
+    -9.9145537112081263920685469752598e-01,
+    -9.4910791234275852452618968404809e-01,
+    -8.6486442335976907278971278864098e-01,
+    -7.415311855993944398638647732811e-01,
+    -5.8608723546769113029414483825842e-01,
+    -4.0584515137739716690660641207707e-01,
+    -2.0778495500789846760068940377309e-01,
+    0.0};
 
-static constexpr std::array<double, 8> wd7{2.2935322010529224963732008059913e-02,
-                                  6.3092092629978553290700663189093e-02,
-                                  1.0479001032225018383987632254189e-01,
-                                  1.4065325971552591874518959051021e-01,
-                                  1.6900472663926790282658342659795e-01,
-                                  1.9035057806478540991325640242055e-01,
-                                  2.0443294007529889241416199923466e-01,
-                                  2.0948214108472782801299917489173e-01};
+static constexpr std::array<double, 8> wd7{
+    2.2935322010529224963732008059913e-02,
+    6.3092092629978553290700663189093e-02,
+    1.0479001032225018383987632254189e-01,
+    1.4065325971552591874518959051021e-01,
+    1.6900472663926790282658342659795e-01,
+    1.9035057806478540991325640242055e-01,
+    2.0443294007529889241416199923466e-01,
+    2.0948214108472782801299917489173e-01};
 
-static constexpr std::array<double, 4> gwd7{1.2948496616886969327061143267787e-01,
-                                   2.797053914892766679014677714229e-01,
-                                   3.8183005050511894495036977548818e-01,
-                                   4.1795918367346938775510204081658e-01};
+static constexpr std::array<double, 4> gwd7{
+    1.2948496616886969327061143267787e-01, 2.797053914892766679014677714229e-01,
+    3.8183005050511894495036977548818e-01,
+    4.1795918367346938775510204081658e-01};
 
 /**
  * Get the [x]-th lexicographically ordered set of [p] elements in [dim]
@@ -69,8 +71,8 @@ static constexpr std::array<double, 4> gwd7{1.2948496616886969327061143267787e-0
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline Eigen::VectorXi combination(Eigen::VectorXi& c, const int dim, const int p,
-                        const int x) {
+inline Eigen::VectorXi combination(Eigen::VectorXi& c, const int dim,
+                                   const int p, const int x) {
   int r = 0;
   int k = 0;
   c[0] = 0;
@@ -104,8 +106,7 @@ inline Eigen::VectorXi combination(Eigen::VectorXi& c, const int dim, const int 
  * @param lambda scalar
  * @param dim dimension
  */
-inline Eigen::MatrixXd combos(const int k, const double lambda,
-                   const int dim) {
+inline Eigen::MatrixXd combos(const int k, const double lambda, const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk);
@@ -114,7 +115,7 @@ inline Eigen::MatrixXd combos(const int k, const double lambda,
     for (size_t j = 0; j < k; j++) {
       p.coeffRef(c.coeff(j) - 1, i) = lambda;
     }
-  } 
+  }
   return p;
 }
 
@@ -129,7 +130,7 @@ inline Eigen::MatrixXd combos(const int k, const double lambda,
  * @param dim dimension
  */
 inline Eigen::MatrixXd signcombos(const int k, const double lambda,
-                       const int dim) {
+                                  const int dim) {
   Eigen::VectorXi c(k);
   const auto choose_dimk = choose(dim, k);
   Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
@@ -259,7 +260,8 @@ make_GenzMalik(const int dim) {
   points[1] = combos(1, l3, dim);
   points[2] = signcombos(2, l4, dim);
   points[3] = signcombos(dim, l5, dim);
-  return std::make_tuple(std::move(points), std::move(weights), std::move(weights_low_deg));
+  return std::make_tuple(std::move(points), std::move(weights),
+                         std::move(weights_low_deg));
 }
 
 /**
@@ -281,9 +283,10 @@ make_GenzMalik(const int dim) {
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, const std::vector<Eigen::MatrixXd>& points, const Eigen::VectorXd& weights, const Eigen::VectorXd& weights_low_deg,
-    const int dim, const std::vector<double>& a,
-    const std::vector<double>& b, const ParsTupleT& pars_tuple) {
+    const F& integrand, const std::vector<Eigen::MatrixXd>& points,
+    const Eigen::VectorXd& weights, const Eigen::VectorXd& weights_low_deg,
+    const int dim, const std::vector<double>& a, const std::vector<double>& b,
+    const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
   std::vector<double> deltac(dim, 0);
 
@@ -384,8 +387,12 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f5 += temp;
   }
 
-  double I = v * (weights[0] * f1 + weights[1] * f2 + weights[2] * f3 + weights[3] * f4 + weights[4] * f5);
-  double Idash = v * (weights_low_deg[0] * f1 + weights_low_deg[1] * f2 + weights_low_deg[2] * f3 + weights_low_deg[3] * f4);
+  double I = v
+             * (weights[0] * f1 + weights[1] * f2 + weights[2] * f3
+                + weights[3] * f4 + weights[4] * f5);
+  double Idash = v
+                 * (weights_low_deg[0] * f1 + weights_low_deg[1] * f2
+                    + weights_low_deg[2] * f3 + weights_low_deg[3] * f4);
   double E = fabs(I - Idash);
 
   int kdivide = 0;
@@ -416,7 +423,10 @@ std::tuple<double, double, int> integrate_GenzMalik(
 struct Box {
   template <typename Vec1, typename Vec2>
   Box(Vec1&& a, Vec2&& b, double I, int kdivide)
-      : a_(std::forward<Vec1>(a)), b_(std::forward<Vec2>(b)), I_(I), kdiv_(kdivide) {}
+      : a_(std::forward<Vec1>(a)),
+        b_(std::forward<Vec2>(b)),
+        I_(I),
+        kdiv_(kdivide) {}
   std::vector<double> a_;
   std::vector<double> b_;
   double I_;
@@ -551,7 +561,7 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     err_vec.push_back(err_1);
     err_vec.push_back(err_2);
     numevals += 2 * evals_per_box;
- }
+  }
   result = 0.0;
   err = 0.0;
 

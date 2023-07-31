@@ -525,9 +525,10 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
  * @param args_tuple Tuple of arguments to pass to functor
  * @param log_result Whether the function result is already on the log-scale
  */
-template <size_t ErrIndex, bool GradW7 = false, size_t NestedIndex = 0, bool LogResult = true,
-          typename F, typename... ArgsTupleT>
-double estimate_with_err_check(const F& functor, double err, ArgsTupleT&&... args_tuple) {
+template <size_t ErrIndex, bool GradW7 = false, size_t NestedIndex = 0,
+          bool LogResult = true, typename F, typename... ArgsTupleT>
+double estimate_with_err_check(const F& functor, double err,
+                               ArgsTupleT&&... args_tuple) {
   double result = functor(args_tuple...);
   double log_fabs_result = LogResult ? log(fabs(result)) : fabs(result);
   if (log_fabs_result < err) {
@@ -660,7 +661,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     density = internal::estimate_with_err_check<5, false, 0, false>(
         [&](auto&&... args) { return internal::wiener5_density(args...); },
         log_error_density - LOG_TWO, y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, log_error_absolute);
+        sv_val, log_error_absolute);
     log_density += density;
 
     const double new_est_err = density + log_error_derivative - LOG_FOUR;
@@ -669,8 +670,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // the value as deriv_y to edge1 and as -deriv_y to edge5
     const double deriv_y = internal::estimate_with_err_check<5>(
         [&](auto&&... args) { return internal::wiener5_grad_t(args...); },
-        new_est_err, y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, log_error_absolute);
+        new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+        log_error_absolute);
 
     // computation of derivatives and precision checks
     if (!is_constant_all<T_y>::value) {
@@ -679,8 +680,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<5>(
           [&](auto&&... args) { return internal::wiener5_grad_a(args...); },
-          new_est_err, y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, log_error_absolute);
+          new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+          log_error_absolute);
     }
     if (!is_constant_all<T_t0>::value) {
       ops_partials.edge3_.partials_[i] = -deriv_y;
@@ -688,8 +689,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<5>(
           [&](auto&&... args) { return internal::wiener5_grad_w(args...); },
-          new_est_err, y_val - t0_val, a_val, v_val, w_val,
-                                        sv_val, log_error_absolute);
+          new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+          log_error_absolute);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i] = internal::wiener5_grad_v(

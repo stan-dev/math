@@ -58,8 +58,8 @@ inline double wiener7_grad_sw(double y, double a, double v, double w, double sv,
  */
 template <bool GradSW, typename F, std::enable_if_t<!GradSW>* = nullptr>
 inline double conditionally_grad_sw(const F& functor, double y_diff, double a,
-                                    double v, double w, double sv,
-                                    double sw, double log_error) {
+                                    double v, double w, double sv, double sw,
+                                    double log_error) {
   return functor(y_diff, a, v, w, sv, log_error);
 }
 
@@ -74,7 +74,8 @@ inline double conditionally_grad_sw(const F& functor, double y_diff, double a,
  * @tparam F Type of Gradient/density functor
  *
  * @param functor Gradient/density functor to apply
- * @param y_diff A scalar variable; the reaction time minus the non-decision in seconds
+ * @param y_diff A scalar variable; the reaction time minus the non-decision in
+ * seconds
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
@@ -87,8 +88,8 @@ inline double conditionally_grad_sw(const F& functor, double y_diff, double a,
  */
 template <bool GradSW, typename F, std::enable_if_t<GradSW>* = nullptr>
 inline double conditionally_grad_sw(const F& functor, double y_diff, double a,
-                                    double v, double w, double sv,
-                                    double sw, double log_error) {
+                                    double v, double w, double sv, double sw,
+                                    double log_error) {
   return functor(y_diff, a, v, w, sv, sw, log_error);
 }
 
@@ -111,8 +112,8 @@ template <bool GradSW, bool GradW7 = false, typename Wiener7FunctorT,
 auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                        double hcubature_err, TArgs&&... args) {
   const auto& wiener7_integrand_impl
-      = [&](auto&& x, double y, double a, double v, double w,
-            double t0, double sv, double sw, double st0, double log_error) {
+      = [&](auto&& x, double y, double a, double v, double w, double t0,
+            double sv, double sw, double st0, double log_error) {
           scalar_seq_view<decltype(x)> x_vec(x);
           const double sw_val = GradSW ? 0 : sw;
           const double new_w = sw_val ? w + sw_val * (x_vec[0] - 0.5) : w;
@@ -121,8 +122,8 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
           if (y - new_t0 <= 0) {
             return 0.0;
           } else {
-            return conditionally_grad_sw<GradSW>(
-                wiener7_functor, y - new_t0, a, v, new_w, sv, sw, log_error);
+            return conditionally_grad_sw<GradSW>(wiener7_functor, y - new_t0, a,
+                                                 v, new_w, sv, sw, log_error);
           }
         };
   const auto& functor = [&](auto&&... int_args) {
@@ -401,7 +402,8 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   const int maximal_evaluations_hcubature = 6000;
   double density = 0.0;
   double log_density = 0.0;
-  auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref, sw_ref, st0_ref);
+  auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
+                                               v_ref, sv_ref, sw_ref, st0_ref);
   ReturnT result = 0;
 
   // calculate density and partials
@@ -523,7 +525,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 return internal::wiener7_grad_sw(args...);
               },
               hcubature_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
-                                sw_val, log_error_absolute - LOG_TWO);
+              sw_val, log_error_absolute - LOG_TWO);
         } else {
           derivative = internal::wiener7_integrate<true>(
               [&](auto&&... args) {
@@ -549,7 +551,8 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
-              log_error_derivative + log(st0_val), y_val - t0_st0, a_val, v_val, w_val, sv_val, log_error_absolute - LOG_TWO);
+              log_error_derivative + log(st0_val), y_val - t0_st0, a_val, v_val,
+              w_val, sv_val, log_error_absolute - LOG_TWO);
         } else {
           const double new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
