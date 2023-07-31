@@ -52,6 +52,10 @@ void stan_print(std::ostream* o, const EigMat& x) {
   *o << ']';
 }
 
+// forward decl to allow the next two overloads to call each other
+template <typename T, require_tuple_t<T>* = nullptr>
+void stan_print(std::ostream* o, const T& x);
+
 template <typename T, require_std_vector_t<T>* = nullptr>
 void stan_print(std::ostream* o, const T& x) {
   *o << '[';
@@ -64,7 +68,7 @@ void stan_print(std::ostream* o, const T& x) {
   *o << ']';
 }
 
-template <typename T, require_tuple_t<T>* = nullptr>
+template <typename T, require_tuple_t<T>*>
 void stan_print(std::ostream* o, const T& x) {
   *o << '(';
   constexpr auto tuple_size = std::tuple_size<std::decay_t<T>>::value;
