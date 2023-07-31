@@ -69,7 +69,7 @@ static constexpr std::array<double, 4> gwd7{1.2948496616886969327061143267787e-0
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline void combination(Eigen::VectorXi& c, const int dim, const int p,
+inline Eigen::VectorXi combination(Eigen::VectorXi& c, const int dim, const int p,
                         const int x) {
   int r = 0;
   int k = 0;
@@ -92,6 +92,7 @@ inline void combination(Eigen::VectorXi& c, const int dim, const int p,
   } else {
     c[0] = x;
   }
+  return std::move(c);
 }
 
 /**
@@ -109,7 +110,7 @@ inline Eigen::MatrixXd combos(const int k, const double lambda,
   const auto choose_dimk = choose(dim, k);
   Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk);
   for (size_t i = 0; i < choose_dimk; i++) {
-    combination(c, dim, k, i + 1);
+    c = combination(c, dim, k, i + 1);
     for (size_t j = 0; j < k; j++) {
       p.coeffRef(c.coeff(j) - 1, i) = lambda;
     }
@@ -134,7 +135,7 @@ inline Eigen::MatrixXd signcombos(const int k, const double lambda,
   Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
   int current_col = 0;
   for (int i = 1; i != choose_dimk + 1; i++) {
-    combination(c, dim, k, i);
+    c = combination(c, dim, k, i);
     std::vector<bool> index;
     for (int j = 0; j != std::pow(2, k); j++) {
       int prev_col = (j == 0) ? current_col : current_col - 1;
@@ -227,17 +228,17 @@ std::pair<double, double> gauss_kronrod(const F& integrand, const double a,
  * Compute the points and weights corresponding to a [dim]-dimensional
  * Genz-Malik cubature rule
  *
- * @param[in,out] p points for the last 4 GenzMalik weights
- * @param[in,out] w weights for the 5 terms in the GenzMalik rule
- * @param[in,out] wd weights for the embedded lower-degree rule
+ * @param[in,out] points points for the last 4 GenzMalik weights
+ * @param[in,out] weights weights for the 5 terms in the GenzMalik rule
+ * @param[in,out] weights_low_deg weights for the embedded lower-degree rule
  * @param dim dimension
  */
 inline std::tuple<std::vector<Eigen::MatrixXd>, Eigen::VectorXd,
                   Eigen::VectorXd>
 make_GenzMalik(const int dim) {
-  std::vector<Eigen::MatrixXd> p(4);
-  Eigen::VectorXd w(5);
-  Eigen::VectorXd wd(4);
+  std::vector<Eigen::MatrixXd> points(4);
+  Eigen::VectorXd weights(5);
+  Eigen::VectorXd weights_low_deg(4);
   double l4 = std::sqrt(9 * 1.0 / 10);
   double l2 = std::sqrt(9 * 1.0 / 70);
   double l3 = l4;
@@ -245,20 +246,20 @@ make_GenzMalik(const int dim) {
 
   double twopn = std::pow(2, dim);
 
-  w[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
-  w[1] = twopn * (980.0 / 6561);
-  w[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
-  w[3] = twopn * (200.0 / 19683);
-  w[4] = 6859.0 / 19683;
-  wd[3] = twopn * (25.0 / 729);
-  wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
-  wd[1] = twopn * (245.0 / 486);
-  wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
-  p[0] = combos(1, l2, dim);
-  p[1] = combos(1, l3, dim);
-  p[2] = signcombos(2, l4, dim);
-  p[3] = signcombos(dim, l5, dim);
-  return std::make_tuple(std::move(p), std::move(w), std::move(wd));
+  weights[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
+  weights[1] = twopn * (980.0 / 6561);
+  weights[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
+  weights[3] = twopn * (200.0 / 19683);
+  weights[4] = 6859.0 / 19683;
+  weights_low_deg[3] = twopn * (25.0 / 729);
+  weights_low_deg[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
+  weights_low_deg[1] = twopn * (245.0 / 486);
+  weights_low_deg[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
+  points[0] = combos(1, l2, dim);
+  points[1] = combos(1, l3, dim);
+  points[2] = signcombos(2, l4, dim);
+  points[3] = signcombos(dim, l5, dim);
+  return std::make_tuple(std::move(points), std::move(weights), std::move(weights_low_deg));
 }
 
 /**
@@ -268,9 +269,9 @@ make_GenzMalik(const int dim) {
  * @tparam F type of the integrand
  * @tparam ParsTupleT type of the tuple of parameters for the integrand
  * @param[out] integrand function to be integrated
- * @param[in] p
- * @param[in] w
- * @param[in] wd
+ * @param[in] points points for the last 4 GenzMalik weights
+ * @param[in] weights weights for the 5 terms in the GenzMalik rule
+ * @param[in] weights_low_deg weights for the embedded lower-degree rule
  * @param dim dimension of the multidimensional integral
  * @param a lower limit of integration
  * @param b upper limit of integration
@@ -280,7 +281,7 @@ make_GenzMalik(const int dim) {
  */
 template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, const std::vector<Eigen::MatrixXd>& p, const Eigen::VectorXd& w, const Eigen::VectorXd& wd,
+    const F& integrand, const std::vector<Eigen::MatrixXd>& points, const Eigen::VectorXd& weights, const Eigen::VectorXd& weights_low_deg,
     const int dim, const std::vector<double>& a,
     const std::vector<double>& b, const ParsTupleT& pars_tuple) {
   std::vector<double> c(dim, 0);
@@ -316,7 +317,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
 
   for (std::size_t i = 0; i != dim; i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p2[j] = deltac[j] * p[0](j, i);
+      p2[j] = deltac[j] * points[0](j, i);
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -334,7 +335,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f2i += temp;
 
     for (std::size_t j = 0; j != dim; j++) {
-      p3[j] = deltac[j] * p[1](j, i);
+      p3[j] = deltac[j] * points[1](j, i);
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p3[j];
@@ -355,9 +356,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   std::vector<double> p4(dim);
   double f4 = 0.0;
-  for (std::size_t i = 0; i != p[2].cols(); i++) {
+  for (std::size_t i = 0; i != points[2].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p4[j] = deltac[j] * p[2](j, i);
+      p4[j] = deltac[j] * points[2](j, i);
     }
     for (std::size_t j = 0; j != dim; j++) {
       cc[j] = c[j] + p4[j];
@@ -369,9 +370,9 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   double f5 = 0.0;
   std::vector<double> p5(dim);
-  for (std::size_t i = 0; i != p[3].cols(); i++) {
+  for (std::size_t i = 0; i != points[3].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
-      p5[j] = deltac[j] * p[3](j, i);
+      p5[j] = deltac[j] * points[3](j, i);
     }
 
     for (std::size_t j = 0; j != dim; j++) {
@@ -383,8 +384,8 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f5 += temp;
   }
 
-  double I = v * (w[0] * f1 + w[1] * f2 + w[2] * f3 + w[3] * f4 + w[4] * f5);
-  double Idash = v * (wd[0] * f1 + wd[1] * f2 + wd[2] * f3 + wd[3] * f4);
+  double I = v * (weights[0] * f1 + weights[1] * f2 + weights[2] * f3 + weights[3] * f4 + weights[4] * f5);
+  double Idash = v * (weights_low_deg[0] * f1 + weights_low_deg[1] * f2 + weights_low_deg[2] * f3 + weights_low_deg[3] * f4);
   double E = fabs(I - Idash);
 
   int kdivide = 0;
@@ -400,7 +401,18 @@ std::tuple<double, double, int> integrate_GenzMalik(
   }
   return std::make_tuple(I, E, kdivide);
 }
-// DOCUMENT THIS
+
+/**
+ * Compute the integral of the function to be integrated (integrand) from a to b
+ * for more than one dimensions.
+ *
+ * @tparam Vec1 Type of vector 1
+ * @tparam Vec2 Type of vector 2
+ * @param a lower bounds of the integral
+ * @param b upper bounds of the integral
+ * @param I value of the integral
+ * @param kdivide number of subdividing the integration volume
+ */
 struct Box {
   template <typename Vec1, typename Vec2>
   Box(Vec1&& a, Vec2&& b, double I, int kdivide)
