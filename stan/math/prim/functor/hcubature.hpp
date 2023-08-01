@@ -285,21 +285,16 @@ template <typename F, typename ParsTupleT>
 std::tuple<double, double, int> integrate_GenzMalik(
     const F& integrand, const std::vector<Eigen::MatrixXd>& points,
     const Eigen::VectorXd& weights, const Eigen::VectorXd& weights_low_deg,
-    const int dim, const std::vector<double>& a, const std::vector<double>& b,
+    const int dim, const Eigen::VectorXd& a, const Eigen::VectorXd& b,
     const ParsTupleT& pars_tuple) {
-  std::vector<double> c(dim, 0);
-  std::vector<double> deltac(dim, 0);
-
+  Eigen::VectorXd c = Eigen::VectorXd::Zero(dim);
   for (std::size_t i = 0; i != dim; i++) {
     if (a[i] == b[i]) {
       return std::make_tuple(0.0, 0.0, 0);
     }
     c[i] = (a[i] + b[i]) / 2;
   }
-
-  for (std::size_t i = 0; i != dim; i++) {
-    deltac[i] = fabs(b[i] - a[i]) / 2;
-  }
+  Eigen::VectorXd deltac = ((b - a).array() / 2.0).matrix();
   double v = 1.0;
   for (std::size_t i = 0; i != dim; i++) {
     v *= deltac[i];
@@ -427,8 +422,8 @@ struct Box {
         b_(std::forward<Vec2>(b)),
         I_(I),
         kdiv_(kdivide) {}
-  std::vector<double> a_;
-  std::vector<double> b_;
+  Eigen::VectorXd a_;
+  Eigen::VectorXd b_;
   double I_;
   int kdiv_;
 };
@@ -481,7 +476,7 @@ struct Box {
  */
 template <typename F, typename ParsTuple>
 double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
-                 const std::vector<double>& a, const std::vector<double>& b,
+                 const Eigen::VectorXd& a, const Eigen::VectorXd& b,
                  const int max_eval, const double reqAbsError,
                  const double reqRelError) {
   const auto maxEval = max_eval <= 0 ? 1000000 : max_eval;
@@ -526,10 +521,10 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     auto&& box = ms[err_idx];
 
     double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    std::vector<double> ma(box.a_);
+    Eigen::VectorXd ma = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    std::vector<double> mb(box.b_);
+    Eigen::VectorXd mb = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
     double result_1;

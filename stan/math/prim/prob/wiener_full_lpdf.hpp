@@ -111,7 +111,7 @@ template <bool GradSW, bool GradW7 = false, typename Wiener7FunctorT,
           typename... TArgs>
 auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                        double hcubature_err, TArgs&&... args) {
-  const auto& wiener7_integrand_impl
+  const auto wiener7_integrand_impl
       = [&](auto&& x, double y, double a, double v, double w, double t0,
             double sv, double sw, double st0, double log_error) {
           scalar_seq_view<decltype(x)> x_vec(x);
@@ -126,7 +126,7 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                                                  v, new_w, sv, sw, log_error);
           }
         };
-  const auto& functor = [&](auto&&... int_args) {
+  const auto functor = [&](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
   return estimate_with_err_check<0, GradW7, 8>(functor, hcubature_err, args...);
@@ -284,6 +284,11 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 const T_w& w, const T_v& v, const T_sv& sv,
                                 const T_sw& sw, const T_st0& st0,
                                 double precision_derivatives = 1e-4) {
+  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+                       T_st0>::value) {
+    return 0;
+  }
+                                 
   using T_y_ref = ref_type_t<T_y>;
   using T_a_ref = ref_type_t<T_a>;
   using T_v_ref = ref_type_t<T_v>;
@@ -368,7 +373,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
   size_t N_beta_sw = max_size(w, sw);
   for (size_t i = 0; i < N_beta_sw; ++i) {
-    if (w_vec[i] - .5 * sw_vec[i] <= 0) {
+    if (unlikely(w_vec[i] - .5 * sw_vec[i] <= 0)) {
       std::stringstream msg;
       msg << ", but must be smaller than 2*(A-priori bias) = " << 2 * w_vec[i];
       std::string msg_str(msg.str());
@@ -376,7 +381,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                          "Inter-trial variability in A-priori bias", sw_vec[i],
                          " = ", msg_str.c_str());
     }
-    if (w_vec[i] + .5 * sw_vec[i] >= 1) {
+    if (unlikely(w_vec[i] + .5 * sw_vec[i] >= 1)) {
       std::stringstream msg;
       msg << ", but must be smaller than 2*(1-A-priori bias) = "
           << 2 * (1 - w_vec[i]);
@@ -386,10 +391,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                          " = ", msg_str.c_str());
     }
   }
-  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
-                       T_st0>::value) {
-    return 0;
-  }
+
 
   const double log_error_density = log(1e-6);        // precision for density
   const double error_bound = precision_derivatives;  // precision for
@@ -400,7 +402,6 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       = .9 * error_bound;  // eps_rel(Integration)
   const double log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
-  double density = 0.0;
   double log_density = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
                                                v_ref, sv_ref, sw_ref, st0_ref);
@@ -422,31 +423,29 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     const double sv_val = sv_vec.val(i);
     const double sw_val = sw_vec.val(i);
     const double st0_val = st0_vec.val(i);
-    const auto params
-        = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, sw_val,
-                          st0_val, log_error_absolute - LOG_TWO);
     const int dim = (sw_val != 0) + (st0_val != 0);
     check_positive(function_name,
                    "(Inter-trial variability in A-priori bias) + "
                    "(Inter-trial variability in nondecision time)",
                    dim);
 
-    std::vector<double> xmin(dim, 0);
-    std::vector<double> xmax(dim, 1);
+    Eigen::VectorXd xmin = Eigen::VectorXd::Zero(dim);
+    Eigen::VectorXd xmax = Eigen::VectorXd::Ones(dim);
     if (st0_val) {
       xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
     }
 
     double hcubature_err = log_error_absolute - log_error_density + LOG_TWO + 1;
-
-    density = internal::wiener7_integrate<false>(
+    const auto params
+        = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, sw_val,
+                          st0_val, log_error_absolute - LOG_TWO);
+    double density = internal::wiener7_integrate<false>(
         [&](auto&&... args) {
           return internal::wiener5_density<true>(args...);
         },
         hcubature_err, params, dim, xmin, xmax, maximal_evaluations_hcubature,
         absolute_error_hcubature, relative_error_hcubature / 2);
-    const double log_dens = log(density);
-    log_density += log_dens;
+    log_density += log(density);
 
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;
@@ -568,8 +567,6 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<7>(ops_partials)[i] = -1 / st0_val + f / st0_val / density;
       }
     }
-    std::vector<double>().swap(xmin);
-    std::vector<double>().swap(xmax);
   }
   return result + ops_partials.build(log_density);
 }
