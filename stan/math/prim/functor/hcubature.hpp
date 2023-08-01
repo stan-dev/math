@@ -192,10 +192,9 @@ template <typename F, typename ParsPairT>
 std::pair<double, double> gauss_kronrod(const F& integrand, const double a,
                                         const double b,
                                         const ParsPairT& pars_pair) {
-  std::vector<double> c(1, 0);
-  std::vector<double> cp(1, 0);
-  std::vector<double> cm(1, 0);
-  c[0] = 0.5 * (a + b);
+  Eigen::VectorXd c {{0.5 * (a + b)}};
+  Eigen::VectorXd cp(1);
+  Eigen::VectorXd cm(1);
   double delta = 0.5 * (b - a);
   double f0 = math::apply(
       [&integrand, &c](auto&&... args) { return integrand(c, args...); },
@@ -308,10 +307,10 @@ std::tuple<double, double, int> integrate_GenzMalik(
   double twelvef1 = 12 * f1;
 
   double maxdivdiff = 0.0;
-  std::vector<double> divdiff(dim);
-  std::vector<double> p2(dim);
-  std::vector<double> p3(dim);
-  std::vector<double> cc(dim, 0);
+  Eigen::VectorXd divdiff(dim);
+  Eigen::VectorXd p2(dim);
+  Eigen::VectorXd p3(dim);
+  Eigen::VectorXd cc(dim);
 
   for (std::size_t i = 0; i != dim; i++) {
     for (std::size_t j = 0; j != dim; j++) {
@@ -352,7 +351,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f3 += f3i;
     divdiff[i] = fabs(f3i + twelvef1 - 7 * f2i);
   }
-  std::vector<double> p4(dim);
+  Eigen::VectorXd p4(dim);
   double f4 = 0.0;
   for (std::size_t i = 0; i != points[2].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
@@ -367,7 +366,7 @@ std::tuple<double, double, int> integrate_GenzMalik(
     f4 += temp;
   }
   double f5 = 0.0;
-  std::vector<double> p5(dim);
+  Eigen::VectorXd p5(dim);
   for (std::size_t i = 0; i != points[3].cols(); i++) {
     for (std::size_t j = 0; j != dim; j++) {
       p5[j] = deltac[j] * points[3](j, i);
@@ -521,12 +520,10 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     auto&& box = ms[err_idx];
 
     double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    Eigen::VectorXd ma
-        = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
+    Eigen::VectorXd ma = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    Eigen::VectorXd mb
-        = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
+    Eigen::VectorXd mb = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
     double result_1;

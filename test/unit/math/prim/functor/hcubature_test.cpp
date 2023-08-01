@@ -105,8 +105,8 @@ stan::return_type_t<T_x, double> f7(const T_x& x, double a) {
 
 template <typename F, typename ArgsTupleT>
 void test_integration(const F& f, const ArgsTupleT& pars, int dim,
-                      std::vector<double> a, std::vector<double> b, int maxEval,
-                      double reqAbsError, std::vector<double> reqRelError,
+                      const Eigen::VectorXd& a, const Eigen::VectorXd& b, int maxEval,
+                      double reqAbsError, const Eigen::VectorXd& reqRelError,
                       double val) {
   using stan::math::hcubature;
 
@@ -122,46 +122,44 @@ TEST(StanMath_hcubature_prim, test1) {
   // https://www.quantargo.com/help/r/latest/packages/cubature/2.0.4.1/hcubature
 
   int dim = 1;
-  std::vector<double> a = {0.0};
-  std::vector<double> b = {1.0};
-  std::vector<double> reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f1<std::vector<double>>, std::make_tuple(),
+  const Eigen::VectorXd a {{0.0}};
+  const Eigen::VectorXd b {{1.0}};
+  const Eigen::VectorXd reqRelError {{1e-4, 1e-6, 1e-7}};
+  test_integration(hcubature_test::f1<const Eigen::VectorXd>, std::make_tuple(),
                    dim, a, b, 6000, 0.0, reqRelError, 0.841471);
 
   dim = 2;
-  a = {0.0, 0.0};
-  b = {1.0, 1.0};
-  reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f2<std::vector<double>>, std::make_tuple(),
-                   dim, a, b, 6000, 0.0, reqRelError, 0.7080734);
+  const Eigen::VectorXd a_2 {{0.0, 0.0}};
+  const Eigen::VectorXd b_2 {{1.0, 1.0}};
+  test_integration(hcubature_test::f2<const Eigen::VectorXd>, std::make_tuple(),
+                   dim, a_2, b_2, 6000, 0.0, reqRelError, 0.7080734);
 
-  reqRelError = {1e-4};
-  test_integration(hcubature_test::f3<std::vector<double>>,
-                   std::make_tuple(0.50124145262344534123412), dim, a, b, 10000,
-                   0.0, reqRelError, 0.1972807);
+  const Eigen::VectorXd reqRelError_2 {{1e-4}};
+  test_integration(hcubature_test::f3<const Eigen::VectorXd>,
+                   std::make_tuple(0.50124145262344534123412), dim, a_2, b_2, 10000,
+                   0.0, reqRelError_2, 0.1972807);
 
   // (Gaussian centered at 1/2)
-  reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f4<std::vector<double>>,
-                   std::make_tuple(0.1), dim, a, b, 6000, 0.0, reqRelError, 1);
+  test_integration(hcubature_test::f4<const Eigen::VectorXd>,
+                   std::make_tuple(0.1), dim, a_2, b_2, 6000, 0.0, reqRelError, 1);
 
   dim = 3;
-  a = {0.0, 0.0, 0.0};
-  b = {1.0, 1.0, 1.0};
-  reqRelError = {1e-4, 1e-6};
-  test_integration(hcubature_test::f5<std::vector<double>>, std::make_tuple(),
-                   dim, a, b, 6000, 0.0, reqRelError, 1.00001);
+  const Eigen::VectorXd a_3 {{0.0, 0.0, 0.0}};
+  const Eigen::VectorXd b_3 {{1.0, 1.0, 1.0}};
+  const Eigen::VectorXd reqRelError_3 {{1e-4, 1e-6}};
+  test_integration(hcubature_test::f5<const Eigen::VectorXd>, std::make_tuple(),
+                   dim, a_3, b_3, 6000, 0.0, reqRelError_3, 1.00001);
 
-  reqRelError = {1e-4, 1e-6, 1e-8};
-  test_integration(hcubature_test::f6<std::vector<double>>, std::make_tuple(),
-                   dim, a, b, 6000, 0.0, reqRelError, 1);
+  const Eigen::VectorXd reqRelError_4 {{1e-4, 1e-6, 1e-8}};
+  test_integration(hcubature_test::f6<const Eigen::VectorXd>, std::make_tuple(),
+                   dim, a_3, b_3, 6000, 0.0, reqRelError_4, 1);
 
   // (Tsuda's example)
   dim = 4;
-  a = {0.0, 0.0, 0.0, 0.0};
-  b = {1.0, 1.0, 1.0, 1.0};
-  reqRelError = {1e-4, 1e-6};
-  test_integration(hcubature_test::f7<std::vector<double>>,
-                   std::make_tuple((1 + sqrt(10.0)) / 9.0), dim, a, b, 20000,
-                   0.0, reqRelError, 0.999998);
+  const Eigen::VectorXd a_4 {{0.0, 0.0, 0.0, 0.0}};
+  const Eigen::VectorXd b_4 {{1.0, 1.0, 1.0, 1.0}};
+  test_integration(hcubature_test::f7<const Eigen::VectorXd>,
+                   std::make_tuple((1 + sqrt(10.0)) / 9.0), dim, a_4, b_4, 20000,
+                   0.0, reqRelError_3, 0.999998);
+
 }
