@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
-
+#include <stan/math/rev/core/chainable_object.hpp>
 namespace stan {
 namespace math {
 
@@ -72,6 +72,51 @@ class arena_matrix : public Eigen::Map<MatrixType> {
               : other.cols()) {
     *this = other;
   }
+
+  /**
+   * Constructs `arena_matrix` from an expression.
+   * @param other expression
+   */
+  template <typename T, require_eigen_t<T>* = nullptr,
+            require_not_arena_matrix_t<T>* = nullptr>
+  arena_matrix(T&& other)  // NOLINT
+      : Base::Map([](auto&& x) {
+          using base_map_t =
+              typename stan::math::arena_matrix<MatrixType>::Base::Map;
+          using T_t = std::decay_t<T>;
+          if (std::is_rvalue_reference<decltype(x)>::value && is_plain_type<T_t>::value) {
+            // Note: plain_type_t here does nothing since T_t is plain type
+            auto other = make_chainable_ptr(plain_type_t<MatrixType>(std::move(x)));
+            return base_map_t(
+                &(other->coeffRef(0)),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? other->cols()
+                    : other->rows(),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? other->rows()
+                    : other->cols());
+          } else {
+            base_map_t map(
+                ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                    x.size()),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? x.cols()
+                    : x.rows(),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? x.rows()
+                    : x.cols());
+            map = x;
+            return map;
+          }
+        }(std::forward<T>(other))) {}
 
   /**
    * Constructs `arena_matrix` from an expression. This makes an assumption that
