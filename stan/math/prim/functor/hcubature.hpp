@@ -521,10 +521,12 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     auto&& box = ms[err_idx];
 
     double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    Eigen::VectorXd ma = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
+    Eigen::VectorXd ma
+        = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    Eigen::VectorXd mb = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
+    Eigen::VectorXd mb
+        = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
     double result_1;
