@@ -129,7 +129,7 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
   const auto functor = [&](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
-  return estimate_with_err_check<0, GradW7, 8>(functor, hcubature_err, args...);
+  return estimate_with_err_check<GradW7, 8>(functor, hcubature_err, args...);
 }
 }  // namespace internal
 
@@ -518,7 +518,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0;
       } else {
         if (st0_val == 0) {
-          derivative = internal::estimate_with_err_check<5>(
+          derivative = internal::estimate_with_err_check(
               [&](auto&&... args) {
                 return internal::wiener7_grad_sw(args...);
               },
@@ -545,7 +545,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         const double t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
-          f = internal::estimate_with_err_check<5>(
+          f = internal::estimate_with_err_check(
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
