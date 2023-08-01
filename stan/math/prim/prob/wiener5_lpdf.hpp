@@ -525,8 +525,8 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
  * @param args_tuple Tuple of arguments to pass to functor
  * @param log_result Whether the function result is already on the log-scale
  */
-template <bool GradW7 = false, size_t NestedIndex = 0,
-          bool LogResult = true, typename F, typename... ArgsTupleT>
+template <bool GradW7 = false, size_t NestedIndex = 0, bool LogResult = true,
+          typename F, typename... ArgsTupleT>
 double estimate_with_err_check(const F& functor, double err,
                                ArgsTupleT&&... args_tuple) {
   double result = functor(args_tuple...);
@@ -534,7 +534,7 @@ double estimate_with_err_check(const F& functor, double err,
   if (log_fabs_result < err) {
     log_fabs_result = std::isinf(log_fabs_result) ? 0 : log_fabs_result;
     auto err_args_tuple = std::make_tuple(args_tuple...);
-	const int size_tuple = std::tuple_size<decltype(err_args_tuple)>::value - 1;
+    const int size_tuple = std::tuple_size<decltype(err_args_tuple)>::value - 1;
     const double new_error
         = GradW7 ? err + log_fabs_result + LOG_TWO : err + log_fabs_result;
     assign_err<NestedIndex>(std::get<size_tuple>(err_args_tuple), new_error);
