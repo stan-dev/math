@@ -288,7 +288,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                        T_st0>::value) {
     return 0;
   }
-                                 
+
   using T_y_ref = ref_type_t<T_y>;
   using T_a_ref = ref_type_t<T_a>;
   using T_v_ref = ref_type_t<T_v>;
@@ -391,7 +391,6 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                          " = ", msg_str.c_str());
     }
   }
-
 
   const double log_error_density = log(1e-6);        // precision for density
   const double error_bound = precision_derivatives;  // precision for
