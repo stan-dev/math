@@ -74,11 +74,14 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Constructs `arena_matrix` from an expression, then send it to either the object stack or memory arena.
-   * @tparam T A type that inherits from Eigen::DenseBase that is not an `arena_matrix`.
+   * Constructs `arena_matrix` from an expression, then send it to either the
+   * object stack or memory arena.
+   * @tparam T A type that inherits from Eigen::DenseBase that is not an
+   * `arena_matrix`.
    * @param other expression
-   * @note When T is both an rvalue and a plain type, the expression is moved to the object stack. However
-   *      when T is an lvalue, or an rvalue that is not a plain type, the expression is copied to the memory arena.
+   * @note When T is both an rvalue and a plain type, the expression is moved to
+   * the object stack. However when T is an lvalue, or an rvalue that is not a
+   * plain type, the expression is copied to the memory arena.
    */
   template <typename T, require_eigen_t<T>* = nullptr,
             require_not_arena_matrix_t<T>* = nullptr>
@@ -87,9 +90,11 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           using base_map_t =
               typename stan::math::arena_matrix<MatrixType>::Base::Map;
           using T_t = std::decay_t<T>;
-          if (std::is_rvalue_reference<decltype(x)>::value && is_plain_type<T_t>::value) {
+          if (std::is_rvalue_reference<decltype(x)>::value
+              && is_plain_type<T_t>::value) {
             // Note: plain_type_t here does nothing since T_t is plain type
-            auto other = make_chainable_ptr(plain_type_t<MatrixType>(std::move(x)));
+            auto other
+                = make_chainable_ptr(plain_type_t<MatrixType>(std::move(x)));
             return base_map_t(
                 &(other->coeffRef(0)),
                 (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
