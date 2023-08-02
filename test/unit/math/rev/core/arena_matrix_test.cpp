@@ -115,4 +115,3 @@ TEST(AgradRevArenaMat, arena_matrix_move_test) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
   stan::math::recover_memory();
 }
-
