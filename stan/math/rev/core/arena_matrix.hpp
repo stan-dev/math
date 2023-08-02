@@ -54,7 +54,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           size) {}
 
   /**
-   * Constructs `arena_matrix` from an expression.
+   * Constructs `arena_matrix` from an expression
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
@@ -74,8 +74,11 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Constructs `arena_matrix` from an expression.
+   * Constructs `arena_matrix` from an expression, then send it to either the object stack or memory arena.
+   * @tparam T A type that inherits from Eigen::DenseBase that is not an `arena_matrix`.
    * @param other expression
+   * @note When T is both an rvalue and a plain type, the expression is moved to the object stack. However
+   *      when T is an lvalue, or an rvalue that is not a plain type, the expression is copied to the memory arena.
    */
   template <typename T, require_eigen_t<T>* = nullptr,
             require_not_arena_matrix_t<T>* = nullptr>

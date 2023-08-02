@@ -190,6 +190,22 @@ The general rules to follow for passing values to a function are:
 2. If you are writing a function for reverse mode, pass values by `const&`
 3. In prim, if you are confident and working with larger types, use perfect forwarding to pass values that can be moved from. Otherwise simply pass values by `const&`.
 
+
+### Using auto is Dangerous With Eigen Matrix Functions in Reverse Mode
+
+
+```c++
+Eigen::Matrix<var, -1, 1> y;
+Eigen::Matrix<var, -1, -1> X;
+// Bad!! Will change memory used by reverse pass callback within multiply!
+auto mu = multiply(X, y);
+mu(4) = 1.0;
+// Good! Will not change memory used by reverse pass callback within multiply
+auto mu_good = multiply(X, y);
+mu_good(4) = 1.0;
+```
+
+
 ### Passing variables that need destructors called after the reverse pass (`make_chainable_ptr`)
 
 When possible, non-arena variables should be copied to the arena to be used in the reverse pass.
