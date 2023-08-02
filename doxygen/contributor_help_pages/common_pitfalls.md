@@ -193,6 +193,9 @@ The general rules to follow for passing values to a function are:
 
 ### Using auto is Dangerous With Eigen Matrix Functions in Reverse Mode
 
+Like in [Eigen](https://eigen.tuxfamily.org/dox/TopicPitfalls.html), the use of `auto` with the Stan math library should be used with care. Along with the cautions mentioned in the Eigen docs, there are also memory considerations when using reverse mode automatic differentiation. When returning from a function in the Stan math library with an Eigen matrix output with a scalar `var` type, the actual returned type will often be an `arena_matrix<Eigen::Matrix<...>>`. The `arena_matrix` class is an Eigen matrix where the underlying array of memory is located in Stan's memory arena. The `arena_matrix` that is returned by Stan functions is normally the same one resting in the callback used to calculate gradients in the reverse pass. Directly changing the elements of this matrix would also change the memory the reverse pass callback sees which would result in incorrect calculations.
+
+The simple solution to this is that when you use a math library function that returns a matrix and then want to assign to any of the individual elements of the matrix, assign to an actual Eigen matrix type instead of using auto. In the below example, we see the first case which uses auto and will change the memory of the `arena_matrix` returned in the callback for multiply's reverse mode. Directly below it is the safe version, which just directly assigns to an Eigen matrix type and is safe to do element insertion into.
 
 ```c++
 Eigen::Matrix<var, -1, 1> y;
@@ -201,8 +204,21 @@ Eigen::Matrix<var, -1, -1> X;
 auto mu = multiply(X, y);
 mu(4) = 1.0;
 // Good! Will not change memory used by reverse pass callback within multiply
-auto mu_good = multiply(X, y);
+Eigen::Matrix<var, -1, 1> mu_good = multiply(X, y);
 mu_good(4) = 1.0;
+```
+
+The reason we do this is for cases where functions returns are passe to other functions. An `arena_matrix` will always make a shallow copy when being constructed from another `arena_matrix`, which let's the functions avoid unnecessary copies.
+
+```c++
+Eigen::Matrix<var, -1, 1> y1;
+Eigen::Matrix<var, -1, -1> X1;
+Eigen::Matrix<var, -1, 1> y2;
+Eigen::Matrix<var, -1, -1> X2;
+auto mu1 = multiply(X1, y1);
+auto mu2 = multiply(X2, y2);
+// Inputs not copied in this case!
+auto z = add(mu1, mu2);
 ```
 
 
