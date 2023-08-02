@@ -15,6 +15,7 @@
 #include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <boost/optional.hpp>
 

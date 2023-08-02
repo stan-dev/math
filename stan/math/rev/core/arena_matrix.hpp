@@ -88,7 +88,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   arena_matrix(T&& other)  // NOLINT
       : Base::Map([](auto&& x) {
           using base_map_t =
-              typename stan::math::arena_matrix<MatrixType>::Base::Map;
+              typename stan::math::arena_matrix<MatrixType>::Base;
           using T_t = std::decay_t<T>;
           if (std::is_rvalue_reference<decltype(x)>::value
               && is_plain_type<T_t>::value) {
