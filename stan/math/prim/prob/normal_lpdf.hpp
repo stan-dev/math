@@ -41,8 +41,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y,
-                                                      T_loc&& mu,
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
                                                       T_scale&& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
