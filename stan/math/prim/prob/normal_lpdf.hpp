@@ -105,8 +105,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y,
-                                                      T_loc&& mu,
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
                                                       T_scale&& sigma) {
   return normal_lpdf<false>(y, mu, sigma);
 }
