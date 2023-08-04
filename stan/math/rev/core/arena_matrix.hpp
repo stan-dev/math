@@ -95,18 +95,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
             // Note: plain_type_t here does nothing since T_t is plain type
             auto other
                 = make_chainable_ptr(plain_type_t<MatrixType>(std::move(x)));
-            return base_map_t(
-                &(other->coeffRef(0)),
-                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
-                        || (ColsAtCompileTime == 1
-                            && T_t::RowsAtCompileTime == 1)
-                    ? other->cols()
-                    : other->rows(),
-                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
-                        || (ColsAtCompileTime == 1
-                            && T_t::RowsAtCompileTime == 1)
-                    ? other->rows()
-                    : other->cols());
+            // other has it's rows and cols swapped already if it needed that
+            return base_map_t(&(other->coeffRef(0)), other->rows(), other->cols());
           } else {
             base_map_t map(
                 ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
@@ -163,23 +153,33 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param a expression to evaluate into this
    * @return `*this`
    */
-  template <typename T>
-  arena_matrix& operator=(const T& a) {
-    // do we need to transpose?
-    if ((RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-        || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)) {
-      // placement new changes what data map points to - there is no allocation
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.cols(), a.rows());
-
+  template <typename T, require_not_arena_matrix_t<T>* = nullptr>
+  arena_matrix& operator=(T&& a) {
+    using T_t = std::decay_t<T>;
+    if (std::is_rvalue_reference<T&&>::value
+        && is_plain_type<T_t>::value) {
+        // Note: plain_type_t here does nothing since T_t is plain type
+        auto other
+            = make_chainable_ptr(plain_type_t<MatrixType>(std::move(a)));
+         new (this) Base(&(other->coeffRef(0)), other->rows(), other->cols());
+        return *this;       
     } else {
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.rows(), a.cols());
+        // do we need to transpose?
+        if ((RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+            || (ColsAtCompileTime == 1 && T_t::RowsAtCompileTime == 1)) {
+            // placement new changes what data map points to - there is no allocation
+            new (this) Base(
+                ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+                a.cols(), a.rows());
+
+        } else {
+            new (this) Base(
+                ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+                a.rows(), a.cols());
+        }
+        Base::operator=(a);
+        return *this;
     }
-    Base::operator=(a);
-    return *this;
   }
 };
 
