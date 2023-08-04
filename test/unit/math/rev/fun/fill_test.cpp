@@ -60,7 +60,8 @@ TEST_F(AgradRev, fillVarMatDouble) {
   using stan::math::fill;
   using stan::math::sum;
   using stan::math::var_value;
-  Matrix<double, Dynamic, 1> y_val = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
+  Matrix<double, Dynamic, 1> y_val
+      = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -79,7 +80,8 @@ TEST_F(AgradRev, fillVarMatVar) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
-  Matrix<double, Dynamic, 1> y_val = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
+  Matrix<double, Dynamic, 1> y_val
+      = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   var z(3.0);
   fill(y, z);
