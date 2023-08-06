@@ -29,5 +29,6 @@
 #include <stan/math/rev/functor/partials_propagator.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
 #include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
+#include <stan/math/rev/functor/finite_diff_hessian_times_vector_auto.hpp>
 
 #endif

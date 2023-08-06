@@ -11,7 +11,7 @@ namespace math {
  * Return a uniform simplex of size K
  *
  * @param K size of the simplex
- * @return A vector of size K with all elements initialised to 1 / K,
+ * @return A vector of size K with all elements initialized to 1 / K,
  * so that their sum is equal to 1.
  * @throw std::domain_error if K is not positive.
  */

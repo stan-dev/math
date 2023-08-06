@@ -221,7 +221,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
 }
 
 /**
- * Enables the vectorised application of the log_modified_bessel_first_kind
+ * Enables the vectorized application of the log_modified_bessel_first_kind
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

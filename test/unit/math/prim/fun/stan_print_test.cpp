@@ -11,6 +11,9 @@ TEST(MathPrim, basic_print) {
 
   std::tuple<Eigen::VectorXd, int, std::vector<double>> tup(v, i, a);
 
+  std::vector<std::tuple<Eigen::VectorXd, int, std::vector<double>>> arr_tup{
+      tup, tup};
+
   {
     std::stringstream s;
     stan::math::stan_print(&s, i);
@@ -51,6 +54,11 @@ TEST(MathPrim, basic_print) {
     std::stringstream s;
     stan::math::stan_print(&s, tup);
     EXPECT_TRUE(s.str().find("([1],1,[1])") != std::string::npos);
+  }
+  {
+    std::stringstream s;
+    stan::math::stan_print(&s, arr_tup);
+    EXPECT_TRUE(s.str().find("[([1],1,[1])") != std::string::npos);
   }
 }
 

@@ -70,7 +70,7 @@ TEST(ProbDistributions, fvar_var) {
                   stan::math::dirichlet_log(theta2, alpha2).d_.val());
 }
 
-TEST(ProbDistributions, fvar_varVectorised) {
+TEST(ProbDistributions, fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_log;
@@ -161,7 +161,7 @@ TEST(ProbDistributions, fvar_fvar_var) {
                   stan::math::dirichlet_log(theta2, alpha2).d_.val_.val());
 }
 
-TEST(ProbDistributions, fvar_fvar_varVectorised) {
+TEST(ProbDistributions, fvar_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_log;
