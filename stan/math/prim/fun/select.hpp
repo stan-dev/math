@@ -53,7 +53,8 @@ template <
     require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
 inline T_true_plain select(const bool c, const T_true y_true,
                            const T_false y_false) {
-  check_matching_dims("select", "left hand side", y_true, "right hand side", y_false);
+  check_matching_dims("select", "left hand side", y_true, "right hand side",
+                      y_false);
   return c ? T_true_plain(std::forward<T_true>(y_true))
             : T_true_plain(std::forward<T_false>(y_false));
 }
