@@ -16,14 +16,16 @@ namespace math {
  * @param x boolean input
  * @return The input unchanged
  */
-inline bool any(bool x) { return x; }
+template <typename T, require_integral_t<T>* = nullptr>
+constexpr inline T any(T x) { return x; }
 
 /**
  * Return true if any values in the input are true.
  *
  * Overload for Eigen types
  *
- * @tparam Eigen type of the input
+ * @tparam ContainerT A type derived from `Eigen::EigenBase` that has an
+ *                      `integral` scalar type
  * @param x Eigen object of boolean inputs
  * @return Boolean indicating whether any elements are true
  */
