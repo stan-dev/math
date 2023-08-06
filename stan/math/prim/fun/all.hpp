@@ -17,7 +17,9 @@ namespace math {
  * @return The input unchanged
  */
 template <typename T, require_integral_t<T>* = nullptr>
-constexpr inline T all(T x) { return x; }
+constexpr inline T all(T x) {
+  return x;
+}
 
 /**
  * Return true if all values in the input are true.

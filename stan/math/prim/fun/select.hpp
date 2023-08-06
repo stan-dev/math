@@ -56,7 +56,7 @@ inline T_true_plain select(const bool c, const T_true y_true,
   check_matching_dims("select", "left hand side", y_true, "right hand side",
                       y_false);
   return c ? T_true_plain(std::forward<T_true>(y_true))
-            : T_true_plain(std::forward<T_false>(y_false));
+           : T_true_plain(std::forward<T_false>(y_false));
 }
 
 /**
@@ -148,8 +148,10 @@ template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_vt<std::is_integral, T_bool>* = nullptr,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
-  return c.unaryExpr(
-    [y_true, y_false](bool cond) { return cond ? y_true : y_false; }).eval();
+  return c
+      .unaryExpr(
+          [y_true, y_false](bool cond) { return cond ? y_true : y_false; })
+      .eval();
 }
 
 /**
@@ -169,7 +171,7 @@ template <typename T_bool, typename T_true, typename T_false,
           require_any_eigen_array_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
   check_consistent_sizes("select", "boolean", c, "left hand side", y_true,
-                          "right hand side", y_false);
+                         "right hand side", y_false);
   return c.select(y_true, y_false).eval();
 }
 
