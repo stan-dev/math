@@ -51,8 +51,7 @@ template <
     typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
     require_all_container_t<T_true, T_false>* = nullptr,
     require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
-inline T_true_plain select(const bool c, T_true&& y_true,
-                           T_false&& y_false) {
+inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
   check_matching_dims("select", "left hand side", y_true, "right hand side",
                       y_false);
   return c ? T_true_plain(std::forward<T_true>(y_true))
