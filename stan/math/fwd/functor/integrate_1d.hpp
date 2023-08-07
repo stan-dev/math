@@ -37,7 +37,8 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
   // for which tangents are needed
   auto a_val = value_of(a);
   auto b_val = value_of(b);
-  auto func = [f,msgs,relative_tolerance,a_val,b_val](const auto&... args_var) {
+  auto func
+    = [f, msgs, relative_tolerance, a_val, b_val](const auto&... args_var) {
     return integrate_1d_impl(f, a_val, b_val, relative_tolerance, msgs,
                                args_var...);
   };

@@ -47,7 +47,9 @@ namespace math {
  * @param[out] grad_fx gradient of function at argument
  */
 template <typename F, typename ScalarT>
-void finite_diff_gradient_auto(const F& f, const Eigen::Matrix<ScalarT, -1, 1>& x, ScalarT& fx,
+void finite_diff_gradient_auto(const F& f,
+                               const Eigen::Matrix<ScalarT, -1, 1>& x,
+                               ScalarT& fx,
                                Eigen::Matrix<ScalarT, -1, 1>& grad_fx) {
   Eigen::Matrix<ScalarT, -1, 1> x_temp(x);
   fx = f(x);
