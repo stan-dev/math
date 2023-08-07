@@ -31,7 +31,6 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
   using FvarT = scalar_type_t<return_type_t<T_a, T_b, Args...>>;
-  using FvarInnerT = typename FvarT::Scalar;
 
   // Wrap integrate_1d call in a functor where the input arguments are only
   // for which tangents are needed
