@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 TEST(MathFunctions, all) {
   using stan::math::all;
@@ -23,20 +24,24 @@ TEST(MathFunctions, all) {
 
   auto bool_tuple
       = std::make_tuple(true, bool_stdvector, bool_array, nested_bool);
+  std::vector<decltype(bool_tuple)> stdvec_bool_tuple{bool_tuple};
 
   EXPECT_FALSE(all(inp < 2));
   EXPECT_TRUE(all(bool_stdvector));
   EXPECT_TRUE(all(bool_array));
   EXPECT_TRUE(all(nested_bool));
   EXPECT_TRUE(all(bool_tuple));
+  EXPECT_TRUE(all(stdvec_bool_tuple));
 
   bool_array(2) = false;
   nested_bool[1](3) = false;
   bool_stdvector[1] = false;
   std::get<3>(bool_tuple) = nested_bool;
+  stdvec_bool_tuple[0] = bool_tuple;
 
   EXPECT_FALSE(all(bool_array));
   EXPECT_FALSE(all(nested_bool));
   EXPECT_FALSE(all(bool_stdvector));
   EXPECT_FALSE(all(bool_tuple));
+  EXPECT_FALSE(all(stdvec_bool_tuple));
 }

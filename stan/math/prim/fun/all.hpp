@@ -11,13 +11,14 @@ namespace math {
 /**
  * Return true if all values in the input are true.
  *
- * Overload for a single boolean input
+ * Overload for a single integral input
  *
+ * @tparam T The type of integral input.
  * @param x boolean input
  * @return The input unchanged
  */
-template <typename T, require_integral_t<T>* = nullptr>
-constexpr inline T all(T x) {
+template <typename T, require_t<std::is_convertible<T, bool>>* = nullptr>
+constexpr inline bool all(T x) {
   return x;
 }
 
@@ -37,6 +38,10 @@ inline bool all(const ContainerT& x) {
   return x.all();
 }
 
+// Forward-declaration for correct resolution of all(std::vector<std::tuple>)
+template <typename... Types>
+inline bool all(const std::tuple<Types...>& x);
+
 /**
  * Return true if all values in the input are true.
  *
@@ -44,13 +49,12 @@ inline bool all(const ContainerT& x) {
  * approach cannot be used as std::vector<bool> types do not have a .data()
  * member and are not always stored contiguously.
  *
- * @tparam Type of container
+ * @tparam InnerT Type within std::vector
  * @param x Nested container of boolean inputs
  * @return Boolean indicating whether all elements are true
  */
-template <typename ContainerT,
-          require_std_vector_st<std::is_integral, ContainerT>* = nullptr>
-inline bool all(const ContainerT& x) {
+template <typename InnerT>
+inline bool all(const std::vector<InnerT>& x) {
   return std::all_of(x.begin(), x.end(), [](const auto& i) { return all(i); });
 }
 

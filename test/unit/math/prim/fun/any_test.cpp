@@ -23,20 +23,24 @@ TEST(MathFunctions, any) {
 
   auto bool_tuple
       = std::make_tuple(false, bool_stdvector, bool_array, nested_bool);
+  std::vector<decltype(bool_tuple)> stdvec_bool_tuple{bool_tuple};
 
   EXPECT_TRUE(any(inp < 2));
   EXPECT_FALSE(any(bool_stdvector));
   EXPECT_FALSE(any(bool_array));
   EXPECT_FALSE(any(nested_bool));
   EXPECT_FALSE(any(bool_tuple));
+  EXPECT_FALSE(any(stdvec_bool_tuple));
 
   bool_array(2) = true;
   nested_bool[1](3) = true;
   bool_stdvector[1] = true;
   std::get<3>(bool_tuple) = nested_bool;
+  stdvec_bool_tuple[0] = bool_tuple;
 
   EXPECT_TRUE(any(bool_array));
   EXPECT_TRUE(any(nested_bool));
   EXPECT_TRUE(any(bool_stdvector));
   EXPECT_TRUE(any(bool_tuple));
+  EXPECT_TRUE(any(stdvec_bool_tuple));
 }

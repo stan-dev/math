@@ -13,11 +13,12 @@ namespace math {
  *
  * Overload for a single boolean input
  *
+ * @tparam T The type of integral input.
  * @param x boolean input
  * @return The input unchanged
  */
-template <typename T, require_integral_t<T>* = nullptr>
-constexpr inline T any(T x) {
+template <typename T, require_t<std::is_convertible<T, bool>>* = nullptr>
+constexpr inline bool any(T x) {
   return x;
 }
 
@@ -37,6 +38,10 @@ inline bool any(const ContainerT& x) {
   return x.any();
 }
 
+// Forward-declaration for correct resolution of any(std::vector<std::tuple>)
+template <typename... Types>
+inline bool any(const std::tuple<Types...>& x);
+
 /**
  * Return true if any values in the input are true.
  *
@@ -44,13 +49,12 @@ inline bool any(const ContainerT& x) {
  * approach cannot be used as std::vector<bool> types do not have a .data()
  * member and are not always stored contiguously.
  *
- * @tparam Type of container within std::vector
+ * @tparam InnerT Type within std::vector
  * @param x Nested container of boolean inputs
  * @return Boolean indicating whether any elements are true
  */
-template <typename ContainerT,
-          require_std_vector_st<std::is_integral, ContainerT>* = nullptr>
-inline bool any(const ContainerT& x) {
+template <typename InnerT>
+inline bool any(const std::vector<InnerT>& x) {
   return std::any_of(x.begin(), x.end(), [](const auto& i) { return any(i); });
 }
 

@@ -9,13 +9,13 @@ namespace stan {
 namespace math {
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument.
+ * If first argument is true return the second argument,
+ * else return the third argument.
  *
  * `select(c, y1, y0) = c ? y1 : y0`.
  *
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A stan `Scalar` type
+ * @tparam T_false A stan `Scalar` type
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -29,8 +29,8 @@ inline ReturnT select(const bool c, const T_true y_true,
 }
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument. Eigen expressions are
+ * If first argument is true return the second argument,
+ * else return the third argument. Eigen expressions are
  * evaluated so that the return type is the same for both branches.
  *
  * Both containers must have the same plain type. The scalar type
@@ -38,8 +38,8 @@ inline ReturnT select(const bool c, const T_true y_true,
  *
  * Overload for use with two containers.
  *
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A container of stan `Scalar` types
+ * @tparam T_false A container of stan `Scalar` types
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -59,8 +59,8 @@ inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
 }
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument.
+ * If first argument is true return the second argument,
+ * else return the third argument.
  *
  * Overload for use when the 'true' return is a container and the 'false'
  * return is a scalar
@@ -69,8 +69,8 @@ inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
  * plain type as the provided argument. Consequently, any Eigen expressions are
  * evaluated.
  *
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A container of stan `Scalar` types
+ * @tparam T_false A stan `Scalar` type
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -94,8 +94,8 @@ inline ReturnT select(const bool c, const T_true& y_true,
 }
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument.
+ * If first argument is true return the second argument,
+ * else return the third argument.
  *
  * Overload for use when the 'true' return is a scalar and the 'false'
  * return is a container
@@ -104,8 +104,8 @@ inline ReturnT select(const bool c, const T_true& y_true,
  * plain type as the provided argument. Consequently, any Eigen expressions are
  * evaluated.
  *
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A stan `Scalar` type
+ * @tparam T_false A container of stan `Scalar` types
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -129,16 +129,16 @@ inline ReturnT select(const bool c, const T_true y_true,
 }
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument. Overload for use with an Eigen
+ * If first argument is true return the second argument,
+ * else return the third argument. Overload for use with an Eigen
  * object of booleans, and two scalars.
  *
  * The chosen scalar is returned as an Eigen object of the same dimension
  * as the input Eigen argument
  *
  * @tparam T_bool type of Eigen boolean object
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A stan `Scalar` type
+ * @tparam T_false A stan `Scalar` type
  * @param c Eigen object of boolean condition values.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -147,20 +147,22 @@ template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_vt<std::is_integral, T_bool>* = nullptr,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+  using ret_t = return_type_t<T_true, T_false>;
   return c
       .unaryExpr(
-          [y_true, y_false](bool cond) { return cond ? y_true : y_false; })
+          [y_true, y_false](bool cond) {
+            return cond ? ret_t(y_true) : ret_t(y_false); })
       .eval();
 }
 
 /**
- * Return the second argument if the first argument is true
- * and otherwise return the third argument. Overload for use with an Eigen
+ * If first argument is true return the second argument,
+ * else return the third argument. Overload for use with an Eigen
  * array of booleans, one Eigen array and a scalar as input.
  *
  * @tparam T_bool type of Eigen boolean object
- * @tparam T_true type of the true argument
- * @tparam T_false type of the false argument
+ * @tparam T_true A stan `Scalar` type or Eigen Array type
+ * @tparam T_false A stan `Scalar` type or Eigen Array type
  * @param c Eigen object of boolean condition values.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
@@ -171,7 +173,8 @@ template <typename T_bool, typename T_true, typename T_false,
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
   check_consistent_sizes("select", "boolean", c, "left hand side", y_true,
                          "right hand side", y_false);
-  return c.select(y_true, y_false).eval();
+  using ret_t = return_type_t<T_true, T_false>;
+  return c.select(y_true, y_false).template cast<ret_t>().eval();
 }
 
 }  // namespace math
