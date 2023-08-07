@@ -149,9 +149,9 @@ template <typename T_bool, typename T_true, typename T_false,
 inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
   using ret_t = return_type_t<T_true, T_false>;
   return c
-      .unaryExpr(
-          [y_true, y_false](bool cond) {
-            return cond ? ret_t(y_true) : ret_t(y_false); })
+      .unaryExpr([y_true, y_false](bool cond) {
+        return cond ? ret_t(y_true) : ret_t(y_false);
+      })
       .eval();
 }
 
