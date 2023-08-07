@@ -38,24 +38,30 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
   auto a_val = value_of(a);
   auto b_val = value_of(b);
   auto func
-    = [f, msgs, relative_tolerance, a_val, b_val](const auto&... args_var) {
-    return integrate_1d_impl(f, a_val, b_val, relative_tolerance, msgs,
-                               args_var...);
-  };
+      = [f, msgs, relative_tolerance, a_val, b_val](const auto &... args_var) {
+          return integrate_1d_impl(f, a_val, b_val, relative_tolerance, msgs,
+                                   args_var...);
+        };
   FvarT ret = fvar_finite_diff(func, args...);
 
   // Calculate tangents w.r.t. integration bounds if needed
   if (is_fvar<T_a>::value || is_fvar<T_b>::value) {
     auto val_args = std::make_tuple(value_of(args)...);
     if (is_fvar<T_a>::value) {
-      ret.d_ += math::forward_as<FvarT>(a).d_ *
-        math::apply([&](auto&&... tuple_args) {
-          return -f(a_val, 0.0, msgs, tuple_args...); }, val_args);
+      ret.d_ += math::forward_as<FvarT>(a).d_
+                * math::apply(
+                    [&](auto &&... tuple_args) {
+                      return -f(a_val, 0.0, msgs, tuple_args...);
+                    },
+                    val_args);
     }
     if (is_fvar<T_b>::value) {
-      ret.d_ += math::forward_as<FvarT>(b).d_ *
-        math::apply([&](auto&&... tuple_args) {
-          return f(b_val, 0.0, msgs, tuple_args...); }, val_args);
+      ret.d_ += math::forward_as<FvarT>(b).d_
+                * math::apply(
+                    [&](auto &&... tuple_args) {
+                      return f(b_val, 0.0, msgs, tuple_args...);
+                    },
+                    val_args);
     }
   }
   return ret;

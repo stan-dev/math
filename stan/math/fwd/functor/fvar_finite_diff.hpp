@@ -22,7 +22,7 @@ namespace internal {
  * @tparam InputArgT Type of the function input argument
  * @param tangent Calculated tangent
  * @param arg Input argument
-*/
+ */
 template <typename FuncTangentT, typename InputArgT,
           require_not_st_fvar<InputArgT>* = nullptr>
 inline constexpr double aggregate_tangent(const FuncTangentT& tangent,
@@ -41,13 +41,13 @@ inline constexpr double aggregate_tangent(const FuncTangentT& tangent,
  * @tparam InputArgT Type of the function input argument
  * @param tangent Calculated tangent
  * @param arg Input argument
-*/
+ */
 template <typename FuncTangentT, typename InputArgT,
           require_st_fvar<InputArgT>* = nullptr>
 auto aggregate_tangent(const FuncTangentT& tangent, const InputArgT& arg) {
   return sum(elt_multiply(tangent, arg.d()));
 }
-}
+}  // namespace internal
 
 /**
  * This frameworks adds fvar<T> support for arbitrary functions through
@@ -59,7 +59,7 @@ auto aggregate_tangent(const FuncTangentT& tangent, const InputArgT& arg) {
  *                     to be passed to function
  * @param func Functor for which fvar<T> support is needed
  * @param args... Parameter pack of arguments to be passed to functor.
-*/
+ */
 template <typename F, typename... TArgs,
           require_any_st_fvar<TArgs...>* = nullptr>
 auto fvar_finite_diff(const F& func, const TArgs&... args) {
@@ -69,17 +69,20 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   auto val_args = std::make_tuple(stan::math::value_of(args)...);
 
   auto serialised_args = stan::math::apply(
-    [&](auto&&... tuple_args) {
-      return math::to_vector(stan::test::serialize<FvarInnerT>(tuple_args...));
-    }, val_args);
+      [&](auto&&... tuple_args) {
+        return math::to_vector(
+            stan::test::serialize<FvarInnerT>(tuple_args...));
+      },
+      val_args);
 
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
   auto serial_functor = [&](const auto& v) {
     auto ds = stan::test::to_deserializer(v);
-    return stan::math::apply([&](auto&&... tuple_args) {
-      return func(ds.read(tuple_args)...); }, val_args);
+    return stan::math::apply(
+        [&](auto&&... tuple_args) { return func(ds.read(tuple_args)...); },
+        val_args);
   };
 
   FvarInnerT rtn_value;
@@ -89,9 +92,8 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   auto ds_grad = stan::test::to_deserializer(grad);
   FvarInnerT rtn_grad = 0;
   // Use a fold-expression to aggregate tangents for input arguments
-  (void)std::initializer_list<int>{
-    (rtn_grad += internal::aggregate_tangent(ds_grad.read(args), args), 0)...
-  };
+  (void)std::initializer_list<int>{(
+      rtn_grad += internal::aggregate_tangent(ds_grad.read(args), args), 0)...};
 
   return fvar<FvarInnerT>(rtn_value, rtn_grad);
 }
@@ -108,7 +110,7 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
  * @tparam TArgs... Types of arguments (containing no fvar<T> types)
  * @param func Functor
  * @param args... Parameter pack of arguments to be passed to functor.
-*/
+ */
 template <typename F, typename... TArgs,
           require_all_not_st_fvar<TArgs...>* = nullptr>
 auto fvar_finite_diff(const F& func, const TArgs&... args) {
