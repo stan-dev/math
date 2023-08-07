@@ -139,7 +139,8 @@ TEST_F(AgradRev, reduce_sum_std_vector_std_vector_eigen_vector_double_slice) {
   stan::test::expect_ad(reduce_sum_sum_lpdf, data);
 }
 
-TEST_F(AgradRev, reduce_sum_std_vector_std_vector_eigen_row_vector_double_slice) {
+TEST_F(AgradRev,
+       reduce_sum_std_vector_std_vector_eigen_row_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
