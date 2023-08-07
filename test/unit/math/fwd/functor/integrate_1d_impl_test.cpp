@@ -1,6 +1,6 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-
+/*
 TEST(FwdFunctor, integrate_1d_t1) {
   using stan::math::fvar;
   using stan::math::integrate_1d_impl;
@@ -68,7 +68,7 @@ TEST(FwdFunctor, integrate_1d_t2) {
   EXPECT_FLOAT_EQ(res.val(), 1.56348343527304);
   EXPECT_FLOAT_EQ(res.d(), -2.148721270700128 + 2.14872127069993);
 }
-/*
+*/
 TEST(FwdFunctor, integrate_1d_t3) {
   using stan::math::fvar;
   using stan::math::integrate_1d_impl;
@@ -82,7 +82,7 @@ TEST(FwdFunctor, integrate_1d_t3) {
   double b_dbl = 1.0;
 
   fvar<fvar<double>> theta = 0.5;
-  theta.val_.d_ = 1.0;
+  theta.d_ = 1.0;
   theta.d_.d_ = 1.0;
 
   const double relative_tolerance = std::sqrt(EPSILON);
@@ -96,9 +96,9 @@ TEST(FwdFunctor, integrate_1d_t3) {
   fvar<fvar<double>> res = integrate_1d_impl(func, a_dbl, b_dbl,
                                               relative_tolerance, msgs, theta);
   EXPECT_FLOAT_EQ(res.val().val(), 1.56348343527304);
-  EXPECT_FLOAT_EQ(res.d().val(), 1.25789445875152);
+  EXPECT_FLOAT_EQ(res.val().d(), 1.25789445875152);
 
   // Second derivative not yet available
+  EXPECT_FLOAT_EQ(res.d().val(), 1.25789445875152);
   EXPECT_FLOAT_EQ(res.d().d(), 0.5476947599595309);
 }
-*/

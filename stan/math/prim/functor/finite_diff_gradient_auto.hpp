@@ -46,16 +46,16 @@ namespace math {
  * @param[out] fx function applied to argument
  * @param[out] grad_fx gradient of function at argument
  */
-template <typename F>
-void finite_diff_gradient_auto(const F& f, const Eigen::VectorXd& x, double& fx,
-                               Eigen::VectorXd& grad_fx) {
-  Eigen::VectorXd x_temp(x);
+template <typename F, typename ScalarT>
+void finite_diff_gradient_auto(const F& f, const Eigen::Matrix<ScalarT, -1, 1>& x, ScalarT& fx,
+                               Eigen::Matrix<ScalarT, -1, 1>& grad_fx) {
+  Eigen::Matrix<ScalarT, -1, 1> x_temp(x);
   fx = f(x);
   grad_fx.resize(x.size());
   for (int i = 0; i < x.size(); ++i) {
-    double h = finite_diff_stepsize(x(i));
+    double h = finite_diff_stepsize(value_of_rec(x(i)));
 
-    double delta_f = 0;
+    ScalarT delta_f = 0;
 
     x_temp(i) = x(i) + 3 * h;
     delta_f += f(x_temp);

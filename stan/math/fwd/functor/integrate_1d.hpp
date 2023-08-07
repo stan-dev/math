@@ -15,22 +15,25 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
-  double a_val = value_of(a);
-  double b_val = value_of(b);
+  using FvarT = scalar_type_t<return_type_t<T_a, T_b, Args...>>;
+  using FvarInnerT = typename FvarT::Scalar;
+  auto a_val = value_of(a);
+  auto b_val = value_of(b);
   auto func = [f,msgs,relative_tolerance,a_val,b_val](const auto&... args_var) {
     return integrate_1d_impl(f, a_val, b_val, relative_tolerance, msgs, args_var...);
   };
-  fvar<double> ret = fvar_wrapper(func, args...);
+  FvarT ret = fvar_wrapper(func, args...);
+
   if (is_fvar<T_a>::value || is_fvar<T_b>::value) {
     auto val_args = std::make_tuple(value_of(args)...);
     if (is_fvar<T_a>::value) {
-      ret.d_ += math::forward_as<fvar<double>>(a).d_ *
+      ret.d_ += math::forward_as<FvarT>(a).d_ *
         math::apply([&](auto&&... tuple_args) {
           return -f(a_val, 0.0, msgs, tuple_args...);
         }, val_args);
     }
     if (is_fvar<T_b>::value) {
-      ret.d_ += math::forward_as<fvar<double>>(b).d_ *
+      ret.d_ += math::forward_as<FvarT>(b).d_ *
         math::apply([&](auto&&... tuple_args) {
           return f(b_val, 0.0, msgs, tuple_args...);
         }, val_args);
@@ -45,11 +48,8 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
     std::ostream *msgs, const double relative_tolerance) {
-  auto func = [&f,&msgs,&x_r,&x_i,&relative_tolerance](auto&& a_var, auto&& b_var, auto&& theta_var) {
-    return integrate_1d_impl(integrate_1d_adapter<F>(f), a_var, b_var, relative_tolerance,
+  return integrate_1d_impl(integrate_1d_adapter<F>(f), a_var, b_var, relative_tolerance,
                            msgs, theta_var, x_r, x_i);
-  };
-  return fvar_wrapper(func, a, b, theta);
 }
 
 }  // namespace math
