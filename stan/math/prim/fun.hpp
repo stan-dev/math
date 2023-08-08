@@ -275,6 +275,7 @@
 #include <stan/math/prim/fun/qr.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
 #include <stan/math/prim/fun/qr_R.hpp>
+#include <stan/math/prim/fun/qr_thin.hpp>
 #include <stan/math/prim/fun/qr_thin_Q.hpp>
 #include <stan/math/prim/fun/qr_thin_R.hpp>
 #include <stan/math/prim/fun/quad_form.hpp>
