@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, poisson_log_glm_lpmf) {
+TEST_F(AgradRev, mathMixScalFun_poisson_log_glm_lpmf) {
   auto f = [](const auto y) {
     return [=](const auto& x, const auto& alpha, const auto& beta) {
       return stan::math::poisson_log_glm_lpmf(y, x, alpha, beta);

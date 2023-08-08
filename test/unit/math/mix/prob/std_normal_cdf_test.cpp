@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, std_normal_cdf) {
+TEST_F(AgradRev, mathMixScalFun_std_normal_cdf) {
   auto f = [](const auto& y) { return stan::math::std_normal_cdf(y); };
 
   stan::test::expect_ad(f, -50.0);
