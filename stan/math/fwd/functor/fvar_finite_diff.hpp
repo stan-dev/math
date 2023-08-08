@@ -2,10 +2,10 @@
 #define STAN_MATH_FWD_FUNCTOR_FVAR_FINITE_DIFF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/elt_multiply.hpp>
 #include <test/unit/math/serializer.hpp>
 
 namespace stan {
@@ -44,7 +44,9 @@ inline constexpr double aggregate_tangent(const FuncTangentT& tangent,
 template <typename FuncTangentT, typename InputArgT,
           require_st_fvar<InputArgT>* = nullptr>
 auto aggregate_tangent(const FuncTangentT& tangent, const InputArgT& arg) {
-  return sum(elt_multiply(tangent, arg.d()));
+  return sum(apply_scalar_binary(
+              tangent, arg,
+              [](const auto& x, const auto& y) { return x * y.d_; }));
 }
 }  // namespace internal
 
