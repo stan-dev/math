@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_FUNCTOR_FVAR_FINITE_DIFF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/sum.hpp>
@@ -66,34 +65,25 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
 
-  auto val_args = std::make_tuple(stan::math::value_of(args)...);
-
-  auto serialised_args = stan::math::apply(
-      [&](auto&&... tuple_args) {
-        return math::to_vector(
-            stan::test::serialize<FvarInnerT>(tuple_args...));
-      },
-      val_args);
+  auto serialised_args = test::serialize<FvarInnerT>(value_of(args)...);
 
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
   auto serial_functor = [&](const auto& v) {
-    auto ds = stan::test::to_deserializer(v);
-    return stan::math::apply(
-        [&](auto&&... tuple_args) { return func(ds.read(tuple_args)...); },
-        val_args);
+    return func(test::to_deserializer(v).read(args)...);
   };
 
   FvarInnerT rtn_value;
   Eigen::Matrix<FvarInnerT, -1, 1> grad;
-  finite_diff_gradient_auto(serial_functor, serialised_args, rtn_value, grad);
+  finite_diff_gradient_auto(serial_functor, to_vector(serialised_args),
+                            rtn_value, grad);
 
-  auto ds_grad = stan::test::to_deserializer(grad);
   FvarInnerT rtn_grad = 0;
   // Use a fold-expression to aggregate tangents for input arguments
   (void)std::initializer_list<int>{(
-      rtn_grad += internal::aggregate_tangent(ds_grad.read(args), args), 0)...};
+      rtn_grad += internal::aggregate_tangent(
+                      test::to_deserializer(grad).read(args), args), 0)...};
 
   return FvarT(rtn_value, rtn_grad);
 }
