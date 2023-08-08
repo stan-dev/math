@@ -65,13 +65,13 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
 
-  auto serialised_args = test::serialize<FvarInnerT>(value_of(args)...);
+  auto serialised_args = stan::test::serialize<FvarInnerT>(value_of(args)...);
 
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
   auto serial_functor = [&](const auto& v) {
-    return func(test::to_deserializer(v).read(args)...);
+    return func(stan::test::to_deserializer(v).read(args)...);
   };
 
   FvarInnerT rtn_value;
@@ -83,7 +83,7 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   // Use a fold-expression to aggregate tangents for input arguments
   (void)std::initializer_list<int>{
       (rtn_grad += internal::aggregate_tangent(
-           test::to_deserializer(grad).read(args), args),
+           stan::test::to_deserializer(grad).read(args), args),
        0)...};
 
   return FvarT(rtn_value, rtn_grad);
