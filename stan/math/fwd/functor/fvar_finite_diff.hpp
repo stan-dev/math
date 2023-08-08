@@ -81,9 +81,10 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
 
   FvarInnerT rtn_grad = 0;
   // Use a fold-expression to aggregate tangents for input arguments
-  (void)std::initializer_list<int>{(
-      rtn_grad += internal::aggregate_tangent(
-                      test::to_deserializer(grad).read(args), args), 0)...};
+  (void)std::initializer_list<int>{
+      (rtn_grad += internal::aggregate_tangent(
+           test::to_deserializer(grad).read(args), args),
+       0)...};
 
   return FvarT(rtn_value, rtn_grad);
 }
