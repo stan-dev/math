@@ -13,8 +13,8 @@ namespace math {
  *
  * Overload for a single integral input
  *
- * @tparam T The type of integral input.
- * @param x boolean input
+ * @tparam T Any type convertible to `bool`
+ * @param x integral input
  * @return The input unchanged
  */
 template <typename T, require_t<std::is_convertible<T, bool>>* = nullptr>
@@ -63,8 +63,8 @@ inline bool all(const std::vector<InnerT>& x) {
  *
  * Overload for a tuple input.
  *
- * @tparam Type of container
- * @param x Nested container of boolean inputs
+ * @tparam Types of items within tuple
+ * @param x Tuple of boolean scalar-type elements
  * @return Boolean indicating whether all elements are true
  */
 template <typename... Types>

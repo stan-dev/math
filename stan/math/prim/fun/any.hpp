@@ -13,7 +13,7 @@ namespace math {
  *
  * Overload for a single boolean input
  *
- * @tparam T The type of integral input.
+ * @tparam T Any type convertible to `bool`
  * @param x boolean input
  * @return The input unchanged
  */
@@ -63,9 +63,9 @@ inline bool any(const std::vector<InnerT>& x) {
  *
  * Overload for a tuple input.
  *
- * @tparam Type of container
- * @param x Nested container of boolean inputs
- * @return Boolean indicating whether all elements are true
+ * @tparam Types of items within tuple
+ * @param x Tuple of boolean scalar-type elements
+ * @return Boolean indicating whether any elements are true
  */
 template <typename... Types>
 inline bool any(const std::tuple<Types...>& x) {
