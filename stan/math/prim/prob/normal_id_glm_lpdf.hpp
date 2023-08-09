@@ -6,12 +6,13 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -59,6 +60,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
+  using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return
       = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
@@ -86,7 +88,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   T_sigma_ref sigma_ref = sigma;
-  const auto& sigma_val = value_of_rec(sigma_ref);
+  const auto& sigma_val = value_of(sigma_ref);
   const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
   check_positive_finite(function, "Scale vector", sigma_val_vec);
 
@@ -102,11 +104,10 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_val = value_of_rec(y_ref);
-  const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
-  const auto& alpha_val = value_of_rec(alpha_ref);
-  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& y_val = value_of(y_ref);
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& alpha_val = value_of(alpha_ref);
+  const auto& beta_val = value_of(beta_ref);
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
@@ -116,7 +117,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_scale_val inv_sigma = 1.0 / as_array_or_scalar(sigma_val_vec);
 
   // the most efficient way to calculate this depends on template parameters
-  double y_scaled_sq_sum;
+  T_partials_return y_scaled_sq_sum;
 
   Array<T_partials_return, Dynamic, 1> y_scaled(N_instances);
   if (T_x_rows == 1) {
@@ -178,7 +179,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
         partials<4>(ops_partials)[0]
-            = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
+            = (y_scaled_sq_sum - N_instances)
+              * forward_as<partials_return_t<T_sigma_ref>>(inv_sigma);
       }
     } else {
       y_scaled_sq_sum = sum(y_scaled * y_scaled);
@@ -187,7 +189,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     y_scaled_sq_sum = sum(y_scaled * y_scaled);
   }
 
-  if (!std::isfinite(y_scaled_sq_sum)) {
+  if (!isfinite(y_scaled_sq_sum)) {
     check_finite(function, "Vector of dependent variables", y_val_vec);
     check_finite(function, "Weight vector", beta_val_vec);
     check_finite(function, "Intercept", alpha_val_vec);
@@ -204,7 +206,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances * log(forward_as<double>(sigma_val_vec));
+      logp -= N_instances
+              * log(forward_as<partials_return_t<T_sigma_ref>>(sigma_val_vec));
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;
