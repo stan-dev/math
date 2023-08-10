@@ -270,6 +270,9 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * first-passage time distribution in Wiener diffusion models.
  * *Journal of Mathematical Psychology, 103*, 102550.
  * https://doi.org/10.1016/j.jmp.2021.102550
+ * - Henrich, F., Hartmann, R., Pratz, V., Voss, A., & Klauer, K.C. (in press).
+ * The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian
+ * Analyses. *Behavior Research Methods*.
  * - Navarro, D. J., & Fuss, I. G. (2009). Fast and accurate calculations for
  * first-passage times in Wiener diffusion models.
  * *Journal of Mathematical Psychology, 53*(4), 222–230.

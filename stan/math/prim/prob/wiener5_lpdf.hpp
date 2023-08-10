@@ -196,7 +196,7 @@ inline std::tuple<double, int> wiener5_log_sum_exp(
     for (size_t k = n_terms_small_t; k >= 1; k--) {
       const double wp2k = w + 2.0 * k;
       const double wm2k = w - 2.0 * k;
-      int wp2k_sign = (wp2k > sqrt_offset) ?: 1 - 1;
+      int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
       int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
       double wp2k_quant
           = GradW ? log(fabs((square(wp2k) - offset))) - square(wp2k) * scaling
