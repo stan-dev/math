@@ -44,7 +44,9 @@ inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
     return 0;
   }
   auto&& B_ref = to_ref(B);
-  return multiply(B_ref, D_ref.transpose()).cwiseProduct(mdivide_left_ldlt(A, B_ref)).sum();
+  return multiply(B_ref, D_ref.transpose())
+      .cwiseProduct(mdivide_left_ldlt(A, B_ref))
+      .sum();
 }
 
 /**
@@ -77,7 +79,9 @@ inline return_type_t<EigVec, T, EigMat> trace_gen_inv_quad_form_ldlt(
     return 0;
   }
   auto&& B_ref = to_ref(B);
-  return (B_ref * D_ref.asDiagonal()).cwiseProduct(mdivide_left_ldlt(A, B_ref)).sum();
+  return (B_ref * D_ref.asDiagonal())
+      .cwiseProduct(mdivide_left_ldlt(A, B_ref))
+      .sum();
 }
 
 }  // namespace math

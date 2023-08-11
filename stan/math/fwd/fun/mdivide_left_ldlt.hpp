@@ -41,7 +41,8 @@ mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
     }
   }
   auto&& A_ref = to_ref(A);
-  return to_fvar(mdivide_left_ldlt(A_ref, b_val), mdivide_left_ldlt(A_ref, b_der));
+  return to_fvar(mdivide_left_ldlt(A_ref, b_val),
+                 mdivide_left_ldlt(A_ref, b_der));
 }
 
 }  // namespace math

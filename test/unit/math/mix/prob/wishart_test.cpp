@@ -5,8 +5,9 @@ TEST(ProbDistributionsWishart, matvar) {
     auto&& y_ref = stan::math::to_ref(y);
     auto y_sym = stan::math::multiply(0.5, y_ref + y_ref.transpose());
     auto&& sigma_ref = stan::math::to_ref(sigma);
-    auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
-    
+    auto sigma_sym
+        = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+
     return stan::math::wishart_lpdf(y_sym, dof, sigma_sym);
   };
 

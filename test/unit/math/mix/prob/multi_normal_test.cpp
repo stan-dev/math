@@ -2,9 +2,10 @@
 
 TEST(ProbDistributionsMultiNormal, matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
-              auto&& sigma_ref = stan::math::to_ref(sigma);
+    auto&& sigma_ref = stan::math::to_ref(sigma);
 
-    auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+    auto sigma_sym
+        = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     return stan::math::multi_normal_lpdf(y, mu, sigma_sym);
   };
 

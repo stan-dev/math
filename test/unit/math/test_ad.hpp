@@ -474,11 +474,11 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
   try {
     auto y1 = eval(f(xs...));  // original types, including int
     stan::test::check_expr_test(f, xs...);
-    auto y2 = eval(g(x));      // all int cast to double
+    auto y2 = eval(g(x));  // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
-  } catch (...) { 
+  } catch (...) {
     internal::expect_all_throw(h(0), x);
     return;
   }
@@ -1999,7 +1999,7 @@ template <
     require_t<bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
-  
+
   auto args = internal::common_args();
   for (double x1 : args) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
@@ -2008,7 +2008,6 @@ void expect_common_unary_vectorized(const F& f) {
   for (int x1 : int_args) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   }
-    
 }
 
 /**
@@ -2041,10 +2040,9 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   }
   for (auto x1 : common_complex()) {
-   stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
-  }  
+    stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
+  }
 }
- 
 
 /**
  * Test that the specified vectorized unary function produces the same

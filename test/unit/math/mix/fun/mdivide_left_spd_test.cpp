@@ -6,8 +6,8 @@ TEST(MathMixMatFun, mdivideLeftSpd) {
       return stan::math::mdivide_left_spd(x, y);
 
     auto x_ref = stan::math::to_ref(x);
-    auto x_sym = stan::math::eval(
-        stan::math::multiply(x_ref + x_ref.transpose(), 0.5));  // sym for finite diffs
+    auto x_sym = stan::math::eval(stan::math::multiply(
+        x_ref + x_ref.transpose(), 0.5));  // sym for finite diffs
     return stan::math::mdivide_left_spd(x_sym, y);
   };
 

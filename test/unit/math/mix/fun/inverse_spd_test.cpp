@@ -6,7 +6,8 @@ TEST(MathMixMatFun, inverseSpd) {
       return stan::math::inverse_spd(x);
 
     auto x_ref = stan::math::to_ref(x);
-    auto y = ((x_ref + x_ref.transpose()) * 0.5).eval();  // symmetry for finite diffs
+    auto y = ((x_ref + x_ref.transpose()) * 0.5)
+                 .eval();  // symmetry for finite diffs
     return stan::math::inverse_spd(y);
   };
 

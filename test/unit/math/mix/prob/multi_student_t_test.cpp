@@ -4,13 +4,14 @@ TEST(ProbDistributionsMultiStudentT, matvar) {
   auto f
       = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {
           auto&& sigma_ref = stan::math::to_ref(sigma);
-          auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+          auto sigma_sym
+              = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
           return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
         };
 
   auto f_const_y = [](const auto& y) {
     return [&y](const auto& nu, const auto& mu, const auto& sigma) {
-          auto&& sigma_ref = stan::math::to_ref(sigma);
+      auto&& sigma_ref = stan::math::to_ref(sigma);
       auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
       return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
     };
@@ -18,7 +19,7 @@ TEST(ProbDistributionsMultiStudentT, matvar) {
 
   auto f_const_nu = [](const auto& nu) {
     return [&nu](const auto& y, const auto& mu, const auto& sigma) {
-          auto&& sigma_ref = stan::math::to_ref(sigma);
+      auto&& sigma_ref = stan::math::to_ref(sigma);
       auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
       return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
     };
