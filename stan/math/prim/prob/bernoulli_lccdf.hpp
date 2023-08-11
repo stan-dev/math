@@ -53,13 +53,12 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  const auto& theta_broadcast = select(true, theta_arr, n_arr);
-
+  // Use select() to broadcast theta values & gradients if necessary
   if (!is_constant_all<T_prob>::value) {
-    partials<0>(ops_partials) = inv(theta_broadcast);
+    partials<0>(ops_partials) = select(true, inv(theta_arr), n_arr);
   }
 
-  return ops_partials.build(sum(log(theta_broadcast)));
+  return ops_partials.build(sum(select(true, log(theta_arr), n_arr)));
 }
 
 }  // namespace math
