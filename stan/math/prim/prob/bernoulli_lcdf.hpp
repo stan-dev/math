@@ -3,17 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
+#include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/select.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -35,14 +28,13 @@ template <typename T_n, typename T_prob,
               T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
-  using std::log;
   static const char* function = "bernoulli_lcdf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;
   const auto& n_arr = as_array_or_scalar(n);
-  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
-                1.0);
+  const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
+  check_bounded(function, "Probability parameter", theta_arr, 0.0, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
@@ -52,11 +44,10 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  if (sum(n_arr < 0)) {
+  if (any(n_arr < 0)) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
   const auto& log1m_theta = select(theta_arr == 1, 0.0, log1m(theta_arr));
 
   if (!is_constant_all<T_prob>::value) {
