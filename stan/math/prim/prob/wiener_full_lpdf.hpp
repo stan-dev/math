@@ -292,22 +292,23 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     return 0;
   }
 
-  using T_y_ref = ref_type_t<T_y>;
-  using T_a_ref = ref_type_t<T_a>;
-  using T_v_ref = ref_type_t<T_v>;
-  using T_w_ref = ref_type_t<T_w>;
-  using T_t0_ref = ref_type_t<T_t0>;
-  using T_sv_ref = ref_type_t<T_sv>;
-  using T_sw_ref = ref_type_t<T_sw>;
-  using T_st0_ref = ref_type_t<T_st0>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
+  using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
+  using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
+  using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
+  using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
+  using T_sw_ref = ref_type_if_t<!is_constant<T_sw>::value, T_sw>;
+  using T_st0_ref = ref_type_if_t<!is_constant<T_st0>::value, T_st0>;
 
-  const char* function_name = "wiener_full_lpdf";
+  static constexpr const char* function_name = "wiener_full_lpdf";
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
                          "A-priori bias", w, "Nondecision time", t0,
                          "Inter-trial variability in drift rate", sv,
                          "Inter-trial variability in A-priori bias", sw,
                          "Inter-trial variability in Nondecision time", st0);
+  /* This should support mixes of scalars and vectors
   check_consistent_size(function_name, "Random variable", y, 1);
   check_consistent_size(function_name, "Boundary separation", a, 1);
   check_consistent_size(function_name, "Drift rate", v, 1);
@@ -319,7 +320,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         "Inter-trial variability in A-priori bias", sw, 1);
   check_consistent_size(function_name,
                         "Inter-trial variability in Nondecision time", st0, 1);
-
+  */
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_v_ref v_ref = v;
@@ -329,24 +330,32 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_sw_ref sw_ref = sw;
   T_st0_ref st0_ref = st0;
 
-  check_positive_finite(function_name, "Random variable", value_of(y_ref));
-  check_positive_finite(function_name, "Boundary separation", value_of(a_ref));
-  check_finite(function_name, "Drift rate", value_of(v_ref));
-  check_less(function_name, "A-priori bias", value_of(w_ref), 1);
-  check_greater(function_name, "A-priori bias", value_of(w_ref), 0);
-  check_nonnegative(function_name, "Nondecision time", value_of(t0_ref));
-  check_finite(function_name, "Nondecision time", value_of(t0_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  decltype(auto) sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
+  decltype(auto) sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
+  decltype(auto) st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
+  check_positive_finite(function_name, "Random variable", y_val);
+  check_positive_finite(function_name, "Boundary separation", a_val);
+  check_finite(function_name, "Drift rate", v_val);
+  check_less(function_name, "A-priori bias", w_val, 1);
+  check_greater(function_name, "A-priori bias", w_val, 0);
+  check_nonnegative(function_name, "Nondecision time", t0_val);
+  check_finite(function_name, "Nondecision time", t0_val);
   check_nonnegative(function_name, "Inter-trial variability in drift rate",
-                    value_of(sv_ref));
+                    sv_val);
   check_finite(function_name, "Inter-trial variability in drift rate",
-               value_of(sv_ref));
+               sv_val);
   check_bounded(function_name, "Inter-trial variability in A-priori bias",
-                value_of(sw_ref), 0, 1);
+                sw_val, 0, 1);
   check_nonnegative(function_name,
                     "Inter-trial variability in Nondecision time",
-                    value_of(st0_ref));
+                    st0_val);
   check_finite(function_name, "Inter-trial variability in Nondecision time",
-               value_of(st0_ref));
+               st0_val);
 
   if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0)) {
     return 0;

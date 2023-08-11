@@ -16,20 +16,22 @@ namespace internal {
  * @param sv The inter-trial variability of the drift rate
  * @return 'error_term' term
  */
-inline double wiener5_compute_error_term(double y, double a, double v_value,
-                                         double w_value, double sv) noexcept {
-  const double w = 1.0 - w_value;
-  const double v = -v_value;
-  const double sv_sqr = square(sv);
-  const double one_plus_svsqr_y = 1 + sv_sqr * y;
-  const double two_avw = 2 * a * v * w;
-  const double two_log_a = 2 * log(a);
+template <typename T_y, typename T_a, typename T_v, typename T_w,
+          typename T_sv>
+inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
+                                         T_w&& w_value, T_sv&& sv) noexcept {
+  const auto w = 1.0 - w_value;
+  const auto v = -v_value;
+  const auto sv_sqr = square(sv);
+  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto two_avw = 2 * a * v * w;
+  const auto two_log_a = 2 * log(a);
   if (sv != 0) {
-    return (sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
+    return stan::math::eval((sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
                / one_plus_svsqr_y
-           - two_log_a - 0.5 * log(one_plus_svsqr_y);
+           - two_log_a - 0.5 * log(one_plus_svsqr_y));
   } else {
-    return (-two_avw - square(v) * y) / 2.0 - two_log_a;
+    return stan::math::eval((-two_avw - square(v) * y) / 2.0 - two_log_a);
   }
 }
 
@@ -173,35 +175,33 @@ inline double wiener5_n_terms_largel_t(double y, double a, double w_value,
  * @param n_terms_large_t The n_terms_large_t term
  * @return 'result' sum and its sign
  */
-template <bool Density, bool GradW>
-inline std::tuple<double, int> wiener5_log_sum_exp(
-    double y, double a, double w_value, size_t n_terms_small_t,
-    size_t n_terms_large_t) noexcept {
-  const double y_asq = y / square(a);
-  const double w = 1.0 - w_value;
+template <bool Density, bool GradW, typename T_y, typename T_a, typename T_w, typename T_nsmall, typename T_nlarge>
+inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value, T_nsmall&& n_terms_small_t, T_nlarge&& n_terms_large_t) noexcept {
+  const auto y_asq = y / square(a);
+  const auto w = 1.0 - w_value;
   const bool small_n_terms_small_t
       = Density ? (2 * n_terms_small_t <= n_terms_large_t)
                 : (2 * n_terms_small_t < n_terms_large_t);
-  const double scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
+  const auto scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
 
-  double prev_val = NEGATIVE_INFTY;
-  double current_val = NEGATIVE_INFTY;
+  auto prev_val = NEGATIVE_INFTY;
+  auto current_val = NEGATIVE_INFTY;
   int prev_sign = 1;
   int current_sign = 1;
 
   if (small_n_terms_small_t) {
-    const double mult = Density ? 1 : 3;
-    const double offset = GradW ? y_asq : 0;
-    const double sqrt_offset = sqrt(offset);
+    const auto mult = Density ? 1 : 3;
+    const auto offset = GradW ? y_asq : 0;
+    const auto sqrt_offset = sqrt(offset);
     for (size_t k = n_terms_small_t; k >= 1; k--) {
-      const double wp2k = w + 2.0 * k;
-      const double wm2k = w - 2.0 * k;
+      const auto wp2k = w + 2.0 * k;
+      const auto wm2k = w - 2.0 * k;
       int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
       int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
-      double wp2k_quant
+      auto wp2k_quant
           = GradW ? log(fabs((square(wp2k) - offset))) - square(wp2k) * scaling
                   : mult * log(wp2k_sign * wp2k) - square(wp2k) * scaling;
-      double wm2k_quant
+      auto wm2k_quant
           = GradW ? log(fabs((square(wm2k) - offset))) - square(wm2k) * scaling
                   : mult * log(wm2k_sign * wm2k) - square(wm2k) * scaling;
       double k_term;
@@ -213,7 +213,7 @@ inline std::tuple<double, int> wiener5_log_sum_exp(
       prev_val = current_val;
       prev_sign = current_sign;
     }
-    double new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling
+    auto new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling
                            : mult * log(w) - square(w) * scaling;
     int new_val_sign
         = GradW ? (w > sqrt_offset ? 1 : -1) : (new_val > 0 ? 1 : -1);
@@ -240,7 +240,7 @@ inline std::tuple<double, int> wiener5_log_sum_exp(
       prev_sign = current_sign;
     }
   }
-  return std::make_tuple(current_val, current_sign);
+  return std::make_pair(current_val, current_sign);
 }
 
 /**
@@ -261,27 +261,25 @@ template <bool NaturalScale = false>
 inline double wiener5_density(double y, double a, double v_value,
                               double w_value, double sv,
                               double err = log(1e-12)) noexcept {
-  const double error_term
+  const auto error_term
       = wiener5_compute_error_term(y, a, v_value, w_value, sv);
-  const double error = (err - error_term);
-  const double n_terms_small_t
+  const auto error = (err - error_term);
+  const auto n_terms_small_t
       = wiener5_n_terms_small_t<true, false>(y, a, w_value, error);
-  const double n_terms_large_t
+  const auto n_terms_large_t
       = wiener5_n_terms_largel_t<true, false>(y, a, w_value, error);
 
-  double result;
-  int newsign;
-  double log_density;
-  std::forward_as_tuple(result, newsign) = wiener5_log_sum_exp<true, false>(
-      y, a, w_value, n_terms_small_t, n_terms_large_t);
+  // 0 is result, 1 is newwsign
+  auto res = wiener5_log_sum_exp<true, false>(
+      y, a, w_value, n_terms_small_t, n_terms_large_t).first;
   if (2 * n_terms_small_t <= n_terms_large_t) {
-    log_density = error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
-                  - 1.5 * (log(y) - 2 * log(a)) + result;
+    auto log_density = error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
+                  - 1.5 * (log(y) - 2 * log(a)) + res;
+    return NaturalScale ? exp(log_density) : log_density;
   } else {
-    log_density = error_term + result + LOG_PI;
+    auto log_density = error_term + res + LOG_PI;
+    return NaturalScale ? exp(log_density) : log_density;
   }
-
-  return NaturalScale ? exp(log_density) : log_density;
 }
 
 /**
@@ -572,14 +570,14 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
     const T_sv& sv, const double& precision_derivatives) {
-  using T_y_ref = ref_type_t<T_y>;
-  using T_a_ref = ref_type_t<T_a>;
-  using T_t0_ref = ref_type_t<T_t0>;
-  using T_w_ref = ref_type_t<T_w>;
-  using T_v_ref = ref_type_t<T_v>;
-  using T_sv_ref = ref_type_t<T_sv>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
+  using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
+  using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
+  using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
+  using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
 
-  const char* function_name = "wiener5_lpdf";
+  static constexpr const char* function_name = "wiener5_lpdf";
   if (size_zero(y, a, t0, w, v, sv)) {
     return 0;
   }
@@ -591,6 +589,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
                          "Boundary separation", a, "Drift rate", v,
                          "A-priori bias", w, "Nondecision time", t0,
                          "Inter-trial variability in drift rate", sv);
+
+  /*
   check_consistent_size(function_name, "Random variable", y, 1);
   check_consistent_size(function_name, "Boundary separation", a, 1);
   check_consistent_size(function_name, "Nondecision time", t0, 1);
@@ -598,6 +598,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   check_consistent_size(function_name, "Drift rate", v, 1);
   check_consistent_size(function_name, "Inter-trial variability in drift rate",
                         sv, 1);
+  */
 
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
