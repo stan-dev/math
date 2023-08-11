@@ -1,24 +1,46 @@
 <doxygenlayout version="1.0">
 <navindex>
   <tab type="user" url="index.html" title="Overview" />
+  <!-- Note: @ref doesn't work in doxygen v1.9.7. Perhaps this could come back in the future.
   <tab type="usergroup" visible="yes" title="Contributor Guides" url="@ref contributing" intro="">
-      <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
-      <tab type="usergroup" visible="yes" title="Adding New Functions" url="@ref getting_started" intro=""/>
-      <tab type="usergroup" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
-      <tab type="usergroup" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
-      <tab type="usergroup" visible="yes" title="Using requires for general overloads" url="@ref require_meta_doc" intro=""/>
-      <tab type="usergroup" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
-      <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
-      <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
-      <tab type="usergroup" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
-      <tab type="usergroup" visible="yes" title="Adding New OpenCL Functions" url="@ref opencl_guide" intro=""/>
-      <tab type="usergroup" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
-  </tab>
+      <tab type="user" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
+      <tab type="user" visible="yes" title="Adding New Functions" url="@ref getting_started" intro=""/>
+      <tab type="user" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
+      <tab type="user" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
+      <tab type="user" visible="yes" title="Using requires for general overloads" url="@ref require_meta_doc" intro=""/>
+      <tab type="user" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
+      <tab type="user" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
+      <tab type="user" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
+      <tab type="user" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
+      <tab type="user" visible="yes" title="Adding New OpenCL Functions" url="@ref opencl_guide" intro=""/>
+      <tab type="user" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
+  </tab> 
+  -->
+  <tab type="usergroup" visible="yes" title="Contributor Guides" url="md__8github_2_c_o_n_t_r_i_b_u_t_i_n_g.html" intro="">
+      <tab type="user" visible="yes" title="Developer Guide" url="md_doxygen_2contributor__help__pages_2developer__doc.html" intro=""/>
+      <tab type="user" visible="yes" title="Adding New Functions" url="md_doxygen_2contributor__help__pages_2getting__started.html" intro=""/>
+      <tab type="user" visible="yes" title="Adding New Distributions" url="md_doxygen_2contributor__help__pages_2adding__new__distributions.html" intro=""/>
+      <tab type="user" visible="yes" title="Common Pitfalls" url="md_doxygen_2contributor__help__pages_2common__pitfalls.html" intro=""/>
+      <tab type="user" visible="yes" title="Using requires for general overloads" url="md_doxygen_2contributor__help__pages_2require__meta.html" intro=""/>
+      <tab type="user" visible="yes" title="Reverse Mode Types" url="md_doxygen_2contributor__help__pages_2reverse__mode__types.html" intro=""/>
+      <tab type="user" visible="yes" title="Testing Automatic Differentiation Functions" url="md_doxygen_2contributor__help__pages_2autodiff__test__guide.html" intro=""/>
+      <tab type="user" visible="yes" title="Testing New Distributions" url="md_doxygen_2contributor__help__pages_2distribution__tests.html" intro=""/>
+      <tab type="user" visible="yes" title="Add New Functions With Known Gradients" url="md_doxygen_2contributor__help__pages_2new__gradients.html" intro=""/>
+      <tab type="user" visible="yes" title="Adding New OpenCL Functions" url="md_doxygen_2contributor__help__pages_2add__new__opencl__kernel.html" intro=""/>
+      <tab type="user" visible="yes" title="Windows Development Tips" url="md_doxygen_2contributor__help__pages_2windows__devnotes.html" intro=""/>
+  </tab> 
   <tab type="modules" visible="yes" title="Internal Docs" intro=""/>
+  <!-- Note: @ref doesn't work in doxygen v1.9.7. Perhaps this could come back in the future.
   <tab type="usergroup" visible="yes" title="Parallelism" intro="">
-    <tab type="usergroup" visible="yes" title="Threading" url="@ref tbb_threading" intro=""/>
-    <tab type="usergroup" visible="yes" title="OpenCL for GPU Computing" url="@ref opencl_support" intro=""/>
-    <tab type="usergroup" visible="yes" title="MPI Support" url="@ref mpi" intro=""/>
+    <tab type="user" visible="yes" title="Threading" url="@ref tbb_threading" intro=""/>
+    <tab type="user" visible="yes" title="OpenCL for GPU Computing" url="@ref opencl_support" intro=""/>
+    <tab type="user" visible="yes" title="MPI Support" url="@ref mpi" intro=""/>
+  </tab>
+  -->
+  <tab type="usergroup" visible="yes" title="Parallelism" intro="">
+    <tab type="user" visible="yes" title="Threading" url="md_doxygen_2parallelism__support_2threading__tbb.html" intro=""/>
+    <tab type="user" visible="yes" title="OpenCL for GPU Computing" url="md_doxygen_2parallelism__support_2opencl__support.html" intro=""/>
+    <tab type="user" visible="yes" title="MPI Support" url="md_doxygen_2parallelism__support_2mpi__parallelism.html" intro=""/>
   </tab>
   <tab type="usergroup" visible="yes" title="(External Link) Stan Language Docs" url="https://mc-stan.org/users/documentation/" intro=""/>
   <tab type="usergroup" visible="yes" title="(External Link) Stan Discourse" url="https://discourse.mc-stan.org/" intro=""/>

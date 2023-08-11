@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -48,7 +48,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
     return 0.0;
   }
 
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -61,7 +61,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
 
   if (!is_constant_all<T_prob>::value) {
-    ops_partials.edge1_.partials_ = select(true, inv(theta_arr), n_arr);
+    partials<0>(ops_partials) = select(true, inv(theta_arr), n_arr);
   }
 
   return ops_partials.build(sum(select(true, log(theta_arr), n_arr)));

@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the generalised hypergeometric function applied to the
+ * Returns the generalized hypergeometric function applied to the
  * input arguments:
  * \f$_pF_q(a_1,...,a_p;b_1,...,b_q;z)\f$
  *
@@ -23,7 +23,7 @@ namespace math {
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
- * @return Generalised hypergeometric function
+ * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
           require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,

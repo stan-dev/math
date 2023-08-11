@@ -14,6 +14,7 @@ TEST(mixFun, absBasics) {
   x << 1, 2, 3, 4, 5, 6;
   Eigen::Matrix<double, -1, -1> y = abs(x);
 
+  // test int -> int vectorization
   std::vector<int> u{1, 2, 3, 4};
   std::vector<int> v = abs(u);
 }

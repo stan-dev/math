@@ -1495,6 +1495,39 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
 }
 
 /**
+ * Implementation function for testing that ternary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @tparam T3 type of third argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ * @param z argument to test
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_ad_vectorized_ternary_impl(const ad_tolerances& tols, const F& f,
+                                       const T1& x, const T2& y, const T3& z) {
+  std::vector<T1> nest_x{x};
+  std::vector<T2> nest_y{y};
+  std::vector<T3> nest_z{z};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y};
+  std::vector<std::vector<T3>> nest_nest_z{nest_z};
+  expect_ad(tols, f, x, y, z);
+  expect_ad(tols, f, nest_nest_x, nest_nest_y, nest_nest_z);
+  expect_ad(tols, f, nest_nest_x, nest_nest_y, z[0]);
+  expect_ad(tols, f, nest_nest_x, y[0], z[0]);
+  expect_ad(tols, f, nest_nest_x, y[0], nest_nest_z);
+  expect_ad(tols, f, x[0], y[0], nest_nest_z);
+  expect_ad(tols, f, x[0], nest_nest_y, nest_nest_z);
+  expect_ad(tols, f, x[0], nest_nest_y, z[0]);
+}
+
+/**
  * Implementation function for testing that binary functions with vector inputs
  * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
  * derivatives consistent with finite differences of double inputs.
@@ -1576,6 +1609,31 @@ void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
 }
 
 /**
+ * Test that the specified vectorized polymorphic ternary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam F type of polymorphic, vectorized functor to test
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @tparam T3 type of third argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x value to test
+ * @param y value to test
+ * @param z value to test
+ */
+template <typename F, typename T1, typename T2, typename T3,
+          require_all_eigen_col_vector_t<T1, T2, T3>* = nullptr>
+void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
+                                  const T1& x, const T2& y, const T3& z) {
+  expect_ad_vectorized_ternary_impl(tols, f, x, y, z);
+  expect_ad_vectorized_ternary_impl(tols, f, math::to_array_1d(x),
+                                    math::to_array_1d(y), math::to_array_1d(z));
+}
+
+/**
  * Test that the specified vectorized polymorphic binary function
  * produces autodiff results consistent with values determined by
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
@@ -1597,6 +1655,29 @@ void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
 }
 
 /**
+ * Test that the specified vectorized polymorphic ternary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam F type of polymorphic, vectorized functor to test
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @tparam T3 type of third argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x value to test
+ * @param y value to test
+ * @param z value to test
+ */
+template <typename F, typename T1, typename T2, typename T3,
+          require_any_std_vector_t<T1, T2, T3>* = nullptr>
+void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
+                                  const T1& x, const T2& y, const T3& z) {
+  expect_ad_vectorized_ternary_impl(tols, f, x, y, z);
+}
+
+/**
  * Test that the specified binary function has value and 1st-, 2nd-, and
  * 3rd-order derivatives consistent with primitive values and finite
  * differences using default tolerances.
@@ -1612,6 +1693,27 @@ template <typename F, typename T1, typename T2>
 void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   ad_tolerances tols;
   expect_ad_vectorized_binary(tols, f, x, y);
+}
+
+/**
+ * Test that the specified ternary function has value and 1st-, 2nd-, and
+ * 3rd-order derivatives consistent with primitive values and finite
+ * differences using default tolerances.
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @tparam T3 type of third argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ * @param z argument to test
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
+                                  const T3& z) {
+  ad_tolerances tols;
+  expect_ad_vectorized_ternary(tols, f, x, y, z);
 }
 
 /**

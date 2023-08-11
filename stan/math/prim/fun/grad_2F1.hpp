@@ -73,10 +73,11 @@ TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
 
   int sign_zk = sign_z;
   int k = 0;
+  const int min_steps = 5;
   ScalarT inner_diff = 1;
   ScalarArrayT g_current = ScalarArrayT::Zero(3);
 
-  while (inner_diff > precision && k < max_steps) {
+  while ((inner_diff > precision || k < min_steps) && k < max_steps) {
     ScalarT p = ((a1 + k) * (a2 + k) / ((b1 + k) * (1.0 + k)));
     if (p == 0) {
       return grad_tuple;

@@ -17,7 +17,7 @@ TEST(AgradRev, eigenvaluesSymLogDet) {
   stan::math::matrix_d a_inv = stan::math::inverse(a);
 
   stan::math::matrix_v a_v(a);
-  auto w = eigenvalues_sym(a_v);
+  stan::math::matrix_v w = eigenvalues_sym(a_v);
   auto logdet = stan::math::sum(stan::math::log(w));
 
   stan::math::set_zero_all_adjoints();

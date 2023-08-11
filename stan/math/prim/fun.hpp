@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/acosh.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/add_diag.hpp>
+#include <stan/math/prim/fun/all.hpp>
+#include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/append_array.hpp>
 #include <stan/math/prim/fun/append_col.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
@@ -272,6 +274,7 @@
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/pseudo_eigenvalues.hpp>
 #include <stan/math/prim/fun/pseudo_eigenvectors.hpp>
+#include <stan/math/prim/fun/qr.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
 #include <stan/math/prim/fun/qr_R.hpp>
 #include <stan/math/prim/fun/qr_thin_Q.hpp>

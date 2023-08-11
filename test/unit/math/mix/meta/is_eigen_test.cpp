@@ -29,7 +29,7 @@ TEST(MathMetaPrim, is_eigen_decomp_tests) {
   using Eigen::Matrix;
   using stan::is_eigen;
   using stan::math::test::all_eigen_dense_decomp;
-  all_eigen_dense_decomp<false, is_eigen>();
+  all_eigen_dense_decomp<true, is_eigen>();
 }
 
 TEST(MathMetaPrim, is_eigen_expr_tests) {

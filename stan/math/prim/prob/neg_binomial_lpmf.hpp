@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -56,8 +56,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
-                                                              beta_ref);
+  auto ops_partials = make_partials_propagator(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -108,12 +107,11 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];
 
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge1_.partials_[i] += digamma(alpha_dbl + n_vec[i])
-                                          - digamma_alpha[i]
-                                          - log1p_inv_beta[i];
+      partials<0>(ops_partials)[i] += digamma(alpha_dbl + n_vec[i])
+                                      - digamma_alpha[i] - log1p_inv_beta[i];
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[i]
+      partials<1>(ops_partials)[i]
           += lambda_m_alpha_over_1p_beta[i] - n_vec[i] / (beta_dbl + 1.0);
     }
   }

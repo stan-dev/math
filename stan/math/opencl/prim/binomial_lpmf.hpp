@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
 namespace stan {
@@ -107,7 +107,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
                     calc_if<need_deriv>(deriv_theta));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
+  auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
     if (need_sums) {
@@ -115,7 +115,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
       int sum_N = sum(from_matrix_cl(sum_N_cl));
       double theta_dbl = forward_as<double>(theta_val);
       double& partial = forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge1_.partials_)[0];
+          partials<0>(ops_partials))[0];
       if (sum_N != 0) {
         if (sum_n == 0) {
           partial = -sum_N / (1.0 - theta_dbl);
@@ -126,7 +126,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
         }
       }
     } else {
-      ops_partials.edge1_.partials_ = std::move(deriv_cl);
+      partials<0>(ops_partials) = std::move(deriv_cl);
     }
   }
 

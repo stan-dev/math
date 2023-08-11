@@ -20,7 +20,7 @@ namespace math {
  * The inverse of the unit normal cumulative distribution function evaluated at
  * the log probability.
  *
- * @param p argument between -Inf and 0 inclusive
+ * @param log_p argument between -Inf and 0 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double std_normal_log_qf(double log_p) {
