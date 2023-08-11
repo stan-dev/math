@@ -16,10 +16,9 @@ namespace internal {
  * @param sv The inter-trial variability of the drift rate
  * @return 'error_term' term
  */
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sv>
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
 inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
-                                         T_w&& w_value, T_sv&& sv) noexcept {
+                                       T_w&& w_value, T_sv&& sv) noexcept {
   const auto w = 1.0 - w_value;
   const auto v = -v_value;
   const auto sv_sqr = square(sv);
@@ -27,9 +26,9 @@ inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
   const auto two_avw = 2 * a * v * w;
   const auto two_log_a = 2 * log(a);
   if (sv != 0) {
-    return stan::math::eval((sv_sqr * square(a * w) - two_avw - square(v) * y) / 2.0
-               / one_plus_svsqr_y
-           - two_log_a - 0.5 * log(one_plus_svsqr_y));
+    return stan::math::eval((sv_sqr * square(a * w) - two_avw - square(v) * y)
+                                / 2.0 / one_plus_svsqr_y
+                            - two_log_a - 0.5 * log(one_plus_svsqr_y));
   } else {
     return stan::math::eval((-two_avw - square(v) * y) / 2.0 - two_log_a);
   }
@@ -175,8 +174,11 @@ inline double wiener5_n_terms_largel_t(double y, double a, double w_value,
  * @param n_terms_large_t The n_terms_large_t term
  * @return 'result' sum and its sign
  */
-template <bool Density, bool GradW, typename T_y, typename T_a, typename T_w, typename T_nsmall, typename T_nlarge>
-inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value, T_nsmall&& n_terms_small_t, T_nlarge&& n_terms_large_t) noexcept {
+template <bool Density, bool GradW, typename T_y, typename T_a, typename T_w,
+          typename T_nsmall, typename T_nlarge>
+inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
+                                T_nsmall&& n_terms_small_t,
+                                T_nlarge&& n_terms_large_t) noexcept {
   const auto y_asq = y / square(a);
   const auto w = 1.0 - w_value;
   const bool small_n_terms_small_t
@@ -214,7 +216,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value, T_nsmall&& n_te
       prev_sign = current_sign;
     }
     auto new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling
-                           : mult * log(w) - square(w) * scaling;
+                         : mult * log(w) - square(w) * scaling;
     int new_val_sign
         = GradW ? (w > sqrt_offset ? 1 : -1) : (new_val > 0 ? 1 : -1);
     int factor_sign = GradW ? 1 : -1;
@@ -270,11 +272,12 @@ inline double wiener5_density(double y, double a, double v_value,
       = wiener5_n_terms_largel_t<true, false>(y, a, w_value, error);
 
   // 0 is result, 1 is newwsign
-  auto res = wiener5_log_sum_exp<true, false>(
-      y, a, w_value, n_terms_small_t, n_terms_large_t).first;
+  auto res = wiener5_log_sum_exp<true, false>(y, a, w_value, n_terms_small_t,
+                                              n_terms_large_t)
+                 .first;
   if (2 * n_terms_small_t <= n_terms_large_t) {
     auto log_density = error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
-                  - 1.5 * (log(y) - 2 * log(a)) + res;
+                       - 1.5 * (log(y) - 2 * log(a)) + res;
     return NaturalScale ? exp(log_density) : log_density;
   } else {
     auto log_density = error_term + res + LOG_PI;

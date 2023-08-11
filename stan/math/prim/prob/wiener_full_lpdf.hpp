@@ -347,13 +347,11 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   check_finite(function_name, "Nondecision time", t0_val);
   check_nonnegative(function_name, "Inter-trial variability in drift rate",
                     sv_val);
-  check_finite(function_name, "Inter-trial variability in drift rate",
-               sv_val);
+  check_finite(function_name, "Inter-trial variability in drift rate", sv_val);
   check_bounded(function_name, "Inter-trial variability in A-priori bias",
                 sw_val, 0, 1);
   check_nonnegative(function_name,
-                    "Inter-trial variability in Nondecision time",
-                    st0_val);
+                    "Inter-trial variability in Nondecision time", st0_val);
   check_finite(function_name, "Inter-trial variability in Nondecision time",
                st0_val);
 
