@@ -3,7 +3,8 @@
 TEST(MathMixMatFun, eigenvaluesSym) {
   auto f = [](const auto& y) {
     // need to maintain symmetry for finite diffs
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return stan::math::eigenvalues_sym(a);
   };
 
@@ -38,7 +39,8 @@ TEST(MathMixMatFun, eigenvaluesSym) {
 TEST(MathMixMatFun, eigenvaluesSym_varmat) {
   auto f = [](const auto& y) {
     // need to maintain symmetry for finite diffs
-    auto a = stan::math::multiply((y + y.transpose()), 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = stan::math::multiply((y_ref + y_ref.transpose()), 0.5).eval();
     return stan::math::eigenvalues_sym(a);
   };
 

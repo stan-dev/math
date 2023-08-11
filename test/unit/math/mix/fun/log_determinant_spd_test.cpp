@@ -3,7 +3,8 @@
 
 TEST(MathMixMatFun, logDeterminantSpd) {
   auto f = [](const auto& x) {
-    auto z = stan::math::multiply(x + x.transpose(), 0.5);
+    auto&& x_ref = stan::math::to_ref(x);
+    auto z = stan::math::multiply(x_ref + x_ref.transpose(), 0.5);
     return stan::math::log_determinant_spd(z);
   };
 

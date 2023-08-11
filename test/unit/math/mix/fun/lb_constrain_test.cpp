@@ -131,12 +131,9 @@ TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
   A.push_back(A_inner2);
-  std::cout << "111111 " << std::endl;
   lb_constrain_test::expect_vec(A, lbm_inner);
-  std::cout << "2222222 " << std::endl;
   lb_constrain_test::expect_vec(A, lbm_inner_bad);
   double lbd = 6.0;
-  std::cout << "333333 " << std::endl;
   lb_constrain_test::expect_vec(A, lbd);
 }
 

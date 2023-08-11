@@ -2,7 +2,10 @@
 
 TEST(MathMixMatFun, elt_divide_transpose_test) {
   auto f
-      = [](const auto& x) { return stan::math::elt_divide(x, x.transpose()); };
+      = [](const auto& x) {
+        auto&& x_ref = stan::math::to_ref(x);
+        return stan::math::elt_divide(x_ref, x_ref.transpose()); 
+        };
 
   Eigen::MatrixXd x(2, 2);
 

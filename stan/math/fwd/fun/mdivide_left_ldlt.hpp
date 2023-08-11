@@ -32,16 +32,16 @@ mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
   const auto& b_ref = to_ref(b);
-  Eigen::Matrix<EigMatValueScalar, R2, C2> b_val(b.rows(), b.cols());
-  Eigen::Matrix<EigMatValueScalar, R2, C2> b_der(b.rows(), b.cols());
-  for (int j = 0; j < b.cols(); j++) {
-    for (int i = 0; i < b.rows(); i++) {
+  Eigen::Matrix<EigMatValueScalar, R2, C2> b_val(b_ref.rows(), b_ref.cols());
+  Eigen::Matrix<EigMatValueScalar, R2, C2> b_der(b_ref.rows(), b_ref.cols());
+  for (int j = 0; j < b_ref.cols(); j++) {
+    for (int i = 0; i < b_ref.rows(); i++) {
       b_val.coeffRef(i, j) = b_ref.coeff(i, j).val_;
       b_der.coeffRef(i, j) = b_ref.coeff(i, j).d_;
     }
   }
-
-  return to_fvar(mdivide_left_ldlt(A, b_val), mdivide_left_ldlt(A, b_der));
+  auto&& A_ref = to_ref(A);
+  return to_fvar(mdivide_left_ldlt(A_ref, b_val), mdivide_left_ldlt(A_ref, b_der));
 }
 
 }  // namespace math

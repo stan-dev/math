@@ -2,7 +2,8 @@
 
 TEST(mathMixMatFun, traceGenInvQuadForm) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto x_sym = stan::math::multiply(0.5, a + a.transpose());
+    auto&& a_ref = stan::math::to_ref(a);
+    auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose());
     auto ldlt_a = stan::math::make_ldlt_factor(x_sym);
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
@@ -76,13 +77,10 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
 
 TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto x_sym = stan::math::multiply(0.5, a + a.transpose());
+    auto&& a_ref = stan::math::to_ref(a);
+    auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose()).eval();
     auto ldlt_a = stan::math::make_ldlt_factor(x_sym);
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
-  };
-
-  auto f1 = [&](const auto& c) {
-    return [&](const auto& a, const auto& b) { return f(c, a, b); };
   };
 
   Eigen::MatrixXd a00(0, 0);

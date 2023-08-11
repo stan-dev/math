@@ -6,7 +6,8 @@ TEST(MathMixMatFun, eigenvectorsSym) {
     if (y.rows() != y.cols()) {
       return stan::math::eigenvectors_sym(y);
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return stan::math::eigenvectors_sym(a);
   };
 
@@ -37,7 +38,8 @@ TEST(MathMixMatFun, eigenvectorsSym_varmat) {
     if (y.rows() != y.cols()) {
       return stan::math::eigenvectors_sym(y);
     }
-    auto a = stan::math::multiply((y + y.transpose()), 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = stan::math::multiply((y_ref + y_ref.transpose()), 0.5).eval();
     return stan::math::eigenvectors_sym(a);
   };
 

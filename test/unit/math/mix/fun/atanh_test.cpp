@@ -13,6 +13,7 @@ TEST(mathMixMatFun, atanh) {
       stan::test::expect_ad(f, std::complex<double>{re, im});
     }
   }
+  
 }
 
 TEST(mathMixMatFun, atanh_varmat) {

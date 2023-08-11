@@ -33,31 +33,35 @@ namespace math {
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D,
           require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
-return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
+inline return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   static const char* function = "matrix_normal_prec_lpdf";
+  auto&& y_ref = to_ref(y);
+  auto&& Mu_ref = to_ref(Mu);
+  auto&& Sigma_ref = to_ref(Sigma);
+  auto&& D_ref = to_ref(D);
   check_positive(function, "Sigma rows", Sigma.rows());
-  check_finite(function, "Sigma", Sigma);
-  check_symmetric(function, "Sigma", Sigma);
+  check_finite(function, "Sigma", Sigma_ref);
+  check_symmetric(function, "Sigma", Sigma_ref);
 
-  auto ldlt_Sigma = make_ldlt_factor(Sigma);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
-  check_finite(function, "D", D);
-  check_symmetric(function, "D", D);
+  check_finite(function, "D", D_ref);
+  check_symmetric(function, "D", D_ref);
 
-  auto ldlt_D = make_ldlt_factor(D);
+  auto ldlt_D = make_ldlt_factor(D_ref);
   check_ldlt_factor(function, "LDLT_Factor of D", ldlt_D);
   check_size_match(function, "Rows of random variable", y.rows(),
                    "Rows of location parameter", Mu.rows());
   check_size_match(function, "Columns of random variable", y.cols(),
-                   "Columns of location parameter", Mu.cols());
+                   "Columns of location parameter", Mu_ref.cols());
   check_size_match(function, "Rows of random variable", y.rows(),
                    "Rows of Sigma", Sigma.rows());
   check_size_match(function, "Columns of random variable", y.cols(),
                    "Rows of D", D.rows());
-  check_finite(function, "Location parameter", Mu);
-  check_finite(function, "Random variable", y);
+  check_finite(function, "Location parameter", Mu_ref);
+  check_finite(function, "Random variable", y_ref);
 
   return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(0.0);
 
@@ -74,7 +78,7 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   }
 
   if (include_summand<propto, T_y, T_Mu, T_Sigma, T_D>::value) {
-    lp -= 0.5 * trace_gen_quad_form(D, Sigma, subtract(y, Mu));
+    lp -= 0.5 * trace_gen_quad_form(D_ref, Sigma_ref, subtract(y_ref, Mu_ref));
   }
   return lp;
 }

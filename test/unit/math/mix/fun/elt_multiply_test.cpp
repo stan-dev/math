@@ -2,7 +2,8 @@
 
 TEST(MathMixMatFun, elt_multiply_transpose_test) {
   auto f = [](const auto& x) {
-    return stan::math::elt_multiply(x, x.transpose());
+    auto x_ref = stan::math::to_ref(x);
+    return stan::math::elt_multiply(x_ref, x_ref.transpose());
   };
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);

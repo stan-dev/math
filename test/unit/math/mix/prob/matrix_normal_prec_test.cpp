@@ -2,23 +2,29 @@
 
 TEST(ProbDistributionsMatrixNormal, matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma, const auto& D) {
-    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
-    auto D_sym = stan::math::multiply(0.5, D + D.transpose());
+      auto&& sigma_ref = stan::math::to_ref(sigma);
+      auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+      auto&& D_ref = stan::math::to_ref(D);
+      auto D_sym = stan::math::multiply(0.5, D_ref + D_ref.transpose());
     return stan::math::matrix_normal_prec_lpdf(y, mu, sigma_sym, D_sym);
   };
 
   auto f_const_y = [](const auto& y) {
     return [&y](const auto& mu, const auto& sigma, const auto& D) {
-      auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
-      auto D_sym = stan::math::multiply(0.5, D + D.transpose());
+      auto&& sigma_ref = stan::math::to_ref(sigma);
+      auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+      auto&& D_ref = stan::math::to_ref(D);
+      auto D_sym = stan::math::multiply(0.5, D_ref + D_ref.transpose());
       return stan::math::matrix_normal_prec_lpdf(y, mu, sigma_sym, D_sym);
     };
   };
 
   auto f_const_D = [](const auto& D) {
     return [&D](const auto& y, const auto& mu, const auto& sigma) {
-      auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
-      auto D_sym = stan::math::multiply(0.5, D + D.transpose());
+      auto&& sigma_ref = stan::math::to_ref(sigma);
+      auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
+      auto&& D_ref = stan::math::to_ref(D);
+      auto D_sym = stan::math::multiply(0.5, D_ref + D_ref.transpose());
       return stan::math::matrix_normal_prec_lpdf(y, mu, sigma_sym, D_sym);
     };
   };

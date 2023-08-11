@@ -2,7 +2,8 @@
 
 TEST(ProbDistributionsMultiNormalPrec, matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
-    auto inv_sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    auto&& sigma_ref = stan::math::to_ref(sigma);
+    auto inv_sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     return stan::math::multi_normal_prec_lpdf(y, mu, inv_sigma_sym);
   };
 

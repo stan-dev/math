@@ -2,8 +2,10 @@
 
 TEST(ProbDistributionsInvWishart, matvar) {
   auto f = [](const auto& y, const auto& dof, const auto& sigma) {
-    auto y_sym = stan::math::multiply(0.5, y + y.transpose());
-    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    auto&& y_ref = stan::math::to_ref(y);
+    auto y_sym = stan::math::multiply(0.5, y_ref + y_ref.transpose());
+    auto&& sigma_ref = stan::math::to_ref(sigma);
+    auto sigma_sym = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     return stan::math::inv_wishart_lpdf(y_sym, dof, sigma_sym);
   };
 

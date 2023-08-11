@@ -4,7 +4,9 @@ TEST(MathMixMatFun, mdivideRightSpd) {
   auto f = [](const auto& x, const auto& y) {
     if (y.rows() != y.cols())
       return stan::math::mdivide_right_spd(x, y);
-    auto y_sym = ((y + y.transpose()) * 0.5).eval();  // sym for finite diffs
+    
+    auto&& y_ref = stan::math::to_ref(y);
+    auto y_sym = ((y_ref + y_ref.transpose()) * 0.5).eval();  // sym for finite diffs
     return stan::math::mdivide_right_spd(x, y_sym);
   };
 

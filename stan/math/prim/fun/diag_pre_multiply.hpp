@@ -26,7 +26,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
 
-  return m1.asDiagonal() * m2;
+  return to_ref(m1).asDiagonal() * to_ref(m2);
 }
 
 }  // namespace math
