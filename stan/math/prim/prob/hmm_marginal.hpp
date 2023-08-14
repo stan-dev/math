@@ -89,9 +89,9 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
   T_Gamma_ref Gamma_ref = Gamma;
   T_rho_ref rho_ref = rho;
 
-  const auto& Gamma_val = to_ref(value_of(Gamma_ref));
-  const auto& rho_val = to_ref(value_of(rho_ref));
-  hmm_check(log_omegas, Gamma_val, rho_val, "hmm_marginal");
+  const auto& Gamma_val = value_of(Gamma_ref);
+  const auto& rho_val = value_of(rho_ref);
+  hmm_check(log_omegas_ref, Gamma_val, rho_val, "hmm_marginal");
 
   auto ops_partials
       = make_partials_propagator(log_omegas_ref, Gamma_ref, rho_ref);
