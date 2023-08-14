@@ -35,8 +35,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   auto&& y_ref = to_ref(y);
   auto&& mu_ref = to_ref(mu);
   lp_type lp(0);
-  vector_seq_view<T_y> y_vec(y_ref);
-  vector_seq_view<T_loc> mu_vec(mu_ref);
+  vector_seq_view<std::decay_t<decltype(y_ref)>> y_vec(y_ref);
+  vector_seq_view<std::decay_t<decltype(mu_ref)>> mu_vec(mu_ref);
   size_t size_vec = max_size_mvt(y_ref, mu_ref);
 
   int size_y = y_vec[0].size();
