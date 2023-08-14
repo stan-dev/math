@@ -18,9 +18,7 @@
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline stan::return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_test_wrapper(
-    const T_omega& log_omegas,
-    const T_Gamma&
-        Gamma_unconstrained,
+    const T_omega& log_omegas, const T_Gamma& Gamma_unconstrained,
     const T_rho& rho_unconstrained) {
   using stan::math::row;
   using stan::math::sum;
@@ -28,8 +26,8 @@ inline stan::return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_test_wrapper(
   auto&& Gamma_ref = stan::math::to_ref(Gamma_unconstrained);
   auto&& rho_ref = stan::math::to_ref(rho_unconstrained);
 
-  Eigen::Matrix<stan::scalar_type_t<T_Gamma>, Eigen::Dynamic, Eigen::Dynamic> Gamma(n_states,
-                                                               n_states);
+  Eigen::Matrix<stan::scalar_type_t<T_Gamma>, Eigen::Dynamic, Eigen::Dynamic>
+      Gamma(n_states, n_states);
   for (int i = 0; i < n_states; i++) {
     Gamma(i, n_states - 1) = 1 - sum(row(Gamma_ref, i + 1));
     for (int j = 0; j < n_states - 1; j++) {
