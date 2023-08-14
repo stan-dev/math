@@ -208,13 +208,6 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
   }
 }
 
-
-
-
-
-
-
-
 // CHECK THAT ALL VALID Vector TYPES ARE ACCEPTED
 template <typename F>
 void check_vector_types(F& f, std::vector<double> value, double res) {
@@ -251,52 +244,44 @@ TEST(ProbWienerFull, wiener_full_all_vector) {
 
   double result{-24.307593};
 
-	// rt
-	auto f_rt = [&](auto value) {
-	  return wiener_full_lpdf(value, a, t0, w, v, sv, sw,
-							  st0);
-	};
-	check_vector_types(f_rt, rt, result);
-	// a
-	auto f_a = [&](auto value) {
-	  return wiener_full_lpdf(rt, value, t0, w, v, sv, sw,
-							  st0);
-	};
-	check_vector_types(f_a, a, result);
-	// v
-	auto f_v = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, t0, w, value, sv, sw,
-							  st0);
-	};
-	check_vector_types(f_v, v, result);
-	// w
-	auto f_w = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, t0, value, v, sv, sw,
-							  st0);
-	};
-	check_vector_types(f_w, w, result);
-	// t0
-	auto f_t0 = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, value, w, v, sv, sw,
-							  st0);
-	};
-	check_vector_types(f_t0, t0, result);
-	// sv
-	auto f_sv = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, t0, w, v, value, sw,
-							  st0);
-	};
-	check_vector_types(f_sv, sv, result);
-	// sw
-	auto f_sw = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, t0, w, v, sv, value,
-							  st0);
-	};
-	check_vector_types(f_sw, sw, result);
-	// st0
-	auto f_st0 = [&](auto value) {
-	  return wiener_full_lpdf(rt, a, t0, w, v, sv, sw,
-							  value);
-	};
-	check_vector_types(f_st0, st0, result);
- }
+  // rt
+  auto f_rt = [&](auto value) {
+    return wiener_full_lpdf(value, a, t0, w, v, sv, sw, st0);
+  };
+  check_vector_types(f_rt, rt, result);
+  // a
+  auto f_a = [&](auto value) {
+    return wiener_full_lpdf(rt, value, t0, w, v, sv, sw, st0);
+  };
+  check_vector_types(f_a, a, result);
+  // v
+  auto f_v = [&](auto value) {
+    return wiener_full_lpdf(rt, a, t0, w, value, sv, sw, st0);
+  };
+  check_vector_types(f_v, v, result);
+  // w
+  auto f_w = [&](auto value) {
+    return wiener_full_lpdf(rt, a, t0, value, v, sv, sw, st0);
+  };
+  check_vector_types(f_w, w, result);
+  // t0
+  auto f_t0 = [&](auto value) {
+    return wiener_full_lpdf(rt, a, value, w, v, sv, sw, st0);
+  };
+  check_vector_types(f_t0, t0, result);
+  // sv
+  auto f_sv = [&](auto value) {
+    return wiener_full_lpdf(rt, a, t0, w, v, value, sw, st0);
+  };
+  check_vector_types(f_sv, sv, result);
+  // sw
+  auto f_sw = [&](auto value) {
+    return wiener_full_lpdf(rt, a, t0, w, v, sv, value, st0);
+  };
+  check_vector_types(f_sw, sw, result);
+  // st0
+  auto f_st0 = [&](auto value) {
+    return wiener_full_lpdf(rt, a, t0, w, v, sv, sw, value);
+  };
+  check_vector_types(f_st0, st0, result);
+}
