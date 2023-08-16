@@ -3,7 +3,7 @@
 #include <vector>
 
 // Test that values from a dense matrix in sparse format are extracted.
-TEST(SparseStuff, csr_extract_w_dense) {
+TEST(SparseStuff, csr_extract_dense) {
   stan::math::matrix_d m(2, 3);
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
@@ -33,7 +33,7 @@ TEST(SparseStuff, csr_extract_w_dense) {
 }
 
 // Test that values from a dense matrix are extracted.
-TEST(SparseStuff, csr_extract_w_dense_dense) {
+TEST(SparseStuff, csr_extract_dense_dense) {
   stan::math::matrix_d m(2, 3);
   m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
   stan::math::vector_d w;
@@ -61,7 +61,7 @@ TEST(SparseStuff, csr_extract_w_dense_dense) {
 
 // Test that values from a dense matrix in sparse format are extracted
 // after A.makeCompressed();
-TEST(SparseStuff, csr_extract_w_dense_compressed) {
+TEST(SparseStuff, csr_extract_dense_compressed) {
   stan::math::matrix_d m(2, 3);
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
@@ -91,7 +91,7 @@ TEST(SparseStuff, csr_extract_w_dense_compressed) {
 }
 
 // Test that values from a sparse matrix in sparse format are extracted
-TEST(SparseStuff, csr_extract_w_sparse) {
+TEST(SparseStuff, csr_extract_sparse) {
   stan::math::matrix_d m(2, 3);
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 0.0, 0.0, 0.0;
@@ -117,7 +117,7 @@ TEST(SparseStuff, csr_extract_w_sparse) {
 
 // Test that values from a sparse matrix in sparse format are extracted
 // after A.makeCompressed()
-TEST(SparseStuff, csr_extract_w_sparse_compressed) {
+TEST(SparseStuff, csr_extract_sparse_compressed) {
   stan::math::matrix_d m(2, 3);
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 0.0, 0.0, 0.0;
