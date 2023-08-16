@@ -16,7 +16,7 @@ namespace math {
 
 /**
  * Return the eigenvectors of the specified symmetric matrix.
- * <p>See <code>eigen_decompose()</code> for more information.
+ *
  * @tparam T type of input matrix.
  * @param m Specified matrix.
  * @return Eigenvectors of matrix.
@@ -24,9 +24,7 @@ namespace math {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvectors_sym(const T& m) {
   using return_t = return_var_matrix_t<T>;
-  if (unlikely(m.size() == 0)) {
-    return return_t(m);
-  }
+  check_nonzero_size("eigenvectors_sym", "m", m);
   check_symmetric("eigenvectors_sym", "m", m);
 
   auto arena_m = to_arena(m);

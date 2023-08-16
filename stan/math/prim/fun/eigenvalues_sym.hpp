@@ -10,10 +10,9 @@ namespace math {
 
 /**
  * Return the eigenvalues of the specified symmetric matrix
- * in descending order of magnitude.  This function is more
+ * in ascending order of magnitude.  This function is more
  * efficient than the general eigenvalues function for symmetric
  * matrices.
- * <p>See <code>eigen_decompose()</code> for more information.
  *
  * @tparam EigMat type of the matrix
  * @param m Specified matrix.

@@ -16,7 +16,6 @@ namespace math {
 
 /**
  * Return the eigenvalues of the specified symmetric matrix.
- * <p>See <code>eigen_decompose()</code> for more information.
  * @tparam T type of input matrix.
  * @param m Specified matrix.
  * @return Eigenvalues of matrix.

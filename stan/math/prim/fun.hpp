@@ -82,6 +82,7 @@
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/eigen_comparisons.hpp>
+#include <stan/math/prim/fun/eigendecompose_sym.hpp>
 #include <stan/math/prim/fun/eigenvalues.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/fun/eigenvectors.hpp>
