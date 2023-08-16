@@ -82,7 +82,7 @@ inline std::tuple<Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>,
                   Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>>
 complex_schur_decompose(const M& m) {
   if (m.size() == 0)
-    return std::make_tuple(m,m);
+    return std::make_tuple(m, m);
   check_square("complex_schur_decompose", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type

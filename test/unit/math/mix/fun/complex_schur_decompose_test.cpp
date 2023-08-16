@@ -51,9 +51,9 @@ TEST(mathMixFun, complexSchurDecompose) {
 
 template <typename V>
 void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
+  using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
-  using stan::math::complex_schur_decompose;
   using stan::math::get_real;
   using stan::math::value_of_rec;
   Eigen::Matrix<V, -1, -1> X = x;
@@ -67,14 +67,13 @@ void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
   std::tie(U, T) = complex_schur_decompose(X);
   auto X3 = U * T * U.adjoint();
   EXPECT_MATRIX_NEAR(x, value_of_rec(get_real(X3)), 1e-8);
-
 }
 
 template <typename V>
 void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
+  using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
-  using stan::math::complex_schur_decompose;
   using stan::math::value_of_rec;
   Eigen::Matrix<std::complex<V>, -1, -1> X(x.rows(), x.cols());
   for (int i = 0; i < x.size(); ++i)

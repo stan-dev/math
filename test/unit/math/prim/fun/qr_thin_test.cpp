@@ -34,5 +34,4 @@ TEST(MathMatrixPrimMat, qr_thin) {
       EXPECT_NEAR(m1(i, j), m3(j, i), 1e-12);
     }
   }
-
 }

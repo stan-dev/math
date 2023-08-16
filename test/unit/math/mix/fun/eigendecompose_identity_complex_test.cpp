@@ -27,7 +27,7 @@ void expectComplexEigenvectorsId() {
 
   std::tie(eigenvectors, eigenvalues) = stan::math::eigendecompose(c22);
   auto I2 = (eigenvectors.inverse() * c22 * eigenvectors
-       * eigenvalues.asDiagonal().inverse());
+             * eigenvalues.asDiagonal().inverse());
 
   expect_identity_matrix_complex(I2);
 }

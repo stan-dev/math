@@ -26,8 +26,6 @@ TEST(primFun, complex_schur_decompose_ut) {
   EXPECT_MATRIX_COMPLEX_NEAR(B, B_recovered, 1e-8);
 }
 
-
-
 TEST(primFun, complex_schur_decompose) {
   using c_t = std::complex<double>;
   using stan::math::complex_schur_decompose;
