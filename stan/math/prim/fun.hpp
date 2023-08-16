@@ -62,6 +62,7 @@
 #include <stan/math/prim/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
+#include <stan/math/prim/fun/csr_extract.hpp>
 #include <stan/math/prim/fun/csr_extract_u.hpp>
 #include <stan/math/prim/fun/csr_extract_v.hpp>
 #include <stan/math/prim/fun/csr_extract_w.hpp>
