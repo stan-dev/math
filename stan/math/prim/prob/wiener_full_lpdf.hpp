@@ -21,15 +21,17 @@ namespace internal {
  * @param log_error The log error tolerance
  * @return Gradient w.r.t. sw
  */
-inline double wiener7_grad_sw(double y, double a, double v, double w, double sv,
-                              double sw, double log_error) {
-  double low = w - sw / 2.0;
+template <typename T_partials, typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv, typename T_sw, typename ReturnT
+          = return_type_t<T_partials>>
+inline ReturnT wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v, const T_w& w, const T_sv& sv,
+                              const T_sw& sw, double log_error) {
+  T_partials low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
-  double high = w + sw / 2.0;
+  T_partials high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
 
-  const double lower_value = wiener5_density<true>(y, a, v, low, sv, log_error);
-  const double upper_value
+  const T_partials lower_value = wiener5_density<true>(y, a, v, low, sv, log_error);
+  const T_partials upper_value
       = wiener5_density<true>(y, a, v, high, sv, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
@@ -107,17 +109,17 @@ inline double conditionally_grad_sw(const F& functor, double y_diff, double a,
  * @param args Additional arguments to be passed to the hcubature function
  * @return Wiener7 density or gradient calculated by integration
  */
-template <bool GradSW, bool GradW7 = false, typename Wiener7FunctorT,
-          typename... TArgs>
-auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
-                       double hcubature_err, TArgs&&... args) {
+template <bool GradSW, bool GradW7 = false, typename T_partials, typename Wiener7FunctorT, typename T_hcub,
+          typename... TArgs, typename ReturnT = return_type_t<T_partials>>
+ReturnT wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
+                       T_hcub hcubature_err, TArgs&&... args) {
   const auto wiener7_integrand_impl
-      = [&](auto&& x, double y, double a, double v, double w, double t0,
-            double sv, double sw, double st0, double log_error) {
+      = [&](auto&& x, auto y, auto a, auto v, auto w, auto t0,
+            auto sv, auto sw, auto st0, auto log_error) {
           scalar_seq_view<decltype(x)> x_vec(x);
-          const double sw_val = GradSW ? 0 : sw;
-          const double new_w = sw_val ? w + sw_val * (x_vec[0] - 0.5) : w;
-          const double new_t0 = sw_val ? (st0 ? t0 + st0 * x_vec[1] : t0)
+          const auto sw_val = GradSW ? 0 : sw;
+          const auto new_w = sw_val ? w + sw_val * (x_vec[0] - 0.5) : w;
+          const auto new_t0 = sw_val ? (st0 ? t0 + st0 * x_vec[1] : t0)
                                        : (st0 ? t0 + st0 * x_vec[0] : t0);
           if (y - new_t0 <= 0) {
             return 0.0;
@@ -129,7 +131,7 @@ auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
   const auto functor = [&](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
-  return estimate_with_err_check<0, GradW7, 8>(functor, hcubature_err, args...);
+  return estimate_with_err_check<0, GradW7, 8, true, T_partials>(functor, hcubature_err, args...);
 }
 }  // namespace internal
 
@@ -300,6 +302,10 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
   using T_sw_ref = ref_type_if_t<!is_constant<T_sw>::value, T_sw>;
   using T_st0_ref = ref_type_if_t<!is_constant<T_st0>::value, T_st0>;
+  
+  using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
+  
+  using T_partials = partials_type_t<scalar_type_t<T_sv>>;
 
   static constexpr const char* function_name = "wiener_full_lpdf";
   check_consistent_sizes(function_name, "Random variable", y,
@@ -402,16 +408,16 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
   }
 
-  const double log_error_density = log(1e-6);        // precision for density
-  const double error_bound = precision_derivatives;  // precision for
+  const T_partials log_error_density = log(1e-6);        // precision for density
+  const T_partials error_bound = precision_derivatives;  // precision for
   // derivatives (controllable by user)
-  const double log_error_derivative = log(error_bound);
-  const double absolute_error_hcubature = 0.0;
-  const double relative_error_hcubature
+  const T_partials log_error_derivative = log(error_bound);
+  const T_partials absolute_error_hcubature = 0.0;
+  const T_partials relative_error_hcubature
       = .9 * error_bound;  // eps_rel(Integration)
-  const double log_error_absolute = log(1e-12);
+  const T_partials log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
-  double log_density = 0.0;
+  T_partials log_density = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
                                                v_ref, sv_ref, sw_ref, st0_ref);
   ReturnT result = 0;
@@ -424,45 +430,45 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                   v_vec[i], sv_vec[i], precision_derivatives);
       continue;
     }
-    const double y_val = y_vec.val(i);
-    const double a_val = a_vec.val(i);
-    const double v_val = v_vec.val(i);
-    const double w_val = w_vec.val(i);
-    const double t0_val = t0_vec.val(i);
-    const double sv_val = sv_vec.val(i);
-    const double sw_val = sw_vec.val(i);
-    const double st0_val = st0_vec.val(i);
+    const T_partials_return y_val = y_vec.val(i);
+    const T_partials_return a_val = a_vec.val(i);
+    const T_partials_return v_val = v_vec.val(i);
+    const T_partials_return w_val = w_vec.val(i);
+    const T_partials_return t0_val = t0_vec.val(i);
+    const T_partials_return sv_val = sv_vec.val(i);
+    const T_partials_return sw_val = sw_vec.val(i);
+    const T_partials_return st0_val = st0_vec.val(i);
     const int dim = (sw_val != 0) + (st0_val != 0);
     check_positive(function_name,
                    "(Inter-trial variability in A-priori bias) + "
                    "(Inter-trial variability in nondecision time)",
                    dim);
 
-    Eigen::VectorXd xmin = Eigen::VectorXd::Zero(dim);
-    Eigen::VectorXd xmax = Eigen::VectorXd::Ones(dim);
-    if (st0_val) {
+    Eigen::Array<T_partials, 1, Eigen::Dynamic> xmin = Eigen::VectorXd::Zero(dim);
+    Eigen::Array<T_partials, 1, Eigen::Dynamic> xmax = Eigen::VectorXd::Ones(dim);
+    if (st0_val != 0) {
       xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
     }
 
-    double hcubature_err = log_error_absolute - log_error_density + LOG_TWO + 1;
+    T_partials_return hcubature_err = log_error_absolute - log_error_density + LOG_TWO + 1;
     const auto params
         = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, sw_val,
                           st0_val, log_error_absolute - LOG_TWO);
-    double density = internal::wiener7_integrate<false>(
+    T_partials density = internal::wiener7_integrate<false, false, T_partials>(
         [&](auto&&... args) {
           return internal::wiener5_density<true>(args...);
         },
         hcubature_err, params, dim, xmin, xmax, maximal_evaluations_hcubature,
         absolute_error_hcubature, relative_error_hcubature / 2);
-    log_density += log(density);
+    log_density = log_density + log(density);
 
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    const double deriv_t_7
-        = internal::wiener7_integrate<false>(
+    const T_partials deriv_t_7
+        = internal::wiener7_integrate<false, false, T_partials>(
               [&](auto&&... args) {
                 return internal::wiener5_grad_t<true>(args...);
               },
@@ -472,13 +478,13 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
           / density;
 
     // computation of derivatives and precision checks
-    double derivative;
+    T_partials_return derivative;
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] = deriv_t_7;
     }
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
-          = internal::wiener7_integrate<false>(
+          = internal::wiener7_integrate<false, false, T_partials>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_a<true>(args...);
                 },
@@ -492,7 +498,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = internal::wiener7_integrate<false, true>(
+          = internal::wiener7_integrate<false, true, T_partials>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_w<true>(args...);
                 },
@@ -503,7 +509,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
-          = internal::wiener7_integrate<false>(
+          = internal::wiener7_integrate<false, false, T_partials>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_v<true>(args...);
                 },
@@ -514,7 +520,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_sv>::value) {
       partials<5>(ops_partials)[i]
-          = internal::wiener7_integrate<false>(
+          = internal::wiener7_integrate<false, false, T_partials>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_sv<true>(args...);
                 },
@@ -528,16 +534,16 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0;
       } else {
         if (st0_val == 0) {
-          derivative = internal::estimate_with_err_check<6>(
+          derivative = internal::estimate_with_err_check<6, false, 0, true, T_partials_return>(
               [&](auto&&... args) {
-                return internal::wiener7_grad_sw(args...);
+                return internal::wiener7_grad_sw<T_partials_return>(args...);
               },
               hcubature_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
               sw_val, log_error_absolute - LOG_TWO);
         } else {
-          derivative = internal::wiener7_integrate<true>(
+          derivative = internal::wiener7_integrate<true, false, T_partials>(
               [&](auto&&... args) {
-                return internal::wiener7_grad_sw(args...);
+                return internal::wiener7_grad_sw<T_partials>(args...);
               },
               hcubature_err, params, 1, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -547,25 +553,25 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       }
     }
     if (!is_constant_all<T_st0>::value) {
-      double f;
+      T_partials f;
       if (st0_val == 0) {
         partials<7>(ops_partials)[i] = 0;
       } else if (y_val - (t0_val + st0_val) <= 0) {
         partials<7>(ops_partials)[i] = -1 / st0_val;
       } else {
-        const double t0_st0 = t0_val + st0_val;
+        const T_partials t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
-          f = internal::estimate_with_err_check<5>(
+          f = internal::estimate_with_err_check<5, false, 0, true, T_partials>(
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
               log_error_derivative + log(st0_val), y_val - t0_st0, a_val, v_val,
               w_val, sv_val, log_error_absolute - LOG_TWO);
         } else {
-          const double new_error = log_error_absolute - LOG_TWO;
+          const T_partials new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
               y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
-          f = internal::wiener7_integrate<false>(
+          f = internal::wiener7_integrate<false, false, T_partials>(
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
