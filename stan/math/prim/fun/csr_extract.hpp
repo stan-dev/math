@@ -11,7 +11,8 @@ namespace math {
  *  @{
  */
 
-/* Extract the non-zero values, column indexes for non-zero values, and
+/**
+ * Extract the non-zero values, column indexes for non-zero values, and
  * the NZE index for each entry from a sparse matrix.
  *
  * @tparam T type of elements in the matrix
@@ -22,10 +23,11 @@ template <typename T>
 const std::tuple<Eigen::Matrix<T, Eigen::Dynamic, 1>, std::vector<int>,
                  std::vector<int>>
 csr_extract(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
-  Eigen::Matrix<T, Eigen::Dynamic, 1> w(A.nonZeros());
-  w.setZero();
-  std::vector<int> v(A.nonZeros());
-  for (int nze = 0; nze < A.nonZeros(); ++nze) {
+  auto a_nonzeros = A.nonZeros();
+  Eigen::Matrix<T, Eigen::Dynamic, 1> w
+      = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(a_nonzeros);
+  std::vector<int> v(a_nonzeros);
+  for (int nze = 0; nze < a_nonzeros; ++nze) {
     w[nze] = *(A.valuePtr() + nze);
     v[nze] = *(A.innerIndexPtr() + nze) + stan::error_index::value;
   }
