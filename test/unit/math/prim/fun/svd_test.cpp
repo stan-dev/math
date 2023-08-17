@@ -16,7 +16,7 @@ TEST(MathMatrixPrimMat, svd) {
 
   matrix_d m00(0, 0);
 
-  EXPECT_THROW(svd(m00), std::invalid_argument);
+  EXPECT_NO_THROW(svd(m00));
 
   matrix_d m11(1, 1);
   m11 << 5;

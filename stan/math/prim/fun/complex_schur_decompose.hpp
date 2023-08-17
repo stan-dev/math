@@ -27,13 +27,13 @@ namespace math {
 template <typename M, require_eigen_dense_dynamic_t<M>* = nullptr>
 inline Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>
 complex_schur_decompose_u(const M& m) {
-  if (m.size() == 0)
+  if (unlikely(m.size() == 0)) {
     return m;
+  }
   check_square("complex_schur_decompose_u", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type
-  MatType mv = m;
-  Eigen::ComplexSchur<MatType> cs(mv);
+  Eigen::ComplexSchur<MatType> cs{MatType(m)};
   return cs.matrixU();
 }
 
@@ -51,13 +51,13 @@ complex_schur_decompose_u(const M& m) {
 template <typename M, require_eigen_dense_dynamic_t<M>* = nullptr>
 inline Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>
 complex_schur_decompose_t(const M& m) {
-  if (m.size() == 0)
+  if (unlikely(m.size() == 0)) {
     return m;
+  }
   check_square("complex_schur_decompose_t", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type
-  MatType mv = m;
-  Eigen::ComplexSchur<MatType> cs(mv, false);
+  Eigen::ComplexSchur<MatType> cs{MatType(m), false};
   return cs.matrixT();
 }
 
@@ -81,13 +81,13 @@ template <typename M, require_eigen_dense_dynamic_t<M>* = nullptr>
 inline std::tuple<Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>,
                   Eigen::Matrix<complex_return_t<scalar_type_t<M>>, -1, -1>>
 complex_schur_decompose(const M& m) {
-  if (m.size() == 0)
+  if (unlikely(m.size() == 0)) {
     return std::make_tuple(m, m);
+  }
   check_square("complex_schur_decompose", "m", m);
   using MatType = Eigen::Matrix<scalar_type_t<M>, -1, -1>;
   // copy because ComplexSchur requires Eigen::Matrix type
-  MatType mv = m;
-  Eigen::ComplexSchur<MatType> cs(mv);
+  Eigen::ComplexSchur<MatType> cs{MatType(m)};
   return std::make_tuple(std::move(cs.matrixU()), std::move(cs.matrixT()));
 }
 

@@ -28,7 +28,11 @@ inline auto svd(const EigMat& m) {
   using mat_ret_type = return_var_matrix_t<Eigen::MatrixXd, EigMat>;
   using vec_ret_type = return_var_matrix_t<Eigen::VectorXd, EigMat>;
 
-  check_nonzero_size("svd", "m", m);
+  if (unlikely(m.size() == 0)) {
+    return std::make_tuple(mat_ret_type(Eigen::MatrixXd(0, 0)),
+                           vec_ret_type(Eigen::VectorXd(0, 1)),
+                           mat_ret_type(Eigen::MatrixXd(0, 0)));
+  }
 
   const int M = std::min(m.rows(), m.cols());
   auto arena_m = to_arena(m);

@@ -27,9 +27,9 @@ eigendecompose_sym(const EigMat& m) {
     return std::make_tuple(Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0),
                            Eigen::Matrix<value_type_t<EigMat>, -1, 1>(0, 1));
   }
-  check_symmetric("eigendecompose_sym", "m", m);
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
+  check_symmetric("eigendecompose_sym", "m", m_eval);
 
   Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval);
   return std::make_tuple(std::move(solver.eigenvectors()),

@@ -7,9 +7,9 @@ TEST(MathMixMatFun, svd) {
   auto h = [](const auto& x) { return std::get<2>(stan::math::svd(x)); };
 
   Eigen::MatrixXd m00(0, 0);
-  EXPECT_THROW(f(m00), std::invalid_argument);
-  EXPECT_THROW(g(m00), std::invalid_argument);
-  EXPECT_THROW(h(m00), std::invalid_argument);
+  EXPECT_NO_THROW(f(m00));
+  EXPECT_NO_THROW(g(m00));
+  EXPECT_NO_THROW(h(m00));
 
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.1;
