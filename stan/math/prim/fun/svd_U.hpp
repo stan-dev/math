@@ -23,7 +23,7 @@ Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> svd_U(
   if (unlikely(m.size() == 0)) {
     return MatType(0, 0);
   }
-  return Eigen::JacobiSVD<MatType> (m, Eigen::ComputeThinU).matrixU();
+  return Eigen::JacobiSVD<MatType>(m, Eigen::ComputeThinU).matrixU();
 }
 
 }  // namespace math

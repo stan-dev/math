@@ -19,7 +19,6 @@ eigenvectors_sym(const EigMat& m) {
   const PlainMat& m_eval = m;
   check_symmetric("eigenvalues_sym", "m", m_eval);
 
-
   Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval);
   return solver.eigenvectors();
 }
