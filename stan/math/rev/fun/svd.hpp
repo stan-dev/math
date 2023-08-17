@@ -60,30 +60,32 @@ inline auto svd(const EigMat& m) {
                          arena_Fm, M]() mutable {
     // SVD-U reverse mode
     Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
-    arena_m.adj()
-        += .5 * arena_U.val_op()
-               * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
-                     .matrix()
-               * arena_V.val_op().transpose()
-           + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
-              - arena_U.val_op() * arena_U.val_op().transpose())
-                 * arena_U.adj_op()
-                 * singular_values.val_op().asDiagonal().inverse()
-                 * arena_V.val_op().transpose();
+    auto u_adj
+        = .5 * arena_U.val_op()
+              * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
+                    .matrix()
+              * arena_V.val_op().transpose()
+          + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
+             - arena_U.val_op() * arena_U.val_op().transpose())
+                * arena_U.adj_op()
+                * singular_values.val_op().asDiagonal().inverse()
+                * arena_V.val_op().transpose();
     // Singular values reverse mode
-    arena_m.adj() += arena_U.val_op() * singular_values.adj().asDiagonal()
-                     * arena_V.val_op().transpose();
+    auto d_adj = arena_U.val_op() * singular_values.adj().asDiagonal()
+                 * arena_V.val_op().transpose();
     // SVD-V reverse mode
     Eigen::MatrixXd VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
-    arena_m.adj()
-        += 0.5 * arena_U.val_op()
-               * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())
-                     .matrix()
-               * arena_V.val_op().transpose()
-           + arena_U.val_op() * singular_values.val_op().asDiagonal().inverse()
-                 * arena_V.adj_op().transpose()
-                 * (Eigen::MatrixXd::Identity(arena_m.cols(), arena_m.cols())
-                    - arena_V.val_op() * arena_V.val_op().transpose());
+    auto v_adj
+        = 0.5 * arena_U.val_op()
+              * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())
+                    .matrix()
+              * arena_V.val_op().transpose()
+          + arena_U.val_op() * singular_values.val_op().asDiagonal().inverse()
+                * arena_V.adj_op().transpose()
+                * (Eigen::MatrixXd::Identity(arena_m.cols(), arena_m.cols())
+                   - arena_V.val_op() * arena_V.val_op().transpose());
+
+    arena_m.adj() += u_adj + d_adj + v_adj;
   });
 
   return std::make_tuple(mat_ret_type(arena_U), vec_ret_type(singular_values),
