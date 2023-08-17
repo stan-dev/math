@@ -31,7 +31,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_log(T_y&& y, T_loc&& mu,
                                                      T_scale&& sigma) {
-  return normal_lpdf<propto>(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forwrad<T_scale>(sigma));
+  return normal_lpdf<propto>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                             std::forwrad<T_scale>(sigma));
 }
 
 /** \ingroup prob_dists
@@ -40,7 +41,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_log(T_y&& y, T_loc&& mu,
 template <typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_log(T_y&& y, T_loc&& mu,
                                                      T_scale&& sigma) {
-  return normal_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forwrad<T_scale>(sigma));
+  return normal_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                     std::forwrad<T_scale>(sigma));
 }
 
 }  // namespace math
