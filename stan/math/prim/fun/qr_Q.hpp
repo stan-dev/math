@@ -24,7 +24,7 @@ Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
   if (unlikely(m.size() == 0)) {
     return matrix_t(0, 0);
   }
-  
+
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);
   matrix_t Q = qr.householderQ();
