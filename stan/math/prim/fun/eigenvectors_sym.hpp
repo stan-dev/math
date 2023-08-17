@@ -12,10 +12,13 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
 eigenvectors_sym(const EigMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0);
+  }
+  check_symmetric("eigenvalues_sym", "m", m);
+
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigenvectors_sym", "m", m_eval);
-  check_symmetric("eigenvalues_sym", "m", m_eval);
 
   Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval);
   return solver.eigenvectors();

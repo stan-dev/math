@@ -22,10 +22,15 @@ template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
 inline std::tuple<Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, -1>,
                   Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, 1>>
 eigendecompose(const EigMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return std::make_tuple(
+        Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, -1>(0, 0),
+        Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, 1>(0, 1));
+  }
+  check_square("eigendecompose", "m", m);
+
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigendecompose", "m", m_eval);
-  check_square("eigendecompose", "m", m_eval);
 
   Eigen::EigenSolver<PlainMat> solver(m_eval);
   return std::make_tuple(std::move(solver.eigenvectors()),
@@ -43,16 +48,20 @@ eigendecompose(const EigMat& m) {
  * with entries the eigenvectors of `m`
  */
 template <typename EigCplxMat,
-          require_eigen_matrix_dynamic_t<EigCplxMat>* = nullptr,
-          require_vt_complex<EigCplxMat>* = nullptr>
+          require_eigen_matrix_dynamic_vt<is_complex, EigCplxMat>* = nullptr>
 inline std::tuple<
     Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, -1>,
     Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>>
 eigendecompose(const EigCplxMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return std::make_tuple(
+        Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, -1>(0, 0),
+        Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>(0, 1));
+  }
+  check_square("eigendecompose", "m", m);
+
   using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigendecompose", "m", m_eval);
-  check_square("eigendecompose", "m", m_eval);
 
   Eigen::ComplexEigenSolver<PlainMat> solver(m_eval);
 

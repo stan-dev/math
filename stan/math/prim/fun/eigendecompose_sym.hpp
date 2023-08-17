@@ -9,9 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the eigendecomposition of the specified symmetric matrix.  This
- * function is more efficient than the general eigendecomposition function for
- * symmetric matrices.
+ * Return the eigendecomposition of the specified symmetric matrix.
  *
  * @tparam EigMat type of the matrix
  * @param m Specified matrix.
@@ -25,10 +23,13 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 std::tuple<Eigen::Matrix<value_type_t<EigMat>, -1, -1>,
            Eigen::Matrix<value_type_t<EigMat>, -1, 1>>
 eigendecompose_sym(const EigMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return std::make_tuple(Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0),
+                           Eigen::Matrix<value_type_t<EigMat>, -1, 1>(0, 1));
+  }
+  check_symmetric("eigendecompose_sym", "m", m);
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigendecompose_sym", "m", m_eval);
-  check_symmetric("eigendecompose_sym", "m", m_eval);
 
   Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval);
   return std::make_tuple(std::move(solver.eigenvectors()),

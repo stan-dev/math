@@ -9,7 +9,7 @@ TEST(MathMatrixPrimMat, eigendecompose_sym) {
   ev_m1 << 2.0;
 
   using stan::math::eigendecompose_sym;
-  EXPECT_THROW(eigendecompose_sym(m0), std::invalid_argument);
+  EXPECT_NO_THROW(eigendecompose_sym(m0));
   EXPECT_NO_THROW(eigendecompose_sym(ev_m1));
   EXPECT_THROW(eigendecompose_sym(m1), std::invalid_argument);
 }

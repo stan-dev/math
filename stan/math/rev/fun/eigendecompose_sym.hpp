@@ -29,7 +29,10 @@ inline auto eigendecompose_sym(const T& m) {
   using eigval_return_t = return_var_matrix_t<Eigen::VectorXd, T>;
   using eigvec_return_t = return_var_matrix_t<T>;
 
-  check_nonzero_size("eigendecompose_sym", "m", m);
+  if (unlikely(m.size() == 0)) {
+    return std::make_tuple(eigvec_return_t(Eigen::MatrixXd(0, 0)),
+                           eigval_return_t(Eigen::VectorXd(0)));
+  }
   check_symmetric("eigendecompose_sym", "m", m);
 
   auto arena_m = to_arena(m);
@@ -39,20 +42,22 @@ inline auto eigendecompose_sym(const T& m) {
 
   reverse_pass_callback([eigenvals, arena_m, eigenvecs]() mutable {
     // eigenvalue reverse calculation
-    arena_m.adj() += eigenvecs.val_op() * eigenvals.adj().asDiagonal()
+    auto value_adj = eigenvecs.val_op() * eigenvals.adj().asDiagonal()
                      * eigenvecs.val_op().transpose();
     // eigenvector reverse calculation
-    const int p = arena_m.val().cols();
+    const auto p = arena_m.val().cols();
     Eigen::MatrixXd f
         = (1
            / (eigenvals.val_op().rowwise().replicate(p).transpose()
               - eigenvals.val_op().rowwise().replicate(p))
                  .array());
     f.diagonal().setZero();
-    arena_m.adj()
-        += eigenvecs.val_op()
-           * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj_op())
-           * eigenvecs.val_op().transpose();
+    auto vector_adj
+        = eigenvecs.val_op()
+          * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj_op())
+          * eigenvecs.val_op().transpose();
+
+    arena_m.adj() += value_adj + vector_adj;
   });
 
   return std::make_tuple(std::move(eigvec_return_t(eigenvecs)),
