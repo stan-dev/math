@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
@@ -22,7 +23,7 @@ std::vector<double> test_von_mises_lpdf(double y, double mu, double kappa) {
   return grad;
 }
 
-TEST(ProbAgradDistributionsVonMises, derivatives) {
+TEST_F(AgradRev, ProbAgradDistributionsVonMises_derivatives) {
   using stan::math::fvar;
   using stan::math::von_mises_lpdf;
 
@@ -39,7 +40,7 @@ TEST(ProbAgradDistributionsVonMises, derivatives) {
   EXPECT_NO_THROW(von_mises_lpdf(0, 1, kappa2));
 }
 
-TEST(ProbAgradDistributionsVonMises, FvarVar_1stDeriv) {
+TEST_F(AgradRev, ProbAgradDistributionsVonMises_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::von_mises_lpdf;
@@ -56,7 +57,7 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 
-TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv1) {
+TEST_F(AgradRev, ProbAgradDistributionsVonMises_FvarVar_2ndDeriv1) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::von_mises_lpdf;
@@ -72,7 +73,7 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv1) {
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 
-TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
+TEST_F(AgradRev, ProbAgradDistributionsVonMises_FvarVar_2ndDeriv2) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::von_mises_lpdf;
@@ -91,7 +92,7 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
 
 // This test once failed sanitizer checks -- nothing explicitly tested in the
 // code itself
-TEST(ProbAgradDistributionsVonMises, sanitizer_error_fixed) {
+TEST_F(AgradRev, ProbAgradDistributionsVonMises_sanitizer_error_fixed) {
   using stan::math::var;
   double y = boost::math::constants::third_pi<double>();
   double mu = boost::math::constants::sixth_pi<double>();

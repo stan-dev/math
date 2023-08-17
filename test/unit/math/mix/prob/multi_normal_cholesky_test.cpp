@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiNormalCholesky, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
     auto&& sigma_ref = stan::math::to_ref(sigma);
     auto sigma_sym
@@ -47,7 +47,7 @@ TEST(ProbDistributionsMultiNormalCholesky, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -75,7 +75,7 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_var) {
                   stan::math::multi_normal_cholesky_log(y, mu, L).d_.val());
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

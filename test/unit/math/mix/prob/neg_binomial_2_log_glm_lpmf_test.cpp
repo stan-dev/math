@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, neg_binomial_2_log_glm_lpmf) {
+TEST_F(AgradRev, mathMixScalFun_neg_binomial_2_log_glm_lpmf) {
   auto f = [](const auto y, const auto& x) {
     return [=](const auto& alpha, const auto& beta, const auto& phi) {
       return stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi);

@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMatrixNormal, matvar) {
+TEST_F(AgradRev, ProbDistributionsMatrixNormal_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma, const auto& D) {
     auto&& sigma_ref = stan::math::to_ref(sigma);
     auto sigma_sym
@@ -73,7 +73,7 @@ TEST(ProbDistributionsMatrixNormal, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00, D11);
 }
 
-TEST(ProbDistributionsMatrixNormal, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMatrixNormal_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -111,7 +111,7 @@ TEST(ProbDistributionsMatrixNormal, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMatrixNormal, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMatrixNormal_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

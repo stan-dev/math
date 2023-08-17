@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
-
+#include <stan/math/rev/core/chainable_object.hpp>
 namespace stan {
 namespace math {
 
@@ -54,7 +54,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           size) {}
 
   /**
-   * Constructs `arena_matrix` from an expression.
+   * Constructs `arena_matrix` from an expression
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
@@ -72,6 +72,50 @@ class arena_matrix : public Eigen::Map<MatrixType> {
               : other.cols()) {
     *this = other;
   }
+
+  /**
+   * Constructs `arena_matrix` from an expression, then send it to either the
+   * object stack or memory arena.
+   * @tparam T A type that inherits from Eigen::DenseBase that is not an
+   * `arena_matrix`.
+   * @param other expression
+   * @note When T is both an rvalue and a plain type, the expression is moved to
+   * the object stack. However when T is an lvalue, or an rvalue that is not a
+   * plain type, the expression is copied to the memory arena.
+   */
+  template <typename T, require_eigen_t<T>* = nullptr,
+            require_not_arena_matrix_t<T>* = nullptr>
+  arena_matrix(T&& other)  // NOLINT
+      : Base::Map([](auto&& x) {
+          using base_map_t =
+              typename stan::math::arena_matrix<MatrixType>::Base;
+          using T_t = std::decay_t<T>;
+          if (std::is_rvalue_reference<decltype(x)>::value
+              && is_plain_type<T_t>::value) {
+            // Note: plain_type_t here does nothing since T_t is plain type
+            auto other
+                = make_chainable_ptr(plain_type_t<MatrixType>(std::move(x)));
+            // other has it's rows and cols swapped already if it needed that
+            return base_map_t(&(other->coeffRef(0)), other->rows(),
+                              other->cols());
+          } else {
+            base_map_t map(
+                ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                    x.size()),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? x.cols()
+                    : x.rows(),
+                (RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+                        || (ColsAtCompileTime == 1
+                            && T_t::RowsAtCompileTime == 1)
+                    ? x.rows()
+                    : x.cols());
+            map = x;
+            return map;
+          }
+        }(std::forward<T>(other))) {}
 
   /**
    * Constructs `arena_matrix` from an expression. This makes an assumption that
@@ -110,23 +154,32 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param a expression to evaluate into this
    * @return `*this`
    */
-  template <typename T>
-  arena_matrix& operator=(const T& a) {
-    // do we need to transpose?
-    if ((RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-        || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)) {
-      // placement new changes what data map points to - there is no allocation
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.cols(), a.rows());
-
+  template <typename T, require_not_arena_matrix_t<T>* = nullptr>
+  arena_matrix& operator=(T&& a) {
+    using T_t = std::decay_t<T>;
+    if (std::is_rvalue_reference<T&&>::value && is_plain_type<T_t>::value) {
+      // Note: plain_type_t here does nothing since T_t is plain type
+      auto other = make_chainable_ptr(plain_type_t<MatrixType>(std::move(a)));
+      new (this) Base(&(other->coeffRef(0)), other->rows(), other->cols());
+      return *this;
     } else {
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.rows(), a.cols());
+      // do we need to transpose?
+      if ((RowsAtCompileTime == 1 && T_t::ColsAtCompileTime == 1)
+          || (ColsAtCompileTime == 1 && T_t::RowsAtCompileTime == 1)) {
+        // placement new changes what data map points to - there is no
+        // allocation
+        new (this) Base(
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+            a.cols(), a.rows());
+
+      } else {
+        new (this) Base(
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+            a.rows(), a.cols());
+      }
+      Base::operator=(a);
+      return *this;
     }
-    Base::operator=(a);
-    return *this;
   }
 };
 

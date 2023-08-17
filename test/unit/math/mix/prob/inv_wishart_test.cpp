@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsInvWishart, matvar) {
+TEST_F(AgradRev, ProbDistributionsInvWishart_matvar) {
   auto f = [](const auto& y, const auto& dof, const auto& sigma) {
     auto&& y_ref = stan::math::to_ref(y);
     auto y_sym = stan::math::multiply(0.5, y_ref + y_ref.transpose());
@@ -37,7 +37,7 @@ TEST(ProbDistributionsInvWishart, matvar) {
   stan::test::expect_ad_matvar(f, y11, dof, Sigma00);
 }
 
-TEST(ProbDistributionsInvWishart, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsInvWishart_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -69,7 +69,7 @@ TEST(ProbDistributionsInvWishart, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsInvWishart, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsInvWishart_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

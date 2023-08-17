@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiGP, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiGP_matvar) {
   auto f = [](const auto& y, const auto& sigma, const auto& w) {
     auto sigma_ref = stan::math::to_ref(sigma);
     auto sigma_sym
@@ -48,7 +48,7 @@ TEST(ProbDistributionsMultiGP, matvar) {
   stan::test::expect_ad(f, y22, Sigma00, w0);
 }
 
-TEST(ProbDistributionsMultiGP, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiGP_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -92,7 +92,7 @@ TEST(ProbDistributionsMultiGP, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiGP, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiGP_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

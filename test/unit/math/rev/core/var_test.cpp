@@ -2,18 +2,12 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
-
-struct AgradRev : public testing::Test {
-  void SetUp() {
-    // make sure memory's clean before starting each test
-    stan::math::recover_memory();
-  }
-};
 
 namespace stan {
 namespace test {

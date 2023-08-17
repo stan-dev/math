@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiNormal, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
     auto&& sigma_ref = stan::math::to_ref(sigma);
 
@@ -50,7 +50,7 @@ TEST(ProbDistributionsMultiNormal, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
-TEST(ProbDistributionsMultiNormal, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -77,7 +77,7 @@ TEST(ProbDistributionsMultiNormal, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
