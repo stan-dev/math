@@ -33,7 +33,8 @@ matrix_exp_pade(const EigMat& arg) {
   MatrixType U, V;
   int squarings;
 
-  Eigen::matrix_exp_computeUV<MatrixType>::run(arg_ref, U, V, squarings, arg_ref(0, 0));
+  Eigen::matrix_exp_computeUV<MatrixType>::run(arg_ref, U, V, squarings,
+                                               arg_ref(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
   MatrixType numer = U + V;
