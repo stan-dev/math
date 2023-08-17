@@ -36,10 +36,8 @@ qr_thin(const EigMat& m) {
     }
   }
   matrix_t R = qr.matrixQR().topLeftCorner(min_size, m.cols());
-  for (int i = 0; i < min_size; i++) {
-    for (int j = 0; j < i; j++) {
-      R.coeffRef(i, j) = 0.0;
-    }
+  R.template triangularView<Eigen::StrictlyLower>().setZero();
+  for (int i = 0; i < min_size; ++i) {
     if (R(i, i) < 0) {
       R.row(i) *= -1.0;
     }
