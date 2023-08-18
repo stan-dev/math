@@ -18,6 +18,10 @@ void expectEigenvectorsId() {
     auto vals = eigenvalues(m).eval();
     auto I = (vecs.inverse() * m * vecs * vals.asDiagonal().inverse()).real();
     expect_identity_matrix(I);
+
+    std::tie(vecs, vals) = eigendecompose(m);
+    auto I2 = (vecs.inverse() * m * vecs * vals.asDiagonal().inverse()).real();
+    expect_identity_matrix(I2);
   }
 }
 
