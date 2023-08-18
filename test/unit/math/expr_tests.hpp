@@ -239,7 +239,12 @@ template <typename F, typename... Args,
 void check_expr_test(F&& f, Args&&... args) {
   try {
     stan::test::internal::check_expr_test<double>(f, args...);
-    stan::test::internal::check_expr_test<stan::math::var>(f, args...);
+    try {
+      stan::test::internal::check_expr_test<stan::math::var>(f, args...);
+      stan::math::recover_memory();
+    } catch (const std::exception& e) {
+      stan::math::recover_memory();
+    }
     stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
   } catch (const std::exception& e) {
   }
@@ -250,8 +255,13 @@ template <typename F, typename... Args,
 void check_expr_test(F&& f, Args&&... args) {
   try {
     stan::test::internal::check_expr_test<std::complex<double>>(f, args...);
+    try {
     stan::test::internal::check_expr_test<std::complex<stan::math::var>>(
         f, args...);
+      stan::math::recover_memory();
+    } catch (const std::exception& e) {
+      stan::math::recover_memory();
+    }
     stan::test::internal::check_expr_test<
         std::complex<stan::math::fvar<double>>>(f, args...);
   } catch (const std::exception& e) {
