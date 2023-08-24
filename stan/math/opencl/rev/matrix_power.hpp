@@ -34,7 +34,6 @@ inline var_value<matrix_cl<double>> matrix_power(const var_value<T>& M,
   if (M.size() == 0)
     return M;
 
-  size_t N = M.rows();
   if (n == 0) {
     return diag_matrix(constant(1.0, M.rows(), 1));
   }

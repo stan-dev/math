@@ -95,7 +95,6 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd &F,
   static const char *function = "gaussian_dlm_obs_rng";
 
   int r = F.cols();  // number of variables
-  int n = G.rows();  // number of states
 
   check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
   check_finite(function, "F", F);

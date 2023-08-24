@@ -465,7 +465,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
   int evals_per_box = numevals;
-  int kdiv = kdivide;
   double error = err;
   double val = result;
 
