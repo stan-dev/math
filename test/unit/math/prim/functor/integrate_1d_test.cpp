@@ -403,14 +403,14 @@ TEST(StanMath_integrate_1d_prim, TestThrows) {
 
 TEST(StanMath_integrate_1d_prim, test_integer_arguments) {
   EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
   EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0.0, 1,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
   EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1.0,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d_prim, test1) {
