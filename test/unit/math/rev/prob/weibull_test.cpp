@@ -435,8 +435,9 @@ TEST(ProbDistributionsWeibull, derivativesPrecomputed) {
     };
 
     std::string message_stream;
-    message_stream = "y = " + std::to_string(t.y) + ", alpha = " + std::to_string(t.alpha)
-                   + ", sigma = " + std::to_string(t.sigma);
+    message_stream = "y = " + std::to_string(t.y) + ", alpha = "
+                      + std::to_string(t.alpha)
+                      + ", sigma = " + std::to_string(t.sigma);
 
     const char* message = message_stream.c_str();
 
