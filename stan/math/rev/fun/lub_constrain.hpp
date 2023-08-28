@@ -320,15 +320,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     auto diff = to_arena(ub_val - lb_val);
     auto neg_abs_x = to_arena(-arena_x_val.abs());
     auto inv_logit_x = to_arena(inv_logit(arena_x_val));
-    arena_t<ret_type> ret = (is_lb_inf).select(
-        ub_val - arena_x_val.exp(), diff * inv_logit_x + lb_val);
+    arena_t<ret_type> ret = (is_lb_inf).select(ub_val - arena_x_val.exp(),
+                                               diff * inv_logit_x + lb_val);
     lp += (is_lb_inf)
               .select(arena_x_val,
                       log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))))
               .sum();
-    reverse_pass_callback(
-      [arena_x, arena_x_val, ub, arena_lb, ret, lp, diff, inv_logit_x,
-                           is_lb_inf]() mutable {
+    reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
+                           inv_logit_x, is_lb_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
