@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 
 namespace stan {
 namespace math {
@@ -165,6 +166,7 @@ const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,
                 in_buffer, int, int, int, int, int, int>
     ordered_logistic("ordered_logistic",
                      {log1p_exp_device_function, log1m_exp_device_function,
+                      inv_logit_device_function,
                       ordered_logistic_kernel_code},
                      {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
