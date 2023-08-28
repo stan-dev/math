@@ -92,9 +92,9 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         double log_phi = log(phi);
         double logsumexp_theta_logphi;
         if (theta > log_phi) {
-          logsumexp_theta_logphi = theta + log1p(exp(log_phi - theta));
+          logsumexp_theta_logphi = theta + log1p_exp(log_phi - theta);
         } else {
-          logsumexp_theta_logphi = log_phi + log1p(exp(theta - log_phi));
+          logsumexp_theta_logphi = log_phi + log1p_exp(theta - log_phi);
         }
         double y_plus_phi = y + phi;
         if (need_logp1) {

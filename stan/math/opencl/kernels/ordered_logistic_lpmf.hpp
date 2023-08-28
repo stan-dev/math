@@ -83,20 +83,10 @@ static const char* ordered_logistic_kernel_code = STRINGIFY(
 
           if (need_lambda_derivative || need_cuts_derivative) {
             double exp_cuts_diff = exp(cut_y2 - cut_y1);
-            if (cut2 > 0) {
-              double exp_m_cut2 = exp(-cut2);
-              d1 = exp_m_cut2 / (1 + exp_m_cut2);
-            } else {
-              d1 = 1 / (1 + exp(cut2));
-            }
+            d1 = inv_logit(-cut2);
             d1 -= exp_cuts_diff / (exp_cuts_diff - 1);
             d2 = 1 / (1 - exp_cuts_diff);
-            if (cut1 > 0) {
-              double exp_m_cut1 = exp(-cut1);
-              d2 -= exp_m_cut1 / (1 + exp_m_cut1);
-            } else {
-              d2 -= 1 / (1 + exp(cut1));
-            }
+            d2 -= inv_logit(-cut1);
 
             if (need_lambda_derivative) {
               lambda_derivative[gid] = d1 - d2;
