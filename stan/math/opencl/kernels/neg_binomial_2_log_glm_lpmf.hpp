@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 
 namespace stan {
 namespace math {
@@ -197,6 +198,7 @@ const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
                 int, int, int, int, int, int, int, int, int>
     neg_binomial_2_log_glm("neg_binomial_2_log_glm",
                            {digamma_device_function,
+                            log1p_exp_device_function,
                             neg_binomial_2_log_glm_kernel_code},
                            {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
