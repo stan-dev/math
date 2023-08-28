@@ -308,7 +308,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_square,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::log1m_device_function,
-                                  opencl_kernels::logit_device_function)
+                                 opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
                                  opencl_kernels::inv_logit_device_function,
