@@ -15,6 +15,7 @@ TEST(intel_tbb_new_init, check_status) {
   EXPECT_EQ(1, tbb_init.max_concurrency());
 #endif
 
+  auto& tbb_reinit = stan::math::init_threadpool_tbb();
   EXPECT_TRUE(tbb_init.is_active());
 
   tbb_init.terminate();
