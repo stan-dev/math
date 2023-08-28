@@ -40,6 +40,7 @@ TEST(mathMixFun, eigenvectorsIdComplex) {
   using fv_t = stan::math::fvar<stan::math::var>;
   using ffv_t = stan::math::fvar<fv_t>;
 
+  expectComplexEigenvectorsId<d_t>();
   expectComplexEigenvectorsId<v_t>();
   expectComplexEigenvectorsId<fd_t>();
   expectComplexEigenvectorsId<ffd_t>();

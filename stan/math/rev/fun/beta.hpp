@@ -180,7 +180,7 @@ inline auto beta(const Scalar& a, const VarMat& b) {
                                 - digamma(arena_a + arena_b.val().array()))
                                * beta_val.array());
     return make_callback_var(
-        beta_val, [arena_a, arena_b, digamma_ab](auto& vi) mutable {
+        beta_val, [arena_b, digamma_ab](auto& vi) mutable {
           arena_b.adj().array() += vi.adj().array() * digamma_ab.array();
         });
   }
@@ -210,7 +210,7 @@ inline auto beta(const VarMat& a, const Scalar& b) {
     auto digamma_ab = to_arena(digamma(arena_a.val()).array()
                                - digamma(arena_a.val().array() + arena_b));
     return make_callback_var(beta(arena_a.val(), arena_b),
-                             [arena_a, arena_b, digamma_ab](auto& vi) mutable {
+                             [arena_a, digamma_ab](auto& vi) mutable {
                                arena_a.adj().array() += vi.adj().array()
                                                         * digamma_ab
                                                         * vi.val().array();
