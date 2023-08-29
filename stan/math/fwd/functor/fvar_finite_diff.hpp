@@ -71,9 +71,8 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
-  auto serial_functor = [&](const auto& v) {
-    return func(to_deserializer(v).read(args)...);
-  };
+  auto serial_functor
+      = [&](const auto& v) { return func(to_deserializer(v).read(args)...); };
 
   FvarInnerT rtn_value;
   Eigen::Matrix<FvarInnerT, -1, 1> grad;
@@ -82,10 +81,9 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
 
   FvarInnerT rtn_grad = 0;
   // Use a fold-expression to aggregate tangents for input arguments
-  (void)std::initializer_list<int>{
-      (rtn_grad += internal::aggregate_tangent(
-           to_deserializer(grad).read(args), args),
-       0)...};
+  (void)std::initializer_list<int>{(rtn_grad += internal::aggregate_tangent(
+                                        to_deserializer(grad).read(args), args),
+                                    0)...};
 
   return FvarT(rtn_value, rtn_grad);
 }

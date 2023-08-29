@@ -113,8 +113,7 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U, require_std_vector_st<is_complex, U>* = nullptr>
-  typename promote_scalar_type<std::complex<T>, U>::type read(
-      const U& x) {
+  typename promote_scalar_type<std::complex<T>, U>::type read(const U& x) {
     typename promote_scalar_type<std::complex<T>, U>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
@@ -257,9 +256,7 @@ struct serializer {
    *
    * @return serialized values
    */
-  const Eigen::Matrix<T, -1, 1>& vector_vals() {
-    return to_vector(vals_);
-  }
+  const Eigen::Matrix<T, -1, 1>& vector_vals() { return to_vector(vals_); }
 };
 
 /**
@@ -341,7 +338,7 @@ Eigen::VectorXd serialize_args(const Ts... xs) {
   return to_vector(serialize<double>(xs...));
 }
 
-}  // namespace test
+}  // namespace math
 }  // namespace stan
 
 #endif
