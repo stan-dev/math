@@ -188,9 +188,13 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   }
 
   double chi = 0;
+  Eigen::Map<Eigen::RowVectorXd> bin_map(&bin[0], K);
+  Eigen::Map<Eigen::RowVectorXd> expect_map(&expect[0], K);
 
-  for (int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++) {
+    if (expect[j] == 0) { continue; }
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+  }
 
   EXPECT_LT(chi, boost::math::quantile(boost::math::complement(mydist, 1e-6)));
 }
