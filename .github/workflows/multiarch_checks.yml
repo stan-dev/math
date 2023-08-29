@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   multiarch-prim-rev:
-    name: ${{ matrix.config.platform }}
+    name: ${{ matrix.config.platform }} - prim/rev
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,7 +31,7 @@ jobs:
         config:
           - { platform: arm/v5 }
           - { platform: arm/v7 }
-          - { platform: arm64/v8 }
+          - { platform: arm64 }
           - { platform: mips64le }
           - { platform: ppc64le }
           - { platform: riscv64 }
