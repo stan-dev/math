@@ -1,0 +1,51 @@
+name: Multiarch checks
+
+on:
+  pull_request:
+    branches: [ develop, master ]
+  push:
+    branches: [ develop, master, multiarch-workflow ]
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  multiarch-prim-rev:
+    name: ${{ matrix.config.platform }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { platform: arm/v5 }
+          - { platform: arm/v7 }
+          - { platform: arm64/v8 }
+          - { platform: mips64le }
+          - { platform: ppc64le }
+          - { platform: riscv64 }
+          - { platform: s390x }
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: debian:sid-slim
+          options: -v ${{ github.workspace }}:/work --platform linux/${{ matrix.config.platform }}
+          run: |
+            apt-get update && apt-get install build-essential python-is-python3
+            cd /work
+            ./runTests.py -j2 test/unit/math/prim
+            ./runTests.py -j2 test/unit/math/rev
