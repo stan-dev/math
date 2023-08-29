@@ -174,6 +174,9 @@ ifeq ($(OS),Darwin)
   ifeq (clang,$(CXX_TYPE))
     CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
   endif
+	ifeq (arm64, $(shell uname -m))
+		CXXFLAGS_OS += -ffp-contract=off
+	endif
 endif
 
 ifeq ($(OS),Linux)
@@ -190,6 +193,9 @@ ifeq ($(OS),Linux)
   ifeq (clang,$(CXX_TYPE))
     LDLIBS_OS ?= -lpthread
   endif
+	ifeq (aarch64, $(shell uname -m))
+		CXXFLAGS_OS += -ffp-contract=off
+	endif
 endif
 
 ## makes reentrant version lgamma_r available from cmath
