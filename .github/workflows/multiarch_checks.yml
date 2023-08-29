@@ -22,20 +22,42 @@ concurrency:
 
 jobs:
   multiarch-prim-rev:
-    name: ${{ matrix.config.platform }} - prim/rev
+    name: ${{ matrix.config.platform }} - ${{ matrix.config.folder }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { platform: arm/v6 }
-          - { platform: arm/v7 }
-          - { platform: arm64 }
-          - { platform: mips64le }
-          - { platform: ppc64le }
-          - { platform: riscv64 }
-          - { platform: s390x }
+          - { platform: arm/v6, folder: prim/fun }
+          - { platform: arm/v6, folder: prim/prob }
+          - { platform: arm/v7, folder: prim/fun }
+          - { platform: arm/v7, folder: prim/prob }
+          - { platform: arm64, folder: prim/fun }
+          - { platform: arm64, folder: prim/prob }
+          - { platform: mips64le, folder: prim/fun }
+          - { platform: mips64le, folder: prim/prob }
+          - { platform: ppc64le, folder: prim/fun }
+          - { platform: ppc64le, folder: prim/prob }
+          - { platform: riscv64, folder: prim/fun }
+          - { platform: riscv64, folder: prim/prob }
+
+          - { platform: s390x, folder: rev/fun }
+          - { platform: s390x, folder: rev/prob }
+          - { platform: arm/v6, folder: rev/fun }
+          - { platform: arm/v6, folder: rev/prob }
+          - { platform: arm/v7, folder: rev/fun }
+          - { platform: arm/v7, folder: rev/prob }
+          - { platform: arm64, folder: rev/fun }
+          - { platform: arm64, folder: rev/prob }
+          - { platform: mips64le, folder: rev/fun }
+          - { platform: mips64le, folder: rev/prob }
+          - { platform: ppc64le, folder: rev/fun }
+          - { platform: ppc64le, folder: rev/prob }
+          - { platform: riscv64, folder: rev/fun }
+          - { platform: riscv64, folder: rev/prob }
+          - { platform: s390x, folder: rev/fun }
+          - { platform: s390x, folder: rev/prob }
 
     steps:
       - uses: actions/checkout@v3
@@ -47,5 +69,4 @@ jobs:
           run: |
             apt-get update && apt-get install -y build-essential python-is-python3
             cd /work
-            ./runTests.py test/unit/math/prim --jumbo
-            ./runTests.py test/unit/math/rev --jumbo
+            ./runTests.py -j2 test/unit/math/${{ matrix.config.folder }} --run-all
