@@ -501,9 +501,9 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  */
 template <typename F, typename T>
 void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
-  using stan::math::to_deserializer;
-  using stan::math::serialize_return;
   using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
@@ -565,9 +565,9 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
-  using stan::math::to_deserializer;
-  using stan::math::serialize_return;
   using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   // d.x1
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
@@ -680,9 +680,9 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, const T3& x3) {
-  using stan::math::to_deserializer;
-  using stan::math::serialize_return;
   using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   // d.x1
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
