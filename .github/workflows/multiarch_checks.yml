@@ -39,6 +39,16 @@ jobs:
           - { platform: arm/v6, folder: prim/fun,  batch: 7}
           - { platform: arm/v6, folder: prim/fun,  batch: 8}
           - { platform: arm/v6, folder: prim/fun,  batch: 9}
+          - { platform: arm/v6, folder: prim/fun,  batch: 10}
+          - { platform: arm/v6, folder: prim/fun,  batch: 11}
+          - { platform: arm/v6, folder: prim/fun,  batch: 12}
+          - { platform: arm/v6, folder: prim/fun,  batch: 13}
+          - { platform: arm/v6, folder: prim/fun,  batch: 14}
+          - { platform: arm/v6, folder: prim/fun,  batch: 15}
+          - { platform: arm/v6, folder: prim/fun,  batch: 16}
+          - { platform: arm/v6, folder: prim/fun,  batch: 17}
+          - { platform: arm/v6, folder: prim/fun,  batch: 18}
+          - { platform: arm/v6, folder: prim/fun,  batch: 19}
 
     steps:
       - uses: actions/checkout@v3
@@ -50,10 +60,17 @@ jobs:
           run: |
             apt-get update && apt-get install -y build-essential python-is-python3
             cd /work
-            PrimTests=(test/unit/math/prim/fun/*.cpp)
+            PrimTests=(test/unit/math/prim/prob/*.cpp test/unit/math/prim/core/*.cpp test/unit/math/prim/meta/*.cpp test/unit/math/prim/err/*.cpp test/unit/math/prim/functor/*.cpp)
             NTests=${#PrimTests[@]}
-            TestsPerBatch="$(($NTests / 10))"
+            TestsPerBatch="$(($NTests / 20))"
             StartOfBatch="$((${{ matrix.config.batch }} * $TestsPerBatch))"
             # Compile and run in sub-batches of 5 to fail faster
             echo "${PrimTests[@]:${StartOfBatch}:${TestsPerBatch}}" | xargs -n 5 python ./runTests.py -j2
           shell: bash
+
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
