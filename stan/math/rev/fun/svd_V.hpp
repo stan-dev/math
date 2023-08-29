@@ -24,7 +24,9 @@ namespace math {
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto svd_V(const EigMat& m) {
   using ret_type = return_var_matrix_t<Eigen::MatrixXd, EigMat>;
-  check_nonzero_size("svd_V", "m", m);
+  if (unlikely(m.size() == 0)) {
+    return ret_type(Eigen::MatrixXd(0, 0));
+  }
 
   const int M = std::min(m.rows(), m.cols());
   auto arena_m = to_arena(m);
