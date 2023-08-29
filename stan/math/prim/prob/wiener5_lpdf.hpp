@@ -540,7 +540,7 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, double err) {
 template <size_t ErrIndex, bool GradW7 = false, size_t NestedIndex = 0,
           bool LogResult = true, typename T_partials, typename F, typename... ArgsTupleT,
 		  typename ReturnT = return_type_t<T_partials>>
-ReturnT estimate_with_err_check(const F& functor, double err,
+ReturnT estimate_with_err_check(const F& functor, T_partials err,
                                ArgsTupleT&&... args_tuple) {
   T_partials result = functor(args_tuple...);
   T_partials log_fabs_result = LogResult ? log(fabs(result)) : fabs(result);

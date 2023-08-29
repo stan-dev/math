@@ -559,7 +559,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else if (y_val - (t0_val + st0_val) <= 0) {
         partials<7>(ops_partials)[i] = -1 / st0_val;
       } else {
-        const T_partials t0_st0 = t0_val + st0_val;
+        const T_partials_return t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
           f = internal::estimate_with_err_check<5, false, 0, true, T_partials>(
               [&](auto&&... args) {
