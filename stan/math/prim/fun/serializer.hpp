@@ -1,13 +1,13 @@
-#ifndef TEST_UNIT_MATH_SERIALIZER_HPP
-#define TEST_UNIT_MATH_SERIALIZER_HPP
+#ifndef STAN_MATH_PRIM_FUN_SERIALIZER_HPP
+#define STAN_MATH_PRIM_FUN_SERIALIZER_HPP
 
-#include <stan/math.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 #include <complex>
 #include <string>
 #include <vector>
 
 namespace stan {
-namespace test {
+namespace math {
 
 /**
  * A class to store a sequence of values which can be deserialized
@@ -47,7 +47,7 @@ struct deserializer {
    * @param vals values to deserialize
    */
   explicit deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
-      : position_(0), vals_(math::to_array_1d(v_vals)) {}
+      : position_(0), vals_(to_array_1d(v_vals)) {}
 
   /**
    * Read a scalar conforming to the shape of the specified argument,
@@ -94,8 +94,8 @@ struct deserializer {
    */
   template <typename U, require_std_vector_t<U>* = nullptr,
             require_not_st_complex<U>* = nullptr>
-  typename stan::math::promote_scalar_type<T, U>::type read(const U& x) {
-    typename stan::math::promote_scalar_type<T, U>::type y;
+  typename promote_scalar_type<T, U>::type read(const U& x) {
+    typename promote_scalar_type<T, U>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
       y.push_back(read(x[i]));
@@ -113,9 +113,9 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U, require_std_vector_st<is_complex, U>* = nullptr>
-  typename stan::math::promote_scalar_type<std::complex<T>, U>::type read(
+  typename promote_scalar_type<std::complex<T>, U>::type read(
       const U& x) {
-    typename stan::math::promote_scalar_type<std::complex<T>, U>::type y;
+    typename promote_scalar_type<std::complex<T>, U>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
       y.push_back(read(x[i]));
@@ -258,7 +258,7 @@ struct serializer {
    * @return serialized values
    */
   const Eigen::Matrix<T, -1, 1>& vector_vals() {
-    return math::to_vector(vals_);
+    return to_vector(vals_);
   }
 };
 
@@ -338,7 +338,7 @@ std::vector<real_return_t<T>> serialize_return(const T& x) {
  */
 template <typename... Ts>
 Eigen::VectorXd serialize_args(const Ts... xs) {
-  return math::to_vector(serialize<double>(xs...));
+  return to_vector(serialize<double>(xs...));
 }
 
 }  // namespace test
