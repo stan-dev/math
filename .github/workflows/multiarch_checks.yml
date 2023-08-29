@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop, master, multiarch-workflow ]
+    branches: [ develop, master ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -47,5 +47,5 @@ jobs:
           run: |
             apt-get update && apt-get install -y build-essential python-is-python3
             cd /work
-            ./runTests.py -j2 test/unit/math/prim
-            ./runTests.py -j2 test/unit/math/rev
+            ./runTests.py test/unit/math/prim --jumbo
+            ./runTests.py test/unit/math/rev --jumbo
