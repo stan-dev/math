@@ -465,7 +465,6 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
   int numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
   int evals_per_box = numevals;
-  int kdiv = kdivide;
   double error = err;
   double val = result;
 
@@ -491,7 +490,9 @@ double hcubature(const F& integrand, const T_pars& pars, const int& dim,
     std::vector<double> mb(box.b);
     mb[box.kdiv] -= w;
 
-    double result_1, result_2, err_1, err_2, kdivide_1, kdivide_2;
+    double result_1, result_2, err_1, err_2;
+    double kdivide_1 = math::NOT_A_NUMBER;
+    double kdivide_2 = math::NOT_A_NUMBER;
 
     if (dim == 1) {
       std::tie(result_1, err_1)

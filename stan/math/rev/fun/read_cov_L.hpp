@@ -39,7 +39,7 @@ inline auto read_cov_L(const T_CPCs& CPCs, const T_sds& sds,
   var_value<Eigen::MatrixXd> res
       = sds.val().matrix().asDiagonal() * corr_L.val();
 
-  reverse_pass_callback([CPCs, sds, corr_L, log_prob, res]() mutable {
+  reverse_pass_callback([sds, corr_L, log_prob, res]() mutable {
     size_t K = sds.size();
 
     corr_L.adj() += sds.val().matrix().asDiagonal() * res.adj();

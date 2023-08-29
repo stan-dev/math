@@ -214,7 +214,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
       auto x_ref = to_ref(value_of(x));
       arena_t<ret_type> ret = ub_val - x_ref.array().exp();
       lp += x_ref.sum();
-      reverse_pass_callback([ret, lp, arena_ub = var(ub)]() mutable {
+      reverse_pass_callback([ret, arena_ub = var(ub)]() mutable {
         arena_ub.adj() += ret.adj().sum();
       });
       return ret_type(ret);

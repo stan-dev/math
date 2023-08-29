@@ -61,7 +61,7 @@ inline auto svd(const EigMat& m) {
   arena_t<mat_ret_type> arena_V = svd.matrixV();
 
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V, arena_Fp,
-                         arena_Fm, M]() mutable {
+                         arena_Fm]() mutable {
     // SVD-U reverse mode
     Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
     auto u_adj
