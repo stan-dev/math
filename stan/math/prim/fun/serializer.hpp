@@ -45,7 +45,7 @@ struct deserializer {
   /**
    * Construct a deserializer from the specified sequence of values.
    *
-   * @param vals values to deserialize
+   * @param v_vals values to deserialize
    */
   explicit deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
       : position_(0), vals_(to_array_1d(v_vals)) {}
