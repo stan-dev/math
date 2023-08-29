@@ -56,3 +56,4 @@ jobs:
             StartOfBatch="$((${{ matrix.config.batch }} * $TestsPerBatch))"
             # Compile and run in sub-batches of 5 to fail faster
             echo "${PrimTests[@]:${StartOfBatch}:${TestsPerBatch}}" | xargs -n 5 python ./runTests.py -j2
+          shell: bash
