@@ -6,7 +6,6 @@
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <stan/math/prim/fun/serializer.hpp>
 #include <test/unit/math/test_ad_matvar.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -402,7 +401,8 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1) {
-  auto h = [&](auto v) { return stan::math::serialize_return(eval(f(v(0)))); };
+  using stan::math::serialize_return;
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
   expect_all_throw(h, x);
@@ -419,8 +419,8 @@ void expect_all_throw(const F& f, double x1) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
-  auto h = [&](auto v) {
-    return stan::math::serialize_return(eval(f(v(0), v(1)))); };
+  using stan::math::serialize_return;
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
   expect_all_throw(h, x);
@@ -438,8 +438,8 @@ void expect_all_throw(const F& f, double x1, double x2) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
-  auto h = [&](auto v) {
-    return stan::math::serialize_return(eval(f(v(0), v(1), v(2)))); };
+  using stan::math::serialize_return;
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
   x << x1, x2, x3;
   expect_all_throw(h, x);
@@ -469,13 +469,14 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
 template <typename F, typename G, typename... Ts>
 void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
                       const Eigen::VectorXd& x, Ts... xs) {
+  using stan::math::serialize;
   auto h
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
   try {
     auto y1 = eval(f(xs...));  // original types, including int
     auto y2 = eval(g(x));      // all int cast to double
-    auto y1_serial = stan::math::serialize<double>(y1);
+    auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
   } catch (...) {
@@ -500,12 +501,15 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  */
 template <typename F, typename T>
 void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
+  using stan::math::to_deserializer;
+  using stan::math::serialize_return;
+  using stan::math::serialize_args;
   auto g = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto xds = ds.read(x);
-    return stan::math::serialize_return(eval(f(xds)));
+    return serialize_return(eval(f(xds)));
   };
-  internal::expect_ad_helper(tols, f, g, stan::math::serialize_args(x), x);
+  internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
 }
 
 /**
@@ -561,30 +565,33 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
+  using stan::math::to_deserializer;
+  using stan::math::serialize_return;
+  using stan::math::serialize_args;
   // d.x1
   auto g1 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return stan::math::serialize_return(eval(f(x1ds, x2)));
+    return serialize_return(eval(f(x1ds, x2)));
   };
-  internal::expect_ad_helper(tols, f, g1, stan::math::serialize_args(x1), x1, x2);
+  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
 
   // d.x2
   auto g2 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return stan::math::serialize_return(eval(f(x1, x2ds)));
+    return serialize_return(eval(f(x1, x2ds)));
   };
-  internal::expect_ad_helper(tols, f, g2, stan::math::serialize_args(x2), x1, x2);
+  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
 
   // d.x1, d.x2
   auto g12 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return stan::math::serialize_return(eval(f(x1ds, x2ds)));
+    return serialize_return(eval(f(x1ds, x2ds)));
   };
-  internal::expect_ad_helper(tols, f, g12, stan::math::serialize_args(x1, x2), x1, x2);
+  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
 }
 
 template <typename F, typename T2>
@@ -673,66 +680,69 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, const T3& x3) {
+  using stan::math::to_deserializer;
+  using stan::math::serialize_return;
+  using stan::math::serialize_args;
   // d.x1
   auto g1 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return stan::math::serialize_return(eval(f(x1ds, x2, x3)));
+    return serialize_return(eval(f(x1ds, x2, x3)));
   };
-  internal::expect_ad_helper(tols, f, g1, stan::math::serialize_args(x1), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2, x3);
 
   // d.x2
   auto g2 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return stan::math::serialize_return(eval(f(x1, x2ds, x3)));
+    return serialize_return(eval(f(x1, x2ds, x3)));
   };
-  internal::expect_ad_helper(tols, f, g2, stan::math::serialize_args(x2), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2, x3);
 
   // d.x3
   auto g3 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x3ds = ds.read(x3);
-    return stan::math::serialize_return(eval(f(x1, x2, x3ds)));
+    return serialize_return(eval(f(x1, x2, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g3, stan::math::serialize_args(x3), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g3, serialize_args(x3), x1, x2, x3);
 
   // d.x1 d.x2
   auto g12 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return stan::math::serialize_return(eval(f(x1ds, x2ds, x3)));
+    return serialize_return(eval(f(x1ds, x2ds, x3)));
   };
-  internal::expect_ad_helper(tols, f, g12, stan::math::serialize_args(x1, x2), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
 
   // d.x1 d.x3
   auto g13 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x3ds = ds.read(x3);
-    return stan::math::serialize_return(eval(f(x1ds, x2, x3ds)));
+    return serialize_return(eval(f(x1ds, x2, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g13, stan::math::serialize_args(x1, x3), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
 
   // d.x2 d.x3
   auto g23 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return stan::math::serialize_return(eval(f(x1, x2ds, x3ds)));
+    return serialize_return(eval(f(x1, x2ds, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g23, stan::math::serialize_args(x2, x3), x1, x2, x3);
+  internal::expect_ad_helper(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
 
   // d.x1 d.x2 d.x3
   auto g123 = [&](const auto& v) {
-    auto ds = stan::math::to_deserializer(v);
+    auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return stan::math::serialize_return(eval(f(x1ds, x2ds, x3ds)));
+    return serialize_return(eval(f(x1ds, x2ds, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g123, stan::math::serialize_args(x1, x2, x3), x1, x2,
+  internal::expect_ad_helper(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
                              x3);
 }
 
