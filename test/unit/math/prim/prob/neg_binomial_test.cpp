@@ -188,8 +188,6 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   }
 
   double chi = 0;
-  Eigen::Map<Eigen::RowVectorXd> bin_map(&bin[0], K);
-  Eigen::Map<Eigen::RowVectorXd> expect_map(&expect[0], K);
 
   for (int j = 0; j < K; j++) {
     if (expect[j] == 0) { continue; }
