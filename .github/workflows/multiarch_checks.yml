@@ -60,7 +60,7 @@ jobs:
           run: |
             apt-get update && apt-get install -y build-essential python-is-python3
             cd /work
-            TargetTests=(test/unit/math/prim/*/*.cpp)
+            TargetTests=(test/unit/math/rev/*/*.cpp test/unit/math/fwd/*/*.cpp)
             NTests=${#TargetTests[@]}
             TestsPerBatch="$(($NTests / 20))"
             StartOfBatch="$((${{ matrix.config.batch }} * $TestsPerBatch))"

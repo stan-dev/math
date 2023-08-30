@@ -181,12 +181,6 @@ ifeq ($(OS),Linux)
   CXXFLAGS_WARNINGS ?= -Wno-sign-compare
   ifeq (gcc,$(CXX_TYPE))
     CXXFLAGS_OS ?= -pthread
-    ifeq (aarch64, $(shell uname -m))
-      CXXFLAGS_OS += -Wno-psabi
-    endif
-    ifeq (armv7l, $(shell uname -m))
-      CXXFLAGS_OS += -Wno-psabi
-    endif
   endif
   ifeq (mingw32-gcc,$(CXX_TYPE))
     LDLIBS_OS ?= -static -lwinpthread
@@ -202,7 +196,7 @@ endif
 CXXFLAGS_OS += -D_REENTRANT
 
 ## silence warnings occuring due to the TBB and Eigen libraries
-CXXFLAGS_WARNINGS += -Wno-ignored-attributes -Wno-deprecated-declarations
+CXXFLAGS_WARNINGS += -Wno-ignored-attributes
 
 ################################################################################
 # Setup OpenCL
