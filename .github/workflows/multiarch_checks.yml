@@ -29,26 +29,26 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { platform: arm/v6, batch: 0}
-          - { platform: arm/v6, batch: 1}
-          - { platform: arm/v6, batch: 2}
-          - { platform: arm/v6, batch: 3}
-          - { platform: arm/v6, batch: 4}
-          - { platform: arm/v6, batch: 5}
-          - { platform: arm/v6, batch: 6}
-          - { platform: arm/v6, batch: 7}
-          - { platform: arm/v6, batch: 8}
-          - { platform: arm/v6, batch: 9}
-          - { platform: arm/v6, batch: 10}
-          - { platform: arm/v6, batch: 11}
-          - { platform: arm/v6, batch: 12}
-          - { platform: arm/v6, batch: 13}
-          - { platform: arm/v6, batch: 14}
-          - { platform: arm/v6, batch: 15}
-          - { platform: arm/v6, batch: 16}
-          - { platform: arm/v6, batch: 17}
-          - { platform: arm/v6, batch: 18}
-          - { platform: arm/v6, batch: 19}
+          - { platform: arm/v7, batch: 0}
+          - { platform: arm/v7, batch: 1}
+          - { platform: arm/v7, batch: 2}
+          - { platform: arm/v7, batch: 3}
+          - { platform: arm/v7, batch: 4}
+          - { platform: arm/v7, batch: 5}
+          - { platform: arm/v7, batch: 6}
+          - { platform: arm/v7, batch: 7}
+          - { platform: arm/v7, batch: 8}
+          - { platform: arm/v7, batch: 9}
+          - { platform: arm/v7, batch: 10}
+          - { platform: arm/v7, batch: 11}
+          - { platform: arm/v7, batch: 12}
+          - { platform: arm/v7, batch: 13}
+          - { platform: arm/v7, batch: 14}
+          - { platform: arm/v7, batch: 15}
+          - { platform: arm/v7, batch: 16}
+          - { platform: arm/v7, batch: 17}
+          - { platform: arm/v7, batch: 18}
+          - { platform: arm/v7, batch: 19}
 
     steps:
       - uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
           run: |
             apt-get update && apt-get install -y build-essential python-is-python3
             cd /work
-            TargetTests=(test/unit/math/rev/*/*.cpp)
+            TargetTests=(test/unit/math/prim/*/*.cpp)
             NTests=${#TargetTests[@]}
             TestsPerBatch="$(($NTests / 20))"
             StartOfBatch="$((${{ matrix.config.batch }} * $TestsPerBatch))"
