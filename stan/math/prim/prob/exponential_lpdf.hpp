@@ -81,7 +81,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
 
   T_partials_return logp(0.0);
   if (include_summand<propto, T_inv_scale>::value) {
-    logp = sum(log(beta_val)) * max_size(y, beta) / size(beta);
+    logp = sum(log(beta_val)) * max_size(y, beta) / math::size(beta);
   }
   if (include_summand<propto, T_y, T_inv_scale>::value) {
     logp -= sum(beta_val * y_val);
