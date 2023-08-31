@@ -29,26 +29,26 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { platform: arm64, batch: 0}
-          - { platform: arm64, batch: 1}
-          - { platform: arm64, batch: 2}
-          - { platform: arm64, batch: 3}
-          - { platform: arm64, batch: 4}
-          - { platform: arm64, batch: 5}
-          - { platform: arm64, batch: 6}
-          - { platform: arm64, batch: 7}
-          - { platform: arm64, batch: 8}
-          - { platform: arm64, batch: 9}
-          - { platform: arm64, batch: 10}
-          - { platform: arm64, batch: 11}
-          - { platform: arm64, batch: 12}
-          - { platform: arm64, batch: 13}
-          - { platform: arm64, batch: 14}
-          - { platform: arm64, batch: 15}
-          - { platform: arm64, batch: 16}
-          - { platform: arm64, batch: 17}
-          - { platform: arm64, batch: 18}
-          - { platform: arm64, batch: 19}
+          - { platform: ppc64le, batch: 0}
+          - { platform: ppc64le, batch: 1}
+          - { platform: ppc64le, batch: 2}
+          - { platform: ppc64le, batch: 3}
+          - { platform: ppc64le, batch: 4}
+          - { platform: ppc64le, batch: 5}
+          - { platform: ppc64le, batch: 6}
+          - { platform: ppc64le, batch: 7}
+          - { platform: ppc64le, batch: 8}
+          - { platform: ppc64le, batch: 9}
+          - { platform: ppc64le, batch: 10}
+          - { platform: ppc64le, batch: 11}
+          - { platform: ppc64le, batch: 12}
+          - { platform: ppc64le, batch: 13}
+          - { platform: ppc64le, batch: 14}
+          - { platform: ppc64le, batch: 15}
+          - { platform: ppc64le, batch: 16}
+          - { platform: ppc64le, batch: 17}
+          - { platform: ppc64le, batch: 18}
+          - { platform: ppc64le, batch: 19}
 
     steps:
       - uses: actions/checkout@v3
@@ -65,7 +65,7 @@ jobs:
             TestsPerBatch="$(($NTests / 20))"
             StartOfBatch="$((${{ matrix.config.batch }} * $TestsPerBatch))"
             # Compile and run in sub-batches of 5 to fail faster
-            echo "${TargetTests[@]:${StartOfBatch}:${TestsPerBatch}}" | xargs -n 5 python ./runTests.py -j2
+            echo "${TargetTests[@]}" | xargs -n 5 python ./runTests.py -j2
           shell: bash
 
       - name: Upload gtest_output xml
