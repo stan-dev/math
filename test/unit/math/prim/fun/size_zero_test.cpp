@@ -6,7 +6,7 @@ TEST(MathMatrixPrimScal, size_zero) {
   std::vector<double> x(3), y(0);
   stan::math::matrix_d m(3, 4);
   stan::math::matrix_d n(3, 0);
-  int f, g;
+  int f = 0, g = 0;
 
   EXPECT_EQ(0, stan::math::size_zero(x));
   EXPECT_EQ(0, stan::math::size_zero(m));

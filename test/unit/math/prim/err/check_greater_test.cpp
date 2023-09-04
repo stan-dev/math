@@ -6,8 +6,8 @@
 TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   using stan::math::check_greater;
   const char* function = "check_greater";
-  double x;
-  double low;
+  double x = 0;
+  double low = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat;
   x_mat.resize(3, 3);
@@ -155,8 +155,8 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
 TEST(ErrorHandlingMat, CheckGreater_Matrix_one_indexed_message) {
   using stan::math::check_greater;
   static const char* function = "check_greater";
-  double x;
-  double low;
+  double x = 0;
+  double low = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat;
   x_mat.resize(3, 3);

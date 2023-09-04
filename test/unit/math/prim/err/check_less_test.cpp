@@ -6,8 +6,8 @@
 TEST(ErrorHandlingMat, CheckLess_Matrix) {
   using stan::math::check_less;
   const char* function = "check_less";
-  double x;
-  double high;
+  double x = 0;
+  double high = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> high_mat;
   x_mat.resize(3, 3);
@@ -124,8 +124,8 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
 TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   using stan::math::check_less;
   const char* function = "check_less";
-  double x;
-  double high;
+  double x = 0;
+  double high = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> high_mat;
   x_mat.resize(3, 3);
