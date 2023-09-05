@@ -1,6 +1,25 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.7.0 (5 September 2023)
+======================================================================
+
+- Improved accuracy of `matrix_exp_multiply`. (#2619)
+- Added framework for vectorising ternary functions (#2642)
+- Added `select()` function for vectorised ternary operations, as well as the `any()` and `all()` boolean reduction functions (#2853)
+- Added a minimum number of iterations (5) to the `grad_2f1` function to avoid early convergence (#2858)
+- Fixed some spelling errors in documentation (#2908)
+- Added new function in `stan::math::internal`, `finite_diff_hessian_vector_product_auto` (#2914)
+- Fixed an issue with the return type of `eigenvalues` being incorrect (#2915)
+- Delete jquery files from vendored Boost documentation (#2916)
+- Fixed fvar/higher-order autodiff compatibility with GLM distributions (#2917)
+- Fixed a type issue in the tests for inv_wishart_cholesky. (#2920)
+- The constraint tolerance can now be adjusted by defining the `STAN_MATH_CONSTRAINT_TOLERANCE` macro before including Stan headers. The default value remains `1E-8`. (#2921)
+- Use -dumpfullversion if available in makefiles (#2922)
+- Vectorised binary signature for `log_sum_exp` (#2930)
+- Added new functions `qr_thin`, `eigendecompose_sym`, `eigendecompose`, `complex_schur_decompose`, `svd`, and `csr_extract`. Each of these is equivalent to calling several existing functions, but should be more efficient due to sharing work. For example, `svd(m)` is equivalent to `(svd_U(m), singular_values(m), svd_V(m))`. (#2931)
+
+======================================================================
 v4.6.2 (15 May 2023)
 ======================================================================
 
