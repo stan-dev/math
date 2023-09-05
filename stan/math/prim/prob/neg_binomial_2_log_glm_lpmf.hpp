@@ -15,11 +15,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-<<<<<<< HEAD
 #include <stan/math/prim/fun/value_of.hpp>
-=======
-#include <stan/math/prim/fun/value_of_rec.hpp>
->>>>>>> master
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 #include <cmath>

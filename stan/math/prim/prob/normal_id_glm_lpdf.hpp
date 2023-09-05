@@ -12,11 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-<<<<<<< HEAD
 #include <stan/math/prim/fun/value_of.hpp>
-=======
-#include <stan/math/prim/fun/value_of_rec.hpp>
->>>>>>> master
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -185,12 +181,8 @@ namespace stan {
         } else {
           y_scaled_sq_sum = sum(y_scaled * y_scaled);
           partials<4>(ops_partials)[0]
-<<<<<<< HEAD
               = (y_scaled_sq_sum - N_instances)
                 * forward_as<partials_return_t<T_sigma_ref>>(inv_sigma);
-=======
-              = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
->>>>>>> master
         }
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
