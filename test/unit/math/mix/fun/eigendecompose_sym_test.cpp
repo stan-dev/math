@@ -7,7 +7,8 @@ TEST(MathMixMatFun, eigendecomposeSym) {
     if (y.rows() != y.cols()) {
       return std::get<0>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<0>(stan::math::eigendecompose_sym(a));
   };
 
@@ -16,7 +17,8 @@ TEST(MathMixMatFun, eigendecomposeSym) {
     if (y.rows() != y.cols()) {
       return std::get<1>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<1>(stan::math::eigendecompose_sym(a));
   };
 
@@ -53,7 +55,8 @@ TEST(MathMixMatFun, eigendecomposeSym_varmat) {
     if (y.rows() != y.cols()) {
       return std::get<0>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<0>(stan::math::eigendecompose_sym(a));
   };
 
@@ -62,7 +65,8 @@ TEST(MathMixMatFun, eigendecomposeSym_varmat) {
     if (y.rows() != y.cols()) {
       return std::get<1>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<1>(stan::math::eigendecompose_sym(a));
   };
 
