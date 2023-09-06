@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Specialisation for use with combinations of
+ * Specialization for use with combinations of
  * `Eigen::Matrix` and `var_value<Eigen::Matrix>` inputs.
  * Eigen's binaryExpr framework is used for more efficient indexing of both row-
  * and column-major inputs  without separate loops.
@@ -34,7 +34,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with one `var_value<Eigen vector>` (row or column) and
+ * Specialization for use with one `var_value<Eigen vector>` (row or column) and
  * a one-dimensional std::vector of integer types
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -54,7 +54,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with a two-dimensional std::vector of integer types
+ * Specialization for use with a two-dimensional std::vector of integer types
  * and one `var_value<Matrix>`.
  *
  * @tparam T1 Type of first argument to which functor is applied.
@@ -76,7 +76,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the one input is an `var_value<Eigen> type and
+ * Specialization for use when the one input is an `var_value<Eigen> type and
  * the other is a scalar.
  *
  * @tparam T1 Type of either `var_value<Matrix>` or scalar object to which

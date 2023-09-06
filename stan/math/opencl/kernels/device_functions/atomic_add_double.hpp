@@ -21,8 +21,8 @@ static const char *atomic_add_double_device_function
            * Code is taken from:
            * https://stackoverflow.com/questions/31863587/atomic-operations-with-double-opencl
            *
-           * @param a pointer to value to add to
-           * @param b value to add
+           * @param val pointer to value to add to
+           * @param delta value to add
            */
           void atomic_add_double(__global double *val, double delta) {
             union {
@@ -46,8 +46,8 @@ static const char *atomic_add_double_device_function
            * Code is taken from:
            * https://stackoverflow.com/questions/31863587/atomic-operations-with-double-opencl
            *
-           * @param a pointer to value to add to
-           * @param b value to add
+           * @param val pointer to value to add to
+           * @param delta value to add
            */
           void local_atomic_add_double(__local double *val, double delta) {
             union {

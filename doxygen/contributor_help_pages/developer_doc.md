@@ -1,4 +1,4 @@
-# Developers Guide {#developer_guide}
+# Developer Guide {#developer_guide}
 
 Thanks for checking out these docs. This is where you'll find information on contributing to the [Math library](https://github.com/stan-dev/math), how the source code is laid out, and other technical details that could help. This wiki focuses on things relevant to the Math library. There's also a separate [Stan wiki](https://github.com/stan-dev/stan/wiki) for things related to the language, services, algorithms.
 
@@ -41,7 +41,7 @@ For implementation details of the Math library's automatic differentiation, plea
 
 We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd) and we only accept changes to the code base that compatible with this license.
 
-# Contributing {#contribution}
+# Contributing {#contributing}
 
 Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
 

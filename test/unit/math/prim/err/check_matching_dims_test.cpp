@@ -153,7 +153,7 @@ TEST(ErrorHandlingMatrix, checkMatchingDims_compile_time_sizes) {
 
 TEST(ErrorHandlingMatrix, checkMatchingDimsScalar) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y1;
-  double x;
+  double x = 0;
 
   y1.resize(3, 3);
   EXPECT_THROW(

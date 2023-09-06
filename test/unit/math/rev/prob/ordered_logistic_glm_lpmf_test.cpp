@@ -18,7 +18,6 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;
-  double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 4;
@@ -38,7 +37,6 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;
-  double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 4;
@@ -74,7 +72,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 5;
@@ -125,7 +122,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 5;
@@ -235,7 +231,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 1;
@@ -284,7 +279,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 0;
@@ -328,7 +322,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 5;
@@ -367,7 +360,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-13;
   int N = 5;
@@ -416,7 +408,6 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-7;
   int N = 155;

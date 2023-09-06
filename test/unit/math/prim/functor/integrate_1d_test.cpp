@@ -402,16 +402,15 @@ TEST(StanMath_integrate_1d_prim, TestThrows) {
 }
 
 TEST(StanMath_integrate_1d_prim, test_integer_arguments) {
-  double v;
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(integrate_1d_test::f2{}, 0.0, 1,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1.0,
-                                               std::vector<double>(), {}, {},
-                                               integrate_1d_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1,
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0.0, 1,
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 0, 1.0,
+                                           std::vector<double>(), {}, {},
+                                           integrate_1d_test::msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d_prim, test1) {
@@ -489,7 +488,6 @@ TEST(StanMath_integrate_1d_prim, TestTolerance) {
   std::ostringstream *msgs = nullptr;
 
   double t = 0.5;
-  double b = 1.0;
   double A = 0.5;
   double v1 = 1.0;
   double v2 = 1.0;

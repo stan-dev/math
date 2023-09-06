@@ -93,8 +93,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     N_Vector nv_absolute_tolerance_forward_;
     N_Vector nv_absolute_tolerance_backward_;
     SUNMatrix A_forward_;
-    SUNLinearSolver LS_forward_;
     SUNMatrix A_backward_;
+    SUNLinearSolver LS_forward_;
     SUNLinearSolver LS_backward_;
     void* cvodes_mem_;
     std::tuple<T_Args...> local_args_tuple_;

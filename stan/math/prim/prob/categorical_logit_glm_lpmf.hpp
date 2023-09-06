@@ -6,12 +6,13 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
@@ -28,8 +29,8 @@ namespace math {
  * @tparam T_alpha type of the intercept vector
  * @tparam T_beta type of the matrix of weights
  * @param y a scalar or vector of classes. If it is a scalar it will be
- * broadcast - used for all instances. Values should be between 1 and number of
- * classes, including endpoints.
+ * broadcast - used for all instances. Values should be between 1 and number
+ * of classes, including endpoints.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept vector (in log odds)
@@ -50,11 +51,13 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
+  using std::isfinite;
   using std::log;
   using T_y_ref = ref_type_t<T_y>;
   using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
   using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_beta_partials = partials_type_t<scalar_type_t<T_beta>>;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
@@ -82,11 +85,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
-  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val
-      = to_ref_if<!is_constant<T_x>::value>(value_of_rec(beta_ref));
+      = to_ref_if<!is_constant<T_x>::value>(value_of(beta_ref));
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
@@ -117,7 +119,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // when we have newer Eigen  T_partials_return logp =
   // lin(Eigen::all,y-1).sum() + log(inv_sum_exp_lin).sum() - lin_max.sum();
 
-  if (!std::isfinite(logp)) {
+  if (!isfinite(logp)) {
     check_finite(function, "Weight vector", beta_ref);
     check_finite(function, "Intercept", alpha_ref);
     check_finite(function, "Matrix of independent variables", x_ref);
@@ -128,7 +130,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 
   if (!is_constant_all<T_x>::value) {
     if (T_x_rows == 1) {
-      Array<double, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
+      Array<T_beta_partials, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
       }
@@ -137,7 +139,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin * N_instances;
     } else {
-      Array<double, Dynamic, Dynamic> beta_y(N_instances, N_attributes);
+      Array<T_beta_partials, Dynamic, Dynamic> beta_y(N_instances,
+                                                      N_attributes);
       for (int i = 0; i < N_instances; i++) {
         beta_y.row(i) = beta_val.col(y_seq[i] - 1);
       }
@@ -145,8 +148,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
-      // TODO(Tadej) maybe we can replace previous block with the following line
-      // when we have newer Eigen  partials<0>(ops_partials) = beta_val(y
+      // TODO(Tadej) maybe we can replace previous block with the following
+      // line when we have newer Eigen  partials<0>(ops_partials) = beta_val(y
       // - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
       // inv_sum_exp_lin;
     }
@@ -166,12 +169,11 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
     }
     if (!is_constant_all<T_beta>::value) {
-      Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative;
+      Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
+          = x_val.transpose().template cast<T_partials_return>()
+            * neg_softmax_lin.matrix();
       if (T_x_rows == 1) {
-        beta_derivative
-            = x_val.transpose() * neg_softmax_lin.matrix() * N_instances;
-      } else {
-        beta_derivative = x_val.transpose() * neg_softmax_lin.matrix();
+        beta_derivative *= N_instances;
       }
 
       for (int i = 0; i < N_instances; i++) {
@@ -181,8 +183,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
           beta_derivative.col(y_seq[i] - 1) += x_val.row(i);
         }
       }
-      // TODO(Tadej) maybe we can replace previous loop with the following line
-      // when we have newer Eigen  partials<2>(ops_partials)(Eigen::all, y
+      // TODO(Tadej) maybe we can replace previous loop with the following
+      // line when we have newer Eigen  partials<2>(ops_partials)(Eigen::all,
+      // y
       // - 1) += x_val.colwise.sum().transpose();
 
       partials<2>(ops_partials) = std::move(beta_derivative);

@@ -79,7 +79,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   vector<int> y{1, 0, 1};
   Matrix<double, Dynamic, Dynamic> x_val(3, 2);
@@ -177,7 +176,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_y) {
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   int y = 13;
   Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
@@ -220,7 +218,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   vector<int> y{};
   Matrix<var, Dynamic, Dynamic> x(0, 2);
@@ -267,7 +264,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 0);
@@ -309,7 +305,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);
@@ -375,8 +370,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using stan::math::var;
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
-  using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
@@ -436,7 +429,6 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
   using std::vector;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);

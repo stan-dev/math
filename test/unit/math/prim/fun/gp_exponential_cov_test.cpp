@@ -109,7 +109,6 @@ TEST(MathPrimMat, vec_eigen_vec_eigen_gp_exponential_cov1) {
 
 TEST(MathPrimMat, vec_eigen_vec_eigen_ard_gp_exponential_cov1) {
   double sigma = 0.3;
-  double temp;
 
   std::vector<double> l = {1, 2, 3};
 

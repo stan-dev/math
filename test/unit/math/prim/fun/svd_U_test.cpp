@@ -14,7 +14,7 @@ TEST(MathMatrixPrimMat, svd_U) {
   // Values generated using R base::svd
 
   matrix_d m00(0, 0);
-  EXPECT_THROW(svd_U(m00), std::invalid_argument);
+  EXPECT_NO_THROW(svd_U(m00));
 
   matrix_d m11(1, 1);
   m11 << 5;

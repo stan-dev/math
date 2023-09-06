@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/acosh.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/add_diag.hpp>
+#include <stan/math/prim/fun/all.hpp>
+#include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/append_array.hpp>
 #include <stan/math/prim/fun/append_col.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
@@ -62,6 +64,7 @@
 #include <stan/math/prim/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
+#include <stan/math/prim/fun/csr_extract.hpp>
 #include <stan/math/prim/fun/csr_extract_u.hpp>
 #include <stan/math/prim/fun/csr_extract_v.hpp>
 #include <stan/math/prim/fun/csr_extract_w.hpp>
@@ -82,6 +85,8 @@
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/eigen_comparisons.hpp>
+#include <stan/math/prim/fun/eigendecompose.hpp>
+#include <stan/math/prim/fun/eigendecompose_sym.hpp>
 #include <stan/math/prim/fun/eigenvalues.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/fun/eigenvectors.hpp>
@@ -275,6 +280,7 @@
 #include <stan/math/prim/fun/qr.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
 #include <stan/math/prim/fun/qr_R.hpp>
+#include <stan/math/prim/fun/qr_thin.hpp>
 #include <stan/math/prim/fun/qr_thin_Q.hpp>
 #include <stan/math/prim/fun/qr_thin_R.hpp>
 #include <stan/math/prim/fun/quad_form.hpp>
@@ -305,6 +311,7 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/signbit.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
@@ -330,6 +337,7 @@
 #include <stan/math/prim/fun/sub_row.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/svd.hpp>
 #include <stan/math/prim/fun/svd_U.hpp>
 #include <stan/math/prim/fun/svd_V.hpp>
 #include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
