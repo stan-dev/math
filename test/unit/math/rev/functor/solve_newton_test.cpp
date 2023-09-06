@@ -237,7 +237,6 @@ TEST_F(degenerate_eq_test, newton_guess2) {
 TEST_F(variadic_test, newton) {
   using stan::math::var;
   bool is_newton = true;
-  bool is_impl = false;
   bool use_tol = false;
   for (int k = 0; k < n_x; k++) {
     var y_1 = y_1_dbl;

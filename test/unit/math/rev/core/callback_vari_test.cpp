@@ -27,6 +27,7 @@ TEST(AgradRevCBack, callback_vari_const_scalar_compile_test) {
 
   stan::math::var b = stan::math::make_callback_vari(
       a_val, [a](const auto& vi) mutable { a.adj() += vi.adj(); });
+  EXPECT_FLOAT_EQ(a.val(), b.val());
 }
 
 TEST(AgradRevCBack, callback_vari_eigen_test) {

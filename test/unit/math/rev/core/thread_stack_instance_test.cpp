@@ -86,6 +86,7 @@ TEST(thread_stack_instance, child_instances) {
   // set)
   stan::math::var a = 1;
   stan::math::var b = a * a;
+  EXPECT_FLOAT_EQ(b.val(), 1);
 
   ChainableStack::AutodiffStackStorage* main_ad_stack
       = ChainableStack::instance_;

@@ -18,8 +18,6 @@ TEST(prob_transform, offset_multiplier_matrix_j) {
   EXPECT_MATRIX_EQ(mu.array() + sigma.array() * x.array(),
                    offset_multiplier_constrain(x, mu, sigma, lp));
   EXPECT_FLOAT_EQ(-17.0 + sum(log(sigma)), lp);
-
-  double lp1 = -12.9;
 }
 
 TEST(ProbTransform, offset_multiplier_matrix_Exception) {
