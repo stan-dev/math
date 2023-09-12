@@ -5,6 +5,7 @@
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
@@ -334,13 +335,34 @@ class results_cl {
                                         == sizeof...(T_expressions)>>
   void operator+=(const expressions_cl<T_expressions...>& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
-      auto tmp = std::tuple_cat(make_assignment_pair(
+      auto tmp = std::tuple_cat(make_assignment_pair<assignment_ops_cl::plus_equals>(
           std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
       index_apply<std::tuple_size<decltype(tmp)>::value>(
           [this, &tmp](auto... Is2) {
             assignment_impl(std::make_tuple(std::make_pair(
-                std::get<Is2>(tmp).first,
-                std::get<Is2>(tmp).first + std::get<Is2>(tmp).second)...));
+                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
+          });
+    });
+  }
+
+    /**
+   * Incrementing \c results_ object by \c expressions_cl object
+   * executes the kernel that evaluates expressions and increments results by
+   * those expressions.
+   * @tparam T_expressions types of expressions
+   * @param exprs expressions
+   */
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void operator-=(const expressions_cl<T_expressions...>& exprs) {
+    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
+      auto tmp = std::tuple_cat(make_assignment_pair<assignment_ops_cl::minus_equals>(
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
+      index_apply<std::tuple_size<decltype(tmp)>::value>(
+          [this, &tmp](auto... Is2) {
+            assignment_impl(std::make_tuple(std::make_pair(
+                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
           });
     });
   }
@@ -426,7 +448,7 @@ class results_cl {
           + parts.reduction_2d +
           "}\n";
     }
-    return src;
+     return src;
   }
 
   /**
@@ -529,7 +551,7 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression,
+  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_result, typename T_expression,
             require_all_not_t<is_without_output<T_expression>,
                               conjunction<internal::is_scalar_check<T_result>,
                                           std::is_arithmetic<std::decay_t<
@@ -537,8 +559,8 @@ class results_cl {
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
     return std::make_tuple(
-        std::pair<as_operation_cl_t<T_result>, as_operation_cl_t<T_expression>>(
-            as_operation_cl(std::forward<T_result>(result)),
+        std::pair<as_operation_cl_t<T_result, AssignOp>, as_operation_cl_t<T_expression>>(
+            as_operation_cl<AssignOp>(std::forward<T_result>(result)),
             as_operation_cl(std::forward<T_expression>(expression))));
   }
 
@@ -548,7 +570,7 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression,
+  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_result, typename T_expression,
             require_t<is_without_output<T_expression>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
@@ -562,7 +584,7 @@ class results_cl {
    * @param pass bool scalar
    * @return an empty tuple
    */
-  template <typename T_check, typename T_pass,
+  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_check, typename T_pass,
             require_t<internal::is_scalar_check<T_check>>* = nullptr,
             require_integral_t<T_pass>* = nullptr>
   static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {

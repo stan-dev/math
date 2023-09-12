@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_AS_OPERATION_CL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
@@ -23,7 +24,7 @@ namespace math {
  * @param a an operation
  * @return operation
  */
-template <typename T_operation,
+template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_operation,
           typename = std::enable_if_t<std::is_base_of<
               operation_cl_base, std::remove_reference_t<T_operation>>::value>>
 inline T_operation&& as_operation_cl(T_operation&& a) {
@@ -37,7 +38,7 @@ inline T_operation&& as_operation_cl(T_operation&& a) {
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
-template <typename T_scalar, typename = require_arithmetic_t<T_scalar>,
+template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_scalar, typename = require_arithmetic_t<T_scalar>,
           require_not_same_t<T_scalar, bool>* = nullptr>
 inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
@@ -50,6 +51,7 @@ inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
  * @param a scalar
  * @return \c scalar_<char> wrapping the input
  */
+template <assignment_ops_cl AssignOp = assignment_ops_cl::equals>
 inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
 
 /**
@@ -59,11 +61,11 @@ inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
  * @param a \c matrix_cl
  * @return \c load_ wrapping the input
  */
-template <typename T_matrix_cl,
+template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_matrix_cl,
           typename = require_any_t<is_matrix_cl<T_matrix_cl>,
                                    is_arena_matrix_cl<T_matrix_cl>>>
-inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
-  return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
+inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
+  return load_<T_matrix_cl, AssignOp>(std::forward<T_matrix_cl>(a));
 }
 
 /**
@@ -74,11 +76,11 @@ inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
  * rvalue reference, the reference is removed, so that a variable of this type
  * actually stores the value.
  */
-template <typename T>
+template <typename T, assignment_ops_cl AssignOp = assignment_ops_cl::equals>
 using as_operation_cl_t = std::conditional_t<
     std::is_lvalue_reference<T>::value,
-    decltype(as_operation_cl(std::declval<T>())),
-    std::remove_reference_t<decltype(as_operation_cl(std::declval<T>()))>>;
+    decltype(as_operation_cl<AssignOp>(std::declval<T>())),
+    std::remove_reference_t<decltype(as_operation_cl<AssignOp>(std::declval<T>()))>>;
 
 /** @}*/
 }  // namespace math

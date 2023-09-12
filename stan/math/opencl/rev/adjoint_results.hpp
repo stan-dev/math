@@ -41,22 +41,21 @@ class adjoint_results_cl : protected results_cl<T_results...> {
     index_apply<sizeof...(T_expressions)>([&](auto... Is) {
       auto scalars = std::tuple_cat(select_scalar_assignments(
           std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
-      auto nonscalars_tmp = std::tuple_cat(select_nonscalar_assignments(
+      auto nonscalars_tmp = std::tuple_cat(select_nonscalar_plusequals(
           std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
 
       index_apply<std::tuple_size<decltype(nonscalars_tmp)>::value>(
           [&](auto... Is_nonscal) {
             auto nonscalars = std::make_tuple(std::make_pair(
-                std::get<Is_nonscal>(nonscalars_tmp).first,
-                std::get<Is_nonscal>(nonscalars_tmp).first
-                    + std::get<Is_nonscal>(nonscalars_tmp).second)...);
-
+                std::get<Is_nonscal>(nonscalars_tmp).first, std::get<Is_nonscal>(nonscalars_tmp).second)...);
+ 
+ 
             index_apply<std::tuple_size<decltype(scalars)>::value>(
                 [&](auto... Is_scal) {
                   // evaluate all expressions
                   this->assignment_impl(std::tuple_cat(
                       nonscalars,
-                      this->make_assignment_pair(
+                      this->template make_assignment_pair<assignment_ops_cl::plus_equals>(
                           std::get<2>(std::get<Is_scal>(scalars)),
                           sum_2d(std::get<1>(std::get<Is_scal>(scalars))))...));
 
@@ -100,6 +99,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
     return std::make_tuple();
   }
 
+
   /**
    * Selects assignments that have non-scalar var results.
    * @tparam T_result type of result. This overload is used for non-scalar vars.
@@ -112,9 +112,9 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   template <typename T_result, typename T_expression,
             require_not_stan_scalar_t<T_result>* = nullptr,
             require_st_var<T_result>* = nullptr>
-  auto select_nonscalar_assignments(const T_result& result,
+  auto select_nonscalar_plusequals(T_result&& result,
                                     T_expression&& expression) {
-    return results_cl<T_results...>::make_assignment_pair(
+    return results_cl<T_results...>::template make_assignment_pair<assignment_ops_cl::plus_equals>(
         result.adj(), std::forward<T_expression>(expression));
   }
   /**
@@ -130,7 +130,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
       typename T_result, typename T_expression,
       std::enable_if_t<is_stan_scalar<T_result>::value
                        || !is_var<scalar_type_t<T_result>>::value>* = nullptr>
-  auto select_nonscalar_assignments(T_result&& result,
+  auto select_nonscalar_plusequals(T_result&& result,
                                     T_expression&& expression) {
     return std::make_tuple();
   }
