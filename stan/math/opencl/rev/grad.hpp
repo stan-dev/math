@@ -19,8 +19,7 @@ namespace math {
  * @param[in] x Variables being differentiated with respect to
  * @param[out] g Gradient, d/dx v, evaluated at x.
  */
-inline void grad(var& v, var_value<matrix_cl<double>>& x,
-                 Eigen::VectorXd& g) {
+inline void grad(var& v, var_value<matrix_cl<double>>& x, Eigen::VectorXd& g) {
   grad(v.vi_);
   g = from_matrix_cl<Eigen::VectorXd>(x.adj());
 }

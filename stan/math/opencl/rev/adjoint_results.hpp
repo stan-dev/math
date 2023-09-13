@@ -41,21 +41,24 @@ class adjoint_results_cl : protected results_cl<T_results...> {
     index_apply<sizeof...(T_expressions)>([&](auto... Is) {
       auto scalars = std::tuple_cat(select_scalar_assignments(
           std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
-      auto nonscalars_tmp = std::tuple_cat(select_nonscalar_assignments<assign_op_cl::plus_equals>(
-          std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
+      auto nonscalars_tmp = std::tuple_cat(
+          select_nonscalar_assignments<assign_op_cl::plus_equals>(
+              std::get<Is>(this->results_),
+              std::get<Is>(exprs.expressions_))...);
 
       index_apply<std::tuple_size<decltype(nonscalars_tmp)>::value>(
           [&](auto... Is_nonscal) {
-            auto nonscalars = std::make_tuple(std::make_pair(
-                std::get<Is_nonscal>(nonscalars_tmp).first, std::get<Is_nonscal>(nonscalars_tmp).second)...);
- 
- 
+            auto nonscalars = std::make_tuple(
+                std::make_pair(std::get<Is_nonscal>(nonscalars_tmp).first,
+                               std::get<Is_nonscal>(nonscalars_tmp).second)...);
+
             index_apply<std::tuple_size<decltype(scalars)>::value>(
                 [&](auto... Is_scal) {
                   // evaluate all expressions
                   this->assignment_impl(std::tuple_cat(
                       nonscalars,
-                      this->template make_assignment_pair<assign_op_cl::plus_equals>(
+                      this->template make_assignment_pair<
+                          assign_op_cl::plus_equals>(
                           std::get<2>(std::get<Is_scal>(scalars)),
                           sum_2d(std::get<1>(std::get<Is_scal>(scalars))))...));
 
@@ -99,11 +102,10 @@ class adjoint_results_cl : protected results_cl<T_results...> {
     return std::make_tuple();
   }
 
-
   /**
    * Selects assignments that have non-scalar var results.
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
    * @tparam T_result type of result. This overload is used for non-scalar vars.
    * @tparam T_expression type of expression
    * @param result result
@@ -121,8 +123,8 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   }
   /**
    * Selects assignments that have non-scalar var results.
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
    * @tparam T_result type of result. This overload is used for results that are
    * either scalars or not vars.
    * @tparam T_expression type of expression
@@ -130,8 +132,8 @@ class adjoint_results_cl : protected results_cl<T_results...> {
    * @param expression expression
    * @return empty tuple
    */
-  template <assign_op_cl AssignOp,
-      typename T_result, typename T_expression,
+  template <
+      assign_op_cl AssignOp, typename T_result, typename T_expression,
       std::enable_if_t<is_stan_scalar<T_result>::value
                        || !is_var<scalar_type_t<T_result>>::value>* = nullptr>
   auto select_nonscalar_assignments(T_result&& result,

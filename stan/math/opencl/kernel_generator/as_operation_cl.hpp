@@ -40,7 +40,8 @@ inline T_operation&& as_operation_cl(T_operation&& a) {
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
-template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_scalar, typename = require_arithmetic_t<T_scalar>,
+template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_scalar,
+          typename = require_arithmetic_t<T_scalar>,
           require_not_same_t<T_scalar, bool>* = nullptr>
 inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
@@ -55,13 +56,15 @@ inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
  * @return \c scalar_<char> wrapping the input
  */
 template <assign_op_cl AssignOp = assign_op_cl::equals>
-inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
+inline scalar_<char> as_operation_cl(const bool a) {
+  return scalar_<char>(a);
+}
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for \c matrix_cl. It wraps them into into \c load_.
- * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
- *  is assigned using standard or compound assign. 
+ * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object
+ *  is assigned using standard or compound assign.
  * @tparam T_matrix_cl \c matrix_cl
  * @param a \c matrix_cl
  * @return \c load_ wrapping the input
@@ -80,15 +83,16 @@ inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
  * as_operation_cl_t<T>. If the return value of \c as_operation_cl() would be a
  * rvalue reference, the reference is removed, so that a variable of this type
  * actually stores the value.
- * @tparam T a `matrix_cl` or `Scalar` type 
- * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
- *  is assigned using standard or compound assign. 
+ * @tparam T a `matrix_cl` or `Scalar` type
+ * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object
+ *  is assigned using standard or compound assign.
  */
 template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
-using as_operation_cl_t = std::conditional_t<
-    std::is_lvalue_reference<T>::value,
-    decltype(as_operation_cl<AssignOp>(std::declval<T>())),
-    std::remove_reference_t<decltype(as_operation_cl<AssignOp>(std::declval<T>()))>>;
+using as_operation_cl_t
+    = std::conditional_t<std::is_lvalue_reference<T>::value,
+                         decltype(as_operation_cl<AssignOp>(std::declval<T>())),
+                         std::remove_reference_t<decltype(
+                             as_operation_cl<AssignOp>(std::declval<T>()))>>;
 
 /** @}*/
 }  // namespace math

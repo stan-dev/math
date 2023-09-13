@@ -9,11 +9,11 @@
 #include <string>
 
 TEST(KernelGenerator, plus_equals) {
-  using stan::math::matrix_cl;
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::to_matrix_cl;
   using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::to_matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::MatrixXd A = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd B = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd C = Eigen::MatrixXd::Random(10, 10);
@@ -27,11 +27,11 @@ TEST(KernelGenerator, plus_equals) {
 }
 
 TEST(KernelGenerator, minus_equals) {
-  using stan::math::matrix_cl;
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::to_matrix_cl;
   using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::to_matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::MatrixXd A = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd B = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd C = Eigen::MatrixXd::Random(10, 10);
@@ -45,11 +45,11 @@ TEST(KernelGenerator, minus_equals) {
 }
 
 TEST(KernelGenerator, divide_equals) {
-  using stan::math::matrix_cl;
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::to_matrix_cl;
   using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::to_matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::MatrixXd A = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd B = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd C = Eigen::MatrixXd::Random(10, 10);
@@ -63,11 +63,11 @@ TEST(KernelGenerator, divide_equals) {
 }
 
 TEST(KernelGenerator, times_equals) {
-  using stan::math::matrix_cl;
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::to_matrix_cl;
   using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::to_matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
 
   Eigen::MatrixXd A = Eigen::MatrixXd::Random(10, 10);
   Eigen::MatrixXd B = Eigen::MatrixXd::Random(10, 10);
@@ -80,7 +80,5 @@ TEST(KernelGenerator, times_equals) {
   Eigen::MatrixXd C_cl_host = from_matrix_cl(C_cl);
   EXPECT_MATRIX_EQ(C_cl_host, C)
 }
-
-
 
 #endif

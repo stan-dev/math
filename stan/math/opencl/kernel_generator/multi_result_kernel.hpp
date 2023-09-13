@@ -323,16 +323,17 @@ class results_cl {
     });
   }
 
-    /**
+  /**
    * Incrementing \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
    * @tparam T_expressions types of expressions
    * @param exprs expressions
    */
-  template <assign_op_cl AssignOp = assign_op_cl::plus_equals, typename... T_expressions,
+  template <assign_op_cl AssignOp = assign_op_cl::plus_equals,
+            typename... T_expressions,
             typename = std::enable_if_t<sizeof...(T_results)
                                         == sizeof...(T_expressions)>>
   void compound_assignment_impl(const expressions_cl<T_expressions...>& exprs) {
@@ -361,7 +362,7 @@ class results_cl {
     compound_assignment_impl<assign_op_cl::plus_equals>(exprs);
   }
 
-    /**
+  /**
    * Decrement \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
@@ -375,7 +376,7 @@ class results_cl {
     compound_assignment_impl<assign_op_cl::minus_equals>(exprs);
   }
 
-    /**
+  /**
    * Elementwise divide \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
@@ -389,7 +390,7 @@ class results_cl {
     compound_assignment_impl<assign_op_cl::divide_equals>(exprs);
   }
 
-    /**
+  /**
    * Elementwise multiply \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
@@ -484,7 +485,7 @@ class results_cl {
           + parts.reduction_2d +
           "}\n";
     }
-     return src;
+    return src;
   }
 
   /**
@@ -583,38 +584,44 @@ class results_cl {
   /**
    * Makes a std::pair of one result and one expression and wraps it into a
    * tuple.
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
-   * @tparam T_result An non scalar type that is normally an `result_cl` operation holding a `matrix_cl` 
-   * @tparam T_expression An expression of set of operations on `matrix_cl` and scalar types.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
+   * @tparam T_result An non scalar type that is normally an `result_cl`
+   * operation holding a `matrix_cl`
+   * @tparam T_expression An expression of set of operations on `matrix_cl` and
+   * scalar types.
    * @param result result
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result, typename T_expression,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result,
+            typename T_expression,
             require_all_not_t<is_without_output<T_expression>,
                               conjunction<internal::is_scalar_check<T_result>,
                                           std::is_arithmetic<std::decay_t<
                                               T_expression>>>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
-    return std::make_tuple(
-        std::pair<as_operation_cl_t<T_result, AssignOp>, as_operation_cl_t<T_expression>>(
-            as_operation_cl<AssignOp>(std::forward<T_result>(result)),
-            as_operation_cl(std::forward<T_expression>(expression))));
+    return std::make_tuple(std::pair<as_operation_cl_t<T_result, AssignOp>,
+                                     as_operation_cl_t<T_expression>>(
+        as_operation_cl<AssignOp>(std::forward<T_result>(result)),
+        as_operation_cl(std::forward<T_expression>(expression))));
   }
 
   /**
    * If an expression does not need to be calculated this returns an empty tuple
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
-   * @tparam T_result An non scalar type that is normally an `result_cl` operation holding a `matrix_cl` 
-   * @tparam T_expression An expression of set of operations on `matrix_cl` and scalar types.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
+   * @tparam T_result An non scalar type that is normally an `result_cl`
+   * operation holding a `matrix_cl`
+   * @tparam T_expression An expression of set of operations on `matrix_cl` and
+   * scalar types.
    * @param result result
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result, typename T_expression,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result,
+            typename T_expression,
             require_t<is_without_output<T_expression>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
@@ -624,15 +631,16 @@ class results_cl {
   /**
    * Checks on scalars are done separately in this overload instead of in
    * kernel.
-   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
-   *  is assigned using standard or compound assign. 
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
+   * object is assigned using standard or compound assign.
    * @tparam T_check A scalar type
    * @tparam T_pass An integral type
    * @param result result - check
    * @param pass bool scalar
    * @return an empty tuple
    */
-  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_check, typename T_pass,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_check,
+            typename T_pass,
             require_t<internal::is_scalar_check<T_check>>* = nullptr,
             require_integral_t<T_pass>* = nullptr>
   static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {

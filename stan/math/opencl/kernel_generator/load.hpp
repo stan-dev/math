@@ -25,7 +25,8 @@ namespace math {
 /**
  * Represents an access to a \c matrix_cl in kernel generator expressions
  * @tparam T \c matrix_cl
- * @tparam AssignOp tells higher level operations whether the final operation should be an assignment or a type of compound assignment.
+ * @tparam AssignOp tells higher level operations whether the final operation
+ * should be an assignment or a type of compound assignment.
  */
 template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
 class load_
@@ -35,7 +36,6 @@ class load_
   T a_;
 
  public:
-
   static constexpr assign_op_cl assignment_op = AssignOp;
   using Scalar = typename std::remove_reference_t<T>::type;
   using base = operation_cl<load_<T, AssignOp>, Scalar>;
@@ -57,8 +57,12 @@ class load_
    * @return copy of \c *this
    */
   inline load_<T&, AssignOp> deep_copy() & { return load_<T&, AssignOp>(a_); }
-  inline load_<const T&, AssignOp> deep_copy() const& { return load_<const T&, AssignOp>(a_); }
-  inline load_<T, AssignOp> deep_copy() && { return load_<T, AssignOp>(std::forward<T>(a_)); }
+  inline load_<const T&, AssignOp> deep_copy() const& {
+    return load_<const T&, AssignOp>(a_);
+  }
+  inline load_<T, AssignOp> deep_copy() && {
+    return load_<T, AssignOp>(std::forward<T>(a_));
+  }
 
   /**
    * Generates kernel code for this expression.

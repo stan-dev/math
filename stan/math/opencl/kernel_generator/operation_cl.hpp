@@ -76,21 +76,21 @@ struct kernel_parts {
 };
 
 std::ostream& operator<<(std::ostream& os, kernel_parts& parts) {
-      os << "args:" << std::endl;
-      os <<                parts.args.substr(0, parts.args.size() - 2)  << std::endl;
-      os << "Decl:" << std::endl;
-           os << parts.declarations << std::endl;
-           os << "Init:" << std::endl;
-           os << parts.initialization << std::endl;
-           os << "body:" << std::endl;
-           os << parts.body << std::endl;
-           os << "body_suffix:" << std::endl;
-           os << parts.body_suffix << std::endl;
-           os << "reduction_1d:" << std::endl;
-           os << parts.reduction_1d << std::endl;
-           os << "reduction_2d:" << std::endl;
-           os << parts.reduction_2d << std::endl;
-    return os;
+  os << "args:" << std::endl;
+  os << parts.args.substr(0, parts.args.size() - 2) << std::endl;
+  os << "Decl:" << std::endl;
+  os << parts.declarations << std::endl;
+  os << "Init:" << std::endl;
+  os << parts.initialization << std::endl;
+  os << "body:" << std::endl;
+  os << parts.body << std::endl;
+  os << "body_suffix:" << std::endl;
+  os << parts.body_suffix << std::endl;
+  os << "reduction_1d:" << std::endl;
+  os << parts.reduction_1d << std::endl;
+  os << "reduction_2d:" << std::endl;
+  os << parts.reduction_2d << std::endl;
+  return os;
 }
 
 /**
