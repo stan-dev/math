@@ -179,8 +179,8 @@ TEST(OpenCLPrim, add_aliasing) {
   stan::math::matrix_d d1(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   using stan::math::matrix_cl;
-  using stan::math::var_value;
   using stan::math::var;
+  using stan::math::var_value;
   using varmat_cl = var_value<matrix_cl<double>>;
   varmat_cl d11 = stan::math::to_matrix_cl(d1);
   // Add the same matrix as the left and right hand side
