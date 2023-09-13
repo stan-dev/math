@@ -76,7 +76,6 @@ TEST(OpenCLPrim, add_rev_exceptions) {
   EXPECT_THROW(stan::math::add(md11, md22), std::invalid_argument);
 }
 
-
 TEST(OpenCLPrim, add_aliasing) {
   stan::math::matrix_d d1(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
