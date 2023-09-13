@@ -102,6 +102,8 @@ class adjoint_results_cl : protected results_cl<T_results...> {
 
   /**
    * Selects assignments that have non-scalar var results.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
    * @tparam T_result type of result. This overload is used for non-scalar vars.
    * @tparam T_expression type of expression
    * @param result result
@@ -119,6 +121,8 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   }
   /**
    * Selects assignments that have non-scalar var results.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
    * @tparam T_result type of result. This overload is used for results that are
    * either scalars or not vars.
    * @tparam T_expression type of expression

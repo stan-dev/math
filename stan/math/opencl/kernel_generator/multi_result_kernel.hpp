@@ -327,6 +327,8 @@ class results_cl {
    * Incrementing \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
    * @tparam T_expressions types of expressions
    * @param exprs expressions
    */
@@ -360,7 +362,7 @@ class results_cl {
   }
 
     /**
-   * Incrementing \c results_ object by \c expressions_cl object
+   * Decrement \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
    * @tparam T_expressions types of expressions
@@ -374,7 +376,7 @@ class results_cl {
   }
 
     /**
-   * Incrementing \c results_ object by \c expressions_cl object
+   * Elementwise divide \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
    * @tparam T_expressions types of expressions
@@ -388,7 +390,7 @@ class results_cl {
   }
 
     /**
-   * Incrementing \c results_ object by \c expressions_cl object
+   * Elementwise multiply \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
    * those expressions.
    * @tparam T_expressions types of expressions
@@ -581,6 +583,10 @@ class results_cl {
   /**
    * Makes a std::pair of one result and one expression and wraps it into a
    * tuple.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
+   * @tparam T_result An non scalar type that is normally an `result_cl` operation holding a `matrix_cl` 
+   * @tparam T_expression An expression of set of operations on `matrix_cl` and scalar types.
    * @param result result
    * @param expression expression
    * @return a tuple of pair of result and expression
@@ -600,6 +606,10 @@ class results_cl {
 
   /**
    * If an expression does not need to be calculated this returns an empty tuple
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
+   * @tparam T_result An non scalar type that is normally an `result_cl` operation holding a `matrix_cl` 
+   * @tparam T_expression An expression of set of operations on `matrix_cl` and scalar types.
    * @param result result
    * @param expression expression
    * @return a tuple of pair of result and expression
@@ -614,6 +624,10 @@ class results_cl {
   /**
    * Checks on scalars are done separately in this overload instead of in
    * kernel.
+   * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object 
+   *  is assigned using standard or compound assign. 
+   * @tparam T_check A scalar type
+   * @tparam T_pass An integral type
    * @param result result - check
    * @param pass bool scalar
    * @return an empty tuple
