@@ -27,7 +27,7 @@ namespace math {
  * @tparam T \c matrix_cl
  * @tparam AssignOp tells higher level operations whether the final operation should be an assignment or a type of compound assignment.
  */
-template <typename T, assignment_ops_cl AssignOp = assignment_ops_cl::equals>
+template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
 class load_
     : public operation_cl_lhs<load_<T, AssignOp>,
                               typename std::remove_reference_t<T>::type> {
@@ -36,7 +36,7 @@ class load_
 
  public:
 
-  static constexpr assignment_ops_cl assignment_op = AssignOp;
+  static constexpr assign_op_cl assignment_op = AssignOp;
   using Scalar = typename std::remove_reference_t<T>::type;
   using base = operation_cl<load_<T, AssignOp>, Scalar>;
   using base::var_name_;

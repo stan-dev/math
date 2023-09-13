@@ -323,6 +323,28 @@ class results_cl {
     });
   }
 
+    /**
+   * Incrementing \c results_ object by \c expressions_cl object
+   * executes the kernel that evaluates expressions and increments results by
+   * those expressions.
+   * @tparam T_expressions types of expressions
+   * @param exprs expressions
+   */
+  template <assign_op_cl AssignOp = assign_op_cl::plus_equals, typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void compound_assignment_impl(const expressions_cl<T_expressions...>& exprs) {
+    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
+      auto tmp = std::tuple_cat(make_assignment_pair<AssignOp>(
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
+      index_apply<std::tuple_size<decltype(tmp)>::value>(
+          [this, &tmp](auto... Is2) {
+            assignment_impl(std::make_tuple(std::make_pair(
+                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
+          });
+    });
+  }
+
   /**
    * Incrementing \c results_ object by \c expressions_cl object
    * executes the kernel that evaluates expressions and increments results by
@@ -334,15 +356,7 @@ class results_cl {
             typename = std::enable_if_t<sizeof...(T_results)
                                         == sizeof...(T_expressions)>>
   void operator+=(const expressions_cl<T_expressions...>& exprs) {
-    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
-      auto tmp = std::tuple_cat(make_assignment_pair<assignment_ops_cl::plus_equals>(
-          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
-      index_apply<std::tuple_size<decltype(tmp)>::value>(
-          [this, &tmp](auto... Is2) {
-            assignment_impl(std::make_tuple(std::make_pair(
-                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
-          });
-    });
+    compound_assignment_impl<assign_op_cl::plus_equals>(exprs);
   }
 
     /**
@@ -356,15 +370,35 @@ class results_cl {
             typename = std::enable_if_t<sizeof...(T_results)
                                         == sizeof...(T_expressions)>>
   void operator-=(const expressions_cl<T_expressions...>& exprs) {
-    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
-      auto tmp = std::tuple_cat(make_assignment_pair<assignment_ops_cl::minus_equals>(
-          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
-      index_apply<std::tuple_size<decltype(tmp)>::value>(
-          [this, &tmp](auto... Is2) {
-            assignment_impl(std::make_tuple(std::make_pair(
-                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
-          });
-    });
+    compound_assignment_impl<assign_op_cl::minus_equals>(exprs);
+  }
+
+    /**
+   * Incrementing \c results_ object by \c expressions_cl object
+   * executes the kernel that evaluates expressions and increments results by
+   * those expressions.
+   * @tparam T_expressions types of expressions
+   * @param exprs expressions
+   */
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void operator/=(const expressions_cl<T_expressions...>& exprs) {
+    compound_assignment_impl<assign_op_cl::divide_equals>(exprs);
+  }
+
+    /**
+   * Incrementing \c results_ object by \c expressions_cl object
+   * executes the kernel that evaluates expressions and increments results by
+   * those expressions.
+   * @tparam T_expressions types of expressions
+   * @param exprs expressions
+   */
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void operator*=(const expressions_cl<T_expressions...>& exprs) {
+    compound_assignment_impl<assign_op_cl::multiply_equals>(exprs);
   }
 
   /**
@@ -551,7 +585,7 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_result, typename T_expression,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result, typename T_expression,
             require_all_not_t<is_without_output<T_expression>,
                               conjunction<internal::is_scalar_check<T_result>,
                                           std::is_arithmetic<std::decay_t<
@@ -570,7 +604,7 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_result, typename T_expression,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_result, typename T_expression,
             require_t<is_without_output<T_expression>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
@@ -584,7 +618,7 @@ class results_cl {
    * @param pass bool scalar
    * @return an empty tuple
    */
-  template <assignment_ops_cl AssignOp = assignment_ops_cl::equals, typename T_check, typename T_pass,
+  template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_check, typename T_pass,
             require_t<internal::is_scalar_check<T_check>>* = nullptr,
             require_integral_t<T_pass>* = nullptr>
   static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {
