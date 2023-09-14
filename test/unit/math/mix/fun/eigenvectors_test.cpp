@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST_F(mathMix,  eigenvectors) {
+TEST_F(mathMix, eigenvectors) {
   auto f = [](const auto& x) {
     using stan::math::eigenvectors;
     return eigenvectors(x);
@@ -16,7 +16,7 @@ TEST_F(mathMix,  eigenvectors) {
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
 
-TEST_F(mathMix,  eigenvectorsComplex) {
+TEST_F(mathMix, eigenvectorsComplex) {
   auto f = [](const auto& x) {
     using stan::math::eigenvectors;
     return eigenvectors(stan::math::to_complex(x, 0));

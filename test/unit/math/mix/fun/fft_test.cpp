@@ -11,7 +11,7 @@ void expect_fft(const Eigen::VectorXcd& x) {
   }
 }
 
-TEST_F(mathMix,  fft) {
+TEST_F(mathMix, fft) {
   using cvec_t = Eigen::VectorXcd;
 
   cvec_t x0(0);
@@ -50,7 +50,7 @@ void expect_inv_fft(const Eigen::VectorXcd& x) {
   }
 }
 
-TEST_F(mathMix,  invFft) {
+TEST_F(mathMix, invFft) {
   using cvec_t = Eigen::VectorXcd;
 
   cvec_t x0(0);
@@ -91,7 +91,7 @@ void expect_fft2(const Eigen::MatrixXcd& x) {
   }
 }
 
-TEST_F(mathMix,  fft2) {
+TEST_F(mathMix, fft2) {
   using cmat_t = Eigen::MatrixXcd;
 
   cmat_t x00(0, 0);
@@ -138,7 +138,7 @@ void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   }
 }
 
-TEST_F(mathMix,  inv_fft2) {
+TEST_F(mathMix, inv_fft2) {
   using cmat_t = Eigen::MatrixXcd;
 
   cmat_t x00(0, 0);

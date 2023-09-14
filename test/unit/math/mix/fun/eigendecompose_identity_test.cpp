@@ -26,7 +26,7 @@ void expectEigenvectorsId() {
   }
 }
 
-TEST_F(mathMix,  eigenvectorsId) {
+TEST_F(mathMix, eigenvectorsId) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<double>;

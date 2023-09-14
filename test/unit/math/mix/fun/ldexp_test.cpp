@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/util.hpp>
 
-TEST_F(mathMix,  ldexp) {
+TEST_F(mathMix, ldexp) {
   auto f = [](const auto& x1) { return stan::math::ldexp(x1, 5); };
 
   stan::test::expect_ad(f, 3.1);
@@ -11,7 +11,7 @@ TEST_F(mathMix,  ldexp) {
   stan::test::expect_ad(f, stan::math::NOT_A_NUMBER);
 }
 
-TEST_F(mathMix,  ldexp_vec) {
+TEST_F(mathMix, ldexp_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::ldexp;
     return ldexp(x1, x2);

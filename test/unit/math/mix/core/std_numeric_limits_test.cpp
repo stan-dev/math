@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST_F(mathMix,  All_Fvar) {
+TEST_F(mathMix, All_Fvar) {
   using stan::math::fvar;
   using stan::math::INFTY;
   using stan::math::var;

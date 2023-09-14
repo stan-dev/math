@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  complexPow) {
+TEST_F(mathMix, complexPow) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::pow;
     return pow(x1, x2);
@@ -49,7 +49,7 @@ TEST_F(mathMix,  complexPow) {
   stan::test::expect_ad_vectorized_binary(tols, f, din1, din2);
 }
 
-TEST_F(mathMix,  powIntAmbiguityTest) {
+TEST_F(mathMix, powIntAmbiguityTest) {
   using stan::math::pow;  // included to check ambiguities
   using stan::math::var;
   using std::complex;
@@ -95,7 +95,7 @@ TEST_F(mathMix,  powIntAmbiguityTest) {
   e = e + 0;
 }
 
-TEST_F(mathMix,  powIntAmbiguityTestFvar) {
+TEST_F(mathMix, powIntAmbiguityTestFvar) {
   using stan::math::fvar;
   using stan::math::pow;  // included to check ambiguities
   using std::complex;

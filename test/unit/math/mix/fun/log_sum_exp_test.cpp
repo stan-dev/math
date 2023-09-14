@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  log_sum_exp_scalar) {
+TEST_F(mathMix, log_sum_exp_scalar) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_sum_exp(x1, x2);
   };
@@ -98,7 +98,7 @@ TEST_F(mathMix, log_sum_exp_matrix) {
   stan::test::expect_ad(tols, f, ststx);
 }
 
-TEST_F(mathMix,  logSumExp_vec) {
+TEST_F(mathMix, logSumExp_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_sum_exp;
     return log_sum_exp(x1, x2);

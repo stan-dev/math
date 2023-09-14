@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(mathMix,  gradRegIncGamma_typical) {
+TEST_F(mathMix, gradRegIncGamma_typical) {
   double a = 0.5;
   double b = 1.0;
   double g = 1.77245;
@@ -12,7 +12,7 @@ TEST_F(mathMix,  gradRegIncGamma_typical) {
   EXPECT_FLOAT_EQ(0.38984156, stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
 
-TEST_F(mathMix,  gradRegIncGamma_infLoopInVersion2_0_1) {
+TEST_F(mathMix, gradRegIncGamma_infLoopInVersion2_0_1) {
   double a = 8.01006;
   double b = 2.47579e+215;
   double g = 5143.28;
@@ -21,7 +21,7 @@ TEST_F(mathMix,  gradRegIncGamma_infLoopInVersion2_0_1) {
   EXPECT_FLOAT_EQ(0, stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
 
-TEST_F(mathMix,  gradRegIncGamma_largeZ) {
+TEST_F(mathMix, gradRegIncGamma_largeZ) {
   double a = 3;
   double z = 48;
   double g = 2.0;
@@ -31,7 +31,7 @@ TEST_F(mathMix,  gradRegIncGamma_largeZ) {
                   stan::math::grad_reg_inc_gamma(a, z, g, dig));
 }
 
-TEST_F(mathMix,  gradRegIncGamma_fd) {
+TEST_F(mathMix, gradRegIncGamma_fd) {
   using stan::math::fvar;
 
   fvar<double> a = 0.5;
@@ -42,7 +42,7 @@ TEST_F(mathMix,  gradRegIncGamma_fd) {
   EXPECT_FLOAT_EQ(0.38984156,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val());
 }
-TEST_F(mathMix,  gradRegIncGamma_ffd) {
+TEST_F(mathMix, gradRegIncGamma_ffd) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 0.5;
@@ -54,7 +54,7 @@ TEST_F(mathMix,  gradRegIncGamma_ffd) {
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val_);
 }
 
-TEST_F(mathMix,  gradRegIncGamma_fv) {
+TEST_F(mathMix, gradRegIncGamma_fv) {
   using stan::math::digamma;
   using stan::math::fvar;
   using stan::math::var;
@@ -68,7 +68,7 @@ TEST_F(mathMix,  gradRegIncGamma_fv) {
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val());
 }
 
-TEST_F(mathMix,  gradRegIncGamma_fv_1stderiv) {
+TEST_F(mathMix, gradRegIncGamma_fv_1stderiv) {
   using stan::math::digamma;
   using stan::math::fvar;
   using stan::math::tgamma;
@@ -89,7 +89,7 @@ TEST_F(mathMix,  gradRegIncGamma_fv_1stderiv) {
   EXPECT_NEAR(0.2134999674954450667, grad1[0], 1e-6);
 }
 
-TEST_F(mathMix,  gradRegIncGamma_fv_2ndderiv) {
+TEST_F(mathMix, gradRegIncGamma_fv_2ndderiv) {
   using stan::math::digamma;
   using stan::math::fvar;
   using stan::math::tgamma;

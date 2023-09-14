@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-TEST_F(mathMix,  polar) {
+TEST_F(mathMix, polar) {
   auto f = [](const auto& r, const auto& theta) {
     using stan::math::polar;
     auto y = polar(r, theta);

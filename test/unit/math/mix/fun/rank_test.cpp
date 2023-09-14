@@ -72,7 +72,7 @@ void test_rank_int() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-TEST_F(mathMix,  rank) {
+TEST_F(mathMix, rank) {
   using stan::math::fvar;
   using stan::math::rank;
   using stan::math::var;

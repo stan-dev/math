@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  squaredDistance_nan) {
+TEST_F(mathMix, squaredDistance_nan) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::squared_distance(x1, x2);
   };

@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  owensT) {
+TEST_F(mathMix, owensT) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::owens_t(x1, x2);
   };
@@ -16,7 +16,7 @@ TEST_F(mathMix,  owensT) {
   stan::test::expect_ad(f, nan, nan);
 }
 
-TEST_F(mathMix,  owensT_varmat) {
+TEST_F(mathMix, owensT_varmat) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::owens_t(x1, x2);
   };
@@ -31,7 +31,7 @@ TEST_F(mathMix,  owensT_varmat) {
   stan::test::expect_ad_matvar(f, scal, vec);
 }
 
-TEST_F(mathMix,  owensT_vec) {
+TEST_F(mathMix, owensT_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::owens_t;
     return owens_t(x1, x2);
@@ -44,7 +44,7 @@ TEST_F(mathMix,  owensT_vec) {
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
 
-TEST_F(mathMix,  owensT_vec_matvar) {
+TEST_F(mathMix, owensT_vec_matvar) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::owens_t;
     return owens_t(x1, x2);

@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(mathMix,  operator_multiplication_fv_vector_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_vector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -80,7 +80,7 @@ TEST_F(mathMix,  operator_multiplication_fv_vector_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_vector_scalar_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_vector_scalar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -109,7 +109,7 @@ TEST_F(mathMix,  operator_multiplication_fv_vector_scalar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -186,7 +186,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_scalar_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_scalar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -214,7 +214,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_scalar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -306,7 +306,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_scalar_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_scalar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -336,7 +336,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_scalar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_vector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -381,7 +381,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_vector_1stDeriv) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_vector_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_vector_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -413,7 +413,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_vector_rowvector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_vector_rowvector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_fv;
   using stan::math::multiply;
@@ -512,7 +512,7 @@ TEST_F(mathMix,  operator_multiplication_fv_vector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_vector_rowvector_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_vector_rowvector_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_fv;
   using stan::math::multiply;
@@ -548,7 +548,7 @@ TEST_F(mathMix,  operator_multiplication_fv_vector_rowvector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -612,7 +612,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_vector_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -651,7 +651,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_exception) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_vector_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -668,7 +668,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_vector_exception) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_matrix_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -727,7 +727,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(4, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_matrix_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -768,7 +768,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_exception) {
+TEST_F(mathMix, operator_multiplication_fv_rowvector_matrix_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -785,7 +785,7 @@ TEST_F(mathMix,  operator_multiplication_fv_rowvector_matrix_exception) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_matrix_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -855,7 +855,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(24, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_2ndDeriv) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_matrix_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -895,7 +895,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_exception) {
+TEST_F(mathMix, operator_multiplication_fv_matrix_matrix_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -911,7 +911,7 @@ TEST_F(mathMix,  operator_multiplication_fv_matrix_matrix_exception) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -989,7 +989,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_scalar_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -1018,7 +1018,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_scalar_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -1047,7 +1047,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_scalar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::var;
@@ -1081,7 +1081,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_scalar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1159,7 +1159,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_scalar_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1188,7 +1188,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_scalar_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1217,7 +1217,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_scalar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1250,7 +1250,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_scalar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1342,7 +1342,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_scalar_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1372,7 +1372,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_scalar_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1402,7 +1402,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_scalar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1437,7 +1437,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_scalar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1483,7 +1483,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_1stDeriv) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_vector_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1516,7 +1516,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_vector_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1549,7 +1549,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_vector_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
   using stan::math::row_vector_d;
@@ -1588,7 +1588,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_rowvector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_ffv;
   using stan::math::multiply;
@@ -1688,7 +1688,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_rowvector_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::matrix_ffv;
   using stan::math::multiply;
@@ -1725,7 +1725,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_rowvector_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::matrix_ffv;
   using stan::math::multiply;
@@ -1762,7 +1762,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_vector_rowvector_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_ffv;
   using stan::math::multiply;
@@ -1805,7 +1805,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_vector_rowvector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1869,7 +1869,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_vector_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1908,7 +1908,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_vector_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1947,7 +1947,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_vector_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1994,7 +1994,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_exception) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_vector_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2011,7 +2011,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_vector_exception) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_matrix_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2070,7 +2070,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(4, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_matrix_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2111,7 +2111,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_matrix_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2152,7 +2152,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_matrix_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2202,7 +2202,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_exception) {
+TEST_F(mathMix, operator_multiplication_ffv_rowvector_matrix_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2219,7 +2219,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_rowvector_matrix_exception) {
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_1stDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_matrix_1stDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2289,7 +2289,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(24, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_2ndDeriv_1) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_matrix_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2329,7 +2329,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_2ndDeriv_2) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_matrix_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2369,7 +2369,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_3rdDeriv) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_matrix_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -2421,7 +2421,7 @@ TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-TEST_F(mathMix,  operator_multiplication_ffv_matrix_matrix_exception) {
+TEST_F(mathMix, operator_multiplication_ffv_matrix_matrix_exception) {
   using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;

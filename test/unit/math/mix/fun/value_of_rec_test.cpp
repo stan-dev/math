@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix,  value_of_rec_scalar) {
+TEST_F(mathMix, value_of_rec_scalar) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;
@@ -18,7 +18,7 @@ TEST_F(mathMix,  value_of_rec_scalar) {
   EXPECT_FLOAT_EQ(5.0, value_of_rec(fffffv_a));
 }
 
-TEST_F(mathMix,  value_of_rec_vector) {
+TEST_F(mathMix, value_of_rec_vector) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;
@@ -42,7 +42,7 @@ TEST_F(mathMix,  value_of_rec_vector) {
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i]);
 }
 
-TEST_F(mathMix,  value_of_rec_reps) {
+TEST_F(mathMix, value_of_rec_reps) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;

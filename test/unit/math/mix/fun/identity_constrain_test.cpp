@@ -29,7 +29,7 @@ void expect_identity_constrain(double x) {
   stan::test::expect_ad(f3, x);
 }
 
-TEST_F(mathMix,  identityConstrain) {
+TEST_F(mathMix, identityConstrain) {
   expect_identity_constrain(-1);
   expect_identity_constrain(2.1);
 }

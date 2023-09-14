@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  logSumExp_signed) {
+TEST_F(mathMix, logSumExp_signed) {
   auto f = [](const int x1_sign, const int x2_sign) {
     return [=](const auto& x1, const auto& x2) {
       stan::return_type_t<decltype(x1), decltype(x2)> ret_val;

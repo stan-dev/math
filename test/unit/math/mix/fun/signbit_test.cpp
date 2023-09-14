@@ -22,7 +22,7 @@ void expect_signbit() {
   EXPECT_TRUE(signbit(T(-1.0)));
 }
 
-TEST_F(mathMix,  signbit) {
+TEST_F(mathMix, signbit) {
   using stan::math::fvar;
   using stan::math::var;
   expect_signbit<double>();

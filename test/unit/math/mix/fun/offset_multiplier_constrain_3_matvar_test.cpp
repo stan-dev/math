@@ -4,8 +4,7 @@
 
 // array[] matrix, matrix, array[] matrix
 // array[] matrix, matrix, matrix
-TEST_F(mathMix,
-     offset_multiplier_matvar_stdvec_mu_mat_sigma_vec_constrain) {
+TEST_F(mathMix, offset_multiplier_matvar_stdvec_mu_mat_sigma_vec_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);
@@ -23,8 +22,7 @@ TEST_F(mathMix,
 
 // array[] matrix, array[] matrix, array[] matrix
 // array[] matrix, array[] matrix, matrix
-TEST_F(mathMix,
-     offset_multiplier_matvar_stdvec_mu_vec_sigma_mat_constrain) {
+TEST_F(mathMix, offset_multiplier_matvar_stdvec_mu_vec_sigma_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);

@@ -20,7 +20,7 @@ void expect_isfinite() {
   EXPECT_TRUE(isfinite(T(-1.0)));
 }
 
-TEST_F(mathMix,  isfinite) {
+TEST_F(mathMix, isfinite) {
   using stan::math::fvar;
   using stan::math::var;
   expect_isfinite<double>();

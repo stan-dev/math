@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  lmultiply) {
+TEST_F(mathMix, lmultiply) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::lmultiply(x1, x2);
   };

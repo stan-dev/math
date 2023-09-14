@@ -18,7 +18,7 @@ TEST_F(mathMix, atan2_nan) {
   stan::test::expect_ad(f, 0.5, 2.3);
 }
 
-TEST_F(mathMix,  atan2) {
+TEST_F(mathMix, atan2) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::atan2;
     return atan2(x1, x2);
@@ -40,7 +40,7 @@ TEST_F(mathMix,  atan2) {
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
 
-TEST_F(mathMix,  atan2_varmat) {
+TEST_F(mathMix, atan2_varmat) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::atan2;
     return atan2(x1, x2);

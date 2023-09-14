@@ -21,7 +21,7 @@ void expect_isnan() {
   EXPECT_FALSE(isnan(T(-1.0)));
 }
 
-TEST_F(mathMix,  isnan) {
+TEST_F(mathMix, isnan) {
   expect_isnan<d_t>();
   expect_isnan<v_t>();
   expect_isnan<fd_t>();

@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  logInvLogitDiff) {
+TEST_F(mathMix, logInvLogitDiff) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_inv_logit_diff(x1, x2);
   };
@@ -17,7 +17,7 @@ TEST_F(mathMix,  logInvLogitDiff) {
   stan::test::expect_ad(f, nan, nan);
 }
 
-TEST_F(mathMix,  logInvLogitDiff_vec) {
+TEST_F(mathMix, logInvLogitDiff_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_inv_logit_diff;
     return log_inv_logit_diff(x1, x2);

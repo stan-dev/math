@@ -129,7 +129,7 @@ TEST_F(mathMix, multiply) {
   // can't compile mismatched dimensions, so no tests
 }
 
-TEST_F(mathMix,  multiplicationPatterns1) {
+TEST_F(mathMix, multiplicationPatterns1) {
   using stan::math::fvar;
   using stan::math::var;
   instantiate_multiply<double>();

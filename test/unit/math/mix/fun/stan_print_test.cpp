@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-TEST_F(mathMix,  print_fvar_var) {
+TEST_F(mathMix, print_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -50,7 +50,7 @@ TEST_F(mathMix,  print_fvar_var) {
   EXPECT_EQ("[[1,1],[1,1]]", output.str());
 }
 
-TEST_F(mathMix,  print_fvar_fvar_var) {
+TEST_F(mathMix, print_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

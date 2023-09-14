@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  step) {
+TEST_F(mathMix, step) {
   auto f = [](const auto& x) { return stan::math::step(x); };
 
   stan::test::expect_common_prim([](auto x) { return x < 0.0 ? 0 : 1; }, f);

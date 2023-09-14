@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/util.hpp>
 
-TEST_F(mathMix,  beta) {
+TEST_F(mathMix, beta) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::beta;
     return beta(x1, x2);
@@ -21,7 +21,7 @@ TEST_F(mathMix,  beta) {
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
 
-TEST_F(mathMix,  beta_varmat) {
+TEST_F(mathMix, beta_varmat) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::beta;
     return beta(x1, x2);

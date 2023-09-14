@@ -3,7 +3,7 @@
 #include <complex>
 #include <vector>
 
-TEST_F(mathMix,  arg) {
+TEST_F(mathMix, arg) {
   auto f = [](const auto& x) { return arg(x); };
 
   // undefined with 0 in denominator

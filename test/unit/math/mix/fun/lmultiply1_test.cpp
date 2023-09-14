@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  lmultiply1) {
+TEST_F(mathMix, lmultiply1) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::lmultiply(x1, x2);
   };

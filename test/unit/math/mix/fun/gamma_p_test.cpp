@@ -4,7 +4,7 @@
 #include <stan/math/mix.hpp>
 #include <vector>
 
-TEST_F(mathMix,  gammaP) {
+TEST_F(mathMix, gammaP) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::gamma_p(x1, x2);
   };
@@ -42,7 +42,7 @@ TEST_F(mathMix,  gammaP) {
 }
 
 // separate tests when a is positive_infinity
-TEST_F(mathMix,  gammaP_pos_inf) {
+TEST_F(mathMix, gammaP_pos_inf) {
   auto g = [](const auto& x) { return stan::math::gamma_p(x(0), x(1)); };
   stan::math::vector_d x(2);
   x << 0.5001, stan::math::positive_infinity();
@@ -94,7 +94,7 @@ TEST_F(mathMix,  gammaP_pos_inf) {
   }
 }
 
-TEST_F(mathMix,  gammaP_vec) {
+TEST_F(mathMix, gammaP_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::gamma_p;
     return gamma_p(x1, x2);

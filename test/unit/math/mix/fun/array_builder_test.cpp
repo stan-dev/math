@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix,  array_builder_fvar_var) {
+TEST_F(mathMix, array_builder_fvar_var) {
   using stan::math::array_builder;
   using stan::math::fvar;
   using stan::math::var;
@@ -56,7 +56,7 @@ TEST_F(mathMix,  array_builder_fvar_var) {
   EXPECT_EQ(4, xx[2][1].d_.val());
 }
 
-TEST_F(mathMix,  array_builder_fvar_fvar_var) {
+TEST_F(mathMix, array_builder_fvar_fvar_var) {
   using stan::math::array_builder;
   using stan::math::fvar;
   using stan::math::var;

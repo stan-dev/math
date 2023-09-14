@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  lmultiply3_vec) {
+TEST_F(mathMix, lmultiply3_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::lmultiply;
     return lmultiply(x1, x2);

@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  fmod) {
+TEST_F(mathMix, fmod) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::fmod;
     return fmod(x1, x2);
@@ -22,7 +22,7 @@ TEST_F(mathMix,  fmod) {
   stan::test::expect_value(f, 2.0, 2.0);
 }
 
-TEST_F(mathMix,  fmod_vec) {
+TEST_F(mathMix, fmod_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::fmod;
     return fmod(x1, x2);

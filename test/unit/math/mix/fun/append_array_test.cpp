@@ -293,7 +293,7 @@ void check() {
   }
 }
 
-TEST_F(mathMix,  append_array_prim) {
+TEST_F(mathMix, append_array_prim) {
   check<int, int, int>();
   check<double, double, double>();
   check<double, int, double>();
@@ -303,7 +303,7 @@ TEST_F(mathMix,  append_array_prim) {
   check<M, M, M>();
 }
 
-TEST_F(mathMix,  append_array_rev) {
+TEST_F(mathMix, append_array_rev) {
   check<int, var, var>();
   check<var, int, var>();
   check<double, var, var>();
@@ -320,7 +320,7 @@ TEST_F(mathMix,  append_array_rev) {
   check<Mv, Mv, Mv>();
 }
 
-TEST_F(mathMix,  append_array_fwd) {
+TEST_F(mathMix, append_array_fwd) {
   check<int, fd, fd>();
   check<fd, int, fd>();
   check<double, fd, fd>();
@@ -352,7 +352,7 @@ TEST_F(mathMix,  append_array_fwd) {
   check<Mffd, Mffd, Mffd>();
 }
 
-TEST_F(mathMix,  append_array_mix) {
+TEST_F(mathMix, append_array_mix) {
   check<int, fv, fv>();
   check<fv, int, fv>();
   check<double, fv, fv>();

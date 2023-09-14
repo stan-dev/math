@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  fallingFactorial) {
+TEST_F(mathMix, fallingFactorial) {
   auto f = [](const int x2) {
     return
         [=](const auto& x1) { return stan::math::falling_factorial(x1, x2); };
@@ -22,7 +22,7 @@ TEST_F(mathMix,  fallingFactorial) {
   stan::test::expect_ad(f(2), std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST_F(mathMix,  fallingFactorial_vec) {
+TEST_F(mathMix, fallingFactorial_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::falling_factorial;
     return falling_factorial(x1, x2);
@@ -38,7 +38,7 @@ TEST_F(mathMix,  fallingFactorial_vec) {
   stan::test::expect_ad_vectorized_binary(f, mat_in1, std_std_in2);
 }
 
-TEST_F(mathMix,  fallingFactorial_matvar) {
+TEST_F(mathMix, fallingFactorial_matvar) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::falling_factorial;
     return falling_factorial(x1, x2);

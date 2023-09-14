@@ -33,7 +33,7 @@ void expectComplexEigenvectorsId() {
   expect_identity_matrix_complex(I2);
 }
 
-TEST_F(mathMix,  eigenvectorsIdComplex) {
+TEST_F(mathMix, eigenvectorsIdComplex) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<double>;

@@ -70,16 +70,18 @@ void test_all_comparisons() {
       [](const auto& a, const auto& b) { return a != b; });
 }
 
-TEST_F(mathMix,  eigen_comparisons_var) { test_all_comparisons<stan::math::var>(); }
+TEST_F(mathMix, eigen_comparisons_var) {
+  test_all_comparisons<stan::math::var>();
+}
 
-TEST_F(mathMix,  eigen_comparisons_fvar) {
+TEST_F(mathMix, eigen_comparisons_fvar) {
   test_all_comparisons<stan::math::fvar<double>>();
 }
 
-TEST_F(mathMix,  eigen_comparisons_fvar_var) {
+TEST_F(mathMix, eigen_comparisons_fvar_var) {
   test_all_comparisons<stan::math::fvar<stan::math::var>>();
 }
 
-TEST_F(mathMix,  eigen_comparisons_fvar_fvar) {
+TEST_F(mathMix, eigen_comparisons_fvar_fvar) {
   test_all_comparisons<stan::math::fvar<stan::math::fvar<double>>>();
 }

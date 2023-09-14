@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  fv_gp_periodic_cov1) {
+TEST_F(mathMix, fv_gp_periodic_cov1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -108,7 +108,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1) {
   EXPECT_NO_THROW(gp_periodic_cov(x_rvec_fv, sigma_d, l_d, p_d));
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1) {
+TEST_F(mathMix, ffv_gp_periodic_cov1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -212,7 +212,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov1) {
   EXPECT_NO_THROW(gp_periodic_cov(x_rvec_ffv, sigma_d, l_d, p_d));
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2) {
+TEST_F(mathMix, fv_gp_periodic_cov2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -365,7 +365,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2) {
   EXPECT_NO_THROW(gp_periodic_cov(x_rvec_fv, x2_rvec_fv, sigma_d, l_d, p_d));
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov2) {
+TEST_F(mathMix, ffv_gp_periodic_cov2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -518,7 +518,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov2) {
   EXPECT_NO_THROW(gp_periodic_cov(x_rvec_ffv, x2_rvec_ffv, sigma_d, l_d, p_d));
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_vec_invalid_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -836,7 +836,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_vec_nan_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -1153,7 +1153,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_vec_invalid_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_eigen_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -1467,7 +1467,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_vec_nan_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_eigen_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -1781,7 +1781,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_rvec_invalid_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_eigen_rvec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -2095,7 +2095,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_rvec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_rvec_nan_values) {
+TEST_F(mathMix, fv_gp_periodic_cov1_eigen_rvec_nan_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -2409,7 +2409,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov1_eigen_rvec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_vec_invalid_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_vec_invalid_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -3172,7 +3172,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_vec_invalid_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_vec_invalid_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_vec_invalid_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -3831,7 +3831,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_vec_invalid_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_vec_nan_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_vec_nan_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -4594,7 +4594,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_vec_nan_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_vec_nan_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_vec_nan_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -5253,7 +5253,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_vec_nan_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -6000,7 +6000,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -6643,7 +6643,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -7390,7 +7390,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -8033,7 +8033,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -8780,7 +8780,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -9423,7 +9423,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -10170,7 +10170,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
+TEST_F(mathMix, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -10813,7 +10813,7 @@ TEST_F(mathMix,  fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
       std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1_vec_invalid_values) {
+TEST_F(mathMix, ffv_gp_periodic_cov1_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -11131,7 +11131,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov1_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1_vec_nan_values) {
+TEST_F(mathMix, ffv_gp_periodic_cov1_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -11448,7 +11448,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov1_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1_eigen_vec_invalid_values) {
+TEST_F(mathMix, ffv_gp_periodic_cov1_eigen_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -11762,7 +11762,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov1_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1_eigen_vec_nan_values) {
+TEST_F(mathMix, ffv_gp_periodic_cov1_eigen_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;
@@ -12076,7 +12076,7 @@ TEST_F(mathMix,  ffv_gp_periodic_cov1_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_gp_periodic_cov1_eigen_rvec_invalid_values) {
+TEST_F(mathMix, ffv_gp_periodic_cov1_eigen_rvec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
   using stan::math::var;

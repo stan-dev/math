@@ -23,7 +23,7 @@ void expect_arith_instantiate() {
 }
 
 // this one's been tricky to instantiate, so test all instances
-TEST_F(mathMix,  powInstantiations) {
+TEST_F(mathMix, powInstantiations) {
   using stan::math::fvar;
   using stan::math::var;
   expect_arith_instantiate<double>();
@@ -34,7 +34,7 @@ TEST_F(mathMix,  powInstantiations) {
   expect_arith_instantiate<fvar<fvar<var>>>();
 }
 
-TEST_F(mathMix,  pow) {
+TEST_F(mathMix, pow) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::pow;
     return pow(x1, x2);

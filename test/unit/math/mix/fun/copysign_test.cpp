@@ -72,7 +72,7 @@ void expect_copysign() {
   }
 }
 
-TEST_F(mathMix,  copysign) {
+TEST_F(mathMix, copysign) {
   using stan::math::fvar;
   using stan::math::var;
   expect_copysign<double>();

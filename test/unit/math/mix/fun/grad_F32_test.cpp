@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(mathMix,  gradF32_fd1) {
+TEST_F(mathMix, gradF32_fd1) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -33,7 +33,7 @@ TEST_F(mathMix,  gradF32_fd1) {
               g[0].d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fd2) {
+TEST_F(mathMix, gradF32_fd2) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -63,7 +63,7 @@ TEST_F(mathMix,  gradF32_fd2) {
               g[1].d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fd3) {
+TEST_F(mathMix, gradF32_fd3) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -91,7 +91,7 @@ TEST_F(mathMix,  gradF32_fd3) {
 
   EXPECT_NEAR(0.90986472078762437, g[2].d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_fd4) {
+TEST_F(mathMix, gradF32_fd4) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -120,7 +120,7 @@ TEST_F(mathMix,  gradF32_fd4) {
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               g[3].d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_fd5) {
+TEST_F(mathMix, gradF32_fd5) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -149,7 +149,7 @@ TEST_F(mathMix,  gradF32_fd5) {
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               g[4].d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_fd6) {
+TEST_F(mathMix, gradF32_fd6) {
   using stan::math::fvar;
 
   fvar<double> a = 1.0;
@@ -179,7 +179,7 @@ TEST_F(mathMix,  gradF32_fd6) {
               g[5].d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_2ndderiv1) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv1) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -209,7 +209,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv1) {
               g[0].d_.val_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_2ndderiv2) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv2) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -239,7 +239,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv2) {
               g[1].d_.val_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_2ndderiv3) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv3) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -267,7 +267,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv3) {
 
   EXPECT_NEAR(0.90986472078762437, g[2].d_.val_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_2ndderiv4) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv4) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -296,7 +296,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv4) {
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               g[3].d_.val_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_2ndderiv5) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv5) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -325,7 +325,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv5) {
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               g[4].d_.val_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_2ndderiv6) {
+TEST_F(mathMix, gradF32_ffd_2ndderiv6) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -355,7 +355,7 @@ TEST_F(mathMix,  gradF32_ffd_2ndderiv6) {
               g[5].d_.val_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_3rdderiv1) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv1) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -385,7 +385,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv1) {
   EXPECT_NEAR(65.599396543196708101135082478886528455, g[0].d_.d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_3rdderiv2) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv2) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -415,7 +415,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv2) {
   EXPECT_NEAR(0.074524365399251673905543999863038234, g[1].d_.d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_ffd_3rdderiv3) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv3) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -444,7 +444,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv3) {
 
   EXPECT_NEAR(-0.4025421605307411, g[2].d_.d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_3rdderiv4) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv4) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -473,7 +473,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv4) {
 
   EXPECT_NEAR(-0.505769456958641747831864908555691738, g[3].d_.d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_3rdderiv5) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv5) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -502,7 +502,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv5) {
 
   EXPECT_NEAR(0.143334459434983770772868891143925349, g[4].d_.d_, 1e-5);
 }
-TEST_F(mathMix,  gradF32_ffd_3rdderiv6) {
+TEST_F(mathMix, gradF32_ffd_3rdderiv6) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 1.0;
@@ -532,7 +532,7 @@ TEST_F(mathMix,  gradF32_ffd_3rdderiv6) {
   EXPECT_NEAR(3464.701930495754952696665090654133564817, g[5].d_.d_, 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_1stderiv1) {
+TEST_F(mathMix, gradF32_fv_1stderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -569,7 +569,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv1) {
               grad1[0], 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_1stderiv2) {
+TEST_F(mathMix, gradF32_fv_1stderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -606,7 +606,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv2) {
               grad1[0], 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_1stderiv3) {
+TEST_F(mathMix, gradF32_fv_1stderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -640,7 +640,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv3) {
   g[2].val_.grad(y1, grad1);
   EXPECT_NEAR(0.90986472078762437, grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_1stderiv4) {
+TEST_F(mathMix, gradF32_fv_1stderiv4) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -676,7 +676,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv4) {
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_1stderiv5) {
+TEST_F(mathMix, gradF32_fv_1stderiv5) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -712,7 +712,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv5) {
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_1stderiv6) {
+TEST_F(mathMix, gradF32_fv_1stderiv6) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -749,7 +749,7 @@ TEST_F(mathMix,  gradF32_fv_1stderiv6) {
               grad1[0], 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_2ndderiv1) {
+TEST_F(mathMix, gradF32_fv_2ndderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -785,7 +785,7 @@ TEST_F(mathMix,  gradF32_fv_2ndderiv1) {
   EXPECT_NEAR(65.599396543196708101135082478886528455, grad1[0], 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_2ndderiv2) {
+TEST_F(mathMix, gradF32_fv_2ndderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -821,7 +821,7 @@ TEST_F(mathMix,  gradF32_fv_2ndderiv2) {
   EXPECT_NEAR(0.074524365399251673905543999863038234, grad1[0], 1e-5);
 }
 
-TEST_F(mathMix,  gradF32_fv_2ndderiv3) {
+TEST_F(mathMix, gradF32_fv_2ndderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -855,7 +855,7 @@ TEST_F(mathMix,  gradF32_fv_2ndderiv3) {
   g[2].d_.grad(y1, grad1);
   EXPECT_NEAR(-0.4025421605307411, grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_2ndderiv4) {
+TEST_F(mathMix, gradF32_fv_2ndderiv4) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -890,7 +890,7 @@ TEST_F(mathMix,  gradF32_fv_2ndderiv4) {
   g[3].d_.grad(y1, grad1);
   EXPECT_NEAR(-0.505769456958641747831864908555691738, grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_2ndderiv5) {
+TEST_F(mathMix, gradF32_fv_2ndderiv5) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -925,7 +925,7 @@ TEST_F(mathMix,  gradF32_fv_2ndderiv5) {
   g[4].d_.grad(y1, grad1);
   EXPECT_NEAR(0.143334459434983770772868891143925349, grad1[0], 1e-5);
 }
-TEST_F(mathMix,  gradF32_fv_2ndderiv6) {
+TEST_F(mathMix, gradF32_fv_2ndderiv6) {
   using stan::math::fvar;
   using stan::math::var;
 

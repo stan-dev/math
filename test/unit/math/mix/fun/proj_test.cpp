@@ -3,7 +3,7 @@
 #include <complex>
 #include <vector>
 
-TEST_F(mathMix,  proj) {
+TEST_F(mathMix, proj) {
   auto f = [](const auto& x) { return proj(x); };
   stan::test::expect_complex_common(f);
 }

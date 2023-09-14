@@ -66,12 +66,12 @@ void expect_vec(const T1& x, const T2& lb) {
 }  // namespace lb_constrain_test
 
 // real, real
-TEST_F(mathMix,  lbConstrain) {
+TEST_F(mathMix, lbConstrain) {
   lb_constrain_test::expect(-1, 2);
   lb_constrain_test::expect(2, 4);
 }
 
-TEST_F(mathMix,  lbConstrain_neg_inf) {
+TEST_F(mathMix, lbConstrain_neg_inf) {
   lb_constrain_test::expect(-1, stan::math::NEGATIVE_INFTY);
   lb_constrain_test::expect(2, stan::math::NEGATIVE_INFTY);
 }

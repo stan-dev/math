@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix,  value_of_fvar) {
+TEST_F(mathMix, value_of_fvar) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;
@@ -27,7 +27,7 @@ TEST_F(mathMix,  value_of_fvar) {
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i].val_.val());
 }
 
-TEST_F(mathMix,  value_of_vector) {
+TEST_F(mathMix, value_of_vector) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;

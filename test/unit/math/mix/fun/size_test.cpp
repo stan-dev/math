@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix,  size_fvar_var) {
+TEST_F(mathMix, size_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -42,7 +42,7 @@ TEST_F(mathMix,  size_fvar_var) {
   EXPECT_EQ(14, stan::math::size(g));
 }
 
-TEST_F(mathMix,  size_fvar_fvar_var) {
+TEST_F(mathMix, size_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

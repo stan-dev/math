@@ -21,7 +21,7 @@ void expect_isinf() {
   EXPECT_FALSE(isinf(T(-1.0)));
 }
 
-TEST_F(mathMix,  isinf) {
+TEST_F(mathMix, isinf) {
   expect_isinf<d_t>();
   expect_isinf<v_t>();
   expect_isinf<fd_t>();

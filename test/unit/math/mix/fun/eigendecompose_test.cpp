@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST_F(mathMix,  eigendecompose) {
+TEST_F(mathMix, eigendecompose) {
   auto f = [](const auto& x) {
     using stan::math::eigendecompose;
     return std::get<0>(eigendecompose(x));
@@ -22,7 +22,7 @@ TEST_F(mathMix,  eigendecompose) {
   EXPECT_THROW(g(a32), std::invalid_argument);
 }
 
-TEST_F(mathMix,  eigendecomposeComplex) {
+TEST_F(mathMix, eigendecomposeComplex) {
   auto f = [](const auto& x) {
     using stan::math::eigendecompose;
     return std::get<0>(eigendecompose(stan::math::to_complex(x, 0)));

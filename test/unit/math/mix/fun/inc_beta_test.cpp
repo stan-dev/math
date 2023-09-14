@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  inc_beta) {
+TEST_F(mathMix, inc_beta) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inc_beta(x1, x2, x3);
   };
@@ -29,7 +29,7 @@ TEST_F(mathMix,  inc_beta) {
   stan::test::expect_ad(f, nan, nan, nan);
 }
 
-TEST_F(mathMix,  inc_beta_vec) {
+TEST_F(mathMix, inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inc_beta(x1, x2, x3);
   };

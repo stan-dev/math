@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  fma_matrix) {
+TEST_F(mathMix, fma_matrix) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     auto ret = stan::math::fma(x1, x2, x3).eval();
     using ret_t = stan::plain_type_t<std::decay_t<decltype(ret)>>;

@@ -195,7 +195,7 @@ void test_sort_indices_desc4(Eigen::Matrix<T, R, C> val) {
         EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
 
-TEST_F(mathMix,  var) {
+TEST_F(mathMix, var) {
   std::vector<double> a;
   a.push_back(1);
   a.push_back(2);
@@ -251,7 +251,7 @@ TEST_F(mathMix,  var) {
   test_sort_indices_desc2(vec6);
 }
 
-TEST_F(mathMix,  fv_no_thrown) {
+TEST_F(mathMix, fv_no_thrown) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -267,7 +267,7 @@ TEST_F(mathMix,  fv_no_thrown) {
   EXPECT_NO_THROW(sort_indices_desc(vec2));
 }
 
-TEST_F(mathMix,  ffv_sort) {
+TEST_F(mathMix, ffv_sort) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -327,7 +327,7 @@ TEST_F(mathMix,  ffv_sort) {
   test_sort_indices_desc4(vec6);
 }
 
-TEST_F(mathMix,  ffv_no_thrown) {
+TEST_F(mathMix, ffv_no_thrown) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;

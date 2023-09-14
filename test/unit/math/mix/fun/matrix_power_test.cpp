@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST_F(mathMix,  ad_tests) {
+TEST_F(mathMix, ad_tests) {
   using Eigen::MatrixXd;
   using stan::math::matrix_power;
   using stan::test::expect_ad;

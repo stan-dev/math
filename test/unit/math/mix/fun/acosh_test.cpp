@@ -39,4 +39,3 @@ TEST_F(mathMix, acosh_varmat) {
   }
   expect_ad_vector_matvar(f, A);
 }
-

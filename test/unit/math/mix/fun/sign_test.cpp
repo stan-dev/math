@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  sign) {
+TEST_F(mathMix, sign) {
   auto f = [](const auto& x) { return stan::math::sign(x); };
 
   stan::test::expect_ad(f, -13.2);

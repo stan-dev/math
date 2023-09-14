@@ -63,12 +63,12 @@ void expect_vec(const T1& x, const T2& ub) {
 }  // namespace ub_constrain_test
 
 // real, real
-TEST_F(mathMix,  ubConstrain) {
+TEST_F(mathMix, ubConstrain) {
   ub_constrain_test::expect(-1, 2);
   ub_constrain_test::expect(2, 4);
 }
 
-TEST_F(mathMix,  ubConstrain_inf) {
+TEST_F(mathMix, ubConstrain_inf) {
   ub_constrain_test::expect(-1, stan::math::INFTY);
   ub_constrain_test::expect(2, stan::math::INFTY);
 }

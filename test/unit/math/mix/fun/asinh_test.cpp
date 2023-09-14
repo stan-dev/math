@@ -3,7 +3,7 @@
 #include <complex>
 #include <vector>
 
-TEST_F(mathMix,  asinh) {
+TEST_F(mathMix, asinh) {
   auto f = [](const auto& x1) {
     using stan::math::asinh;
     return asinh(x1);

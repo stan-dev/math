@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix,  matrix_fv) {
+TEST_F(mathMix, matrix_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
@@ -60,7 +60,7 @@ TEST_F(mathMix,  matrix_fv) {
   EXPECT_EQ(8, dims8[2]);
 }
 
-TEST_F(mathMix,  matrix_ffv) {
+TEST_F(mathMix, matrix_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;

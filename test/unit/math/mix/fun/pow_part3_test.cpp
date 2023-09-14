@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  pow_varmat) {
+TEST_F(mathMix, pow_varmat) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::pow;
     using std::pow;

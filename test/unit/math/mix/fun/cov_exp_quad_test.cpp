@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(mathMix,  fv_cov_exp_quad1) {
+TEST_F(mathMix, fv_cov_exp_quad1) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -82,7 +82,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1) {
   EXPECT_NO_THROW(cov_exp_quad(x_rvec_fv, sigma_d, l_d));
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1) {
+TEST_F(mathMix, ffv_cov_exp_quad1) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -160,7 +160,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1) {
   EXPECT_NO_THROW(cov_exp_quad(x_rvec_ffv, sigma_d, l_d));
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2) {
+TEST_F(mathMix, fv_cov_exp_quad2) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -268,7 +268,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2) {
   EXPECT_NO_THROW(cov_exp_quad(x_rvec_fv, x2_rvec_fv, sigma_d, l_d));
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2) {
+TEST_F(mathMix, ffv_cov_exp_quad2) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -376,7 +376,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2) {
   EXPECT_NO_THROW(cov_exp_quad(x_rvec_ffv, x2_rvec_ffv, sigma_d, l_d));
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_vec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -487,7 +487,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_vec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -597,7 +597,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_eigen_vec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -718,7 +718,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_eigen_vec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_eigen_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -839,7 +839,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_eigen_rvec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -960,7 +960,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_eigen_rvec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad1_eigen_rvec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -1081,7 +1081,7 @@ TEST_F(mathMix,  fv_cov_exp_quad1_eigen_rvec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_vec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -1549,7 +1549,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_vec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -2017,7 +2017,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -2469,7 +2469,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -2921,7 +2921,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_invalid_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_rvec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -3373,7 +3373,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_nan_values) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_rvec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -3825,7 +3825,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_vec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -3936,7 +3936,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_vec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4046,7 +4046,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_vec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4167,7 +4167,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_vec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4288,7 +4288,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4409,7 +4409,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_rvec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4530,7 +4530,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad1_eigen_rvec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_vec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -4998,7 +4998,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_vec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -5466,7 +5466,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_vec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -5918,7 +5918,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_vec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -6370,7 +6370,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -6822,7 +6822,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_rvec_nan_values) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_rvec_nan_values) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -7274,7 +7274,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_rvec_nan_values) {
                std::domain_error);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_dim_error) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_vec_dim_error) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -7331,7 +7331,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_vec_dim_error) {
                std::invalid_argument);
 }
 
-TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_dim_error) {
+TEST_F(mathMix, fv_cov_exp_quad2_eigen_rvec_dim_error) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -7388,7 +7388,7 @@ TEST_F(mathMix,  fv_cov_exp_quad2_eigen_rvec_dim_error) {
                std::invalid_argument);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_dim_error) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_vec_dim_error) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;
@@ -7445,7 +7445,7 @@ TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_vec_dim_error) {
                std::invalid_argument);
 }
 
-TEST_F(mathMix,  ffv_cov_exp_quad2_eigen_rvec_dim_error) {
+TEST_F(mathMix, ffv_cov_exp_quad2_eigen_rvec_dim_error) {
   using stan::math::cov_exp_quad;
   using stan::math::fvar;
   using stan::math::var;

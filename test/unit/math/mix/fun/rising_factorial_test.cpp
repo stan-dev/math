@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix,  risingFactorial) {
+TEST_F(mathMix, risingFactorial) {
   auto f = [](const int x2) {
     return [=](const auto& x1) { return stan::math::rising_factorial(x1, x2); };
   };
@@ -23,7 +23,7 @@ TEST_F(mathMix,  risingFactorial) {
   stan::test::expect_ad(f(2), std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST_F(mathMix,  risingFactorial_vec) {
+TEST_F(mathMix, risingFactorial_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::rising_factorial;
     return rising_factorial(x1, x2);
