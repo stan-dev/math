@@ -61,7 +61,7 @@ struct kernel_parts {
             args + other.args};
   }
 
-  kernel_parts operator+=(const kernel_parts& other) {
+  kernel_parts& operator+=(const kernel_parts& other) {
     includes += other.includes;
     declarations += other.declarations;
     initialization += other.initialization;
@@ -75,7 +75,7 @@ struct kernel_parts {
   }
 };
 
-std::ostream& operator<<(std::ostream& os, kernel_parts& parts) {
+inline std::ostream& operator<<(std::ostream& os, kernel_parts& parts) {
   os << "args:" << std::endl;
   os << parts.args.substr(0, parts.args.size() - 2) << std::endl;
   os << "Decl:" << std::endl;
