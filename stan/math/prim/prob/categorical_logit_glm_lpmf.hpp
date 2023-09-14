@@ -29,8 +29,8 @@ namespace math {
  * @tparam T_alpha type of the intercept vector
  * @tparam T_beta type of the matrix of weights
  * @param y a scalar or vector of classes. If it is a scalar it will be
- * broadcast - used for all instances. Values should be between 1 and number of
- * classes, including endpoints.
+ * broadcast - used for all instances. Values should be between 1 and number
+ * of classes, including endpoints.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept vector (in log odds)
@@ -148,8 +148,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
-      // TODO(Tadej) maybe we can replace previous block with the following line
-      // when we have newer Eigen  partials<0>(ops_partials) = beta_val(y
+      // TODO(Tadej) maybe we can replace previous block with the following
+      // line when we have newer Eigen  partials<0>(ops_partials) = beta_val(y
       // - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
       // inv_sum_exp_lin;
     }
@@ -183,8 +183,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
           beta_derivative.col(y_seq[i] - 1) += x_val.row(i);
         }
       }
-      // TODO(Tadej) maybe we can replace previous loop with the following line
-      // when we have newer Eigen  partials<2>(ops_partials)(Eigen::all, y
+      // TODO(Tadej) maybe we can replace previous loop with the following
+      // line when we have newer Eigen  partials<2>(ops_partials)(Eigen::all,
+      // y
       // - 1) += x_val.colwise.sum().transpose();
 
       partials<2>(ops_partials) = std::move(beta_derivative);

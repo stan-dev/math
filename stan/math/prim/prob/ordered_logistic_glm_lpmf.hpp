@@ -20,9 +20,9 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * Returns the log PMF of the ordinal regression Generalized Linear Model (GLM).
- * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
- * cuts).
+ * Returns the log PMF of the ordinal regression Generalized Linear Model
+ * (GLM). This is equivalent to and faster than ordered_logistic_lpmf(y, x *
+ * beta, cuts).
  *
  * @tparam T_y type of integer vector of classes. It can be either
  * `std::vector<int>` or `int`.
@@ -31,8 +31,8 @@ namespace math {
  * @tparam T_cuts type of the vector of cutpoints
  *
  * @param y a scalar or vector of classes. If it is a scalar it will be
- * broadcast - used for all instances. Values should be between 1 and number of
- * classes, including endpoints.
+ * broadcast - used for all instances. Values should be between 1 and number
+ * of classes, including endpoints.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param beta weight vector
