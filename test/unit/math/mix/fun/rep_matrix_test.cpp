@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, repMatrix) {
+TEST_F(mathMix, repMatrix) {
   // y is scalar
   auto f = [](int m, int n) {
     return [=](const auto& y) {

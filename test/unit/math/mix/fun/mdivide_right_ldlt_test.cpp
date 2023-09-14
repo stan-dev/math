@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, mdivideRightLdlt) {
+TEST_F(mathMix, mdivideRightLdlt) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
     auto&& y_ref = stan::math::to_ref(y);

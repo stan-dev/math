@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST(mathMixFun, pseudoEigenvalues) {
+TEST_F(mathMix,  pseudoEigenvalues) {
   auto f = [](const auto& x) {
     using stan::math::pseudo_eigenvalues;
     return pseudo_eigenvalues(x);

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
+TEST_F(mathMix, cov_matrix_constrain_lkj) {
   auto f = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;
@@ -18,7 +19,7 @@ TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
   stan::test::expect_ad_matvar(f(3), x2);
 }
 
-TEST(mathMixMatFun, cov_matrix_constrain_lkj_lp) {
+TEST_F(mathMix, cov_matrix_constrain_lkj_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;

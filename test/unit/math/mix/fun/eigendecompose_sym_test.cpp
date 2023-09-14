@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, eigendecomposeSym) {
+TEST_F(mathMix, eigendecomposeSym) {
   auto g = [](const auto& y) {
     // eigenvectors
     // maintain symmetry for finite diffs; ignore if not square
@@ -48,7 +49,7 @@ TEST(MathMixMatFun, eigendecomposeSym) {
   stan::test::expect_ad(g, a33);
 }
 
-TEST(MathMixMatFun, eigendecomposeSym_varmat) {
+TEST_F(mathMix, eigendecomposeSym_varmat) {
   auto g = [](const auto& y) {
     // eigenvectors
     // maintain symmetry for finite diffs; ignore if not square

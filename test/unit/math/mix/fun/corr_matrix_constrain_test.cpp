@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace corr_matrix_constrain_test {
 // easier than fiddling the quadratic equation
@@ -46,7 +47,7 @@ void expect_corr_matrix_transform(const T& x) {
 }
 }  // namespace corr_matrix_constrain_test
 
-TEST(MathMixMatFun, corr_matrixTransform) {
+TEST_F(mathMix, corr_matrixTransform) {
   // sizes must be (n choose 2)
 
   Eigen::VectorXd v0(0);
@@ -65,7 +66,7 @@ TEST(MathMixMatFun, corr_matrixTransform) {
   corr_matrix_constrain_test::expect_corr_matrix_transform(v6);
 }
 
-TEST(mathMixMatFun, corr_matrix_constrain) {
+TEST_F(mathMix, corr_matrix_constrain) {
   auto f = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;
@@ -83,7 +84,7 @@ TEST(mathMixMatFun, corr_matrix_constrain) {
   stan::test::expect_ad_matvar(f(3), x2);
 }
 
-TEST(mathMixMatFun, corr_matrix_constrain_lp) {
+TEST_F(mathMix, corr_matrix_constrain_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;

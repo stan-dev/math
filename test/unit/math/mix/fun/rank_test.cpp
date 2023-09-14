@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
@@ -71,7 +72,7 @@ void test_rank_int() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-TEST(AgradMixMatrixRank, rank) {
+TEST_F(mathMix,  rank) {
   using stan::math::fvar;
   using stan::math::rank;
   using stan::math::var;

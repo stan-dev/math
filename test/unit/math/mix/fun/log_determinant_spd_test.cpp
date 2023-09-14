@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, logDeterminantSpd) {
+TEST_F(mathMix, logDeterminantSpd) {
   auto f = [](const auto& x) {
     auto&& x_ref = stan::math::to_ref(x);
     auto z = stan::math::multiply(x_ref + x_ref.transpose(), 0.5);

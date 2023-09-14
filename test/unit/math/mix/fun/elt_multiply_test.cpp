@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, elt_multiply_transpose_test) {
+TEST_F(mathMix, elt_multiply_transpose_test) {
   auto f = [](const auto& x) {
     auto x_ref = stan::math::to_ref(x);
     return stan::math::elt_multiply(x_ref, x_ref.transpose());
@@ -11,7 +12,7 @@ TEST(MathMixMatFun, elt_multiply_transpose_test) {
   stan::test::expect_ad_matvar(f, x);
 }
 
-TEST(MathMixMatFun, elt_multiply_block_test) {
+TEST_F(mathMix, elt_multiply_block_test) {
   auto f = [](const auto& y, const auto& x) {
     return stan::math::elt_multiply(y.block(1, 1, 2, 2), x.block(0, 0, 2, 2));
   };
@@ -21,7 +22,7 @@ TEST(MathMixMatFun, elt_multiply_block_test) {
   stan::test::expect_ad_matvar(f, x, x);
 }
 
-TEST(MathMixMatFun, eltMultiply) {
+TEST_F(mathMix, eltMultiply) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::elt_multiply(x, y);
   };

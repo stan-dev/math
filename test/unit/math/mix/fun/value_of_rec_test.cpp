@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradMix, value_of_rec) {
+TEST_F(mathMix,  value_of_rec_scalar) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;
@@ -17,7 +18,7 @@ TEST(AgradMix, value_of_rec) {
   EXPECT_FLOAT_EQ(5.0, value_of_rec(fffffv_a));
 }
 
-TEST(MathMatrixMixArr, value_of_rec) {
+TEST_F(mathMix,  value_of_rec_vector) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;
@@ -41,7 +42,7 @@ TEST(MathMatrixMixArr, value_of_rec) {
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i]);
 }
 
-TEST(AgradMixMatrix, value_of_rec) {
+TEST_F(mathMix,  value_of_rec_reps) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
   using stan::math::var;

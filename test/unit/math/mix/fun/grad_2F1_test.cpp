@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(ProbInternalMath, grad2F1_zero_z) {
+TEST_F(mathMix,  grad2F1_zero_z) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<double> a1 = 3.70975;
@@ -24,7 +25,7 @@ TEST(ProbInternalMath, grad2F1_zero_z) {
   EXPECT_FLOAT_EQ(0, std::get<2>(grad_tuple).d_);
 }
 
-TEST(ProbInternalMath, grad2F1_fnegative_z) {
+TEST_F(mathMix,  grad2F1_fnegative_z) {
   using stan::math::fvar;
 
   fvar<double> a = 3.70975;
@@ -42,7 +43,7 @@ TEST(ProbInternalMath, grad2F1_fnegative_z) {
   EXPECT_NEAR(0.0677809985598383, std::get<2>(grad_tuple), 1e-9);
 }
 
-TEST(ProbInternalMath, grad2F1_fd1) {
+TEST_F(mathMix,  grad2F1_fd1) {
   using stan::math::fvar;
 
   fvar<double> a = 2;
@@ -58,7 +59,7 @@ TEST(ProbInternalMath, grad2F1_fd1) {
   EXPECT_NEAR(0.85137603960998, std::get<1>(grad_tuple).val_, 1e-8);
   EXPECT_NEAR(-0.4617734352303, std::get<2>(grad_tuple).val_, 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_fd2) {
+TEST_F(mathMix,  grad2F1_fd2) {
   using stan::math::fvar;
 
   fvar<double> a = 2;
@@ -75,7 +76,7 @@ TEST(ProbInternalMath, grad2F1_fd2) {
   EXPECT_NEAR(0.434904696493189, std::get<1>(grad_tuple).d_, 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fd3) {
+TEST_F(mathMix,  grad2F1_fd3) {
   using stan::math::fvar;
 
   fvar<double> a = 2;
@@ -91,7 +92,7 @@ TEST(ProbInternalMath, grad2F1_fd3) {
   EXPECT_NEAR(-0.46177343523032, std::get<2>(grad_tuple).val_, 1e-8);
   EXPECT_NEAR(0.574406330443730, std::get<2>(grad_tuple).d_, 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_ffd1) {
+TEST_F(mathMix,  grad2F1_ffd1) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 2;
@@ -106,7 +107,7 @@ TEST(ProbInternalMath, grad2F1_ffd1) {
   EXPECT_NEAR(0.851376039609984, std::get<1>(grad_tuple).val_.val_, 1e-8);
   EXPECT_NEAR(-0.46177343523032, std::get<2>(grad_tuple).val_.val_, 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_ffd2) {
+TEST_F(mathMix,  grad2F1_ffd2) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 2;
@@ -122,7 +123,7 @@ TEST(ProbInternalMath, grad2F1_ffd2) {
   EXPECT_NEAR(-0.461773435230326, std::get<2>(grad_tuple).val_.val_, 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_ffd3) {
+TEST_F(mathMix,  grad2F1_ffd3) {
   using stan::math::fvar;
 
   fvar<fvar<double> > a = 2;
@@ -138,7 +139,7 @@ TEST(ProbInternalMath, grad2F1_ffd3) {
   EXPECT_NEAR(0.574406330443730, std::get<2>(grad_tuple).d_.val_, 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fv1) {
+TEST_F(mathMix,  grad2F1_fv1) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -154,7 +155,7 @@ TEST(ProbInternalMath, grad2F1_fv1) {
   EXPECT_NEAR(0.851376039609984, std::get<1>(grad_tuple).val_.val(), 1e-8);
   EXPECT_NEAR(-0.46177343523032, std::get<2>(grad_tuple).val_.val(), 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_fv2) {
+TEST_F(mathMix,  grad2F1_fv2) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -170,7 +171,7 @@ TEST(ProbInternalMath, grad2F1_fv2) {
   EXPECT_NEAR(0.434904696493189, std::get<1>(grad_tuple).d_.val(), 1e-8);
   EXPECT_NEAR(-0.46177343523032, std::get<2>(grad_tuple).val_.val(), 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_fv3) {
+TEST_F(mathMix,  grad2F1_fv3) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -187,7 +188,7 @@ TEST(ProbInternalMath, grad2F1_fv3) {
   EXPECT_NEAR(0.574406330443730, std::get<2>(grad_tuple).d_.val(), 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fv_1stderiv1) {
+TEST_F(mathMix,  grad2F1_fv_1stderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -204,7 +205,7 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv1) {
   std::get<0>(grad_tuple).val_.grad(y1, grad1);
   EXPECT_NEAR(0.163714876516383, grad1[0], 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_fv_1stderiv2) {
+TEST_F(mathMix,  grad2F1_fv_1stderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -221,7 +222,7 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv2) {
   std::get<1>(grad_tuple).val_.grad(y1, grad1);
   EXPECT_NEAR(0.434904696493189, grad1[0], 1e-8);
 }
-TEST(ProbInternalMath, grad2F1_fv_1stderiv3) {
+TEST_F(mathMix,  grad2F1_fv_1stderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -239,7 +240,7 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv3) {
   EXPECT_NEAR(0.574406330443730, grad1[0], 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fv_2ndderiv1) {
+TEST_F(mathMix,  grad2F1_fv_2ndderiv1) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -257,7 +258,7 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv1) {
   EXPECT_NEAR(0.064256527613079, grad1[0], 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fv_2ndderiv2) {
+TEST_F(mathMix,  grad2F1_fv_2ndderiv2) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -275,7 +276,7 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv2) {
   EXPECT_NEAR(0.222160462864892, grad1[0], 1e-8);
 }
 
-TEST(ProbInternalMath, grad2F1_fv_2ndderiv3) {
+TEST_F(mathMix,  grad2F1_fv_2ndderiv3) {
   using stan::math::fvar;
   using stan::math::var;
 

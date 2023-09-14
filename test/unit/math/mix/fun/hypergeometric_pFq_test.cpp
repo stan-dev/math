@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mixScalFun, grad_2F2_ffv) {
+TEST_F(mathMix,  grad_2F2_ffv) {
   using stan::math::fvar;
   using stan::math::hypergeometric_pFq;
   using stan::math::var;

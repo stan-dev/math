@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <vector>
 
-TEST(mixScalFun, arg) {
+TEST_F(mathMix,  arg) {
   auto f = [](const auto& x) { return arg(x); };
 
   // undefined with 0 in denominator

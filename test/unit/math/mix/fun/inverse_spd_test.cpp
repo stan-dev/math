@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, inverseSpd) {
+TEST_F(mathMix, inverseSpd) {
   auto f = [](const auto& x) {
     if (x.rows() != x.cols())
       return stan::math::inverse_spd(x);

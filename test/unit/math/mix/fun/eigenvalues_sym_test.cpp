@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, eigenvaluesSym) {
+TEST_F(mathMix, eigenvaluesSym) {
   auto f = [](const auto& y) {
     // need to maintain symmetry for finite diffs
     auto&& y_ref = stan::math::to_ref(y);
@@ -36,7 +37,7 @@ TEST(MathMixMatFun, eigenvaluesSym) {
   stan::test::expect_ad(tols, f, a22);
 }
 
-TEST(MathMixMatFun, eigenvaluesSym_varmat) {
+TEST_F(mathMix, eigenvaluesSym_varmat) {
   auto f = [](const auto& y) {
     // need to maintain symmetry for finite diffs
     auto&& y_ref = stan::math::to_ref(y);

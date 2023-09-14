@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace positive_ordered_constrain_test {
 template <typename T>
@@ -32,7 +33,7 @@ void expect_positive_ordered_transform(const T& x) {
 }
 }  // namespace positive_ordered_constrain_test
 
-TEST(MathMixMatFun, positiveOrderedTransform) {
+TEST_F(mathMix, positiveOrderedTransform) {
   Eigen::VectorXd v0(0);
   positive_ordered_constrain_test::expect_positive_ordered_transform(v0);
 

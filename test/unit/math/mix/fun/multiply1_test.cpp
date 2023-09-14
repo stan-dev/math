@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/multiply_util.hpp>
 
-TEST(mathMixMatFun, multiply) {
+TEST_F(mathMix, multiply) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::multiply(x, y); };
 
@@ -128,7 +129,7 @@ TEST(mathMixMatFun, multiply) {
   // can't compile mismatched dimensions, so no tests
 }
 
-TEST(mathMix, multiplicationPatterns1) {
+TEST_F(mathMix,  multiplicationPatterns1) {
   using stan::math::fvar;
   using stan::math::var;
   instantiate_multiply<double>();

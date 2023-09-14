@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/lub_constrain_helpers.hpp>
 
 // array matrix[], array matrix[], array matrix[]
@@ -10,7 +11,7 @@
 // array matrix[], matrix[], real
 // array matrix[], real, matrix[]
 // array matrix[], real, real
-TEST(mathMixMatFun, lub_stdvec_mat_scalar1_constrain) {
+TEST_F(mathMix, lub_stdvec_mat_scalar1_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   // swapping 0.0000001 for 0 causes a failure for the hessian?
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
@@ -28,7 +29,7 @@ TEST(mathMixMatFun, lub_stdvec_mat_scalar1_constrain) {
   lub_constrain_tests::expect_vec(A, lb_scal, ub_vec);
 }
 
-TEST(mathMixMatFun, lub_stdvec_mat_scalar1_constrain_infty) {
+TEST_F(mathMix, lub_stdvec_mat_scalar1_constrain_infty) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.05, 0.1;
   Eigen::MatrixXd lb_inner(2, 3);

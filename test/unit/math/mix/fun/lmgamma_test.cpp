@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, lmgamma) {
+TEST_F(mathMix,  lmgamma) {
   auto f = [](int x1) {
     return [=](const auto& x2) { return stan::math::hypot(x1, x2); };
   };
@@ -9,7 +10,7 @@ TEST(mathMixScalFun, lmgamma) {
   stan::test::expect_ad(f(3), std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST(mathMixScalFun, lmgamma_vec) {
+TEST_F(mathMix,  lmgamma_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::lmgamma;
     return lmgamma(x1, x2);

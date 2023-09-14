@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace dirichlet_test {
 template <typename T>
@@ -16,7 +17,7 @@ auto vectorize_softmax(const T& y) {
 }
 }  // namespace dirichlet_test
 
-TEST_F(AgradRev, ProbDistributions_dirichlet) {
+TEST_F(mathMix, ProbDistributions_dirichlet) {
   auto f = [](const auto& y, const auto& alpha) {
     auto y_simplex = dirichlet_test::vectorize_softmax(y);
     auto lp = stan::math::dirichlet_lpdf(y_simplex, alpha);
@@ -36,7 +37,7 @@ TEST_F(AgradRev, ProbDistributions_dirichlet) {
   stan::test::expect_ad(f, vs, vs);
 }
 
-TEST_F(AgradRev, ProbDistributions_fvar_var) {
+TEST_F(mathMix, ProbDistributions_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -70,7 +71,7 @@ TEST_F(AgradRev, ProbDistributions_fvar_var) {
                   stan::math::dirichlet_log(theta2, alpha2).d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributions_fvar_varVectorized) {
+TEST_F(mathMix, ProbDistributions_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_log;
@@ -126,7 +127,7 @@ TEST_F(AgradRev, ProbDistributions_fvar_varVectorized) {
   EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributions_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributions_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -161,7 +162,7 @@ TEST_F(AgradRev, ProbDistributions_fvar_fvar_var) {
                   stan::math::dirichlet_log(theta2, alpha2).d_.val_.val());
 }
 
-TEST_F(AgradRev, ProbDistributions_fvar_fvar_varVectorized) {
+TEST_F(mathMix, ProbDistributions_fvar_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_log;

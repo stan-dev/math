@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, binomialCoefficientLog) {
+TEST_F(mathMix,  binomialCoefficientLog) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::binomial_coefficient_log(x1, x2);
   };
@@ -13,7 +14,7 @@ TEST(mathMixScalFun, binomialCoefficientLog) {
   stan::test::expect_common_nonzero_binary(f);
 }
 
-TEST(mathMixScalFun, binomialCoefficientLog_vec) {
+TEST_F(mathMix,  binomialCoefficientLog_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binomial_coefficient_log;
     return binomial_coefficient_log(x1, x2);

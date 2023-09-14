@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, acosh) {
+TEST_F(mathMix, acosh) {
   auto f = [](const auto& x1) {
     using stan::math::acosh;
     return acosh(x1);
@@ -20,8 +21,8 @@ TEST(mathMixMatFun, acosh) {
     }
   }
 }
-/*
-TEST(mathMixMatFun, acosh_varmat) {
+
+TEST_F(mathMix, acosh_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;
@@ -38,4 +39,4 @@ TEST(mathMixMatFun, acosh_varmat) {
   }
   expect_ad_vector_matvar(f, A);
 }
-*/
+

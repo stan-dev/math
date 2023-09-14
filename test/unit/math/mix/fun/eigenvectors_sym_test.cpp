@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, eigenvectorsSym) {
+TEST_F(mathMix, eigenvectorsSym) {
   auto f = [](const auto& y) {
     // maintain symmetry for finite diffs; ignore if not square
     if (y.rows() != y.cols()) {
@@ -32,7 +33,7 @@ TEST(MathMixMatFun, eigenvectorsSym) {
   stan::test::expect_ad(tols, f, a33);
 }
 
-TEST(MathMixMatFun, eigenvectorsSym_varmat) {
+TEST_F(mathMix, eigenvectorsSym_varmat) {
   auto f = [](const auto& y) {
     // maintain symmetry for finite diffs; ignore if not square
     if (y.rows() != y.cols()) {

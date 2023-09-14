@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
 template <typename T>
@@ -20,7 +21,7 @@ void expect_isnan() {
   EXPECT_FALSE(isnan(T(-1.0)));
 }
 
-TEST(mixFun, isnan) {
+TEST_F(mathMix,  isnan) {
   expect_isnan<d_t>();
   expect_isnan<v_t>();
   expect_isnan<fd_t>();

@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradMixMatrixFill, fv) {
+TEST_F(mathMix,  fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -44,7 +45,7 @@ TEST(AgradMixMatrixFill, fv) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val());
 }
-TEST(AgradMixMatrixFill, fv2) {
+TEST_F(mathMix,  fv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -56,7 +57,7 @@ TEST(AgradMixMatrixFill, fv2) {
   EXPECT_FLOAT_EQ(3.0, y[0].val_.val());
 }
 
-TEST(AgradMixMatrixFill, ffv) {
+TEST_F(mathMix,  ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -98,7 +99,7 @@ TEST(AgradMixMatrixFill, ffv) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_.val());
 }
-TEST(AgradMixMatrixFill, ffv2) {
+TEST_F(mathMix,  ffv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;

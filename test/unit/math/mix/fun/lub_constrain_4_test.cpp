@@ -1,10 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/lub_constrain_helpers.hpp>
 
 // real[], real[], real[]
 // real[], real, real[]
 // real[], real[], real
-TEST(mathMixMatFun, lub_stdvec_constrain) {
+TEST_F(mathMix, lub_stdvec_constrain) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};
   std::vector<double> lbm{-3.0, 3.0, -6.0, 6.0};
   std::vector<double> ubm{-1.0, 5.0, 0.0, 38.0};
@@ -16,7 +17,7 @@ TEST(mathMixMatFun, lub_stdvec_constrain) {
   lub_constrain_tests::expect_vec(A, lbm, ubd);
 }
 
-TEST(mathMixMatFun, lub_stdvec_constrain_neg_inf) {
+TEST_F(mathMix, lub_stdvec_constrain_neg_inf) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};
   std::vector<double> lbm{stan::math::NEGATIVE_INFTY, 3.0,
                           stan::math::NEGATIVE_INFTY, 6.0};

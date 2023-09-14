@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 
-TEST(MathMixMatFun, quadFormSym) {
+TEST_F(mathMix, quadFormSym) {
   auto f = [](const auto& x, const auto& y) {
     auto&& x_ref = stan::math::to_ref(x);
     // symmetrize the input matrix
@@ -66,7 +67,7 @@ TEST(MathMixMatFun, quadFormSym) {
   stan::test::expect_ad(g, u, v);
 }
 
-TEST(MathMixMatFun, quad_form_sym_2095) {
+TEST_F(mathMix, quad_form_sym_2095) {
   Eigen::Matrix<stan::math::var, -1, -1> av(2, 2);
   Eigen::Matrix<stan::math::var, -1, -1> bv(2, 2);
 

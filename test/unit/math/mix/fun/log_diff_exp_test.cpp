@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, logDiffExp) {
+TEST_F(mathMix,  logDiffExp) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_diff_exp(x1, x2);
   };
@@ -28,7 +29,7 @@ TEST(mathMixScalFun, logDiffExp) {
   stan::test::expect_ad(f, nan, nan);
 }
 
-TEST(mathMixScalFun, logDiffExp_vec) {
+TEST_F(mathMix,  logDiffExp_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_diff_exp;
     return log_diff_exp(x1, x2);

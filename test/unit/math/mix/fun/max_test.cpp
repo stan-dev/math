@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <algorithm>
 
 template <typename T>
@@ -15,7 +16,7 @@ void expect_max(const T& m) {
   stan::test::expect_ad(f, m);
 }
 
-TEST(MathMixMatFun, max) {
+TEST_F(mathMix, max) {
   Eigen::MatrixXd a(0, 0);
   expect_max(a);
 

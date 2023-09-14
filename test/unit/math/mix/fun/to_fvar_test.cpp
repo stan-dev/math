@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(AgradMixMatrixToFvar, fv_vector) {
+TEST_F(mathMix, to_fvarfv_vector) {
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -26,7 +27,7 @@ TEST(AgradMixMatrixToFvar, fv_vector) {
   EXPECT_FLOAT_EQ(1, out(3).d_.val());
   EXPECT_FLOAT_EQ(1, out(4).d_.val());
 }
-TEST(AgradMixMatrixToFvar, fv_rowvector) {
+TEST_F(mathMix, to_fvarfv_rowvector) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
 
@@ -50,7 +51,7 @@ TEST(AgradMixMatrixToFvar, fv_rowvector) {
   EXPECT_FLOAT_EQ(1, output(3).d_.val());
   EXPECT_FLOAT_EQ(1, output(4).d_.val());
 }
-TEST(AgradMixMatrixToFvar, fv_matrix_matrix) {
+TEST_F(mathMix, to_fvarfv_matrix_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
   using stan::math::matrix_fv;
@@ -82,7 +83,7 @@ TEST(AgradMixMatrixToFvar, fv_matrix_matrix) {
   EXPECT_FLOAT_EQ(17, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(18, output(2, 2).d_.val());
 }
-TEST(AgradMixMatrixToFvar, ffv_vector) {
+TEST_F(mathMix, to_fvarffv_vector) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -106,7 +107,7 @@ TEST(AgradMixMatrixToFvar, ffv_vector) {
   EXPECT_FLOAT_EQ(1, out(3).d_.val().val());
   EXPECT_FLOAT_EQ(1, out(4).d_.val().val());
 }
-TEST(AgradMixMatrixToFvar, ffv_rowvector) {
+TEST_F(mathMix, to_fvarffv_rowvector) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
 
@@ -130,7 +131,7 @@ TEST(AgradMixMatrixToFvar, ffv_rowvector) {
   EXPECT_FLOAT_EQ(1, output(3).d_.val().val());
   EXPECT_FLOAT_EQ(1, output(4).d_.val().val());
 }
-TEST(AgradMixMatrixToFvar, ffv_matrix_matrix) {
+TEST_F(mathMix, to_fvarffv_matrix_matrix) {
   using stan::math::matrix_ffv;
   using stan::math::matrix_fv;
 

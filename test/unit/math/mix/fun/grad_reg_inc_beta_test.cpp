@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(ProbInternalMath, grad_reg_inc_beta_fv) {
+TEST_F(mathMix,  grad_reg_inc_beta_fv) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
@@ -29,7 +30,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv) {
   EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,
               g_b.val_.val(), 1e-6);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
+TEST_F(mathMix,  grad_reg_inc_beta_fv_1stDeriv1) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
@@ -58,7 +59,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
   EXPECT_FLOAT_EQ(0.33583548212738989400284958327902414335945097838423129,
                   grad1[0]);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
+TEST_F(mathMix,  grad_reg_inc_beta_fv_1stDeriv2) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
@@ -86,7 +87,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
   g_b.val_.grad(y1, grad1);
   EXPECT_NEAR(-0.156565690737548079304827886, grad1[0], 1e-6);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
+TEST_F(mathMix,  grad_reg_inc_beta_fv_2ndDeriv1) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
@@ -115,7 +116,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
   EXPECT_FLOAT_EQ(-0.30772293970781581317390510390046098438962772318921,
                   grad1[0]);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
+TEST_F(mathMix,  grad_reg_inc_beta_fv_2ndDeriv2) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;

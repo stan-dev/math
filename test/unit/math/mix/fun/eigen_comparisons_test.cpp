@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
@@ -69,16 +70,16 @@ void test_all_comparisons() {
       [](const auto& a, const auto& b) { return a != b; });
 }
 
-TEST(mixFun, eigen_comparisons_var) { test_all_comparisons<stan::math::var>(); }
+TEST_F(mathMix,  eigen_comparisons_var) { test_all_comparisons<stan::math::var>(); }
 
-TEST(mixFun, eigen_comparisons_fvar) {
+TEST_F(mathMix,  eigen_comparisons_fvar) {
   test_all_comparisons<stan::math::fvar<double>>();
 }
 
-TEST(mixFun, eigen_comparisons_fvar_var) {
+TEST_F(mathMix,  eigen_comparisons_fvar_var) {
   test_all_comparisons<stan::math::fvar<stan::math::var>>();
 }
 
-TEST(mixFun, eigen_comparisons_fvar_fvar) {
+TEST_F(mathMix,  eigen_comparisons_fvar_fvar) {
   test_all_comparisons<stan::math::fvar<stan::math::fvar<double>>>();
 }

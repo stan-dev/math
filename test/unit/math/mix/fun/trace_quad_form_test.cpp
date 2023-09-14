@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, traceQuadForm) {
+TEST_F(mathMix, traceQuadForm) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::trace_quad_form(x, y);
   };

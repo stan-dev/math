@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, logRisingFactorial) {
+TEST_F(mathMix,  logRisingFactorial) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_rising_factorial(x1, x2);
   };
@@ -26,7 +27,7 @@ TEST(mathMixScalFun, logRisingFactorial) {
   stan::test::expect_ad(f, nan, nan);
 }
 
-TEST(mathMixScalFun, logRisingFactorial_vec) {
+TEST_F(mathMix,  logRisingFactorial_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_rising_factorial;
     return log_rising_factorial(x1, x2);

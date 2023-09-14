@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, read_cov_matrix) {
+TEST_F(mathMix, read_cov_matrix) {
   auto f = [](int K) {
     Eigen::VectorXd rx2 = (Eigen::VectorXd::Random(K).array() + 2.0).matrix();
     return [K, rx2](const auto& x1) {
@@ -25,7 +26,7 @@ TEST(mathMixMatFun, read_cov_matrix) {
   stan::test::expect_ad_matvar(f(3), x2);
 }
 
-TEST(mathMixMatFun, read_cov_matrix_lp) {
+TEST_F(mathMix, read_cov_matrix_lp) {
   auto f1 = [](int K) {
     Eigen::VectorXd rx2 = (Eigen::VectorXd::Random(K).array() + 2.0).matrix();
     return [K, rx2](const auto& x1) {

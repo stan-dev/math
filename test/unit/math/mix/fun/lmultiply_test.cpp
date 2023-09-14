@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stan/math/rev/fun/lmultiply.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, lmultiply) {
+TEST_F(mathMix,  lmultiply) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::lmultiply(x1, x2);
   };

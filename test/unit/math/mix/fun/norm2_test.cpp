@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, norm2) {
+TEST_F(mathMix, norm2) {
   auto f = [](const auto& y) { return stan::math::norm2(y); };
 
   Eigen::VectorXd x0(0);

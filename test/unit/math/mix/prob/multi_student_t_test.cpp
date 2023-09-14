@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, ProbDistributionsMultiStudentT_matvar) {
+TEST_F(mathMix, ProbDistributionsMultiStudentT_matvar) {
   auto f
       = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {
           auto&& sigma_ref = stan::math::to_ref(sigma);
@@ -64,7 +65,7 @@ TEST_F(AgradRev, ProbDistributionsMultiStudentT_matvar) {
   stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma00);
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiStudentT_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -93,7 +94,7 @@ TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiStudentT_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

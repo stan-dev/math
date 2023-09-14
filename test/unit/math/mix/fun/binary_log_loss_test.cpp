@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, binaryLogLoss) {
+TEST_F(mathMix,  binaryLogLoss) {
   // bind integer arg because can't autodiff
   auto f = [](int x1) {
     return [=](const auto& x2) { return stan::math::binary_log_loss(x1, x2); };
@@ -13,7 +14,7 @@ TEST(mathMixScalFun, binaryLogLoss) {
   }
 }
 
-TEST(mathMixScalFun, binaryLogLossvec) {
+TEST_F(mathMix,  binaryLogLossvec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binary_log_loss;
     return binary_log_loss(x1, x2);
@@ -29,7 +30,7 @@ TEST(mathMixScalFun, binaryLogLossvec) {
   stan::test::expect_ad_vectorized_binary(f, std_std_in1, mat_in2);
 }
 
-TEST(mathMixScalFun, binaryLogLossMatVar) {
+TEST_F(mathMix,  binaryLogLossMatVar) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binary_log_loss;
     return binary_log_loss(x1, x2);
@@ -42,7 +43,7 @@ TEST(mathMixScalFun, binaryLogLossMatVar) {
   stan::test::expect_ad_matvar(f, std_in1[0], in2);
 }
 
-TEST(mathMixScalFun, binaryLogLossMatVarVec) {
+TEST_F(mathMix,  binaryLogLossMatVarVec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binary_log_loss;
     return binary_log_loss(x1, x2);

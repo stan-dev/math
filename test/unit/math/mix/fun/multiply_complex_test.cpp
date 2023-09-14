@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/multiply_util.hpp>
 
-TEST(mathMix, complexMultiply) {
+TEST_F(mathMix,  complexMultiply) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::multiply(x, y); };
   double d_scalar = 1.0;

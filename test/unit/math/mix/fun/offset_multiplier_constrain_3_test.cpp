@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/offset_multiplier_constrain_helpers.hpp>
 
 // array[] matrix, matrix, array[] matrix
 // array[] matrix, matrix, matrix
-TEST(mathMixMatFun, offset_multiplier_stdvec_mu_mat_sigma_vec_constrain) {
+TEST_F(mathMix, offset_multiplier_stdvec_mu_mat_sigma_vec_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);
@@ -20,7 +21,7 @@ TEST(mathMixMatFun, offset_multiplier_stdvec_mu_mat_sigma_vec_constrain) {
 
 // array[] matrix, array[] matrix, array[] matrix
 // array[] matrix, array[] matrix, matrix
-TEST(mathMixMatFun, offset_multiplier_stdvec_mu_vec_sigma_mat_constrain) {
+TEST_F(mathMix, offset_multiplier_stdvec_mu_vec_sigma_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);

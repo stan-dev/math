@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
 namespace identity_constrain_test {
@@ -28,7 +29,7 @@ void expect_identity_constrain(double x) {
   stan::test::expect_ad(f3, x);
 }
 
-TEST(mathMixScalFun, identityConstrain) {
+TEST_F(mathMix,  identityConstrain) {
   expect_identity_constrain(-1);
   expect_identity_constrain(2.1);
 }

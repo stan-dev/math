@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, log1mInvLogit) {
+TEST_F(mathMix, log1mInvLogit) {
   auto f = [](const auto& x1) { return stan::math::log1m_inv_logit(x1); };
   stan::test::expect_common_nonzero_unary_vectorized<
       stan::test::ScalarSupport::Real>(f);
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, log1mInvLogit) {
                                       3, 5);
 }
 
-TEST(mathMixMatFun, log1minvlogit_varmat) {
+TEST_F(mathMix, log1minvlogit_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

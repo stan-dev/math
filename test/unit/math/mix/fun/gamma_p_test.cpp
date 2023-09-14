@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/mix.hpp>
 #include <vector>
 
-TEST(mathMixScalFun, gammaP) {
+TEST_F(mathMix,  gammaP) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::gamma_p(x1, x2);
   };
@@ -41,7 +42,7 @@ TEST(mathMixScalFun, gammaP) {
 }
 
 // separate tests when a is positive_infinity
-TEST(mathMixScalFun, gammaP_pos_inf) {
+TEST_F(mathMix,  gammaP_pos_inf) {
   auto g = [](const auto& x) { return stan::math::gamma_p(x(0), x(1)); };
   stan::math::vector_d x(2);
   x << 0.5001, stan::math::positive_infinity();
@@ -93,7 +94,7 @@ TEST(mathMixScalFun, gammaP_pos_inf) {
   }
 }
 
-TEST(mathMixScalFun, gammaP_vec) {
+TEST_F(mathMix,  gammaP_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::gamma_p;
     return gamma_p(x1, x2);

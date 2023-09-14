@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixMatFun, dotProduct) {
+TEST_F(mathMix, dotProduct) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::dot_product(x, y);
   };

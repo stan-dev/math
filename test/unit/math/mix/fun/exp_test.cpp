@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, exp) {
+TEST_F(mathMix, exp) {
   auto f = [](const auto& x) {
     using stan::math::exp;
     return exp(x);

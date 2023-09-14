@@ -1,10 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <complex>
 #include <vector>
 #include <type_traits>
 
-TEST(mixFun, absBasics) {
+TEST_F(mathMix,  absBasics) {
   using stan::math::abs;
   int a = abs(1);
 
@@ -29,7 +30,7 @@ using is_complex_and_base_ret = stan::bool_constant<
     (!stan::is_complex<stan::scalar_type_t<std::decay_t<T1>>>::value)
     || (stan::is_complex<stan::scalar_type_t<std::decay_t<T1>>>::value
         && !stan::is_complex<stan::scalar_type_t<std::decay_t<T2>>>::value)>;
-TEST(mixFun, abs) {
+TEST_F(mathMix,  abs) {
   auto f = [](const auto& x) {
     auto xx = stan::math::abs(x);
     static_assert(is_complex_and_base_ret<decltype(x), decltype(xx)>::value,
@@ -232,7 +233,7 @@ TEST(mixFun, abs) {
   amc_t q2{k2, k6};
   stan::test::expect_ad(f, q2);
 }
-TEST(mixFun, absReturnType) {
+TEST_F(mathMix,  absReturnType) {
   // validate return types not overpromoted to complex by assignability
   std::complex<stan::math::var> a = 3;
   stan::math::var b = abs(a);
@@ -244,7 +245,7 @@ TEST(mixFun, absReturnType) {
   SUCCEED();
 }
 
-TEST(mathMixMatFun, abs_varmat) {
+TEST_F(mathMix, abs_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

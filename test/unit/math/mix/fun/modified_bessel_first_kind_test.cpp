@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, modifiedBesselFirstKind) {
+TEST_F(mathMix,  modifiedBesselFirstKind) {
   // bind integer arg because can't autodiff through
   auto f = [](const int x1) {
     return [=](const auto& x2) {
@@ -20,7 +21,7 @@ TEST(mathMixScalFun, modifiedBesselFirstKind) {
   stan::test::expect_ad(f(8), 3);
 }
 
-TEST(mathMixScalFun, modifiedBesselFirstKind_vec) {
+TEST_F(mathMix,  modifiedBesselFirstKind_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::modified_bessel_first_kind;
     return modified_bessel_first_kind(x1, x2);

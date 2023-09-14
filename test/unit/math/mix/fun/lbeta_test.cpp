@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, lbeta) {
+TEST_F(mathMix,  lbeta) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::lbeta;
     return lbeta(x1, x2);
@@ -17,7 +18,7 @@ TEST(mathMixScalFun, lbeta) {
   stan::test::expect_ad(f, 12.3, 4.8);
 }
 
-TEST(mathMixScalFun, lbeta_vec) {
+TEST_F(mathMix,  lbeta_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::lbeta;
     return lbeta(x1, x2);

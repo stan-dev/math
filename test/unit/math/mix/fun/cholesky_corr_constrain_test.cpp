@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace cholesky_corr_constrain_test {
 // easier than fiddling the quadratic equation
@@ -46,7 +47,7 @@ void expect_cholesky_corr_transform(const T& x) {
 }
 }  // namespace cholesky_corr_constrain_test
 
-TEST(MathMixMatFun, cholesky_corrTransform) {
+TEST_F(mathMix, cholesky_corrTransform) {
   // sizes must be (n choose 2)
 
   Eigen::VectorXd v0(0);
@@ -65,7 +66,7 @@ TEST(MathMixMatFun, cholesky_corrTransform) {
   cholesky_corr_constrain_test::expect_cholesky_corr_transform(v6);
 }
 
-TEST(mathMixMatFun, cholesky_corr_constrain) {
+TEST_F(mathMix, cholesky_corr_constrain) {
   auto f = [](int K) {
     return [K](const auto& x1) {
       return stan::math::cholesky_corr_constrain(x1, K);
@@ -82,7 +83,7 @@ TEST(mathMixMatFun, cholesky_corr_constrain) {
   stan::test::expect_ad_matvar(f(3), x2);
 }
 
-TEST(mathMixMatFun, cholesky_corr_constrain_lp) {
+TEST_F(mathMix, cholesky_corr_constrain_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;

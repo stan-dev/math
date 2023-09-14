@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/fun/lub_constrain_helpers.hpp>
 
-TEST(mathMixMatFun, lub_constrain_scalars) {
+TEST_F(mathMix, lub_constrain_scalars) {
   double x1 = 0.7;
   double x2 = -38.1;
   double lb = -2.0;

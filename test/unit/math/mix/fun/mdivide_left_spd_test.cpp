@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, mdivideLeftSpd) {
+TEST_F(mathMix, mdivideLeftSpd) {
   auto f = [](const auto& x, const auto& y) {
     if (x.rows() != x.cols())
       return stan::math::mdivide_left_spd(x, y);

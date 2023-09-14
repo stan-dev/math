@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, cos) {
+TEST_F(mathMix, cos) {
   auto f = [](const auto& x) {
     using stan::math::cos;
     return cos(x);
@@ -12,7 +13,7 @@ TEST(mathMixMatFun, cos) {
   stan::test::expect_complex_common(f);
 }
 
-TEST(mathMixMatFun, cos_varmat) {
+TEST_F(mathMix, cos_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

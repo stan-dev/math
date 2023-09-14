@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradMixMatrixDims, matrix_fv) {
+TEST_F(mathMix,  matrix_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
@@ -59,7 +60,7 @@ TEST(AgradMixMatrixDims, matrix_fv) {
   EXPECT_EQ(8, dims8[2]);
 }
 
-TEST(AgradMixMatrixDims, matrix_ffv) {
+TEST_F(mathMix,  matrix_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_matvar) {
+TEST_F(mathMix, ProbDistributionsInvWishartCholesky_matvar) {
   auto f = [](const auto& L_Y, const auto& dof, const auto& L_S) {
     return stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S);
   };
@@ -34,7 +35,7 @@ TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_matvar) {
   stan::test::expect_ad_matvar(f, L_Y11, dof, L_S00);
 }
 
-TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_fvar_var) {
+TEST_F(mathMix, ProbDistributionsInvWishartCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -69,7 +70,7 @@ TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsInvWishartCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

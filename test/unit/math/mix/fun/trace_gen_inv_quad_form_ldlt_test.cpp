@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, traceGenInvQuadForm) {
+TEST_F(mathMix, traceGenInvQuadForm) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
     auto&& a_ref = stan::math::to_ref(a);
     auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose());
@@ -75,7 +76,7 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   stan::math::recover_memory();
 }
 
-TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
+TEST_F(mathMix, traceGenInvQuadForm_vec) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
     auto&& a_ref = stan::math::to_ref(a);
     auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose()).eval();

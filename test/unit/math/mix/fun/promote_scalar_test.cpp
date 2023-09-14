@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <complex>
 #include <vector>
@@ -66,7 +67,7 @@ void test_promote_scalar() {
   stan::math::test::expect_same_value_of_rec(tester, result);
 }
 
-TEST(mixFun, promote_scalar_tuple) {
+TEST_F(mathMix,  promote_scalar_tuple) {
   using stan::math::fvar;
   using stan::math::var;
   test_promote_scalar<double, int>();
@@ -95,7 +96,7 @@ void test_promote_scalar_basic() {
   stan::math::test::expect_same_value_of_rec(x, z);
 }
 
-TEST(mixFun, promote_scalar_tuple_basic) {
+TEST_F(mathMix,  promote_scalar_tuple_basic) {
   using stan::math::fvar;
   using stan::math::var;
   test_promote_scalar_basic<double>();

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, log1pExp) {
+TEST_F(mathMix, log1pExp) {
   auto f = [](const auto& x1) { return stan::math::log1p_exp(x1); };
   stan::test::expect_common_nonzero_unary_vectorized<
       stan::test::ScalarSupport::Real>(f);

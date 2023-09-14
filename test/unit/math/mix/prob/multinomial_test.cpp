@@ -1,11 +1,12 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-TEST_F(AgradRev, ProbDistributionsMultinomial_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultinomial_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -23,7 +24,7 @@ TEST_F(AgradRev, ProbDistributionsMultinomial_fvar_var) {
   EXPECT_FLOAT_EQ(17.666666, stan::math::multinomial_log(ns, theta).d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributionsMultinomial_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultinomial_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
