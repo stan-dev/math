@@ -47,8 +47,8 @@ namespace math {
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
  *
- * @param y failures count scalar or vector parameter. If it is a scalar it will
- * be broadcast - used for all instances.
+ * @param y failures count scalar or vector parameter. If it is a scalar it
+ * will be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept (in log odds)
