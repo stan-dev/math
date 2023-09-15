@@ -444,8 +444,8 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                    "(Inter-trial variability in nondecision time)",
                    dim);
 
-    Eigen::Array<T_partials, 1, Eigen::Dynamic> xmin = Eigen::VectorXd::Zero(dim);
-    Eigen::Array<T_partials, 1, Eigen::Dynamic> xmax = Eigen::VectorXd::Ones(dim);
+    Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> xmin = Eigen::VectorXd::Zero(dim);
+    Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> xmax = Eigen::VectorXd::Ones(dim);
     if (st0_val != 0) {
       xmax[dim - 1] = fmin(1.0, (y_val - t0_val) / st0_val);
     }

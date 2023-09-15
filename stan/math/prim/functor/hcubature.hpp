@@ -414,16 +414,17 @@ std::tuple<double, double, int> integrate_GenzMalik(
  * @param I value of the integral
  * @param kdivide number of subdividing the integration volume
  */
+template <typename Scalar>
 struct Box {
   template <typename Vec1, typename Vec2>
-  Box(Vec1&& a, Vec2&& b, double I, int kdivide)
+  Box(Vec1&& a, Vec2&& b, Scalar I, int kdivide)
       : a_(std::forward<Vec1>(a)),
         b_(std::forward<Vec2>(b)),
         I_(I),
         kdiv_(kdivide) {}
-  Eigen::VectorXd a_;
-  Eigen::VectorXd b_;
-  double I_;
+  Eigen::Matrix<Scalar, -1, 1> a_;
+  Eigen::Matrix<Scalar, -1, 1> b_;
+  Scalar I_;
   int kdiv_;
 };
 
@@ -473,20 +474,20 @@ struct Box {
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename F, typename ParsTuple>
-double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
-                 const Eigen::VectorXd& a, const Eigen::VectorXd& b,
-                 const int max_eval, const double reqAbsError,
-                 const double reqRelError) {
+template <typename F, typename ParsTuple, typename Scalar>
+Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
+                 const Eigen::Matrix<Scalar, -1, 1>& a, 
+                 const Eigen::Matrix<Scalar, -1, 1>& b,
+                 const int max_eval, const Scalar reqAbsError,
+                 const Scalar reqRelError) {
   const auto maxEval = max_eval <= 0 ? 1000000 : max_eval;
-  double result;
-  double err;
+  Scalar result;
+  Scalar err;
   int kdivide = 0;
-
-  std::vector<Eigen::MatrixXd> p(4);
-  Eigen::VectorXd w_five(5);
-  Eigen::VectorXd wd_four(4);
-
+  using eig_vec = Eigen::Matrix<Scalar, -1, 1>;
+  std::vector<Eigen::Matrix<Scalar, -1, -1>> p(4);
+  eig_vec w_five(5);
+  eig_vec wd_four(4);
   if (dim == 1) {
     std::tie(result, err)
         = internal::gauss_kronrod(integrand, a[0], b[0], pars);
@@ -503,14 +504,14 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     return result;
   }
   numevals += 2 * evals_per_box;
-  std::vector<internal::Box> ms;
+  std::vector<internal::Box<Scalar>> ms;
   ms.reserve(numevals);
   ms.emplace_back(std::move(a), std::move(b), result, kdivide);
   auto get_largest_box_idx = [](auto&& box_vec) {
     auto max_it = std::max_element(box_vec.begin(), box_vec.end());
     return std::distance(box_vec.begin(), max_it);
   };
-  std::vector<double> err_vec;
+  std::vector<Scalar> err_vec;
   err_vec.reserve(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
@@ -519,21 +520,21 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     auto err_idx = get_largest_box_idx(err_vec);
     auto&& box = ms[err_idx];
 
-    double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    Eigen::VectorXd ma
+    Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
+    eig_vec ma
         = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    Eigen::VectorXd mb
+    eig_vec mb
         = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
-    double result_1;
-    double result_2;
-    double err_1;
-    double err_2;
-    double kdivide_1{0};
-    double kdivide_2{0};
+    Scalar result_1;
+    Scalar result_2;
+    Scalar err_1;
+    Scalar err_2;
+    Scalar kdivide_1{0};
+    Scalar kdivide_2{0};
 
     if (dim == 1) {
       std::tie(result_1, err_1)
@@ -546,8 +547,8 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
           integrand, p, w_five, wd_four, dim, box.a_, mb, pars);
     }
-    internal::Box box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
-    internal::Box box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
+    internal::Box<Scalar> box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
+    internal::Box<Scalar> box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
     result += result_1 + result_2 - box.I_;
     err += err_1 + err_2 - err_vec[err_idx];
     ms[err_idx].I_ = 0;
@@ -569,6 +570,8 @@ double hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   }
   return result;
 }  // hcubature
+
+
 
 }  // namespace math
 }  // namespace stan

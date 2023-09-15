@@ -616,7 +616,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   check_consistent_size(function_name, "Inter-trial variability in drift rate",
                         sv, 1);
   */
-
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_t0_ref t0_ref = t0;
