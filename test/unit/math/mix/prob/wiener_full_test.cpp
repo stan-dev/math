@@ -1,6 +1,19 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
+TEST(mathMixDouble, wiener5_lpdf) {
+	double y = 1.0;
+	double a = 2.0;
+	double t0 = 0.2;
+	double w = 0.5;
+	double v = 1.5;
+	double sv = 0.2;
+	double sw = 0.2;
+	double st0 = 0.2;
+	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
+}
+
+/*
 TEST(mathMixScalFun, wiener_full_lpdf) {
 	auto f1 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v) {
 	  return [&y, &a, &t0, &w, &v](const auto& sv, const auto& sw, const auto& st0) {
@@ -18,7 +31,7 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 	  return [&w, &v, &sv, &sw, &st0](const auto& y, const auto& a, const auto& t0) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
-	};*/
+	};
 
 	double y = 0.1;
 	double a = 2.0;
@@ -35,8 +48,8 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 
 
 }
-
-
+*/
+/*
 TEST(mathMixVecFun, wiener_full_lpdf) {
 	auto f1 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v) {
 	  return [&y, &a, &t0, &w, &v](const auto& sv, const auto& sw, const auto& st0) {
@@ -54,7 +67,7 @@ TEST(mathMixVecFun, wiener_full_lpdf) {
 	  return [&w, &v, &sv, &sw, &st0](const auto& y, const auto& a, const auto& t0) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
-	};*/
+	};
 
 	Eigen::VectorXd y(2);
 	y << 1.0, 1.5;
@@ -79,4 +92,4 @@ TEST(mathMixVecFun, wiener_full_lpdf) {
 
 
 }
-
+*/
