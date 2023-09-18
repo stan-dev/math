@@ -23,7 +23,7 @@ namespace math {
  * <p>This function does not recover any memory from the computation.
  *
  */
-static void grad() {
+static inline void grad() {
   size_t end = ChainableStack::instance_->var_stack_.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i-- > beginning;) {

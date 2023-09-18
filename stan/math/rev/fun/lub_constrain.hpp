@@ -313,28 +313,28 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   } else {
     arena_t<T> arena_x = x;
     arena_t<L> arena_lb = lb;
-    const auto x_val = value_of(arena_x).array();
+    const auto arena_x_val = to_arena(value_of(arena_x).array());
     const auto lb_val = value_of(arena_lb).array().eval();
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
-    auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
-    auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
-    arena_t<ret_type> ret = (is_lb_inf).select(
-        ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
+    auto neg_abs_x = to_arena(-arena_x_val.abs());
+    auto inv_logit_x = to_arena(inv_logit(arena_x_val));
+    arena_t<ret_type> ret = (is_lb_inf).select(ub_val - arena_x_val.exp(),
+                                               diff * inv_logit_x + lb_val);
     lp += (is_lb_inf)
-              .select(value_of(arena_x).array(),
+              .select(arena_x_val,
                       log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))))
               .sum();
-    reverse_pass_callback([arena_x, ub, arena_lb, ret, lp, diff, inv_logit_x,
-                           is_lb_inf]() mutable {
+    reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
+                           inv_logit_x, is_lb_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
       if (!is_constant<T>::value) {
-        const auto x_sign = value_of(arena_x).array().sign().eval();
+        const auto x_sign = arena_x_val.sign().eval();
         forward_as<T_var>(arena_x).adj().array() += (is_lb_inf).select(
-            ret.adj().array() * -value_of(arena_x).array().exp() + lp_adj,
+            ret.adj().array() * -arena_x_val.exp() + lp_adj,
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
                 + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }

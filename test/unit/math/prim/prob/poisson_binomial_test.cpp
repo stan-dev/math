@@ -89,8 +89,6 @@ TEST(ProbDistributionsPoissonBinomial,
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_scalar_y_oob) {
-  static double inff = std::numeric_limits<double>::infinity();
-
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
   theta << 0.5, 0.2, 0.7;
 
@@ -111,8 +109,6 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_theta_is_not_prob) {
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_vectorial_y_oob) {
-  static double inff = std::numeric_limits<double>::infinity();
-
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
   theta << 0.5, 0.2, 0.1;
   std::vector<int> ys1{-1, 2};
@@ -156,7 +152,6 @@ TEST(ProbDistributionsPoissonBinomial,
 
 TEST(ProbDistributionsPoissonBinomial,
      lpmf_check_error_vectorial_y_oob_with_vectorial_theta) {
-  using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
   vec theta1(3);
@@ -173,7 +168,6 @@ TEST(ProbDistributionsPoissonBinomial,
 
 TEST(ProbDistributionsPoissonBinomial,
      lpmf_check_error_vectorial_y_and_theta_inconsistent_sizes) {
-  using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
   vec theta(3);
@@ -192,7 +186,6 @@ TEST(ProbDistributionsPoissonBinomial,
  * success probabilities to the same value
  */
 TEST(ProbDistributionsPoissonBinomial, chiSquareGoodnessFitTest) {
-  using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
   boost::random::mt19937 rng;

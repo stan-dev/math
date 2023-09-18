@@ -34,16 +34,17 @@ inline var_value<matrix_cl<double>> matrix_power(const var_value<T>& M,
   if (M.size() == 0)
     return M;
 
-  size_t N = M.rows();
+  auto N = M.rows();
+
   if (n == 0) {
-    return diag_matrix(constant(1.0, M.rows(), 1));
+    return diag_matrix(constant(1.0, N, 1));
   }
   if (n == 1) {
     return M;
   }
 
   arena_t<std::vector<matrix_cl<double>>> arena_powers(n + 1);
-  arena_powers[0] = diag_matrix(constant(1.0, M.rows(), 1));
+  arena_powers[0] = diag_matrix(constant(1.0, N, 1));
   arena_powers[1] = M.val();
   for (size_t i = 2; i <= n; ++i) {
     arena_powers[i] = arena_powers[1] * arena_powers[i - 1];

@@ -5,10 +5,10 @@
 TEST(MathPrimFun, size_mvt_scalar) {
   using stan::math::size_mvt;
 
-  double x1;
+  double x1 = 0;
   EXPECT_THROW(size_mvt(x1), std::invalid_argument);
 
-  int x2;
+  int x2 = 0;
   EXPECT_THROW(size_mvt(x2), std::invalid_argument);
 }
 

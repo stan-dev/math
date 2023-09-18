@@ -68,8 +68,7 @@ TEST(MathPrimScalFun, grad2F1_4) {
   double b1 = 10;
   double z = 1;
 
-  EXPECT_THROW(auto grad_tuple = stan::math::grad_2F1<true>(a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(stan::math::grad_2F1<true>(a1, a2, b1, z), std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_5) {
@@ -78,8 +77,7 @@ TEST(MathPrimScalFun, grad2F1_5) {
   double b1 = 20;
   double z = 1.2;
 
-  EXPECT_THROW(auto grad_tuple = stan::math::grad_2F1<true>(a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(stan::math::grad_2F1<true>(a1, a2, b1, z), std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_6) {

@@ -50,7 +50,6 @@ TEST(OpenCLPrim, add_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d0, d0);
 
   double d3 = 3.0;
-  auto a = stan::math::add(d1, d3);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d1, d3);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d3, d1);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d3, d0);
