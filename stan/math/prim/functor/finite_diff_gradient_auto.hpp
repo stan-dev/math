@@ -48,9 +48,7 @@ namespace math {
  */
 template <typename F, typename VectorT,
           typename ScalarT = return_type_t<VectorT>>
-void finite_diff_gradient_auto(const F& f,
-                               const VectorT& x,
-                               ScalarT& fx,
+void finite_diff_gradient_auto(const F& f, const VectorT& x, ScalarT& fx,
                                VectorT& grad_fx) {
   VectorT x_temp(x);
   fx = f(x);

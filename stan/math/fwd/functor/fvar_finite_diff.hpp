@@ -67,16 +67,15 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   using FvarInnerT = typename FvarT::Scalar;
 
   std::vector<FvarInnerT> serialised_args
-    = serialize<FvarInnerT>(value_of(args)...);
+      = serialize<FvarInnerT>(value_of(args)...);
 
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
-  auto serial_functor
-      = [&](const auto& v) {
-        auto v_deserializer = to_deserializer(v);
-        return func(v_deserializer.read(args)...);
-      };
+  auto serial_functor = [&](const auto& v) {
+    auto v_deserializer = to_deserializer(v);
+    return func(v_deserializer.read(args)...);
+  };
 
   FvarInnerT rtn_value;
   std::vector<FvarInnerT> grad;
