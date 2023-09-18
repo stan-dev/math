@@ -17,15 +17,15 @@ namespace internal {
  *
  * Overload for when the input is not an fvar<T> and no tangents are needed.
  *
- * @tparam FuncTangentT Type of tangent calculated by finite-differences
- * @tparam InputArgT Type of the function input argument
+ * @tparam FuncTangent Type of tangent calculated by finite-differences
+ * @tparam InputArg Type of the function input argument
  * @param tangent Calculated tangent
  * @param arg Input argument
  */
-template <typename FuncTangentT, typename InputArgT,
-          require_not_st_fvar<InputArgT>* = nullptr>
-inline constexpr double aggregate_tangent(const FuncTangentT& tangent,
-                                          const InputArgT& arg) {
+template <typename FuncTangent, typename InputArg,
+          require_not_st_fvar<InputArg>* = nullptr>
+inline constexpr double aggregate_tangent(const FuncTangent& tangent,
+                                          const InputArg& arg) {
   return 0;
 }
 
@@ -36,14 +36,14 @@ inline constexpr double aggregate_tangent(const FuncTangentT& tangent,
  * Overload for when the input is an fvar<T> and its tangent needs to be
  * aggregated.
  *
- * @tparam FuncTangentT Type of tangent calculated by finite-differences
- * @tparam InputArgT Type of the function input argument
+ * @tparam FuncTangent Type of tangent calculated by finite-differences
+ * @tparam InputArg Type of the function input argument
  * @param tangent Calculated tangent
  * @param arg Input argument
  */
-template <typename FuncTangentT, typename InputArgT,
-          require_st_fvar<InputArgT>* = nullptr>
-auto aggregate_tangent(const FuncTangentT& tangent, const InputArgT& arg) {
+template <typename FuncTangent, typename InputArg,
+          require_st_fvar<InputArg>* = nullptr>
+auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
   return sum(apply_scalar_binary(
       tangent, arg, [](const auto& x, const auto& y) { return x * y.d_; }));
 }
@@ -66,23 +66,27 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
 
-  auto serialised_args = serialize<FvarInnerT>(value_of(args)...);
+  std::vector<FvarInnerT> serialised_args
+    = serialize<FvarInnerT>(value_of(args)...);
 
   // Create a 'wrapper' functor which will take the flattened column-vector
   // and transform it to individual arguments which are passed to the
   // user-provided functor
   auto serial_functor
-      = [&](const auto& v) { return func(to_deserializer(v).read(args)...); };
+      = [&](const auto& v) {
+        auto v_deserializer = to_deserializer(v);
+        return func(v_deserializer.read(args)...);
+      };
 
   FvarInnerT rtn_value;
-  Eigen::Matrix<FvarInnerT, -1, 1> grad;
-  finite_diff_gradient_auto(serial_functor, to_vector(serialised_args),
-                            rtn_value, grad);
+  std::vector<FvarInnerT> grad;
+  finite_diff_gradient_auto(serial_functor, serialised_args, rtn_value, grad);
 
   FvarInnerT rtn_grad = 0;
+  auto grad_deserializer = to_deserializer(grad);
   // Use a fold-expression to aggregate tangents for input arguments
   (void)std::initializer_list<int>{(rtn_grad += internal::aggregate_tangent(
-                                        to_deserializer(grad).read(args), args),
+                                        grad_deserializer.read(args), args),
                                     0)...};
 
   return FvarT(rtn_value, rtn_grad);
