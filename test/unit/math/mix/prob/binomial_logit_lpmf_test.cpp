@@ -19,4 +19,5 @@ TEST(mathMixScalFun, binomial_logit_lpmf) {
   stan::test::expect_ad(f(n_arr, 10), 2.11);
   stan::test::expect_ad(f(n_arr, N_arr), 2.11);
   stan::test::expect_ad(f(5, N_arr), 2.11);
+  stan::test::expect_ad(f(5, N_arr), alpha);
 }
