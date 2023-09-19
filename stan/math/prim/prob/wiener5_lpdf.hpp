@@ -579,7 +579,7 @@ Scalar estimate_with_err_check(const F& functor, T_partials err,
  * @return The log of the Wiener first passage time density with
  *  the specified arguments for upper boundary responses
  */
-template <bool propto = false, typename Scalar, typename T_y, typename T_a, typename T_t0,
+template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv>
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
@@ -591,7 +591,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
   using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
   
-  using T_partials = partials_type_t<scalar_type_t<T_sv>>;
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
 
   static constexpr const char* function_name = "wiener5_lpdf";
@@ -718,6 +717,17 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i] = internal::wiener5_grad_sv<false, T_partials_return>(
           y_val - t0_val, a_val, v_val, w_val, sv_val);
+/*		const auto params
+        = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, log(1e-5));
+		Eigen::Matrix<T_partials_return, -1, 1> xmin = Eigen::VectorXd::Zero(1);
+		Eigen::Matrix<T_partials_return, -1, 1> xmax = Eigen::VectorXd::Ones(1);
+		int max_eval = 1000;
+		int dim = 1;
+		T_partials_return abs = 0.0;
+		T_partials_return rel = 1e-5;
+		ops_partials.edge6_.partials_[i] = hcubature<T_partials_return>(internal::wiener5_grad_a<false, T_partials_return, T_partials_return,
+			T_partials_return,T_partials_return,T_partials_return,T_partials_return>,
+			params, dim, xmin, xmax, max_eval, abs, rel); */
     }
   }  // end for loop
   return ops_partials.build(log_density);
