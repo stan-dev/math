@@ -95,12 +95,13 @@ static const char* lbeta_device_function
               return lgamma(x) + lgamma(y) - lgamma(x + y);
             }
             double x_over_xy = x / (x + y);
+            double log_xpy = log(x + y);
             if (x < LGAMMA_STIRLING_DIFF_USEFUL) {
               // y large, x small
               double stirling_diff
                   = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
               double stirling
-                  = (y - 0.5) * log1p(-x_over_xy) + x * (1 - log(x + y));
+                  = (y - 0.5) * log1p(-x_over_xy) + x * (1 - log_xpy);
               return stirling + lgamma(x) + stirling_diff;
             }
 
@@ -108,8 +109,9 @@ static const char* lbeta_device_function
             double stirling_diff = lgamma_stirling_diff(x)
                                    + lgamma_stirling_diff(y)
                                    - lgamma_stirling_diff(x + y);
-            double stirling = (x - 0.5) * log(x_over_xy) + y * log1p(-x_over_xy)
-                              + 0.5 * log(2.0 * M_PI) - 0.5 * log(y);
+            double stirling = (x - 0.5) * (log(x) - log_xpy)
+                              + y * log1p(-x_over_xy)
+                              + 0.5 * (M_LN2 + log(M_PI)) - 0.5 * log(y);
             return stirling + stirling_diff;
           }
           // \cond
