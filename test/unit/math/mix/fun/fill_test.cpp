@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(mathMix, fv) {
+TEST_F(mathMix, Fillfv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -45,7 +45,7 @@ TEST_F(mathMix, fv) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val());
 }
-TEST_F(mathMix, fv2) {
+TEST_F(mathMix, Fillfv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -57,7 +57,7 @@ TEST_F(mathMix, fv2) {
   EXPECT_FLOAT_EQ(3.0, y[0].val_.val());
 }
 
-TEST_F(mathMix, ffv) {
+TEST_F(mathMix, Fillffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -99,7 +99,7 @@ TEST_F(mathMix, ffv) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_.val());
 }
-TEST_F(mathMix, ffv2) {
+TEST_F(mathMix, Fillffv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;

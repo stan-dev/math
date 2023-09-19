@@ -21,7 +21,7 @@ struct sum_functor {
   }
 };
 
-TEST_F(mathMix, func_gradient) {
+TEST_F(mathMix, finite_diff_func_gradient) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -57,7 +57,7 @@ TEST_F(mathMix, func_gradient) {
   }
 }
 
-TEST_F(mathMix, func_hessian) {
+TEST_F(mathMix, finite_diff_func_hessian) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   third_order_mixed f;
@@ -110,7 +110,7 @@ TEST_F(mathMix, func_hessian) {
   }
 }
 
-TEST_F(mathMix, func_gradHessianResizingTest) {
+TEST_F(mathMix, finite_diff_func_gradHessianResizingTest) {
   // failed in 2.19 before grad_hess_fx.clear() was added
   norm_functor f;
   Eigen::VectorXd x(3);
@@ -126,7 +126,7 @@ TEST_F(mathMix, func_gradHessianResizingTest) {
   EXPECT_EQ(x.size(), hess.cols());
 }
 
-TEST_F(mathMix, func_grad_hessian) {
+TEST_F(mathMix, finite_diff_func_grad_hessian) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   norm_functor norm;
@@ -188,7 +188,7 @@ TEST_F(mathMix, func_grad_hessian) {
   }
 }
 
-TEST_F(mathMix, func_gradientZeroOneArg) {
+TEST_F(mathMix, finite_diff_func_gradientZeroOneArg) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
@@ -223,7 +223,7 @@ TEST_F(mathMix, func_gradientZeroOneArg) {
                                    f_z_grad_sum);
 }
 
-TEST_F(mathMix, func_hessianZeroOneArg) {
+TEST_F(mathMix, finite_diff_func_hessianZeroOneArg) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
