@@ -95,9 +95,7 @@ static constexpr const char* tridiagonalization_householder_kernel_code
             P[P_rows * (k + j + 1) + k + j]
                 = P[P_rows * (k + j) + k + j + 1] * q / M_SQRT2 + alpha;
           }
-        }
-        // \cond
-    );
+        });  // \cond
 // \endcond
 
 // \cond
@@ -163,9 +161,7 @@ static constexpr const char* tridiagonalization_v_step_1_kernel_code
             Uu[wgid] = res_loc1[0];
             Vu[wgid] = res_loc2[0];
           }
-        }
-        // \cond
-    );
+        });  // \cond
 // \endcond
 
 // \cond
@@ -243,9 +239,7 @@ static constexpr const char* tridiagonalization_v_step_2_kernel_code
             }
             barrier(CLK_LOCAL_MEM_FENCE);
           }
-        }
-        // \cond
-    );
+        });  // \cond
 // \endcond
 
 // \cond
@@ -301,9 +295,7 @@ static constexpr const char* tridiagonalization_v_step_3_kernel_code
           if (gid == 0) {
             P[P_rows * (k + j + 1) + k + j] -= *q / M_SQRT2 * u[0];
           }
-        }
-        // \cond
-    );
+        });  // \cond
 // \endcond
 
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
