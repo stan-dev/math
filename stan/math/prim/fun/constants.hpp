@@ -74,17 +74,17 @@ static constexpr double LOG_ZERO = -INFTY;
 const double LOG_EPSILON = std::log(EPSILON);
 
 /**
+ * The natural logarithm of 2,
+ * \f$ \log 2 \f$.
+ */
+static constexpr double LOG_TWO = boost::math::constants::ln_two<double>();
+
+/**
  * The natural logarithm of \f$ \pi \f$,
  * \f$ \log \pi \f$.
  */
 static constexpr double LOG_PI
     = 2 * boost::math::constants::log_root_two_pi<double>() - LOG_TWO;
-
-/**
- * The natural logarithm of 2,
- * \f$ \log 2 \f$.
- */
-static constexpr double LOG_TWO = boost::math::constants::ln_two<double>();
 
 /**
  * The natural logarithm of 0.5,
