@@ -97,22 +97,22 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd &F,
   int r = F.cols();  // number of variables
   int n = G.rows();  // number of states
 
-  check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
+  check_size_match(function, "rows of F", F.rows(), "rows of G", n);
   check_finite(function, "F", F);
   check_square(function, "G", G);
   check_finite(function, "G", G);
-  check_size_match(function, "rows of V", V.rows(), "cols of F", F.cols());
+  check_size_match(function, "rows of V", V.rows(), "cols of F", r);
   check_finite(function, "V", V);
   check_positive(function, "V rows", V.rows());
   check_symmetric(function, "V", V);
-  check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
+  check_size_match(function, "rows of W", W.rows(), "rows of G", n);
   check_finite(function, "W", W);
   check_positive(function, "W rows", W.rows());
   check_symmetric(function, "W", W);
-  check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
-  check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
+  check_size_match(function, "rows of W", W.rows(), "rows of G", n);
+  check_size_match(function, "size of m0", m0.size(), "rows of G", n);
   check_finite(function, "m0", m0);
-  check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
+  check_size_match(function, "rows of C0", C0.rows(), "rows of G", n);
   check_finite(function, "C0", C0);
   check_positive(function, "C0 rows", C0.rows());
   check_symmetric(function, "C0", C0);

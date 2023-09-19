@@ -20,15 +20,15 @@ Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_thin_R(
     const EigMat& m) {
   using matrix_t
       = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;
-  check_nonzero_size("qr_thin_R", "m", m);
+  if (unlikely(m.size() == 0)) {
+    return matrix_t(0, 0);
+  }
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);
   const int min_size = std::min(m.rows(), m.cols());
   matrix_t R = qr.matrixQR().topLeftCorner(min_size, m.cols());
-  for (int i = 0; i < min_size; i++) {
-    for (int j = 0; j < i; j++) {
-      R.coeffRef(i, j) = 0.0;
-    }
+  R.template triangularView<Eigen::StrictlyLower>().setZero();
+  for (int i = 0; i < min_size; ++i) {
     if (R(i, i) < 0) {
       R.row(i) *= -1.0;
     }

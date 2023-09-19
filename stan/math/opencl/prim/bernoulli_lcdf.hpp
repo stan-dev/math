@@ -34,7 +34,6 @@ return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);

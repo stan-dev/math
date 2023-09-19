@@ -373,7 +373,6 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
       cluster_end--;  // now this is the index of the last element of the
                       // cluster
       if (cluster_end > i) {  // cluster
-        double_d a = high[cluster_end - 1], b = low[cluster_end];
         double_d max_shift
             = (high[cluster_end - 1] - low[cluster_end]) / min_rel_sep;
         double_d next_shift;
@@ -396,7 +395,6 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 
         i = cluster_end;
       } else {  // isolated eigenvalue
-        int twist_idx;
         const double_d low_gap
             = i == block.start
                   ? double_d(std::numeric_limits<double>::infinity())

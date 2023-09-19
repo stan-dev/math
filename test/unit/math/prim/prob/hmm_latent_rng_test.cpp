@@ -83,7 +83,7 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   std::vector<int> counts_1(2);
   // int product = 0;
   std::vector<int> states;
-  int a = 0, b = 0, c = 0, d = 0;
+  int a = 0, c = 0;
   for (int i = 0; i < N; ++i) {
     states = hmm_latent_rng(log_omegas, Gamma, rho, rng);
     ++counts_0[states[0] - stan::error_index::value];
@@ -91,12 +91,8 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
     // product += states[0] * states[1];
     a += (states[0] == stan::error_index::value
           && states[1] == stan::error_index::value);
-    b += (states[0] == stan::error_index::value
-          && states[1] == 1 + stan::error_index::value);
     c += (states[0] == 1 + stan::error_index::value
           && states[1] == stan::error_index::value);
-    d += (states[0] == 1 + stan::error_index::value
-          && states[1] == 1 + stan::error_index::value);
   }
 
   // Test the marginal probabilities of each variable

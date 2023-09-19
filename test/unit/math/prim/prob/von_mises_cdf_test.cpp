@@ -62,7 +62,6 @@ TEST(ProbVonMises, pdf_cdf_agree_test) {
 
 TEST(ProbVonMises, pointwise_cdf_test) {
   using stan::math::von_mises_cdf;
-  double pi = stan::math::pi();
   // check that our von_mises_cdf coincides with scipy's for mu = -pi, 0, pi
   double ABS_TOL = 1e-12;
   ASSERT_NEAR(0.0000157567385742, von_mises_cdf(-3.141492653589793, 0, 0.01),

@@ -8,7 +8,7 @@ TEST(MathMatrixPrimMat, qr) {
 
   using stan::math::qr;
   using stan::math::transpose;
-  EXPECT_THROW(qr(m0), std::invalid_argument);
+  EXPECT_NO_THROW(qr(m0));
   EXPECT_NO_THROW(qr(m1));
 
   stan::math::matrix_d m2(4, 2);

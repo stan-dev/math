@@ -434,11 +434,12 @@ TEST(ProbDistributionsWeibull, derivativesPrecomputed) {
       }
     };
 
-    std::ostringstream message_stream;
-    message_stream << "y = " << t.y << ", alpha = " << t.alpha
-                   << ", sigma = " << t.sigma;
+    std::string message_stream;
+    message_stream = "y = " + std::to_string(t.y)
+                     + ", alpha = " + std::to_string(t.alpha)
+                     + ", sigma = " + std::to_string(t.sigma);
 
-    const char* message = message_stream.str().c_str();
+    const char* message = message_stream.c_str();
 
     my_expect_near(value_of(val), t.value, "value", message);
     my_expect_near(gradients[0], t.grad_y, "grad_y", message);

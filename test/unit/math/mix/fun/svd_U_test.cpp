@@ -5,7 +5,7 @@ TEST(MathMixMatFun, svd_U) {
   auto f = [](const auto& x) { return stan::math::svd_U(x); };
 
   Eigen::MatrixXd m00(0, 0);
-  EXPECT_THROW(f(m00), std::invalid_argument);
+  EXPECT_NO_THROW(f(m00));
 
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.1;

@@ -6,8 +6,6 @@
 TEST(checkConsistentSizesMvt, checkConsistentSizesMvt) {
   using stan::math::check_consistent_sizes_mvt;
 
-  size_t expected_size = 3;
-
   std::vector<Eigen::VectorXd> good(3);
   Eigen::VectorXd good_single(4);
   good_single << 1.0, 2.0, 3.0, 4.0;
