@@ -26,9 +26,9 @@ namespace math {
  * simplified gradients.
  * If containers are supplied, returns the log sum of the probabilities.
  *
- * @tparam T_y type of binary vector of successes variables;
+ * @tparam T_n type of binary vector of successes variables;
  * this can also be a single binary value;
- * @tparam T_y type of binary vector of population size variables;
+ * @tparam T_N type of binary vector of population size variables;
  * this can also be a single binary value;
  * @tparam T_x type of the matrix of independent variables (features)
  * @tparam T_alpha type of the intercept(s);
@@ -42,7 +42,7 @@ namespace math {
  * broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
- * @param alpha intercept (in log odds)
+ * @param alpha intercept
  * @param beta weight vector
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if x, beta or alpha is infinite.
