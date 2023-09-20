@@ -53,8 +53,8 @@ namespace math {
 template <bool propto, typename T_n, typename T_N, typename T_x,
           typename T_alpha, typename T_beta, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
-    const T_n& n, const T_N& N, const T_x& x,
-    const T_alpha& alpha, const T_beta& beta) {
+    const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
+    const T_beta& beta) {
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
@@ -165,8 +165,8 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 template <typename T_n, typename T_N, typename T_x, typename T_alpha,
           typename T_beta>
 inline return_type_t<T_x, T_beta, T_alpha> binomial_logit_glm_lpmf(
-    const T_n& n, const T_N& N, const T_x& x,
-    const T_alpha& alpha, const T_beta& beta) {
+    const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
+    const T_beta& beta) {
   return binomial_logit_glm_lpmf<false>(n, N, x, alpha, beta);
 }
 }  // namespace math

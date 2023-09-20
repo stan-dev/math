@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(ProbBinomialLogitGLM, matchesNonGLM) {
-  using stan::math::binomial_logit_lpmf;
   using stan::math::binomial_logit_glm_lpmf;
+  using stan::math::binomial_logit_lpmf;
 
   std::vector<int> n{1, 2};
   std::vector<int> N{5, 4};
@@ -58,13 +58,13 @@ TEST(ProbBinomialLogitGLM, throwsCorrectly) {
 
   std::vector<int> N_mismatch_size{5, 4, 10};
   EXPECT_THROW(binomial_logit_glm_lpmf(n, N_mismatch_size, x, alpha, beta),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(binomial_logit_glm_lpmf(500, 1, x, alpha, beta),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(binomial_logit_glm_lpmf(-10, N, x, alpha, beta),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(binomial_logit_glm_lpmf(n, -10, x, alpha, beta),
-                std::domain_error);
+               std::domain_error);
 
   Eigen::VectorXd alpha_inf = alpha;
   alpha[0] = INFTY;
@@ -74,9 +74,9 @@ TEST(ProbBinomialLogitGLM, throwsCorrectly) {
   x(0, 0) = INFTY;
 
   EXPECT_THROW(binomial_logit_glm_lpmf(n, N, x_inf, alpha, beta),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(binomial_logit_glm_lpmf(n, N, x, alpha_inf, beta),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(binomial_logit_glm_lpmf(n, N, x, alpha, beta_inf),
-                std::domain_error);
+               std::domain_error);
 }
