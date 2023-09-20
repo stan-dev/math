@@ -31,5 +31,4 @@ TEST(mathMixScalFun, binomial_logit_glm_lpmf) {
   stan::test::expect_ad(f(n_arr[0], N_arr), x_rowvec, alpha[0], beta);
   stan::test::expect_ad(f(n_arr, N_arr[0]), x_rowvec, alpha[0], beta);
   stan::test::expect_ad(f(n_arr, N_arr), x_rowvec, alpha[0], beta);
-
 }
