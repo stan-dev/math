@@ -196,9 +196,11 @@ template <typename Scalar, typename F, typename ParsPairT>
 std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
                                         const Scalar b,
                                         const ParsPairT& pars_pair) {
-  Eigen::Matrix<Scalar, -1, 1> c{{0.5 * (a + b)}};
-  Eigen::Matrix<Scalar, -1, 1> cp(1);
-  Eigen::Matrix<Scalar, -1, 1> cm(1);
+  //Eigen::Matrix<Scalar, -1, 1> c{{0.5 * (a + b)}};
+  //Eigen::Matrix<Scalar, -1, 1> cp(1);
+  //Eigen::Matrix<Scalar, -1, 1> cm(1);
+  Scalar c = 0.5 * (a+b);
+
   Scalar delta = 0.5 * (b - a);
   Scalar f0 = math::apply(
       [&integrand, &c](auto&&... args) { return integrand(c, args...); },
@@ -208,8 +210,10 @@ std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
   Scalar Idash = f0 * gwd7[3];
   for (auto i = 0; i != 7; i++) {
     Scalar deltax = delta * xd7[i];
-    cp[0] = c[0] + deltax;
-    cm[0] = c[0] - deltax;
+//    cp[0] = c[0] + deltax;
+//    cm[0] = c[0] - deltax;
+    Scalar cp = c + deltax;
+    Scalar cm = c - deltax;
     Scalar fx = math::apply(
         [&integrand, &cp](auto&&... args) { return integrand(cp, args...); },
         pars_pair);
@@ -535,9 +539,10 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
 //  err_vec.conservativeResize(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
-  /*       && (err > max(reqRelError * fabs(result), reqAbsError))
-         && std::isfinite(result)) {
+         && (error > fmax(reqRelError * fabs(val), reqAbsError))
+         && fabs(val) < INFTY){ //isfinite(val)) {
     auto err_idx = get_largest_box_idx(err_vec);
+//----------------
     auto&& box = ms[err_idx];
 
     double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
@@ -549,17 +554,15 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
         = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
-    double result_1;
+    /*double result_1;
     double result_2;
     double err_1;
-    double err_2;
-    double kdivide_1{0};
-    double kdivide_2{0};*/
-	
-			&& (error > max(reqRelError * fabs(val), reqAbsError))
-			&& std::isfinite(val)) {
-	auto err_idx = get_largest_box_idx(err_vec);
-    internal::Box<Scalar> box = ms.top();
+    double err_2;*/
+    int kdivide_1{0};
+    int kdivide_2{0};
+//--------------------------	
+	/*		
+    internal::Box box = ms.top();
     ms.pop();
 
     Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
@@ -568,12 +571,12 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     ma[box.kdiv_] += w;
 //    std::vector<double> mb(box.b);
 	eig_vec mb(box.b_);
-    mb[box.kdiv_] -= w;
+    mb[box.kdiv_] -= w; */
 
     Scalar result_1, result_2, err_1, err_2;
-    Scalar kdivide_1 = math::NOT_A_NUMBER;
-    Scalar kdivide_2 = math::NOT_A_NUMBER;
-
+    //Scalar kdivide_1 = math::NOT_A_NUMBER;
+    //Scalar kdivide_2 = math::NOT_A_NUMBER;
+//-----------------------
     if (dim == 1) {
       std::tie(result_1, err_1)
           = internal::gauss_kronrod<Scalar>(integrand, ma[0], box.b_[0], pars);

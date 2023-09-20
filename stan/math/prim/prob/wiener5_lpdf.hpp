@@ -717,8 +717,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i] = internal::wiener5_grad_sv<false, T_partials_return>(
           y_val - t0_val, a_val, v_val, w_val, sv_val);
-/*		const auto params
-        = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, log(1e-5));
+	/*	const auto params
+        = std::make_tuple(y_val-t0_val, a_val, v_val, w_val, sv_val);
 		Eigen::Matrix<T_partials_return, -1, 1> xmin = Eigen::VectorXd::Zero(1);
 		Eigen::Matrix<T_partials_return, -1, 1> xmax = Eigen::VectorXd::Ones(1);
 		int max_eval = 1000;
