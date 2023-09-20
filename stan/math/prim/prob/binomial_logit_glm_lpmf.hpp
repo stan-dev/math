@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_vector_or_scalar.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -58,9 +59,6 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
-  using T_theta_tmp =
-      typename std::conditional_t<T_x_rows == 1, T_partials_return,
-                                  Eigen::Array<T_partials_return, -1, 1>>;
   using T_xbeta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
                                   Eigen::Array<T_xbeta_partials, -1, 1>>;
