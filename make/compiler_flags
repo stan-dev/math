@@ -167,11 +167,6 @@ ifeq ($(OS),Windows_NT)
     LDLIBS_OS ?= -static-libgcc -static-libstdc++
   endif
 
-  UCRT_STRING := $(shell echo "\#include <windows.h>" | $(CXX) -E -dM -  | grep -i _UCRT)
-  ifneq (,$(UCRT_STRING))
-    CXXFLAGS_OS += -D_UCRT
-  endif
-
   EXE := .exe
 endif
 

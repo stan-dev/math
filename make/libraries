@@ -139,8 +139,11 @@ ifeq (Linux, $(OS))
   SHELL = /usr/bin/env bash
 endif
 
-ifneq (,$(UCRT_STRING))
-	TBB_CXXFLAGS += -D_UCRT
+ifeq (Windows_NT, $(OS))
+  UCRT_STRING := $(shell echo "\#include <windows.h>" | $(CXX) -E -dM -  | grep -i _UCRT)
+  ifneq (,$(UCRT_STRING))
+	  TBB_CXXFLAGS += -D_UCRT
+  endif
 endif
 
 # If brackets or spaces are found in MAKE on Windows
