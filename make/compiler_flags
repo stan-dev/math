@@ -161,6 +161,11 @@ ifeq ($(OS),Windows_NT)
     CXXFLAGS_OS ?= -m64
   endif
 
+  UCRT_STRING := $(shell echo "\#include <windows.h>" | $(CXX) -E -dM -  | grep -i _UCRT)
+  ifneq (,$(UCRT_STRING))
+    CXXFLAGS_OS += -D_UCRT
+  endif
+
   ifneq (gcc,$(CXX_TYPE))
     LDLIBS_OS ?= -static-libgcc
   else

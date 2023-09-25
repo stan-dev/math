@@ -140,9 +140,8 @@ ifeq (Linux, $(OS))
 endif
 
 ifeq (Windows_NT, $(OS))
-  UCRT_STRING := $(shell echo "\#include <windows.h>" | $(CXX) -E -dM -  | grep -i _UCRT)
   ifneq (,$(UCRT_STRING))
-	  TBB_CXXFLAGS += -D_UCRT
+    TBB_CXXFLAGS += -D_UCRT
   endif
 endif
 
