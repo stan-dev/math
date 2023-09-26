@@ -6,13 +6,13 @@ on:
 
 jobs:
   timing-test:
-    name: prim and rev tests
+    name: Timing test
     runs-on: windows-latest
 
     steps:
     - name: Timing for UCRT check
       if: runner.os == 'Windows'
       run: |
-        Measure-Command { echo "#include <windows.h>" | g++ -E -dM -  | findstr /l _UCRT }
+        Measure-Command { echo "#include <_mingw.h>" | g++ -E -dM -  | findstr /l _UCRT }
       shell: powershell
 
