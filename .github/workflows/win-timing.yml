@@ -1,0 +1,18 @@
+name: Windows Rtools40
+
+on:
+  push:
+    branches: [ win-timing-test ]
+
+jobs:
+  timing-test:
+    name: prim and rev tests
+    runs-on: windows-latest
+
+    steps:
+    - name: Timing for UCRT check
+      if: runner.os == 'Windows'
+      run: |
+        Measure-Command { echo "#include <windows.h>" | g++ -E -dM -  | findstr /l _UCRT }
+      shell: powershell
+
