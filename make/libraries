@@ -140,7 +140,7 @@ ifeq (Linux, $(OS))
 endif
 
 ifeq (Windows_NT, $(OS))
-  ifneq (,$(UCRT_STRING))
+  ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
 endif

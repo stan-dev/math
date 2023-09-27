@@ -161,8 +161,19 @@ ifeq ($(OS),Windows_NT)
     CXXFLAGS_OS ?= -m64
   endif
 
-  UCRT_STRING := $(shell echo "\#include <windows.h>" | $(CXX) -E -dM -  | grep -i _UCRT)
-  ifneq (,$(UCRT_STRING))
+  ifeq (,$(wildcard $(MATH)make/ucrt))
+    UCRT_STRING := $(shell echo "#include <windows.h>" | $(CXX) -E -dM -  | findstr _UCRT)
+    ifneq (,$(UCRT_STRING))
+      IS_UCRT ?= true
+    else
+      IS_UCRT ?= false
+    endif
+    $(shell echo "IS_UCRT ?= $(IS_UCRT)" > $(MATH)make/ucrt)
+  else
+    -include $(MATH)make/ucrt
+  endif
+
+  ifeq ($(IS_UCRT),true)
     CXXFLAGS_OS += -D_UCRT
   endif
 
