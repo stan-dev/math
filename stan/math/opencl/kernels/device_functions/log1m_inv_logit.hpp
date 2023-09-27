@@ -40,9 +40,9 @@ static const char* log1m_inv_logit_device_function
           */
           inline double log1m_inv_logit(double x) {
             if (x > 0.0) {
-              return -x - log1p(exp(-x));  // prevent underflow
+              return -x - log1p_exp(-x);  // prevent underflow
             }
-            return -log1p(exp(x));
+            return -log1p_exp(x);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT
