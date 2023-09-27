@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <cmath>
 
@@ -12,7 +13,7 @@ namespace math {
 template <typename T>
 inline fvar<T> log_inv_logit(const fvar<T>& x) {
   using std::exp;
-  return fvar<T>(log_inv_logit(x.val_), x.d_ / (1 + exp(x.val_)));
+  return fvar<T>(log_inv_logit(x.val_), x.d_ * inv_logit(-x.val_));
 }
 }  // namespace math
 }  // namespace stan
