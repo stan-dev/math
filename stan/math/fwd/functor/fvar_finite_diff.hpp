@@ -85,9 +85,9 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
   auto grad_deserializer = to_deserializer(grad);
   // Use a fold-expression to aggregate tangents for input arguments
   static_cast<void>(
-    std::initializer_list<int>{(rtn_grad += internal::aggregate_tangent(
-                                        grad_deserializer.read(args), args),
-                                    0)...});
+      std::initializer_list<int>{(rtn_grad += internal::aggregate_tangent(
+                                      grad_deserializer.read(args), args),
+                                  0)...});
 
   return FvarT(rtn_value, rtn_grad);
 }
