@@ -121,6 +121,15 @@ CXXFLAGS_LANG ?= -std=c++1y
 CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
 
+make/ucrt:
+  pound := \#
+  UCRT_STRING := $(shell echo '$(pound)include <windows.h>' | $(CXX) -E -dM -  | findstr _UCRT)
+  ifneq (,$(UCRT_STRING))
+    IS_UCRT ?= true
+  else
+    IS_UCRT ?= false
+  endif
+  $(shell echo "IS_UCRT ?= $(IS_UCRT)" > $(MATH)make/ucrt)
 
 ## These are the other compiler flags that can be set.
 ##
@@ -161,18 +170,7 @@ ifeq ($(OS),Windows_NT)
     CXXFLAGS_OS ?= -m64
   endif
 
-  ifeq (,$(wildcard $(MATH)make/ucrt))
-    UCRT_STRING := $(shell echo "#include <windows.h>" | $(CXX) -E -dM -  | findstr _UCRT)
-    ifneq (,$(UCRT_STRING))
-      IS_UCRT ?= true
-    else
-      IS_UCRT ?= false
-    endif
-    $(shell echo "IS_UCRT ?= $(IS_UCRT)" > $(MATH)make/ucrt)
-  else
-    -include $(MATH)make/ucrt
-  endif
-
+  include make/ucrt
   ifeq ($(IS_UCRT),true)
     CXXFLAGS_OS += -D_UCRT
   endif
