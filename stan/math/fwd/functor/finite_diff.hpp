@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_FUNCTOR_FVAR_FINITE_DIFF_HPP
-#define STAN_MATH_FWD_FUNCTOR_FVAR_FINITE_DIFF_HPP
+#ifndef STAN_MATH_FWD_FUNCTOR_FINITE_DIFF_HPP
+#define STAN_MATH_FWD_FUNCTOR_FINITE_DIFF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
@@ -43,35 +43,36 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
  */
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
-auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
+inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
   return sum(apply_scalar_binary(
       tangent, arg, [](const auto& x, const auto& y) { return x * y.d_; }));
 }
 }  // namespace internal
 
 /**
- * This frameworks adds fvar<T> support for arbitrary functions through
- * finite-differencing. Higher-order inputs (i.e., fvar<var> & fvar<fvar<T>>)
- * are also implicitly supported.
+ * Construct an fvar<T> where the tangent is calculated by finite-differencing.
+ * Finite-differencing is only perfomed where the scalar type to be evaluated is
+ * `fvar<T>.
+ *
+ * Higher-order inputs (i.e., fvar<var> & fvar<fvar<T>>) are also implicitly
+ * supported through auto-diffing the finite-differencing process.
  *
  * @tparam F Type of functor for which fvar<T> support is needed
- * @tparam TArgs... Types of arguments (containing at least one fvar<T> type)
- *                     to be passed to function
+ * @tparam TArgs Template parameter pack of the types passed in the `operator()`
+ *                of the functor type `F`. Must contain at least on type whose
+ *                scalar type is `fvar<T>`
  * @param func Functor for which fvar<T> support is needed
  * @param args Parameter pack of arguments to be passed to functor.
  */
 template <typename F, typename... TArgs,
           require_any_st_fvar<TArgs...>* = nullptr>
-auto fvar_finite_diff(const F& func, const TArgs&... args) {
+inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
 
   std::vector<FvarInnerT> serialised_args
       = serialize<FvarInnerT>(value_of(args)...);
 
-  // Create a 'wrapper' functor which will take the flattened column-vector
-  // and transform it to individual arguments which are passed to the
-  // user-provided functor
   auto serial_functor = [&](const auto& v) {
     auto v_deserializer = to_deserializer(v);
     return func(v_deserializer.read(args)...);
@@ -93,21 +94,23 @@ auto fvar_finite_diff(const F& func, const TArgs&... args) {
 }
 
 /**
- * This frameworks adds fvar<T> support for arbitrary functions through
- * finite-differencing. Higher-order inputs (i.e., fvar<var> & fvar<fvar<T>>)
- * are also implicitly supported.
+ * Construct an fvar<T> where the tangent is calculated by finite-differencing.
+ * Finite-differencing is only perfomed where the scalar type to be evaluated is
+ * `fvar<T>.
  *
- * Overload for use when no fvar<T> arguments are passed, and finite-differences
- * are not needed.
+ * This overload is used when no fvar<T> arguments are passed and simply
+ * evaluates the functor with the provided arguments.
  *
  * @tparam F Type of functor
- * @tparam TArgs... Types of arguments (containing no fvar<T> types)
+ * @tparam TArgs Template parameter pack of the types passed in the `operator()`
+ *                of the functor type `F`. Must contain no type whose
+ *                scalar type is `fvar<T>`
  * @param func Functor
  * @param args... Parameter pack of arguments to be passed to functor.
  */
 template <typename F, typename... TArgs,
           require_all_not_st_fvar<TArgs...>* = nullptr>
-auto fvar_finite_diff(const F& func, const TArgs&... args) {
+inline auto finite_diff(const F& func, const TArgs&... args) {
   return func(args...);
 }
 

@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/fwd/functor/fvar_finite_diff.hpp>
+#include <stan/math/fwd/functor/finite_diff.hpp>
 
 namespace stan {
 namespace math {
@@ -42,7 +42,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
           return integrate_1d_impl(f, a_val, b_val, relative_tolerance, msgs,
                                    args_var...);
         };
-  FvarT ret = fvar_finite_diff(func, args...);
+  FvarT ret = finite_diff(func, args...);
 
   // Calculate tangents w.r.t. integration bounds if needed
   if (is_fvar<T_a>::value || is_fvar<T_b>::value) {
