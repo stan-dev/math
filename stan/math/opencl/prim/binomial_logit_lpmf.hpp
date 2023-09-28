@@ -61,8 +61,8 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
       = check_cl(function, "Probability parameter", alpha_val, "finite");
   auto alpha_finite = isfinite(alpha_val);
 
-  auto log_inv_logit_alpha = log_inv_logit(alpha);
-  auto log1m_inv_logit_alpha = log1m_inv_logit(alpha);
+  auto log_inv_logit_alpha = log_inv_logit(alpha_val);
+  auto log1m_inv_logit_alpha = log1m_inv_logit(alpha_val);
   auto n_diff = N - n;
   auto logp_expr1 = elt_multiply(n, log_inv_logit_alpha)
                     + elt_multiply(n_diff, log1m_inv_logit_alpha);
