@@ -125,6 +125,7 @@ clean-deps:
 	@$(RM) $(call findfiles,test,*.d.*)
 	@$(RM) $(call findfiles,lib,*.d.*)
 	@$(RM) $(call findfiles,stan,*.dSYM)
+	@$(RM) $(call findfiles,make,ucrt)
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 
