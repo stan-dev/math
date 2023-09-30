@@ -196,10 +196,9 @@ template <typename Scalar, typename F, typename ParsPairT>
 std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
                                         const Scalar b,
                                         const ParsPairT& pars_pair) {
-  //Eigen::Matrix<Scalar, -1, 1> c{{0.5 * (a + b)}};
-  //Eigen::Matrix<Scalar, -1, 1> cp(1);
-  //Eigen::Matrix<Scalar, -1, 1> cm(1);
-  Scalar c = 0.5 * (a+b);
+  Eigen::Matrix<Scalar, -1, 1> c{{0.5 * (a + b)}};
+  Eigen::Matrix<Scalar, -1, 1> cp(1);
+  Eigen::Matrix<Scalar, -1, 1> cm(1);
 
   Scalar delta = 0.5 * (b - a);
   Scalar f0 = math::apply(
@@ -210,10 +209,8 @@ std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
   Scalar Idash = f0 * gwd7[3];
   for (auto i = 0; i != 7; i++) {
     Scalar deltax = delta * xd7[i];
-//    cp[0] = c[0] + deltax;
-//    cm[0] = c[0] - deltax;
-    Scalar cp = c + deltax;
-    Scalar cm = c - deltax;
+    cp[0] = c[0] + deltax;
+    cm[0] = c[0] - deltax;
     Scalar fx = math::apply(
         [&integrand, &cp](auto&&... args) { return integrand(cp, args...); },
         pars_pair);
@@ -245,7 +242,7 @@ template <typename Scalar>
 inline std::tuple<Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1>, Eigen::Matrix<Scalar, -1, 1>,
                   Eigen::Matrix<Scalar, -1, 1>>
 make_GenzMalik(const int dim) {
-  Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1> points(4);
+  Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1> points(4); // is this line correct? It has been: std::vector<Eigen::MatrixXd> points(4);
   Eigen::Matrix<Scalar, -1, 1> weights(5);
   Eigen::Matrix<Scalar, -1, 1> weights_low_deg(4);
   Scalar l4 = std::sqrt(9 * 1.0 / 10);
@@ -254,7 +251,6 @@ make_GenzMalik(const int dim) {
   Scalar l5 = std::sqrt(9 * 1.0 / 19);
 
   Scalar twopn = std::pow(2, dim);
-
   weights[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
   weights[1] = twopn * (980.0 / 6561);
   weights[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
@@ -264,10 +260,14 @@ make_GenzMalik(const int dim) {
   weights_low_deg[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
   weights_low_deg[1] = twopn * (245.0 / 486);
   weights_low_deg[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
+std::cout << "In make_GenzMalik Stelle vor combos" << std::endl;
   points[0] = combos(1, l2, dim);
+std::cout << "In make_GenzMalik Stelle vor combos2" << std::endl;
   points[1] = combos(1, l3, dim);
+std::cout << "In make_GenzMalik nach combos" << std::endl;
   points[2] = signcombos(2, l4, dim);
   points[3] = signcombos(dim, l5, dim);
+std::cout << "In make_GenzMalik Stelle 4" << std::endl;
   return std::make_tuple(std::move(points), std::move(weights),
                          std::move(weights_low_deg));
 }
@@ -296,7 +296,7 @@ std::tuple<Scalar, Scalar, int> integrate_GenzMalik(
     const int dim, const Eigen::Matrix<Scalar, -1, 1>& a, const Eigen::Matrix<Scalar, -1, 1>& b,
     const ParsTupleT& pars_tuple) {
   using eig_vec = Eigen::Matrix<Scalar, -1, 1>;
-  eig_vec c = Eigen::VectorXd::Zero(dim);
+  Eigen::Matrix<Scalar, -1, 1> c = Eigen::VectorXd::Zero(dim);
   for (auto i = 0; i != dim; i++) {
     if (a[i] == b[i]) {
       return std::make_tuple(0.0, 0.0, 0);
@@ -424,7 +424,7 @@ std::tuple<Scalar, Scalar, int> integrate_GenzMalik(
  * @param I value of the integral
  * @param kdivide number of subdividing the integration volume
  */
-template <typename Scalar>//, typename Vec1, typename Vec2>
+template <typename Scalar>
 struct Box {
   template <typename Vec1, typename Vec2>
   Box(Vec1&& a, Vec2&& b, Scalar I, int kdivide)
@@ -432,10 +432,8 @@ struct Box {
         b_(std::forward<Vec2>(b)),
         I_(I),
         kdiv_(kdivide) {}
-//  Eigen::Matrix<Scalar, -1, 1> a_;
-  Eigen::VectorXd a_;
-//  Eigen::Matrix<Scalar, -1, 1> b_;
-  Eigen::VectorXd b_;
+  Eigen::Matrix<Scalar, -1, 1> a_;
+  Eigen::Matrix<Scalar, -1, 1> b_;
   Scalar I_;
   int kdiv_;
 };
@@ -497,10 +495,7 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   Scalar err;
   auto kdivide = 0;
 
-//  std::vector<Eigen::MatrixXd> p(4);
   Eigen::Matrix<eig_vec, -1, 1> p(4);
-//  Eigen::VectorXd w_five(5);
-//  Eigen::VectorXd wd_four(4); 
   eig_vec w_five(5);
   eig_vec wd_four(4);
 
@@ -508,7 +503,9 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     std::tie(result, err)
         = internal::gauss_kronrod<Scalar>(integrand, a[0], b[0], pars);
   } else {
+std::cout << "vor make_GenzMalik" << std::endl;
     std::tie(p, w_five, wd_four) = internal::make_GenzMalik<Scalar>(dim);
+std::cout << "nach make_GenzMalik" << std::endl;
     std::tie(result, err, kdivide) = internal::integrate_GenzMalik<Scalar>(
         integrand, p, w_five, wd_four, dim, a, b, pars);
   }
@@ -532,11 +529,9 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     auto max_it = std::max_element(box_vec.begin(), box_vec.end());
     return std::distance(box_vec.begin(), max_it);
   };
-//  std::vector<double> err_vec;
   std::vector<Scalar> err_vec;
 //  eig_vec err_vec;
   err_vec.reserve(numevals);
-//  err_vec.conservativeResize(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
          && (error > fmax(reqRelError * fabs(val), reqAbsError))
@@ -545,19 +540,15 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
 //----------------
     auto&& box = ms[err_idx];
 
-    double w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    Eigen::VectorXd ma
-        = Eigen::Map<const Eigen::VectorXd>(box.a_.data(), box.a_.size());
+    Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
+    eig_vec ma
+        = Eigen::Map<const eig_vec>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    Eigen::VectorXd mb
-        = Eigen::Map<const Eigen::VectorXd>(box.b_.data(), box.b_.size());
+    eig_vec mb
+        = Eigen::Map<const eig_vec>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
-    /*double result_1;
-    double result_2;
-    double err_1;
-    double err_2;*/
     int kdivide_1{0};
     int kdivide_2{0};
 //--------------------------	
@@ -573,9 +564,10 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
 	eig_vec mb(box.b_);
     mb[box.kdiv_] -= w; */
 
-    Scalar result_1, result_2, err_1, err_2;
-    //Scalar kdivide_1 = math::NOT_A_NUMBER;
-    //Scalar kdivide_2 = math::NOT_A_NUMBER;
+    Scalar result_1;
+	Scalar result_2;
+	Scalar err_1;
+	Scalar err_2;
 //-----------------------
     if (dim == 1) {
       std::tie(result_1, err_1)

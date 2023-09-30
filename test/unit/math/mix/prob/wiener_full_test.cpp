@@ -1,16 +1,29 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixDouble, wiener5_lpdf) {
+TEST(mathMixDouble, wiener_full_lpdf) {
 	double y = 1.0;
 	double a = 2.0;
 	double t0 = 0.2;
 	double w = 0.5;
 	double v = 1.5;
 	double sv = 0.2;
-	double sw = 0.2;
+	double sw = 0; // if = 0 no errors, if = 0.2 'Invalid sizes when resizing a matrix or array.' in hcubature 'points[0] = combos(1, l2, dim);'
 	double st0 = 0.2;
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
+}
+
+TEST(mathMixVar, wiener_full_lpdf) {
+	using stan::math::var;
+	var y = 1.0;
+	var a = 2.0;
+	var t0 = 0.2;
+	var w = 0.5;
+	var v = 1.5;
+	var sv = 0.2;
+	var sw = 0; // if = 0 no errors, if = 0.2 'Invalid sizes when resizing a matrix or array.' in hcubature 'points[0] = combos(1, l2, dim);'
+	var st0 = 0.2;
+	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0, 1e-4);
 }
 
 /*

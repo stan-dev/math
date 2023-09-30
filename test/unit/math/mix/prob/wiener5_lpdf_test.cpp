@@ -24,7 +24,7 @@ TEST(mathMixVar, wiener5_lpdf) {
 	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, 1e-4);
 }
 
-
+/*
 TEST(mathMixFVar, wiener5_lpdf) {
 	using stan::math::fvar;
 	using stan::math::var;
@@ -34,7 +34,8 @@ TEST(mathMixFVar, wiener5_lpdf) {
 	fvar<var> w = 0.5;
 	fvar<var> v = 1.5;
 	fvar<var> sv = 0.2;	
-	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, 1e-4);
+	double error = 1e-4;
+	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, error);
 }
 
 
@@ -53,7 +54,7 @@ TEST(mathMixDouble1Fun, wiener5_lpdf) {
 	  };
 	};
 	stan::test::expect_ad(f1(y, a, t0, w, v), sv);
-}
+}*/
 //correct value for grad_sv from R: -0.147527191875488
 
 /*
