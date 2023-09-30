@@ -161,6 +161,21 @@ ifeq ($(OS),Windows_NT)
     CXXFLAGS_OS ?= -m64
   endif
 
+  make/ucrt:
+    pound := \#
+    UCRT_STRING := $(shell echo '$(pound)include <windows.h>' | $(CXX) -E -dM -  | findstr _UCRT)
+    ifneq (,$(UCRT_STRING))
+      IS_UCRT ?= true
+    else
+      IS_UCRT ?= false
+    endif
+    $(shell echo "IS_UCRT ?= $(IS_UCRT)" > $(MATH)make/ucrt)
+
+  include make/ucrt
+  ifeq ($(IS_UCRT),true)
+    CXXFLAGS_OS += -D_UCRT
+  endif
+
   ifneq (gcc,$(CXX_TYPE))
     LDLIBS_OS ?= -static-libgcc
   else

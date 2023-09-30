@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_AS_OPERATION_CL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
@@ -19,11 +20,12 @@ namespace math {
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for operations - a no-op
+ * @tparam AssignOp ignored
  * @tparam T_operation type of the input operation
  * @param a an operation
  * @return operation
  */
-template <typename T_operation,
+template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_operation,
           typename = std::enable_if_t<std::is_base_of<
               operation_cl_base, std::remove_reference_t<T_operation>>::value>>
 inline T_operation&& as_operation_cl(T_operation&& a) {
@@ -33,11 +35,13 @@ inline T_operation&& as_operation_cl(T_operation&& a) {
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for scalars (arithmetic types). It wraps them into \c scalar_.
+ * @tparam AssignOp ignored
  * @tparam T_scalar type of the input scalar
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
-template <typename T_scalar, typename = require_arithmetic_t<T_scalar>,
+template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_scalar,
+          typename = require_arithmetic_t<T_scalar>,
           require_not_same_t<T_scalar, bool>* = nullptr>
 inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
@@ -47,23 +51,29 @@ inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for bool scalars. It wraps them into \c scalar_<char> as \c bool can
  * not be used as a type of a kernel argument.
+ * @tparam AssignOp ignored
  * @param a scalar
  * @return \c scalar_<char> wrapping the input
  */
-inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
+template <assign_op_cl AssignOp = assign_op_cl::equals>
+inline scalar_<char> as_operation_cl(const bool a) {
+  return scalar_<char>(a);
+}
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for \c matrix_cl. It wraps them into into \c load_.
+ * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object
+ *  is assigned using standard or compound assign.
  * @tparam T_matrix_cl \c matrix_cl
  * @param a \c matrix_cl
  * @return \c load_ wrapping the input
  */
-template <typename T_matrix_cl,
+template <assign_op_cl AssignOp = assign_op_cl::equals, typename T_matrix_cl,
           typename = require_any_t<is_matrix_cl<T_matrix_cl>,
                                    is_arena_matrix_cl<T_matrix_cl>>>
-inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
-  return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
+inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
+  return load_<T_matrix_cl, AssignOp>(std::forward<T_matrix_cl>(a));
 }
 
 /**
@@ -73,12 +83,16 @@ inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
  * as_operation_cl_t<T>. If the return value of \c as_operation_cl() would be a
  * rvalue reference, the reference is removed, so that a variable of this type
  * actually stores the value.
+ * @tparam T a `matrix_cl` or `Scalar` type
+ * @tparam AssignOp an optional `assign_op_cl` that dictates whether the object
+ *  is assigned using standard or compound assign.
  */
-template <typename T>
-using as_operation_cl_t = std::conditional_t<
-    std::is_lvalue_reference<T>::value,
-    decltype(as_operation_cl(std::declval<T>())),
-    std::remove_reference_t<decltype(as_operation_cl(std::declval<T>()))>>;
+template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
+using as_operation_cl_t
+    = std::conditional_t<std::is_lvalue_reference<T>::value,
+                         decltype(as_operation_cl<AssignOp>(std::declval<T>())),
+                         std::remove_reference_t<decltype(
+                             as_operation_cl<AssignOp>(std::declval<T>()))>>;
 
 /** @}*/
 }  // namespace math

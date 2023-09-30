@@ -71,6 +71,7 @@ lib/tbb
 
 # local make include
 /make/local
+/make/ucrt
 
 # python byte code
 *.pyc
