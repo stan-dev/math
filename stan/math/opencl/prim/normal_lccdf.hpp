@@ -82,13 +82,12 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
-  results(check_y_not_nan, check_mu_finite, check_sigma_positive, lccdf_cl,
-          y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
-      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr,
-                    lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
+  results(check_y_not_nan, check_mu_finite, check_sigma_positive)
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr);
+  results(lccdf_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
+      = expressions(lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
-
   T_partials_return lccdf = LOG_HALF + sum(from_matrix_cl(lccdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);

@@ -139,6 +139,12 @@ ifeq (Linux, $(OS))
   SHELL = /usr/bin/env bash
 endif
 
+ifeq (Windows_NT, $(OS))
+  ifeq ($(IS_UCRT),true)
+    TBB_CXXFLAGS += -D_UCRT
+  endif
+endif
+
 # If brackets or spaces are found in MAKE on Windows
 # we error, as those characters cause issues when building.
 ifeq (Windows_NT, $(OS))
