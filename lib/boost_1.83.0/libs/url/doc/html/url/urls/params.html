@@ -1,0 +1,522 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Params</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../urls.html" title="URLs">
+<link rel="prev" href="segments.html" title="Segments">
+<link rel="next" href="normalization.html" title="Normalization">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="segments.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="normalization.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.urls.params"></a><a class="link" href="params.html" title="Params">Params</a>
+</h3></div></div></div>
+<p>
+        While the query is specified as a plain string, it is usually interpreted
+        as a set of key-value pairs commonly referred to as <a href="https://en.wikipedia.org/wiki/Query_string" target="_top"><span class="emphasis"><em>URL
+        Parameters</em></span></a>, although here we use the term <span class="emphasis"><em>query
+        parameters</em></span> or <span class="emphasis"><em>params</em></span> for short. There is
+        no official, standard specification of the query parameters format, but the
+        W3C recommendations and HTML 5 have this to say:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            The query string is composed of a series of key-value pairs.
+          </li>
+<li class="listitem">
+            Within each pair, the field name and value are separated by an equals
+            sign, "=".
+          </li>
+<li class="listitem">
+            The series of pairs is separated by the ampersand, "&amp;".
+          </li>
+<li class="listitem">
+            Most web frameworks allow multiple values to have the same key.
+          </li>
+<li class="listitem">
+            Key comparisons are usually case sensitive, but the receiving authority
+            is ultimately responsible for deciding this.
+          </li>
+</ul></div>
+<p>
+        This URL has two query parameters, <code class="computeroutput">first</code> and <code class="computeroutput">last</code>
+        whose values are "John" and "Doe" respectively:
+      </p>
+<pre class="programlisting">http://www.example.com?first=John&amp;last=Doe
+</pre>
+<p>
+        Like the path, the library permits access to the params as using these separate,
+        bidirectional view types which reference the underlying URL:
+      </p>
+<div class="table">
+<a name="url.urls.params.params_types"></a><p class="title"><b>Table 1.29. Params Types</b></p>
+<div class="table-contents"><table class="table" summary="Params Types">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Accessor
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_view.html" title="params_view"><code class="computeroutput"><span class="identifier">params_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/params.html" title="url_view_base::params"><code class="computeroutput">params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A read-only range of decoded params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_ref.html" title="params_ref"><code class="computeroutput"><span class="identifier">params_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/params.html" title="url_base::params"><code class="computeroutput">params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A modifiable range of decoded params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_encoded_view.html" title="params_encoded_view"><code class="computeroutput"><span class="identifier">params_encoded_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_params.html" title="url_view_base::encoded_params"><code class="computeroutput">encoded_params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A read-only range of params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_encoded_ref.html" title="params_encoded_ref"><code class="computeroutput"><span class="identifier">params_encoded_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/encoded_params.html" title="url_base::encoded_params"><code class="computeroutput">encoded_params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A modifiable range of params.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        A param always has a key, even if it is the empty string. The value is optional;
+        an empty string is distinct from no value. To represent individual params
+        the library uses these types, distinguished by their ownership model and
+        whether or not percent-escapes are possible:
+      </p>
+<div class="table">
+<a name="url.urls.params.param_types"></a><p class="title"><b>Table 1.30. Param Types</b></p>
+<div class="table-contents"><table class="table" summary="Param Types">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Type
+                </p>
+              </th>
+<th>
+                <p>
+                  String Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__param.html" title="param"><code class="computeroutput"><span class="identifier">param</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A key-value pair with ownership of the strings. This can be used
+                  to hold decoded strings, or to allow the caller to take ownership
+                  of a param by making a copy.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__param_view.html" title="param_view"><code class="computeroutput"><span class="identifier">param_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A key-value pair without percent-escapes, referencing externally
+                  managed character buffers.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__param_pct_view.html" title="param_pct_view"><code class="computeroutput"><span class="identifier">param_pct_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A key-value pair which may contain percent-escapes, referencing
+                  externally managed character buffers.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        Param types can be constructed from initializer lists, allowing for convenient
+        notation. To represent a missing value, the constant <a class="link" href="../ref/boost__urls__no_value.html" title="no_value"><code class="computeroutput">no_value</code></a>
+        or <code class="computeroutput">nullptr</code> may be used. This table shows some examples of initializer
+        lists used to construct a param type, and the resulting data members:
+      </p>
+<div class="table">
+<a name="url.urls.params.param_initializers"></a><p class="title"><b>Table 1.31. Param Initializers</b></p>
+<div class="table-contents"><table class="table" summary="Param Initializers">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Statement
+                </p>
+              </th>
+<th>
+                <p>
+                  <code class="computeroutput">qp.key</code>
+                </p>
+              </th>
+<th>
+                <p>
+                  <code class="computeroutput">qp.value</code>
+                </p>
+              </th>
+<th>
+                <p>
+                  <code class="computeroutput">qp.has_value</code>
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">param qp = { "first", "John" };</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">"First"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">"John"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">true</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">param qp = { "first", "" };</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">"First"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">""</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">true</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">param qp = { "first", no_value };</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">"First"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">""</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">false</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">param qp = { "", "Doe" };</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">""</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">"Doe"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">true</code>
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        To understand the relationship between the query and the resulting range
+        of params, first we define this function <code class="computeroutput">parms</code> which returns
+        a list of params corresponding to the elements in a container of params:
+      </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">parms</span><span class="special">(</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span> <span class="special">)</span> <span class="special">-&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">list</span><span class="special">&lt;</span> <span class="identifier">param</span> <span class="special">&gt;</span>
+<span class="special">{</span>
+    <span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">(</span> <span class="identifier">s</span> <span class="special">);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">list</span><span class="special">&lt;</span> <span class="identifier">param</span> <span class="special">&gt;</span> <span class="identifier">seq</span><span class="special">;</span>
+    <span class="keyword">for</span><span class="special">(</span> <span class="keyword">auto</span> <span class="identifier">qp</span> <span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">params</span><span class="special">()</span> <span class="special">)</span>
+        <span class="identifier">seq</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span> <span class="identifier">qp</span> <span class="special">);</span>
+    <span class="keyword">return</span> <span class="identifier">seq</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+        In the table below we show the result of invoking <code class="computeroutput">parms</code> with
+        different queries. This demonstrates how the syntax of the query maps to
+        the parameter structure:
+      </p>
+<div class="table">
+<a name="url.urls.params.params_sequences"></a><p class="title"><b>Table 1.32. Params Sequences</b></p>
+<div class="table-contents"><table class="table" summary="Params Sequences">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  s
+                </p>
+              </th>
+<th>
+                <p>
+                  <code class="computeroutput">parms( s )</code>
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">"?first=John&amp;last=Doe"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ { "first", "John" }, { "last",
+                  "Doe" } }</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">"?id=42&amp;unsorted"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ { "id", "42" }, { "last",
+                  no_value } }</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">"?col=cust&amp;row="</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ { "col", "cust" }, { "row",
+                  "" } }</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">"?justify=left&amp;"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ { "justify", "left" }, { "",
+                  no_value } }</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">"?"</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ { "", no_value } }</code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">""</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">{ }</code>
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        It may be surprising that an empty query string ("?") produces
+        a sequence with one empty param. This is by design, otherwise the sequence
+        would not be distinguishable from the case where there is no query string
+        (last two rows of the table above).
+      </p>
+<p>
+        For complete details on containers used to represent query strings as params
+        please view the reference.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="segments.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="normalization.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

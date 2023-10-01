@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Text queries</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="static_interface.html" title="The static interface">
+<link rel="next" href="prepared_statements.html" title="Prepared statements">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="static_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="prepared_statements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.queries"></a><a class="link" href="queries.html" title="Text queries">Text queries</a>
+</h2></div></div></div>
+<p>
+      To run a text query, use any of the following functions, passing a string-like
+      object (convertible to <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>)
+      containing valid SQL as the first parameter:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>
+          or <a class="link" href="ref/boost__mysql__connection/async_execute.html" title="connection::async_execute"><code class="literal">connection::async_execute</code></a>:
+          these functions run the query and read the generated results into memory.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>
+          and <a class="link" href="ref/boost__mysql__connection/async_start_execution.html" title="connection::async_start_execution"><code class="literal">connection::async_start_execution</code></a>:
+          these functions initiate a text query as a multi-function operation.
+        </li>
+</ul></div>
+<p>
+      Almost any query that may be issued in the <code class="computeroutput"><span class="identifier">mysql</span></code>
+      command line can be executed using this method. This includes <code class="computeroutput"><span class="identifier">SELECT</span></code>s, <code class="computeroutput"><span class="identifier">UPDATE</span></code>s,
+      <code class="computeroutput"><span class="identifier">INSERT</span></code>s, <code class="computeroutput"><span class="identifier">DELETE</span></code>s,
+      <code class="computeroutput"><span class="identifier">CREATE</span> <span class="identifier">TABLE</span></code>s...
+      In particular, you may start transactions issuing a <code class="computeroutput"><span class="identifier">START</span>
+      <span class="identifier">TRANSACTION</span></code>, commit them using <code class="computeroutput"><span class="identifier">COMMIT</span></code> and rolling them back using <code class="computeroutput"><span class="identifier">ROLLBACK</span></code>.
+    </p>
+<h4>
+<a name="mysql.queries.h0"></a>
+      <span class="phrase"><a name="mysql.queries.limitations"></a></span><a class="link" href="queries.html#mysql.queries.limitations">Limitations</a>
+    </h4>
+<p>
+      At the moment, there is no equivalent to <a href="https://dev.mysql.com/doc/c-api/8.0/en/mysql-real-escape-string.html" target="_top"><code class="computeroutput"><span class="identifier">mysql_real_escape_string</span></code></a> to sanitize
+      user provided input. This limits text queries to queries without parameters.
+      Doing composition by hand can lead to SQL injection vulnerabilities. Please
+      use <a class="link" href="prepared_statements.html" title="Prepared statements">prepared statements</a> instead,
+      which perform composition server-side in a safe way.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <span class="bold"><strong>SQL injection warning</strong></span>: if you compose queries
+        by concatenating strings without sanitization, your code is vulnerable to
+        SQL injection attacks. Use prepared statements when possible!
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.queries.h1"></a>
+      <span class="phrase"><a name="mysql.queries.running_multiple_queries_at_once"></a></span><a class="link" href="queries.html#mysql.queries.running_multiple_queries_at_once">Running
+      multiple queries at once</a>
+    </h4>
+<p>
+      You can run several semicolon-separated queries in a single <code class="computeroutput"><span class="identifier">execute</span><span class="special">()</span></code> call by enabling the <a class="link" href="ref/boost__mysql__handshake_params/multi_queries.html" title="handshake_params::multi_queries"><code class="literal">handshake_params::multi_queries</code></a>
+      option. You can find an example <a class="link" href="multi_resultset.html#mysql.multi_resultset.multi_queries">here</a>.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <span class="bold"><strong>SQL injection warning</strong></span>: do not use this feature
+        if any of your queries contains untrusted input. You can create SQL injection
+        vulnerabilities if you do.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.queries.h2"></a>
+      <span class="phrase"><a name="mysql.queries.use_cases"></a></span><a class="link" href="queries.html#mysql.queries.use_cases">Use
+      cases</a>
+    </h4>
+<p>
+      You should generally prefer prepared statements over text queries. Text queries
+      can be useful for simple, non-parametrized queries:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <code class="computeroutput"><span class="string">"START TRANSACTION"</span></code>,
+          <code class="computeroutput"><span class="string">"COMMIT"</span></code> and <code class="computeroutput"><span class="string">"ROLLBACK"</span></code> queries, for transactions.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="string">"SET NAMES utf8mb4"</span></code>
+          and similar, to set variables for encoding, time zones and similar configuration
+          options.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="string">"CREATE TABLE ..."</span></code>
+          and similar DDL statements.
+        </li>
+</ul></div>
+<p>
+      Avoid text queries involving user input.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="static_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="prepared_statements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

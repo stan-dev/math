@@ -1,0 +1,255 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Character Sets</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../grammar.html" title="Customization">
+<link rel="prev" href="parse_rules.html" title="Parse Rules">
+<link rel="next" href="compound_rules.html" title="Compound Rules">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parse_rules.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../grammar.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compound_rules.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.grammar.character_sets"></a><a class="link" href="character_sets.html" title="Character Sets">Character Sets</a>
+</h3></div></div></div>
+<p>
+        A <span class="emphasis"><em>character set</em></span> represents a subset of low-ASCII characters,
+        used as a building block for constructing rules. The library models them
+        as callable predicates invocable with this equivalent signature:
+      </p>
+<pre class="programlisting"><span class="comment">/// Return true if ch is in the set</span>
+<span class="keyword">bool</span><span class="special">(</span> <span class="keyword">char</span> <span class="identifier">ch</span> <span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+</pre>
+<p>
+        The <a class="link" href="../concepts/charset.html" title="CharSet"><span class="emphasis"><em>CharSet</em></span></a>
+        concept describes the requirements on syntax and semantics for these types.
+        Here we declare a character set type that includes the horizontal and vertical
+        whitespace characters:
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">ws_chars_t</span>
+<span class="special">{</span>
+    <span class="keyword">constexpr</span> <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">()(</span> <span class="keyword">char</span> <span class="identifier">c</span> <span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span>
+    <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">c</span> <span class="special">==</span> <span class="char">'\t'</span> <span class="special">||</span> <span class="identifier">c</span> <span class="special">==</span> <span class="char">' '</span> <span class="special">||</span> <span class="identifier">c</span> <span class="special">==</span> <span class="char">'\r'</span> <span class="special">||</span> <span class="identifier">c</span> <span class="special">==</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<p>
+        The type trait <a class="link" href="../ref/boost__urls__grammar__is_charset.html" title="grammar::is_charset"><code class="computeroutput"><span class="identifier">is_charset</span></code></a> determines if a type
+        meets the requirements:
+      </p>
+<pre class="programlisting"><span class="keyword">static_assert</span><span class="special">(</span> <span class="identifier">is_charset</span><span class="special">&lt;</span> <span class="identifier">ws_chars_t</span> <span class="special">&gt;::</span><span class="identifier">value</span><span class="special">,</span> <span class="string">"CharSet requirements not met"</span> <span class="special">);</span>
+</pre>
+<p>
+        Character sets are always passed as values. As with rules, we declare an
+        instance of the type for notational convenience. The <code class="computeroutput"><span class="keyword">constexpr</span></code>
+        designation is used to make it a zero-cost abstraction:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="identifier">ws_chars_t</span> <span class="identifier">ws_chars</span><span class="special">{};</span>
+</pre>
+<p>
+        For best results, ensure that user-defined character set types are <code class="computeroutput"><span class="keyword">constexpr</span></code> constructible.
+      </p>
+<p>
+        The functions <a class="link" href="../ref/boost__urls__grammar__find_if.html" title="grammar::find_if"><code class="computeroutput"><span class="identifier">find_if</span></code></a> and <a class="link" href="../ref/boost__urls__grammar__find_if_not.html" title="grammar::find_if_not"><code class="computeroutput"><span class="identifier">find_if_not</span></code></a> are used to search a
+        string for the first matching or the first non-matching character from a
+        set. The example below skips any leading whitespace and then returns everything
+        from the first non-whitespace character to the last non-whitespace character:
+      </p>
+<pre class="programlisting"><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">get_token</span><span class="special">(</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span> <span class="special">)</span> <span class="keyword">noexcept</span>
+<span class="special">{</span>
+    <span class="keyword">auto</span> <span class="identifier">it0</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">data</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">end</span> <span class="special">=</span> <span class="identifier">it0</span> <span class="special">+</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span>
+
+    <span class="comment">// find the first non-whitespace character</span>
+    <span class="identifier">it0</span> <span class="special">=</span> <span class="identifier">find_if_not</span><span class="special">(</span> <span class="identifier">it0</span><span class="special">,</span> <span class="identifier">end</span><span class="special">,</span> <span class="identifier">ws_chars</span> <span class="special">);</span>
+
+    <span class="keyword">if</span><span class="special">(</span> <span class="identifier">it0</span> <span class="special">==</span> <span class="identifier">end</span> <span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// all whitespace or empty string</span>
+        <span class="keyword">return</span> <span class="special">{};</span>
+    <span class="special">}</span>
+
+    <span class="comment">// find the next whitespace character</span>
+    <span class="keyword">auto</span> <span class="identifier">it1</span> <span class="special">=</span> <span class="identifier">find_if</span><span class="special">(</span> <span class="identifier">it0</span><span class="special">,</span> <span class="identifier">end</span><span class="special">,</span> <span class="identifier">ws_chars</span> <span class="special">);</span>
+
+    <span class="comment">// [it0, it1) is the part we want</span>
+    <span class="keyword">return</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">(</span> <span class="identifier">it0</span><span class="special">,</span> <span class="identifier">it1</span> <span class="special">-</span> <span class="identifier">it0</span> <span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<p>
+        The function can now be called thusly:
+      </p>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">get_token</span><span class="special">(</span> <span class="string">" \t john-doe\r\n \t jane-doe\r\n"</span><span class="special">)</span> <span class="special">==</span> <span class="string">"john-doe"</span> <span class="special">);</span>
+</pre>
+<p>
+        The library provides these often-used character sets:
+      </p>
+<div class="table">
+<a name="url.grammar.character_sets.character_sets"></a><p class="title"><b>Table 1.33. Character Sets</b></p>
+<div class="table-contents"><table class="table" summary="Character Sets">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Value
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__grammar__alnum_chars.html" title="grammar::alnum_chars"><code class="computeroutput"><span class="identifier">alnum_chars</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Contains the uppercase and lowercase letters, and digits.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__grammar__alpha_chars.html" title="grammar::alpha_chars"><code class="computeroutput"><span class="identifier">alpha_chars</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Contains the uppercase and lowercase letters.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__grammar__digit_chars.html" title="grammar::digit_chars"><code class="computeroutput"><span class="identifier">digit_chars</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Contains the decimal digit characters.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__grammar__hexdig_chars.html" title="grammar::hexdig_chars"><code class="computeroutput"><span class="identifier">hexdig_chars</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Contains the uppercase and lowercase hexadecimal digit characters.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__grammar__vchars.html" title="grammar::vchars"><code class="computeroutput"><span class="identifier">vchars</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Contains the visible characters (i.e. non whitespace).
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        Some of the character sets in the library have implementations optimized
+        for the particular character set or optimized in general, often in ways that
+        take advantage of opportunities not available to standard library facilities.
+        For example, custom code enhancements using Streaming SIMD Extensions 2 (<a href="https://en.wikipedia.org/wiki/SSE2" target="_top">SSE2</a>), available on all
+        x86 and x64 architectures.
+      </p>
+<h5>
+<a name="url.grammar.character_sets.h0"></a>
+        <span class="phrase"><a name="url.grammar.character_sets.the_lut_chars_type"></a></span><a class="link" href="character_sets.html#url.grammar.character_sets.the_lut_chars_type">The
+        lut_chars Type</a>
+      </h5>
+<p>
+        The <a class="link" href="../ref/boost__urls__grammar__lut_chars.html" title="grammar::lut_chars"><code class="computeroutput"><span class="identifier">lut_chars</span></code></a> type satisfies the <a class="link" href="../concepts/charset.html" title="CharSet"><span class="emphasis"><em>CharSet</em></span></a> requirements
+        and offers an optimized <code class="computeroutput"><span class="keyword">constexpr</span></code>
+        implementation which provides enhanced performance and notational convenience
+        for specifying character sets. Compile-time instances can be constructed
+        from strings:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="identifier">lut_chars</span> <span class="identifier">vowels</span> <span class="special">=</span> <span class="string">"AEIOU"</span> <span class="string">"aeiou"</span><span class="special">;</span>
+</pre>
+<p>
+        We can use <code class="computeroutput"><span class="keyword">operator</span><span class="special">+</span></code>
+        and <code class="computeroutput"><span class="keyword">operator</span><span class="special">-</span></code>
+        notation to add and remove elements from the set at compile time. For example,
+        sometimes the character 'y' sounds like a vowel:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="keyword">auto</span> <span class="identifier">vowels_and_y</span> <span class="special">=</span> <span class="identifier">vowels</span> <span class="special">+</span> <span class="char">'y'</span> <span class="special">+</span> <span class="char">'Y'</span><span class="special">;</span>
+</pre>
+<p>
+        The type is named after its implementation, which is a lookup table ("lut")
+        of packed bits. This allows for a variety of construction methods and flexible
+        composition. Here we create the set of visible characters using a lambda:
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">is_visible</span>
+<span class="special">{</span>
+    <span class="keyword">constexpr</span> <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">()(</span> <span class="keyword">char</span> <span class="identifier">ch</span> <span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span>
+    <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">ch</span> <span class="special">&gt;=</span> <span class="number">33</span> <span class="special">&amp;&amp;</span> <span class="identifier">ch</span> <span class="special">&lt;=</span> <span class="number">126</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+<span class="keyword">constexpr</span> <span class="identifier">lut_chars</span> <span class="identifier">visible_chars</span><span class="special">(</span> <span class="identifier">is_visible</span><span class="special">{}</span> <span class="special">);</span> <span class="comment">// (since C++11)</span>
+</pre>
+<p>
+        Alternatively:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="identifier">lut_chars</span> <span class="identifier">visible_chars</span><span class="special">(</span> <span class="special">[](</span><span class="keyword">char</span> <span class="identifier">ch</span><span class="special">)</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">ch</span> <span class="special">&gt;=</span> <span class="number">33</span> <span class="special">&amp;&amp;</span> <span class="identifier">ch</span> <span class="special">&lt;=</span> <span class="number">126</span><span class="special">;</span> <span class="special">}</span> <span class="special">);</span> <span class="comment">// (since C++17)</span>
+</pre>
+<p>
+        Differences can be calculated with <code class="computeroutput"><span class="keyword">operator</span><span class="special">-</span></code>:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="keyword">auto</span> <span class="identifier">visible_non_vowels</span> <span class="special">=</span> <span class="identifier">visible_chars</span> <span class="special">-</span> <span class="identifier">vowels</span><span class="special">;</span>
+</pre>
+<p>
+        We can also remove individual characters:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="keyword">auto</span> <span class="identifier">visible_non_vowels_or_y</span> <span class="special">=</span> <span class="identifier">visible_chars</span> <span class="special">-</span> <span class="identifier">vowels</span> <span class="special">-</span> <span class="char">'y'</span><span class="special">;</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parse_rules.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../grammar.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compound_rules.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

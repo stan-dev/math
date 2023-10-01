@@ -1,0 +1,165 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Handshake parameters</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="error_handling.html" title="Error handling and available overloads">
+<link rel="next" href="reconnecting.html" title="Reconnecting a MySQL connection">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="error_handling.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="reconnecting.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.connparams"></a><a class="link" href="connparams.html" title="Handshake parameters">Handshake parameters</a>
+</h2></div></div></div>
+<p>
+      This section discusses several aspects regarding the establishment of a connection
+      with the MySQL server, including a detailed description of the parameters in
+      <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>.
+    </p>
+<h4>
+<a name="mysql.connparams.h0"></a>
+      <span class="phrase"><a name="mysql.connparams.authentication"></a></span><a class="link" href="connparams.html#mysql.connparams.authentication">Authentication</a>
+    </h4>
+<p>
+      The parameters <a class="link" href="ref/boost__mysql__handshake_params/username.html" title="handshake_params::username"><code class="literal">handshake_params::username</code></a>
+      and <a class="link" href="ref/boost__mysql__handshake_params/password.html" title="handshake_params::password"><code class="literal">handshake_params::password</code></a>
+      are mandatory. The password is provided to <a href="https://anarthal.github.io/boost/index.html" target="_top">Boost.MySQL</a>
+      in plain text, but it is not sent like that to the server (see below for more
+      info). If your password is empty, just provide an empty string.
+    </p>
+<p>
+      MySQL implements several methods of authentication with the server, in what
+      is called <a href="https://dev.mysql.com/doc/refman/8.0/en/pluggable-authentication.html" target="_top">pluggable
+      authentication</a>. The authentication plugin used is chosen on a per-user
+      basis. This information is stored in the <code class="computeroutput"><span class="identifier">mysql</span><span class="special">.</span><span class="identifier">user</span></code> table.
+      Additionally, servers define a default authentication plugin (see <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_authentication_policy" target="_top"><code class="computeroutput"><span class="identifier">authentication_policy</span></code></a> and <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin" target="_top"><code class="computeroutput"><span class="identifier">default_authentication_plugin</span></code></a>). The
+      default plugin will be used for newly created users, and may affect how the
+      handshake works.
+    </p>
+<p>
+      <a href="https://anarthal.github.io/boost/index.html" target="_top">Boost.MySQL</a>
+      implements the two most common authentication plugins:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://dev.mysql.com/doc/refman/8.0/en/native-pluggable-authentication.html" target="_top"><code class="computeroutput"><span class="identifier">mysql_native_password</span></code></a>. Unless
+          otherwise configured, this is the default plugin for MySQL 5.7 and MariaDB.
+          It can be used over both TLS and non-TLS connections. It sends the password
+          hashed, salted by a nonce.
+        </li>
+<li class="listitem">
+          <a href="https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html" target="_top"><code class="computeroutput"><span class="identifier">caching_sha2_password</span></code></a>. Unless
+          otherwise configured, this is the default plugin for MySQL 8.0. It can
+          only be used over TLS, which makes it less vulnerable. This is also the
+          reason why all examples use TLS.
+        </li>
+</ul></div>
+<p>
+      Other authentication plugins are not supported. Multi-factor authentication
+      is not yet supported, either. If you require any other plugin, please file
+      a feature request against the GitHub repository.
+    </p>
+<p>
+      If you try to establish a connection (using <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>)
+      and you specify a user with an unsupported authentication plugin, the operation
+      will fail.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Servers configured with a default authentication plugin not implemented in
+        <a href="https://anarthal.github.io/boost/index.html" target="_top">Boost.MySQL</a>
+        are not supported, regardless of the actual plugin the concrete user employs.
+        This limitation may be lifted in the future.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.connparams.h1"></a>
+      <span class="phrase"><a name="mysql.connparams.connect_with_database"></a></span><a class="link" href="connparams.html#mysql.connparams.connect_with_database">Connect
+      with database</a>
+    </h4>
+<p>
+      The parameter <a class="link" href="ref/boost__mysql__handshake_params/database.html" title="handshake_params::database"><code class="literal">handshake_params::database</code></a>
+      is a string with the database name to connect to. If you specify it, your connection
+      will default to use that database, as if you had issued a <a href="https://dev.mysql.com/doc/refman/8.0/en/use.html" target="_top"><code class="computeroutput"><span class="identifier">USE</span></code></a> statement. You can leave it blank
+      to select no database. You can always employ a <a href="https://dev.mysql.com/doc/refman/8.0/en/use.html" target="_top"><code class="computeroutput"><span class="identifier">USE</span></code></a> statement to select a different
+      database after establishing the connection.
+    </p>
+<h4>
+<a name="mysql.connparams.h2"></a>
+      <span class="phrase"><a name="mysql.connparams.connection_encoding_and_collatio"></a></span><a class="link" href="connparams.html#mysql.connparams.connection_encoding_and_collatio">Connection
+      encoding and collation</a>
+    </h4>
+<p>
+      When establishing a connection, you specify a numeric collation ID parameter
+      (<a class="link" href="ref/boost__mysql__handshake_params/connection_collation.html" title="handshake_params::connection_collation"><code class="literal">handshake_params::connection_collation</code></a>),
+      which will determine the connection's character set and collation. This determines
+      the encoding of the strings sent to and received from the server. If left unspecified,
+      <code class="computeroutput"><span class="identifier">utf8mb4_general_ci</span></code> will be
+      used, which is portable accross MySQL 5.x, MySQL 8.x and MariaDB.
+    </p>
+<p>
+      Collation IDs are defined in <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mysql_collations.hpp" target="_top">boost/mysql/mysql_collations.hpp</a>&gt;</code>
+      and <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mariadb_collations.hpp" target="_top">boost/mysql/mariadb_collations.hpp</a>&gt;</code>.
+      Some collations are portable between servers, while others are MySQL or MariaDB-specific,
+      and some IDs overlap. You may also define your own collations server-side.
+      This is why collations are specified as an integer, rather than an enumeration.
+    </p>
+<p>
+      Please refer to <a class="link" href="charsets.html" title="Character sets">this section</a> for more
+      info about character sets.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        If you specify a collation ID that is unknown to the server (an old server
+        that doesn't recognize the newest collations), the handshake operation will
+        succeed but the connection will sillently fall back to the server's default
+        character set and collation. If you want to be sure, use a <code class="computeroutput"><span class="string">"SET NAMES"</span></code> statement.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.connparams.h3"></a>
+      <span class="phrase"><a name="mysql.connparams.ssl_tls"></a></span><a class="link" href="connparams.html#mysql.connparams.ssl_tls">SSL/TLS</a>
+    </h4>
+<p>
+      When establising a connection, you can specify a <a class="link" href="ref/boost__mysql__ssl_mode.html" title="ssl_mode"><code class="literal">ssl_mode</code></a>
+      value to configure whether to use SSL/TLS or not. As explained in <a class="link" href="ssl.html#mysql.ssl.negotiation">this
+      section</a>, this parameters can be employed to configure SSL negotiation.
+      This value is ignored if the underlying stream does not support SSL.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="error_handling.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="reconnecting.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

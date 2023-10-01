@@ -1,0 +1,172 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section RFC 3986]
+
+Functions like __parse_uri__ are sufficient for converting URLs but
+they require that the entire string is consumed. When URLs appear as
+components of a larger grammar, it is desired to use composition
+of rules based parsing to process these along with other elements
+potentially unrelated to resource locators. To achieve this, the
+library provides rules for the top-level BNF productions found
+in __rfc3986__ and a rule for matching percent-encoded strings.
+
+[heading Percent Encoding]
+
+The percent-encoding mechanism is used to represent a data octet
+in a component when the corresponding character is outside the
+allowed set or is being used as a delimiter of, or within, the
+component. An encoded octet (also called an ['escape]) is
+encoded as the percent character ('%') followed by a two-digit
+hexadecimal number representing the octet's numeric value:
+
+```
+pct-encoded   = "%" HEXDIG HEXDIG
+```
+
+URL components with possible percent-encoded characters are
+specified in the components BNF using the ['pct-encoded]
+production, along with the characters which are not
+considered to be part of the reserved set. For example,
+this is how path characters are described in
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 3.3 Path]
+of the RFC:
+
+```
+pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+```
+
+The library provides the __pct_encoded_rule__ for matching
+strings which are percent-encoded. This function is passed the
+set of characters that may be used without escapes and returns
+a suitable rule. If the input is valid; that is, if there are
+no invalid escape sequences, the rule returns a
+__decode_view__. This is a forward range of characters
+which performs percent-decoding when iterated. It also supports
+equality and comparison to unencoded strings, without allocating
+memory. In the example below we parse the string `s` as a
+series of zero or more __pchars__:
+
+[code_grammar_5_1]
+
+These constants are used and provided by the library to
+specify rules for percent-encoded URL components:
+
+[table URL Character Sets [
+    [Name]
+    [BNF]
+][
+    [[link url.ref.boost__urls__gen_delim_chars `gen_delim_chars`]]
+    [
+    ```
+    gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__pchars `pchars`]]
+    [
+    ```
+    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__reserved_chars `reserved_chars`]]
+    [
+    (everything but
+    [link url.ref.boost__urls__unreserved_chars `unreserved_chars`])
+    ]
+][
+    [[link url.ref.boost__urls__sub_delim_chars `sub_delim_chars`]]
+    [
+    ```
+    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+                  / "*" / "+" / "," / ";" / "="
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__unreserved_chars `unreserved_chars`]]
+    [
+    ```
+    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    ```
+    ]
+]]
+
+[heading URL Rules]
+
+When a URL can appear in the context of a larger grammar, it may
+be desired to express the enclosing grammar in a single rule that
+incoporates the URL as an element. To achieve this, the library
+makes public the rules used to implement high-level parsing of
+complete strings as URL components, so that these components
+may be parsed as part of a larger string containing non-URL
+elements. Here we present a rule suitable for parsing the
+the HTTP
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 ['request-line]]:
+
+[code_grammar_5_2]
+
+The library offers these rules to allow custom rule definitions
+to integrate the various styles of valid URL rules:
+
+[table RFC3986 Rules [
+    [Name]
+    [BNF]
+][
+    [[link url.ref.boost__urls__absolute_uri_rule `absolute_uri_rule`]]
+    [
+    ```
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+    hier-part       = "//" authority path-abempty
+                    / path-absolute
+                    / path-rootless
+                    / path-empty
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__authority_rule `authority_rule`]]
+    [
+    ```
+    authority       = [ userinfo "@" ] host [ ":" port ]
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
+    [
+    ```
+    origin-form    = absolute-path [ "?" query ]
+
+    absolute-path = 1*( "/" segment )
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__relative_ref_rule `relative_ref_rule`]]
+    [
+    ```
+    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__uri_reference_rule `uri_reference_rule`]]
+    [
+    ```
+    URI-reference   = URI / relative-ref
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__uri_rule `uri_rule`]]
+    [
+    ```
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    ```
+    ]
+]]
+
+[endsect]

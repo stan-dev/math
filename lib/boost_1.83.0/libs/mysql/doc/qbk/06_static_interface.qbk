@@ -1,0 +1,257 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:static_interface The static interface]
+[nochunk]
+
+To use the static interface, we must first define a data structure that describes the shape of
+your rows. We recommend using [@boost:/libs/describe/index.html Boost.Describe] for this.
+We define a plain `struct` with the fields returned by your our and annotate it with
+`BOOST_DESCRIBE_STRUCT` to enable reflection on it.
+
+For example, given the following table definition and query:
+
+[static_setup]
+
+We can define our row type like this:
+
+[describe_post]
+
+To run the query, we can write:
+
+[static_query]
+
+Note that [refmem static_results rows] returns a `boost::span` object,
+which is a C++11 backport of `std::span`. The span points into memory owned by the
+`static_results` object. Care must be taken not to use this view object after the
+`static_results` goes out of scope.
+
+[heading Field matching]
+
+Columns in the query are matched to fields in the struct by name.
+If a struct field cannot be matched to any query column, an error is issued.
+Extra columns in the query are ignored.
+
+If your query contains columns with names that don't qualify as C++ identifiers,
+you can use SQL aliases. For example, given this struct:
+
+[describe_statistics]
+
+You can write your query as:
+
+[static_field_order]
+
+[heading Using tuples]
+
+You can also use `std::tuple`s as row types. This can be handy for simple queries:
+
+[static_tuples]
+
+Fields in tuples are matched to query columns by order. The query must return as many
+columns as fields the tuple has, at least. Any extra trailing columns in the query are ignored.
+
+[heading Metadata checking]
+
+The static interface will try to validate as soon as possible that the provided row type 
+is compatible with the schema returned by the server. This process is known as [*metadata checking],
+and is performed before reading any data. The following checks are performed:
+
+* [*Type compatibility]: the C++ type must be able to represent any value that the MySQL type can represent.
+  For example, `std::int32_t` is compatible with `TINYINT` (1 byte integer), but not with `BIGINT` (8 byte integer).
+  For a full list of allowable field types, [link mysql.static_interface.readable_field_reference refer to this table].
+* [*Nullability]: if MySQL reports that a column can be `NULL`, your type must account for it. You can use
+  `std::optional<T>` or `boost::optional<T>` for these columns.
+
+For example, if your table is defined like this:
+
+[static_nulls_table]
+
+Using the `post` type we defined above will cause an error, because
+the `body` field may be `NULL`, but our type doesn't account for it.
+In this case, the correct definition would be:
+
+[describe_post_v2]
+
+[heading Multi-resultset and multi-function operations]
+
+You can use both with the dynamic interface. Please refer to the sections
+on [link mysql.multi_resultset multi-resultset operations] and
+[link mysql.multi_function multi-function operations] for more information.
+
+[heading C++ standard requirements]
+
+Using the static interface requires C++14. The `BOOST_MYSQL_CXX14` test macro
+is defined only if the static interface is supported. Including the static interface headers
+on an unsupported compiler doesn't cause any error, but classes like [reflink static_results]
+and [reflink static_execution_state] are not defined. The test macro is brought on scope by
+any of the static interface headers.
+
+[heading Allowed field types]
+
+All the types used within your Describe structs or tuples must be within
+the following table. A Describe struct or tuple composed of valid field
+types models the [reflink StaticRow] concept.
+
+The following table is a reference of the C++ types that can be used in a
+`StaticRow` and their compatibility with MySQL database types:
+
+[table:readable_field_reference
+    [
+        [C++ type]
+        [Compatible with...]
+    ]
+    [
+        [`std::int8_t`]
+        [
+            __TINYINT__
+        ]
+    ]
+    [
+        [`std::uint8_t`]
+        [
+            __TINYINT__ `UNSIGNED`
+        ]
+    ]
+    [
+        [`std::int16_t`]
+        [
+            __TINYINT__[br]
+            __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__ [br]
+            __YEAR__
+        ]
+    ]
+    [
+        [`std::uint16_t`]
+        [
+            __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__ `UNSIGNED` [br]
+            __YEAR__
+        ]
+    ]
+    [
+        [`std::int32_t`]
+        [
+            __TINYINT__, __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__, __SMALLINT__ `UNSIGNED`[br]
+            __MEDIUMINT__, __MEDIUMINT__ `UNSIGNED`[br]
+            __INT__[br]
+            __YEAR__
+        ]
+    ]
+    [
+        [`std::uint32_t`]
+        [
+            __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__ `UNSIGNED`[br]
+            __MEDIUMINT__ `UNSIGNED`[br]
+            __INT__ `UNSIGNED`[br]
+            __YEAR__
+        ]
+    ]
+    [
+        [`std::int64_t`]
+        [
+            __TINYINT__,  __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__, __SMALLINT__ `UNSIGNED`[br]
+            __MEDIUMINT__, __MEDIUMINT__ `UNSIGNED`[br]
+            __INT__, __INT__ `UNSIGNED`[br]
+            __BIGINT__[br]
+            __YEAR__
+        ]
+    ]
+    [
+        [`std::uint64_t`]
+        [
+            __TINYINT__ `UNSIGNED`[br]
+            __SMALLINT__ `UNSIGNED`[br]
+            __MEDIUMINT__ `UNSIGNED`[br]
+            __INT__ `UNSIGNED`[br]
+            __BIGINT__ `UNSIGNED`[br]
+            __YEAR__[br]
+            __BIT__
+        ]
+    ]
+    [
+        [`bool`]
+        [
+            `BOOL` or `BOOLEAN` (alias for __TINYINT__).
+        ]
+    ]
+    [
+        [`float`]
+        [
+            __FLOAT__
+        ]
+    ]
+    [
+        [`double`]
+        [
+            __FLOAT__, __DOUBLE__[br]
+        ]
+    ]
+    [
+        [`date`]
+        [
+            __DATE__
+        ]
+    ]
+    [
+        [`datetime`]
+        [
+            __DATETIME__, __TIMESTAMP__
+        ]
+    ]
+    [
+        [`time`]
+        [
+            __TIME__
+        ]
+    ]
+    [
+        [
+            `std::basic_string<char, std::char_traits<char>, Allocator>`[br][br]
+            The object must be default-constructible.
+        ]
+        [
+            __CHAR__, __VARCHAR__, __TEXT__[br]
+            __ENUM__, __SET__[br]
+            __JSON__[br]
+            __DECIMAL__/__NUMERIC__
+        ]
+    ]
+    [
+        [
+            `std::basic_vector<unsigned char, Allocator>`[br][br]
+            The object must be default-constructible.
+        ]
+        [
+            __BINARY__, __VARBINARY__, __BLOB__[br]
+            __GEOMETRY__
+        ]
+    ]
+    [
+        [
+            `std::optional<T>`[br][br]
+            `T` must be any of the types listed in this table.
+        ]
+        [
+            Any type compatible with `T`
+        ]
+    ]
+    [
+        [
+            `boost::optional<T>`[br][br]
+            `T` must be any of the types listed in this table.
+        ]
+        [
+            Any type compatible with `T`
+        ]
+    ]
+]
+
+[endsect]

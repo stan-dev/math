@@ -1,0 +1,104 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:connparams Handshake parameters]
+[nochunk]
+
+This section discusses several aspects regarding the establishment
+of a connection with the MySQL server, including a detailed
+description of the parameters in [reflink handshake_params].
+
+[heading Authentication]
+
+The parameters [refmem handshake_params username] and
+[refmem handshake_params password] are mandatory. The
+password is provided to __Self__ in plain text,
+but it is not sent like that to the server (see below for more info).
+If your password is empty, just provide an empty string.
+
+MySQL implements several methods of authentication with the server,
+in what is called [mysqllink pluggable-authentication.html
+pluggable authentication]. The authentication
+plugin used is chosen on a per-user basis. This information
+is stored in the `mysql.user` table. Additionally,
+servers define a default authentication plugin
+(see [mysqllink server-system-variables.html#sysvar_authentication_policy `authentication_policy`] and
+[mysqllink server-system-variables.html#sysvar_default_authentication_plugin
+`default_authentication_plugin`]). The default plugin will
+be used for newly created users, and may affect how the handshake works.
+
+__Self__ implements the two most common authentication plugins:
+
+* [mysqllink native-pluggable-authentication.html `mysql_native_password`].
+  Unless otherwise configured, this is the default plugin for
+  MySQL 5.7 and MariaDB. It can be used over both TLS and non-TLS
+  connections. It sends the password hashed, salted by a nonce.
+* [mysqllink caching-sha2-pluggable-authentication.html
+  `caching_sha2_password`]. Unless otherwise configured, this is the default plugin for
+  MySQL 8.0. It can only be used over TLS, which makes it less vulnerable.
+  This is also the reason why all examples use TLS.
+
+Other authentication plugins are not supported. Multi-factor authentication
+is not yet supported, either. If you require any other plugin, please file a feature request
+against the GitHub repository.
+
+If you try to establish a connection (using [refmem connection handshake] or
+[refmem connection connect]) and you specify a user with
+an unsupported authentication plugin, the operation will fail.
+
+[note
+    Servers configured with a default authentication plugin
+    not implemented in __Self__ are not supported, regardless
+    of the actual plugin the concrete user employs. This limitation
+    may be lifted in the future.
+]
+
+[heading Connect with database]
+
+The parameter [refmem handshake_params database] is a string
+with the database name to connect to. If you specify it,
+your connection will default to use that database, as if
+you had issued a __USE__ statement. You can leave it blank
+to select no database. You can always employ a __USE__
+statement to select a different database after establishing
+the connection.
+
+[heading Connection encoding and collation]
+
+When establishing a connection, you specify a numeric collation ID
+parameter ([refmem handshake_params connection_collation]), which will
+determine the connection's character set and collation. This determines
+the encoding of the strings sent to and received from the server.
+If left unspecified, `utf8mb4_general_ci` will be used, which is portable
+accross MySQL 5.x, MySQL 8.x and MariaDB.
+
+Collation IDs are defined in [include_file boost/mysql/mysql_collations.hpp] and 
+[include_file boost/mysql/mariadb_collations.hpp]. Some collations are portable
+between servers, while others are MySQL or MariaDB-specific, and some IDs overlap.
+You may also define your own collations server-side. This is why collations
+are specified as an integer, rather than an enumeration.
+
+Please refer to [link mysql.charsets this section] for more info
+about character sets.
+
+[warning
+    If you specify a collation ID that is unknown to the server (an old server
+    that doesn't recognize the newest collations), the handshake operation
+    will succeed but the connection will sillently fall back to the server's default character set
+    and collation. If you want to be sure, use a `"SET NAMES"` statement.
+]
+
+[heading SSL/TLS]
+
+When establising a connection, you can specify a [reflink ssl_mode]
+value to configure whether to use SSL/TLS or not. As explained in
+[link mysql.ssl.negotiation this section], this parameters can be
+employed to configure SSL negotiation. This value is ignored if the
+underlying stream does not support SSL.
+
+
+[endsect] [/ connparams]

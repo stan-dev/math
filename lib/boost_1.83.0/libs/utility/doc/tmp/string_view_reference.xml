@@ -1,0 +1,250 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="string_view.reference"><title>Reference</title><header name="boost/utility/string_view.hpp">
+<namespace name="boost">
+<class name="basic_string_view"><template>
+      <template-type-parameter name="charT"/>
+      <template-type-parameter name="traits"/>
+    </template><typedef name="traits_type"><type>traits</type></typedef>
+<typedef name="value_type"><type>charT</type></typedef>
+<typedef name="pointer"><type>charT *</type></typedef>
+<typedef name="const_pointer"><type>const charT *</type></typedef>
+<typedef name="reference"><type>charT &amp;</type></typedef>
+<typedef name="const_reference"><type>const charT &amp;</type></typedef>
+<typedef name="const_iterator"><type>const_pointer</type></typedef>
+<typedef name="iterator"><type>const_iterator</type></typedef>
+<typedef name="const_reverse_iterator"><type>std::reverse_iterator&lt; const_iterator &gt;</type></typedef>
+<typedef name="reverse_iterator"><type>const_reverse_iterator</type></typedef>
+<typedef name="size_type"><type>std::size_t</type></typedef>
+<typedef name="difference_type"><type>std::ptrdiff_t</type></typedef>
+<data-member name="npos" specifiers="static"><type>constexpr size_type</type></data-member>
+<method-group name="public member functions">
+<method name="begin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method name="cbegin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method name="end" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method name="cend" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method name="rbegin" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method name="crbegin" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method name="rend" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method name="crend" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method name="size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method name="length" cv="const noexcept"><type>constexpr size_type</type></method>
+<method name="max_size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method name="empty" cv="const noexcept"><type>constexpr bool</type></method>
+<method name="operator[]" cv="const noexcept"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method name="at" cv="const"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method name="front" cv="const"><type>constexpr const_reference</type></method>
+<method name="back" cv="const"><type>constexpr const_reference</type></method>
+<method name="data" cv="const noexcept"><type>constexpr const_pointer</type></method>
+<method name="clear" cv="noexcept"><type>void</type></method>
+<method name="remove_prefix"><type>constexpr void</type><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="remove_suffix"><type>constexpr void</type><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="swap" cv="noexcept"><type>constexpr void</type><parameter name="s"><paramtype><classname>basic_string_view</classname> &amp;</paramtype></parameter></method>
+<method name="conversion-operator" cv="const" specifiers="explicit"><type>std::basic_string&lt; charT, traits, Allocator &gt;</type><template>
+          <template-type-parameter name="Allocator"/>
+        </template></method>
+<method name="to_string" cv="const"><type>std::basic_string&lt; charT, traits, Allocator &gt;</type><template>
+          <template-type-parameter name="Allocator"><default>std::allocator&lt;charT&gt;</default></template-type-parameter>
+        </template><parameter name="a"><paramtype>const Allocator &amp;</paramtype><default>Allocator()</default></parameter></method>
+<method name="copy" cv="const"><type>size_type</type><parameter name="s"><paramtype>charT *</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="substr" cv="const"><type>constexpr <classname>basic_string_view</classname></type></method>
+<method name="substr" cv="const"><type>constexpr <classname>basic_string_view</classname></type><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="compare" cv="const noexcept"><type>constexpr int</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos2"><paramtype>size_type</paramtype></parameter><parameter name="n2"><paramtype>size_type</paramtype></parameter></method>
+<method name="compare" cv="const"><type>constexpr int</type><parameter name="x"><paramtype>const charT *</paramtype></parameter></method>
+<method name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype>const charT *</paramtype></parameter></method>
+<method name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="n2"><paramtype>size_type</paramtype></parameter></method>
+<method name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method name="ends_with" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method name="ends_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="s"><paramtype>const charT *</paramtype></parameter></method>
+<method name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+</method-group>
+<constructor cv="noexcept"/>
+<constructor><parameter name="rhs"><paramtype>const <classname>basic_string_view</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment><type><classname>basic_string_view</classname> &amp;</type><parameter name="rhs"><paramtype>const <classname>basic_string_view</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor cv="noexcept"><template>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="str"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></constructor>
+<constructor><parameter name="str"><paramtype>const charT *</paramtype></parameter></constructor>
+<constructor><parameter name="str"><paramtype>const charT *</paramtype></parameter><parameter name="len"><paramtype>size_type</paramtype></parameter></constructor>
+<method-group name="private member functions">
+<method name="reverse_distance" cv="const noexcept"><type>size_type</type><template>
+          <template-type-parameter name="r_iter"/>
+        </template><parameter name="first"><paramtype>r_iter</paramtype></parameter><parameter name="last"><paramtype>r_iter</paramtype></parameter></method>
+<method name="find_not_of" cv="const noexcept"><type>Iterator</type><template>
+          <template-type-parameter name="Iterator"/>
+        </template><parameter name="first"><paramtype>Iterator</paramtype></parameter><parameter name="last"><paramtype>Iterator</paramtype></parameter><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+</method-group>
+</class><function name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="str"><paramtype>const <classname>basic_string_view</classname>&lt; charT, traits &gt; &amp;</paramtype></parameter></function>
+<function name="hash_range"><type>std::size_t</type><template>
+          <template-type-parameter name="It"/>
+        </template><parameter name=""><paramtype>It</paramtype></parameter><parameter name=""><paramtype>It</paramtype></parameter></function>
+<function name="hash_value"><type>std::size_t</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="s"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+</namespace>
+</header>
+</library-reference>

@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Customization</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="prev" href="urls/formatting.html" title="Formatting">
+<link rel="next" href="grammar/parse_rules.html" title="Parse Rules">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="urls/formatting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="grammar/parse_rules.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="url.grammar"></a><a class="link" href="grammar.html" title="Customization">Customization</a>
+</h2></div></div></div>
+<p>
+      For a wide range of applications the library's container interfaces are sufficient
+      for URLs using the generic syntax or the well known schemes. There are however
+      more complex cases where it is desired to go beyond what the library offers:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Create new custom containers for other schemes
+        </li>
+<li class="listitem">
+          Incorporate the parsing of URLs in an enclosing grammar
+        </li>
+<li class="listitem">
+          Parse <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>
+          elements in non-URL contexts (<a class="link" href="ref/boost__urls__authority_view.html" title="authority_view"><code class="computeroutput"><span class="identifier">authority_view</span></code></a> is an example of
+          this).
+        </li>
+<li class="listitem">
+          Define new ABNF rules used to parse non-URL strings
+        </li>
+</ul></div>
+<p>
+      To enable these use-cases, the library provides a suite of general facilities
+      for processing low-ASCII character strings, and makes public the interface
+      to useful rules found in rfc3986. The design goals of these facilities are:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          No use of <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">locale</span></code> or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span></code>
+        </li>
+<li class="listitem">
+          No exotic character types, just low-ASCII <code class="computeroutput"><span class="keyword">char</span></code>
+        </li>
+<li class="listitem">
+          No memory allocation (or bounded allocation)
+        </li>
+<li class="listitem">
+          Flexible composition with non-terminal rules
+        </li>
+<li class="listitem">
+          Optimized for the grammars commonly found in RFCs
+        </li>
+<li class="listitem">
+          Easily extended by downstream consumers
+        </li>
+</ul></div>
+<p>
+      The general facilities are nested in the fully qualified namespace <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span></code>,
+      while the headers for rfc3986-specific parsing algorithms are located in the
+      <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">rfc</span><span class="special">/&gt;</span></code>
+      include directory. This section explains the design and use of the general
+      facilities to define and parse new grammars.
+    </p>
+<h4>
+<a name="url.grammar.h0"></a>
+      <span class="phrase"><a name="url.grammar.syntax_notation"></a></span><a class="link" href="grammar.html#url.grammar.syntax_notation">Syntax
+      Notation</a>
+    </h4>
+<p>
+      The documentation and reference for this library use the Augmented Backus-Naur
+      Form (<a href="https://datatracker.ietf.org/doc/html/rfc2234" target="_top">ABNF</a>)
+      notation throughout to specify grammar rules. An understanding of this notation
+      is necessary to achieve best results for learning how to use the custom parsing
+      features.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+        Code samples and identifiers in this customization section are written as
+        if the following declarations are in effect:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">grammar</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">;</span>
+</pre>
+</td></tr>
+</table></div>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="urls/formatting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="grammar/parse_rules.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

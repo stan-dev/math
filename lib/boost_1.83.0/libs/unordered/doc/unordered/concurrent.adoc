@@ -1,0 +1,182 @@
+﻿[#concurrent]
+= Concurrent Containers
+
+:idprefix: concurrent_
+
+Boost.Unordered currently provides just one concurrent container named `boost::concurrent_flat_map`.
+`boost::concurrent_flat_map` is a hash table that allows concurrent write/read access from
+different threads without having to implement any synchronzation mechanism on the user's side.
+
+[source,c++]
+----
+std::vector<int>                    input;
+boost::concurrent_flat_map<int,int> m;
+
+...
+
+// process input in parallel
+const int                 num_threads = 8;
+std::vector<std::jthread> threads;
+std::size_t               chunk = input.size() / num_threads; // how many elements per thread
+
+for (int i = 0; i < num_threads; ++i) {
+  threads.emplace_back([&,i] {
+    // calculate the portion of input this thread takes care of
+    std::size_t start = i * chunk;
+    std::size_t end = (i == num_threads - 1)? input.size(): (i + 1) * chunk;
+
+    for (std::size_t n = start; n < end; ++n) {
+      m.emplace(input[n], calculation(input[n]));
+    }
+  });
+}
+----
+
+In the example above, threads access `m` without synchronization, just as we'd do in a
+single-threaded scenario. In an ideal setting, if a given workload is distributed among
+_N_ threads, execution is _N_ times faster than with one thread —this limit is
+never attained in practice due to synchronization overheads and _contention_ (one thread
+waiting for another to leave a locked portion of the map), but `boost::concurrent_flat_map`
+is designed to perform with very little overhead and typically achieves _linear scaling_
+(that is, performance is proportional to the number of threads up to the number of
+logical cores in the CPU).
+
+== Visitation-based API
+
+The first thing a new user of `boost::concurrent_flat_map` will notice is that this
+class _does not provide iterators_ (which makes it technically
+not a https://en.cppreference.com/w/cpp/named_req/Container[Container^]
+in the C++ standard sense). The reason for this is that iterators are inherently
+thread-unsafe. Consider this hypothetical code:
+
+[source,c++]
+----
+auto it = m.find(k);  // A: get an iterator pointing to the element with key k
+if (it != m.end() ) {
+  some_function(*it); // B: use the value of the element
+}
+----
+
+In a multithreaded scenario, the iterator `it` may be invalid at point B if some other
+thread issues an `m.erase(k)` operation between A and B. There are designs that
+can remedy this by making iterators lock the element they point to, but this
+approach lends itself to high contention and can easily produce deadlocks in a program.
+`operator[]` has similar concurrency issues, and is not provided by
+`boost::concurrent_flat_map` either. Instead, element access is done through
+so-called _visitation functions_:
+
+[source,c++]
+----
+m.visit(k, [](const auto& x) { // x is the element with key k (if it exists)
+  some_function(x);            // use it
+});
+----
+
+The visitation function passed by the user (in this case, a lambda function)
+is executed internally by `boost::concurrent_flat_map` in
+a thread-safe manner, so it can access the element without worrying about other
+threads interfering in the process.
+
+On the other hand, a visitation function can _not_ access the container itself:
+
+[source,c++]
+----
+m.visit(k, [&](const auto& x) { 
+  some_function(x, m.size()); // forbidden: m can't be accessed inside visitation
+});
+----
+
+Access to a different container is allowed, though:
+
+[source,c++]
+----
+m.visit(k, [&](const auto& x) {
+  if (some_function(x)) {
+    m2.insert(x); // OK, m2 is a different boost::concurrent_flat_map
+  }
+});
+----
+
+But, in general, visitation functions should be as lightweight as possible to
+reduce contention and increase parallelization. In some cases, moving heavy work
+outside of visitation may be beneficial:
+
+[source,c++]
+----
+std::optional<value_type> o;
+bool found = m.visit(k, [&](const auto& x) { 
+  o = x;
+});
+if (found) {
+  some_heavy_duty_function(*o);
+}
+----
+
+Visitation is prominent in the API provided by `boost::concurrent_flat_map`, and
+many classical operations have visitation-enabled variations:
+
+[source,c++]
+----
+m.insert_or_visit(x, [](auto& y) { 
+  // if insertion failed because of an equivalent element y,
+  // do something with it, for instance:
+  ++y.second; // increment the mapped part of the element
+});
+----
+
+Note that in this last example the visitation function could actually _modify_
+the element: as a general rule, operations on a `boost::concurrent_flat_map` `m`
+will grant visitation functions const/non-const access to  the element depending on whether
+`m` is const/non-const. Const access can be always be explicitly requested
+by using `cvisit` overloads (for instance, `insert_or_cvisit`) and may result
+in higher parallelization. Consult the xref:#concurrent_flat_map[reference]
+for a complete list of available operations.
+
+== Whole-Table Visitation
+
+In the absence of iterators, `boost::concurrent_flat_map` provides `visit_all`
+as an alternative way to process all the elements in the map:
+
+[source,c++]
+----
+m.visit_all([](auto& x) {
+  x.second = 0; // reset the mapped part of the element
+});
+----
+
+In C++17 compilers implementing standard parallel algorithms, whole-table
+visitation can be parallelized:
+
+[source,c++]
+----
+m.visit_all(std::execution::par, [](auto& x) { // run in parallel
+  x.second = 0; // reset the mapped part of the element
+});
+----
+
+There is another whole-table visitation operation, `erase_if`:
+
+[source,c++]
+----
+m.erase_if([](auto& x) {
+  return x.second == 0; // erase the elements whose mapped value is zero
+});
+----
+
+`erase_if` can also be parallelized. Note that, in order to increase efficiency,
+these operations do not block the table during execution: this implies that elements
+may be inserted, modified or erased by other threads during visitation. It is
+advisable not to assume too much about the exact global state of a `boost::concurrent_flat_map`
+at any point in your program.
+
+== Blocking Operations
+
+``boost::concurrent_flat_map``s can be copied, assigned, cleared and merged just like any
+Boost.Unordered container. Unlike most other operations, these are _blocking_,
+that is, all other threads are prevented from accesing the tables involved while a copy, assignment,
+clear or merge operation is in progress. Blocking is taken care of automatically by the library
+and the user need not take any special precaution, but overall performance may be affected.
+
+Another blocking operation is _rehashing_, which happens explicitly via `rehash`/`reserve`
+or during insertion when the table's load hits `max_load()`. As with non-concurrent containers,
+reserving space in advance of bulk insertions will generally speed up the process.

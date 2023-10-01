@@ -1,0 +1,123 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+
+project mysql/doc ;
+
+import boostbook ;
+import os ;
+import ../../../tools/docca/docca.jam ;
+
+
+# Note: adding server-specific error codes and collations to the reference
+# increases build times a lot without any benefit
+local doxygen_exclussions =
+    detail
+    impl
+    mysql_server_errc.hpp
+    mariadb_server_errc.hpp
+    mysql_collations.hpp
+    mariadb_collations.hpp
+    src.hpp
+;
+
+docca.reference reference.qbk
+    :
+        xsl/custom-overrides.xsl
+        [ glob-tree-ex ../include/boost/mysql : *.hpp : $(doxygen_exclussions) ]
+    :
+        <doxygen:param>PROJECT_NAME=MySQL
+        <doxygen:param>PROJECT_BRIEF="C++ MySQL Client Library"
+        <doxygen:param>DISTRIBUTE_GROUP_DOC=YES
+        <doxygen:param>ENABLE_PREPROCESSING=YES
+        <doxygen:param>MACRO_EXPANSION=YES
+        <doxygen:param>EXPAND_ONLY_PREDEF=YES
+        <doxygen:param>SEARCH_INCLUDES=NO
+        <doxygen:param>"PREDEFINED=\\
+            BOOST_MYSQL_DOXYGEN \\
+            \"BOOST_ASIO_INITFN_RESULT_TYPE(t,a)=auto\" \\
+            \"BOOST_ASIO_COMPLETION_TOKEN_FOR(sig)=class\" \\
+            \"BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ct,sig)=auto\" \\
+            \"BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(ex)=\" \\
+            \"BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(ex)=\" \\
+            \"protected=private\" \\
+            \"BOOST_CXX14_CONSTEXPR=constexpr\" \\
+            \"BOOST_MYSQL_CXX14\" \\
+            \"BOOST_MYSQL_WRITABLE_FIELD_TUPLE=class\" \\
+            \"BOOST_MYSQL_FIELD_VIEW_FORWARD_ITERATOR=class\" \\
+            \"BOOST_MYSQL_EXECUTION_REQUEST=class\" \\
+            \"BOOST_MYSQL_RESULTS_TYPE=class\" \\
+            \"BOOST_MYSQL_EXECUTION_STATE_TYPE=class\" \\
+            \"BOOST_MYSQL_DECL=\" \\
+            "
+        <doxygen:param>SKIP_FUNCTION_MACROS=NO
+        <doxygen:param>OUTPUT_LANGUAGE=English
+        <doxygen:param>ABBREVIATE_BRIEF=
+        <doxygen:param>INLINE_INHERITED_MEMB=YES
+        <doxygen:param>AUTOLINK_SUPPORT=NO
+        <doxygen:param>EXTRACT_ALL=NO
+        <doxygen:param>EXTRACT_PRIVATE=NO
+        <doxygen:param>EXTRACT_LOCAL_CLASSES=NO
+        <doxygen:param>HIDE_UNDOC_MEMBERS=YES
+        <doxygen:param>HIDE_UNDOC_CLASSES=YES
+        <doxygen:param>HIDE_FRIEND_COMPOUNDS=YES
+        <doxygen:param>CASE_SENSE_NAMES=YES
+        <doxygen:param>SHOW_INCLUDE_FILES=NO
+        <doxygen:param>INLINE_INFO=NO
+        <doxygen:param>SORT_MEMBER_DOCS=NO
+        <doxygen:param>SORT_MEMBERS_CTORS_1ST=YES
+        <doxygen:param>SHOW_USED_FILES=NO
+        <doxygen:param>SHOW_FILES=NO
+        <doxygen:param>SHOW_NAMESPACES=NO
+        <doxygen:param>CLASS_DIAGRAMS=NO
+        <doxygen:param>QUIET=YES
+    ;
+
+install images
+    :
+        [ glob images/*.png images/*.svg ]
+    :
+        <location>html/mysql/images
+    ;
+
+explicit images ;
+
+xml mysql_doc
+    :
+        qbk/00_main.qbk
+    :
+        <dependency>reference.qbk
+        <dependency>images
+    ;
+
+explicit mysql_doc ;
+
+
+boostbook mysql
+    :
+        mysql_doc
+    :
+        <xsl:param>boost.root=../../../..
+        <xsl:param>chapter.autolabel=1
+        <xsl:param>chunk.section.depth=8                # Depth to which sections should be chunked
+        <xsl:param>chunk.first.sections=1               # Chunk the first top-level section?
+        <xsl:param>toc.section.depth=8                  # How deep should recursive sections appear in the TOC?
+        <xsl:param>toc.max.depth=8                      # How many levels should be created for each TOC?
+        <xsl:param>generate.toc="chapter toc,title section nop reference nop part toc"
+        <include>../../../tools/boostbook/dtd
+    :
+        <dependency>images
+    ;
+
+# These are used to inform the build system of the
+# means to build the integrated and stand-alone docs.
+
+alias boostdoc ;
+explicit boostdoc ;
+
+alias boostrelease : mysql ;
+explicit boostrelease ;

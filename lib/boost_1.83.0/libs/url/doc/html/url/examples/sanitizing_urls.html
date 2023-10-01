@@ -1,0 +1,496 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Sanitizing URLs</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="router.html" title="Router">
+<link rel="next" href="../ref.html" title="Reference">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="router.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../ref.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.examples.sanitizing_urls"></a><a class="link" href="sanitizing_urls.html" title="Sanitizing URLs">Sanitizing URLs</a>
+</h3></div></div></div>
+<p>
+        This example parses a non-strict or invalid URL into path components according
+        to its delimiters. This pattern can be adapted to the requirements of other
+        applications.
+      </p>
+<p>
+        Once the non-strict components are determined, a new URL is created and its
+        parts are set with the <code class="computeroutput"><span class="identifier">set_encoded_X</span></code>
+        functions, which will encode any invalid chars accordingly.
+      </p>
+<p>
+        This sort of transformation is useful in applications that are extremely
+        loose in what kinds of URLs they accept, such as browsers. The sanitized
+        URL can later be used for machine-to-machine communication.
+      </p>
+<p>
+        Using non-strict URLs directly is a security concern in machine-to-machine
+        communication, is ambiguous, and also involve an extra cost for the transformations.
+      </p>
+<p>
+        Different transformations are required by different applications to construct
+        a valid URL appropriate for machine-to-machine communication. For instance,
+        if an invalid relative reference includes something that looks like a host
+        in the first path segment, browsers usually interpret that as the host with
+        an implicit "https" scheme. Other applications also have other
+        implicit schemes.
+      </p>
+<p>
+        The example also identifies whether the input url is already valid. It includes
+        diagnostics that can be used to help the user determine if a URL is invalid
+        and why it's invalid.
+      </p>
+<p>
+        Once all transformations are applied, the result is a URL appropriate for
+        machine-to-machine communication.
+      </p>
+<pre class="programlisting"><span class="comment">/*
+    This example parses a non-strict / invalid URL
+    into path components according to its delimiters.
+    This pattern can be adapted to the requirements of other
+    applications.
+
+    Once the non-strict components are determined, a new URL is
+    created and its parts are set with the set_encoded_X
+    functions, which will encode any invalid chars accordingly.
+
+    This sort of transformation is useful in applications that are
+    extremely loose in what kinds of URLs they accept, such as
+    browsers. The sanitized URL can later be used for machine-to-machine
+    communication.
+
+    Using non-strict URLs directly is a security concern in
+    machine-to-machine communication, is ambiguous, and also
+    involve an extra cost for the transformations.
+
+    Different transformations are required by different applications to
+    construct a valid URL appropriate for machine-to-machine communication.
+    For instance, if an invalid relative reference includes something that
+    looks like a host in the first path segment, browsers usually interpret
+    that as the host with an implicit "https" scheme. Other applications
+    also have other implicit schemes.
+
+    The example also identifies whether the input url is already valid.
+    It includes diagnostics that can be used to help the user determine
+    if a URL is invalid and why it's invalid.
+
+    Once all transformations are applied, the result is a URL
+    appropriate for machine-to-machine communication.
+*/</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">parse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">parse_path</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">string_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">grammar</span><span class="special">/</span><span class="identifier">alpha_chars</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">grammar</span><span class="special">/</span><span class="identifier">charset</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">grammar</span><span class="special">/</span><span class="identifier">digit_chars</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">grammar</span><span class="special">/</span><span class="identifier">lut_chars</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">algorithm</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">array</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">core</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">;</span>
+
+<span class="keyword">struct</span> <span class="identifier">url_components</span>
+<span class="special">{</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">scheme</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">user</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">password</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">hostname</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">port</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">query</span><span class="special">;</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">fragment</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span>
+<span class="identifier">port_of_scheme</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">scheme_str</span><span class="special">)</span> <span class="special">{</span>
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">&gt;,</span> <span class="number">21</span><span class="special">&gt;</span> <span class="identifier">scheme_ports</span> <span class="special">=</span>
+    <span class="special">{{</span>
+         <span class="special">{</span><span class="string">"http"</span><span class="special">,</span> <span class="string">"80"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"ftp"</span><span class="special">,</span> <span class="string">"21"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"https"</span><span class="special">,</span> <span class="string">"443"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"gopher"</span><span class="special">,</span> <span class="string">"70"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"ldap"</span><span class="special">,</span> <span class="string">"389"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"nntp"</span><span class="special">,</span> <span class="string">"119"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"snews"</span><span class="special">,</span> <span class="string">"563"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"imap"</span><span class="special">,</span> <span class="string">"143"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"pop"</span><span class="special">,</span> <span class="string">"110"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"sip"</span><span class="special">,</span> <span class="string">"5060"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"rtsp"</span><span class="special">,</span> <span class="string">"554"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"wais"</span><span class="special">,</span> <span class="string">"210"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"z39.50r"</span><span class="special">,</span> <span class="string">"210"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"z39.50s"</span><span class="special">,</span> <span class="string">"210"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"prospero"</span><span class="special">,</span> <span class="string">"191"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"nfs"</span><span class="special">,</span> <span class="string">"2049"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"tip"</span><span class="special">,</span> <span class="string">"3372"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"acap"</span><span class="special">,</span> <span class="string">"674"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"telnet"</span><span class="special">,</span> <span class="string">"23"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">"ssh"</span><span class="special">,</span> <span class="string">"22"</span><span class="special">},</span>
+         <span class="special">{</span><span class="string">""</span><span class="special">,</span> <span class="string">"65535"</span><span class="special">}</span>
+    <span class="special">}};</span>
+
+    <span class="keyword">auto</span> <span class="identifier">iequals</span> <span class="special">=</span> <span class="special">[](</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">a</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">b</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">b</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">a</span><span class="special">.</span><span class="identifier">size</span><span class="special">())</span> <span class="special">{</span>
+            <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="identifier">i</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span> <span class="identifier">i</span> <span class="special">&lt;</span> <span class="identifier">a</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span> <span class="special">++</span><span class="identifier">i</span><span class="special">)</span> <span class="special">{</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">tolower</span><span class="special">(</span><span class="identifier">a</span><span class="special">[</span><span class="identifier">i</span><span class="special">])</span> <span class="special">!=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">tolower</span><span class="special">(</span><span class="identifier">b</span><span class="special">[</span><span class="identifier">i</span><span class="special">]))</span> <span class="special">{</span>
+                <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+        <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+    <span class="special">};</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">find_if</span><span class="special">(</span>
+        <span class="identifier">scheme_ports</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+        <span class="identifier">scheme_ports</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+        <span class="special">[&amp;](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">iequals</span><span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">first</span><span class="special">,</span> <span class="identifier">scheme_str</span><span class="special">);</span>
+    <span class="special">});</span>
+
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">scheme_ports</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span> <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">second</span><span class="special">;</span>
+    <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+        <span class="keyword">return</span> <span class="special">{};</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">extract_relative_ref</span><span class="special">(</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">hostinfo_relative</span><span class="special">,</span>
+    <span class="identifier">url_components</span> <span class="special">&amp;</span><span class="identifier">out</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// split path and query#fragment</span>
+    <span class="keyword">constexpr</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">lut_chars</span> <span class="identifier">path_end_chars</span><span class="special">(</span><span class="string">"?#\0"</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">find_if</span><span class="special">(</span>
+        <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+        <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span> <span class="identifier">path_end_chars</span><span class="special">);</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">query_and_frag</span> <span class="special">=</span> <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">it</span> <span class="special">-</span> <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">());</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">query_and_frag</span> <span class="special">!=</span> <span class="identifier">hostinfo_relative</span><span class="special">)</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">path</span> <span class="special">=</span> <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span>
+            <span class="number">0</span><span class="special">,</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">hostinfo_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="keyword">return</span><span class="special">;</span>
+
+    <span class="comment">// ?query#fragment</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">front</span><span class="special">()</span> <span class="special">==</span> <span class="char">'?'</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">query_and_frag</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+        <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">size_type</span> <span class="identifier">hash_pos</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="char">'#'</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">hash_pos</span> <span class="special">!=</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">fragment_part</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">hash_pos</span><span class="special">);</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">fragment</span> <span class="special">=</span> <span class="identifier">fragment_part</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">query</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span>
+                <span class="number">0</span><span class="special">,</span> <span class="identifier">fragment_part</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+        <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">query</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">return</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// fragment</span>
+    <span class="identifier">out</span><span class="special">.</span><span class="identifier">fragment</span> <span class="special">=</span> <span class="identifier">query_and_frag</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">extract_userinfo_relative</span><span class="special">(</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">relative_ref</span><span class="special">,</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">userinfo_relative</span><span class="special">,</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">host_info</span><span class="special">,</span>
+    <span class="identifier">url_components</span><span class="special">&amp;</span> <span class="identifier">out</span><span class="special">)</span> <span class="special">{</span>
+    <span class="comment">// We expect userinfo_relative to point to the first character of</span>
+    <span class="comment">// the hostname.  If there's a port it is the first colon,</span>
+    <span class="comment">// except with IPv6.</span>
+    <span class="keyword">auto</span> <span class="identifier">host_end_pos</span> <span class="special">=</span> <span class="identifier">host_info</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="char">':'</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">host_end_pos</span> <span class="special">==</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// definitely no port</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">hostname</span> <span class="special">=</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span>
+            <span class="number">0</span><span class="special">,</span> <span class="identifier">relative_ref</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+        <span class="keyword">return</span> <span class="identifier">extract_relative_ref</span><span class="special">(</span><span class="identifier">relative_ref</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// extract hostname and port</span>
+    <span class="identifier">out</span><span class="special">.</span><span class="identifier">hostname</span> <span class="special">=</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">host_end_pos</span><span class="special">);</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">host_relative</span> <span class="special">=</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">host_end_pos</span> <span class="special">+</span> <span class="number">1</span><span class="special">);</span>
+    <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span> <span class="special">=</span> <span class="identifier">host_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">relative_ref</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">host_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+
+    <span class="comment">// validate port</span>
+    <span class="keyword">bool</span> <span class="keyword">const</span> <span class="identifier">valid_port</span> <span class="special">=</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">find_if_not</span><span class="special">(</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">digit_chars</span><span class="special">)</span>
+        <span class="special">==</span> <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">valid_port</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// move port to hostname where it can be encoded</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">hostname</span> <span class="special">=</span> <span class="special">{</span><span class="identifier">out</span><span class="special">.</span><span class="identifier">hostname</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">end</span><span class="special">()};</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span> <span class="special">=</span> <span class="special">{};</span>
+    <span class="special">}</span>
+
+    <span class="identifier">extract_relative_ref</span><span class="special">(</span><span class="identifier">relative_ref</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">empty</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="special">!</span><span class="identifier">out</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">port</span> <span class="special">=</span> <span class="identifier">port_of_scheme</span><span class="special">(</span><span class="identifier">out</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">extract_scheme_relative</span><span class="special">(</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">scheme_relative</span><span class="special">,</span>
+    <span class="identifier">url_components</span> <span class="special">&amp;</span><span class="identifier">out</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// hostinfo</span>
+    <span class="keyword">constexpr</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">lut_chars</span> <span class="identifier">hostinfo_end_chars</span><span class="special">(</span><span class="string">"/?#\0"</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">find_if</span><span class="special">(</span>
+        <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+        <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+        <span class="identifier">hostinfo_end_chars</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="identifier">path_offset</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">)(</span>
+        <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span>
+        <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">&gt;(</span><span class="identifier">it</span> <span class="special">-</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">()));</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">host_info</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">path_offset</span><span class="special">);</span>
+
+    <span class="comment">// userinfo</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">relative_ref</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">path_offset</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="identifier">host_offset</span> <span class="special">=</span> <span class="identifier">host_info</span><span class="special">.</span><span class="identifier">find_last_of</span><span class="special">(</span><span class="char">'@'</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">host_offset</span> <span class="special">==</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+        <span class="keyword">return</span> <span class="identifier">extract_userinfo_relative</span><span class="special">(</span>
+            <span class="identifier">relative_ref</span><span class="special">,</span>
+            <span class="identifier">scheme_relative</span><span class="special">,</span>
+            <span class="identifier">host_info</span><span class="special">,</span>
+            <span class="identifier">out</span><span class="special">);</span>
+
+    <span class="comment">// password</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">userinfo_at_relative</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">host_offset</span><span class="special">);</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">userinfo</span><span class="special">(</span><span class="identifier">host_info</span><span class="special">.</span><span class="identifier">data</span><span class="special">(),</span> <span class="identifier">userinfo_at_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">host_info</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+    <span class="keyword">auto</span> <span class="identifier">password_offset</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">(</span><span class="identifier">userinfo</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span> <span class="identifier">userinfo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="char">':'</span><span class="special">));</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">password_offset</span> <span class="special">!=</span> <span class="identifier">userinfo</span><span class="special">.</span><span class="identifier">size</span><span class="special">())</span> <span class="special">{</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">user</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">password_offset</span><span class="special">);</span>
+        <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">password</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">password_offset</span> <span class="special">+</span> <span class="number">1</span><span class="special">);</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">userinfo_at_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">password</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+    <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+        <span class="identifier">out</span><span class="special">.</span><span class="identifier">user</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">userinfo_at_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">()</span> <span class="special">-</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">data</span><span class="special">());</span>
+    <span class="special">}</span>
+
+    <span class="comment">// userinfo-relative</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">userinfo_relative</span> <span class="special">=</span> <span class="identifier">userinfo_at_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">find_if</span><span class="special">(</span>
+        <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+        <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+        <span class="identifier">hostinfo_end_chars</span><span class="special">);</span>
+    <span class="identifier">path_offset</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">)(</span>
+        <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span>
+        <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">&gt;(</span><span class="identifier">it</span> <span class="special">-</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">begin</span><span class="special">()));</span>
+    <span class="identifier">host_info</span> <span class="special">=</span> <span class="identifier">userinfo_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">path_offset</span><span class="special">);</span>
+    <span class="identifier">extract_userinfo_relative</span><span class="special">(</span>
+        <span class="identifier">relative_ref</span><span class="special">,</span>
+        <span class="identifier">userinfo_relative</span><span class="special">,</span>
+        <span class="identifier">host_info</span><span class="special">,</span>
+        <span class="identifier">out</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">extract_uri_components</span><span class="special">(</span>
+   <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span><span class="special">,</span>
+   <span class="identifier">url_components</span> <span class="special">&amp;</span><span class="identifier">out</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="string">"//"</span><span class="special">)</span> <span class="special">&amp;&amp;</span> <span class="special">!</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="string">"///"</span><span class="special">))</span>
+        <span class="keyword">return</span> <span class="identifier">extract_scheme_relative</span><span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">2</span><span class="special">),</span> <span class="identifier">out</span><span class="special">);</span>
+
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="char">'/'</span><span class="special">))</span>
+        <span class="keyword">return</span> <span class="identifier">extract_relative_ref</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+
+    <span class="comment">// extract scheme</span>
+    <span class="comment">// first char in a scheme must be letter (we accept uppercase here)</span>
+    <span class="keyword">bool</span> <span class="identifier">has_scheme</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">empty</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">alpha_chars</span><span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">front</span><span class="special">()))</span> <span class="special">{</span>
+        <span class="keyword">constexpr</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">lut_chars</span> <span class="identifier">scheme_chars</span><span class="special">(</span>
+                <span class="string">"0123456789+-.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"</span><span class="special">);</span>
+        <span class="keyword">char</span> <span class="keyword">const</span><span class="special">*</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">grammar</span><span class="special">::</span><span class="identifier">find_if_not</span><span class="special">(</span>
+            <span class="identifier">s</span><span class="special">.</span><span class="identifier">begin</span><span class="special">()</span> <span class="special">+</span> <span class="number">1</span><span class="special">,</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span> <span class="identifier">scheme_chars</span><span class="special">);</span>
+        <span class="identifier">size_t</span> <span class="identifier">scheme_size</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">)(</span>
+            <span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span> <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">&gt;(</span><span class="identifier">it</span> <span class="special">-</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">begin</span><span class="special">()));</span>
+        <span class="comment">// scheme must be non-empty and followed by ':'</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">&gt;</span> <span class="identifier">scheme_size</span> <span class="special">&amp;&amp;</span> <span class="identifier">s</span><span class="special">[</span><span class="identifier">scheme_size</span><span class="special">]</span> <span class="special">==</span> <span class="char">':'</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">out</span><span class="special">.</span><span class="identifier">scheme</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">scheme_size</span><span class="special">);</span>
+            <span class="identifier">has_scheme</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+
+    <span class="comment">// The usual route, parse scheme first</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">scheme_relative</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">has_scheme</span><span class="special">)</span>
+        <span class="identifier">scheme_relative</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">out</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">+</span> <span class="number">1</span><span class="special">);</span>
+
+    <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">has_authority</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="string">"//"</span><span class="special">);</span>
+    <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">is_relative_ref</span> <span class="special">=</span> <span class="special">!</span><span class="identifier">has_scheme</span> <span class="special">&amp;&amp;</span> <span class="special">!</span><span class="identifier">has_authority</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">is_relative_ref</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// this is the trick browsers usually apply when 1) there's no</span>
+        <span class="comment">// authority because the "//" is missing, 2) the scheme is also missing,</span>
+        <span class="comment">// and 3) the first path segment looks like an authority</span>
+        <span class="comment">//</span>
+        <span class="comment">// This behavior is widespread, although it's ambiguous because valid</span>
+        <span class="comment">// host characters are also valid path characters.</span>
+        <span class="comment">//</span>
+        <span class="comment">// It's this rule that allows for things like "www.boost.org" in the</span>
+        <span class="comment">// browser. This is an invalid URL because it has no "//" to indicate</span>
+        <span class="comment">// this is the authority and "www.boost.org" is a perfectly valid</span>
+        <span class="comment">// path segment.</span>
+        <span class="keyword">auto</span> <span class="identifier">first_seg_offset</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">)(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">find_first_of</span><span class="special">(</span><span class="char">'/'</span><span class="special">));</span>
+        <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">first_seg</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">first_seg_offset</span><span class="special">);</span>
+        <span class="keyword">auto</span> <span class="identifier">host_delimiter_pos</span> <span class="special">=</span> <span class="identifier">first_seg</span><span class="special">.</span><span class="identifier">find_first_of</span><span class="special">(</span><span class="string">".:"</span><span class="special">);</span>
+        <span class="keyword">bool</span> <span class="keyword">const</span> <span class="identifier">looks_like_authority</span> <span class="special">=</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_authority</span><span class="special">(</span><span class="identifier">first_seg</span><span class="special">)</span> <span class="special">&amp;&amp;</span>
+            <span class="identifier">host_delimiter_pos</span> <span class="special">!=</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span> <span class="special">&amp;&amp;</span>
+            <span class="identifier">host_delimiter_pos</span> <span class="special">!=</span> <span class="identifier">first_seg</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">-</span> <span class="number">1</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">looks_like_authority</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="identifier">extract_scheme_relative</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+
+        <span class="comment">// if the first_seg is really a seg, parse as relative ref</span>
+        <span class="keyword">return</span> <span class="identifier">extract_relative_ref</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">has_authority</span><span class="special">)</span>
+        <span class="identifier">scheme_relative</span> <span class="special">=</span> <span class="identifier">scheme_relative</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="number">2</span><span class="special">);</span>
+
+    <span class="comment">// all that's left is a relative path</span>
+    <span class="keyword">return</span> <span class="identifier">extract_relative_ref</span><span class="special">(</span><span class="identifier">scheme_relative</span><span class="special">,</span> <span class="identifier">out</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">sanitize_uri</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span><span class="special">,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_base</span><span class="special">&amp;</span> <span class="identifier">dest</span><span class="special">)</span> <span class="special">{</span>
+    <span class="identifier">url_components</span> <span class="identifier">o</span><span class="special">;</span>
+    <span class="identifier">dest</span><span class="special">.</span><span class="identifier">clear</span><span class="special">();</span>
+    <span class="identifier">extract_uri_components</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">o</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_scheme</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">user</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_user</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">user</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">password</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_password</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">password</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">hostname</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_host</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">hostname</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">port</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_port</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">port</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">path</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_path</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">path</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">query</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_query</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">query</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">fragment</span><span class="special">.</span><span class="identifier">data</span><span class="special">())</span>
+        <span class="identifier">dest</span><span class="special">.</span><span class="identifier">set_encoded_fragment</span><span class="special">(</span><span class="identifier">o</span><span class="special">.</span><span class="identifier">fragment</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span>
+<span class="identifier">sanitize_uri</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span><span class="special">)</span> <span class="special">{</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">u</span><span class="special">;</span>
+    <span class="identifier">sanitize_uri</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">u</span><span class="special">);</span>
+    <span class="keyword">return</span> <span class="identifier">u</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span>
+<span class="identifier">print_url_components</span><span class="special">(</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"url: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_scheme</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"scheme: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_userinfo</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"user: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_user</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_password</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"password: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_password</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_authority</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"hostname: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_host</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_port</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"port: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"path: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"segments:\n"</span><span class="special">;</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">seg</span><span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"- "</span> <span class="special">&lt;&lt;</span> <span class="identifier">seg</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_query</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"query: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_query</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"params:\n"</span><span class="special">;</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">param</span><span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_params</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">param</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">)</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"- "</span> <span class="special">&lt;&lt;</span> <span class="identifier">param</span><span class="special">.</span><span class="identifier">key</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">param</span><span class="special">.</span><span class="identifier">value</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"- "</span> <span class="special">&lt;&lt;</span> <span class="identifier">param</span><span class="special">.</span><span class="identifier">key</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_fragment</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"fragment: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_fragment</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span>
+<span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">**</span><span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">2</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">];</span>
+        <span class="keyword">auto</span> <span class="identifier">p</span> <span class="special">=</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">find_last_of</span><span class="special">(</span><span class="string">"/\\"</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">p</span> <span class="special">!=</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+            <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">p</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span>
+            <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span>
+            <span class="special">&lt;&lt;</span> <span class="string">" &lt;url&gt;\n"</span>
+               <span class="string">"target: a non-strict url\n"</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">uri_str</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">];</span>
+
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_view</span><span class="special">&gt;</span> <span class="identifier">ru</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri_reference</span><span class="special">(</span><span class="identifier">uri_str</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ru</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_view</span> <span class="identifier">u</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">ru</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_scheme</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">has_fragment</span><span class="special">())</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Input is a valid URL\n"</span><span class="special">;</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_scheme</span><span class="special">())</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Input is a valid absolute URL\n"</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Input is a valid relative URL\n"</span><span class="special">;</span>
+        <span class="identifier">print_url_components</span><span class="special">(</span><span class="identifier">u</span><span class="special">);</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Sanitizing URL:\n"</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"input: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">uri_str</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">sanitize_uri</span><span class="special">(</span><span class="identifier">uri_str</span><span class="special">);</span>
+    <span class="identifier">print_url_components</span><span class="special">(</span><span class="identifier">u</span><span class="special">);</span>
+    <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="router.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../ref.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

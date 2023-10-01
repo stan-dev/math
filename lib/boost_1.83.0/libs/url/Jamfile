@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2013-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/url
+#
+
+import ../../config/checks/config : requires ;
+
+constant c11-requires :
+    [ requires
+    cxx11_constexpr
+    cxx11_decltype
+    cxx11_hdr_tuple
+    cxx11_template_aliases
+    cxx11_variadic_templates
+    ]
+    ;

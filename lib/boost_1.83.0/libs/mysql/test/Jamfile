@@ -1,0 +1,148 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+import path ;
+import feature ;
+import ../config/checks/config : requires ;
+
+project /boost/mysql/test ;
+
+# Support header-only builds
+feature.feature boost.mysql.separate-compilation : on off : propagated composite ;
+
+# System libraries
+if [ os.name ] = NT
+{
+    local OPENSSL_ROOT_ENV = [ os.environ OPENSSL_ROOT ] ;
+    local OPENSSL_ROOT = "" ;
+    if $(OPENSSL_ROOT_ENV)
+    {
+        OPENSSL_ROOT = $(OPENSSL_ROOT_ENV) ;
+    }
+    else 
+    {
+        OPENSSL_ROOT = "C:/OpenSSL" ;
+    }
+    local openssl_requirements =
+        <include>$(OPENSSL_ROOT)/include
+        <library-path>$(OPENSSL_ROOT)/lib
+    ; 
+
+    if [ path.exists $(OPENSSL_ROOT)/lib/libssl.lib ]
+    {
+        echo "OpenSSL > 1.1.0. Including libssl" ;
+        lib ssl : : <target-os>windows <name>libssl : : $(openssl_requirements) ;
+    }
+    else if [ path.exists $(OPENSSL_ROOT)/lib/ssleay32.lib ] 
+    {
+        echo "OpenSSL < 1.1.0. Including ssleay32" ;
+        lib ssl : : <target-os>windows <name>ssleay32 : : $(openssl_requirements) ;
+    }
+    else
+    {
+        lib ssl : : <link>shared : : $(openssl_requirements) ;
+    }
+
+    if [ path.exists $(OPENSSL_ROOT)/lib/libcrypto.lib ]
+    {
+        echo "OpenSSL > 1.1.0. Including libcrypto" ;
+        lib crypto : : <target-os>windows <name>libcrypto : : $(openssl_requirements) ;
+    }
+    else if [ path.exists $(OPENSSL_ROOT)/lib/libeay32.lib ]
+    {
+        echo "OpenSSL < 1.1.0. Including libeay32" ;
+        lib crypto : : <target-os>windows <name>libeay32 : : $(openssl_requirements) ;
+    }
+    else
+    {
+        lib crypto : : <link>shared : : $(openssl_requirements) ;
+    }
+}
+else
+{
+    local OPENSSL_ROOT = [ os.environ OPENSSL_ROOT ] ;
+    local openssl_requirements =
+        <include>$(OPENSSL_ROOT)/include
+        <library-path>$(OPENSSL_ROOT)/lib
+    ; 
+    lib ssl : : <link>shared : : $(openssl_requirements) ;
+    lib crypto : : <link>shared : : $(openssl_requirements) ;
+}
+
+# Requirements to use across targets
+local requirements = 
+        <define>BOOST_ALL_NO_LIB=1
+        <define>BOOST_ASIO_NO_DEPRECATED=1
+        <define>BOOST_ASIO_DISABLE_BOOST_ARRAY=1
+        <define>BOOST_ASIO_DISABLE_BOOST_BIND=1
+        <define>BOOST_ASIO_DISABLE_BOOST_DATE_TIME=1
+        <define>BOOST_ASIO_DISABLE_BOOST_REGEX=1
+        <define>BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS=1
+        <define>BOOST_ALLOW_DEPRECATED_HEADERS=1
+        <toolset>msvc:<cxxflags>"/bigobj"
+        <toolset>msvc-14.1:<cxxflags>"/permissive-"
+        <toolset>msvc-14.2:<cxxflags>"/permissive-"
+        <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS=1
+        <toolset>msvc:<define>_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING
+        <toolset>msvc:<define>_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING
+        <toolset>msvc:<define>_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+        <toolset>gcc-13:<cxxflags>-Wno-dangling-reference # GCC13 doesn't understand view types
+        <target-os>linux:<define>_XOPEN_SOURCE=600
+        <target-os>linux:<define>_GNU_SOURCE=1
+        <target-os>windows:<define>_WIN32_WINNT=0x0601
+        <define>BOOST_ASIO_SEPARATE_COMPILATION
+        <boost.mysql.separate-compilation>on:<define>BOOST_MYSQL_SEPARATE_COMPILATION
+        <include>../include
+    ;
+
+lib boost_mysql_compiled
+    :
+        common/src/boost_asio.cpp
+        ssl
+        crypto
+    : requirements
+        [ requires
+            cxx11_defaulted_moves
+            cxx11_final
+            cxx11_hdr_array
+            cxx11_hdr_chrono
+            cxx11_hdr_tuple
+            cxx11_hdr_type_traits
+            cxx11_numeric_limits
+            cxx11_override
+            cxx11_smart_ptr
+            cxx11_trailing_result_types
+            cxx11_template_aliases
+            cxx11_variadic_templates
+        ]
+        <boost.mysql.separate-compilation>on:<source>common/src/boost_mysql.cpp
+        <link>static
+        $(requirements)
+    : usage-requirements
+        $(requirements)
+    ;
+
+alias common_test_sources
+    :
+        common/src/entry_point.cpp
+        common/src/tracker_executor.cpp
+    ;
+
+alias boost_mysql_test
+    :
+        boost_mysql_compiled
+        # Unit test library generates some internal warnings we're not interested in
+        /boost/test//boost_unit_test_framework/<warnings-as-errors>off
+    : requirements
+        <link>static
+        <include>common/include
+    : usage-requirements
+        <include>common/include
+    ;
+
+build-project unit ;

@@ -1,0 +1,183 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Async functions using futures</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="async_callbacks.html" title="Async functions using callbacks">
+<link rel="next" href="async_coroutines.html" title="Async functions using stackful coroutines">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_callbacks.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="async_coroutines.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.examples.async_futures"></a><a class="link" href="async_futures.html" title="Async functions using futures">Async functions using futures</a>
+</h3></div></div></div>
+<p>
+        This example demonstrates how use the asynchronous functions using futures.
+      </p>
+<p>
+        This example assumes you have gone through the <a class="link" href="../examples.html#mysql.examples.setup">setup</a>.
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">error_code</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">handshake_params</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">results</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">row_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">statement</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">tcp_ssl</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">io_context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ip</span><span class="special">/</span><span class="identifier">tcp</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ssl</span><span class="special">/</span><span class="identifier">context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">use_future</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">system</span><span class="special">/</span><span class="identifier">system_error</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">thread</span><span class="special">&gt;</span>
+
+<span class="keyword">using</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">;</span>
+
+<span class="keyword">void</span> <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">employee</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee '"</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span>   <span class="comment">// first_name (string)</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">"' earns "</span>            <span class="comment">// last_name  (string)</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">2</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">" dollars yearly\n"</span><span class="special">;</span>  <span class="comment">// salary     (double)</span>
+<span class="special">}</span>
+
+<span class="comment">/**
+ * A boost::asio::io_context plus a thread that calls context.run().
+ * We encapsulate this here to ensure correct shutdown even in case of
+ * error (exception), when we should first reset the work guard, then
+ * stop the io_context, and then join the thread. Failing to do so
+ * may cause your application to not stop (if the work guard is not
+ * reset) or to terminate badly (if the thread is not joined).
+ */</span>
+<span class="keyword">class</span> <span class="identifier">application</span>
+<span class="special">{</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx_</span><span class="special">;</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">executor_work_guard</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span><span class="special">::</span><span class="identifier">executor_type</span><span class="special">&gt;</span> <span class="identifier">guard_</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">thread</span> <span class="identifier">runner_</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="identifier">application</span><span class="special">()</span> <span class="special">:</span> <span class="identifier">guard_</span><span class="special">(</span><span class="identifier">ctx_</span><span class="special">.</span><span class="identifier">get_executor</span><span class="special">()),</span> <span class="identifier">runner_</span><span class="special">([</span><span class="keyword">this</span><span class="special">]</span> <span class="special">{</span> <span class="identifier">ctx_</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span> <span class="special">})</span> <span class="special">{}</span>
+    <span class="identifier">application</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">application</span><span class="special">&amp;)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+    <span class="identifier">application</span><span class="special">(</span><span class="identifier">application</span><span class="special">&amp;&amp;)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+    <span class="identifier">application</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="keyword">const</span> <span class="identifier">application</span><span class="special">&amp;)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+    <span class="identifier">application</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">application</span><span class="special">&amp;&amp;)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+    <span class="special">~</span><span class="identifier">application</span><span class="special">()</span>
+    <span class="special">{</span>
+        <span class="identifier">guard_</span><span class="special">.</span><span class="identifier">reset</span><span class="special">();</span>
+        <span class="identifier">runner_</span><span class="special">.</span><span class="identifier">join</span><span class="special">();</span>
+    <span class="special">}</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span><span class="special">&amp;</span> <span class="identifier">context</span><span class="special">()</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">ctx_</span><span class="special">;</span> <span class="special">}</span>
+<span class="special">};</span>
+
+<span class="keyword">void</span> <span class="identifier">main_impl</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">4</span> <span class="special">&amp;&amp;</span> <span class="identifier">argc</span> <span class="special">!=</span> <span class="number">5</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">" &lt;username&gt; &lt;password&gt; &lt;server-hostname&gt; [company-id]\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// The company_id whose employees we will be listing. This</span>
+    <span class="comment">// is user-supplied input, and should be treated as untrusted.</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">company_id</span> <span class="special">=</span> <span class="identifier">argc</span> <span class="special">==</span> <span class="number">5</span> <span class="special">?</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">4</span><span class="special">]</span> <span class="special">:</span> <span class="string">"HGS"</span><span class="special">;</span>
+
+    <span class="comment">// Context and connections</span>
+    <span class="identifier">application</span> <span class="identifier">app</span><span class="special">;</span>  <span class="comment">// boost::asio::io_context and a thread that calls run()</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span> <span class="identifier">ssl_ctx</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">::</span><span class="identifier">tls_client</span><span class="special">);</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">app</span><span class="special">.</span><span class="identifier">context</span><span class="special">(),</span> <span class="identifier">ssl_ctx</span><span class="special">);</span>
+
+    <span class="comment">// Resolver for hostname resolution</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">resolver</span> <span class="identifier">resolver</span><span class="special">(</span><span class="identifier">app</span><span class="special">.</span><span class="identifier">context</span><span class="special">().</span><span class="identifier">get_executor</span><span class="special">());</span>
+
+    <span class="comment">// Connection params</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+        <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">],</span>                <span class="comment">// username</span>
+        <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">],</span>                <span class="comment">// password</span>
+        <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database to use; leave empty or omit for no database</span>
+    <span class="special">);</span>
+
+    <span class="comment">/**
+     * Hostname resolution.
+     * Calling async_resolve triggers the
+     * operation, and calling future::get() blocks the current thread until
+     * it completes. get() will throw an exception if the operation fails.
+     */</span>
+    <span class="keyword">auto</span> <span class="identifier">endpoints_fut</span> <span class="special">=</span> <span class="identifier">resolver</span><span class="special">.</span><span class="identifier">async_resolve</span><span class="special">(</span>
+        <span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">],</span>
+        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">default_port_string</span><span class="special">,</span>
+        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span>
+    <span class="special">);</span>
+    <span class="keyword">auto</span> <span class="identifier">endpoints</span> <span class="special">=</span> <span class="identifier">endpoints_fut</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+
+    <span class="comment">// Perform the TCP connect and MySQL handshake.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">fut</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_connect</span><span class="special">(*</span><span class="identifier">endpoints</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">,</span> <span class="identifier">use_future</span><span class="special">);</span>
+    <span class="identifier">fut</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+
+    <span class="comment">// We will be using company_id, which is untrusted user input, so we will use a prepared</span>
+    <span class="comment">// statement.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span><span class="special">&gt;</span> <span class="identifier">stmt_fut</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_prepare_statement</span><span class="special">(</span>
+        <span class="string">"SELECT first_name, last_name, salary FROM employee WHERE company_id = ?"</span><span class="special">,</span>
+        <span class="identifier">use_future</span>
+    <span class="special">);</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">stmt_fut</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+
+    <span class="comment">// Execute the statement</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">fut</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">company_id</span><span class="special">),</span> <span class="identifier">result</span><span class="special">,</span> <span class="identifier">use_future</span><span class="special">);</span>
+    <span class="identifier">fut</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+
+    <span class="comment">// Print employees</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">employee</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">employee</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Notify the MySQL server we want to quit, then close the underlying connection.</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_close</span><span class="special">(</span><span class="identifier">use_future</span><span class="special">).</span><span class="identifier">get</span><span class="special">();</span>
+
+    <span class="comment">// application dtor. stops io_context and then joins the thread</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">try</span>
+    <span class="special">{</span>
+        <span class="identifier">main_impl</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_callbacks.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="async_coroutines.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Finicky</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="qr_code.html" title="QR Code">
+<link rel="next" href="mailto_urls.html" title="mailto URLs">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="qr_code.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mailto_urls.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.examples.finicky"></a><a class="link" href="finicky.html" title="Finicky">Finicky</a>
+</h3></div></div></div>
+<p>
+        This example shows how to classify URLs according to a set of rules. It is
+        inspired by <a href="https://github.com/johnste/finicky" target="_top">Finicky</a>
+        application.
+      </p>
+<p>
+        The URLs are classified and redirected to a browser according to their category.
+        See the example <code class="computeroutput"><span class="identifier">config</span><span class="special">.</span><span class="identifier">json</span></code> file.
+      </p>
+<pre class="programlisting"><span class="comment">/*
+    This example shows how to classify URLs
+    according to a set of rules. This example is
+    inspired by Finicky. The URLs are classified
+    and redirected to a browser according to their
+    category. See the example config.json file.
+    https://github.com/johnste/finicky
+*/</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">parse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">system</span><span class="special">/</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">json</span><span class="special">/</span><span class="identifier">stream_parser</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">core</span><span class="special">/</span><span class="identifier">detail</span><span class="special">/</span><span class="identifier">string_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">regex</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">fstream</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">json</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">json</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">core</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">;</span>
+
+<span class="identifier">json</span><span class="special">::</span><span class="identifier">value</span>
+<span class="identifier">read_json</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">istream</span><span class="special">&amp;</span> <span class="identifier">is</span><span class="special">,</span> <span class="identifier">json</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">&amp;</span> <span class="identifier">ec</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">parse_options</span> <span class="identifier">opt</span><span class="special">;</span>
+    <span class="identifier">opt</span><span class="special">.</span><span class="identifier">allow_comments</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">stream_parser</span> <span class="identifier">p</span><span class="special">(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">storage_ptr</span><span class="special">(),</span> <span class="identifier">opt</span><span class="special">);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">line</span><span class="special">;</span>
+    <span class="keyword">while</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">getline</span><span class="special">(</span> <span class="identifier">is</span><span class="special">,</span> <span class="identifier">line</span> <span class="special">)</span> <span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">p</span><span class="special">.</span><span class="identifier">write</span><span class="special">(</span> <span class="identifier">line</span><span class="special">,</span> <span class="identifier">ec</span> <span class="special">);</span>
+        <span class="keyword">if</span><span class="special">(</span> <span class="identifier">ec</span> <span class="special">)</span>
+            <span class="keyword">return</span> <span class="keyword">nullptr</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="identifier">p</span><span class="special">.</span><span class="identifier">finish</span><span class="special">(</span> <span class="identifier">ec</span> <span class="special">);</span>
+    <span class="keyword">if</span><span class="special">(</span> <span class="identifier">ec</span> <span class="special">)</span>
+        <span class="keyword">return</span> <span class="keyword">nullptr</span><span class="special">;</span>
+    <span class="keyword">return</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">release</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">bool</span>
+<span class="identifier">glob_match</span><span class="special">(</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">pattern</span><span class="special">,</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">str</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// regex</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">str</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="string">"/"</span><span class="special">)</span> <span class="special">&amp;&amp;</span>
+        <span class="identifier">str</span><span class="special">.</span><span class="identifier">ends_with</span><span class="special">(</span><span class="string">"/"</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex</span> <span class="identifier">pr</span><span class="special">(</span><span class="identifier">pattern</span><span class="special">.</span><span class="identifier">begin</span><span class="special">()</span> <span class="special">+</span> <span class="number">1</span><span class="special">,</span> <span class="identifier">pattern</span><span class="special">.</span><span class="identifier">end</span><span class="special">()</span> <span class="special">-</span> <span class="number">1</span><span class="special">);</span>
+        <span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex_match</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">str</span><span class="special">),</span> <span class="identifier">pr</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// literal</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">pattern</span><span class="special">.</span><span class="identifier">contains</span><span class="special">(</span><span class="char">'*'</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">pattern</span> <span class="special">==</span> <span class="identifier">str</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// glob</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">p</span> <span class="special">=</span> <span class="identifier">pattern</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">i</span> <span class="special">=</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="char">'*'</span><span class="special">);</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">i</span> <span class="special">!=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="identifier">e</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">min</span><span class="special">(</span><span class="identifier">p</span><span class="special">.</span><span class="identifier">find_first_not_of</span><span class="special">(</span><span class="char">'*'</span><span class="special">,</span> <span class="identifier">i</span><span class="special">),</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">size</span><span class="special">());</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span> <span class="identifier">e</span> <span class="special">-</span> <span class="identifier">i</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">n</span> <span class="special">==</span> <span class="number">1</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="identifier">p</span><span class="special">.</span><span class="identifier">replace</span><span class="special">(</span><span class="identifier">i</span><span class="special">,</span> <span class="identifier">e</span><span class="special">,</span> <span class="string">"[^/]*"</span><span class="special">);</span>
+            <span class="identifier">i</span> <span class="special">+=</span> <span class="number">5</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span>
+        <span class="special">{</span>
+            <span class="identifier">p</span><span class="special">.</span><span class="identifier">replace</span><span class="special">(</span><span class="identifier">i</span><span class="special">,</span> <span class="identifier">e</span><span class="special">,</span> <span class="string">".*"</span><span class="special">);</span>
+            <span class="identifier">i</span> <span class="special">+=</span> <span class="number">2</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="identifier">i</span> <span class="special">=</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="char">'*'</span><span class="special">,</span> <span class="identifier">i</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex</span> <span class="identifier">pr</span><span class="special">(</span><span class="identifier">p</span><span class="special">);</span>
+    <span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex_match</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">str</span><span class="special">),</span> <span class="identifier">pr</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="keyword">bool</span>
+<span class="identifier">url_match</span><span class="special">(</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">value</span><span class="special">&amp;</span> <span class="identifier">mv</span><span class="special">,</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">u</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">mv</span><span class="special">.</span><span class="identifier">is_string</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">json</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">p</span> <span class="special">=</span> <span class="identifier">mv</span><span class="special">.</span><span class="identifier">as_string</span><span class="special">();</span>
+        <span class="keyword">return</span> <span class="identifier">glob_match</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">(),</span> <span class="identifier">p</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">mv</span><span class="special">.</span><span class="identifier">is_array</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">json</span><span class="special">::</span><span class="identifier">array</span><span class="special">&amp;</span> <span class="identifier">m</span> <span class="special">=</span> <span class="identifier">mv</span><span class="special">.</span><span class="identifier">as_array</span><span class="special">();</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">mi</span><span class="special">:</span> <span class="identifier">m</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">mi</span><span class="special">.</span><span class="identifier">is_string</span><span class="special">())</span>
+                <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">invalid_argument</span><span class="special">(</span>
+                    <span class="string">"handle match is not a string"</span><span class="special">);</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">glob_match</span><span class="special">(</span><span class="identifier">mi</span><span class="special">.</span><span class="identifier">as_string</span><span class="special">(),</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()))</span>
+                <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">mv</span><span class="special">.</span><span class="identifier">is_object</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">json</span><span class="special">::</span><span class="identifier">object</span><span class="special">&amp;</span> <span class="identifier">m</span> <span class="special">=</span> <span class="identifier">mv</span><span class="special">.</span><span class="identifier">as_object</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">&gt;</span>
+            <span class="identifier">field_values</span><span class="special">[]</span> <span class="special">=</span> <span class="special">{</span>
+                <span class="special">{</span><span class="string">"protocol"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"authority"</span><span class="special">,</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_authority</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"username"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_user</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"user"</span><span class="special">,</span>      <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_user</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"password"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_password</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"userinfo"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_userinfo</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"host"</span><span class="special">,</span>      <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_host</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"port"</span><span class="special">,</span>      <span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"path"</span><span class="special">,</span>      <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"pathname"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"query"</span><span class="special">,</span>     <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_query</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"search"</span><span class="special">,</span>    <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_query</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"fragment"</span><span class="special">,</span>  <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_fragment</span><span class="special">()},</span>
+                <span class="special">{</span><span class="string">"hash"</span><span class="special">,</span>      <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_fragment</span><span class="special">()},</span>
+            <span class="special">};</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">p</span><span class="special">:</span> <span class="identifier">field_values</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">m</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="identifier">p</span><span class="special">.</span><span class="identifier">first</span><span class="special">);</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">m</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+            <span class="special">{</span>
+                <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">())</span>
+                    <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">invalid_argument</span><span class="special">(</span>
+                        <span class="string">"match fields should be a strings"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">glob_match</span><span class="special">(</span><span class="identifier">p</span><span class="special">.</span><span class="identifier">second</span><span class="special">,</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">first</span><span class="special">))</span>
+                    <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+    <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="preprocessor">#define</span> <span class="identifier">CHECK</span><span class="special">(</span><span class="identifier">c</span><span class="special">,</span> <span class="identifier">msg</span><span class="special">)</span>             <span class="special">\</span>
+    <span class="keyword">if</span> <span class="special">(!(</span><span class="identifier">c</span><span class="special">))</span>                     <span class="special">\</span>
+    <span class="special">{</span>                             <span class="special">\</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">msg</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span> <span class="special">\</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>      <span class="special">\</span>
+    <span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">3</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: finicky &lt;config&gt; &lt;url&gt;\n"</span>
+                     <span class="string">"options:\n"</span>
+                     <span class="string">"    &lt;config&gt;: Configuration file\n"</span>
+                     <span class="string">"    &lt;url&gt;:    The url to open\n"</span>
+                     <span class="string">"examples:\n"</span>
+                     <span class="string">"    finicky config.json \"http://www.example.com\"\n"</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Parse url</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span><span class="special">&gt;</span> <span class="identifier">ru</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">]);</span>
+    <span class="identifier">CHECK</span><span class="special">(</span><span class="identifier">ru</span><span class="special">,</span> <span class="string">"Invalid URL"</span><span class="special">);</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">ru</span><span class="special">;</span>
+
+    <span class="comment">// Open config file</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">fstream</span> <span class="identifier">fin</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]);</span>
+    <span class="identifier">CHECK</span><span class="special">(</span><span class="identifier">fin</span><span class="special">.</span><span class="identifier">good</span><span class="special">(),</span> <span class="string">"Cannot open configuration file"</span><span class="special">);</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">value</span> <span class="identifier">c</span> <span class="special">=</span> <span class="identifier">read_json</span><span class="special">(</span><span class="identifier">fin</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+    <span class="identifier">CHECK</span><span class="special">(!</span><span class="identifier">ec</span><span class="special">.</span><span class="identifier">failed</span><span class="special">(),</span> <span class="string">"Cannot parse configuration file"</span><span class="special">);</span>
+    <span class="identifier">CHECK</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">is_object</span><span class="special">(),</span> <span class="string">"Configuration file is not an object"</span><span class="special">);</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">object</span><span class="special">&amp;</span> <span class="identifier">o</span> <span class="special">=</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">as_object</span><span class="special">();</span>
+
+    <span class="comment">// Set initial browser</span>
+    <span class="keyword">auto</span> <span class="identifier">bit</span> <span class="special">=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"defaultBrowser"</span><span class="special">);</span>
+    <span class="identifier">CHECK</span><span class="special">(</span>
+        <span class="identifier">bit</span> <span class="special">!=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+        <span class="string">"Configuration file has no defaultBrowser"</span><span class="special">);</span>
+    <span class="identifier">CHECK</span><span class="special">(</span>
+        <span class="identifier">bit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+        <span class="string">"defaultBrowser should be a string"</span><span class="special">);</span>
+    <span class="identifier">json</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">browser</span> <span class="special">=</span> <span class="identifier">bit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">();</span>
+
+    <span class="comment">// Apply rewrites to the input string</span>
+    <span class="keyword">auto</span> <span class="identifier">rsit</span> <span class="special">=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"rewrite"</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">rsit</span> <span class="special">!=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">CHECK</span><span class="special">(</span>
+            <span class="identifier">rsit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_array</span><span class="special">(),</span>
+            <span class="string">"rewrite rules should be an array"</span><span class="special">);</span>
+        <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">rs</span> <span class="special">=</span> <span class="identifier">rsit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_array</span><span class="special">();</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">rv</span><span class="special">:</span> <span class="identifier">rs</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">rv</span><span class="special">.</span><span class="identifier">is_object</span><span class="special">(),</span>
+                <span class="string">"individual rewrite rule should be an object"</span><span class="special">);</span>
+            <span class="identifier">json</span><span class="special">::</span><span class="identifier">object</span><span class="special">&amp;</span> <span class="identifier">r</span> <span class="special">=</span> <span class="identifier">rv</span><span class="special">.</span><span class="identifier">as_object</span><span class="special">();</span>
+
+            <span class="comment">// Look for match</span>
+            <span class="keyword">auto</span> <span class="identifier">mit</span> <span class="special">=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"match"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">mit</span> <span class="special">!=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+                <span class="string">"rewrite rule should have a match field"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_object</span><span class="special">()</span> <span class="special">||</span> <span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                <span class="string">"rewrite match field is not an object"</span><span class="special">);</span>
+            <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">url_match</span><span class="special">(</span><span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">(),</span> <span class="identifier">u</span><span class="special">))</span>
+                <span class="keyword">continue</span><span class="special">;</span>
+
+            <span class="comment">// Apply replacement rule</span>
+            <span class="keyword">auto</span> <span class="identifier">uit</span> <span class="special">=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"url"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">uit</span> <span class="special">!=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+                <span class="string">"rewrite rule should have a url field"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">uit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_object</span><span class="special">()</span> <span class="special">||</span>
+                <span class="identifier">uit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                <span class="string">"url field must be an object or string"</span><span class="special">);</span>
+
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">uit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">())</span>
+            <span class="special">{</span>
+                <span class="identifier">json</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">uo</span> <span class="special">=</span> <span class="identifier">uit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">();</span>
+                <span class="keyword">auto</span> <span class="identifier">ru1</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri</span><span class="special">(</span><span class="identifier">uo</span><span class="special">);</span>
+                <span class="identifier">CHECK</span><span class="special">(</span><span class="identifier">ru1</span><span class="special">,</span> <span class="string">"url "</span> <span class="special">&lt;&lt;</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">" is invalid"</span><span class="special">);</span>
+                <span class="identifier">u</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">ru</span><span class="special">;</span>
+            <span class="special">}</span>
+            <span class="keyword">else</span>
+            <span class="special">{</span>
+                <span class="identifier">json</span><span class="special">::</span><span class="identifier">object</span><span class="special">&amp;</span> <span class="identifier">uo</span> <span class="special">=</span> <span class="identifier">uit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_object</span><span class="special">();</span>
+                <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"protocol"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"protocol field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_scheme</span><span class="special">(</span><span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"authority"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"authority field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_authority</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"username"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">==</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                    <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"user"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"username field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_user</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"password"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"password field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_password</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"userinfo"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"userinfo field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_userinfo</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"host"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"host field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_host</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"port"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"port field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_port</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"path"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">==</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                    <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"pathname"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"path field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_path</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"query"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">==</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                    <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"search"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"query field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_query</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+
+                <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"fragment"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">==</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                    <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"hash"</span><span class="special">);</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">uo</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+                <span class="special">{</span>
+                    <span class="identifier">CHECK</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                        <span class="string">"fragment field should be a string"</span><span class="special">);</span>
+                    <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_fragment</span><span class="special">(</span>
+                        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">());</span>
+                <span class="special">}</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Determine which browser should handle the url</span>
+    <span class="keyword">auto</span> <span class="identifier">hsit</span> <span class="special">=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"handlers"</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">hsit</span> <span class="special">!=</span> <span class="identifier">o</span><span class="special">.</span><span class="identifier">end</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">CHECK</span><span class="special">(</span>
+            <span class="identifier">hsit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_array</span><span class="special">(),</span>
+            <span class="string">"handler rules should be an array"</span><span class="special">);</span>
+        <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">hs</span> <span class="special">=</span> <span class="identifier">hsit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_array</span><span class="special">();</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">hv</span><span class="special">:</span> <span class="identifier">hs</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">hv</span><span class="special">.</span><span class="identifier">is_object</span><span class="special">(),</span>
+                <span class="string">"individual handlers should be an object"</span><span class="special">);</span>
+            <span class="identifier">json</span><span class="special">::</span><span class="identifier">object</span><span class="special">&amp;</span> <span class="identifier">h</span> <span class="special">=</span> <span class="identifier">hv</span><span class="special">.</span><span class="identifier">as_object</span><span class="special">();</span>
+
+            <span class="keyword">auto</span> <span class="identifier">mit</span> <span class="special">=</span> <span class="identifier">h</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"match"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">mit</span> <span class="special">!=</span> <span class="identifier">h</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+                <span class="string">"handle rule should have a match field"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">()</span> <span class="special">||</span> <span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_array</span><span class="special">(),</span>
+                <span class="string">"handle match field must be an array or a string"</span><span class="special">);</span>
+
+            <span class="keyword">auto</span> <span class="identifier">hbit</span> <span class="special">=</span> <span class="identifier">h</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"browser"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">hbit</span> <span class="special">!=</span> <span class="identifier">h</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+                <span class="string">"handle rule should have a browser field"</span><span class="special">);</span>
+            <span class="identifier">CHECK</span><span class="special">(</span>
+                <span class="identifier">hbit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">is_string</span><span class="special">(),</span>
+                <span class="string">"browser field is not a string"</span><span class="special">);</span>
+
+            <span class="comment">// Look for match and change browser</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">url_match</span><span class="special">(</span><span class="identifier">mit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">(),</span> <span class="identifier">u</span><span class="special">))</span>
+            <span class="special">{</span>
+                <span class="identifier">browser</span> <span class="special">=</span> <span class="identifier">hbit</span><span class="special">-&gt;</span><span class="identifier">value</span><span class="special">().</span><span class="identifier">as_string</span><span class="special">().</span><span class="identifier">subview</span><span class="special">();</span>
+                <span class="keyword">break</span><span class="special">;</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Print command finicky would run</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"\""</span> <span class="special">&lt;&lt;</span> <span class="identifier">browser</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">"\" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+
+    <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="qr_code.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mailto_urls.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

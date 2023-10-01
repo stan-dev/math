@@ -1,0 +1,91 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connection::start_execution (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../start_execution.html" title="connection::start_execution">
+<link rel="prev" href="../start_execution.html" title="connection::start_execution">
+<link rel="next" href="overload2.html" title="connection::start_execution (2 of 2 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../start_execution.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../start_execution.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__connection.start_execution.overload1"></a><a class="link" href="overload1.html" title="connection::start_execution (1 of 2 overloads)">connection::start_execution
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Starts a SQL execution as a multi-function operation.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection.start_execution.overload1.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection.start_execution.overload1.synopsis"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection.start_execution.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <a class="link" href="../../boost__mysql__ExecutionRequest.html" title="ExecutionRequest concept"><code class="literal"><span class="emphasis"><em>ExecutionRequest</em></span></code></a><span class="special">,</span>
+    <span class="keyword">class</span> <a class="link" href="../../boost__mysql__ExecutionStateType.html" title="ExecutionStateType concept"><code class="literal"><span class="emphasis"><em>ExecutionStateType</em></span></code></a><span class="special">&gt;</span>
+<span class="keyword">void</span>
+<span class="identifier">start_execution</span><span class="special">(</span>
+    <span class="keyword">const</span> <span class="identifier">ExecutionRequest</span><span class="special">&amp;</span> <span class="identifier">req</span><span class="special">,</span>
+    <span class="identifier">ExecutionStateType</span><span class="special">&amp;</span> <span class="identifier">st</span><span class="special">,</span>
+    <span class="identifier">error_code</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">,</span>
+    <span class="identifier">diagnostics</span><span class="special">&amp;</span> <span class="identifier">diag</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__connection.start_execution.overload1.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection.start_execution.overload1.description"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection.start_execution.overload1.description">Description</a>
+          </h6>
+<p>
+            Writes the execution request and reads the initial server response and
+            the column metadata, but not the generated rows or subsequent resultsets,
+            if any. <code class="computeroutput"><span class="identifier">st</span></code> may be either
+            an <a class="link" href="../../boost__mysql__execution_state.html" title="execution_state"><code class="computeroutput"><span class="identifier">execution_state</span></code></a> or <a class="link" href="../../boost__mysql__static_execution_state.html" title="static_execution_state"><code class="computeroutput"><span class="identifier">static_execution_state</span></code></a> object.
+          </p>
+<p>
+            After this operation completes, <code class="computeroutput"><span class="identifier">st</span></code>
+            will have <a class="link" href="../../boost__mysql__execution_state/meta.html" title="execution_state::meta"><code class="computeroutput"><span class="identifier">execution_state</span><span class="special">::</span><span class="identifier">meta</span></code></a> populated. Metadata will
+            be populated according to <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">meta_mode</span><span class="special">()</span></code>.
+          </p>
+<p>
+            If the operation generated any rows or more than one resultset, these
+            <span class="bold"><strong>must</strong></span> be read (by using <a class="link" href="../read_some_rows.html" title="connection::read_some_rows"><code class="computeroutput"><span class="identifier">read_some_rows</span></code></a> and <a class="link" href="../read_resultset_head.html" title="connection::read_resultset_head"><code class="computeroutput"><span class="identifier">read_resultset_head</span></code></a>) before
+            engaging in any further network operation. Otherwise, the results are
+            undefined.
+          </p>
+<p>
+            req may be either a type convertible to <a class="link" href="../../boost__mysql__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a> containing valid
+            SQL or a bound prepared statement, obtained by calling <a class="link" href="../../boost__mysql__statement/bind.html" title="statement::bind"><code class="computeroutput"><span class="identifier">statement</span><span class="special">::</span><span class="identifier">bind</span></code></a>. If a string, it must be
+            encoded using the connection's character set. Any string parameters provided
+            to <a class="link" href="../../boost__mysql__statement/bind.html" title="statement::bind"><code class="computeroutput"><span class="identifier">statement</span><span class="special">::</span><span class="identifier">bind</span></code></a> should also be encoded
+            using the connection's character set.
+          </p>
+<p>
+            When using the static interface, this function will detect schema mismatches
+            for the first resultset. Further errors may be detected by <a class="link" href="../read_resultset_head.html" title="connection::read_resultset_head"><code class="computeroutput"><span class="identifier">read_resultset_head</span></code></a> and <a class="link" href="../read_some_rows.html" title="connection::read_some_rows"><code class="computeroutput"><span class="identifier">read_some_rows</span></code></a>.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../start_execution.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../start_execution.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
