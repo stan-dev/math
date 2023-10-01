@@ -1,0 +1,46 @@
+[#hash_traits]
+== Hash traits
+
+:idprefix: hash_traits_
+
+=== Synopsis
+
+[listing,subs="+macros,+quotes"]
+-----
+// #include <boost/unordered/hash_traits.hpp>
+
+namespace boost {
+namespace unordered {
+
+template<typename Hash>
+struct xref:#hash_traits_hash_is_avalanching[hash_is_avalanching];
+
+} // namespace unordered
+} // namespace boost
+-----
+
+---
+
+=== hash_is_avalanching
+```c++
+template<typename Hash>
+struct hash_is_avalanching;
+```
+
+A hash function is said to have the _avalanching property_ if small changes in the input translate to
+large changes in the returned hash code &#8212;ideally, flipping one bit in the representation of
+the input value results in each bit of the hash code flipping with probability 50%. Approaching
+this property is critical for the proper behavior of open-addressing hash containers.
+
+`hash_is_avalanching<Hash>::value` is `true` if `Hash::is_avalanching` is a valid type,
+and `false` otherwise.
+Users can then declare a hash function `Hash` as avalanching either by embedding an `is_avalanching` typedef
+into the definition of `Hash`, or directly by specializing `hash_is_avalanching<Hash>` to a class with
+an embedded compile-time constant `value` set to `true`.
+
+xref:unordered_flat_set[`boost::unordered_flat_set`] and xref:unordered_flat_map[`boost::unordered_flat_map`]
+use the provided hash function `Hash` as-is if `hash_is_avalanching<Hash>::value` is `true`; otherwise, they
+implement a bit-mixing post-processing stage to increase the quality of hashing at the expense of
+extra computational cost.
+
+---

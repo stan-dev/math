@@ -1,0 +1,356 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>grammar::range</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__urls__pct_string_view/npos.html" title="pct_string_view::npos">
+<link rel="next" href="boost__urls__grammar__range/value_type.html" title="grammar::range::value_type">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__urls__pct_string_view/npos.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__urls__grammar__range/value_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="url.ref.boost__urls__grammar__range"></a><a class="link" href="boost__urls__grammar__range.html" title="grammar::range">grammar::range</a>
+</h4></div></div></div>
+<p>
+        A forward range of parsed elements.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h0"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.synopsis"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url/grammar/range_rule.hpp" target="_top">boost/url/grammar/range_rule.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">class</span> <span class="identifier">range</span>
+</pre>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h1"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.types"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/const_iterator.html" title="grammar::range::const_iterator">const_iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A constant, forward iterator to elements of the range.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/const_reference.html" title="grammar::range::const_reference">const_reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type of each element of the range.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/difference_type.html" title="grammar::range::difference_type">difference_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type used to represent signed integers.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/pointer.html" title="grammar::range::pointer">pointer</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Provided for compatibility, unused.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/reference.html" title="grammar::range::reference">reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type of each element of the range.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/size_type.html" title="grammar::range::size_type">size_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type used to represent unsigned integers.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/value_type.html" title="grammar::range::value_type">value_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type of each element of the range.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h2"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.member_functions"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.member_functions">Member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/begin.html" title="grammar::range::begin">begin</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return an iterator to the beginning.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/empty.html" title="grammar::range::empty">empty</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return true if the range is empty.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/end.html" title="grammar::range::end">end</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return an iterator to the end.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/operator_eq_.html" title="grammar::range::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructor. <br><span class="silver">—</span><br>Assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/range.html" title="grammar::range::range">range</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/size.html" title="grammar::range::size">size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the number of elements in the range.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/string.html" title="grammar::range::string">string</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the matching part of the string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__grammar__range/_dtor_range.html" title="grammar::range::~range">~range</a> <span class="silver">[destructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h3"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.description"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.description">Description</a>
+      </h5>
+<p>
+        Objects of this type are forward ranges returned when parsing using the
+        <a class="link" href="boost__urls__grammar__range_rule.html" title="grammar::range_rule"><code class="computeroutput"><span class="identifier">range_rule</span></code></a>.
+        Iteration is performed by re-parsing the underlying character buffer. Ownership
+        of the buffer is not transferred; the caller is responsible for ensuring
+        that the lifetime of the buffer extends until it is no longer referenced
+        by the range.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h4"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.remarks"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.remarks">Remarks</a>
+      </h5>
+<p>
+        The implementation may use temporary, recycled storage for type-erasure.
+        Objects of type <code class="computeroutput"><span class="identifier">range</span></code> are
+        intended to be used ephemerally. That is, for short durations such as within
+        a function scope. If it is necessary to store the range for a long period
+        of time or with static storage duration, it is necessary to copy the contents
+        to an object of a different type.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h5"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.template_parameters"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.template_parameters">Template
+        Parameters</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">T</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The value type of the range
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__grammar__range.h6"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__grammar__range.see_also"></a></span><a class="link" href="boost__urls__grammar__range.html#url.ref.boost__urls__grammar__range.see_also">See
+        Also</a>
+      </h5>
+<p>
+        <a class="link" href="boost__urls__grammar__parse.html" title="grammar::parse"><code class="computeroutput"><span class="identifier">parse</span></code></a>,
+        <a class="link" href="boost__urls__grammar__range_rule.html" title="grammar::range_rule"><code class="computeroutput"><span class="identifier">range_rule</span></code></a>.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url/grammar.hpp" target="_top">boost/url/grammar.hpp</a>&gt;</code>
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__urls__pct_string_view/npos.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__urls__grammar__range/value_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

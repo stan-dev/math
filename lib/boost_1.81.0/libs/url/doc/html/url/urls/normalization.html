@@ -1,0 +1,185 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Normalization</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../urls.html" title="URLs">
+<link rel="prev" href="params.html" title="Params">
+<link rel="next" href="string_token.html" title="String Token">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="params.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="string_token.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.urls.normalization"></a><a class="link" href="normalization.html" title="Normalization">Normalization</a>
+</h3></div></div></div>
+<p>
+        Normalization allows us to determine if two URLs refer to the same resource.
+        URLs comparisons serve the same purpose, where two strings are compared as
+        if they were normalized.
+      </p>
+<p>
+        There is no way to determine whether two URLs refer to the same resource
+        without full knowledge or control of them. Thus, equivalence is based on
+        string comparisons augmented by additional URL and scheme rules. This means
+        comparison is not sufficient to determine whether two URLs identify different
+        resources as the same resource can always be served from different addresses.
+      </p>
+<p>
+        For this reason, comparison methods are designed to minimize false negatives
+        while strictly avoiding false positives. In other words, if two URLs compare
+        equal, they definitely represent the same resource. If they are considered
+        different, they might still refer to the same resource depending on the application.
+      </p>
+<p>
+        Context-dependent rules can be considered to minimize the number of false
+        negatives, where cheaper methods have a higher chance of producing false
+        negatives:
+      </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+            Simple String Comparison
+          </li>
+<li class="listitem">
+            Syntax-Based Normalization
+          </li>
+<li class="listitem">
+            Scheme-Based Normalization
+          </li>
+<li class="listitem">
+            Protocol-Based Normalization
+          </li>
+</ol></div>
+<p>
+        Simple String Comparison can be performed by accessing the underlying buffer
+        of URLs:
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u1</span><span class="special">(</span><span class="string">"https://www.boost.org/index.html"</span><span class="special">);</span>
+<span class="identifier">url_view</span> <span class="identifier">u2</span><span class="special">(</span><span class="string">"https://www.boost.org/doc/../index.html"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">u2</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">());</span>
+</pre>
+<p>
+        By only considering the rules of <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>,
+        Simple String Comparison fails to identify the URLs above point to the same
+        resource. The comparison operators implement Syntax-Based Normalization,
+        which implements the rules defined by <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>.
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u1</span><span class="special">(</span><span class="string">"https://www.boost.org/index.html"</span><span class="special">);</span>
+<span class="identifier">url_view</span> <span class="identifier">u2</span><span class="special">(</span><span class="string">"https://www.boost.org/doc/../index.html"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span> <span class="special">==</span> <span class="identifier">u2</span><span class="special">);</span>
+</pre>
+<p>
+        In mutable URLs, the member function <a class="link" href="../ref/boost__urls__url_base/normalize.html" title="url_base::normalize"><code class="computeroutput">normalize</code></a>
+        can used to be apply Syntax-Based Normalization to a URL. A normalized URL
+        is represented by a canonical string where any two strings that would compare
+        equal end up with the same underlying representation. In other words, Simple
+        String Comparison of two normalized URLs is equivalent to Syntax-Based Normalization.
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u1</span><span class="special">(</span><span class="string">"https://www.boost.org/index.html"</span><span class="special">);</span>
+<span class="identifier">url</span> <span class="identifier">u2</span><span class="special">(</span><span class="string">"https://www.boost.org/doc/../index.html"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span> <span class="special">==</span> <span class="identifier">u2</span><span class="special">);</span>
+<span class="identifier">u2</span><span class="special">.</span><span class="identifier">normalize</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">u2</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">());</span>
+</pre>
+<p>
+        Normalization uses the following definitions of <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>
+        to minimize false negatives:
+      </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+            Case Normalization: percent-encoding triplets are normalized to use uppercase
+            letters
+          </li>
+<li class="listitem">
+            Percent-Encoding Normalization: decode octets that do not require percent-encoding
+          </li>
+<li class="listitem">
+            Path Segment Normalization: path segments "." and ".."
+            are resolved
+          </li>
+</ol></div>
+<p>
+        The following example normalizes the percent-encoding and path segments of
+        a URL:
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span><span class="special">(</span><span class="string">"https://www.boost.org/doc/../%69%6e%64%65%78%20file.html"</span><span class="special">);</span>
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">normalize</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/index%20file.html"</span><span class="special">);</span>
+</pre>
+<p>
+        Syntax-Based Normalization can also be used as a first step for Scheme-Based
+        and Protocol-Based Normalization. One common scheme-specific rule is ignoring
+        the default port for that scheme and empty absolute paths:
+      </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">normalize_http_url</span> <span class="special">=</span>
+    <span class="special">[](</span><span class="identifier">url</span><span class="special">&amp;</span> <span class="identifier">u</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">u</span><span class="special">.</span><span class="identifier">normalize</span><span class="special">();</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">()</span> <span class="special">==</span> <span class="string">"80"</span> <span class="special">||</span>
+        <span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="identifier">u</span><span class="special">.</span><span class="identifier">remove_port</span><span class="special">();</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_authority</span><span class="special">()</span> <span class="special">&amp;&amp;</span>
+        <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_path_absolute</span><span class="special">(</span><span class="keyword">true</span><span class="special">);</span>
+<span class="special">};</span>
+
+<span class="identifier">url</span> <span class="identifier">u1</span><span class="special">(</span><span class="string">"https://www.boost.org"</span><span class="special">);</span>
+<span class="identifier">normalize_http_url</span><span class="special">(</span><span class="identifier">u1</span><span class="special">);</span>
+<span class="identifier">url</span> <span class="identifier">u2</span><span class="special">(</span><span class="string">"https://www.boost.org/"</span><span class="special">);</span>
+<span class="identifier">normalize_http_url</span><span class="special">(</span><span class="identifier">u2</span><span class="special">);</span>
+<span class="identifier">url</span> <span class="identifier">u3</span><span class="special">(</span><span class="string">"https://www.boost.org:/"</span><span class="special">);</span>
+<span class="identifier">normalize_http_url</span><span class="special">(</span><span class="identifier">u3</span><span class="special">);</span>
+<span class="identifier">url</span> <span class="identifier">u4</span><span class="special">(</span><span class="string">"https://www.boost.org:80/"</span><span class="special">);</span>
+<span class="identifier">normalize_http_url</span><span class="special">(</span><span class="identifier">u4</span><span class="special">);</span>
+
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u2</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u3</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u4</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/"</span><span class="special">);</span>
+</pre>
+<p>
+        Other criteria commonly used to minimize false negatives for specific schemes
+        are:
+      </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+            Handling empty authority component as an error or localhost
+          </li>
+<li class="listitem">
+            Replacing authority with empty string for the default authority
+          </li>
+<li class="listitem">
+            Normalizing extra subcomponents with case-insensitive data
+          </li>
+<li class="listitem">
+            Normalizing paths with case-insensitive data
+          </li>
+</ol></div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="params.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="string_token.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

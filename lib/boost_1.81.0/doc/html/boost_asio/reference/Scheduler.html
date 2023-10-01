@@ -1,0 +1,206 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Scheduler concept</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="ResolveToken.html" title="Resolve token requirements">
+<link rel="next" href="Sender.html" title="Sender concepts">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ResolveToken.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="Sender.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.Scheduler"></a><a class="link" href="Scheduler.html" title="Scheduler concept">Scheduler concept</a>
+</h3></div></div></div>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">S</span><span class="special">&gt;</span>
+  <span class="identifier">concept</span> <span class="identifier">scheduler</span> <span class="special">=</span>
+    <span class="identifier">copy_constructible</span><span class="special">&lt;</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">&gt;&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">equality_comparable</span><span class="special">&lt;</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">&gt;&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">requires</span><span class="special">(</span><span class="identifier">E</span><span class="special">&amp;&amp;</span> <span class="identifier">e</span><span class="special">)</span> <span class="special">{</span>
+      <span class="identifier">execution</span><span class="special">::</span><span class="identifier">schedule</span><span class="special">((</span><span class="identifier">E</span><span class="special">&amp;&amp;)</span><span class="identifier">e</span><span class="special">);</span>
+    <span class="special">};</span>
+</pre>
+<p>
+        None of a scheduler's copy constructor, destructor, equality comparison,
+        or <code class="computeroutput"><span class="identifier">swap</span></code> operation shall exit
+        via an exception.
+      </p>
+<p>
+        None of these operations, nor a scheduler type's <code class="computeroutput"><span class="identifier">schedule</span></code>
+        function, or associated query functions shall introduce data races as a result
+        of concurrent invocations of those functions from different threads.
+      </p>
+<p>
+        For any two (possibly const) values <code class="computeroutput"><span class="identifier">x1</span></code>
+        and <code class="computeroutput"><span class="identifier">x2</span></code> of some scheduler
+        type <code class="computeroutput"><span class="identifier">X</span></code>, <code class="computeroutput"><span class="identifier">x1</span>
+        <span class="special">==</span> <span class="identifier">x2</span></code>
+        shall return <code class="computeroutput"><span class="keyword">true</span></code> only if <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x1</span><span class="special">,</span> <span class="identifier">p</span><span class="special">)</span> <span class="special">==</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x2</span><span class="special">,</span>
+        <span class="identifier">p</span><span class="special">)</span></code>
+        for every property <code class="computeroutput"><span class="identifier">p</span></code> where
+        both <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x1</span><span class="special">,</span> <span class="identifier">p</span><span class="special">)</span></code> and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x2</span><span class="special">,</span>
+        <span class="identifier">p</span><span class="special">)</span></code>
+        are well-formed and result in a non-void type that is <code class="computeroutput"><span class="identifier">EqualityComparable</span></code>
+        (C++Std [equalitycomparable]). [<span class="emphasis"><em>Note:</em></span> The above requirements
+        imply that <code class="computeroutput"><span class="identifier">x1</span> <span class="special">==</span>
+        <span class="identifier">x2</span></code> returns <code class="computeroutput"><span class="keyword">true</span></code>
+        if <code class="computeroutput"><span class="identifier">x1</span></code> and <code class="computeroutput"><span class="identifier">x2</span></code>
+        can be interchanged with identical effects. A scheduler may conceptually
+        contain additional properties which are not exposed by a named property type
+        that can be observed via <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span></code>;
+        in this case, it is up to the concrete scheduler implementation to decide
+        if these properties affect equality. Returning <code class="computeroutput"><span class="keyword">false</span></code>
+        does not necessarily imply that the effects are not identical. —<span class="emphasis"><em>end
+        note</em></span>]
+      </p>
+<p>
+        A scheduler type's destructor shall not block pending completion of any receivers
+        submitted to the sender objects returned from <code class="computeroutput"><span class="identifier">schedule</span></code>.
+        [<span class="emphasis"><em>Note:</em></span> The ability to wait for completion of submitted
+        function objects may be provided by the execution context that produced the
+        scheduler. —<span class="emphasis"><em>end note</em></span>]
+      </p>
+<p>
+        In addition to the above requirements, type <code class="computeroutput"><span class="identifier">S</span></code>
+        models <code class="computeroutput"><span class="identifier">scheduler</span></code> only if
+        it satisfies the requirements in the Table below.
+      </p>
+<p>
+        In the Table below,
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">s</span></code> denotes a (possibly
+            const) scheduler object of type <code class="computeroutput"><span class="identifier">S</span></code>,
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">N</span></code> denotes a type that
+            models <code class="computeroutput"><span class="identifier">sender</span></code>, and
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">n</span></code> denotes a sender object
+            of type <code class="computeroutput"><span class="identifier">N</span></code>
+          </li>
+</ul></div>
+<div class="table">
+<a name="boost_asio.reference.Scheduler.t0"></a><p class="title"><b>Table 27. Scheduler requirements</b></p>
+<div class="table-contents"><table class="table" summary="Scheduler requirements">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  expression
+                </p>
+              </th>
+<th>
+                <p>
+                  return type
+                </p>
+              </th>
+<th>
+                <p>
+                  operation semantics
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">schedule</span><span class="special">(</span><span class="identifier">s</span><span class="special">)</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">N</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Evaluates <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">schedule</span><span class="special">(</span><span class="identifier">s</span><span class="special">)</span></code> on the calling thread to create
+                  <code class="computeroutput"><span class="identifier">N</span></code>.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">start</span><span class="special">(</span><span class="identifier">o</span><span class="special">)</span></code>, where
+        <code class="computeroutput"><span class="identifier">o</span></code> is the result of a call
+        to <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">N</span><span class="special">,</span> <span class="identifier">r</span><span class="special">)</span></code> for some receiver object <code class="computeroutput"><span class="identifier">r</span></code>,
+        is required to eagerly submit <code class="computeroutput"><span class="identifier">r</span></code>
+        for execution on an execution agent that <code class="computeroutput"><span class="identifier">s</span></code>
+        creates for it. Let <code class="computeroutput"><span class="identifier">rc</span></code> be
+        <code class="computeroutput"><span class="identifier">r</span></code> or an object created by
+        copy or move construction from <code class="computeroutput"><span class="identifier">r</span></code>.
+        The semantic constraints on the <code class="computeroutput"><span class="identifier">sender</span></code>
+        <code class="computeroutput"><span class="identifier">N</span></code> returned from a scheduler
+        <code class="computeroutput"><span class="identifier">s</span></code>'s <code class="computeroutput"><span class="identifier">schedule</span></code>
+        function are as follows:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">rc</span></code>'s <code class="computeroutput"><span class="identifier">set_error</span></code> function is called in response
+            to a submission error, scheduling error, or other internal error, let
+            <code class="computeroutput"><span class="identifier">E</span></code> be an expression that
+            refers to that error if <code class="computeroutput"><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">rc</span><span class="special">,</span> <span class="identifier">E</span><span class="special">)</span></code> is well-formed; otherwise, let <code class="computeroutput"><span class="identifier">E</span></code> be an <code class="computeroutput"><span class="identifier">exception_ptr</span></code>
+            that refers to that error. [Note: <code class="computeroutput"><span class="identifier">E</span></code>
+            could be the result of calling <code class="computeroutput"><span class="identifier">current_exception</span></code>
+            or <code class="computeroutput"><span class="identifier">make_exception_ptr</span></code>.]
+            The scheduler calls <code class="computeroutput"><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">rc</span><span class="special">,</span> <span class="identifier">E</span><span class="special">)</span></code> on an unspecified weakly-parallel execution
+            agent ([Note: An invocation of <code class="computeroutput"><span class="identifier">set_error</span></code>
+            on a receiver is required to be <code class="computeroutput"><span class="keyword">noexcept</span></code>]),
+            and
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">rc</span></code>'s <code class="computeroutput"><span class="identifier">set_error</span></code> function is called in response
+            to an exception that propagates out of the invocation of <code class="computeroutput"><span class="identifier">set_value</span></code> on <code class="computeroutput"><span class="identifier">rc</span></code>,
+            let <code class="computeroutput"><span class="identifier">E</span></code> be <code class="computeroutput"><span class="identifier">make_exception_ptr</span><span class="special">(</span><span class="identifier">receiver_invocation_error</span><span class="special">{})</span></code>
+            invoked from within a catch clause that has caught the exception. The
+            executor calls <code class="computeroutput"><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">rc</span><span class="special">,</span> <span class="identifier">E</span><span class="special">)</span></code> on an unspecified weakly-parallel execution
+            agent, and
+          </li>
+<li class="listitem">
+            A call to <code class="computeroutput"><span class="identifier">set_done</span><span class="special">(</span><span class="identifier">rc</span><span class="special">)</span></code>
+            is made on an unspecified weakly-parallel execution agent ([Note: An
+            invocation of a receiver's <code class="computeroutput"><span class="identifier">set_done</span></code>
+            function is required to be <code class="computeroutput"><span class="keyword">noexcept</span></code>]).
+          </li>
+</ul></div>
+<p>
+        [<span class="emphasis"><em>Note:</em></span> The senders returned from a scheduler's <code class="computeroutput"><span class="identifier">schedule</span></code> function have wide discretion
+        when deciding which of the three receiver functions to call upon submission.
+        —<span class="emphasis"><em>end note</em></span>]
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ResolveToken.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="Sender.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

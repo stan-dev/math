@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url::port_number</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__url.html" title="url">
+<link rel="prev" href="port.html" title="url::port">
+<link rel="next" href="is_path_absolute.html" title="url::is_path_absolute">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="is_path_absolute.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__url.port_number"></a><a class="link" href="port_number.html" title="url::port_number">url::port_number</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm107404"></a>
+        </p>
+<p>
+          Return the port.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.synopsis"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint16_t</span>
+<span class="identifier">port_number</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.description"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.description">Description</a>
+        </h6>
+<p>
+          If a port is present and the numerical value is representable, it is returned
+          as an unsigned integer. Otherwise, the number zero is returned.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.example"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">url_view</span><span class="special">(</span> <span class="string">"http://localhost.com:8080"</span> <span class="special">).</span><span class="identifier">port_number</span><span class="special">()</span> <span class="special">==</span> <span class="number">8080</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.complexity"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.complexity">Complexity</a>
+        </h6>
+<p>
+          Constant.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.exception_safety"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Throws nothing.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.bnf"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">port</span>        <span class="special">=</span> <span class="special">*</span><span class="identifier">DIGIT</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.specification"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3" target="_top">3.2.3.
+              Port (rfc3986)</a>
+            </li></ul></div>
+<h6>
+<a name="url.ref.boost__urls__url.port_number.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.port_number.see_also"></a></span><a class="link" href="port_number.html#url.ref.boost__urls__url.port_number.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="encoded_host_and_port.html" title="url::encoded_host_and_port"><code class="computeroutput"><span class="identifier">encoded_host_and_port</span></code></a>, <a class="link" href="has_port.html" title="url::has_port"><code class="computeroutput"><span class="identifier">has_port</span></code></a>, <a class="link" href="port.html" title="url::port"><code class="computeroutput"><span class="identifier">port</span></code></a>.
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="is_path_absolute.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

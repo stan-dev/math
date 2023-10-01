@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>QR Code</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="../examples.html" title="Examples">
+<link rel="next" href="finicky.html" title="Finicky">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../examples.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="finicky.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.examples.qr_code"></a><a class="link" href="qr_code.html" title="QR Code">QR Code</a>
+</h3></div></div></div>
+<p>
+        A QR code is a machine-readable two-dimensional barcode. They might contain
+        data for a identifier or a URL to a website.
+      </p>
+<p>
+        This example shows how to construct and modify URLs to consume a third party
+        API to generate QR Codes.
+      </p>
+<pre class="programlisting"><span class="comment">/*
+    This example shows how to construct and modify
+    URLs to consume a third party API to
+    generate QR Codes.
+    https://developers.google.com/chart/infographics/docs/qr_codes
+*/</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">parse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">2</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: qrcode &lt;data&gt; &lt;width&gt; &lt;height&gt; &lt;output encoding&gt; &lt;error correction&gt; &lt;border&gt;\n"</span>
+                     <span class="string">"options:\n"</span>
+                     <span class="string">"    &lt;data&gt;:             The data to encode (required)\n"</span>
+                     <span class="string">"    &lt;width&gt;:            Image width (default: 100)\n"</span>
+                     <span class="string">"    &lt;height&gt;:           Image height (default: width)\n"</span>
+                     <span class="string">"    &lt;output encoding&gt;:  UTF-8, Shift_JIS, ISO-8859-1 (default: utf8)\n"</span>
+                     <span class="string">"    &lt;error correction&gt;: percentage of error correction (default: 7)\n"</span>
+                     <span class="string">"    &lt;margin&gt;:           border width (default: 4)\n"</span>
+                     <span class="string">"examples:\n"</span>
+                     <span class="string">"qrcode \"Hello world\"\n"</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri</span><span class="special">(</span>
+            <span class="string">"https://chart.googleapis.com/chart?cht=qr"</span><span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="identifier">ps</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">params</span><span class="special">();</span>
+
+    <span class="comment">// Data</span>
+    <span class="identifier">ps</span><span class="special">.</span><span class="identifier">append</span><span class="special">({</span><span class="string">"chl"</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]});</span>
+
+    <span class="comment">// Size</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">width</span> <span class="special">=</span> <span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">3</span> <span class="special">?</span> <span class="number">100</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">stoll</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">]);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">height</span> <span class="special">=</span> <span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">4</span> <span class="special">?</span> <span class="identifier">width</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">stoll</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">]);</span>
+    <span class="identifier">ps</span><span class="special">.</span><span class="identifier">append</span><span class="special">({</span><span class="string">"chs"</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">width</span><span class="special">)</span> <span class="special">+</span> <span class="string">"x"</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">height</span><span class="special">)});</span>
+
+    <span class="comment">// Encoding</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&gt;=</span> <span class="number">5</span><span class="special">)</span>
+    <span class="special">{</span>
+         <span class="identifier">urls</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">output_encoding</span> <span class="special">=</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">])</span> <span class="special">==</span> <span class="string">"Shift_JIS"</span> <span class="special">||</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">])</span> <span class="special">==</span> <span class="string">"ISO-8859-1"</span> <span class="special">?</span>
+                <span class="identifier">argv</span><span class="special">[</span><span class="number">4</span><span class="special">]</span> <span class="special">:</span> <span class="string">"UTF-8"</span><span class="special">;</span>
+         <span class="identifier">ps</span><span class="special">.</span><span class="identifier">append</span><span class="special">({</span><span class="string">"choe"</span><span class="special">,</span> <span class="identifier">output_encoding</span><span class="special">});</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Error</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&gt;=</span> <span class="number">6</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">err</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">stoll</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">5</span><span class="special">]);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">chld</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">err</span> <span class="special">&lt;</span> <span class="number">11</span><span class="special">)</span>
+            <span class="identifier">chld</span> <span class="special">=</span> <span class="string">"L"</span><span class="special">;</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">err</span> <span class="special">&lt;</span> <span class="number">20</span><span class="special">)</span>
+            <span class="identifier">chld</span> <span class="special">=</span> <span class="string">"M"</span><span class="special">;</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">err</span> <span class="special">&lt;</span> <span class="number">27</span><span class="special">)</span>
+            <span class="identifier">chld</span> <span class="special">=</span> <span class="string">"Q"</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">chld</span> <span class="special">=</span> <span class="string">"H"</span><span class="special">;</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">margin</span> <span class="special">=</span> <span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">7</span> <span class="special">?</span> <span class="number">4</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">stoll</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">6</span><span class="special">]);</span>
+        <span class="identifier">chld</span> <span class="special">+=</span> <span class="string">"|"</span><span class="special">;</span>
+        <span class="identifier">chld</span> <span class="special">+=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">margin</span><span class="special">);</span>
+        <span class="identifier">ps</span><span class="special">.</span><span class="identifier">append</span><span class="special">({</span><span class="string">"chld"</span><span class="special">,</span> <span class="identifier">chld</span><span class="special">});</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+
+    <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../examples.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="finicky.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

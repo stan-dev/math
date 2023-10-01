@@ -1,0 +1,2420 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Containers</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../urls.html" title="URLs">
+<link rel="prev" href="parsing.html" title="Parsing">
+<link rel="next" href="segments.html" title="Segments">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parsing.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="segments.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.urls.containers"></a><a class="link" href="containers.html" title="Containers">Containers</a>
+</h3></div></div></div>
+<p>
+        Three containers are provided for interacting with URLs:
+      </p>
+<div class="table">
+<a name="url.urls.containers.types"></a><p class="title"><b>Table 1.6. Types</b></p>
+<div class="table-contents"><table class="table" summary="Types">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A valid, modifiable URL which performs dynamic memory allocation
+                  to store the character buffer.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A read-only reference to a character buffer containing a valid
+                  URL. The view does not retain ownership of the underlying character
+                  buffer; instead, it is managed by the caller.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  A valid, modifiable URL which stores the character buffer inside
+                  the class itself. This is a class template, where the maximum buffer
+                  size is a non-type template parameter.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        Inheritance provides the observer and modifier public members; class <a class="link" href="../ref/boost__urls__url_view_base.html" title="url_view_base"><code class="computeroutput">url_view_base</code></a>
+        has all the observers, while class <a class="link" href="../ref/boost__urls__url_base.html" title="url_base"><code class="computeroutput">url_base</code></a>
+        has all the modifiers. Although the members are public, these base classes
+        can only be constructed by the library as needed to support the implementation.
+        The class hierarchy looks like this:
+      </p>
+<p>
+        <span class="inlinemediaobject"><object type="image/svg+xml" data="../images/ClassHierarchy.svg"></object></span>
+      </p>
+<p>
+        Throughout this documentation and especially below, when an observer is discussed,
+        it is applicable to all three derived containers shown in the table above.
+        When a modifier is discussed, it is relevant to the containers <a class="link" href="../ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> and <a class="link" href="../ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a>. The tables and exposition
+        which follow describe the available observers and modifiers, along with notes
+        relating important behaviors or special requirements.
+      </p>
+<h5>
+<a name="url.urls.containers.h0"></a>
+        <span class="phrase"><a name="url.urls.containers.scheme"></a></span><a class="link" href="containers.html#url.urls.containers.scheme">Scheme</a>
+      </h5>
+<p>
+        The scheme is represented as a case-insensitive string, along with an enumeration
+        constant which acts as a numeric indentifier when the string matches one
+        of the well-known schemes: http, https, ws, wss, file, and ftp. Characters
+        in the scheme are never escaped; only letters and numbers are allowed, and
+        the first character must be a letter.
+      </p>
+<p>
+        These members are used to inspect and modify the scheme:
+      </p>
+<div class="table">
+<a name="url.urls.containers.scheme_observers"></a><p class="title"><b>Table 1.7. Scheme Observers</b></p>
+<div class="table-contents"><table class="table" summary="Scheme Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_scheme.html" title="url_view_base::has_scheme"><code class="computeroutput">has_scheme</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a scheme is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/scheme.html" title="url_view_base::scheme"><code class="computeroutput">scheme</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the scheme as a string, or the empty string if there is
+                  no scheme.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/scheme_id.html" title="url_view_base::scheme_id"><code class="computeroutput">scheme_id</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__scheme.html" title="scheme"><code class="computeroutput">scheme</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the scheme as an enumerated constant, the value <a class="link" href="../ref/boost__urls__scheme.html" title="scheme"><code class="computeroutput">scheme::unknown</code></a>
+                  if the scheme is not one of the well-known schemes, or the value
+                  <a class="link" href="../ref/boost__urls__scheme.html" title="scheme"><code class="computeroutput">scheme::none</code></a>
+                  if there is no scheme.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.scheme_modifiers"></a><p class="title"><b>Table 1.8. Scheme Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Scheme Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_scheme.html" title="url_base::set_scheme"><code class="computeroutput">set_scheme</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the scheme to a string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_scheme_id.html" title="url_base::set_scheme_id"><code class="computeroutput">set_scheme_id</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__scheme.html" title="scheme"><code class="computeroutput">scheme</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the scheme to a well-known scheme constant.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_scheme.html" title="url_base::remove_scheme"><code class="computeroutput">remove_scheme</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the scheme if present. This includes the trailing colon
+                  (":").
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="url.urls.containers.h1"></a>
+        <span class="phrase"><a name="url.urls.containers.authority"></a></span><a class="link" href="containers.html#url.urls.containers.authority">Authority</a>
+      </h5>
+<p>
+        The authority is an optional part whose presence is indicated by an unescaped
+        double slash ("//") immediately following the scheme, or at the
+        beginning if the scheme is not present. It contains three components: an
+        optional userinfo, the host, and an optional port. The authority in this
+        diagram has all three components:
+      </p>
+<p>
+        <span class="inlinemediaobject"><object type="image/svg+xml" data="../images/AuthorityDiagram.svg"></object></span>
+      </p>
+<p>
+        An empty authority, corresponding to just a zero-length host component, is
+        distinct from the absence of an authority. These members are used to inspect
+        and modify the authority as a whole string:
+      </p>
+<div class="table">
+<a name="url.urls.containers.authority_observers"></a><p class="title"><b>Table 1.9. Authority Observers</b></p>
+<div class="table-contents"><table class="table" summary="Authority Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_authority.html" title="url_view_base::has_authority"><code class="computeroutput">has_authority</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if an authority is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/authority.html" title="url_view_base::authority"><code class="computeroutput">authority</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__authority_view.html" title="authority_view"><code class="computeroutput"><span class="identifier">authority_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the authority as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_authority.html" title="url_view_base::encoded_authority"><code class="computeroutput">encoded_authority</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the authority as a read-only view.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.authority_modifiers"></a><p class="title"><b>Table 1.10. Authority Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Authority Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_userinfo.html" title="url_base::set_encoded_userinfo"><code class="computeroutput">set_encoded_authority</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the authority to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_authority.html" title="url_base::remove_authority"><code class="computeroutput">remove_authority</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the authority if present. This includes the leading double
+                  slash ("//").
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        The paragraphs and tables that follow describe how to interact with the individual
+        parts of the authority.
+      </p>
+<h5>
+<a name="url.urls.containers.h2"></a>
+        <span class="phrase"><a name="url.urls.containers.userinfo"></a></span><a class="link" href="containers.html#url.urls.containers.userinfo">Userinfo</a>
+      </h5>
+<p>
+        An authority may have an optional userinfo, which consists of a user and
+        optional password. The presence of the userinfo is indicated by an unescaped
+        at sign ("@") which comes afterwards. The password if present is
+        prefixed by an unescaped colon (":"). An empty password string
+        is distinct from no password. This table shows various URLs with userinfos,
+        and the corresponding user and password:
+      </p>
+<div class="table">
+<a name="url.urls.containers.userinfo_examples"></a><p class="title"><b>Table 1.11. Userinfo Examples</b></p>
+<div class="table-contents"><table class="table" summary="Userinfo Examples">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  URL
+                </p>
+              </th>
+<th>
+                <p>
+                  User
+                </p>
+              </th>
+<th>
+                <p>
+                  Password
+                </p>
+              </th>
+<th>
+                <p>
+                  Notes
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//user:pass@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  "user"
+                </p>
+              </td>
+<td>
+                <p>
+                  "pass"
+                </p>
+              </td>
+<td>
+                <p>
+                  User and password
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  ""
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Empty user, no password
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//user@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  "user"
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  No password
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//user:@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  "user"
+                </p>
+              </td>
+<td>
+                <p>
+                  ""
+                </p>
+              </td>
+<td>
+                <p>
+                  Empty password
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//:pass@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  ""
+                </p>
+              </td>
+<td>
+                <p>
+                  "pass"
+                </p>
+              </td>
+<td>
+                <p>
+                  Empty user
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput">//:@</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  ""
+                </p>
+              </td>
+<td>
+                <p>
+                  ""
+                </p>
+              </td>
+<td>
+                <p>
+                  Empty user and password
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../../../../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Although the specification allows the format username:password, the password
+          component is deprecated and should be avoided if possible or otherwise
+          used with care. It is not recommended to transfer password data through
+          URLs unless it is an empty string indicating no password.
+        </p></td></tr>
+</table></div>
+<p>
+        These members are used to inspect and modify the userinfo:
+      </p>
+<div class="table">
+<a name="url.urls.containers.userinfo_observers"></a><p class="title"><b>Table 1.12. Userinfo Observers</b></p>
+<div class="table-contents"><table class="table" summary="Userinfo Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_userinfo.html" title="url_view_base::has_userinfo"><code class="computeroutput">has_userinfo</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a userinfo is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_password.html" title="url_view_base::has_password"><code class="computeroutput">has_password</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a password is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/user.html" title="url_view_base::user"><code class="computeroutput">user</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the user as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/password.html" title="url_view_base::password"><code class="computeroutput">password</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the password as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/userinfo.html" title="url_view_base::userinfo"><code class="computeroutput">userinfo</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the userinfo as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_user.html" title="url_view_base::encoded_user"><code class="computeroutput">encoded_user</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the user.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_password.html" title="url_view_base::encoded_password"><code class="computeroutput">encoded_password</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the password, or an empty string if no password is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_userinfo.html" title="url_view_base::encoded_userinfo"><code class="computeroutput">encoded_userinfo</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the userinfo.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.userinfo_modifiers"></a><p class="title"><b>Table 1.13. Userinfo Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Userinfo Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_user.html" title="url_base::set_user"><code class="computeroutput">set_user</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the user to the string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_user.html" title="url_base::set_user"><code class="computeroutput">set_password</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the password to the string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_userinfo.html" title="url_base::set_userinfo"><code class="computeroutput">set_userinfo</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the userinfo to the string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_user.html" title="url_base::set_encoded_user"><code class="computeroutput">set_encoded_user</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the user to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_password.html" title="url_base::set_encoded_password"><code class="computeroutput">set_encoded_password</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the password to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_userinfo.html" title="url_base::set_encoded_userinfo"><code class="computeroutput">set_encoded_userinfo</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the userinfo to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_password.html" title="url_base::remove_password"><code class="computeroutput">remove_password</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the password if present. This includes the password separator
+                  colon (":").
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_userinfo.html" title="url_base::remove_userinfo"><code class="computeroutput">remove_userinfo</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the userinfo if present. This includes the user and password
+                  separator colon (":") and the trailing at sign ("@").
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="url.urls.containers.h3"></a>
+        <span class="phrase"><a name="url.urls.containers.host"></a></span><a class="link" href="containers.html#url.urls.containers.host">Host</a>
+      </h5>
+<p>
+        The host portion of the authority is a string which can be a host name, an
+        IPv4 address, an IPv6 address, or an IPvFuture address depending on the contents.
+        The host is always defined if an authority is present, even if the resulting
+        host string would be zero length.
+      </p>
+<p>
+        These members are used to inspect and modify the host:
+      </p>
+<div class="table">
+<a name="url.urls.containers.host_observers"></a><p class="title"><b>Table 1.14. Host Observers</b></p>
+<div class="table-contents"><table class="table" summary="Host Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_type.html" title="url_view_base::host_type"><code class="computeroutput">host_type</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host type enumeration constant. If there is no authority,
+                  this is the value <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::none</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host.html" title="url_view_base::host"><code class="computeroutput">host</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host as a decoded string, or an empty string if there
+                  is no authority.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_address.html" title="url_view_base::host_address"><code class="computeroutput">host_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host as a decoded string. If the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>,
+                  the enclosing brackets are removed.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_name.html" title="url_view_base::host_name"><code class="computeroutput">host_name</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host name as a decoded string, or the empty string if
+                  the host type is not <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_ipv4_address.html" title="url_view_base::host_ipv4_address"><code class="computeroutput">host_ipv4_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__ipv4_address.html" title="ipv4_address"><code class="computeroutput"><span class="identifier">ipv4_address</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host as an <a class="link" href="../ref/boost__urls__ipv4_address.html" title="ipv4_address"><code class="computeroutput"><span class="identifier">ipv4_address</span></code></a>. If the host
+                  type is not <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>,
+                  a default-constructed value is returned.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_ipv6_address.html" title="url_view_base::host_ipv6_address"><code class="computeroutput">host_ipv6_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__ipv6_address.html" title="ipv6_address"><code class="computeroutput"><span class="identifier">ipv6_address</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host as an <a class="link" href="../ref/boost__urls__ipv6_address.html" title="ipv6_address"><code class="computeroutput"><span class="identifier">ipv6_address</span></code></a>. If the host
+                  type is not <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>,
+                  a default-constructed value is returned.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/host_ipvfuture.html" title="url_view_base::host_ipvfuture"><code class="computeroutput">host_ipvfuture</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host as a string without enclosing brackets if the host
+                  type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>,
+                  otherwise return an empty string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_host.html" title="url_view_base::encoded_host"><code class="computeroutput">encoded_host</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host, or an empty string if there is no authority. This
+                  includes enclosing brackets if the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_host_address.html" title="url_view_base::encoded_host_address"><code class="computeroutput">encoded_host_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host. If the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>,
+                  the enclosing brackets are removed.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_host_name.html" title="url_view_base::encoded_host_name"><code class="computeroutput">encoded_host_name</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host name as a string. If the host type is not <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>,
+                  an empty string is returned.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.host_modifiers"></a><p class="title"><b>Table 1.15. Host Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Host Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host.html" title="url_base::set_host"><code class="computeroutput">set_host</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string, depending on the contents. If the string
+                  is a valid IPv4 address, a valid IPv6 address enclosed in brackets,
+                  or a valid IPvFuture address enclosed in brackets then the resulting
+                  host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>,
+                  <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>,
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>
+                  respectively. Otherwise, the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>,
+                  and any reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host_address.html" title="url_base::set_host_address"><code class="computeroutput">set_host_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string, depending on the contents. If the string
+                  is a valid IPv4 address, a valid IPv6 address, or a valid IPvFuture
+                  address then the resulting host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>,
+                  <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>,
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>
+                  respectively. Otherwise, the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>,
+                  and any reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host_ipv4.html" title="url_base::set_host_ipv4"><code class="computeroutput">set_host_ipv4</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__ipv4_address.html" title="ipv4_address"><code class="computeroutput"><span class="identifier">ipv4_address</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the IPv4 address. The host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host_ipv6.html" title="url_base::set_host_ipv6"><code class="computeroutput">set_host_ipv6</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__ipv6_address.html" title="ipv6_address"><code class="computeroutput"><span class="identifier">ipv6_address</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the IPv6 address. The host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host_ipvfuture.html" title="url_base::set_host_ipvfuture"><code class="computeroutput">set_host_ipvfuture</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the IPvFuture address, which should not include
+                  square brackets. The host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>.
+                  If the string is not a valid IPvFuture address, an exception is
+                  thrown.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_host_name.html" title="url_base::set_host_name"><code class="computeroutput">set_host_name</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string. Any reserved characters are percent-escaped
+                  automatically. The host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_host.html" title="url_base::set_encoded_host"><code class="computeroutput">set_encoded_host</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string, depending on the contents. If the string
+                  is a valid IPv4 address, a valid IPv6 address enclosed in brackets,
+                  or a valid IPvFuture address enclosed in brackets then the resulting
+                  host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>,
+                  <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>,
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>
+                  respectively. Otherwise, the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>,
+                  the string may contain percent escapes, and any reserved characters
+                  are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_host_address.html" title="url_base::set_encoded_host_address"><code class="computeroutput">set_encoded_host_address</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string, depending on the contents. If the string
+                  is a valid IPv4 address, a valid IPv6 address, or a valid IPvFuture
+                  address then the resulting host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv4</code></a>,
+                  <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipv6</code></a>,
+                  or <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::ipvfuture</code></a>
+                  respectively. Otherwise, the host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>,
+                  the string may contain percent escapes, and and any reserved characters
+                  are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_host_name.html" title="url_base::set_encoded_host_name"><code class="computeroutput">set_encoded_host_name</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the host to the string, which may contain percent escapes.
+                  Any reserved characters are percent-escaped automatically. The
+                  host type is <a class="link" href="../ref/boost__urls__host_type.html" title="host_type"><code class="computeroutput">host_type::name</code></a>.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="url.urls.containers.h4"></a>
+        <span class="phrase"><a name="url.urls.containers.port"></a></span><a class="link" href="containers.html#url.urls.containers.port">Port</a>
+      </h5>
+<p>
+        The port is a string of digits, possibly of zero length. The presence of
+        a port is indicated by a colon prefix (":") appearing after the
+        host and userinfo. A zero length port string is distinct from the absence
+        of a port. The library represents the port with both a decimal string and
+        an unsigned 16-bit integer. If the numeric value of the string would exceed
+        the range of the integer, then it is mapped to the number zero.
+      </p>
+<p>
+        These members are used to inspect and modify the port:
+      </p>
+<div class="table">
+<a name="url.urls.containers.port_observers"></a><p class="title"><b>Table 1.16. Port Observers</b></p>
+<div class="table-contents"><table class="table" summary="Port Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_port.html" title="url_view_base::has_port"><code class="computeroutput">has_port</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a port is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/port.html" title="url_view_base::port"><code class="computeroutput">port</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the port as a string, or an empty string if there is no
+                  port.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/port_number.html" title="url_view_base::port_number"><code class="computeroutput">port_number</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">std::uint16_t</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the port as an unsigned integer. If the number would be
+                  greater than 65535, then zero is returned.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.port_modifiers"></a><p class="title"><b>Table 1.17. Port Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Port Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_port.html" title="url_base::set_port"><code class="computeroutput">set_port</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the port to a string. If the string contains any character
+                  which is not a digit, an exception is thrown.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_port_number.html" title="url_base::set_port_number"><code class="computeroutput">set_port_number</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">std::uint16_t</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the port to a number.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_port.html" title="url_base::remove_port"><code class="computeroutput">remove_port</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the port if present. This does not remove the authority.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="url.urls.containers.h5"></a>
+        <span class="phrase"><a name="url.urls.containers.path"></a></span><a class="link" href="containers.html#url.urls.containers.path">Path</a>
+      </h5>
+<p>
+        Depending on the scheme, the path may be treated as a string, or as a hierarchically
+        structured sequence of segments delimited by unescaped forward-slashes ("/").
+        A path is <span class="emphasis"><em>always</em></span> defined for every URL, even if it is
+        the empty string.
+      </p>
+<p>
+        These members are used to inspect and modify the path:
+      </p>
+<div class="table">
+<a name="url.urls.containers.path_observers"></a><p class="title"><b>Table 1.18. Path Observers</b></p>
+<div class="table-contents"><table class="table" summary="Path Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/is_path_absolute.html" title="url_view_base::is_path_absolute"><code class="computeroutput">is_path_absolute</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if the path starts with a forward slash
+                  ("/").
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/path.html" title="url_view_base::path"><code class="computeroutput">path</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_path.html" title="url_view_base::encoded_path"><code class="computeroutput">encoded_path</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/segments.html" title="url_view_base::segments"><code class="computeroutput">segments</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__segments_view.html" title="segments_view"><code class="computeroutput"><span class="identifier">segments_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path as a range of decoded segments.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_segments.html" title="url_view_base::encoded_segments"><code class="computeroutput">encoded_segments</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__segments_encoded_view.html" title="segments_encoded_view"><code class="computeroutput"><span class="identifier">segments_encoded_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path as a range of segments.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.path_modifiers"></a><p class="title"><b>Table 1.19. Path Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Path Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_path.html" title="url_base::set_path"><code class="computeroutput">set_path</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the path to the string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_path_absolute.html" title="url_base::set_path_absolute"><code class="computeroutput">set_path_absolute</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set whether the path is absolute.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_path.html" title="url_base::set_encoded_path"><code class="computeroutput">set_encoded_path</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the path to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/segments.html" title="url_base::segments"><code class="computeroutput">segments</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__segments_ref.html" title="segments_ref"><code class="computeroutput"><span class="identifier">segments_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path as a modifiable range of decoded segments.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/encoded_segments.html" title="url_base::encoded_segments"><code class="computeroutput">encoded_segments</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__segments_encoded_ref.html" title="segments_encoded_ref"><code class="computeroutput"><span class="identifier">segments_encoded_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the path as a modifiable range of segments.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        The segments-based containers <a class="link" href="../ref/boost__urls__segments_view.html" title="segments_view"><code class="computeroutput"><span class="identifier">segments_view</span></code></a>, <a class="link" href="../ref/boost__urls__segments_ref.html" title="segments_ref"><code class="computeroutput"><span class="identifier">segments_ref</span></code></a>, <a class="link" href="../ref/boost__urls__segments_encoded_view.html" title="segments_encoded_view"><code class="computeroutput"><span class="identifier">segments_encoded_view</span></code></a>, and <a class="link" href="../ref/boost__urls__segments_encoded_ref.html" title="segments_encoded_ref"><code class="computeroutput"><span class="identifier">segments_encoded_ref</span></code></a>
+        are discussed in a later section.
+      </p>
+<h5>
+<a name="url.urls.containers.h6"></a>
+        <span class="phrase"><a name="url.urls.containers.query"></a></span><a class="link" href="containers.html#url.urls.containers.query">Query</a>
+      </h5>
+<p>
+        Depending on the scheme, the query may be treated as a string, or as a structured
+        series of key-value pairs (called "params") separated by unescaped
+        ampersands ("&amp;"). The query is optional; an empty query string
+        is distinct from no query.
+      </p>
+<p>
+        These members are used to inspect and modify the query:
+      </p>
+<div class="table">
+<a name="url.urls.containers.query_observers"></a><p class="title"><b>Table 1.20. Query Observers</b></p>
+<div class="table-contents"><table class="table" summary="Query Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_query.html" title="url_view_base::has_query"><code class="computeroutput">has_query</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a query is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/query.html" title="url_view_base::query"><code class="computeroutput">query</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_query.html" title="url_view_base::encoded_query"><code class="computeroutput">encoded_query</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/params.html" title="url_view_base::params"><code class="computeroutput">params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_view.html" title="params_view"><code class="computeroutput"><span class="identifier">params_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query as a read-only range of decoded params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_params.html" title="url_view_base::encoded_params"><code class="computeroutput">encoded_params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_encoded_view.html" title="params_encoded_view"><code class="computeroutput"><span class="identifier">params_encoded_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query as a read-only range of params.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.query_modifiers"></a><p class="title"><b>Table 1.21. Query Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Query Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_query.html" title="url_base::set_query"><code class="computeroutput">set_query</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the query to a string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_query.html" title="url_base::set_encoded_query"><code class="computeroutput">set_encoded_query</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the query to a string, which may contain percent escapes. Reserved
+                  characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/params.html" title="url_base::params"><code class="computeroutput">params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_ref.html" title="params_ref"><code class="computeroutput"><span class="identifier">params_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query as a modifiable range of decoded params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/encoded_params.html" title="url_base::encoded_params"><code class="computeroutput">encoded_params</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__params_encoded_ref.html" title="params_encoded_ref"><code class="computeroutput"><span class="identifier">params_encoded_ref</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the query as a modifiable range of params.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_query.html" title="url_base::remove_query"><code class="computeroutput">remove_query</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the query. This also removes the leading question mark ("?")
+                  if present.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+        The params-based containers <a class="link" href="../ref/boost__urls__params_view.html" title="params_view"><code class="computeroutput"><span class="identifier">params_view</span></code></a>, <a class="link" href="../ref/boost__urls__params_ref.html" title="params_ref"><code class="computeroutput"><span class="identifier">params_ref</span></code></a>, <a class="link" href="../ref/boost__urls__params_encoded_view.html" title="params_encoded_view"><code class="computeroutput"><span class="identifier">params_encoded_view</span></code></a>, and <a class="link" href="../ref/boost__urls__params_encoded_ref.html" title="params_encoded_ref"><code class="computeroutput"><span class="identifier">params_encoded_ref</span></code></a> are discussed
+        in a later section.
+      </p>
+<h5>
+<a name="url.urls.containers.h7"></a>
+        <span class="phrase"><a name="url.urls.containers.fragment"></a></span><a class="link" href="containers.html#url.urls.containers.fragment">Fragment</a>
+      </h5>
+<p>
+        The fragment is treated as a string; there is no common, structured interpretation
+        of the contents.
+      </p>
+<p>
+        These members are used to inspect and modify the fragment:
+      </p>
+<div class="table">
+<a name="url.urls.containers.fragment_observers"></a><p class="title"><b>Table 1.22. Fragment Observers</b></p>
+<div class="table-contents"><table class="table" summary="Fragment Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/has_fragment.html" title="url_view_base::has_fragment"><code class="computeroutput">has_fragment</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput">bool</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return <code class="computeroutput">true</code> if a fragment is present.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/fragment.html" title="url_view_base::fragment"><code class="computeroutput">fragment</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the fragment as a decoded string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/fragment.html" title="url_view_base::fragment"><code class="computeroutput">encoded_fragment</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the fragment.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.fragment_modifiers"></a><p class="title"><b>Table 1.23. Fragment Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Fragment Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_query.html" title="url_base::set_query"><code class="computeroutput">set_fragment</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the fragment to the string. Reserved characters are percent-escaped
+                  automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/set_encoded_fragment.html" title="url_base::set_encoded_fragment"><code class="computeroutput">set_encoded_fragment</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Set the fragment to the string, which may contain percent escapes.
+                  Reserved characters are percent-escaped automatically.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_fragment.html" title="url_base::remove_fragment"><code class="computeroutput">remove_fragment</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the fragment. This also removes the leading pound sign ("#")
+                  if present.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="url.urls.containers.h8"></a>
+        <span class="phrase"><a name="url.urls.containers.compound_fields"></a></span><a class="link" href="containers.html#url.urls.containers.compound_fields">Compound
+        Fields</a>
+      </h5>
+<p>
+        For convenience, these observers and modifiers for aggregated subsets of
+        the URL are provided:
+      </p>
+<div class="table">
+<a name="url.urls.containers.compound_field_observers"></a><p class="title"><b>Table 1.24. Compound Field Observers</b></p>
+<div class="table-contents"><table class="table" summary="Compound Field Observers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Return Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_host_and_port.html" title="url_view_base::encoded_host_and_port"><code class="computeroutput">encoded_host_and_port</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the host and port as a string with percent escapes.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_origin.html" title="url_view_base::encoded_origin"><code class="computeroutput">encoded_origin</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return only the scheme and authority parts as an individual string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_resource.html" title="url_view_base::encoded_resource"><code class="computeroutput">encoded_resource</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return only the path, query, and fragment parts as an individual
+                  string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_view_base/encoded_target.html" title="url_view_base::encoded_target"><code class="computeroutput">encoded_target</code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return only the path and query parts as an individual string.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="url.urls.containers.compound_field_modifiers"></a><p class="title"><b>Table 1.25. Compound Field Modifiers</b></p>
+<div class="table-contents"><table class="table" summary="Compound Field Modifiers">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Function
+                </p>
+              </th>
+<th>
+                <p>
+                  Parameters
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <a class="link" href="../ref/boost__urls__url_base/remove_origin.html" title="url_base::remove_origin"><code class="computeroutput">remove_origin</code></a>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Remove the scheme and authority parts from the URL.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parsing.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="segments.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template fraction</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="up" href="../../../histogram/reference.html#header.boost.histogram.accumulators.fraction_hpp" title="Header &lt;boost/histogram/accumulators/fraction.hpp&gt;">
+<link rel="prev" href="count.html" title="Class template count">
+<link rel="next" href="mean.html" title="Class template mean">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="count.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../histogram/reference.html#header.boost.histogram.accumulators.fraction_hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mean.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="boost.histogram.accumulators.fraction"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template fraction</span></h2>
+<p>boost::histogram::accumulators::fraction — Accumulate boolean samples and compute the fraction of true samples. </p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../histogram/reference.html#header.boost.histogram.accumulators.fraction_hpp" title="Header &lt;boost/histogram/accumulators/fraction.hpp&gt;">boost/histogram/accumulators/fraction.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ValueType</span>                                                                                          <a name="boost.histogram.accumulators.fraction.value_type"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span>                                                                                 <a name="boost.histogram.accumulators.fraction.const_reference"></a><span class="identifier">const_reference</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">conditional</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_floating_point</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">value_type</span><span class="special">,</span> <span class="keyword">double</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a name="boost.histogram.accumulators.fraction.real_type"></a><span class="identifier">real_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <a class="link" href="../utility/wilson_interval.html" title="Class template wilson_interval">utility::wilson_interval</a><span class="special">&lt;</span> <span class="identifier">real_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">interval_type</span>                                      <a name="boost.histogram.accumulators.fraction.interval_type"></a><span class="identifier">interval_type</span><span class="special">;</span>  
+
+  <span class="comment">// <a class="link" href="fraction.html#boost.histogram.accumulators.fractionconstruct-copy-destruct">construct/copy/destruct</a></span>
+  <a class="link" href="fraction.html#idm13328-bb"><span class="identifier">fraction</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="fraction.html#idm13329-bb"><span class="identifier">fraction</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">,</span> <span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a class="link" href="fraction.html#idm13335-bb"><span class="identifier">fraction</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="fraction.html#idm13279-bb">public member functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="fraction.html#idm13280-bb"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="keyword">bool</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span> <a class="link" href="fraction.html#idm13285-bb"><span class="keyword">operator</span><span class="special">+=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="fraction.html#idm13292-bb"><span class="identifier">successes</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="fraction.html#idm13295-bb"><span class="identifier">failures</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">value_type</span> <a class="link" href="fraction.html#idm13298-bb"><span class="identifier">count</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">real_type</span> <a class="link" href="fraction.html#idm13301-bb"><span class="identifier">value</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">real_type</span> <a class="link" href="fraction.html#idm13304-bb"><span class="identifier">variance</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">interval_type</span> <a class="link" href="fraction.html#idm13307-bb"><span class="identifier">confidence_interval</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="fraction.html#idm13310-bb"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="fraction.html#idm13315-bb"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="fraction.html#idm13320-bb"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idm20829"></a><h2>Description</h2>
+<p>This accumulator should be used to calculate the efficiency or success fraction of a random process as a function of process parameters. It returns the fraction of successes, the variance of this fraction, and a two-sided confidence interval with 68.3 % confidence level for this fraction.</p>
+<p>There is no unique way to compute an interval for a success fraction. This class returns the Wilson score interval, because it is widely recommended in the literature for general use. More interval computers can be found in <code class="computeroutput">boost/histogram/utility</code>, which can be used to compute intervals for other confidence levels.</p>
+<div class="refsect2">
+<a name="idm20834"></a><h3>
+<a name="boost.histogram.accumulators.fractionconstruct-copy-destruct"></a><code class="computeroutput">fraction</code> 
+        public
+       construct/copy/destruct</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="idm13328-bb"></a><span class="identifier">fraction</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm13329-bb"></a><span class="identifier">fraction</span><span class="special">(</span><span class="identifier">const_reference</span> successes<span class="special">,</span> <span class="identifier">const_reference</span> failures<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Initialize to external successes and failures. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a name="idm13335-bb"></a><span class="identifier">fraction</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Allow implicit conversion from fraction with a different value type. </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm20878"></a><h3>
+<a name="idm13279-bb"></a><code class="computeroutput">fraction</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm13280-bb"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="keyword">bool</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Insert boolean sample x. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span> <a name="idm13285-bb"></a><span class="keyword">operator</span><span class="special">+=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Add another accumulator. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="idm13292-bb"></a><span class="identifier">successes</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return number of boolean samples that were true. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="idm13295-bb"></a><span class="identifier">failures</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return number of boolean samples that were false. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">value_type</span> <a name="idm13298-bb"></a><span class="identifier">count</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return total number of boolean samples. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">real_type</span> <a name="idm13301-bb"></a><span class="identifier">value</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return success fraction of boolean samples. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">real_type</span> <a name="idm13304-bb"></a><span class="identifier">variance</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return variance of the success fraction. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">interval_type</span> <a name="idm13307-bb"></a><span class="identifier">confidence_interval</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return standard interval with 68.3 % confidence level (Wilson score interval). </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm13310-bb"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm13315-bb"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="fraction.html" title="Class template fraction">fraction</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a name="idm13320-bb"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2016-2019 Hans
+      Dembinski<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="count.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../histogram/reference.html#header.boost.histogram.accumulators.fraction_hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mean.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

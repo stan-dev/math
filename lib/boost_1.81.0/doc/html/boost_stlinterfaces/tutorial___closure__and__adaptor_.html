@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial: closure and adaptor</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../stl_interfaces.html" title="Chapter 37. Boost.STLInterfaces">
+<link rel="prev" href="tutorial__view_adaptors.html" title="Tutorial: View Adaptors">
+<link rel="next" href="tutorial___bind_back____and_more_complicated_view_adaptors.html" title="Tutorial: bind_back() and More Complicated View Adaptors">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial__view_adaptors.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../stl_interfaces.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial___bind_back____and_more_complicated_view_adaptors.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_stlinterfaces.tutorial___closure__and__adaptor_"></a><a class="link" href="tutorial___closure__and__adaptor_.html" title="Tutorial: closure and adaptor">Tutorial:
+    <code class="computeroutput"><span class="identifier">closure</span></code> and <code class="computeroutput"><span class="identifier">adaptor</span></code></a>
+</h2></div></div></div>
+<p>
+      Here is <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">stl_interfaces</span><span class="special">::</span><span class="identifier">closure</span></code>:
+    </p>
+<p>
+</p>
+<pre class="programlisting">    <span class="comment">/** An invocable consisting of a contained invocable `f`.  Calling
+        `operator()` with some argument `t` calls `f(t)` and returns the
+        result.  This type is typically used to capture a the result of a call
+        to `bind_back()`. */</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">F</span><span class="special">&gt;</span>
+    <span class="keyword">struct</span> <span class="identifier">closure</span> <span class="special">:</span> <span class="identifier">range_adaptor_closure</span><span class="special">&lt;</span><span class="identifier">closure</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;&gt;</span>
+    <span class="special">{</span>
+        <span class="keyword">constexpr</span> <span class="identifier">closure</span><span class="special">(</span><span class="identifier">F</span> <span class="identifier">f</span><span class="special">)</span> <span class="special">:</span> <span class="identifier">f_</span><span class="special">(</span><span class="identifier">f</span><span class="special">)</span> <span class="special">{}</span>
+
+<span class="preprocessor">#if</span> <span class="identifier">BOOST_STL_INTERFACES_USE_CONCEPTS</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
+        <span class="identifier">requires</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">invocable</span><span class="special">&lt;</span><span class="identifier">F</span> <span class="keyword">const</span> <span class="special">&amp;,</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="preprocessor">#else</span>
+        <span class="keyword">template</span><span class="special">&lt;</span>
+            <span class="keyword">typename</span> <span class="identifier">T</span><span class="special">,</span>
+            <span class="keyword">typename</span> <span class="identifier">Enable</span> <span class="special">=</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if_t</span><span class="special">&lt;</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">is_invocable_v</span><span class="special">&lt;</span><span class="identifier">F</span> <span class="keyword">const</span> <span class="special">&amp;,</span> <span class="identifier">T</span><span class="special">&gt;&gt;&gt;</span>
+<span class="preprocessor">#endif</span>
+        <span class="keyword">constexpr</span> <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> <span class="identifier">t</span><span class="special">)</span> <span class="keyword">const</span>
+        <span class="special">{</span>
+            <span class="keyword">return</span> <span class="identifier">f_</span><span class="special">((</span><span class="identifier">T</span> <span class="special">&amp;&amp;)</span> <span class="identifier">t</span><span class="special">);</span>
+        <span class="special">}</span>
+
+    <span class="keyword">private</span><span class="special">:</span>
+        <span class="identifier">F</span> <span class="identifier">f_</span><span class="special">;</span>
+    <span class="special">};</span>
+</pre>
+<p>
+    </p>
+<p>
+      As you can see, it inherits from <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">stl_interfaces</span><span class="special">::</span><span class="identifier">range_adaptor_closure</span></code>,
+      and its only member function is a call operator that forwards to the function
+      <code class="computeroutput"><span class="identifier">F</span></code> it is constructed from. It
+      exists simply to adapt some function that constructs a particular view to use
+      in pipe expressions.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">adaptor</span></code> is slightly different;
+      it operates essentially just like <code class="computeroutput"><span class="identifier">closure</span></code>
+      if you call its <code class="computeroutput"><span class="keyword">operator</span><span class="special">()</span></code>
+      with all arguments necessary to invoke its function <code class="computeroutput"><span class="identifier">F</span></code>
+      — it just constructs a view. However, if you pass it all the arguments
+      but the first, it returns a <code class="computeroutput"><span class="identifier">closure</span></code>
+      with all those arguments bound into it:
+    </p>
+<p>
+</p>
+<pre class="programlisting">    <span class="comment">/** Adapts an invocable `f` as a view adaptor.  Calling
+        `operator(args...)` will either: call `f(args...)` and return the
+        result, if `f(args...)` is well-formed; or return
+        `closure(stl_interfaces::bind_back(f, args...))` otherwise. */</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">F</span><span class="special">&gt;</span>
+    <span class="keyword">struct</span> <span class="identifier">adaptor</span>
+    <span class="special">{</span>
+        <span class="keyword">constexpr</span> <span class="identifier">adaptor</span><span class="special">(</span><span class="identifier">F</span> <span class="identifier">f</span><span class="special">)</span> <span class="special">:</span> <span class="identifier">f_</span><span class="special">(</span><span class="identifier">f</span><span class="special">)</span> <span class="special">{}</span>
+
+        <span class="comment">// clang-format off</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">...</span> <span class="identifier">Args</span><span class="special">&gt;</span>
+        <span class="keyword">constexpr</span> <span class="keyword">auto</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;...</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+        <span class="comment">// clang-format on</span>
+        <span class="special">{</span>
+<span class="preprocessor">#if</span> <span class="identifier">BOOST_STL_INTERFACES_USE_CONCEPTS</span>
+            <span class="keyword">if</span> <span class="keyword">constexpr</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_invocable_v</span><span class="special">&lt;</span><span class="identifier">F</span> <span class="keyword">const</span> <span class="special">&amp;,</span> <span class="identifier">Args</span><span class="special">...&gt;)</span> <span class="special">{</span>
+                <span class="keyword">return</span> <span class="identifier">f</span><span class="special">((</span><span class="identifier">Args</span> <span class="special">&amp;&amp;)</span> <span class="identifier">args</span><span class="special">...);</span>
+            <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+                <span class="keyword">return</span> <span class="identifier">closure</span><span class="special">(</span>
+                    <span class="identifier">stl_interfaces</span><span class="special">::</span><span class="identifier">bind_back</span><span class="special">(</span><span class="identifier">f_</span><span class="special">,</span> <span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;)</span> <span class="identifier">args</span><span class="special">...));</span>
+            <span class="special">}</span>
+<span class="preprocessor">#else</span>
+            <span class="keyword">return</span> <span class="identifier">detail</span><span class="special">::</span><span class="identifier">adaptor_impl</span><span class="special">&lt;</span>
+                <span class="identifier">F</span> <span class="keyword">const</span> <span class="special">&amp;,</span>
+                <span class="identifier">detail</span><span class="special">::</span><span class="identifier">is_invocable_v</span><span class="special">&lt;</span><span class="identifier">F</span> <span class="keyword">const</span> <span class="special">&amp;,</span> <span class="identifier">Args</span><span class="special">...&gt;,</span>
+                <span class="identifier">Args</span><span class="special">...&gt;::</span><span class="identifier">call</span><span class="special">(</span><span class="identifier">f_</span><span class="special">,</span> <span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;)</span> <span class="identifier">args</span><span class="special">...);</span>
+<span class="preprocessor">#endif</span>
+        <span class="special">}</span>
+
+    <span class="keyword">private</span><span class="special">:</span>
+        <span class="identifier">F</span> <span class="identifier">f_</span><span class="special">;</span>
+    <span class="special">};</span>
+</pre>
+<p>
+    </p>
+<p>
+      This allows you to use it both as a view-constructor (e.g. <code class="computeroutput"><span class="identifier">take</span><span class="special">(</span><span class="identifier">range</span><span class="special">,</span>
+      <span class="number">3</span><span class="special">)</span></code>),
+      and as a closure-constructor (e.g. <code class="computeroutput"><span class="identifier">range</span>
+      <span class="special">|</span> <span class="identifier">take</span><span class="special">(</span><span class="number">3</span><span class="special">)</span></code>).
+    </p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Due to the way <code class="computeroutput"><span class="identifier">adaptor</span></code> works,
+        your views's constructors should always take their view parameter before
+        any other parameters. Otherwise, the combination of <code class="computeroutput"><span class="identifier">bind_back</span><span class="special">()</span></code> and <code class="computeroutput"><span class="identifier">closure</span></code>
+        will probably not do anything very useful.
+      </p></td></tr>
+</table></div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2019 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial__view_adaptors.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../stl_interfaces.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial___bind_back____and_more_complicated_view_adaptors.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

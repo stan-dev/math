@@ -1,0 +1,160 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[library Boost.URL
+    [id url]
+    [quickbook 1.6]
+    [authors [Falco, Vinnie], [de Freitas, Alan]]
+    [copyright 2021-2022 Vinnie Falco, Alan de Freitas]
+    [purpose URL Library]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+    [category template]
+    [category generic]
+]
+
+[template mdash[] '''&mdash; ''']
+[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+
+[template include_file[path][^<'''<ulink url="https://github.com/boostorg/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
+[template issue[n] '''<ulink url="https://github.com/boostorg/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
+
+[def __rfc3986__                [@https://tools.ietf.org/html/rfc3986 rfc3986]]
+[def __rfc7230__                [@https://tools.ietf.org/html/rfc7230 rfc7230]]
+
+[/ Named Requirements ]
+
+[def __Allocator__              [@https://en.cppreference.com/w/cpp/named_req/Allocator ['Allocator]]]
+[def __Copyable__               [@https://en.cppreference.com/w/cpp/concepts/copyable ['Copyable]]]
+[def __CopyAssignable__         [@https://en.cppreference.com/w/cpp/named_req/CopyAssignable ['CopyAssignable]]]
+[def __CopyConstructible__      [@https://en.cppreference.com/w/cpp/named_req/CopyConstructible ['CopyConstructible]]]
+[def __DefaultConstructible__   [@https://en.cppreference.com/w/cpp/named_req/DefaultConstructible ['DefaultConstructible]]]
+[def __Hash__                   [@https://en.cppreference.com/w/cpp/named_req/Hash ['Hash]]]
+[def __InputIterator__          [@https://en.cppreference.com/w/cpp/named_req/InputIterator ['InputIterator]]]
+[def __MoveAssignable__         [@https://en.cppreference.com/w/cpp/named_req/MoveAssignable ['MoveAssignable]]]
+[def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
+[def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
+[def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
+[def __CharSet__                [link url.concepts.charset ['CharSet]]]
+[def __Rule__                   [link url.concepts.rule ['Rule]]]
+[def __Rule1__                  [link url.concepts.rule ['Rule1]]]
+[def __Rule2__                  [link url.concepts.rule ['Rule2]]]
+[def __Rules__                  [link url.concepts.rule ['Rules]]]
+
+[def __StringToken__            [link url.concepts.stringtoken ['StringToken]]]
+[def __deduced__                [link url.concepts.stringtoken ['DEDUCED]]]
+[def __is_token__               [link url.ref.boost__urls__string_token__is_token `string_token::is_token`]]
+[def __append_to__              [link url.ref.boost__urls__string_token__append_to `string_token::append_to`]]
+[def __assign_to__              [link url.ref.boost__urls__string_token__assign_to `string_token::assign_to`]]
+[def __preserve_size__          [link url.ref.boost__urls__string_token__preserve_size `string_token::preserve_size`]]
+[def __append_to__              [link url.ref.boost__urls__string_token__return_string `string_token::return_string`]]
+
+
+[def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
+[def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
+[def __std_tuple__              [@https://en.cppreference.com/w/cpp/utility/tuple `std::tuple`]]
+[def __std_get__                [@https://en.cppreference.com/w/cpp/utility/tuple/get `std::get`]]
+[def __std_string_view__        [@https://en.cppreference.com/w/cpp/string/basic_string_view `std::string_view`]]
+
+[def __absolute_uri_rule__      [link url.ref.boost__urls__absolute_uri_rule `absolute_uri_rule`]]
+[def __authority_rule__         [link url.ref.boost__urls__authority_rule `authority_rule`]]
+[def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
+[def __decode_view__            [link url.ref.boost__urls__decode_view `decode_view`]]
+[def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
+[def __ipv4_address__           [link url.ref.boost__urls__ipv4_address `ipv4_address`]]
+[def __ipv4_address_rule__      [link url.ref.boost__urls__ipv4_address_rule `ipv4_address_rule`]]
+[def __ipv6_address__           [link url.ref.boost__urls__ipv6_address `ipv6_address`]]
+[def __ipv6_address_rule__      [link url.ref.boost__urls__ipv6_address `ipv6_address_rule`]]
+[def __optional__               [link url.ref.boost__urls__optional `optional`]]
+[def __origin_form_rule__       [link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
+[def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
+[def __param__                  [link url.ref.boost__urls__param `param`]]
+[def __param_view__             [link url.ref.boost__urls__param_view `param_view`]]
+[def __param_pct_view__         [link url.ref.boost__urls__param_pct_view `param_pct_view`]]
+[def __params_ref__             [link url.ref.boost__urls__params_ref `params_ref`]]
+[def __params_view__            [link url.ref.boost__urls__params_view `params_view`]]
+[def __params_encoded_ref__     [link url.ref.boost__urls__params_encoded_ref `params_encoded_ref`]]
+[def __params_encoded_view__    [link url.ref.boost__urls__params_encoded_view `params_encoded_view`]]
+[def __pchars__                 [link url.ref.boost__urls__pchars `pchars`]]
+[def __pct_encoded_rule__       [link url.ref.boost__urls__pct_encoded_rule `pct_encoded_rule`]]
+[def __pct_string_view__        [link url.ref.boost__urls__pct_string_view `pct_string_view`]]
+[def __query_param_view__       [link url.ref.boost__urls__query_param_view `query_param_view`]]
+[def __result__                 [link url.ref.boost__urls__result `result`]]
+[def __segments_ref__           [link url.ref.boost__urls__segments_ref `segments_ref`]]
+[def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
+[def __segments_encoded_ref__   [link url.ref.boost__urls__segments_encoded_ref `segments_encoded_ref`]]
+[def __segments_encoded_view__  [link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
+[def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
+[def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
+[def __url__                    [link url.ref.boost__urls__url `url`]]
+[def __url_base__               [link url.ref.boost__urls__url_base `url_base`]]
+[def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
+[def __url_view_base__          [link url.ref.boost__urls__url_view_base `url_view_base`]]
+[def __variant__                [link url.ref.boost__urls__variant `variant`]]
+
+[def __dec_octet_rule__         [link url.ref.boost__urls__grammar__dec_octet_rule `dec_octet_rule`]]
+[def __delim_rule__             [link url.ref.boost__urls__grammar__delim_rule `delim_rule`]]
+[def __find_if__                [link url.ref.boost__urls__grammar__find_if `find_if`]]
+[def __find_if_not__            [link url.ref.boost__urls__grammar__find_if_not `find_if_not`]]
+[def __is_charset__             [link url.ref.boost__urls__grammar__is_charset `is_charset`]]
+[def __is_rule__                [link url.ref.boost__urls__grammar__is_rule `is_rule`]]
+[def __lut_chars__              [link url.ref.boost__urls__grammar__lut_chars `lut_chars`]]
+[def __literal_rule__           [link url.ref.boost__urls__grammar__literal_rule `literal_rule`]]
+[def __not_empty_rule__         [link url.ref.boost__urls__grammar__not_empty_rule `not_empty_rule`]]
+[def __optional_rule__          [link url.ref.boost__urls__grammar__optional_rule `optional_rule`]]
+[def __parse__                  [link url.ref.boost__urls__grammar__parse `parse`]]
+[def __range__                  [link url.ref.boost__urls__grammar__range `range`]]
+[def __range_rule__             [link url.ref.boost__urls__grammar__range_rule `range_rule`]]
+[def __ref__                    [link url.ref.boost__urls__grammar__ref `ref`]]
+[def __tuple_rule__             [link url.ref.boost__urls__grammar__tuple_rule `tuple_rule`]]
+[def __squelch__                [link url.ref.boost__urls__grammar__squelch `squelch`]]
+[def __token_rule__             [link url.ref.boost__urls__grammar__token_rule `token_rule`]]
+[def __unsigned_rule__          [link url.ref.boost__urls__grammar__unsigned_rule `unsigned_rule`]]
+[def __variant_rule__           [link url.ref.boost__urls__grammar__variant_rule `variant_rule`]]
+
+[/ Dingbats ]
+
+[def __good__ [role green \u2714]]
+[def __bad__  [role red   \u2718]]
+
+[/-----------------------------------------------------------------------------]
+
+[import ../../example/qrcode/qrcode.cpp]
+[import ../../example/finicky/finicky.cpp]
+[import ../../example/mailto/mailto.cpp]
+[import ../../example/magnet/magnet.cpp]
+[import ../../example/route/route.cpp]
+[import ../../test/unit/snippets.cpp]
+[import ../../test/unit/doc_3_urls.cpp]
+[import ../../test/unit/doc_grammar.cpp]
+
+[/-----------------------------------------------------------------------------]
+
+[include 1.0.overview.qbk]
+[include 3.0.urls.qbk]
+[include 4.0.grammar.qbk]
+[include 5.0.concepts.qbk]
+[include 6.0.examples.qbk]
+
+[section:ref Reference]
+[xinclude quickref.xml]
+[block'''<part label="Two: Reference">''']
+[include reference.qbk]
+[block'''</part>''']
+
+[include 7.1.HelpCard.qbk]
+
+[endsect]
+
+[xinclude index.xml]

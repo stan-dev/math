@@ -1,0 +1,230 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Percent Encoding</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../urls.html" title="URLs">
+<link rel="prev" href="string_token.html" title="String Token">
+<link rel="next" href="../grammar.html" title="Customization">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="string_token.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../grammar.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.urls.percent_encoding"></a><a class="link" href="percent_encoding.html" title="Percent Encoding">Percent Encoding</a>
+</h3></div></div></div>
+<h5>
+<a name="url.urls.percent_encoding.h0"></a>
+        <span class="phrase"><a name="url.urls.percent_encoding.encoding"></a></span><a class="link" href="percent_encoding.html#url.urls.percent_encoding.encoding">Encoding</a>
+      </h5>
+<p>
+        The <a class="link" href="../ref/boost__urls__encode.html" title="encode"><code class="computeroutput">encode</code></a>
+        can be used to percent-encode strings with the specified <a class="link" href="../concepts/charset.html" title="CharSet"><span class="emphasis"><em>CharSet</em></span></a>.
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">encode</span><span class="special">(</span><span class="string">"hello world!"</span><span class="special">,</span> <span class="identifier">unreserved_chars</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">s</span> <span class="special">==</span> <span class="string">"hello%20world%21"</span><span class="special">);</span>
+</pre>
+<p>
+        A few parameters, such as encoding spaces as plus (<code class="computeroutput">+</code>), can be
+        adjusted with <a class="link" href="../ref/boost__urls__encoding_opts.html" title="encoding_opts"><code class="computeroutput">encode_opts</code></a>:
+      </p>
+<pre class="programlisting"><span class="identifier">encoding_opts</span> <span class="identifier">opt</span><span class="special">;</span>
+<span class="identifier">opt</span><span class="special">.</span><span class="identifier">space_as_plus</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">encode</span><span class="special">(</span><span class="string">"msg=hello world"</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">,</span> <span class="identifier">opt</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">s</span> <span class="special">==</span> <span class="string">"msg=hello+world"</span><span class="special">);</span>
+</pre>
+<p>
+        The result type of the function can also be specified via a <a class="link" href="../concepts/stringtoken.html" title="StringToken"><span class="emphasis"><em>StringToken</em></span></a>
+        so that strings can be reused or appended.
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span><span class="special">;</span>
+<span class="identifier">encode</span><span class="special">(</span><span class="string">"hello "</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">,</span> <span class="special">{},</span> <span class="identifier">string_token</span><span class="special">::</span><span class="identifier">assign_to</span><span class="special">(</span><span class="identifier">s</span><span class="special">));</span>
+<span class="identifier">encode</span><span class="special">(</span><span class="string">"world"</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">,</span> <span class="special">{},</span> <span class="identifier">string_token</span><span class="special">::</span><span class="identifier">append_to</span><span class="special">(</span><span class="identifier">s</span><span class="special">));</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">s</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+</pre>
+<p>
+        We can also use <a class="link" href="../ref/boost__urls__encoded_size.html" title="encoded_size"><code class="computeroutput">encoded_size</code></a>
+        to determine the required size before attempting to encode:
+      </p>
+<pre class="programlisting"><span class="identifier">string_view</span> <span class="identifier">e</span> <span class="special">=</span> <span class="string">"hello world"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span><span class="special">;</span>
+<span class="identifier">s</span><span class="special">.</span><span class="identifier">reserve</span><span class="special">(</span><span class="identifier">encoded_size</span><span class="special">(</span><span class="identifier">e</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">));</span>
+<span class="identifier">encode</span><span class="special">(</span><span class="identifier">e</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">,</span> <span class="special">{},</span> <span class="identifier">string_token</span><span class="special">::</span><span class="identifier">assign_to</span><span class="special">(</span><span class="identifier">s</span><span class="special">));</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">s</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+</pre>
+<p>
+        In other scenarios, strings can also be directly encoded into buffers:
+      </p>
+<pre class="programlisting"><span class="identifier">string_view</span> <span class="identifier">e</span> <span class="special">=</span> <span class="string">"hello world"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span><span class="special">;</span>
+<span class="identifier">s</span><span class="special">.</span><span class="identifier">resize</span><span class="special">(</span><span class="identifier">encoded_size</span><span class="special">(</span><span class="identifier">e</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">));</span>
+<span class="identifier">encode</span><span class="special">(&amp;</span><span class="identifier">s</span><span class="special">[</span><span class="number">0</span><span class="special">],</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">(),</span> <span class="identifier">e</span><span class="special">,</span> <span class="identifier">pchars</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">s</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+</pre>
+<h5>
+<a name="url.urls.percent_encoding.h1"></a>
+        <span class="phrase"><a name="url.urls.percent_encoding.validating"></a></span><a class="link" href="percent_encoding.html#url.urls.percent_encoding.validating">Validating</a>
+      </h5>
+<p>
+        The class <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> represents a reference
+        percent-encoded strings:
+      </p>
+<pre class="programlisting"><span class="identifier">pct_string_view</span> <span class="identifier">sv</span> <span class="special">=</span> <span class="string">"hello%20world"</span><span class="special">;</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">sv</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+</pre>
+<p>
+        <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+        is analogous to <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>, with the main difference
+        that the percent-encoding of the underlying buffer is always validated. Attempting
+        to directly construct a <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> from an invalid
+        string throws an exception.
+      </p>
+<p>
+        To simply validate a string without recurring to exceptions, a <a class="link" href="../ref/boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a> can be returned with the
+        <a class="link" href="../ref/boost__urls__make_pct_string_view.html" title="make_pct_string_view"><code class="computeroutput">make_pct_string_view</code></a>:
+      </p>
+<pre class="programlisting"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">pct_string_view</span><span class="special">&gt;</span> <span class="identifier">rs</span> <span class="special">=</span>
+    <span class="identifier">make_pct_string_view</span><span class="special">(</span><span class="string">"hello%20world"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">rs</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">());</span>
+<span class="identifier">pct_string_view</span> <span class="identifier">sv</span> <span class="special">=</span> <span class="identifier">rs</span><span class="special">.</span><span class="identifier">value</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">sv</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+</pre>
+<p>
+        This means <a class="link" href="../ref/boost__urls__make_pct_string_view.html" title="make_pct_string_view"><code class="computeroutput">make_pct_string_view</code></a>
+        can also be used to validate strings and keep that information for future
+        use. The modifying functions in classes such as <a class="link" href="../ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> expect instances of <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> that have already
+        been validated. This completely removes the responsibility of revalidating
+        this information or throwing exceptions from these functions:
+      </p>
+<pre class="programlisting"><span class="identifier">pct_string_view</span> <span class="identifier">s</span> <span class="special">=</span> <span class="string">"path/to/file"</span><span class="special">;</span>
+<span class="identifier">url</span> <span class="identifier">u</span><span class="special">;</span>
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_path</span><span class="special">(</span><span class="identifier">s</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"path/to/file"</span><span class="special">);</span>
+</pre>
+<p>
+        When exceptions are acceptable, a common pattern is to let a literal string
+        or other type convertible to <a class="link" href="../ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a> be implicitly converted
+        to <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>.
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span><span class="special">;</span>
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_path</span><span class="special">(</span><span class="string">"path/to/file"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"path/to/file"</span><span class="special">);</span>
+</pre>
+<p>
+        If the input is invalid, note that an exception is thrown while the <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>
+        is implicitly constructed and not from the modifying function.
+      </p>
+<p>
+        Reusing the validation guarantee is particularly useful when the <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> comes from another
+        source where the data is also ensured to be validated:
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">uv</span><span class="special">(</span><span class="string">"path/to/file"</span><span class="special">);</span>
+<span class="identifier">url</span> <span class="identifier">u</span><span class="special">;</span>
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">set_encoded_path</span><span class="special">(</span><span class="identifier">uv</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">());</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"path/to/file"</span><span class="special">);</span>
+</pre>
+<p>
+        In the example above, <a class="link" href="../ref/boost__urls__url_base/set_encoded_path.html" title="url_base::set_encoded_path"><code class="computeroutput">set_encoded_path</code></a>
+        does not to revalidate any information from <a class="link" href="../ref/boost__urls__url_base/encoded_path.html" title="url_base::encoded_path"><code class="computeroutput">encoded_path</code></a>
+        because these references are passed as <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>.
+      </p>
+<h5>
+<a name="url.urls.percent_encoding.h2"></a>
+        <span class="phrase"><a name="url.urls.percent_encoding.decode"></a></span><a class="link" href="percent_encoding.html#url.urls.percent_encoding.decode">Decode</a>
+      </h5>
+<p>
+        The class <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> represents a reference
+        percent-encoded strings. <a class="link" href="../ref/boost__urls__decode_view.html" title="decode_view"><code class="computeroutput"><span class="identifier">decode_view</span></code></a> is analogous to <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a>,
+        with the main difference that the underlying buffer always dereferences to
+        decoded characters.
+      </p>
+<pre class="programlisting"><span class="identifier">pct_string_view</span> <span class="identifier">es</span><span class="special">(</span><span class="string">"hello%20world"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">es</span> <span class="special">==</span> <span class="string">"hello%20world"</span><span class="special">);</span>
+
+<span class="identifier">decode_view</span> <span class="identifier">dv</span><span class="special">(</span><span class="string">"hello%20world"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">dv</span> <span class="special">==</span> <span class="string">"hello world"</span><span class="special">);</span>
+</pre>
+<p>
+        A <a class="link" href="../ref/boost__urls__decode_view.html" title="decode_view"><code class="computeroutput"><span class="identifier">decode_view</span></code></a>
+        can also be created from a <a class="link" href="../ref/boost__urls__pct_string_view.html" title="pct_string_view"><code class="computeroutput"><span class="identifier">pct_string_view</span></code></a> with the <a class="link" href="../ref/boost__urls__pct_string_view/operator__star_.html" title="pct_string_view::operator *"><code class="computeroutput">operator*</code></a>.
+        The also gives us an opportunity to validate external strings:
+      </p>
+<pre class="programlisting"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">pct_string_view</span><span class="special">&gt;</span> <span class="identifier">rs</span> <span class="special">=</span>
+    <span class="identifier">make_pct_string_view</span><span class="special">(</span><span class="string">"hello%20world"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">rs</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">());</span>
+<span class="identifier">pct_string_view</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">rs</span><span class="special">.</span><span class="identifier">value</span><span class="special">();</span>
+<span class="identifier">decode_view</span> <span class="identifier">dv</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">s</span><span class="special">;</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">dv</span> <span class="special">==</span> <span class="string">"hello world"</span><span class="special">);</span>
+</pre>
+<p>
+        This is particularly useful when the decoded string need to be accessed for
+        comparisons with no necessity to explicitly decoding the string into a buffer:
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span> <span class="special">=</span>
+    <span class="identifier">parse_relative_ref</span><span class="special">(</span><span class="string">"user/john%20doe/profile%20photo.jpg"</span><span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">route</span> <span class="special">=</span>
+    <span class="special">{</span><span class="string">"user"</span><span class="special">,</span> <span class="string">"john doe"</span><span class="special">,</span> <span class="string">"profile photo.jpg"</span><span class="special">};</span>
+<span class="keyword">auto</span> <span class="identifier">segs</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">it0</span> <span class="special">=</span> <span class="identifier">segs</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">end0</span> <span class="special">=</span> <span class="identifier">segs</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">it1</span> <span class="special">=</span> <span class="identifier">route</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">end1</span> <span class="special">=</span> <span class="identifier">route</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+<span class="keyword">while</span> <span class="special">(</span>
+    <span class="identifier">it0</span> <span class="special">!=</span> <span class="identifier">end0</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">it1</span> <span class="special">!=</span> <span class="identifier">end1</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">pct_string_view</span> <span class="identifier">seg0</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">it0</span><span class="special">;</span>
+    <span class="identifier">decode_view</span> <span class="identifier">dseg0</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">seg0</span><span class="special">;</span>
+    <span class="identifier">string_view</span> <span class="identifier">seg1</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">it1</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">dseg0</span> <span class="special">==</span> <span class="identifier">seg1</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="special">++</span><span class="identifier">it0</span><span class="special">;</span>
+        <span class="special">++</span><span class="identifier">it1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="keyword">break</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+<span class="keyword">bool</span> <span class="identifier">route_match</span> <span class="special">=</span> <span class="identifier">it0</span> <span class="special">==</span> <span class="identifier">end0</span> <span class="special">&amp;&amp;</span> <span class="identifier">it1</span> <span class="special">==</span> <span class="identifier">end1</span><span class="special">;</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">route_match</span><span class="special">);</span>
+</pre>
+<p>
+        The member function <a class="link" href="../ref/boost__urls__pct_string_view/decode.html" title="pct_string_view::decode"><code class="computeroutput">pct_string_view::decode</code></a>
+        can be used to decode the data into a buffer. Like the free-function <a class="link" href="../ref/boost__urls__encode.html" title="encode"><code class="computeroutput">encode</code></a>, decoding
+        options and the string token can be customized.
+      </p>
+<pre class="programlisting"><span class="identifier">pct_string_view</span> <span class="identifier">s</span> <span class="special">=</span> <span class="string">"user/john%20doe/profile%20photo.jpg"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">buf</span><span class="special">;</span>
+<span class="identifier">buf</span><span class="special">.</span><span class="identifier">resize</span><span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">decoded_size</span><span class="special">());</span>
+<span class="identifier">s</span><span class="special">.</span><span class="identifier">decode</span><span class="special">({},</span> <span class="identifier">string_token</span><span class="special">::</span><span class="identifier">assign_to</span><span class="special">(</span><span class="identifier">buf</span><span class="special">));</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">buf</span> <span class="special">==</span> <span class="string">"user/john doe/profile photo.jpg"</span><span class="special">);</span>
+</pre>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="string_token.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../grammar.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

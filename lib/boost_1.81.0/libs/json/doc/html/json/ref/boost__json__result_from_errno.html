@@ -1,0 +1,237 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>result_from_errno</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../ref.html" title="This Page Intentionally Left Blank 2/2">
+<link rel="prev" href="boost__json__get.html" title="get">
+<link rel="next" href="boost__json__operator_eq__eq_.html" title="operator==">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__json__get.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../ref.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__json__operator_eq__eq_.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="json.ref.boost__json__result_from_errno"></a><a class="link" href="boost__json__result_from_errno.html" title="result_from_errno">result_from_errno</a>
+</h4></div></div></div>
+<p>
+        <a class="indexterm" name="idm65436"></a>
+      </p>
+<p>
+        Create <a class="link" href="boost__json__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a>
+        storing a portable error code.
+      </p>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h0"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.synopsis"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/cppalliance/json/blob/master/include/boost/json/system_error.hpp" target="_top">boost/json/system_error.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="identifier">result_for</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">value</span> <span class="special">&gt;::</span><span class="identifier">type</span>
+<span class="identifier">result_from_errno</span><span class="special">(</span>
+    <span class="keyword">int</span> <span class="identifier">e</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span> <span class="keyword">const</span><span class="special">*</span> <span class="identifier">loc</span><span class="special">);</span>
+</pre>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h1"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.description"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.description">Description</a>
+      </h5>
+<p>
+        This function constructs a <code class="computeroutput"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+        that stores <a class="link" href="boost__json__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a> with <code class="computeroutput"><span class="identifier">value</span><span class="special">()</span></code> equal to <code class="computeroutput"><span class="identifier">e</span></code>
+        and <code class="computeroutput"><span class="identifier">category</span><span class="special">()</span></code>
+        equal to <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">generic_category</span><span class="special">()</span></code>.
+      </p>
+<p>
+        The main use for this function is in implementation of functions returning
+        <a class="link" href="boost__json__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a>,
+        without including <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">json</span><span class="special">/</span><span class="identifier">system_error</span><span class="special">.</span><span class="identifier">hpp</span></code> or
+        even <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">system_error</span><span class="special">&gt;</span></code>. In particular, it may be useful for
+        customizations of <a class="link" href="boost__json__try_value_to.html" title="try_value_to"><code class="computeroutput"><span class="identifier">try_value_to</span></code></a> without creating a
+        physical dependency on Boost.JSON. For example:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">cerrno</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">assert</span><span class="special">/</span><span class="identifier">source_location</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">boost</span>
+<span class="special">{</span>
+<span class="keyword">namespace</span> <span class="identifier">json</span>
+<span class="special">{</span>
+
+<span class="keyword">class</span> <span class="identifier">value</span><span class="special">;</span>
+
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">try_value_to_tag</span><span class="special">;</span>
+
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T1</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">T2</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">result_for</span><span class="special">;</span>
+
+<span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">typename</span> <span class="identifier">result_for</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;::</span><span class="identifier">type</span>
+<span class="identifier">result_from_errno</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">e</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span> <span class="keyword">const</span><span class="special">*</span> <span class="identifier">loc</span><span class="special">)</span> <span class="keyword">noexcept</span>
+
+<span class="special">}</span>
+<span class="special">}</span>
+
+<span class="keyword">namespace</span> <span class="identifier">mine</span>
+<span class="special">{</span>
+
+<span class="keyword">class</span> <span class="identifier">my_class</span><span class="special">;</span>
+<span class="special">...</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">JsonValue</span><span class="special">&gt;</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">result_for</span><span class="special">&lt;</span><span class="identifier">my_class</span><span class="special">,</span> <span class="identifier">JsonValue</span><span class="special">&gt;</span>
+<span class="identifier">tag_invoke</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">try_value_to_tag</span><span class="special">&lt;</span><span class="identifier">my_class</span><span class="special">&gt;,</span> <span class="keyword">const</span> <span class="identifier">JsonValue</span><span class="special">&amp;</span> <span class="identifier">jv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">BOOST_STATIC_CONSTEXPR</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span> <span class="identifier">loc</span> <span class="special">=</span> <span class="identifier">BOOST_CURRENT_LOCATION</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span> <span class="special">!</span><span class="identifier">jv</span><span class="special">.</span><span class="identifier">is_null</span><span class="special">()</span> <span class="special">)</span>
+        <span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">result_from_errno</span><span class="special">&lt;</span><span class="identifier">my_class</span><span class="special">&gt;(</span><span class="identifier">EINVAL</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">loc</span><span class="special">);</span>
+    <span class="keyword">return</span> <span class="identifier">my_class</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="special">}</span>
+</pre>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h2"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.exception_safety"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.exception_safety">Exception
+        Safety</a>
+      </h5>
+<p>
+        Does not throw exceptions.
+      </p>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h3"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.template_parameters"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.template_parameters">Template
+        Parameters</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">T</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The value type of returned <code class="computeroutput"><span class="identifier">result</span></code>.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h4"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.parameters"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.parameters">Parameters</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">e</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The error value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">loc</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The error location.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h5"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.return_value"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.return_value">Return Value</a>
+      </h5>
+<p>
+        <a class="link" href="boost__json__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a>
+        with <code class="computeroutput"><span class="identifier">value</span><span class="special">()</span></code>
+        equal to <code class="computeroutput"><span class="identifier">e</span></code> and <code class="computeroutput"><span class="identifier">category</span><span class="special">()</span></code>
+        equal to <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">generic_category</span><span class="special">()</span></code>.
+      </p>
+<h5>
+<a name="json.ref.boost__json__result_from_errno.h6"></a>
+        <span class="phrase"><a name="json.ref.boost__json__result_from_errno.see_also"></a></span><a class="link" href="boost__json__result_from_errno.html#json.ref.boost__json__result_from_errno.see_also">See
+        Also</a>
+      </h5>
+<p>
+        <a class="link" href="boost__json__try_value_to_tag.html" title="try_value_to_tag"><code class="computeroutput"><span class="identifier">try_value_to_tag</span></code></a>,
+        <a class="link" href="boost__json__try_value_to.html" title="try_value_to"><code class="computeroutput"><span class="identifier">try_value_to</span></code></a>,
+        <a class="link" href="boost__json__result_for.html" title="result_for"><code class="computeroutput"><span class="identifier">result_for</span></code></a>,
+        <a href="https://www.boost.org/doc/libs/develop/libs/system/doc/html/system.html#ref_generic_category" target="_top"><code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">generic_category</span></code></a>, <a href="https://www.boost.org/doc/libs/master/libs/assert/doc/html/assert.html#source_location_support" target="_top"><code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span></code></a>.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/cppalliance/json/blob/master/include/boost/json.hpp" target="_top">boost/json.hpp</a>&gt;</code>
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__json__get.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../ref.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__json__operator_eq__eq_.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

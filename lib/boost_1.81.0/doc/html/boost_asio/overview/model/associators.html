@@ -1,0 +1,159 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Associated Characteristics and Associators</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../model.html" title="Asynchronous Model">
+<link rel="prev" href="async_agents.html" title="Asynchronous Agents">
+<link rel="next" href="child_agents.html" title="Child Agents">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_agents.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="child_agents.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.model.associators"></a><a class="link" href="associators.html" title="Associated Characteristics and Associators">Associated Characteristics
+        and Associators</a>
+</h4></div></div></div>
+<p>
+          An asynchronous agent has <span class="emphasis"><em>associated characteristics</em></span>
+          that specify how asynchronous operations should behave when composed as
+          part of that agent, such as:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              An allocator, which determines how the agent's asynchronous operations
+              obtain memory resources.
+            </li>
+<li class="listitem">
+              A cancellation slot, which determines how the agent's asynchronous
+              operations support cancellation.
+            </li>
+<li class="listitem">
+              An executor, which determines how the agent's completion handlers will
+              be queued and run.
+            </li>
+</ul></div>
+<p>
+          When an asynchronous operation is run within an asynchronous agent, its
+          implementation may query these associated characteristics and use them
+          to satisfy the requirements or preferences they represent. The asynchronous
+          operation performs these queries by applying <span class="emphasis"><em>associator</em></span>
+          traits to the completion handler. Each characteristic has a corresponding
+          associator trait.
+        </p>
+<p>
+          An associator trait may be specialised for concrete completion handler
+          types to:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              accept the default characteristic supplied by the asynchronous operation,
+              returning this default as-is
+            </li>
+<li class="listitem">
+              return an unrelated implementation of the characteristic, or
+            </li>
+<li class="listitem">
+              adapt the supplied default to introduce additional behaviour required
+              by the completion handler.
+            </li>
+</ul></div>
+<h6>
+<a name="boost_asio.overview.model.associators.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.model.associators.specification_of_an_associator"></a></span><a class="link" href="associators.html#boost_asio.overview.model.associators.specification_of_an_associator">Specification
+          of an Associator</a>
+        </h6>
+<p>
+          Given an associator trait named<a href="#ftn.boost_asio.overview.model.associators.f0" class="footnote" name="boost_asio.overview.model.associators.f0"><sup class="footnote">[2]</sup></a> <code class="computeroutput"><span class="identifier">associated_R</span></code>,
+          having:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              a source value <code class="computeroutput"><span class="identifier">s</span></code> of
+              type <code class="computeroutput"><span class="identifier">S</span></code>, in this case
+              the completion handler and its type,
+            </li>
+<li class="listitem">
+              a set of type requirements (or a concept) <code class="computeroutput"><span class="identifier">R</span></code>
+              that define the syntactic and semantic requirements of the associated
+              characteristic, and
+            </li>
+<li class="listitem">
+              a candidate value <code class="computeroutput"><span class="identifier">c</span></code>
+              of type <code class="computeroutput"><span class="identifier">C</span></code> that meets
+              the type requirements <code class="computeroutput"><span class="identifier">R</span></code>,
+              which represents a default implementation of the associated characteristic,
+              supplied by the asynchronous operation
+            </li>
+</ul></div>
+<p>
+          the asynchronous operation uses the associator trait to compute:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              the type <code class="computeroutput"><span class="identifier">associated_R</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">,</span> <span class="identifier">C</span><span class="special">&gt;::</span><span class="identifier">type</span></code>,
+              and
+            </li>
+<li class="listitem">
+              the value <code class="computeroutput"><span class="identifier">associated_R</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">,</span> <span class="identifier">C</span><span class="special">&gt;::</span><span class="identifier">get</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">c</span><span class="special">)</span></code>
+            </li>
+</ul></div>
+<p>
+          that meet the requirements defined in <code class="computeroutput"><span class="identifier">R</span></code>.
+          For convenience, these are also accessible via type alias <code class="computeroutput"><span class="identifier">associated_R_t</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">,</span> <span class="identifier">C</span><span class="special">&gt;</span></code> and free function <code class="computeroutput"><span class="identifier">get_associated_R</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span>
+          <span class="identifier">c</span><span class="special">)</span></code>,
+          respectively.
+        </p>
+<p>
+          The trait's primary template is specified such that:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              if <code class="computeroutput"><span class="identifier">S</span><span class="special">::</span><span class="identifier">R_type</span></code> is well-formed, defines a
+              nested type alias type as <code class="computeroutput"><span class="identifier">S</span><span class="special">::</span><span class="identifier">R_type</span></code>,
+              and a static member function get that returns <code class="computeroutput"><span class="identifier">s</span><span class="special">.</span><span class="identifier">get_R</span><span class="special">()</span></code>
+            </li>
+<li class="listitem">
+              otherwise, if <code class="computeroutput"><span class="identifier">associator</span><span class="special">&lt;</span><span class="identifier">associated_R</span><span class="special">,</span> <span class="identifier">S</span><span class="special">,</span> <span class="identifier">C</span><span class="special">&gt;::</span><span class="identifier">type</span></code>
+              is well-formed and denotes a type, inherits from <code class="computeroutput"><span class="identifier">associator</span><span class="special">&lt;</span><span class="identifier">associated_R</span><span class="special">,</span> <span class="identifier">S</span><span class="special">,</span> <span class="identifier">C</span><span class="special">&gt;</span></code>
+            </li>
+<li class="listitem">
+              otherwise, defines a nested type alias type as <code class="computeroutput"><span class="identifier">C</span></code>,
+              and a static member function get that returns <code class="computeroutput"><span class="identifier">c</span></code>.
+            </li>
+</ul></div>
+<div class="footnotes">
+<br><hr style="width:100; text-align:left;margin-left: 0">
+<div id="ftn.boost_asio.overview.model.associators.f0" class="footnote"><p><a href="#boost_asio.overview.model.associators.f0" class="para"><sup class="para">[2] </sup></a>
+            The associator traits are named <a class="link" href="../../reference/associated_allocator.html" title="associated_allocator"><code class="computeroutput"><span class="identifier">associated_allocator</span></code></a>, <a class="link" href="../../reference/associated_executor.html" title="associated_executor"><code class="computeroutput"><span class="identifier">associated_executor</span></code></a>,
+            and <a class="link" href="../../reference/associated_cancellation_slot.html" title="associated_cancellation_slot"><code class="computeroutput"><span class="identifier">associated_cancellation_slot</span></code></a>.
+          </p></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_agents.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="child_agents.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

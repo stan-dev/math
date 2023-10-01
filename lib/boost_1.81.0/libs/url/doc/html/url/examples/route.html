@@ -1,0 +1,243 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Route</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="magnet_link.html" title="Magnet Link">
+<link rel="next" href="../ref.html" title="Reference">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="magnet_link.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../ref.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.examples.route"></a><a class="link" href="route.html" title="Route">Route</a>
+</h3></div></div></div>
+<p>
+        This example defines a route for a URL path. If the specified route matches
+        and the file exists, the example prints its contents to standard output.
+      </p>
+<pre class="programlisting"><span class="comment">/*
+    This example defines a route for a URL path.
+    If the specified route matches and the file
+    exists, the example prints its contents to
+    standard output.
+*/</span>
+
+
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">error</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">parse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">segments_encoded_ref</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">segments_encoded_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">string_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">url_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">/</span><span class="identifier">static_url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">filesystem</span><span class="special">/</span><span class="identifier">fstream</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">filesystem</span><span class="special">/</span><span class="identifier">operations</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">filesystem</span><span class="special">/</span><span class="identifier">path</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">fs</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">string_view</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">;</span>
+
+<span class="comment">/** Check if a target matches a prefix
+
+    This function checks if the first segments
+    of the target match the corresponding prefix
+    segments.
+
+    @param target Target segments
+    @param prefix Prefix segments
+    @return True if target matches prefix
+ */</span>
+<span class="keyword">bool</span> <span class="identifier">match_prefix</span><span class="special">(</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">segments_view</span> <span class="identifier">target</span><span class="special">,</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">segments_view</span> <span class="identifier">prefix</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Trivially reject target that cannot</span>
+    <span class="comment">// contain the prefix</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">target</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">&lt;</span> <span class="identifier">prefix</span><span class="special">.</span><span class="identifier">size</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+
+    <span class="comment">// Match the prefix segments</span>
+    <span class="keyword">auto</span> <span class="identifier">it0</span> <span class="special">=</span> <span class="identifier">target</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="identifier">end0</span> <span class="special">=</span> <span class="identifier">target</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="identifier">it1</span> <span class="special">=</span> <span class="identifier">prefix</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="identifier">end1</span> <span class="special">=</span> <span class="identifier">prefix</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+    <span class="keyword">while</span> <span class="special">(</span>
+        <span class="identifier">it0</span> <span class="special">!=</span> <span class="identifier">end0</span> <span class="special">&amp;&amp;</span>
+        <span class="identifier">it1</span> <span class="special">!=</span> <span class="identifier">end1</span> <span class="special">&amp;&amp;</span>
+        <span class="special">*</span><span class="identifier">it0</span> <span class="special">==</span> <span class="special">*</span><span class="identifier">it1</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="special">++</span><span class="identifier">it0</span><span class="special">;</span>
+        <span class="special">++</span><span class="identifier">it1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">return</span> <span class="identifier">it1</span> <span class="special">==</span> <span class="identifier">end1</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="comment">/** A static route representing files in a directory
+
+    A route is a URL logical prefix representing
+    static files in the specified root directory.
+
+    The `match` function returns the corresponding
+    file for a given URL path.
+ */</span>
+<span class="keyword">class</span> <span class="identifier">route</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">/// Constructor</span>
+    <span class="identifier">route</span><span class="special">(</span><span class="identifier">string_view</span> <span class="identifier">prefix</span><span class="special">,</span> <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">root</span><span class="special">)</span>
+        <span class="special">:</span> <span class="identifier">prefix_</span><span class="special">(</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri_reference</span><span class="special">(</span><span class="identifier">prefix</span><span class="special">).</span><span class="identifier">value</span><span class="special">())</span>
+        <span class="special">,</span> <span class="identifier">root_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">root</span><span class="special">))</span>
+    <span class="special">{}</span>
+
+    <span class="comment">/// Constructor</span>
+    <span class="identifier">route</span><span class="special">(</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">prefix</span><span class="special">,</span> <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">root</span><span class="special">)</span>
+        <span class="special">:</span> <span class="identifier">prefix_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">prefix</span><span class="special">))</span>
+        <span class="special">,</span> <span class="identifier">root_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">root</span><span class="special">))</span>
+    <span class="special">{}</span>
+
+    <span class="comment">/** Match target URL path with a file
+
+        This function attempts to match the target
+        URL path with the route prefix.
+
+        If the prefix matches, the target is
+        considered to represent a file in the root
+        directory. When that happens, the target
+        prefix is consumed and other segments are
+        appended to the root path.
+
+        The complete file path represented by the
+        target is returned as the output parameter
+        `result`.
+
+        @param target Target URL path
+        @param result An out-parameter holding the resulting path
+        @return `true` if target matches the directory
+     */</span>
+    <span class="keyword">bool</span> <span class="identifier">match</span><span class="special">(</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_view</span> <span class="identifier">target</span><span class="special">,</span>
+        <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span><span class="special">&amp;</span> <span class="identifier">result</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">match_prefix</span><span class="special">(</span>
+                <span class="identifier">target</span><span class="special">.</span><span class="identifier">segments</span><span class="special">(),</span>
+                <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">urls</span><span class="special">::</span><span class="identifier">url_view</span><span class="special">&gt;(</span><span class="identifier">prefix_</span><span class="special">).</span><span class="identifier">segments</span><span class="special">()))</span>
+        <span class="special">{</span>
+            <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">root_</span><span class="special">;</span>
+            <span class="keyword">auto</span> <span class="identifier">segs</span> <span class="special">=</span> <span class="identifier">target</span><span class="special">.</span><span class="identifier">segments</span><span class="special">();</span>
+            <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">segs</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+            <span class="keyword">auto</span> <span class="identifier">end</span> <span class="special">=</span> <span class="identifier">segs</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">advance</span><span class="special">(</span><span class="identifier">it</span><span class="special">,</span> <span class="identifier">prefix_</span><span class="special">.</span><span class="identifier">segments</span><span class="special">().</span><span class="identifier">size</span><span class="special">());</span>
+            <span class="keyword">while</span> <span class="special">(</span><span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">end</span><span class="special">)</span>
+            <span class="special">{</span>
+                <span class="keyword">auto</span> <span class="identifier">seg</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">it</span><span class="special">;</span>
+                <span class="identifier">result</span><span class="special">.</span><span class="identifier">append</span><span class="special">(</span><span class="identifier">seg</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">seg</span><span class="special">.</span><span class="identifier">end</span><span class="special">());</span>
+                <span class="special">++</span><span class="identifier">it</span><span class="special">;</span>
+            <span class="special">}</span>
+            <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+    <span class="special">}</span>
+
+<span class="keyword">private</span><span class="special">:</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">prefix_</span><span class="special">;</span>
+    <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">root_</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">int</span>
+<span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">**</span><span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+    <span class="keyword">namespace</span> <span class="identifier">fs</span>   <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">;</span>
+
+    <span class="comment">// Check command line arguments.</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">4</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">];</span>
+        <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">filename</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span>
+            <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">()</span>
+            <span class="special">&lt;&lt;</span> <span class="string">" &lt;target&gt; &lt;prefix&gt; &lt;doc_root&gt;\n"</span>
+               <span class="string">"target: path to make a request\n"</span>
+               <span class="string">"prefix: url prefix\n"</span>
+               <span class="string">"doc_root: dir to look for files\n"</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">try</span> <span class="special">{</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">url</span> <span class="identifier">target</span> <span class="special">=</span>
+            <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_uri_reference</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]).</span><span class="identifier">value</span><span class="special">();</span>
+        <span class="identifier">target</span><span class="special">.</span><span class="identifier">normalize_path</span><span class="special">();</span>
+
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">prefix</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">];</span>
+        <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">root</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">];</span>
+
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">fs</span><span class="special">::</span><span class="identifier">is_directory</span><span class="special">(</span><span class="identifier">root</span><span class="special">))</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span>
+                <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">root</span>
+                <span class="special">&lt;&lt;</span> <span class="string">" is not a directory\n"</span><span class="special">;</span>
+            <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Create route</span>
+        <span class="identifier">route</span> <span class="identifier">r</span><span class="special">(</span><span class="identifier">prefix</span><span class="special">,</span> <span class="identifier">root</span><span class="special">);</span>
+
+        <span class="comment">// Check if target matches a file</span>
+        <span class="identifier">fs</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">result</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">r</span><span class="special">.</span><span class="identifier">match</span><span class="special">(</span><span class="identifier">target</span><span class="special">,</span> <span class="identifier">result</span><span class="special">))</span>
+        <span class="special">{</span>
+            <span class="identifier">fs</span><span class="special">::</span><span class="identifier">ifstream</span> <span class="identifier">f</span><span class="special">(</span><span class="identifier">result</span><span class="special">);</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">l</span><span class="special">;</span>
+            <span class="keyword">while</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">getline</span><span class="special">(</span><span class="identifier">f</span><span class="special">,</span> <span class="identifier">l</span><span class="special">))</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">l</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+            <span class="identifier">f</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span>
+                <span class="special">&lt;&lt;</span> <span class="string">"No "</span> <span class="special">&lt;&lt;</span> <span class="identifier">target</span> <span class="special">&lt;&lt;</span> <span class="string">" in prefix "</span>
+                <span class="special">&lt;&lt;</span> <span class="identifier">prefix</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span> <span class="special">&amp;</span><span class="identifier">e</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">e</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="identifier">EXIT_FAILURE</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="magnet_link.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../ref.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

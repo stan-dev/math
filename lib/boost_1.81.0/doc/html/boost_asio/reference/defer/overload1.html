@@ -1,0 +1,149 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>defer (1 of 3 overloads)</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../defer.html" title="defer">
+<link rel="prev" href="../defer.html" title="defer">
+<link rel="next" href="overload2.html" title="defer (2 of 3 overloads)">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../defer.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../defer.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.reference.defer.overload1"></a><a class="link" href="overload1.html" title="defer (1 of 3 overloads)">defer (1 of 3
+        overloads)</a>
+</h4></div></div></div>
+<p>
+          Submits a completion token or function object for execution.
+        </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <a class="link" href="../NullaryToken.html" title="Nullary token requirements">NullaryToken</a><span class="special">&gt;</span>
+<a class="link" href="../asynchronous_operations.html#boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type"><span class="emphasis"><em>DEDUCED</em></span></a> <span class="identifier">defer</span><span class="special">(</span>
+    <span class="identifier">NullaryToken</span> <span class="special">&amp;&amp;</span> <span class="identifier">token</span><span class="special">);</span>
+</pre>
+<p>
+          This function submits an object for execution using the object's associated
+          executor. The function object is queued for execution, and is never called
+          from the current thread prior to returning from <code class="computeroutput"><span class="identifier">defer</span><span class="special">()</span></code>.
+        </p>
+<p>
+          The use of <code class="computeroutput"><span class="identifier">defer</span><span class="special">()</span></code>,
+          rather than <a class="link" href="../post.html" title="post"><code class="computeroutput"><span class="identifier">post</span></code></a>,
+          indicates the caller's preference that the executor defer the queueing
+          of the function object. This may allow the executor to optimise queueing
+          for cases when the function object represents a continuation of the current
+          call context.
+        </p>
+<h6>
+<a name="boost_asio.reference.defer.overload1.h0"></a>
+          <span class="phrase"><a name="boost_asio.reference.defer.overload1.parameters"></a></span><a class="link" href="overload1.html#boost_asio.reference.defer.overload1.parameters">Parameters</a>
+        </h6>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term">token</span></dt>
+<dd>
+<p>
+                The <a class="link" href="../../overview/model/completion_tokens.html" title="Completion Tokens">completion
+                token</a> that will be used to produce a completion handler. The
+                function signature of the completion handler must be:
+              </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">handler</span><span class="special">();</span>
+</pre>
+</dd>
+</dl>
+</div>
+<h6>
+<a name="boost_asio.reference.defer.overload1.h1"></a>
+          <span class="phrase"><a name="boost_asio.reference.defer.overload1.return_value"></a></span><a class="link" href="overload1.html#boost_asio.reference.defer.overload1.return_value">Return
+          Value</a>
+        </h6>
+<p>
+          This function returns <code class="computeroutput"><span class="identifier">async_initiate</span><span class="special">&lt;</span><span class="identifier">NullaryToken</span><span class="special">,</span> <span class="keyword">void</span><span class="special">()&gt;(</span><span class="identifier">Init</span><span class="special">{},</span> <span class="identifier">token</span><span class="special">)</span></code>,
+          where <code class="computeroutput"><span class="identifier">Init</span></code> is a function
+          object type defined as:
+        </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Init</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">CompletionHandler</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">CompletionHandler</span><span class="special">&amp;&amp;</span> <span class="identifier">completion_handler</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">};</span>
+</pre>
+<p>
+          The function call operator of <code class="computeroutput"><span class="identifier">Init</span><span class="special">:</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+<p class="simpara">
+              Obtains the handler's associated executor object <code class="computeroutput"><span class="identifier">ex</span></code>
+              of type <code class="computeroutput"><span class="identifier">Ex</span></code> by performing
+            </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">ex</span> <span class="special">=</span> <span class="identifier">get_associated_executor</span><span class="special">(</span><span class="identifier">handler</span><span class="special">);</span>
+</pre>
+</li>
+<li class="listitem">
+<p class="simpara">
+              Obtains the handler's associated allocator object <code class="computeroutput"><span class="identifier">alloc</span></code>
+              by performing
+            </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">alloc</span> <span class="special">=</span> <span class="identifier">get_associated_allocator</span><span class="special">(</span><span class="identifier">handler</span><span class="special">);</span>
+</pre>
+</li>
+<li class="listitem">
+<p class="simpara">
+              If <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">is_executor</span><span class="special">&lt;</span><span class="identifier">Ex</span><span class="special">&gt;::</span><span class="identifier">value</span></code> is true, performs
+            </p>
+<pre class="programlisting"><span class="identifier">prefer</span><span class="special">(</span>
+    <span class="identifier">require</span><span class="special">(</span><span class="identifier">ex</span><span class="special">,</span> <span class="identifier">execution</span><span class="special">::</span><span class="identifier">blocking</span><span class="special">.</span><span class="identifier">never</span><span class="special">),</span>
+    <span class="identifier">execution</span><span class="special">::</span><span class="identifier">relationship</span><span class="special">.</span><span class="identifier">continuation</span><span class="special">,</span>
+    <span class="identifier">execution</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">(</span><span class="identifier">alloc</span><span class="special">)</span>
+  <span class="special">).</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">CompletionHandler</span><span class="special">&gt;(</span><span class="identifier">completion_handler</span><span class="special">));</span>
+</pre>
+</li>
+<li class="listitem">
+<p class="simpara">
+              If <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">is_executor</span><span class="special">&lt;</span><span class="identifier">Ex</span><span class="special">&gt;::</span><span class="identifier">value</span></code> is false, performs
+            </p>
+<pre class="programlisting"><span class="identifier">ex</span><span class="special">.</span><span class="identifier">defer</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">CompletionHandler</span><span class="special">&gt;(</span><span class="identifier">completion_handler</span><span class="special">),</span>
+    <span class="identifier">alloc</span><span class="special">);</span>
+</pre>
+</li>
+</ul></div>
+<h6>
+<a name="boost_asio.reference.defer.overload1.h2"></a>
+          <span class="phrase"><a name="boost_asio.reference.defer.overload1.completion_signature"></a></span><a class="link" href="overload1.html#boost_asio.reference.defer.overload1.completion_signature">Completion
+          Signature</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">void</span><span class="special">()</span>
+</pre>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../defer.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../defer.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template basic_process_handle</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../../boost_process/v2.html#header.boost.process.v2.process_handle_hpp" title="Header &lt;boost/process/v2/process_handle.hpp&gt;">
+<link rel="prev" href="basic_process/rebind_executor.html" title="Struct template rebind_executor">
+<link rel="next" href="basic_process_handle/rebind_executor.html" title="Struct template rebind_executor">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="basic_process/rebind_executor.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../boost_process/v2.html#header.boost.process.v2.process_handle_hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="basic_process_handle/rebind_executor.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="boost.process.v2.basic_process_handle"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template basic_process_handle</span></h2>
+<p>boost::process::v2::basic_process_handle</p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../boost_process/v2.html#header.boost.process.v2.process_handle_hpp" title="Header &lt;boost/process/v2/process_handle.hpp&gt;">boost/process/v2/process_handle.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">any_io_executor</span><span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="basic_process_handle.html" title="Struct template basic_process_handle">basic_process_handle</a> <span class="special">{</span>
+  <span class="comment">// <a class="link" href="basic_process_handle.html#boost.process.v2.basic_process_handletypes">types</a></span>
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a class="link" href="basic_process_handle.html#boost.process.v2.basic_process_handle.native_handle_type"><span class="identifier">native_handle_type</span></a><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">Executor</span>               <a name="boost.process.v2.basic_process_handle.executor_type"></a><span class="identifier">executor_type</span><span class="special">;</span>       <span class="comment">// The executor_type of the process_handle. </span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="comment">// Rebinds the process_handle to another executor.</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="basic_process_handle/rebind_executor.html" title="Struct template rebind_executor">rebind_executor</a> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="basic_process_handle.html" title="Struct template basic_process_handle">basic_process_handle</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <a class="link" href="basic_process_handle/rebind_executor.html#boost.process.v2.basic_process_handle.rebind_executor.other"><span class="identifier">other</span></a><span class="special">;</span>  <span class="comment">// The socket type when rebound to the specified executor. </span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="basic_process_handle.html#boost.process.v2.basic_process_handleconstruct-copy-destruct">construct/copy/destruct</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">&gt;</span> <a class="link" href="basic_process_handle.html#idm9465-bb"><span class="identifier">basic_process_handle</span></a><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_process_handle.html#idm9476-bb"><span class="identifier">basic_process_handle</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_process_handle.html#idm9480-bb"><span class="identifier">basic_process_handle</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">,</span> <span class="identifier">pid_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_process_handle.html#idm9488-bb"><span class="identifier">basic_process_handle</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">,</span> <span class="identifier">pid_type</span><span class="special">,</span> <span class="identifier">native_handle_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> 
+    <a class="link" href="basic_process_handle.html#idm9498-bb"><span class="identifier">basic_process_handle</span></a><span class="special">(</span><a class="link" href="basic_process_handle.html" title="Struct template basic_process_handle">basic_process_handle</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="basic_process_handle.html#idm9377-bb">public member functions</a></span>
+  <span class="identifier">executor_type</span> <a class="link" href="basic_process_handle.html#idm9378-bb"><span class="identifier">get_executor</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">pid_type</span> <a class="link" href="basic_process_handle.html#idm9381-bb"><span class="identifier">id</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9384-bb"><span class="identifier">terminate_if_running</span></a><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9389-bb"><span class="identifier">terminate_if_running</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9394-bb"><span class="identifier">wait</span></a><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9401-bb"><span class="identifier">wait</span></a><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9408-bb"><span class="identifier">interrupt</span></a><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9415-bb"><span class="identifier">interrupt</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9420-bb"><span class="identifier">request_exit</span></a><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_process_handle.html#idm9425-bb"><span class="identifier">request_exit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="../../container/flat_map.html#idm9430-bb"><span class="identifier">terminate</span></a><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="basic_process_handle.html#idm9437-bb"><span class="identifier">running</span></a><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="basic_process_handle.html#idm9447-bb"><span class="identifier">running</span></a><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="basic_process_handle.html#idm9454-bb"><span class="identifier">is_open</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">Token</span> <span class="identifier">WaitHandler</span> DEFAULT_TYPE<span class="special">&gt;</span>  <a class="link" href="../../container/flat_map.html#idm9457-bb"><span class="identifier">async_wait</span></a><span class="special">(</span><span class="identifier">WaitHandler</span> <span class="special">&amp;&amp;</span><span class="identifier">handler</span> <span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">void</span> <span class="identifier">error_code</span> <span class="special">&amp;</span> <span class="identifier">ec</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.29.12.8.12.3.4"></a><h2>Description</h2>
+<p>A process handle is an unmanaged version of a process. This means it does not terminate the proces on destruction and will not keep track of the exit-code.</p>
+<p>Note that the exit code might be discovered early, during a call to <code class="computeroutput">running</code>. Thus it can only be discovered that process has exited already. </p>
+<div class="refsect2">
+<a name="id-1.3.29.12.8.12.3.4.4"></a><h3>
+<a name="boost.process.v2.basic_process_handletypes"></a><code class="computeroutput">basic_process_handle</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a name="boost.process.v2.basic_process_handle.native_handle_type"></a><span class="identifier">native_handle_type</span><span class="special">;</span></p>
+<p>This might be undefined on posix systems that only support signals </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.29.12.8.12.3.4.5"></a><h3>
+<a name="boost.process.v2.basic_process_handleconstruct-copy-destruct"></a><code class="computeroutput">basic_process_handle</code> 
+        public
+       construct/copy/destruct</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">&gt;</span> 
+  <a name="idm9465-bb"></a><span class="identifier">basic_process_handle</span><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">)</span><span class="special">;</span></pre>Construct a <code class="computeroutput"><a class="link" href="basic_process_handle.html" title="Struct template basic_process_handle">basic_process_handle</a></code> from an execution_context. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Template Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ExecutionContext</code></span></p></td>
+<td><p>The context must fulfill the asio::execution_context requirements </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm9476-bb"></a><span class="identifier">basic_process_handle</span><span class="special">(</span><span class="identifier">executor_type</span> executor<span class="special">)</span><span class="special">;</span></pre>Construct an empty process_handle from an executor. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm9480-bb"></a><span class="identifier">basic_process_handle</span><span class="special">(</span><span class="identifier">executor_type</span> executor<span class="special">,</span> <span class="identifier">pid_type</span> pid<span class="special">)</span><span class="special">;</span></pre>Construct an empty process_handle from an executor and bind it to a pid. <p>On NON-linux posix systems this call is not able to obtain a file-descriptor and will thus rely on signals. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm9488-bb"></a><span class="identifier">basic_process_handle</span><span class="special">(</span><span class="identifier">executor_type</span> executor<span class="special">,</span> <span class="identifier">pid_type</span> pid<span class="special">,</span> 
+                     <span class="identifier">native_handle_type</span> process_handle<span class="special">)</span><span class="special">;</span></pre>Construct an empty process_handle from an executor and bind it to a pid and the native-handle. <p>On some non-linux posix systems this overload is not present. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> 
+  <a name="idm9498-bb"></a><span class="identifier">basic_process_handle</span><span class="special">(</span><a class="link" href="basic_process_handle.html" title="Struct template basic_process_handle">basic_process_handle</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> handle<span class="special">)</span><span class="special">;</span></pre>Move construct and rebind the executor. </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.29.12.8.12.3.4.6"></a><h3>
+<a name="idm9377-bb"></a><code class="computeroutput">basic_process_handle</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">executor_type</span> <a name="idm9378-bb"></a><span class="identifier">get_executor</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Getter for the executor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pid_type</span> <a name="idm9381-bb"></a><span class="identifier">id</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the id of the process. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9384-bb"></a><span class="identifier">terminate_if_running</span><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>Terminate the process if it's still running and ignore the result. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9389-bb"></a><span class="identifier">terminate_if_running</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9394-bb"></a><span class="identifier">wait</span><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span> exit_status<span class="special">,</span> <span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>wait for the process to exit and store the exit code in exit_status. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9401-bb"></a><span class="identifier">wait</span><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span> exit_status<span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9408-bb"></a><span class="identifier">interrupt</span><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>Sends the process a signal to ask for an interrupt, which the process may interpret as a shutdown. <p>Maybe be ignored by the subprocess. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9415-bb"></a><span class="identifier">interrupt</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9420-bb"></a><span class="identifier">request_exit</span><span class="special">(</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>Sends the process a signal to ask for a graceful shutdown. Maybe be ignored by the subprocess. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9425-bb"></a><span class="identifier">request_exit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.Unconditionally terminates the process and stores the exit code in exit_status. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm9430-bb"></a><span class="identifier">terminate</span><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span> exit_status<span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="idm9437-bb"></a><span class="identifier">running</span><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span> exit_code<span class="special">,</span> <span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>Checks if the current process is running. <p>If it has already completed, it assigns the exit code to <code class="computeroutput">exit_code</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="idm9447-bb"></a><span class="identifier">running</span><span class="special">(</span><span class="identifier">native_exit_code_type</span> <span class="special">&amp;</span> exit_code<span class="special">)</span><span class="special">;</span></pre>Throwing. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="idm9454-bb"></a><span class="identifier">is_open</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Check if the process handle is referring to an existing process. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">Token</span> <span class="identifier">WaitHandler</span> DEFAULT_TYPE<span class="special">&gt;</span> 
+   <a name="idm9457-bb"></a><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">WaitHandler</span> <span class="special">&amp;&amp;</span><span class="identifier">handler</span>  DEFAULT<span class="special">)</span><span class="special">;</span></pre>Asynchronously wait for the process to exit and deliver the native exit-code in the completion handler. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="basic_process/rebind_executor.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../boost_process/v2.html#header.boost.process.v2.process_handle_hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="basic_process_handle/rebind_executor.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

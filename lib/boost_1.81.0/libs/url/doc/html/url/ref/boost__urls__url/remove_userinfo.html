@@ -1,0 +1,115 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url::remove_userinfo</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__url.html" title="url">
+<link rel="prev" href="set_encoded_userinfo.html" title="url::set_encoded_userinfo">
+<link rel="next" href="set_user.html" title="url::set_user">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_encoded_userinfo.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_user.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__url.remove_userinfo"></a><a class="link" href="remove_userinfo.html" title="url::remove_userinfo">url::remove_userinfo</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm96906"></a>
+        </p>
+<p>
+          Remove the userinfo.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.synopsis"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">url</span><span class="special">&amp;</span>
+<span class="identifier">remove_userinfo</span><span class="special">();</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.description"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.description">Description</a>
+        </h6>
+<p>
+          This function removes the userinfo if present, without removing any authority.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.example"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">url</span><span class="special">(</span> <span class="string">"http://user@example.com"</span> <span class="special">).</span><span class="identifier">remove_userinfo</span><span class="special">().</span><span class="identifier">has_userinfo</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">false</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.postconditions"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.postconditions">Postconditions</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">has_userinfo</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">false</span> <span class="special">&amp;&amp;</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">encoded_userinfo</span><span class="special">().</span><span class="identifier">empty</span> <span class="special">==</span> <span class="keyword">true</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.complexity"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.complexity">Complexity</a>
+        </h6>
+<p>
+          Linear in <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">()</span></code>.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.exception_safety"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Throws nothing.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.bnf"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">userinfo</span>      <span class="special">=</span> <span class="special">[</span> <span class="special">[</span> <span class="identifier">user</span> <span class="special">]</span> <span class="special">[</span> <span class="char">':'</span> <span class="identifier">password</span> <span class="special">]</span> <span class="special">]</span>
+
+<span class="identifier">user</span>          <span class="special">=</span> <span class="special">*(</span> <span class="identifier">unreserved</span> <span class="special">/</span> <span class="identifier">pct</span><span class="special">-</span><span class="identifier">encoded</span> <span class="special">/</span> <span class="identifier">sub</span><span class="special">-</span><span class="identifier">delims</span> <span class="special">)</span>
+<span class="identifier">password</span>      <span class="special">=</span> <span class="special">*(</span> <span class="identifier">unreserved</span> <span class="special">/</span> <span class="identifier">pct</span><span class="special">-</span><span class="identifier">encoded</span> <span class="special">/</span> <span class="identifier">sub</span><span class="special">-</span><span class="identifier">delims</span> <span class="special">/</span> <span class="string">":"</span> <span class="special">)</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.specification"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1" target="_top">3.2.1.
+              User Information (rfc3986)</a>
+            </li></ul></div>
+<h6>
+<a name="url.ref.boost__urls__url.remove_userinfo.h8"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.remove_userinfo.see_also"></a></span><a class="link" href="remove_userinfo.html#url.ref.boost__urls__url.remove_userinfo.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="set_encoded_userinfo.html" title="url::set_encoded_userinfo"><code class="computeroutput"><span class="identifier">set_encoded_userinfo</span></code></a>, <a class="link" href="set_userinfo.html" title="url::set_userinfo"><code class="computeroutput"><span class="identifier">set_userinfo</span></code></a>.
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_encoded_userinfo.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_user.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

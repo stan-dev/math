@@ -1,0 +1,139 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Parse Rules</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../grammar.html" title="Customization">
+<link rel="prev" href="../grammar.html" title="Customization">
+<link rel="next" href="character_sets.html" title="Character Sets">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../grammar.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../grammar.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="character_sets.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.grammar.parse_rules"></a><a class="link" href="parse_rules.html" title="Parse Rules">Parse Rules</a>
+</h3></div></div></div>
+<p>
+        A <a class="link" href="../concepts/rule.html" title="Rule"><span class="emphasis"><em>Rule</em></span></a> is an
+        object which tries to match the beginning of an input character buffer against
+        a particular syntax. It returns a <a class="link" href="../ref/boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a> containing a value if the
+        match was successful, or an <a class="link" href="../ref/boost__urls__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a> if the match failed.
+        Rules are not invoked directly. Instead they are passed as values to a <a class="link" href="../ref/boost__urls__grammar__parse.html" title="grammar::parse"><code class="computeroutput"><span class="identifier">parse</span></code></a>
+        function, along with the input character buffer to process. The first overload
+        requires that the entire input string match, otherwise else an error occurs.
+        The second overload advances the input buffer pointer to the first unconsumed
+        character upon success, allowing a stream of data to be parsed sequentially:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">class</span> <span class="identifier">Rule</span> <span class="special">&gt;</span>
+<span class="keyword">auto</span> <span class="identifier">parse</span><span class="special">(</span> <span class="identifier">string_view</span> <span class="identifier">s</span><span class="special">,</span> <span class="identifier">Rule</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">r</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="identifier">result</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">Rule</span><span class="special">::</span><span class="identifier">value_type</span> <span class="special">&gt;;</span>
+
+<span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">class</span> <span class="identifier">Rule</span> <span class="special">&gt;</span>
+<span class="keyword">auto</span> <span class="identifier">parse</span><span class="special">(</span> <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*&amp;</span> <span class="identifier">it</span><span class="special">,</span> <span class="keyword">char</span> <span class="keyword">const</span><span class="special">*</span> <span class="identifier">end</span><span class="special">,</span> <span class="identifier">Rule</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">r</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="identifier">result</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">Rule</span><span class="special">::</span><span class="identifier">value_type</span> <span class="special">&gt;;</span>
+</pre>
+<p>
+        To satisfy the <a class="link" href="../concepts/rule.html" title="Rule"><span class="emphasis"><em>Rule</em></span></a>
+        concept, a <code class="computeroutput"><span class="keyword">class</span></code> or <code class="computeroutput"><span class="keyword">struct</span></code> must declare the nested type <code class="computeroutput"><span class="identifier">value_type</span></code> indicating the type of value
+        returned upon success, and a <code class="computeroutput"><span class="keyword">const</span></code>
+        member function <code class="computeroutput"><span class="identifier">parse</span></code> with
+        a prescribed signature. In the following code we define a rule that matches
+        a single comma:
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">comma_rule_t</span>
+<span class="special">{</span>
+    <span class="comment">// The type of value returned upon success</span>
+    <span class="keyword">using</span> <span class="identifier">value_type</span> <span class="special">=</span> <span class="identifier">string_view</span><span class="special">;</span>
+
+    <span class="comment">// The algorithm which checks for a match</span>
+    <span class="identifier">result</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span>
+    <span class="identifier">parse</span><span class="special">(</span> <span class="keyword">char</span> <span class="keyword">const</span><span class="special">*&amp;</span> <span class="identifier">it</span><span class="special">,</span> <span class="keyword">char</span> <span class="keyword">const</span><span class="special">*</span> <span class="identifier">end</span> <span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span><span class="special">(</span> <span class="identifier">it</span> <span class="special">!=</span> <span class="identifier">end</span> <span class="special">&amp;&amp;</span> <span class="special">*</span><span class="identifier">it</span> <span class="special">==</span> <span class="char">','</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="identifier">string_view</span><span class="special">(</span> <span class="identifier">it</span><span class="special">++,</span> <span class="number">1</span> <span class="special">);</span>
+
+        <span class="keyword">return</span> <span class="identifier">error</span><span class="special">::</span><span class="identifier">mismatch</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<p>
+        Since rules are passed by value, we declare a <code class="computeroutput"><span class="keyword">constexpr</span></code>
+        variable of the type for syntactical convenience. Variable names for rules
+        are usually suffixed with <code class="computeroutput"><span class="identifier">_rule</span></code>:
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="identifier">comma_rule_t</span> <span class="identifier">comma_rule</span><span class="special">{};</span>
+</pre>
+<p>
+        Now we can call <a class="link" href="../ref/boost__urls__grammar__parse.html" title="grammar::parse"><code class="computeroutput"><span class="identifier">parse</span></code></a> with the string of input and
+        the rule variable thusly:
+      </p>
+<pre class="programlisting"><span class="identifier">result</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> <span class="identifier">rv</span> <span class="special">=</span> <span class="identifier">parse</span><span class="special">(</span> <span class="string">","</span><span class="special">,</span> <span class="identifier">comma_rule</span> <span class="special">);</span>
+
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">rv</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">rv</span><span class="special">.</span><span class="identifier">value</span><span class="special">()</span> <span class="special">==</span> <span class="string">","</span> <span class="special">);</span>
+</pre>
+<p>
+        Rule expressions can come in several styles. The rule defined above is a
+        compile-time constant. The <a class="link" href="../ref/boost__urls__grammar__unsigned_rule.html" title="grammar::unsigned_rule"><code class="computeroutput"><span class="identifier">unsigned_rule</span></code></a> matches an unsigned
+        decimal integer. Here we construct the rule at run time and specify the type
+        of unsigned integer used to hold the result with a template parameter:
+      </p>
+<pre class="programlisting"><span class="identifier">result</span><span class="special">&lt;</span> <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="special">&gt;</span> <span class="identifier">rv</span> <span class="special">=</span> <span class="identifier">parse</span><span class="special">(</span> <span class="string">"16384"</span><span class="special">,</span> <span class="identifier">unsigned_rule</span><span class="special">&lt;</span> <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="special">&gt;{}</span> <span class="special">);</span>
+</pre>
+<p>
+        The function <a class="link" href="../ref/boost__urls__grammar__delim_rule.html" title="grammar::delim_rule"><code class="computeroutput"><span class="identifier">delim_rule</span></code></a> returns a rule which
+        matches the passed character literal. This is a more general version of the
+        comma rule which we defined earlier. There is also an overload which matches
+        exactly one character from a character set.
+      </p>
+<pre class="programlisting"><span class="identifier">result</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> <span class="identifier">rv</span> <span class="special">=</span> <span class="identifier">parse</span><span class="special">(</span> <span class="string">","</span><span class="special">,</span> <span class="identifier">delim_rule</span><span class="special">(</span><span class="char">','</span><span class="special">)</span> <span class="special">);</span>
+</pre>
+<h5>
+<a name="url.grammar.parse_rules.h0"></a>
+        <span class="phrase"><a name="url.grammar.parse_rules.error_handling"></a></span><a class="link" href="parse_rules.html#url.grammar.parse_rules.error_handling">Error
+        Handling</a>
+      </h5>
+<p>
+        When a rule fails to match, or if the rule detects a unrecoverable problem
+        with the input, it returns a result assigned from an <a class="link" href="../ref/boost__urls__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a> indicating the failure.
+        When using overloads of <a class="link" href="../ref/boost__urls__grammar__parse.html" title="grammar::parse"><code class="computeroutput"><span class="identifier">parse</span></code></a> which have a character pointer
+        as both an in and out parameter, it is up to the rule to define which character
+        is pointed to upon error. When the rule matches successfully, the pointer
+        is always changed to point to the first unconsumed character in the input,
+        or to the <code class="computeroutput"><span class="identifier">end</span></code> pointer if
+        all input was consumed.
+      </p>
+<p>
+        It is the responsibilty of library and user-defined implementations of <span class="emphasis"><em>compound
+        rules</em></span> (explained later) to rewind their internal pointer if a
+        parsing operation was unsuccessful, and they wish to attempt parsing the
+        same input using a different rule. Users who extend the library's grammar
+        by defining their own custom rules should follow the behaviors described
+        above regarding the handling of errors and the modification of the caller's
+        input pointer.
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../grammar.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../grammar.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="character_sets.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

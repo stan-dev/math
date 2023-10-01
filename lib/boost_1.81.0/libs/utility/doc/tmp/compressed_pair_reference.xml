@@ -1,0 +1,54 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="compressed_pair.reference"><title>Reference</title><header name="boost/compressed_pair.hpp">
+</header>
+<header name="boost/detail/compressed_pair.hpp">
+<namespace name="boost">
+<class name="compressed_pair"><template>
+      <template-type-parameter name="T1"/>
+      <template-type-parameter name="T2"/>
+    </template><typedef name="first_type"><type>T1</type></typedef>
+<typedef name="second_type"><type>T2</type></typedef>
+<typedef name="first_param_type"><type>call_traits&lt; first_type &gt;::param_type</type></typedef>
+<typedef name="second_param_type"><type>call_traits&lt; second_type &gt;::param_type</type></typedef>
+<typedef name="first_reference"><type>call_traits&lt; first_type &gt;::reference</type></typedef>
+<typedef name="second_reference"><type>call_traits&lt; second_type &gt;::reference</type></typedef>
+<typedef name="first_const_reference"><type>call_traits&lt; first_type &gt;::const_reference</type></typedef>
+<typedef name="second_const_reference"><type>call_traits&lt; second_type &gt;::const_reference</type></typedef>
+<method-group name="public member functions">
+<method name="first"><type>first_reference</type></method>
+<method name="first" cv="const"><type>first_const_reference</type></method>
+<method name="second"><type>second_reference</type></method>
+<method name="second" cv="const"><type>second_const_reference</type></method>
+<method name="swap"><type>void</type><parameter name="y"><paramtype><classname>compressed_pair</classname> &amp;</paramtype></parameter></method>
+</method-group>
+<constructor/>
+<constructor><parameter name="x"><paramtype>first_param_type</paramtype></parameter><parameter name="y"><paramtype>second_param_type</paramtype></parameter></constructor>
+<constructor specifiers="explicit"><parameter name="x"><paramtype>first_param_type</paramtype></parameter></constructor>
+<constructor specifiers="explicit"><parameter name="y"><paramtype>second_param_type</paramtype></parameter></constructor>
+</class><class-specialization name="compressed_pair"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>T</template-arg></specialization><typedef name="first_type"><type>T</type></typedef>
+<typedef name="second_type"><type>T</type></typedef>
+<typedef name="first_param_type"><type>call_traits&lt; first_type &gt;::param_type</type></typedef>
+<typedef name="second_param_type"><type>call_traits&lt; second_type &gt;::param_type</type></typedef>
+<typedef name="first_reference"><type>call_traits&lt; first_type &gt;::reference</type></typedef>
+<typedef name="second_reference"><type>call_traits&lt; second_type &gt;::reference</type></typedef>
+<typedef name="first_const_reference"><type>call_traits&lt; first_type &gt;::const_reference</type></typedef>
+<typedef name="second_const_reference"><type>call_traits&lt; second_type &gt;::const_reference</type></typedef>
+<method-group name="public member functions">
+<method name="first"><type>first_reference</type></method>
+<method name="first" cv="const"><type>first_const_reference</type></method>
+<method name="second"><type>second_reference</type></method>
+<method name="second" cv="const"><type>second_const_reference</type></method>
+<method name="swap"><type>void</type><parameter name="y"><paramtype>::<classname>boost::compressed_pair</classname>&lt; T, T &gt; &amp;</paramtype></parameter></method>
+</method-group>
+<constructor/>
+<constructor><parameter name="x"><paramtype>first_param_type</paramtype></parameter><parameter name="y"><paramtype>second_param_type</paramtype></parameter></constructor>
+<constructor specifiers="explicit"><parameter name="x"><paramtype>first_param_type</paramtype></parameter></constructor>
+</class-specialization><function name="swap"><type>void</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="T2"/>
+        </template><parameter name="x"><paramtype><classname>compressed_pair</classname>&lt; T1, T2 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>compressed_pair</classname>&lt; T1, T2 &gt; &amp;</paramtype></parameter></function>
+</namespace>
+</header>
+</library-reference>

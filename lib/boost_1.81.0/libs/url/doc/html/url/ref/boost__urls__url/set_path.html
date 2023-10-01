@@ -1,0 +1,235 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url::set_path</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__url.html" title="url">
+<link rel="prev" href="remove_port.html" title="url::remove_port">
+<link rel="next" href="set_encoded_path.html" title="url::set_encoded_path">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="remove_port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_encoded_path.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__url.set_path"></a><a class="link" href="set_path.html" title="url::set_path">url::set_path</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm100485"></a>
+        </p>
+<p>
+          Set if the path is absolute.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.synopsis"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">url</span><span class="special">&amp;</span>
+<span class="identifier">set_path</span><span class="special">(</span>
+    <span class="identifier">string_view</span> <span class="identifier">s</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.description"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.description">Description</a>
+        </h6>
+<p>
+          This function adjusts the path to make it absolute or not, depending on
+          the parameter.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.remarks"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.remarks">Remarks</a>
+        </h6>
+<p>
+          If an authority is present, the path is always absolute. In this case,
+          the function has no effect.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.example"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"path/to/file.txt"</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">set_path_absolute</span><span class="special">(</span> <span class="keyword">true</span> <span class="special">)</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"/path/to/file.txt"</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.postconditions"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.postconditions">Postconditions</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">is_path_absolute</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span> <span class="special">&amp;&amp;</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">encoded_path</span><span class="special">().</span><span class="identifier">front</span><span class="special">()</span> <span class="special">==</span> <span class="char">'/'</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.return_value"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.return_value">Return
+          Value</a>
+        </h6>
+<p>
+          true on success.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.complexity"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.complexity">Complexity</a>
+        </h6>
+<p>
+          Linear in <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">()</span></code>.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.bnf"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">path</span>          <span class="special">=</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">abempty</span>    <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="string">"/"</span> <span class="keyword">or</span> <span class="identifier">is</span> <span class="identifier">empty</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">absolute</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="string">"/"</span> <span class="identifier">but</span> <span class="keyword">not</span> <span class="string">"//"</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">noscheme</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="identifier">a</span> <span class="identifier">non</span><span class="special">-</span><span class="identifier">colon</span> <span class="identifier">segment</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">rootless</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="identifier">a</span> <span class="identifier">segment</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">empty</span>      <span class="special">;</span> <span class="identifier">zero</span> <span class="identifier">characters</span>
+
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">abempty</span>  <span class="special">=</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">absolute</span> <span class="special">=</span> <span class="string">"/"</span> <span class="special">[</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span> <span class="special">]</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">noscheme</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span><span class="special">-</span><span class="identifier">nc</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">rootless</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">empty</span>    <span class="special">=</span> <span class="number">0</span><span class="special">&lt;</span><span class="identifier">pchar</span><span class="special">&gt;</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h8"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.specification"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3" target="_top">3.3.
+              Path (rfc3986)</a>
+            </li></ul></div>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h9"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.see_also"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="encoded_segments.html" title="url::encoded_segments"><code class="computeroutput"><span class="identifier">encoded_segments</span></code></a>, <a class="link" href="segments.html" title="url::segments"><code class="computeroutput"><span class="identifier">segments</span></code></a>, <a class="link" href="set_encoded_path.html" title="url::set_encoded_path"><code class="computeroutput"><span class="identifier">set_encoded_path</span></code></a>, <a class="link" href="set_path.html" title="url::set_path"><code class="computeroutput"><span class="identifier">set_path</span></code></a>. Set the path. This function
+          sets the path to the string, which may be empty. Reserved characters in
+          the string are percent-escaped in the result.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h10"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.remarks0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.remarks0">Remarks</a>
+        </h6>
+<p>
+          The library may adjust the final result to ensure that no other parts of
+          the url is semantically affected.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h11"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.example0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.example0">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"http://www.example.com"</span> <span class="special">);</span>
+
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">set_path</span><span class="special">(</span> <span class="string">"path/to/file.txt"</span> <span class="special">);</span>
+
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"/path/to/file.txt"</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h12"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.complexity0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.complexity0">Complexity</a>
+        </h6>
+<p>
+          Linear in <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">()</span> <span class="special">+</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span></code>.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h13"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.exception_safety"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Strong guarantee. Calls to allocate may throw.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h14"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.parameters"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">s</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The string to set.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h15"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.bnf0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.bnf0">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">path</span>          <span class="special">=</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">abempty</span>    <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="string">"/"</span> <span class="keyword">or</span> <span class="identifier">is</span> <span class="identifier">empty</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">absolute</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="string">"/"</span> <span class="identifier">but</span> <span class="keyword">not</span> <span class="string">"//"</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">noscheme</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="identifier">a</span> <span class="identifier">non</span><span class="special">-</span><span class="identifier">colon</span> <span class="identifier">segment</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">rootless</span>   <span class="special">;</span> <span class="identifier">begins</span> <span class="identifier">with</span> <span class="identifier">a</span> <span class="identifier">segment</span>
+              <span class="special">/</span> <span class="identifier">path</span><span class="special">-</span><span class="identifier">empty</span>      <span class="special">;</span> <span class="identifier">zero</span> <span class="identifier">characters</span>
+
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">abempty</span>  <span class="special">=</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">absolute</span> <span class="special">=</span> <span class="string">"/"</span> <span class="special">[</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span> <span class="special">]</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">noscheme</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span><span class="special">-</span><span class="identifier">nc</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">rootless</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">-</span><span class="identifier">nz</span> <span class="special">*(</span> <span class="string">"/"</span> <span class="identifier">segment</span> <span class="special">)</span>
+<span class="identifier">path</span><span class="special">-</span><span class="identifier">empty</span>    <span class="special">=</span> <span class="number">0</span><span class="special">&lt;</span><span class="identifier">pchar</span><span class="special">&gt;</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h16"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.specification0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.specification0">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3" target="_top">3.3.
+              Path (rfc3986)</a>
+            </li></ul></div>
+<h6>
+<a name="url.ref.boost__urls__url.set_path.h17"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url.set_path.see_also0"></a></span><a class="link" href="set_path.html#url.ref.boost__urls__url.set_path.see_also0">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="encoded_segments.html" title="url::encoded_segments"><code class="computeroutput"><span class="identifier">encoded_segments</span></code></a>, <a class="link" href="segments.html" title="url::segments"><code class="computeroutput"><span class="identifier">segments</span></code></a>, <a class="link" href="set_encoded_path.html" title="url::set_encoded_path"><code class="computeroutput"><span class="identifier">set_encoded_path</span></code></a>, <a class="link" href="set_path_absolute.html" title="url::set_path_absolute"><code class="computeroutput"><span class="identifier">set_path_absolute</span></code></a>.
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="remove_port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_encoded_path.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

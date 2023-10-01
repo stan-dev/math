@@ -1,0 +1,157 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>static_url::set_host_ipv4</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__static_url.html" title="static_url">
+<link rel="prev" href="set_encoded_host_address.html" title="static_url::set_encoded_host_address">
+<link rel="next" href="set_host_ipv6.html" title="static_url::set_host_ipv6">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_encoded_host_address.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__static_url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_host_ipv6.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__static_url.set_host_ipv4"></a><a class="link" href="set_host_ipv4.html" title="static_url::set_host_ipv4">static_url::set_host_ipv4</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm65980"></a>
+        </p>
+<p>
+          Set the host to an address.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.synopsis"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">static_url</span><span class="special">&amp;</span>
+<span class="identifier">set_host_ipv4</span><span class="special">(</span>
+    <span class="identifier">ipv4_address</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">addr</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.description"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.description">Description</a>
+        </h6>
+<p>
+          The host is set to the specified IPv4 address. The host type is <a class="link" href="../boost__urls__host_type.html" title="host_type"><code class="computeroutput"><span class="identifier">host_type</span><span class="special">::</span><span class="identifier">ipv4</span></code></a>.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.example"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">url</span><span class="special">(</span><span class="string">"http://www.example.com"</span><span class="special">).</span><span class="identifier">set_host_ipv4</span><span class="special">(</span> <span class="identifier">ipv4_address</span><span class="special">(</span> <span class="string">"127.0.0.1"</span> <span class="special">)</span> <span class="special">).</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"http://127.0.0.1"</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.complexity"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.complexity">Complexity</a>
+        </h6>
+<p>
+          Linear in <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">()</span></code>.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.postconditions"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.postconditions">Postconditions</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">has_authority</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span> <span class="special">&amp;&amp;</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">host_ipv4_address</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">addr</span> <span class="special">&amp;&amp;</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">host_type</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">host_type</span><span class="special">::</span><span class="identifier">ipv4</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.exception_safety"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Strong guarantee. Calls to allocate may throw.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.parameters"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">addr</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The address to set.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.bnf"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">IPv4address</span> <span class="special">=</span> <span class="identifier">dec</span><span class="special">-</span><span class="identifier">octet</span> <span class="string">"."</span> <span class="identifier">dec</span><span class="special">-</span><span class="identifier">octet</span> <span class="string">"."</span> <span class="identifier">dec</span><span class="special">-</span><span class="identifier">octet</span> <span class="string">"."</span> <span class="identifier">dec</span><span class="special">-</span><span class="identifier">octet</span>
+
+<span class="identifier">dec</span><span class="special">-</span><span class="identifier">octet</span>   <span class="special">=</span> <span class="identifier">DIGIT</span>                 <span class="special">;</span> <span class="number">0</span><span class="special">-</span><span class="number">9</span>
+            <span class="special">/</span> <span class="special">%</span><span class="identifier">x31</span><span class="special">-</span><span class="number">39</span> <span class="identifier">DIGIT</span>         <span class="special">;</span> <span class="number">10</span><span class="special">-</span><span class="number">99</span>
+            <span class="special">/</span> <span class="string">"1"</span> <span class="number">2D</span><span class="identifier">IGIT</span>            <span class="special">;</span> <span class="number">100</span><span class="special">-</span><span class="number">199</span>
+            <span class="special">/</span> <span class="string">"2"</span> <span class="special">%</span><span class="identifier">x30</span><span class="special">-</span><span class="number">34</span> <span class="identifier">DIGIT</span>     <span class="special">;</span> <span class="number">200</span><span class="special">-</span><span class="number">249</span>
+            <span class="special">/</span> <span class="string">"25"</span> <span class="special">%</span><span class="identifier">x30</span><span class="special">-</span><span class="number">35</span>          <span class="special">;</span> <span class="number">250</span><span class="special">-</span><span class="number">255</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h8"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.specification"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <a href="https://en.wikipedia.org/wiki/IPv4" target="_top">IPv4 (Wikipedia)</a>
+            </li>
+<li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2" target="_top">3.2.2.
+              Host (rfc3986)</a>
+            </li>
+</ul></div>
+<h6>
+<a name="url.ref.boost__urls__static_url.set_host_ipv4.h9"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__static_url.set_host_ipv4.see_also"></a></span><a class="link" href="set_host_ipv4.html#url.ref.boost__urls__static_url.set_host_ipv4.see_also">See Also</a>
+        </h6>
+<p>
+          <a class="link" href="set_encoded_host.html" title="static_url::set_encoded_host"><code class="computeroutput"><span class="identifier">set_encoded_host</span></code></a>, <a class="link" href="set_encoded_host_address.html" title="static_url::set_encoded_host_address"><code class="computeroutput"><span class="identifier">set_encoded_host_address</span></code></a>, <a class="link" href="set_encoded_host_name.html" title="static_url::set_encoded_host_name"><code class="computeroutput"><span class="identifier">set_encoded_host_name</span></code></a>, <a class="link" href="set_host.html" title="static_url::set_host"><code class="computeroutput"><span class="identifier">set_host</span></code></a>, <a class="link" href="set_host_address.html" title="static_url::set_host_address"><code class="computeroutput"><span class="identifier">set_host_address</span></code></a>, <a class="link" href="set_host_ipv6.html" title="static_url::set_host_ipv6"><code class="computeroutput"><span class="identifier">set_host_ipv6</span></code></a>, <a class="link" href="set_host_ipvfuture.html" title="static_url::set_host_ipvfuture"><code class="computeroutput"><span class="identifier">set_host_ipvfuture</span></code></a>, <a class="link" href="set_host_name.html" title="static_url::set_host_name"><code class="computeroutput"><span class="identifier">set_host_name</span></code></a>.
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_encoded_host_address.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__static_url.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="set_host_ipv6.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

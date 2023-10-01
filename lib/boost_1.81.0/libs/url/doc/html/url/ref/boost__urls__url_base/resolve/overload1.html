@@ -1,0 +1,220 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url_base::resolve (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../resolve.html" title="url_base::resolve">
+<link rel="prev" href="../resolve.html" title="url_base::resolve">
+<link rel="next" href="overload2.html" title="url_base::resolve (2 of 2 overloads)">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../resolve.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../resolve.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="url.ref.boost__urls__url_base.resolve.overload1"></a><a class="link" href="overload1.html" title="url_base::resolve (1 of 2 overloads)">url_base::resolve
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Resolve a URL reference against a base URL.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h0"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.synopsis"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.synopsis">Synopsis</a>
+          </h6>
+<p>
+            Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url/url_base.hpp" target="_top">boost/url/url_base.hpp</a>&gt;</code>
+          </p>
+<pre class="programlisting"><span class="keyword">friend</span> <span class="identifier">result</span><span class="special">&lt;</span> <span class="keyword">void</span> <span class="special">&gt;</span>
+<span class="identifier">resolve</span><span class="special">(</span>
+    <span class="identifier">url_view_base</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">base</span><span class="special">,</span>
+    <span class="identifier">url_view_base</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ref</span><span class="special">,</span>
+    <span class="identifier">url_base</span><span class="special">&amp;</span> <span class="identifier">dest</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h1"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.description"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.description">Description</a>
+          </h6>
+<p>
+            This function attempts to resolve a URL reference <code class="computeroutput"><span class="identifier">ref</span></code>
+            against the base URL <code class="computeroutput"><span class="identifier">base</span></code>
+            in a manner similar to that of a web browser resolving an anchor tag.
+            The base URL must satisfy the <span class="emphasis"><em>URI</em></span> grammar. In other
+            words, it must contain a scheme. Relative references are only usable
+            when in the context of a base absolute URI. This process of resolving
+            a relative <span class="emphasis"><em>reference</em></span> within the context of a <span class="emphasis"><em>base</em></span>
+            URI is defined in detail in rfc3986 (see below). The resolution process
+            works as if the relative reference is appended to the base URI and the
+            result is normalized. Given the input base URL, this function resolves
+            the relative reference as if performing the following steps:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                Ensure the base URI has at least a scheme
+              </li>
+<li class="listitem">
+                Normalizing the reference path
+              </li>
+<li class="listitem">
+                Merge base and reference paths
+              </li>
+<li class="listitem">
+                Normalize the merged path
+              </li>
+</ul></div>
+<p>
+            This function places the result of the resolution into <code class="computeroutput"><span class="identifier">dest</span></code>, which can be any of the url containers
+            that inherit from <a class="link" href="../../boost__urls__url_base.html" title="url_base"><code class="computeroutput"><span class="identifier">url_base</span></code></a>. If an error occurs,
+            the contents of <code class="computeroutput"><span class="identifier">dest</span></code>
+            is unspecified and <code class="computeroutput"><span class="identifier">ec</span></code>
+            is set.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h2"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.example"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.example">Example</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">dest</span><span class="special">;</span>
+<span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+
+<span class="identifier">resolve</span><span class="special">(</span><span class="string">"/one/two/three"</span><span class="special">,</span> <span class="string">"four"</span><span class="special">,</span> <span class="identifier">dest</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">dest</span><span class="special">.</span><span class="identifier">str</span><span class="special">()</span> <span class="special">==</span> <span class="string">"/one/two/four"</span> <span class="special">);</span>
+
+<span class="identifier">resolve</span><span class="special">(</span><span class="string">"http://example.com/"</span><span class="special">,</span> <span class="string">"/one"</span><span class="special">,</span> <span class="identifier">dest</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">dest</span><span class="special">.</span><span class="identifier">str</span><span class="special">()</span> <span class="special">==</span> <span class="string">"http://example.com/one"</span> <span class="special">);</span>
+
+<span class="identifier">resolve</span><span class="special">(</span><span class="string">"http://example.com/one"</span><span class="special">,</span> <span class="string">"/two"</span><span class="special">,</span> <span class="identifier">dest</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">dest</span><span class="special">.</span><span class="identifier">str</span><span class="special">()</span> <span class="special">==</span> <span class="string">"http://example.com/two"</span> <span class="special">);</span>
+
+<span class="identifier">resolve</span><span class="special">(</span><span class="string">"http://a/b/c/d;p?q"</span><span class="special">,</span> <span class="string">"g#s"</span><span class="special">,</span> <span class="identifier">dest</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">dest</span><span class="special">.</span><span class="identifier">str</span><span class="special">()</span> <span class="special">==</span> <span class="string">"http://a/b/c/g#s"</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h3"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.bnf"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.bnf">BNF</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">absolute</span><span class="special">-</span><span class="identifier">URI</span>  <span class="special">=</span> <span class="identifier">scheme</span> <span class="string">":"</span> <span class="identifier">hier</span><span class="special">-</span><span class="identifier">part</span> <span class="special">[</span> <span class="string">"?"</span> <span class="identifier">query</span> <span class="special">]</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h4"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.exception_safety"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.exception_safety">Exception
+            Safety</a>
+          </h6>
+<p>
+            Basic guarantee. Calls to allocate may throw.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h5"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.return_value"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.return_value">Return
+            Value</a>
+          </h6>
+<p>
+            An empty <a class="link" href="../../boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a>
+            upon success, otherwise an error code if <code class="computeroutput"><span class="special">!</span><span class="identifier">base</span><span class="special">.</span><span class="identifier">has_scheme</span><span class="special">()</span></code>.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h6"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.parameters"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.parameters">Parameters</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Name
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Description
+                    </p>
+                  </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">base</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      The base URL to resolve against.
+                    </p>
+                  </td>
+</tr>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">ref</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      The URL reference to resolve.
+                    </p>
+                  </td>
+</tr>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">dest</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      The container where the result is written, upon success.
+                    </p>
+                  </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h7"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.specification"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.specification">Specification</a>
+          </h6>
+<p>
+            <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5" target="_top">5.
+            Reference Resolution (rfc3986)</a>
+          </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.resolve.overload1.h8"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__url_base.resolve.overload1.see_also"></a></span><a class="link" href="overload1.html#url.ref.boost__urls__url_base.resolve.overload1.see_also">See
+            Also</a>
+          </h6>
+<p>
+            <a class="link" href="../../boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>,
+            <a class="link" href="../../boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>.
+          </p>
+<p>
+            Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url.hpp" target="_top">boost/url.hpp</a>&gt;</code>
+          </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../resolve.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../resolve.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

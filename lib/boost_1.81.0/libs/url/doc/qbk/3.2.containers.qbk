@@ -1,0 +1,945 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Containers]
+
+Three containers are provided for interacting with URLs:
+
+[table Types [
+    [Name]
+    [Description]
+][
+    [__url__]
+    [
+    A valid, modifiable URL which performs dynamic memory allocation
+    to store the character buffer.
+    ]
+][
+    [__url_view__]
+    [
+    A read-only reference to a character buffer containing a valid URL.
+    The view does not retain ownership of the underlying character buffer;
+    instead, it is managed by the caller.
+    ]
+][
+    [__static_url__]
+    [
+    A valid, modifiable URL which stores the character buffer
+    inside the class itself. This is a class template, where
+    the maximum buffer size is a non-type template parameter.
+    ]
+]]
+
+Inheritance provides the observer and modifier
+public members; class
+[link url.ref.boost__urls__url_view_base `url_view_base`]
+has all the observers, while class
+[link url.ref.boost__urls__url_base `url_base`]
+has all the modifiers.
+Although the members are public, these base classes can only be
+constructed by the library as needed to support the implementation.
+The class hierarchy looks like this:
+
+[$url/images/ClassHierarchy.svg]
+
+Throughout this documentation and especially below, when an observer
+is discussed, it is applicable to all three derived containers
+shown in the table above.
+When a modifier is discussed, it is relevant to the containers
+__url__ and __static_url__.
+The tables and exposition which follow describe the available
+observers and modifiers, along with notes relating important
+behaviors or special requirements.
+
+[/-----------------------------------------------------------------------------]
+
+[heading Scheme]
+
+The scheme is represented as a case-insensitive string, along with
+an enumeration constant which acts as a numeric indentifier when the
+string matches one of the well-known schemes: http, https, ws, wss,
+file, and ftp. Characters in the scheme are never escaped; only
+letters and numbers are allowed, and the first character must be
+a letter.
+
+These members are used to inspect and modify the scheme:
+
+[table Scheme Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_scheme `has_scheme`]]
+    [`bool`]
+    [
+    Return `true` if a scheme is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.scheme `scheme`]]
+    [__string_view__]
+    [
+    Return the scheme as a string, or the empty string if there is no scheme.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.scheme_id `scheme_id`]]
+    [[link url.ref.boost__urls__scheme `scheme`]]
+    [
+    Return the scheme as an enumerated constant, the value
+    [link url.ref.boost__urls__scheme `scheme::unknown`]
+    if the scheme is not one of the well-known schemes, or the value
+    [link url.ref.boost__urls__scheme `scheme::none`]
+    if there is no scheme.
+    ]
+]]
+
+[table Scheme Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_scheme `set_scheme`]]
+    [__string_view__]
+    [
+    Set the scheme to a string.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_scheme_id `set_scheme_id`]]
+    [[link url.ref.boost__urls__scheme `scheme`]]
+    [
+    Set the scheme to a well-known scheme constant.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_scheme `remove_scheme`]]
+    []
+    [
+    Remove the scheme if present.
+    This includes the trailing colon (":").
+    ]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Authority]
+
+The authority is an optional part whose presence is indicated by
+an unescaped double slash ("//") immediately following the scheme,
+or at the beginning if the scheme is not present. It contains
+three components: an optional userinfo, the host, and an optional port.
+The authority in this diagram has all three components:
+
+[$url/images/AuthorityDiagram.svg]
+
+An empty authority, corresponding to just a zero-length host component,
+is distinct from the absence of an authority.
+These members are used to inspect and modify the authority as a whole string:
+
+[table Authority Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_authority `has_authority`]]
+    [`bool`]
+    [
+    Return `true` if an authority is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.authority `authority`]]
+    [__authority_view__]
+    [
+    Return the authority as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_authority `encoded_authority`]]
+    [__pct_string_view__]
+    [
+    Return the authority as a read-only view.
+    ]
+]]
+
+[table Authority Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_userinfo `set_encoded_authority`]]
+    [__pct_string_view__]
+    [
+    Set the authority to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_authority `remove_authority`]]
+    []
+    [
+    Remove the authority if present.
+    This includes the leading double slash ("//").
+    ]
+]]
+
+The paragraphs and tables that follow describe how to interact with the
+individual parts of the authority.
+
+[/-----------------------------------------------------------------------------]
+
+[heading Userinfo]
+
+An authority may have an optional userinfo, which consists of a user and
+optional password. The presence of the userinfo is indicated by an unescaped
+at sign ("@") which comes afterwards. The password if present is prefixed
+by an unescaped colon (":"). An empty password string is distinct from
+no password. This table shows various URLs with userinfos, and the
+corresponding user and password:
+
+[table Userinfo Examples [
+    [URL]
+    [User]
+    [Password]
+    [Notes]
+][
+    [`//user:pass@`]
+    ["user"]
+    ["pass"]
+    [
+    User and password
+    ]
+][
+    [`//@`]
+    [""]
+    []
+    [
+    Empty user, no password
+    ]
+][
+    [`//user@`]
+    ["user"]
+    []
+    [
+    No password
+    ]
+][
+    [`//user:@`]
+    ["user"]
+    [""]
+    [
+    Empty password
+    ]
+][
+    [`//:pass@`]
+    [""]
+    ["pass"]
+    [
+    Empty user
+    ]
+][
+    [`//:@`]
+    [""]
+    [""]
+    [
+    Empty user and password
+    ]
+]]
+
+[caution
+    Although the specification allows the format username:password,
+    the password component is deprecated and should be avoided if
+    possible or otherwise used with care. It is not recommended to
+    transfer password data through URLs unless it is an empty
+    string indicating no password.
+]
+
+These members are used to inspect and modify the userinfo:
+
+[table Userinfo Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_userinfo `has_userinfo`]]
+    [`bool`]
+    [
+    Return `true` if a userinfo is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.has_password `has_password`]]
+    [`bool`]
+    [
+    Return `true` if a password is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.user `user`]]
+    [__std_string__]
+    [
+    Return the user as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.password `password`]]
+    [__std_string__]
+    [
+    Return the password as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.userinfo `userinfo`]]
+    [__std_string__]
+    [
+    Return the userinfo as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_user `encoded_user`]]
+    [__pct_string_view__]
+    [
+    Return the user.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_password `encoded_password`]]
+    [__pct_string_view__]
+    [
+    Return the password, or an empty string if no password is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_userinfo `encoded_userinfo`]]
+    [__pct_string_view__]
+    [
+    Return the userinfo.
+    ]
+]]
+
+[table Userinfo Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_user `set_user`]]
+    [__string_view__]
+    [
+    Set the user to the string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_user `set_password`]]
+    [__string_view__]
+    [
+    Set the password to the string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_userinfo `set_userinfo`]]
+    [__string_view__]
+    [
+    Set the userinfo to the string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_user `set_encoded_user`]]
+    [__pct_string_view__]
+    [
+    Set the user to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_password `set_encoded_password`]]
+    [__pct_string_view__]
+    [
+    Set the password to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_userinfo `set_encoded_userinfo`]]
+    [__pct_string_view__]
+    [
+    Set the userinfo to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_password `remove_password`]]
+    []
+    [
+    Remove the password if present.
+    This includes the password separator colon (":").
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_userinfo `remove_userinfo`]]
+    []
+    [
+    Remove the userinfo if present.
+    This includes the user and password separator colon (":")
+    and the trailing at sign ("@").
+    ]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Host]
+
+The host portion of the authority is a string which can be a host name,
+an IPv4 address, an IPv6 address, or an IPvFuture address depending on
+the contents. The host is always defined if an authority is present,
+even if the resulting host string would be zero length.
+
+These members are used to inspect and modify the host:
+
+[table Host Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.host_type `host_type`]]
+    [[link url.ref.boost__urls__host_type `host_type`]]
+    [
+    Return the host type enumeration constant.
+    If there is no authority, this is the value
+    [link url.ref.boost__urls__host_type `host_type::none`].
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host `host`]]
+    [__std_string__]
+    [
+    Return the host as a decoded string, or an empty string if there is
+    no authority.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host_address `host_address`]]
+    [__std_string__]
+    [
+    Return the host as a decoded string.
+    If the host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv6`] or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`],
+    the enclosing brackets are removed.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host_name `host_name`]]
+    [__std_string__]
+    [
+    Return the host name as a decoded string, or the empty string if
+    the host type is not
+    [link url.ref.boost__urls__host_type `host_type::name`].
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host_ipv4_address `host_ipv4_address`]]
+    [__ipv4_address__]
+    [
+    Return the host as an __ipv4_address__.
+    If the host type is not
+    [link url.ref.boost__urls__host_type `host_type::ipv4`],
+    a default-constructed value is returned.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host_ipv6_address `host_ipv6_address`]]
+    [__ipv6_address__]
+    [
+    Return the host as an __ipv6_address__.
+    If the host type is not
+    [link url.ref.boost__urls__host_type `host_type::ipv6`],
+    a default-constructed value is returned.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.host_ipvfuture `host_ipvfuture`]]
+    [__string_view__]
+    [
+    Return the host as a string without enclosing brackets if
+    the host type is
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`],
+    otherwise return an empty string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_host `encoded_host`]]
+    [__pct_string_view__]
+    [
+    Return the host, or an empty string if there is no authority.
+    This includes enclosing brackets if the host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv6`] or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`].
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_host_address `encoded_host_address`]]
+    [__pct_string_view__]
+    [
+    Return the host.
+    If the host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv6`] or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`],
+    the enclosing brackets are removed.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_host_name `encoded_host_name`]]
+    [__pct_string_view__]
+    [
+    Return the host name as a string. If the host type is not
+    [link url.ref.boost__urls__host_type `host_type::name`],
+    an empty string is returned.
+    ]
+]]
+
+[table Host Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_host `set_host`]]
+    [__string_view__]
+    [
+    Set the host to the string, depending on the contents. If
+    the string is a valid IPv4 address, a valid IPv6 address
+    enclosed in brackets, or a valid IPvFuture address enclosed
+    in brackets then the resulting host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv4`],
+    [link url.ref.boost__urls__host_type `host_type::ipv6`], or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
+    respectively. Otherwise, the host type is
+    [link url.ref.boost__urls__host_type `host_type::name`], and
+    any reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_host_address `set_host_address`]]
+    [__string_view__]
+    [
+    Set the host to the string, depending on the contents. If
+    the string is a valid IPv4 address, a valid IPv6 address, or
+    a valid IPvFuture address then the resulting host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv4`],
+    [link url.ref.boost__urls__host_type `host_type::ipv6`], or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
+    respectively. Otherwise, the host type is
+    [link url.ref.boost__urls__host_type `host_type::name`], and
+    any reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_host_ipv4 `set_host_ipv4`]]
+    [__ipv4_address__]
+    [
+    Set the host to the IPv4 address. The host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv4`].
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_host_ipv6 `set_host_ipv6`]]
+    [__ipv6_address__]
+    [
+    Set the host to the IPv6 address. The host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv6`].
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_host_ipvfuture `set_host_ipvfuture`]]
+    [__string_view__]
+    [
+    Set the host to the IPvFuture address, which should not include
+    square brackets. The host type is
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`].
+    If the string is not a valid IPvFuture address, an exception
+    is thrown.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_host_name `set_host_name`]]
+    [__string_view__]
+    [
+    Set the host to the string.
+    Any reserved characters are percent-escaped automatically.
+    The host type is
+    [link url.ref.boost__urls__host_type `host_type::name`].
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_host `set_encoded_host`]]
+    [__pct_string_view__]
+    [
+    Set the host to the string, depending on the contents. If
+    the string is a valid IPv4 address, a valid IPv6 address
+    enclosed in brackets, or a valid IPvFuture address enclosed
+    in brackets then the resulting host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv4`],
+    [link url.ref.boost__urls__host_type `host_type::ipv6`], or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
+    respectively. Otherwise, the host type is
+    [link url.ref.boost__urls__host_type `host_type::name`], the
+    string may contain percent escapes, and any reserved characters
+    are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_host_address `set_encoded_host_address`]]
+    [__pct_string_view__]
+    [
+    Set the host to the string, depending on the contents. If
+    the string is a valid IPv4 address, a valid IPv6 address, or
+    a valid IPvFuture address then the resulting host type is
+    [link url.ref.boost__urls__host_type `host_type::ipv4`],
+    [link url.ref.boost__urls__host_type `host_type::ipv6`], or
+    [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
+    respectively. Otherwise, the host type is
+    [link url.ref.boost__urls__host_type `host_type::name`], the
+    string may contain percent escapes, and and
+    any reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_host_name `set_encoded_host_name`]]
+    [__pct_string_view__]
+    [
+    Set the host to the string, which may contain percent escapes.
+    Any reserved characters are percent-escaped automatically.
+    The host type is
+    [link url.ref.boost__urls__host_type `host_type::name`].
+    ]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Port]
+
+The port is a string of digits, possibly of zero length. The presence of
+a port is indicated by a colon prefix (":") appearing after the host and
+userinfo. A zero length port string is distinct from the absence of a port.
+The library represents the port with both a decimal string and an unsigned
+16-bit integer. If the numeric value of the string would exceed the range
+of the integer, then it is mapped to the number zero.
+
+These members are used to inspect and modify the port:
+
+[table Port Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_port `has_port`]]
+    [`bool`]
+    [
+    Return `true` if a port is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.port `port`]]
+    [__string_view__]
+    [
+    Return the port as a string, or an empty string if there is no port.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.port_number `port_number`]]
+    [`std::uint16_t`]
+    [
+    Return the port as an unsigned integer. If the number would be
+    greater than 65535, then zero is returned.
+    ]
+]]
+
+[table Port Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_port `set_port`]]
+    [__string_view__]
+    [
+    Set the port to a string.
+    If the string contains any character which is not a digit,
+    an exception is thrown.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_port_number `set_port_number`]]
+    [`std::uint16_t`]
+    [
+    Set the port to a number.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_port `remove_port`]]
+    []
+    [
+    Remove the port if present.
+    This does not remove the authority.
+    ]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Path]
+
+Depending on the scheme, the path may be treated as a string,
+or as a hierarchically structured sequence of segments delimited
+by unescaped forward-slashes ("/"). A path is ['always] defined
+for every URL, even if it is the empty string.
+
+These members are used to inspect and modify the path:
+
+[table Path Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.is_path_absolute `is_path_absolute`]]
+    [`bool`]
+    [
+    Return `true` if the path starts with a forward slash ("/").
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.path `path`]]
+    [__std_string__]
+    [
+    Return the path as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_path `encoded_path`]]
+    [__pct_string_view__]
+    [
+    Return the path.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.segments `segments`]]
+    [__segments_view__]
+    [
+    Return the path as a range of decoded segments.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]]
+    [__segments_encoded_view__]
+    [
+    Return the path as a range of segments.
+    ]
+]]
+
+[table Path Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_path `set_path`]]
+    [__string_view__]
+    [
+    Set the path to the string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_path_absolute `set_path_absolute`]]
+    [`bool`]
+    [
+    Set whether the path is absolute.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_path `set_encoded_path`]]
+    [__pct_string_view__]
+    [
+    Set the path to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.segments `segments`]]
+    [__segments_ref__]
+    [
+    Return the path as a modifiable range of decoded segments.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.encoded_segments `encoded_segments`]]
+    [__segments_encoded_ref__]
+    [
+    Return the path as a modifiable range of segments.
+    ]
+]]
+
+The segments-based containers
+__segments_view__, __segments_ref__,
+__segments_encoded_view__, and __segments_encoded_ref__
+are discussed in a later section.
+
+[/-----------------------------------------------------------------------------]
+
+[heading Query]
+
+Depending on the scheme, the query may be treated as a string,
+or as a structured series of key-value pairs (called "params")
+separated by unescaped ampersands ("&"). The query is optional;
+an empty query string is distinct from no query.
+
+These members are used to inspect and modify the query:
+
+[table Query Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_query `has_query`]]
+    [`bool`]
+    [
+    Return `true` if a query is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.query `query`]]
+    [__std_string__]
+    [
+    Return the query as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_query `encoded_query`]]
+    [__pct_string_view__]
+    [
+    Return the query.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.params `params`]]
+    [__params_view__]
+    [
+    Return the query as a read-only range of decoded params.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_params `encoded_params`]]
+    [__params_encoded_view__]
+    [
+    Return the query as a read-only range of params.
+    ]
+]]
+
+[table Query Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_query `set_query`]]
+    [__string_view__]
+    [
+    Set the query to a string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_query `set_encoded_query`]]
+    [__pct_string_view__]
+    [
+    Set the query to a string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.params `params`]]
+    [__params_ref__]
+    [
+    Return the query as a modifiable range of decoded params.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.encoded_params `encoded_params`]]
+    [__params_encoded_ref__]
+    [
+    Return the query as a modifiable range of params.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_query `remove_query`]]
+    []
+    [
+    Remove the query.
+    This also removes the leading question mark ("?") if present.
+    ]
+]]
+
+The params-based containers
+__params_view__, __params_ref__,
+__params_encoded_view__, and __params_encoded_ref__
+are discussed in a later section.
+
+[/-----------------------------------------------------------------------------]
+
+[heading Fragment]
+
+The fragment is treated as a string; there is no common,
+structured interpretation of the contents.
+
+These members are used to inspect and modify the fragment:
+
+[table Fragment Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.has_fragment `has_fragment`]]
+    [`bool`]
+    [
+    Return `true` if a fragment is present.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.fragment `fragment`]]
+    [__std_string__]
+    [
+    Return the fragment as a decoded string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.fragment `encoded_fragment`]]
+    [__pct_string_view__]
+    [
+    Return the fragment.
+    ]
+]]
+
+[table Fragment Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.set_query `set_fragment`]]
+    [__string_view__]
+    [
+    Set the fragment to the string.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.set_encoded_fragment `set_encoded_fragment`]]
+    [__pct_string_view__]
+    [
+    Set the fragment to the string, which may contain percent escapes.
+    Reserved characters are percent-escaped automatically.
+    ]
+][
+    [[link url.ref.boost__urls__url_base.remove_fragment `remove_fragment`]]
+    []
+    [
+    Remove the fragment.
+    This also removes the leading pound sign ("#") if present.
+    ]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Compound Fields]
+
+For convenience, these observers and modifiers for aggregated subsets
+of the URL are provided:
+
+[table Compound Field Observers [
+    [Function]
+    [Return Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_host_and_port `encoded_host_and_port`]]
+    [__pct_string_view__]
+    [
+    Return the host and port as a string with percent escapes.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_origin `encoded_origin`]]
+    [__pct_string_view__]
+    [
+    Return only the scheme and authority parts as an individual string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_resource `encoded_resource`]]
+    [__pct_string_view__]
+    [
+    Return only the path, query, and fragment parts as an individual string.
+    ]
+][
+    [[link url.ref.boost__urls__url_view_base.encoded_target `encoded_target`]]
+    [__pct_string_view__]
+    [
+    Return only the path and query parts as an individual string.
+    ]
+]]
+
+[table Compound Field Modifiers [
+    [Function]
+    [Parameters]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_base.remove_origin `remove_origin`]]
+    []
+    [
+    Remove the scheme and authority parts from the URL.
+    ]
+]]
+
+[endsect]

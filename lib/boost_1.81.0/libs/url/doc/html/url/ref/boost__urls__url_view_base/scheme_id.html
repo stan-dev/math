@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url_view_base::scheme_id</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__url_view_base.html" title="url_view_base">
+<link rel="prev" href="scheme.html" title="url_view_base::scheme">
+<link rel="next" href="has_authority.html" title="url_view_base::has_authority">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="scheme.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url_view_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="has_authority.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__url_view_base.scheme_id"></a><a class="link" href="scheme_id.html" title="url_view_base::scheme_id">url_view_base::scheme_id</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm132089"></a>
+        </p>
+<p>
+          Return the scheme.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.synopsis"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">urls</span><span class="special">::</span><span class="identifier">scheme</span>
+<span class="identifier">scheme_id</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.description"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.description">Description</a>
+        </h6>
+<p>
+          This function returns a value which depends on the scheme in the url:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              If the scheme is a well-known scheme, corresponding value from the
+              enumeration <a class="link" href="../boost__urls__scheme.html" title="scheme"><code class="computeroutput"><span class="identifier">urls</span><span class="special">::</span><span class="identifier">scheme</span></code></a> is returned.
+            </li>
+<li class="listitem">
+              If a scheme is present but is not a well-known scheme, the value returned
+              is <a class="link" href="../boost__urls__scheme.html" title="scheme"><code class="computeroutput"><span class="identifier">urls</span><span class="special">::</span><span class="identifier">scheme</span><span class="special">::</span><span class="identifier">unknown</span></code></a>.
+            </li>
+<li class="listitem">
+              Otherwise, if the scheme is absent the value returned is <a class="link" href="../boost__urls__scheme.html" title="scheme"><code class="computeroutput"><span class="identifier">urls</span><span class="special">::</span><span class="identifier">scheme</span><span class="special">::</span><span class="identifier">none</span></code></a>.
+            </li>
+</ul></div>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.example"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">url_view</span><span class="special">(</span> <span class="string">"wss://www.example.com/crypto.cgi"</span> <span class="special">).</span><span class="identifier">scheme_id</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">scheme</span><span class="special">::</span><span class="identifier">wss</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.complexity"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.complexity">Complexity</a>
+        </h6>
+<p>
+          Constant.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.exception_safety"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Throws nothing.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.bnf"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">URI</span>             <span class="special">=</span> <span class="identifier">scheme</span> <span class="string">":"</span> <span class="identifier">hier</span><span class="special">-</span><span class="identifier">part</span> <span class="special">[</span> <span class="string">"?"</span> <span class="identifier">query</span> <span class="special">]</span> <span class="special">[</span> <span class="string">"#"</span> <span class="identifier">fragment</span> <span class="special">]</span>
+
+<span class="identifier">absolute</span><span class="special">-</span><span class="identifier">URI</span>    <span class="special">=</span> <span class="identifier">scheme</span> <span class="string">":"</span> <span class="identifier">hier</span><span class="special">-</span><span class="identifier">part</span> <span class="special">[</span> <span class="string">"?"</span> <span class="identifier">query</span> <span class="special">]</span>
+
+<span class="identifier">scheme</span>          <span class="special">=</span> <span class="identifier">ALPHA</span> <span class="special">*(</span> <span class="identifier">ALPHA</span> <span class="special">/</span> <span class="identifier">DIGIT</span> <span class="special">/</span> <span class="string">"+"</span> <span class="special">/</span> <span class="string">"-"</span> <span class="special">/</span> <span class="string">"."</span> <span class="special">)</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.specification"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1" target="_top">3.1.
+              Scheme (rfc3986)</a>
+            </li></ul></div>
+<h6>
+<a name="url.ref.boost__urls__url_view_base.scheme_id.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_view_base.scheme_id.see_also"></a></span><a class="link" href="scheme_id.html#url.ref.boost__urls__url_view_base.scheme_id.see_also">See Also</a>
+        </h6>
+<p>
+          <a class="link" href="has_scheme.html" title="url_view_base::has_scheme"><code class="computeroutput"><span class="identifier">has_scheme</span></code></a>, <a class="link" href="scheme.html" title="url_view_base::scheme"><code class="computeroutput"><span class="identifier">scheme</span></code></a>.
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="scheme.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url_view_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="has_authority.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

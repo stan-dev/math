@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>experimental::parallel_group::signature</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../experimental__parallel_group.html" title="experimental::parallel_group">
+<link rel="prev" href="parallel_group.html" title="experimental::parallel_group::parallel_group">
+<link rel="next" href="../experimental__promise.html" title="experimental::promise">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parallel_group.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../experimental__parallel_group.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../experimental__promise.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.reference.experimental__parallel_group.signature"></a><a class="link" href="signature.html" title="experimental::parallel_group::signature">experimental::parallel_group::signature</a>
+</h4></div></div></div>
+<p>
+          <a class="indexterm" name="boost_asio.indexterm.experimental__parallel_group.signature"></a> 
+The
+          completion signature for the group of operations.
+        </p>
+<pre class="programlisting"><span class="keyword">typedef</span> <span class="identifier">detail</span><span class="special">::</span><span class="identifier">parallel_group_signature</span><span class="special">&lt;</span> <span class="keyword">sizeof</span><span class="special">...(</span><span class="identifier">Ops</span><span class="special">),</span> <span class="keyword">typename</span> <span class="identifier">completion_signature_of</span><span class="special">&lt;</span> <span class="identifier">Ops</span> <span class="special">&gt;::</span><span class="identifier">type</span><span class="special">...&gt;::</span><span class="identifier">type</span> <span class="identifier">signature</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="boost_asio.reference.experimental__parallel_group.signature.h0"></a>
+          <span class="phrase"><a name="boost_asio.reference.experimental__parallel_group.signature.types"></a></span><a class="link" href="signature.html#boost_asio.reference.experimental__parallel_group.signature.types">Types</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <a class="link" href="../completion_signature_of/type.html" title="completion_signature_of::type"><span class="bold"><strong>type</strong></span></a>
+                  </p>
+                </td>
+<td>
+                </td>
+</tr></tbody>
+</table></div>
+<p>
+          Class template <code class="computeroutput"><span class="identifier">completion_signature_of</span></code>
+          is a trait with a member type alias <code class="computeroutput"><span class="identifier">type</span></code>
+          that denotes the completion signature of the asynchronous operation initiated
+          by the expression <code class="computeroutput"><span class="identifier">T</span><span class="special">(</span><span class="identifier">Args</span><span class="special">...,</span> <span class="identifier">token</span><span class="special">)</span></code>
+          operation, where <code class="computeroutput"><span class="identifier">token</span></code>
+          is an unspecified completion token type. If the asynchronous operation
+          does not have exactly one completion signature, the instantion of the trait
+          is well-formed but the member type alias <code class="computeroutput"><span class="identifier">type</span></code>
+          is omitted. If the expression <code class="computeroutput"><span class="identifier">T</span><span class="special">(</span><span class="identifier">Args</span><span class="special">...,</span> <span class="identifier">token</span><span class="special">)</span></code> is not an asynchronous operation then
+          use of the trait is ill-formed.
+        </p>
+<h6>
+<a name="boost_asio.reference.experimental__parallel_group.signature.h1"></a>
+          <span class="phrase"><a name="boost_asio.reference.experimental__parallel_group.signature.requirements"></a></span><a class="link" href="signature.html#boost_asio.reference.experimental__parallel_group.signature.requirements">Requirements</a>
+        </h6>
+<p>
+          <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/experimental/parallel_group.hpp</code>
+        </p>
+<p>
+          <span class="emphasis"><em>Convenience header: </em></span>None
+        </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="parallel_group.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../experimental__parallel_group.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../experimental__promise.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

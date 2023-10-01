@@ -1,0 +1,439 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>segments_encoded_view</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__urls__segments_encoded_ref/max_size.html" title="segments_encoded_ref::max_size">
+<link rel="next" href="boost__urls__segments_encoded_view/parse_path.html" title="segments_encoded_view::parse_path">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__urls__segments_encoded_ref/max_size.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__urls__segments_encoded_view/parse_path.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="url.ref.boost__urls__segments_encoded_view"></a><a class="link" href="boost__urls__segments_encoded_view.html" title="segments_encoded_view">segments_encoded_view</a>
+</h4></div></div></div>
+<p>
+        A view representing path segments in a URL.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h0"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.synopsis"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url/segments_encoded_view.hpp" target="_top">boost/url/segments_encoded_view.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">segments_encoded_view</span> <span class="special">:</span>
+    <span class="keyword">public</span> <span class="identifier">segments_encoded_base</span>
+</pre>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h1"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.types"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/const_iterator.html" title="segments_encoded_view::const_iterator">const_iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A Bidirectional iterator to a path segment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/const_reference.html" title="segments_encoded_view::const_reference">const_reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/difference_type.html" title="segments_encoded_view::difference_type">difference_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A signed integer type used to represent differences.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/iterator.html" title="segments_encoded_view::iterator">iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A Bidirectional iterator to a path segment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/reference.html" title="segments_encoded_view::reference">reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/size_type.html" title="segments_encoded_view::size_type">size_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  An unsigned integer type used to represent size.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/value_type.html" title="segments_encoded_view::value_type">value_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The value type.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h2"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.member_functions"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/back.html" title="segments_encoded_view::back">back</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the last segment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/begin.html" title="segments_encoded_view::begin">begin</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return an iterator to the beginning.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/buffer.html" title="segments_encoded_view::buffer">buffer</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the referenced character buffer.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/empty.html" title="segments_encoded_view::empty">empty</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return true if there are no segments.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/end.html" title="segments_encoded_view::end">end</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return an iterator to the end.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/front.html" title="segments_encoded_view::front">front</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the first segment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/is_absolute.html" title="segments_encoded_view::is_absolute">is_absolute</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns true if this references an absolute path.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/operator_eq_.html" title="segments_encoded_view::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/operator_segments_view.html" title="segments_encoded_view::operator segments_view">operator
+                  segments_view</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Conversion.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/segments_encoded_view.html" title="segments_encoded_view::segments_encoded_view">segments_encoded_view</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/size.html" title="segments_encoded_view::size">size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the number of segments.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h3"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.static_member_functions"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.static_member_functions">Static
+        Member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/max_size.html" title="segments_encoded_view::max_size">max_size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Return the maximum number of characters possible.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h4"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.friends"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.friends">Friends</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__urls__segments_encoded_view/parse_path.html" title="segments_encoded_view::parse_path">parse_path</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Parse a string and return an encoded segment view.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h5"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.description"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.description">Description</a>
+      </h5>
+<p>
+        Objects of this type are used to interpret the path as a bidirectional view
+        of segment strings. The view does not retain ownership of the elements and
+        instead references the original character buffer. The caller is responsible
+        for ensuring that the lifetime of the buffer extends until it is no longer
+        referenced.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h6"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.example"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.example">Example</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"/path/to/file.txt"</span> <span class="special">);</span>
+
+<span class="identifier">segments_encoded_view</span> <span class="identifier">ps</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">();</span>
+
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">ps</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">().</span><span class="identifier">data</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">().</span><span class="identifier">data</span><span class="special">()</span> <span class="special">);</span>
+</pre>
+<p>
+        Strings produced when elements are returned have type <a class="link" href="boost__urls__param_pct_view.html" title="param_pct_view"><code class="computeroutput"><span class="identifier">param_pct_view</span></code></a> and represent encoded
+        strings. Strings passed to member functions may contain percent escapes,
+        and throw exceptions on invalid inputs.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h7"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.iterator_invalidation"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.iterator_invalidation">Iterator
+        Invalidation</a>
+      </h5>
+<p>
+        Changes to the underlying character buffer can invalidate iterators which
+        reference it.
+      </p>
+<h5>
+<a name="url.ref.boost__urls__segments_encoded_view.h8"></a>
+        <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_view.see_also"></a></span><a class="link" href="boost__urls__segments_encoded_view.html#url.ref.boost__urls__segments_encoded_view.see_also">See
+        Also</a>
+      </h5>
+<p>
+        <a class="link" href="boost__urls__segments_view.html" title="segments_view"><code class="computeroutput"><span class="identifier">segments_view</span></code></a>,
+        <a class="link" href="boost__urls__segments_encoded_ref.html" title="segments_encoded_ref"><code class="computeroutput"><span class="identifier">segments_encoded_ref</span></code></a>,
+        <a class="link" href="boost__urls__segments_ref.html" title="segments_ref"><code class="computeroutput"><span class="identifier">segments_ref</span></code></a>.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/url/blob/master/include/boost/url.hpp" target="_top">boost/url.hpp</a>&gt;</code>
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__urls__segments_encoded_ref/max_size.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__urls__segments_encoded_view/parse_path.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

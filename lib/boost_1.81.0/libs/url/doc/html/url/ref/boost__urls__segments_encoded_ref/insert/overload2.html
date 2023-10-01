@@ -1,0 +1,193 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>segments_encoded_ref::insert (2 of 3 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../insert.html" title="segments_encoded_ref::insert">
+<link rel="prev" href="overload1.html" title="segments_encoded_ref::insert (1 of 3 overloads)">
+<link rel="next" href="overload3.html" title="segments_encoded_ref::insert (3 of 3 overloads)">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../insert.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2"></a><a class="link" href="overload2.html" title="segments_encoded_ref::insert (2 of 3 overloads)">segments_encoded_ref::insert
+          (2 of 3 overloads)</a>
+</h6></div></div></div>
+<p>
+            Insert segments.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h0"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.synopsis"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">iterator</span>
+<span class="identifier">insert</span><span class="special">(</span>
+    <span class="identifier">iterator</span> <span class="identifier">before</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">pct_string_view</span> <span class="special">&gt;</span> <span class="identifier">init</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h1"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.description"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.description">Description</a>
+          </h6>
+<p>
+            This function inserts the segments in an initializer list before the
+            specified position. Reserved characters in the list are automatically
+            escaped. Escapes in the list are preserved.
+          </p>
+<p>
+            All iterators that are equal to <code class="computeroutput"><span class="identifier">before</span></code>
+            or come after are invalidated.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h2"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.remarks"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.remarks">Remarks</a>
+          </h6>
+<p>
+            None of the character buffers referenced by the list may overlap the
+            character buffer of the underlying url, or else the behavior is undefined.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h3"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.example"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.example">Example</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"/file.txt"</span> <span class="special">);</span>
+
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">().</span><span class="identifier">insert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">().</span><span class="identifier">begin</span><span class="special">(),</span> <span class="special">{</span> <span class="string">"path"</span><span class="special">,</span> <span class="string">"to"</span> <span class="special">}</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h4"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.complexity"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.complexity">Complexity</a>
+          </h6>
+<p>
+            Linear in <code class="computeroutput"><span class="identifier">init</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">+</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">url</span><span class="special">().</span><span class="identifier">encoded_resource</span><span class="special">().</span><span class="identifier">size</span><span class="special">()</span></code>.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h5"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.exception_safety"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.exception_safety">Exception
+            Safety</a>
+          </h6>
+<p>
+            Strong guarantee. Calls to allocate may throw. Exceptions thrown on invalid
+            input.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h6"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.exceptions"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.exceptions">Exceptions</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Type
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Thrown On
+                    </p>
+                  </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">system_error</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      The list contains an invalid percent-encoding.
+                    </p>
+                  </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h7"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.return_value"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.return_value">Return
+            Value</a>
+          </h6>
+<p>
+            An iterator to the first element inserted, or <code class="computeroutput"><span class="identifier">before</span></code>
+            if <code class="computeroutput"><span class="identifier">init</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">==</span> <span class="number">0</span></code>.
+          </p>
+<h6>
+<a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.h8"></a>
+            <span class="phrase"><a name="url.ref.boost__urls__segments_encoded_ref.insert.overload2.parameters"></a></span><a class="link" href="overload2.html#url.ref.boost__urls__segments_encoded_ref.insert.overload2.parameters">Parameters</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Name
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Description
+                    </p>
+                  </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">before</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      An iterator before which the list is inserted. This may be
+                      equal to <code class="computeroutput"><span class="identifier">end</span><span class="special">()</span></code>.
+                    </p>
+                  </td>
+</tr>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">init</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      The list of segments to insert.
+                    </p>
+                  </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../insert.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

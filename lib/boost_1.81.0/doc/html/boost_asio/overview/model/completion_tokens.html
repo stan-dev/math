@@ -1,0 +1,337 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Completion Tokens</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../model.html" title="Asynchronous Model">
+<link rel="prev" href="cancellation.html" title="Cancellation">
+<link rel="next" href="library_elements.html" title="Supporting Library Elements">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cancellation.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="library_elements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.model.completion_tokens"></a><a class="link" href="completion_tokens.html" title="Completion Tokens">Completion
+        Tokens</a>
+</h4></div></div></div>
+<p>
+          <span class="inlinemediaobject"><img src="../../completion_token_model.png" width="436"></span>
+        </p>
+<p>
+          A key goal of Boost.Asio's asynchronous model is to support multiple composition
+          mechanisms. This is achieved via a <span class="emphasis"><em>completion token</em></span>,
+          which the user passes to an asynchronous operation's initiating function
+          to customise the API surface of the library. By convention, the completion
+          token is the final argument to an asynchronous operation's initiating function.
+        </p>
+<p>
+          For example, if the user passes a lambda (or other function object) as
+          the completion token, the asynchronous operation behaves as previously
+          described: the operation begins, and when the operation completes the result
+          is passed to the lambda.
+        </p>
+<pre class="programlisting"><span class="identifier">socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">buffer</span><span class="special">,</span>
+    <span class="special">[](</span><span class="identifier">error_code</span> <span class="identifier">e</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="comment">// ...</span>
+    <span class="special">}</span>
+  <span class="special">);</span>
+</pre>
+<p>
+          When the user passes the <a class="link" href="../../reference/use_future.html" title="use_future">use_future</a>
+          completion token, the operation behaves as though implemented in terms
+          of a <code class="computeroutput"><span class="identifier">promise</span></code> and <code class="computeroutput"><span class="identifier">future</span></code> pair. The initiating function
+          does not just launch the operation, but also returns a future that may
+          be used to await the result.
+        </p>
+<pre class="programlisting"><span class="identifier">future</span><span class="special">&lt;</span><span class="identifier">size_t</span><span class="special">&gt;</span> <span class="identifier">f</span> <span class="special">=</span>
+  <span class="identifier">socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span>
+      <span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">use_future</span>
+    <span class="special">);</span>
+<span class="comment">// ...</span>
+<span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span> <span class="identifier">f</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+</pre>
+<p>
+          Similarly, when the user passes the <a class="link" href="../../reference/use_awaitable.html" title="use_awaitable">use_awaitable</a>
+          completion token, the initiating function behaves as though it is an <code class="computeroutput"><span class="identifier">awaitable</span></code>-based coroutine <a href="#ftn.boost_asio.overview.model.completion_tokens.f0" class="footnote" name="boost_asio.overview.model.completion_tokens.f0"><sup class="footnote">[6]</sup></a>. However, in this case the initiating function does not launch
+          the asynchronous operation directly. It only returns the <code class="computeroutput"><span class="identifier">awaitable</span></code>, which in turn launches the
+          operation when it is co_await-ed.
+        </p>
+<pre class="programlisting"><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">foo</span><span class="special">()</span>
+<span class="special">{</span>
+  <span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span>
+    <span class="identifier">co_await</span> <span class="identifier">socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span>
+        <span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">use_awaitable</span>
+      <span class="special">);</span>
+
+  <span class="comment">// ...</span>
+<span class="special">}</span>
+</pre>
+<p>
+          Finally, the <a class="link" href="../../reference/yield_context.html" title="yield_context">yield_context</a>
+          completion token causes the initiating function to behave as a synchronous
+          operation within the context of a stackful coroutine. It not only begins
+          the asynchronous operation, but blocks the stackful coroutine until it
+          is complete. From the point of the stackful coroutine, it is a synchronous
+          operation.
+        </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">foo</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">yield_context</span> <span class="identifier">yield</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span> <span class="identifier">socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">yield</span><span class="special">);</span>
+
+  <span class="comment">// ...</span>
+<span class="special">}</span>
+</pre>
+<p>
+          All of these uses are supported by a single implementation of the <code class="computeroutput"><span class="identifier">async_read_some</span></code> initiating function.
+        </p>
+<p>
+          To achieve this, an asynchronous operation must first specify a <span class="emphasis"><em>completion
+          signature</em></span> (or, possibly, signatures) that describes the arguments
+          that will be passed to its completion handler.
+        </p>
+<p>
+          Then, the operation's initiating function takes the completion signature,
+          completion token, and its internal implementation and passes them to the
+          <span class="emphasis"><em>async_result</em></span> trait. The <code class="computeroutput"><span class="identifier">async_result</span></code>
+          trait is a customisation point that combines these to first produce a concrete
+          completion handler, and then launch the operation.
+        </p>
+<p>
+          <span class="inlinemediaobject"><img src="../../completion_token_transform.png" width="856"></span>
+        </p>
+<p>
+          To see this in practice, let's use a detached thread to adapt a synchronous
+          operation into an asynchronous one:<a href="#ftn.boost_asio.overview.model.completion_tokens.f1" class="footnote" name="boost_asio.overview.model.completion_tokens.f1"><sup class="footnote">[7]</sup></a>
+        </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span>
+    <span class="identifier">completion_token_for</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)&gt;</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c0" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c1"><img src="../../../../../doc/src/images/callouts/1.png" alt="1" border="0"></a>
+      <span class="identifier">CompletionToken</span><span class="special">&gt;</span>
+<span class="keyword">auto</span> <span class="identifier">async_read_some</span><span class="special">(</span>
+    <span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">mutable_buffer</span><span class="special">&amp;</span> <span class="identifier">b</span><span class="special">,</span>
+    <span class="identifier">CompletionToken</span><span class="special">&amp;&amp;</span> <span class="identifier">token</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="keyword">auto</span> <span class="identifier">init</span> <span class="special">=</span> <span class="special">[](</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c2" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c3"><img src="../../../../../doc/src/images/callouts/2.png" alt="2" border="0"></a>
+      <span class="keyword">auto</span> <span class="identifier">completion_handler</span><span class="special">,</span>
+      <span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">*</span> <span class="identifier">s</span><span class="special">,</span>
+      <span class="keyword">const</span> <span class="identifier">mutable_buffer</span><span class="special">&amp;</span> <span class="identifier">b</span><span class="special">)</span>
+  <span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">thread</span><span class="special">(</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c4" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c5"><img src="../../../../../doc/src/images/callouts/3.png" alt="3" border="0"></a>
+        <span class="special">[](</span>
+            <span class="keyword">auto</span> <span class="identifier">completion_handler</span><span class="special">,</span>
+            <span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">*</span> <span class="identifier">s</span><span class="special">,</span>
+            <span class="keyword">const</span> <span class="identifier">mutable_buffer</span><span class="special">&amp;</span> <span class="identifier">b</span>
+          <span class="special">)</span>
+        <span class="special">{</span>
+          <span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+          <span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span> <span class="identifier">s</span><span class="special">-&gt;</span><span class="identifier">read_some</span><span class="special">(</span><span class="identifier">b</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">completion_handler</span><span class="special">)(</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">n</span><span class="special">);</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c6" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c7"><img src="../../../../../doc/src/images/callouts/4.png" alt="4" border="0"></a>
+        <span class="special">},</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">completion_handler</span><span class="special">),</span>
+        <span class="identifier">s</span><span class="special">,</span>
+        <span class="identifier">b</span>
+      <span class="special">).</span><span class="identifier">detach</span><span class="special">();</span>
+  <span class="special">};</span>
+
+  <span class="keyword">return</span> <span class="identifier">async_result</span><span class="special">&lt;</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c8" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c9"><img src="../../../../../doc/src/images/callouts/5.png" alt="5" border="0"></a>
+      <span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">CompletionToken</span><span class="special">&gt;,</span>
+      <span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)</span>
+    <span class="special">&gt;::</span><span class="identifier">initiate</span><span class="special">(</span>
+        <span class="identifier">init</span><span class="special">,</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c10" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c11"><img src="../../../../../doc/src/images/callouts/6.png" alt="6" border="0"></a>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">CompletionToken</span><span class="special">&gt;(</span><span class="identifier">token</span><span class="special">),</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c12" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c13"><img src="../../../../../doc/src/images/callouts/7.png" alt="7" border="0"></a>
+        <span class="special">&amp;</span><span class="identifier">s</span><span class="special">,</span> <a class="co" name="boost_asio.overview.model.completion_tokens.c14" href="completion_tokens.html#boost_asio.overview.model.completion_tokens.c15"><img src="../../../../../doc/src/images/callouts/8.png" alt="8" border="0"></a>
+        <span class="identifier">b</span>
+      <span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<div class="calloutlist"><table border="0" summary="Callout list">
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c1"></a><a href="#boost_asio.overview.model.completion_tokens.c0"><img src="../../../../../doc/src/images/callouts/1.png" alt="1" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              The <code class="computeroutput"><span class="identifier">completion_token_for</span></code>
+              concept checks whether the user-supplied completion token will satisfy
+              the specified completion signature. For older versions of C++, simply
+              use <code class="computeroutput"><span class="keyword">typename</span></code> here instead.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c3"></a><a href="#boost_asio.overview.model.completion_tokens.c2"><img src="../../../../../doc/src/images/callouts/2.png" alt="2" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              Define a function object that contains the code to launch the asynchronous
+              operation. This is passed the concrete completion handler, followed
+              by any additional arguments that were passed through the <code class="computeroutput"><span class="identifier">async_result</span></code> trait.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c5"></a><a href="#boost_asio.overview.model.completion_tokens.c4"><img src="../../../../../doc/src/images/callouts/3.png" alt="3" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              The body of the function object spawns a new thread to perform the
+              operation.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c7"></a><a href="#boost_asio.overview.model.completion_tokens.c6"><img src="../../../../../doc/src/images/callouts/4.png" alt="4" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              Once the operation completes, the completion handler is passed the
+              result.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c9"></a><a href="#boost_asio.overview.model.completion_tokens.c8"><img src="../../../../../doc/src/images/callouts/5.png" alt="5" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              The <code class="computeroutput"><span class="identifier">async_result</span></code> trait
+              is passed the (decayed) completion token type, and the completion signatures
+              of the asynchronous operation.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c11"></a><a href="#boost_asio.overview.model.completion_tokens.c10"><img src="../../../../../doc/src/images/callouts/6.png" alt="6" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              Call the trait’s <code class="computeroutput"><span class="identifier">initiate</span></code>
+              member function, first passing the function object that launches the
+              operation.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c13"></a><a href="#boost_asio.overview.model.completion_tokens.c12"><img src="../../../../../doc/src/images/callouts/7.png" alt="7" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              Next comes the forwarded completion token. The trait implementation
+              will convert this into a concrete completion handler.
+            </p></td>
+</tr>
+<tr>
+<td width="5%" valign="top" align="left"><p><a name="boost_asio.overview.model.completion_tokens.c15"></a><a href="#boost_asio.overview.model.completion_tokens.c14"><img src="../../../../../doc/src/images/callouts/8.png" alt="8" border="0"></a> </p></td>
+<td valign="top" align="left"><p>
+              Finally, pass any additional arguments for the function object. Assume
+              that these may be decay-copied and moved by the trait implementation.
+            </p></td>
+</tr>
+</table></div>
+<p>
+          In practice we should call the <a class="link" href="../../reference/async_initiate.html" title="async_initiate">async_initiate</a>
+          helper function, rather than use the <code class="computeroutput"><span class="identifier">async_result</span></code>
+          trait directly. The <code class="computeroutput"><span class="identifier">async_initiate</span></code>
+          function automatically performs the necessary decay and forward of the
+          completion token, and also enables backwards compatibility with legacy
+          completion token implementations.
+        </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span>
+    <span class="identifier">completion_token_for</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)&gt;</span>
+      <span class="identifier">CompletionToken</span><span class="special">&gt;</span>
+<span class="keyword">auto</span> <span class="identifier">async_read_some</span><span class="special">(</span>
+    <span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">mutable_buffer</span><span class="special">&amp;</span> <span class="identifier">b</span><span class="special">,</span>
+    <span class="identifier">CompletionToken</span><span class="special">&amp;&amp;</span> <span class="identifier">token</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="keyword">auto</span> <span class="identifier">init</span> <span class="special">=</span> <span class="comment">/* ... as above ... */</span><span class="special">;</span>
+
+  <span class="keyword">return</span> <span class="identifier">async_initiate</span><span class="special">&lt;</span>
+      <span class="identifier">CompletionToken</span><span class="special">,</span>
+      <span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)</span>
+    <span class="special">&gt;(</span><span class="identifier">init</span><span class="special">,</span> <span class="identifier">token</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">b</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<p>
+          We can think of the completion token as a kind of proto completion handler.
+          In the case where we pass a function object (like a lambda) as the completion
+          token, it already satisfies the completion handler requirements. The async_result
+          primary template handles this case by trivially forwarding the arguments
+          through:
+        </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">CompletionToken</span><span class="special">,</span> <span class="identifier">completion_signature</span><span class="special">...</span> <span class="identifier">Signatures</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">async_result</span>
+<span class="special">{</span>
+  <span class="keyword">template</span> <span class="special">&lt;</span>
+      <span class="keyword">class</span> <span class="identifier">Initiation</span><span class="special">,</span>
+      <span class="identifier">completion_handler_for</span><span class="special">&lt;</span><span class="identifier">Signatures</span><span class="special">...&gt;</span> <span class="identifier">CompletionHandler</span><span class="special">,</span>
+      <span class="keyword">class</span><span class="special">...</span> <span class="identifier">Args</span><span class="special">&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <span class="identifier">initiate</span><span class="special">(</span>
+      <span class="identifier">Initiation</span><span class="special">&amp;&amp;</span> <span class="identifier">initiation</span><span class="special">,</span>
+      <span class="identifier">CompletionHandler</span><span class="special">&amp;&amp;</span> <span class="identifier">completion_handler</span><span class="special">,</span>
+      <span class="identifier">Args</span><span class="special">&amp;&amp;...</span> <span class="identifier">args</span><span class="special">)</span>
+  <span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">Initiation</span><span class="special">&gt;(</span><span class="identifier">initiation</span><span class="special">)(</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">CompletionHandler</span><span class="special">&gt;(</span><span class="identifier">completion_handler</span><span class="special">),</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">Args</span><span class="special">&gt;(</span><span class="identifier">args</span><span class="special">)...);</span>
+  <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<p>
+          We can see here that this default implementation avoids copies of all arguments,
+          thus ensuring that eager initiation is as efficient as possible.
+        </p>
+<p>
+          On the other hand, a lazy completion token (such as <code class="computeroutput"><span class="identifier">use_awaitable</span></code>
+          above) may capture these arguments for deferred launching of the operation.
+          For example, a specialisation for a trivial <a class="link" href="../../reference/deferred.html" title="deferred">deferred</a>
+          token (that simply packages the operation for later) might look something
+          like this:
+        </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="identifier">completion_signature</span><span class="special">...</span> <span class="identifier">Signatures</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">async_result</span><span class="special">&lt;</span><span class="identifier">deferred_t</span><span class="special">,</span> <span class="identifier">Signatures</span><span class="special">...&gt;</span>
+<span class="special">{</span>
+  <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">Initiation</span><span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> <span class="identifier">Args</span><span class="special">&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">auto</span> <span class="identifier">initiate</span><span class="special">(</span><span class="identifier">Initiation</span> <span class="identifier">initiation</span><span class="special">,</span> <span class="identifier">deferred_t</span><span class="special">,</span> <span class="identifier">Args</span><span class="special">...</span> <span class="identifier">args</span><span class="special">)</span>
+  <span class="special">{</span>
+    <span class="keyword">return</span> <span class="special">[</span>
+        <span class="identifier">initiation</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">initiation</span><span class="special">),</span>
+        <span class="identifier">arg_pack</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">make_tuple</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">args</span><span class="special">)...)</span>
+      <span class="special">](</span><span class="keyword">auto</span><span class="special">&amp;&amp;</span> <span class="identifier">token</span><span class="special">)</span> <span class="keyword">mutable</span>
+    <span class="special">{</span>
+      <span class="keyword">return</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">apply</span><span class="special">(</span>
+          <span class="special">[&amp;](</span><span class="keyword">auto</span><span class="special">&amp;&amp;...</span> <span class="identifier">args</span><span class="special">)</span>
+          <span class="special">{</span>
+            <span class="keyword">return</span> <span class="identifier">async_result</span><span class="special">&lt;</span><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="keyword">decltype</span><span class="special">(</span><span class="identifier">token</span><span class="special">)&gt;,</span> <span class="identifier">Signatures</span><span class="special">...&gt;::</span><span class="identifier">initiate</span><span class="special">(</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">initiation</span><span class="special">),</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="keyword">decltype</span><span class="special">(</span><span class="identifier">token</span><span class="special">)&gt;(</span><span class="identifier">token</span><span class="special">),</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="keyword">decltype</span><span class="special">(</span><span class="identifier">args</span><span class="special">)&gt;(</span><span class="identifier">args</span><span class="special">)...</span>
+              <span class="special">);</span>
+          <span class="special">},</span>
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">arg_pack</span><span class="special">)</span>
+        <span class="special">);</span>
+    <span class="special">};</span>
+  <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<div class="footnotes">
+<br><hr style="width:100; text-align:left;margin-left: 0">
+<div id="ftn.boost_asio.overview.model.completion_tokens.f0" class="footnote"><p><a href="#boost_asio.overview.model.completion_tokens.f0" class="para"><sup class="para">[6] </sup></a>
+            The <a class="link" href="../../reference/awaitable.html" title="awaitable">awaitable</a> class
+            template is included with the Boost.Asio library as a return type for
+            C++20 coroutines. These coroutines can be trivially implemented in terms
+            of other <code class="computeroutput"><span class="identifier">awaitable</span></code>-based
+            coroutines.
+          </p></div>
+<div id="ftn.boost_asio.overview.model.completion_tokens.f1" class="footnote"><p><a href="#boost_asio.overview.model.completion_tokens.f1" class="para"><sup class="para">[7] </sup></a>
+            For illustrative purposes only. Not recommended for real world use!
+          </p></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cancellation.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="library_elements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,430 @@
+# Copyright 2003 John Maddock
+# Copyright 2010 Artyom Beilis
+# Copyright 2021 - 2022 Alexander Grund
+#
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt.
+
+import config : requires ;
+import configure ;
+import errors ;
+import feature ;
+import os ;
+import path ;
+import toolset ;
+
+path-constant TOP : .. ;
+
+project /boost/locale
+    : source-location $(TOP)/src/boost/locale
+    ;
+
+# Features
+
+feature.feature boost.locale.iconv : on off : optional propagated ;
+feature.feature boost.locale.icu : on off :  optional propagated ;
+feature.feature boost.locale.posix : on off : optional propagated ;
+feature.feature boost.locale.std : on off : optional propagated ;
+feature.feature boost.locale.winapi : on off : optional propagated ;
+
+local rule debug-message ( message * )
+{
+    if --debug-configuration in [ modules.peek : ARGV ]
+    {
+        ECHO "notice:" "[locale]" $(message) ;
+    }
+}
+
+# Configuration of libraries
+
+## iconv
+# Iconv support may be builtin (i.e. in libc)
+
+exe has_iconv : $(TOP)/build/has_iconv.cpp ;
+explicit has_iconv ;
+
+ICONV_PATH = [ modules.peek : ICONV_PATH ] ;
+
+# There may also be an external iconv library
+lib iconv :
+  : <search>$(ICONV_PATH)/lib <link>shared <runtime-link>shared
+  : : <include>$(ICONV_PATH)/include
+  ;
+
+explicit iconv ;
+
+# Separate pair of obj & exe rules so the CPP file is built with the iconv include path
+obj has_external_iconv_obj : $(TOP)/build/has_iconv.cpp iconv ;
+exe has_external_iconv : has_external_iconv_obj iconv ;
+explicit has_external_iconv ;
+
+exe accepts_shared_option   : $(TOP)/build/option.cpp
+                            :   <cxxflags>-shared-libstdc++
+                                <cxxflags>-shared-libgcc
+                                <linkflags>-shared-libstdc++
+                                <linkflags>-shared-libgcc
+                            ;
+
+# Xlocale
+
+exe has_xlocale : $(TOP)/build/has_xlocale.cpp ;
+explicit has_xlocale ;
+
+#end xlocale
+
+if [ modules.peek : ICU_LINK ]
+{
+    errors.user-error : "The ICU_LINK option is no longer supported by the Boost.Locale build - please refer to the documentation for equivalent options" ;
+}
+
+if [ modules.peek : ICU_LINK_LOCALE ]
+{
+    errors.user-error : "The ICU_LINK_LOCALE option is no longer supported by the Boost.Locale build - please refer to the documentation for equivalent options" ;
+}
+
+# Specify the root path to the installed ICU libraries via
+#   - Environment variable: ICU_PATH
+#   - `b2 .. -s ICU_PATH=x`
+#   - In project-config.jam as `path-constant ICU_PATH : x ;
+
+.icu-path = [ modules.peek : ICU_PATH ] ; # -sICU_PATH=x or env variable
+.icu-path ?= $(ICU_PATH) ;                # path-constant
+
+if $(.icu-path)
+{
+    .icu-path = [ path.make $(.icu-path) ] ; # Normalize
+    debug-message ICU path set to "$(.icu-path)" ;
+}
+
+rule path_options ( properties * )
+{
+    local result ;
+    if <address-model>64 in $(properties) && <toolset>msvc in $(properties)
+    {
+        debug-message Search 64 bit ICU in "$(.icu-path)/lib64" ;
+        result = <search>$(.icu-path)/bin64 <search>$(.icu-path)/lib64 ;
+    }
+    else
+    {
+        debug-message Search ICU in "$(.icu-path)/lib" ;
+        result = <search>$(.icu-path)/bin <search>$(.icu-path)/lib ;
+    }
+    return $(result) ;
+}
+
+if [ modules.peek : ICU_ICUUC_NAME ]
+{
+   ICU_ICUUC_NAME =  [ modules.peek : ICU_ICUUC_NAME ] ;
+}
+if [ modules.peek : ICU_ICUDT_NAME ]
+{
+   ICU_ICUDT_NAME =  [ modules.peek : ICU_ICUDT_NAME ] ;
+}
+if [ modules.peek : ICU_ICUIN_NAME ]
+{
+   ICU_ICUIN_NAME =  [ modules.peek : ICU_ICUIN_NAME ] ;
+}
+
+if $(ICU_ICUUC_NAME)
+{
+    lib icuuc : : <name>$(ICU_ICUUC_NAME) <conditional>@path_options ;
+    debug-message Using "$(ICU_ICUUC_NAME)" for library "icuuc" ;
+}
+else
+{
+    lib icuuc : :                                                               <runtime-link>shared <conditional>@path_options ;
+    lib icuuc : : <toolset>msvc                     <variant>debug <name>icuucd <runtime-link>shared <conditional>@path_options ;
+    lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>icuucd <runtime-link>shared <conditional>@path_options ;
+    lib icuuc : :                                                  <name>sicuuc <runtime-link>static <conditional>@path_options ;
+    lib icuuc : : <toolset>msvc                     <variant>debug <name>sicuucd <runtime-link>static <conditional>@path_options ;
+    lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>sicuucd <runtime-link>static <conditional>@path_options ;
+    lib icuuc : : <name>this_is_an_invalid_library_name ;
+}
+
+if $(ICU_ICUDT_NAME)
+{
+    lib icudt : : <name>$(ICU_ICUDT_NAME) <conditional>@path_options ;
+    debug-message Using "$(ICU_ICUDT_NAME)" for library "icudt" ;
+}
+else
+{
+    lib icudt : : <name>icudata                                   <runtime-link>shared <conditional>@path_options ;
+    lib icudt : : <name>icudt   <toolset>msvc                     <runtime-link>shared <conditional>@path_options ;
+    lib icudt : : <name>icudt   <toolset>intel <target-os>windows <runtime-link>shared <conditional>@path_options ;
+    lib icudt : : <name>sicudata                                   <runtime-link>static <conditional>@path_options ;
+    lib icudt : : <name>sicudt   <toolset>msvc                     <runtime-link>static <conditional>@path_options ;
+    lib icudt : : <name>sicudt   <toolset>intel <target-os>windows <runtime-link>static <conditional>@path_options ;
+    lib icudt : : <name>this_is_an_invalid_library_name ;
+}
+
+if $(ICU_ICUIN_NAME)
+{
+    lib icuin : : <name>$(ICU_ICUIN_NAME) <conditional>@path_options ;
+    debug-message Using "$(ICU_ICUIN_NAME)" for library "icuin" ;
+}
+else
+{
+    lib icuin : :                                                    <name>icui18n <runtime-link>shared <conditional>@path_options ;
+    lib icuin : : <toolset>msvc                     <variant>debug   <name>icuind  <runtime-link>shared <conditional>@path_options ;
+    lib icuin : : <toolset>msvc                                      <name>icuin   <runtime-link>shared <conditional>@path_options ;
+    lib icuin : : <toolset>intel <target-os>windows <variant>debug   <name>icuind  <runtime-link>shared <conditional>@path_options ;
+    lib icuin : : <toolset>intel <target-os>windows                  <name>icuin   <runtime-link>shared <conditional>@path_options ;
+    lib icuin : :                                                    <name>sicui18n <runtime-link>static <conditional>@path_options ;
+    lib icuin : : <toolset>msvc                     <variant>debug   <name>sicuind  <runtime-link>static <conditional>@path_options ;
+    lib icuin : : <toolset>msvc                                      <name>sicuin   <runtime-link>static <conditional>@path_options ;
+    lib icuin : : <toolset>intel <target-os>windows <variant>debug   <name>sicuind  <runtime-link>static <conditional>@path_options ;
+    lib icuin : : <toolset>intel <target-os>windows                  <name>sicuin   <runtime-link>static <conditional>@path_options ;
+    lib icuin : : <name>this_is_an_invalid_library_name ;
+}
+
+ICU_OPTS =
+  <include>$(.icu-path)/include
+  <runtime-link>shared:<library>icuuc/<link>shared
+  <runtime-link>shared:<library>icudt/<link>shared
+  <runtime-link>shared:<library>icuin/<link>shared
+  <runtime-link>static:<library>icuuc
+  <runtime-link>static:<library>icudt
+  <runtime-link>static:<library>icuin
+  <target-os>windows,<toolset>clang:<linkflags>"advapi32.lib"
+  <runtime-link>static:<define>U_STATIC_IMPLEMENTATION=1
+  ;
+
+exe has_icu : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS) ;
+explicit has_icu ;
+
+
+# This function is called whenever the 'boost_locale' metatarget
+# below is generated and figures out what external components we have,
+# what the user wants, and what sources have to be compiled in the end.
+rule configure-full ( properties * : flags-only )
+{
+
+    local result ;
+    local flags-result ;
+
+    local found-iconv ;
+
+    # The system Iconv on Solaris may have bugs, while the GNU Iconv is fine.
+    # So enable by default only if not on Solaris.
+    if <boost.locale.iconv>on in $(properties)
+      || ( ! <boost.locale.iconv> in $(properties:G) && ! <target-os>solaris in $(properties) )
+    {
+        # See if iconv is bundled with standard library.
+        if [ configure.builds has_iconv : $(properties) : "iconv (libc)" ]
+        {
+            found-iconv = true ;
+        } else if [ configure.builds has_external_iconv : $(properties) : "iconv (separate)" ]
+        {
+            found-iconv = true ;
+            result += <library>iconv ;
+        }
+    }
+    if $(found-iconv)
+    {
+        flags-result += <define>BOOST_LOCALE_WITH_ICONV=1 ;
+    }
+
+    local found-icu ;
+
+    if ! <boost.locale.icu>off in $(properties)
+    {
+        if [ configure.builds has_icu : $(properties) : "icu" ]
+        {
+            found-icu = true ;
+            flags-result += <define>BOOST_LOCALE_WITH_ICU=1 $(ICU_OPTS) ;
+
+            ICU_SOURCES =
+                boundary
+                codecvt
+                collator
+                conversion
+                date_time
+                formatter
+                formatters_cache
+                icu_backend
+                numeric
+                time_zone
+                ;
+
+            result += <source>icu/$(ICU_SOURCES).cpp
+                      <library>/boost/thread//boost_thread
+                      ;
+        }
+    }
+
+    if ! $(found-iconv) && ! $(found-icu) && ! <target-os>windows in $(properties) && ! <target-os>cygwin in $(properties)
+    {
+        ECHO "- Boost.Locale needs either iconv or ICU library to be built." ;
+        result += <build>no ;
+    }
+
+    if ! <boost.locale.std> in $(properties:G)
+    {
+        if <toolset>sun in $(properties)
+        {
+            properties += <boost.locale.std>off ;
+        } else
+        {
+            properties += <boost.locale.std>on ;
+        }
+    }
+
+    if <boost.locale.std>off in $(properties)
+    {
+        flags-result += <define>BOOST_LOCALE_NO_STD_BACKEND=1 ;
+    } else
+    {
+        STD_SOURCES =
+          codecvt
+          collate
+          converter
+          numeric
+          std_backend
+          ;
+        result += <source>std/$(STD_SOURCES).cpp ;
+    }
+
+    if ! <boost.locale.winapi> in $(properties:G)
+    {
+        if <target-os>windows in $(properties) || <target-os>cygwin in $(properties)
+        {
+            properties += <boost.locale.winapi>on ;
+        } else
+        {
+            properties += <boost.locale.winapi>off ;
+        }
+    }
+    if  <target-os>windows in $(properties)
+        && <toolset>gcc in $(properties)
+        && <link>shared in $(properties)
+        && [ configure.builds accepts_shared_option : $(properties) : "g++ -shared-* supported" ]
+    {
+        flags-result += <cxxflags>-shared-libstdc++
+                        <cxxflags>-shared-libgcc
+                        <linkflags>-shared-libstdc++
+                        <linkflags>-shared-libgcc
+                        ;
+    }
+
+    if <boost.locale.winapi>off in $(properties)
+    {
+        flags-result += <define>BOOST_LOCALE_NO_WINAPI_BACKEND=1 ;
+    } else
+    {
+        WINAPI_SOURCES =
+            collate
+            converter
+            numeric
+            win_backend
+          ;
+        result += <source>win32/$(WINAPI_SOURCES).cpp ;
+    }
+
+    if ( ! <boost.locale.winapi>off in $(properties) || ! <boost.locale.std>off in $(properties) )
+       && ( <target-os>windows in $(properties) || <target-os>cygwin in $(properties) )
+    {
+        result += <source>win32/lcid.cpp ;
+    }
+
+    if ! <boost.locale.posix> in $(properties:G)
+    {
+        if <target-os>linux in $(properties)
+            || <target-os>darwin in $(properties)
+            || ( <target-os>freebsd in $(properties) && [ configure.builds has_xlocale : $(properties) : "xlocale supported" ] )
+        {
+            properties += <boost.locale.posix>on ;
+        } else
+        {
+            properties += <boost.locale.posix>off ;
+        }
+    }
+
+    if <boost.locale.posix>off in $(properties)
+    {
+        flags-result += <define>BOOST_LOCALE_NO_POSIX_BACKEND=1 ;
+    } else
+    {
+        POSIX_SOURCES =
+          collate
+          converter
+          numeric
+          codecvt
+          posix_backend
+          ;
+        result += <source>posix/$(POSIX_SOURCES).cpp ;
+    }
+
+    if <boost.locale.posix>on in $(properties) || <boost.locale.std>on in $(properties) || <boost.locale.winapi>on in $(properties)
+    {
+        result += <source>util/gregorian.cpp ;
+    }
+
+    if "$(flags-only)" = "flags"
+    {
+        return $(flags-result) ;
+    } else
+    {
+        result += $(flags-result) ;
+        return $(result) ;
+    }
+}
+
+rule configure ( properties * )
+{
+    local result = [ configure-full $(properties) : "all" ] ;
+    return $(result) ;
+}
+
+rule configure-flags ( properties * )
+{
+    local result ;
+    result = [ configure-full $(properties) : "flags" ] ;
+    return $(result) ;
+}
+
+alias build_flags : : : : <conditional>@configure-flags ;
+
+local cxx_requirements = [ requires
+      cxx11_auto_declarations
+      cxx11_decltype
+      cxx11_defaulted_functions
+      cxx11_defaulted_moves
+      cxx11_hdr_functional
+      cxx11_hdr_type_traits
+      cxx11_noexcept
+      cxx11_nullptr
+      cxx11_override
+      cxx11_range_based_for
+      cxx11_rvalue_references
+      cxx11_scoped_enums
+      cxx11_smart_ptr
+      cxx11_static_assert
+    ] ;
+
+boost-lib locale
+    :
+      encoding/codepage.cpp
+      shared/date_time.cpp
+      shared/format.cpp
+      shared/formatting.cpp
+      shared/generator.cpp
+      shared/ids.cpp
+      shared/localization_backend.cpp
+      shared/message.cpp
+      shared/mo_lambda.cpp
+      util/codecvt_converter.cpp
+      util/default_locale.cpp
+      util/info.cpp
+      util/locale_data.cpp
+    :
+      $(cxx_requirements)
+      # Don't link explicitly, not required
+      <define>BOOST_THREAD_NO_LIB=1
+      <include>$(TOP)/src
+      <threading>multi
+      <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
+      <target-os>windows:<define>_SCL_SECURE_NO_WARNINGS
+      # Meanwhile remove this
+      <conditional>@configure
+    : : $(cxx_requirements)
+    ;
