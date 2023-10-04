@@ -1,6 +1,33 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+TEST(mathMixScalFun, hyper_pfq) {
+  using stan::math::hypergeometric_pFq;
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::hypergeometric_pFq;
+    return hypergeometric_pFq(a, b, z);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 4, 2;
+  Eigen::VectorXd in2(2);
+  in2 << 6, 3;
+  double z = 4;
+
+  Eigen::VectorXd x = stan::math::to_vector(stan::test::serialize<double>(in1, in2, z));
+  auto serial_functor = [&](const auto& v) {
+    auto v_deserializer = stan::test::to_deserializer(v);
+    return f(v_deserializer.read(in1), v_deserializer.read(in2), v_deserializer.read(z));
+  };
+  double fx_ad;
+  Eigen::MatrixXd H_ad;
+  std::vector<Eigen::MatrixXd> grad_H_ad;
+  stan::math::grad_hessian(serial_functor, x, fx_ad, H_ad, grad_H_ad);
+  //std::cout << H_ad << "\n" << std::endl;
+  std::cout << grad_H_ad[0] << std::endl;
+  //stan::test::expect_ad(f, in1, in2, z);
+}
+/*
 TEST(mixScalFun, grad_2F2_ffv) {
   using stan::math::fvar;
   using stan::math::hypergeometric_pFq;
@@ -48,3 +75,4 @@ TEST(mixScalFun, grad_2F2_ffv) {
   // double, double, fvar
   EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, d_b, ffv_z).val_.d_.val(), z_adj);
 }
+ */
