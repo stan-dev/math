@@ -132,7 +132,7 @@ TEST(RevMath, grad_2F1_derivs_match) {
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
-/*
+
 TEST(RevMath, grad2F1_2) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq_2;
@@ -153,7 +153,6 @@ TEST(RevMath, grad2F1_2) {
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
- */
 
 TEST(RevMath, grad2F1_3) {
   using stan::math::grad_2F1;
@@ -281,7 +280,6 @@ TEST(RevMath, grad2F1_10) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-/*
 TEST(RevMath, grad2F1_11) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq_2;
@@ -294,16 +292,16 @@ TEST(RevMath, grad2F1_11) {
   b_v << 2.70975;
   var z_v = 0.999696;
 
-  double std::get<0>(grad_2F1_tuple);
-  double std::get<2>(grad_2F1_tuple);
 
-  grad_2F1(std::get<0>(grad_2F1_tuple), std::get<2>(grad_2F1_tuple), a_v[0],
-a_v[1], b_v[0], z_v); auto grad_tuple = grad_pFq_2(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
+  auto grad_tuple = grad_pFq_2(a_v, b_v, z_v);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
-}*/
-/*
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
+}
+
 TEST(RevMath, F32_converges_by_z) {
   using stan::math::grad_F32;
   using stan::math::grad_pFq_2;
@@ -328,7 +326,6 @@ TEST(RevMath, F32_converges_by_z) {
   EXPECT_FLOAT_EQ(g_calc[4], std::get<1>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
 }
-*/
 
 TEST(RevMath, grad_F32_double_sign_flip_1) {
   using stan::math::grad_F32;

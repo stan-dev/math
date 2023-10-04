@@ -34,7 +34,6 @@ auto grad_pFq_2(const Ta& a, const Tb& b, const Tz& z,
   T_ArrayPartials a_val = as_value_column_array_or_scalar(a);
   T_ArrayPartials b_val = as_value_column_array_or_scalar(b);
   Tz_partials z_val = value_of(z);
-  Tz_partials z_k = abs(z_val);
 
   IntArray a_signs = internal::bin_sign(a_val);
   IntArray b_signs = internal::bin_sign(b_val);
@@ -46,10 +45,11 @@ auto grad_pFq_2(const Ta& a, const Tb& b, const Tz& z,
 
   T_ArrayPartials a_k = a_val;
   T_ArrayPartials b_k = b_val;
-  Tz_partials z_pow_k = 1;
+  Tz_partials log_z_pow_k = 0.0;
+  Tz_partials log_z_k = log(abs(z_val));
 
-  T_ArrayPartials phammer_a_k = T_ArrayPartials::Ones(a.size());
-  T_ArrayPartials phammer_b_k = T_ArrayPartials::Ones(b.size());
+  T_ArrayPartials log_phammer_a_k = T_ArrayPartials::Zero(a.size());
+  T_ArrayPartials log_phammer_b_k = T_ArrayPartials::Zero(b.size());
   IntArray phammer_a_k_signs = IntArray::Ones(a.size());
   IntArray phammer_b_k_signs = IntArray::Ones(b.size());
 
@@ -57,8 +57,8 @@ auto grad_pFq_2(const Ta& a, const Tb& b, const Tz& z,
   T_ArrayPartials digamma_b = inv(b_k);
   T_ArrayPartials digamma_a_k = digamma_a;
   T_ArrayPartials digamma_b_k = digamma_b;
-  T_ArrayPartials abs_digamma_a_k = abs(digamma_a);
-  T_ArrayPartials abs_digamma_b_k = abs(digamma_b);
+  T_ArrayPartials log_digamma_a_k = log(abs(digamma_a));
+  T_ArrayPartials log_digamma_b_k = log(abs(digamma_b));
   IntArray digamma_a_k_signs = a_k_signs;
   IntArray digamma_b_k_signs = b_k_signs;
   T_ArrayPartials a_infsum = T_ArrayPartials::Zero(a.size());
@@ -67,30 +67,30 @@ auto grad_pFq_2(const Ta& a, const Tb& b, const Tz& z,
   int k = 0;
   double curr_log_prec = 1.0;
   double curr_prec = 1.0;
-  double factorial_k = 1;
-  while (k <= max_steps && curr_prec > precision) {
+  double log_factorial_k = 0;
+  while (k <= max_steps && curr_log_prec > log(precision)) {
     int base_sign = z_k_sign * phammer_a_k_signs.prod() * phammer_b_k_signs.prod();
-    T_partials base = base_sign * (prod(phammer_a_k) * z_pow_k)
-                                    / (factorial_k * prod(phammer_b_k));
-    T_ArrayPartials a_grad = abs_digamma_a_k * base * digamma_a_k_signs;
-    T_ArrayPartials b_grad = abs_digamma_b_k * base * digamma_b_k_signs;
+    T_partials log_base = (sum(log_phammer_a_k) + log_z_pow_k)
+                          - (log_factorial_k + sum(log_phammer_b_k));
+    T_ArrayPartials a_grad = log_digamma_a_k + log_base;
+    T_ArrayPartials b_grad = log_digamma_b_k + log_base;
 
-    curr_prec = max(a_grad.abs().maxCoeff(), b_grad.abs().maxCoeff());
-    a_infsum += a_grad;
-    b_infsum += b_grad;
+    curr_log_prec = max(a_grad.maxCoeff(), b_grad.maxCoeff());
+    a_infsum += exp(a_grad) * base_sign * digamma_a_k_signs;
+    b_infsum += exp(b_grad) * base_sign * digamma_b_k_signs;
 
-    phammer_a_k *= abs(a_k);
-    phammer_b_k *= abs(b_k);
+    log_phammer_a_k += log(abs(a_k));
+    log_phammer_b_k += log(abs(b_k));
     phammer_a_k_signs *= a_k_signs;
     phammer_b_k_signs *= b_k_signs;
 
-    z_pow_k *= z_k;
+    log_z_pow_k += log_z_k;
     z_k_sign *= z_sign;
 
     digamma_a_k += select(a_k == 0.0, 0.0, inv(a_k));
     digamma_b_k += select(b_k == 0.0, 0.0, inv(b_k));
-    abs_digamma_a_k = abs(digamma_a_k);
-    abs_digamma_b_k = abs(digamma_b_k);
+    log_digamma_a_k = log(abs(digamma_a_k));
+    log_digamma_b_k = log(abs(digamma_b_k));
     digamma_a_k_signs = internal::bin_sign(digamma_a_k);
     digamma_b_k_signs = internal::bin_sign(digamma_b_k);
 
@@ -100,7 +100,7 @@ auto grad_pFq_2(const Ta& a, const Tb& b, const Tz& z,
     b_k_signs = internal::bin_sign(b_k);
 
     k += 1;
-    factorial_k *= k;
+    log_factorial_k += log(k);
   }
 
   T_partials pfq_val = hypergeometric_pFq(a_val, b_val, z_val);
