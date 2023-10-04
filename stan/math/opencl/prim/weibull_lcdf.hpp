@@ -65,7 +65,8 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lcdf(
 
   auto pow_n = pow(elt_divide(y_val, sigma_val), alpha_val);
   auto exp_n = exp(-pow_n);
-  auto lcdf_expr = colwise_sum(log(1.0 - exp_n));
+  // TODO(Andrew) Further simplify derivatives and log1m_exp below
+  auto lcdf_expr = colwise_sum(log1m(exp_n));
 
   auto rep_deriv = elt_divide(pow_n, elt_divide(1.0, exp_n) - 1.0);
   auto deriv_y_sigma = elt_multiply(rep_deriv, alpha_val);
