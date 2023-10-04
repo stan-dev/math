@@ -35,6 +35,7 @@ template <typename Ta, typename Tb, typename Tz>
 auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
                 double precision = 1e-16,
                 int max_steps = 1e8) {
+  using std::max;
   using T_partials = partials_return_t<Ta, Tb, Tz>;
   using Ta_partials = partials_return_t<Ta>;
   using Tb_partials = partials_return_t<Tb>;
@@ -61,8 +62,8 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
   Tz_partials log_z_pow_k = 0.0;
   Tz_partials log_z_k = log(abs(z_val));
 
-  Ta_PartialsArray log_phammer_a_k = T_ArrayPartials::Zero(a.size());
-  Tb_PartialsArray log_phammer_b_k = T_ArrayPartials::Zero(b.size());
+  Ta_PartialsArray log_phammer_a_k = Ta_PartialsArray::Zero(a.size());
+  Tb_PartialsArray log_phammer_b_k = Tb_PartialsArray::Zero(b.size());
   IntArray phammer_a_k_signs = IntArray::Ones(a.size());
   IntArray phammer_b_k_signs = IntArray::Ones(b.size());
 
@@ -81,17 +82,17 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
   IntArray b_infsum_sign = IntArray::Ones(b.size());
 
   T_ArrayPartials a_grad = T_ArrayPartials::Constant(a.size(), NEGATIVE_INFTY);
-  IntArray a_grad_signs = IntArray::Ones(a.size());
   T_ArrayPartials b_grad = T_ArrayPartials::Constant(a.size(), NEGATIVE_INFTY);
+  IntArray a_grad_signs = IntArray::Ones(a.size());
   IntArray b_grad_signs = IntArray::Ones(a.size());
 
   int k = 0;
-  double curr_log_prec = 1.0;
+  T_partials curr_log_prec = 1.0;
   double log_factorial_k = 0;
   while (k <= max_steps && curr_log_prec > log(precision)) {
     int base_sign = z_k_sign * phammer_a_k_signs.prod() * phammer_b_k_signs.prod();
     T_partials log_base = (sum(log_phammer_a_k) + log_z_pow_k)
-                          - (log_factorial_k + sum(log_phammer_b_k));
+                            - (log_factorial_k + sum(log_phammer_b_k));
 
     if (!is_constant_all<Ta>::value) {
       a_grad = log_digamma_a_k + log_base;
@@ -145,7 +146,7 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
               T_partials> ret_tuple;
 
   if (!is_constant_all<Ta, Tb>::value) {
-    T_partials pfq_val = hypergeometric_pFq(a_val, b_val, z_val);
+    T_partials pfq_val = hypergeometric_pFq(a_val.matrix(), b_val.matrix(), z_val);
     if (!is_constant_all<Ta>::value) {
       std::get<0>(ret_tuple) = a_infsum_sign * exp(a_log_infsum) - digamma_a * pfq_val;
     }
@@ -154,7 +155,7 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
     }
   }
   if (!is_constant_all<Tz>::value) {
-    T_partials pfq_p1_val = hypergeometric_pFq(a_val + 1, b_val + 1, z_val);
+    T_partials pfq_p1_val = hypergeometric_pFq((a_val + 1).matrix(), (b_val + 1).matrix(), z_val);
     std::get<2>(ret_tuple) = prod(a_val) / prod(b_val) * pfq_p1_val;
   }
   return ret_tuple;
