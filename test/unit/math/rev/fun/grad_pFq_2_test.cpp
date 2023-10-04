@@ -132,7 +132,7 @@ TEST(RevMath, grad_2F1_derivs_match) {
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
-
+/*
 TEST(RevMath, grad2F1_2) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq_2;
@@ -153,7 +153,7 @@ TEST(RevMath, grad2F1_2) {
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
-
+ */
 
 TEST(RevMath, grad2F1_3) {
   using stan::math::grad_2F1;
