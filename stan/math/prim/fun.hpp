@@ -130,6 +130,7 @@
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <stan/math/prim/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
+#include <stan/math/prim/fun/grad_pFq_2.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
