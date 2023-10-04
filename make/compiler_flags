@@ -272,8 +272,8 @@ else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
 
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags -ltbb
-LDLIBS_TBB ?= $(LDFLAGS_TBB)
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags
+LDLIBS_TBB ?= -ltbb
 
 else
 
@@ -291,7 +291,7 @@ endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
-LDLIBS_TBB ?= $(LDFLAGS_TBB)
+LDLIBS_TBB ?= -ltbb
 
 endif
 
