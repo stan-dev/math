@@ -124,6 +124,7 @@ ifdef GENERATE_DISTRIBUTION_TESTS
 ##
 # Test generator for distribution tests
 ##
+test/prob/generate_tests$(EXE) : LDLIBS_TBB =
 test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 	@mkdir -p $(dir $@)
 	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
