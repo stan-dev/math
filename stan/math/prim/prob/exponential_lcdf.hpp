@@ -24,8 +24,8 @@ template <typename T_y, typename T_inv_scale,
 return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
-  using T_y_ref = ref_type_if_not_const_t<T_y>;
-  using T_beta_ref = ref_type_if_not_const_t<T_inv_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static const char* function = "exponential_lcdf";
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;

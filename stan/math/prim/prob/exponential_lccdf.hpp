@@ -21,8 +21,8 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
                                                   const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
-  using T_y_ref = ref_type_if_not_const_t<T_y>;
-  using T_beta_ref = ref_type_if_not_const_t<T_inv_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static const char* function = "exponential_lccdf";
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;

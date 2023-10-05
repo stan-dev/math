@@ -28,9 +28,9 @@ template <typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_not_const_t<T_y>;
-  using T_mu_ref = ref_type_if_not_const_t<T_loc>;
-  using T_sigma_ref = ref_type_if_not_const_t<T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   static const char* function = "lognormal_lcdf";
 
   T_y_ref y_ref = y;
