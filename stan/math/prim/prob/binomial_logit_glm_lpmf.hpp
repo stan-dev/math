@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup multivar_dists
+/** \ingroup prob_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Binomial distribution and logit link function.
  * The idea is that binomial_logit_glm_lpmf(n | N, x, alpha, beta) should
@@ -93,15 +93,15 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
 
-  const auto& n_val = as_value_column_array_or_scalar(n_ref);
-  const auto& N_val = as_value_column_array_or_scalar(N_ref);
+  auto&& n_val = as_value_column_array_or_scalar(n_ref);
+  auto&& N_val = as_value_column_array_or_scalar(N_ref);
 
   check_bounded(function, "Successes variable", n_val, 0, N_val);
   check_nonnegative(function, "Population size parameter", N_val);
 
-  const auto& alpha_val = as_value_column_array_or_scalar(alpha_ref);
-  const auto& beta_val = as_value_column_vector_or_scalar(beta_ref);
-  const auto& x_val = value_of(x_ref);
+  auto&& alpha_val = as_value_column_array_or_scalar(alpha_ref);
+  auto&& beta_val = as_value_column_vector_or_scalar(beta_ref);
+  auto&& x_val = value_of(x_ref);
   Eigen::Array<T_partials_return, -1, 1> theta(N_instances);
   if (T_x_rows == 1) {
     theta = forward_as<T_xbeta_tmp>((x_val * beta_val)(0, 0)) + alpha_val;
@@ -109,11 +109,11 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     theta = (x_val * beta_val).array() + alpha_val;
   }
 
-  const auto& log_inv_logit_theta = log_inv_logit(theta);
-  const auto& log1m_inv_logit_theta = log1m_inv_logit(theta);
+  constexpr bool gradients_calc = !is_constant_all<T_beta, T_x, T_alpha>::value;
+  auto&& log_inv_logit_theta = to_ref_if<gradients_calc>(log_inv_logit(theta));
 
   T_partials_return logp = sum(n_val * log_inv_logit_theta
-                               + (N_val - n_val) * log1m_inv_logit_theta);
+                               + (N_val - n_val) * log1m_inv_logit(theta));
 
   using std::isfinite;
   if (!isfinite(logp)) {
@@ -128,8 +128,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
-
-  if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
+  if (gradients_calc) {
     Eigen::Matrix<T_partials_return, -1, 1> theta_derivative
         = n_val - N_val * exp(log_inv_logit_theta);
 
