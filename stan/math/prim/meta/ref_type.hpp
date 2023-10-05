@@ -56,6 +56,10 @@ using ref_type_t = typename ref_type_if<true, T>::type;
 template <bool Condition, typename T>
 using ref_type_if_t = typename ref_type_if<Condition, T>::type;
 
+template <typename T>
+using ref_type_if_not_const_t
+  = typename ref_type_if<!is_constant<T>::value, T>::type;
+
 }  // namespace stan
 
 #endif
