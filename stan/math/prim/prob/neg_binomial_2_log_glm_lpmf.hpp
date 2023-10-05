@@ -93,8 +93,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using T_x_ref = ref_type_if_not_const_t<T_x>;
   using T_alpha_ref = ref_type_if_not_const_t<T_alpha>;
   using T_beta_ref = ref_type_if_not_const_t<T_beta>;
-  using T_phi_ref
-      = ref_type_if_not_const_t<T_precision>;
+  using T_phi_ref = ref_type_if_not_const_t<T_precision>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
