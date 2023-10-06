@@ -6,7 +6,7 @@
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <test/unit/math/serializer.hpp>
+#include <stan/math/prim/fun/serializer.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>

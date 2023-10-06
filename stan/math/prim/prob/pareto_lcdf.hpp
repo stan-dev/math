@@ -69,7 +69,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   const auto& exp_prod
       = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
           exp(alpha_val * log_quot));
-  T_partials_return P = sum(log(1 - exp_prod));
+  // TODO(Andrew) Further simplify derivatives and log1m_exp below
+  T_partials_return P = sum(log1m(exp_prod));
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& common_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value

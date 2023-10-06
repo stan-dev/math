@@ -109,7 +109,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
     if (y_dbl <= mu_dbl) {
       cdf_log += log1m(tau_dbl * exp(-2.0 * expo));
     } else {
-      cdf_log += log(1 - tau_dbl) - 2.0 * expo;
+      cdf_log += log1m(tau_dbl) - 2.0 * expo;
     }
 
     if (!is_constant_all<T_y>::value) {

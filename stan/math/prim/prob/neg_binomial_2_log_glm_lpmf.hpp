@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -153,8 +154,8 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   T_precision_val log_phi = log(phi_arr);
   Array<T_partials_return, Dynamic, 1> logsumexp_theta_logphi
       = (theta > log_phi)
-            .select(theta + log1p(exp(log_phi - theta)),
-                    log_phi + log1p(exp(theta - log_phi)));
+            .select(theta + log1p_exp(log_phi - theta),
+                    log_phi + log1p_exp(theta - log_phi));
 
   T_sum_val y_plus_phi = y_arr + phi_arr;
 
