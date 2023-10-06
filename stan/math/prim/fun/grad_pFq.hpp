@@ -98,9 +98,9 @@ auto grad_pFq_impl(const TpFq& pfq_val, const Ta& a_val, const Tb& b_val, const 
       a_grad_signs = base_sign * digamma_a_k_signs;
 
       for (int i = 0; i < a_val.size(); i++) {
-        std::forward_as_tuple(a_log_infsum(i), a_infsum_sign(i))
-          = log_sum_exp_signed(a_log_infsum(i), a_infsum_sign(i),
-                                a_grad(i), a_grad_signs(i));
+        std::forward_as_tuple(a_log_infsum.coeffRef(i), a_infsum_sign.coeffRef(i))
+          = log_sum_exp_signed(a_log_infsum.coeffRef(i), a_infsum_sign.coeffRef(i),
+                                a_grad.coeffRef(i), a_grad_signs.coeffRef(i));
       }
     }
 
@@ -172,7 +172,6 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
       value_of(z)
     );
 }
-
 }  // namespace math
 }  // namespace stan
 #endif

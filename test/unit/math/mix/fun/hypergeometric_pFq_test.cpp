@@ -1,8 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, hyper_pfq) {
-  using stan::math::hypergeometric_pFq;
+TEST(mathMixScalFun, hyper_2f2) {
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -16,52 +15,73 @@ TEST(mathMixScalFun, hyper_pfq) {
 
   stan::test::expect_ad(f, in1, in2, z);
 }
-/*
-TEST(mixScalFun, grad_2F2_ffv) {
-  using stan::math::fvar;
-  using stan::math::hypergeometric_pFq;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
 
-  vector_ffv ffv_a(2);
-  vector_d d_a(2);
-  ffv_a.val().val() << 4, 2;
-  d_a << 4, 2;
-  ffv_a.val().d() << 1, 1;
+TEST(mathMixScalFun, hyper_2f3) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::hypergeometric_pFq;
+    return hypergeometric_pFq(a, b, z);
+  };
 
-  vector_ffv ffv_b(2);
-  vector_d d_b(2);
-  ffv_b.val().val() << 6, 3;
-  d_b << 6, 3;
-  ffv_b.val().d() << 1, 1;
+  Eigen::VectorXd in1(2);
+  in1 << 2, 3;
+  Eigen::VectorXd in2(3);
+  in2 << 2, 4, 5;
+  double z = 1;
 
-  fvar<fvar<var>> ffv_z;
-  ffv_z.val_.val_ = 4;
-  ffv_z.val_.d_ = 1;
-  double d_z = 4;
-
-  double a_adj = 3.924636646666071 + 6.897245961898751;
-  double b_adj = -2.775051002566842 - 4.980095849781222;
-  double z_adj = 4.916522138006060;
-
-  // fvar, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, ffv_b, ffv_z).val_.d_.val(),
-                  a_adj + b_adj + z_adj);
-  // fvar, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, ffv_b, d_z).val_.d_.val(),
-                  a_adj + b_adj);
-  // fvar, double, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, d_b, d_z).val_.d_.val(), a_adj);
-  // fvar, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffv_a, d_b, ffv_z).val_.d_.val(),
-                  a_adj + z_adj);
-  // double, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffv_b, ffv_z).val_.d_.val(),
-                  b_adj + z_adj);
-  // double, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffv_b, d_z).val_.d_.val(), b_adj);
-  // double, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, d_b, ffv_z).val_.d_.val(), z_adj);
+  stan::test::expect_ad(f, in1, in2, z);
 }
- */
+
+TEST(mathMixScalFun, hyper_4f3) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::hypergeometric_pFq;
+    return hypergeometric_pFq(a, b, z);
+  };
+
+  Eigen::VectorXd in1(4);
+  in1 << 1, 2, 3, 4;
+  Eigen::VectorXd in2(3);
+  in2 << 5, 6, 7;
+  double z = 0.8;
+
+  stan::test::expect_ad(f, in1, in2, z);
+}
+
+TEST(mathMixScalFun, hyper_2f1) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::hypergeometric_pFq;
+    return hypergeometric_pFq(a, b, z);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 1, 1;
+  Eigen::VectorXd in2(1);
+  in2 << 1;
+  double z = 0.6;
+
+  stan::test::expect_ad(f, in1, in2, z);
+
+  in1 << 1, 31;
+  in2 << 41;
+  z = 0.6;
+  stan::test::expect_ad(f, in1, in2, z);
+
+  in1 << 1, -2.1;
+  in2 << 41;
+  z = 0.6;
+  stan::test::expect_ad(f, in1, in2, z);
+
+  in1 << 1, -0.5;
+  in2 << 10;
+  z = 0.3;
+  //stan::test::expect_ad(f, in1, in2, z);
+
+  in1 << -0.5, -4.5;
+  in2 << 1;
+  z = 0.3;
+  //stan::test::expect_ad(f, in1, in2, z);
+
+  in1 << -0.5, -4.5;
+  in2 << -3.2;
+  z = 0.9;
+  //stan::test::expect_ad(f, in1, in2, z);
+}

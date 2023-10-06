@@ -4,6 +4,7 @@
 
 TEST(RevMath, grad_2F2) {
   using stan::math::grad_pFq;
+  using stan::math::hypergeometric_pFq;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
@@ -21,7 +22,8 @@ TEST(RevMath, grad_2F2) {
   var z_v = 4;
   double z_d = 4;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_v, b_v, z_v);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
@@ -31,34 +33,34 @@ TEST(RevMath, grad_2F2) {
 
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_v, b_d, z_d);
+  grad_tuple = grad_pFq(pfq_val, a_v, b_d, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_d, b_v, z_d);
+  grad_tuple = grad_pFq(pfq_val, a_d, b_v, z_d);
 
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_d, b_d, z_v);
+  grad_tuple = grad_pFq(pfq_val, pfq_val, a_d, b_d, z_v);
 
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_v, b_v, z_d);
+  grad_tuple = grad_pFq(pfq_val, a_v, b_v, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_v, b_d, z_v);
+  grad_tuple = grad_pFq(pfq_val, a_v, b_d, z_v);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_d, b_v, z_v);
+  grad_tuple = grad_pFq(pfq_val, a_d, b_v, z_v);
 
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
@@ -75,7 +77,8 @@ TEST(RevMath, grad_2F3) {
   b_v << 2, 4, 5;
   var z_v = 1;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_v.val(), b_v.val(), z_v.val());
+  auto grad_tuple = grad_pFq(pfq_val, a_v, b_v, z_v);
 
   EXPECT_FLOAT_EQ(0.08377717301140296, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(0.05615450733193106, std::get<0>(grad_tuple)[1]);
