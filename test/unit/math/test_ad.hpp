@@ -306,11 +306,9 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
   expect_near_rel("grad_hessian() Hessian", H_fd, H_ad,
                   tols.grad_hessian_hessian_);
   EXPECT_EQ(x.size(), grad_H_fd.size());
-  for (size_t i = 0; i < grad_H_fd.size(); ++i) {
-    std::cout << i << "\n\n" << grad_H_ad[i] << "\n" << std::endl;
-    //expect_near_rel("grad_hessian() grad Hessian", grad_H_fd[i], grad_H_ad[i],
-    //                tols.grad_hessian_grad_hessian_);
-  }
+  for (size_t i = 0; i < grad_H_fd.size(); ++i)
+    expect_near_rel("grad_hessian() grad Hessian", grad_H_fd[i], grad_H_ad[i],
+                    tols.grad_hessian_grad_hessian_);
 }
 #endif
 

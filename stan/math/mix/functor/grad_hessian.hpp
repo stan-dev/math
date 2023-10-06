@@ -50,10 +50,8 @@ void grad_hessian(
   int d = x.size();
   H.resize(d, d);
   grad_H.resize(d, Matrix<double, Dynamic, Dynamic>(d, d));
-  //for (int i = 0; i < d; ++i) {
-  int i = 0;
-    //for (int j = i; j < d; ++j) {
-      int j = 0;
+  for (int i = 0; i < d; ++i) {
+    for (int j = i; j < d; ++j) {
       // Run nested autodiff in this scope
       nested_rev_autodiff nested;
 
@@ -70,8 +68,8 @@ void grad_hessian(
         grad_H[i](j, k) = x_ffvar(k).val_.val_.adj();
         grad_H[j](i, k) = grad_H[i](j, k);
       }
-    //}
-  //}
+    }
+  }
 }
 
 }  // namespace math

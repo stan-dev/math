@@ -29,7 +29,8 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   using fvar_t = return_type_t<Ta, Tb, Tz>;
   ref_type_t<Ta> a_ref = a;
   ref_type_t<Tb> b_ref = b;
-  auto grad_tuple = grad_pFq(a_ref, b_ref, z);
+  auto pfq_val = hypergeometric_pFq(value_of(a_ref), value_of(b_ref), value_of(z));
+  auto grad_tuple = grad_pFq(pfq_val, a_ref, b_ref, z);
 
   typename fvar_t::Scalar grad = 0;
 
@@ -46,8 +47,7 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
             * std::get<2>(grad_tuple);
   }
 
-  return fvar_t(
-      hypergeometric_pFq(value_of(a_ref), value_of(b_ref), value_of(z)), grad);
+  return fvar_t(pfq_val, grad);
 }
 
 }  // namespace math

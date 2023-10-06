@@ -27,21 +27,21 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<Ta> arena_a = a;
   arena_t<Tb> arena_b = b;
-  return make_callback_var(
-      hypergeometric_pFq(value_of(arena_a), value_of(arena_b), value_of(z)),
-      [arena_a, arena_b, z](auto& vi) mutable {
-        auto grad_tuple = grad_pFq(arena_a, arena_b, z);
+  auto pfq_val = hypergeometric_pFq(value_of(a), value_of(b), value_of(z));
+  return make_callback_var(pfq_val,
+      [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
+        auto grad_tuple = grad_pFq(pfq_val, arena_a, arena_b, z);
         if (!is_constant<Ta>::value) {
-          //forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
-          //    += vi.adj() * std::get<0>(grad_tuple);
+          forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
+              += vi.adj() * std::get<0>(grad_tuple);
         }
         if (!is_constant<Tb>::value) {
-          //forward_as<promote_scalar_t<var, Tb>>(arena_b).adj()
-          //    += vi.adj() * std::get<1>(grad_tuple);
+          forward_as<promote_scalar_t<var, Tb>>(arena_b).adj()
+              += vi.adj() * std::get<1>(grad_tuple);
         }
         if (!is_constant<Tz>::value) {
-          //forward_as<promote_scalar_t<var, Tz>>(z).adj()
-          //    += vi.adj() * std::get<2>(grad_tuple);
+          forward_as<promote_scalar_t<var, Tz>>(z).adj()
+              += vi.adj() * std::get<2>(grad_tuple);
         }
       });
 }
