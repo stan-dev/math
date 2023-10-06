@@ -24,9 +24,8 @@
 namespace stan {
 namespace math {
 
-template <bool propto, typename T_n_cl, typename T_N_cl,
-          typename T_x_cl, typename T_alpha_cl,
-          typename T_beta_cl,
+template <bool propto, typename T_n_cl, typename T_N_cl, typename T_x_cl,
+          typename T_alpha_cl, typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
 return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
@@ -37,8 +36,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   constexpr bool is_y_vector = !is_stan_scalar<T_n_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
 
-  const size_t N_instances = max(max_size(n, N, alpha),
-                                  static_cast<size_t>(x.rows()));
+  const size_t N_instances
+      = max(max_size(n, N, alpha), static_cast<size_t>(x.rows()));
   const size_t N_attributes = x.cols();
 
   check_consistent_sizes(function, "Successes variable", n,
@@ -76,8 +75,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
       = static_select<include_summand<propto, T_n_cl, T_N_cl>::value>(
           logp_expr1 + binomial_coefficient_log(N, n), logp_expr1);
 
-  constexpr bool need_theta_deriv =
-    !is_constant_all<T_beta_cl, T_x_cl, T_alpha_cl>::value;
+  constexpr bool need_theta_deriv
+      = !is_constant_all<T_beta_cl, T_x_cl, T_alpha_cl>::value;
   auto theta_deriv_expr = n - elt_multiply(N, exp(log_inv_logit_theta));
 
   constexpr bool need_theta_deriv_sum = need_theta_deriv && !is_alpha_vector;
@@ -85,17 +84,17 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   matrix_cl<double> theta_deriv_cl;
   matrix_cl<double> theta_deriv_sum_cl;
 
-  results(check_n_bounded, check_N_nonnegative, logp_cl,
-          theta_deriv_cl, theta_deriv_sum_cl) = expressions(
-      n_bounded, N_nonnegative, logp_expr,
-      calc_if<need_theta_deriv>(theta_deriv_expr),
-      calc_if<need_theta_deriv_sum>(colwise_sum(theta_deriv_expr)));
+  results(check_n_bounded, check_N_nonnegative, logp_cl, theta_deriv_cl,
+          theta_deriv_sum_cl)
+      = expressions(
+          n_bounded, N_nonnegative, logp_expr,
+          calc_if<need_theta_deriv>(theta_deriv_expr),
+          calc_if<need_theta_deriv_sum>(colwise_sum(theta_deriv_expr)));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   using std::isfinite;
   if (!isfinite(logp)) {
-    check_cl(function, "Intercept", alpha_val, "finite")
-        = isfinite(alpha_val);
+    check_cl(function, "Intercept", alpha_val, "finite") = isfinite(alpha_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
     check_cl(function, "Matrix of independent variables", x_val, "finite")
@@ -104,8 +103,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   if (!is_constant_all<T_x_cl>::value) {
-    partials<0>(ops_partials)
-        = transpose(beta_val * transpose(theta_deriv_cl));
+    partials<0>(ops_partials) = transpose(beta_val * transpose(theta_deriv_cl));
   }
   if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {

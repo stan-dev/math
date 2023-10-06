@@ -6,8 +6,8 @@
 #include <vector>
 
 TEST(ProbDistributionsBinomialLogitGLM, error_checking) {
-  using stan::math::matrix_cl;
   using stan::math::binomial_logit_glm_lpmf;
+  using stan::math::matrix_cl;
 
   int N = 3;
   int M = 2;
@@ -80,10 +80,10 @@ TEST(ProbDistributionsBinomialLogitGLM, error_checking) {
       binomial_logit_glm_lpmf(n_cl, trials_cl, x_cl, alpha_cl, beta_size_cl),
       std::invalid_argument);
 
-   EXPECT_THROW(
+  EXPECT_THROW(
       binomial_logit_glm_lpmf(n_value_cl, trials_cl, x_cl, alpha_cl, beta_cl),
       std::domain_error);
-   EXPECT_THROW(
+  EXPECT_THROW(
       binomial_logit_glm_lpmf(n_cl, trials_value_cl, x_cl, alpha_cl, beta_cl),
       std::domain_error);
   EXPECT_THROW(
@@ -98,15 +98,15 @@ TEST(ProbDistributionsBinomialLogitGLM, error_checking) {
 }
 
 auto binomial_logit_glm_lpmf_functor
-    = [](const auto& n, const auto& trials, const auto& x,
-          const auto& alpha, const auto& beta) {
+    = [](const auto& n, const auto& trials, const auto& x, const auto& alpha,
+         const auto& beta) {
         return stan::math::binomial_logit_glm_lpmf(n, trials, x, alpha, beta);
       };
 auto binomial_logit_glm_lpmf_functor_propto
-    = [](const auto& n, const auto& trials, const auto& x,
-          const auto& alpha, const auto& beta) {
-        return stan::math::binomial_logit_glm_lpmf<true>(n, trials, x,
-                                                          alpha, beta);
+    = [](const auto& n, const auto& trials, const auto& x, const auto& alpha,
+         const auto& beta) {
+        return stan::math::binomial_logit_glm_lpmf<true>(n, trials, x, alpha,
+                                                         beta);
       };
 
 TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_small_simple) {
@@ -121,8 +121,8 @@ TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_small_simple) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      binomial_logit_glm_lpmf_functor, n, trials, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_glm_lpmf_functor,
+                                                n, trials, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
@@ -156,8 +156,8 @@ TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_zero_instances) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      binomial_logit_glm_lpmf_functor, n, trials, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_glm_lpmf_functor,
+                                                n, trials, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
@@ -172,15 +172,13 @@ TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_zero_attributes) {
   Eigen::VectorXd beta(M);
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      binomial_logit_glm_lpmf_functor, n, trials, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_glm_lpmf_functor,
+                                                n, trials, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-
-TEST(ProbDistributionsBinomialLogitGLM,
-     opencl_matches_cpu_small_vector_alpha) {
+TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -193,8 +191,8 @@ TEST(ProbDistributionsBinomialLogitGLM,
   Eigen::VectorXd alpha(N);
   alpha << 0.3, -0.8, 1.8;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      binomial_logit_glm_lpmf_functor, n, trials, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_glm_lpmf_functor,
+                                                n, trials, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
@@ -213,8 +211,8 @@ TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_big) {
   Eigen::VectorXd beta = Eigen::VectorXd::Random(M);
   Eigen::VectorXd alpha = Eigen::VectorXd::Random(N);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      binomial_logit_glm_lpmf_functor, n, trials, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_glm_lpmf_functor,
+                                                n, trials, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
