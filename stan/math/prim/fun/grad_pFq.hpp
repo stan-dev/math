@@ -2,58 +2,60 @@
 #define STAN_MATH_PRIM_FUN_GRAD_PFQ_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
-#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/prod.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/max.hpp>
-#include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/select.hpp>
-#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
-#include <stan/math/prim/fun/log_sum_exp_signed.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {
 namespace internal {
   template <typename T>
   inline auto binarysign(const T& x) {
-    return select(x == 0.0, 1, sign(value_of_rec(x)));
+    return select(x == 0.0, 1.0, sign(value_of_rec(x)));
   }
 }
 
 /**
- * Wrapper function for calculating gradients for the generalized
- * hypergeometric function. The function always returns a tuple with
- * three elements (gradients wrt a, b, and z, respectively), but the
- * elements will only be defined/calculated when the respective parameter
- * is not a primitive type.
+ * Returns the gradient of generalized hypergeometric function wrt to the
+ * input arguments:
+ * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
  *
+ * @tparam CalcA Boolean for whether to calculate derivatives wrt to 'a'
+ * @tparam CalcB Boolean for whether to calculate derivatives wrt to 'b'
+ * @tparam CalcZ Boolean for whether to calculate derivatives wrt to 'z'
+ * @tparam TpFq Scalar type of hypergeometric_pFq return value
  * @tparam Ta Eigen type with either one row or column at compile time
  * @tparam Tb Eigen type with either one row or column at compile time
  * @tparam Tz Scalar type
+ * @param[in] pfq_val Return value from the hypergeometric_pFq function
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
  * @param[in] precision Convergence criteria for infinite sum
- * @param[in] outer_steps Maximum number of iterations
+ * @param[in] max_steps Maximum number of iterations
  * @return Tuple of gradients
  */
 template <bool CalcA = true, bool CalcB = true, bool CalcZ = true,
           typename TpFq, typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const TpFq& pfq_val, const Ta& a_val, const Tb& b_val,
-              const Tz& z_val, double precision = 1e-14, int max_steps = 1e6) {
+auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
+              const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
   using std::max;
   using T_Rtn = return_type_t<Ta, Tb, Tz>;
   using Ta_Array = Eigen::Array<return_type_t<Ta>, -1, 1>;
   using Tb_Array = Eigen::Array<return_type_t<Tb>, -1, 1>;
-  using T_RtnVector = Eigen::Matrix<T_Rtn, -1, 1>;
 
-  Ta_Array a_array = as_column_vector_or_scalar(a_val).array();
+  Ta_Array a_array = as_column_vector_or_scalar(a).array();
   Ta_Array a_k = a_array;
-  Tb_Array b_array = as_column_vector_or_scalar(b_val).array();
+  Tb_Array b_array = as_column_vector_or_scalar(b).array();
   Tb_Array b_k = b_array;
-  Tz log_z = log(abs(z_val));
-  int z_sign = internal::binarysign(z_val);
+  Tz log_z = log(abs(z));
+  int z_sign = internal::binarysign(z);
 
   Ta_Array digamma_a = inv(a_k);
   Tb_Array digamma_b = inv(b_k);
@@ -61,12 +63,12 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a_val, const Tb& b_val,
   std::tuple<
     promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
     promote_scalar_t<T_Rtn, plain_type_t<Tb>>, T_Rtn> ret_tuple;
-  std::get<0>(ret_tuple).setConstant(a_val.size(), 0.0);
-  std::get<1>(ret_tuple).setConstant(b_val.size(), 0.0);
+  std::get<0>(ret_tuple).setConstant(a.size(), 0.0);
+  std::get<1>(ret_tuple).setConstant(b.size(), 0.0);
   std::get<2>(ret_tuple) = 0.0;
 
-  Eigen::Array<T_Rtn, -1, 1> a_grad(a_val.size());
-  Eigen::Array<T_Rtn, -1, 1> b_grad(b_val.size());
+  Eigen::Array<T_Rtn, -1, 1> a_grad(a.size());
+  Eigen::Array<T_Rtn, -1, 1> b_grad(b.size());
 
   int k = 0;
   int base_sign = 1;
@@ -110,8 +112,8 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a_val, const Tb& b_val,
   }
   if (CalcZ) {
     T_Rtn pfq_p1_val = hypergeometric_pFq((a_array + 1).matrix(),
-                                          (b_array + 1).matrix(), z_val);
-    std::get<2>(ret_tuple) = prod(a_val) / prod(b_val) * pfq_p1_val;
+                                          (b_array + 1).matrix(), z);
+    std::get<2>(ret_tuple) = prod(a) / prod(b) * pfq_p1_val;
   }
   return ret_tuple;
 }
