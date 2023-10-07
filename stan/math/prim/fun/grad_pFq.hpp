@@ -67,48 +67,50 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
   std::get<1>(ret_tuple).setConstant(b.size(), 0.0);
   std::get<2>(ret_tuple) = 0.0;
 
-  Eigen::Array<T_Rtn, -1, 1> a_grad(a.size());
-  Eigen::Array<T_Rtn, -1, 1> b_grad(b.size());
+  if (CalcA || CalcB) {
+    Eigen::Array<T_Rtn, -1, 1> a_grad(a.size());
+    Eigen::Array<T_Rtn, -1, 1> b_grad(b.size());
 
-  int k = 0;
-  int base_sign = 1;
-  T_Rtn curr_log_prec = NEGATIVE_INFTY;
-  T_Rtn log_base = 0;
-  while ((k < 10 || curr_log_prec > log(precision)) && (k <= max_steps)) {
-    curr_log_prec = NEGATIVE_INFTY;
+    int k = 0;
+    int base_sign = 1;
+    T_Rtn curr_log_prec = NEGATIVE_INFTY;
+    T_Rtn log_base = 0;
+    while ((k < 10 || curr_log_prec > log(precision)) && (k <= max_steps)) {
+      curr_log_prec = NEGATIVE_INFTY;
+      if (CalcA) {
+        a_grad = log(select(digamma_a == 0.0, 1.0, abs(digamma_a))) + log_base;
+        std::get<0>(ret_tuple).array()
+            += exp(a_grad) * base_sign * internal::binarysign(digamma_a);
+
+        curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
+        digamma_a += select(a_k == 0.0, 0.0, inv(a_k));
+      }
+
+      if (CalcB) {
+        b_grad = log(select(digamma_b == 0.0, 1.0, abs(digamma_b))) + log_base;
+        std::get<1>(ret_tuple).array()
+            -= exp(b_grad) * base_sign * internal::binarysign(digamma_b);
+
+        curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
+        digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
+      }
+
+      log_base += (sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z)
+                  - (sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k));
+      base_sign *= z_sign * internal::binarysign(a_k).prod()
+                  * internal::binarysign(b_k).prod();
+
+      a_k += 1.0;
+      b_k += 1.0;
+      k += 1;
+    }
+
     if (CalcA) {
-      a_grad = log(select(digamma_a == 0.0, 1.0, abs(digamma_a))) + log_base;
-      std::get<0>(ret_tuple).array()
-          += exp(a_grad) * base_sign * internal::binarysign(digamma_a);
-
-      curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
-      digamma_a += select(a_k == 0.0, 0.0, inv(a_k));
+      std::get<0>(ret_tuple).array() -= pfq_val / a_array;
     }
-
     if (CalcB) {
-      b_grad = log(select(digamma_b == 0.0, 1.0, abs(digamma_b))) + log_base;
-      std::get<1>(ret_tuple).array()
-          -= exp(b_grad) * base_sign * internal::binarysign(digamma_b);
-
-      curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
-      digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
+      std::get<1>(ret_tuple).array() += pfq_val / b_array;
     }
-
-    log_base += (sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z)
-                - (sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k));
-    base_sign *= z_sign * internal::binarysign(a_k).prod()
-                 * internal::binarysign(b_k).prod();
-
-    a_k += 1.0;
-    b_k += 1.0;
-    k += 1;
-  }
-
-  if (CalcA) {
-    std::get<0>(ret_tuple).array() -= pfq_val / a_array;
-  }
-  if (CalcB) {
-    std::get<1>(ret_tuple).array() += pfq_val / b_array;
   }
   if (CalcZ) {
     T_Rtn pfq_p1_val
