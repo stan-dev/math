@@ -15,6 +15,11 @@
 namespace stan {
 namespace math {
 namespace internal {
+  template <typename T>
+  inline auto binarysign(const T& x) {
+    return select(x == 0.0, 1, sign(value_of_rec(x)));
+  }
+
 /**
  * Wrapper function for calculating gradients for the generalized
  * hypergeometric function. The function always returns a tuple with
@@ -36,121 +41,79 @@ namespace internal {
 template <bool CalcA, bool CalcB, bool CalcZ,
           typename TpFq, typename Ta, typename Tb, typename Tz>
 auto grad_pFq_impl(const TpFq& pfq_val, const Ta& a_val, const Tb& b_val, const Tz& z_val,
-                double precision = 1e-16,
-                int max_steps = 1e8) {
+                    double precision = 1e-16,
+                    int max_steps = 1e8) {
   using std::max;
   using T_partials = return_type_t<Ta, Tb, Tz>;
   using Ta_partials = return_type_t<Ta>;
   using Tb_partials = return_type_t<Tb>;
-  using Tz_partials = Tz;
+  using Tz_partials = return_type_t<Tz>;
   using T_ArrayPartials = promote_scalar_t<T_partials, Eigen::Array<double, -1, 1>>;
   using IntArray = Eigen::Array<int, -1, 1>;
   using Ta_PartialsArray = promote_scalar_t<Ta_partials, Eigen::Array<double, -1, 1>>;
   using Tb_PartialsArray = promote_scalar_t<Tb_partials, Eigen::Array<double, -1, 1>>;
 
-  IntArray a_signs = sign(value_of_rec(a_val));
-  IntArray b_signs = sign(value_of_rec(b_val));
-  int z_sign = sign(value_of_rec(z_val));
-
-  IntArray a_k_signs = a_signs;
-  IntArray b_k_signs = b_signs;
-  int z_k_sign = 1;
+  int z_sign = binarysign(z_val);
 
   Ta_PartialsArray a_k = a_val;
   Tb_PartialsArray b_k = b_val;
-  Tz_partials log_z_pow_k = 0.0;
-  Tz_partials log_z_k = log(abs(z_val));
-
-  Ta_PartialsArray log_phammer_a_k = Ta_PartialsArray::Zero(a_val.size());
-  Tb_PartialsArray log_phammer_b_k = Tb_PartialsArray::Zero(b_val.size());
-  IntArray phammer_a_k_signs = IntArray::Ones(a_val.size());
-  IntArray phammer_b_k_signs = IntArray::Ones(b_val.size());
+  Tz_partials log_z = log(abs(z_val));
 
   Ta_PartialsArray digamma_a = inv(a_k);
   Tb_PartialsArray digamma_b = inv(b_k);
-  Ta_PartialsArray digamma_a_k = digamma_a;
-  Tb_PartialsArray digamma_b_k = digamma_b;
-  Ta_PartialsArray log_digamma_a_k = log(abs(digamma_a));
-  Tb_PartialsArray log_digamma_b_k = log(abs(digamma_b));
-  IntArray digamma_a_k_signs = a_k_signs;
-  IntArray digamma_b_k_signs = b_k_signs;
 
-  T_ArrayPartials a_log_infsum = T_ArrayPartials::Constant(a_val.size(), NEGATIVE_INFTY);
-  T_ArrayPartials b_log_infsum = T_ArrayPartials::Constant(b_val.size(), NEGATIVE_INFTY);
-  IntArray a_infsum_sign = IntArray::Ones(a_val.size());
-  IntArray b_infsum_sign = IntArray::Ones(b_val.size());
+  std::tuple<Eigen::Matrix<T_partials, -1, 1>, Eigen::Matrix<T_partials, -1, 1>,
+              T_partials> ret_tuple;
+  std::get<0>(ret_tuple).setConstant(a_val.size(), 0.0);
+  std::get<1>(ret_tuple).setConstant(b_val.size(), 0.0);
+  std::get<2>(ret_tuple) = 0.0;
 
-  T_ArrayPartials a_grad = T_ArrayPartials::Constant(a_val.size(), NEGATIVE_INFTY);
-  T_ArrayPartials b_grad = T_ArrayPartials::Constant(a_val.size(), NEGATIVE_INFTY);
-  IntArray a_grad_signs = IntArray::Ones(a_val.size());
-  IntArray b_grad_signs = IntArray::Ones(a_val.size());
+  T_ArrayPartials a_grad(a_val.size());
+  T_ArrayPartials b_grad(b_val.size());
 
   int k = 0;
-  T_partials curr_log_prec = 1.0;
-  double log_factorial_k = 0;
-  while (k <= max_steps && curr_log_prec > log(precision)) {
-    int base_sign = z_k_sign * phammer_a_k_signs.prod() * phammer_b_k_signs.prod();
-    T_partials log_base = (sum(log_phammer_a_k) + log_z_pow_k)
-                            - (log_factorial_k + sum(log_phammer_b_k));
-
+  int base_sign = 1;
+  T_partials curr_log_prec = NEGATIVE_INFTY;
+  T_partials log_base = 0;
+  while ((k < 10 || curr_log_prec > log(precision)) && (k <= max_steps)) {
+    curr_log_prec = NEGATIVE_INFTY;
     if (CalcA) {
-      a_grad = log_digamma_a_k + log_base;
-      a_grad_signs = base_sign * digamma_a_k_signs;
+      a_grad = log(select(digamma_a == 0.0, 1.0, abs(digamma_a))) + log_base;
+      std::get<0>(ret_tuple).array()
+        += exp(a_grad) * base_sign * binarysign(digamma_a);
 
-      for (int i = 0; i < a_val.size(); i++) {
-        std::forward_as_tuple(a_log_infsum.coeffRef(i), a_infsum_sign.coeffRef(i))
-          = log_sum_exp_signed(a_log_infsum.coeffRef(i), a_infsum_sign.coeffRef(i),
-                                a_grad.coeffRef(i), a_grad_signs.coeffRef(i));
-      }
+      curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
+      digamma_a += select(a_k == 0.0, 0.0, inv(a_k));
     }
 
     if (CalcB) {
-      b_grad = log_digamma_b_k + log_base;
-      b_grad_signs = base_sign * digamma_b_k_signs;
+      b_grad = log(select(digamma_b == 0.0, 1.0, abs(digamma_b))) + log_base;
+      std::get<1>(ret_tuple).array()
+        -= exp(b_grad) * base_sign * binarysign(digamma_b);
 
-      for (int i = 0; i < b_val.size(); i++) {
-        std::forward_as_tuple(b_log_infsum(i), b_infsum_sign(i))
-          = log_sum_exp_signed(b_log_infsum(i), b_infsum_sign(i),
-                                b_grad(i), b_grad_signs(i));
-      }
+      curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
+      digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
     }
 
-    curr_log_prec = max(a_grad.maxCoeff(), b_grad.maxCoeff());
-    log_phammer_a_k += log(abs(a_k));
-    log_phammer_b_k += log(abs(b_k));
-    phammer_a_k_signs *= a_k_signs;
-    phammer_b_k_signs *= b_k_signs;
-
-    log_z_pow_k += log_z_k;
-    z_k_sign *= z_sign;
-
-    digamma_a_k += select(a_k == 0.0, 0.0, inv(a_k));
-    digamma_b_k += select(b_k == 0.0, 0.0, inv(b_k));
-    log_digamma_a_k = log(abs(digamma_a_k));
-    log_digamma_b_k = log(abs(digamma_b_k));
-    digamma_a_k_signs = sign(value_of_rec(digamma_a_k));
-    digamma_b_k_signs = sign(value_of_rec(digamma_b_k));
+    log_base += sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z;
+    log_base -= sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k);
+    base_sign *= z_sign * binarysign(a_k).prod() * binarysign(b_k).prod();
 
     a_k += 1.0;
     b_k += 1.0;
-    a_k_signs = sign(value_of_rec(a_k));
-    b_k_signs = sign(value_of_rec(b_k));
 
     k += 1;
-    log_factorial_k += log(k);
   }
-  std::tuple<Eigen::Matrix<T_partials, -1, 1>,
-              Eigen::Matrix<T_partials, -1, 1>,
-              T_partials> ret_tuple;
 
   if (CalcA) {
-    std::get<0>(ret_tuple) = a_infsum_sign * exp(a_log_infsum) - digamma_a * pfq_val;
+    std::get<0>(ret_tuple).array() -= pfq_val / a_val;
   }
   if (CalcB) {
-    std::get<1>(ret_tuple) = digamma_b * pfq_val - b_infsum_sign * exp(b_log_infsum);
+    std::get<1>(ret_tuple).array() += pfq_val / b_val;
   }
   if (CalcZ) {
-    T_partials pfq_p1_val = hypergeometric_pFq((a_val + 1).matrix(), (b_val + 1).matrix(), z_val);
+    T_partials pfq_p1_val = hypergeometric_pFq((a_val + 1).matrix(),
+                                                (b_val + 1).matrix(), z_val);
     std::get<2>(ret_tuple) = prod(a_val) / prod(b_val) * pfq_p1_val;
   }
   return ret_tuple;
@@ -169,7 +132,9 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
       pfq_val,
       to_ref(as_value_column_array_or_scalar(a)),
       to_ref(as_value_column_array_or_scalar(b)),
-      value_of(z)
+      value_of(z),
+      precision,
+      max_steps
     );
 }
 }  // namespace math
