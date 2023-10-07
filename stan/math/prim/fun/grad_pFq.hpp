@@ -98,7 +98,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
       log_base += (sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z)
                   - (sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k));
       base_sign *= z_sign * internal::binarysign(a_k).prod()
-                  * internal::binarysign(b_k).prod();
+                   * internal::binarysign(b_k).prod();
 
       a_k += 1.0;
       b_k += 1.0;
