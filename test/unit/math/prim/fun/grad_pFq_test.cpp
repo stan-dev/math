@@ -298,7 +298,6 @@ TEST(PrimMath, grad2F1_11) {
   b_d << 2.70975;
   double z_d = 0.999696;
 
-
   auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
   auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
   auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
@@ -410,8 +409,8 @@ TEST(PrimMath, grad_2F1_negative_z) {
 TEST(PrimMath, grad_3F2_cross_zero) {
   using stan::math::grad_F32;
   using stan::math::grad_pFq;
-  using stan::math::hypergeometric_pFq;
   using stan::math::hypergeometric_3F2;
+  using stan::math::hypergeometric_pFq;
   using stan::math::vector_d;
 
   vector_d a_d(3);

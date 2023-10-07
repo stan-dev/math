@@ -21,12 +21,11 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Generalized hypergeometric function
  */
-template <typename Ta, typename Tb, typename Tz,
-          bool GradA = !is_constant<Ta>::value,
-          bool GradB = !is_constant<Tb>::value,
-          bool GradZ = !is_constant<Tz>::value,
-          require_all_matrix_t<Ta, Tb>* = nullptr,
-          require_return_type_t<is_fvar, Ta, Tb, Tz>* = nullptr>
+template <
+    typename Ta, typename Tb, typename Tz, bool GradA = !is_constant<Ta>::value,
+    bool GradB = !is_constant<Tb>::value, bool GradZ = !is_constant<Tz>::value,
+    require_all_matrix_t<Ta, Tb>* = nullptr,
+    require_return_type_t<is_fvar, Ta, Tb, Tz>* = nullptr>
 inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                                     const Tz& z) {
   using fvar_t = return_type_t<Ta, Tb, Tz>;

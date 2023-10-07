@@ -15,11 +15,11 @@
 namespace stan {
 namespace math {
 namespace internal {
-  template <typename T>
-  inline auto binarysign(const T& x) {
-    return select(x == 0.0, 1.0, sign(value_of_rec(x)));
-  }
+template <typename T>
+inline auto binarysign(const T& x) {
+  return select(x == 0.0, 1.0, sign(value_of_rec(x)));
 }
+}  // namespace internal
 
 /**
  * Returns the gradient of generalized hypergeometric function wrt to the
@@ -43,8 +43,8 @@ namespace internal {
  */
 template <bool CalcA = true, bool CalcB = true, bool CalcZ = true,
           typename TpFq, typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
-              const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
+auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
+              double precision = 1e-14, int max_steps = 1e6) {
   using std::max;
   using T_Rtn = return_type_t<Ta, Tb, Tz>;
   using Ta_Array = Eigen::Array<return_type_t<Ta>, -1, 1>;
@@ -60,9 +60,9 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
   Ta_Array digamma_a = inv(a_k);
   Tb_Array digamma_b = inv(b_k);
 
-  std::tuple<
-    promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
-    promote_scalar_t<T_Rtn, plain_type_t<Tb>>, T_Rtn> ret_tuple;
+  std::tuple<promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
+             promote_scalar_t<T_Rtn, plain_type_t<Tb>>, T_Rtn>
+      ret_tuple;
   std::get<0>(ret_tuple).setConstant(a.size(), 0.0);
   std::get<1>(ret_tuple).setConstant(b.size(), 0.0);
   std::get<2>(ret_tuple) = 0.0;
@@ -79,7 +79,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
     if (CalcA) {
       a_grad = log(select(digamma_a == 0.0, 1.0, abs(digamma_a))) + log_base;
       std::get<0>(ret_tuple).array()
-        += exp(a_grad) * base_sign * internal::binarysign(digamma_a);
+          += exp(a_grad) * base_sign * internal::binarysign(digamma_a);
 
       curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
       digamma_a += select(a_k == 0.0, 0.0, inv(a_k));
@@ -88,7 +88,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
     if (CalcB) {
       b_grad = log(select(digamma_b == 0.0, 1.0, abs(digamma_b))) + log_base;
       std::get<1>(ret_tuple).array()
-        -= exp(b_grad) * base_sign * internal::binarysign(digamma_b);
+          -= exp(b_grad) * base_sign * internal::binarysign(digamma_b);
 
       curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
       digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
@@ -97,7 +97,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
     log_base += (sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z)
                 - (sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k));
     base_sign *= z_sign * internal::binarysign(a_k).prod()
-                        * internal::binarysign(b_k).prod();
+                 * internal::binarysign(b_k).prod();
 
     a_k += 1.0;
     b_k += 1.0;
@@ -111,8 +111,8 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b,
     std::get<1>(ret_tuple).array() += pfq_val / b_array;
   }
   if (CalcZ) {
-    T_Rtn pfq_p1_val = hypergeometric_pFq((a_array + 1).matrix(),
-                                          (b_array + 1).matrix(), z);
+    T_Rtn pfq_p1_val
+        = hypergeometric_pFq((a_array + 1).matrix(), (b_array + 1).matrix(), z);
     std::get<2>(ret_tuple) = prod(a) / prod(b) * pfq_p1_val;
   }
   return ret_tuple;
