@@ -32,9 +32,8 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   auto pfq_val = hypergeometric_pFq(a.val(), b.val(), value_of(z));
   return make_callback_var(
       pfq_val, [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
-        auto grad_tuple = grad_pFq<GradA, GradB, GradZ>(pfq_val, arena_a.val(),
-                                                        arena_b.val(),
-                                                        value_of(z));
+        auto grad_tuple = grad_pFq<GradA, GradB, GradZ>(
+            pfq_val, arena_a.val(), arena_b.val(), value_of(z));
         if (GradA) {
           forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
               += vi.adj() * std::get<0>(grad_tuple);
