@@ -22,24 +22,28 @@ namespace math {
  * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
+          bool GradA = !is_constant<Ta>::value,
+          bool GradB = !is_constant<Tb>::value,
+          bool GradZ = !is_constant<Tz>::value,
           require_all_matrix_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<Ta> arena_a = a;
   arena_t<Tb> arena_b = b;
-  auto pfq_val = hypergeometric_pFq(value_of(a), value_of(b), value_of(z));
+  auto pfq_val = hypergeometric_pFq(a.val(), b.val(), value_of(z));
+  auto grad_tuple
+    = grad_pFq<GradA, GradB, GradZ>(pfq_val, a.val(), b.val(), value_of(z));
   return make_callback_var(pfq_val,
-      [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
-        auto grad_tuple = grad_pFq(pfq_val, arena_a, arena_b, z);
-        if (!is_constant<Ta>::value) {
+      [arena_a, arena_b, z, grad_tuple](auto& vi) mutable {
+        if (GradA) {
           forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
               += vi.adj() * std::get<0>(grad_tuple);
         }
-        if (!is_constant<Tb>::value) {
+        if (GradB) {
           forward_as<promote_scalar_t<var, Tb>>(arena_b).adj()
               += vi.adj() * std::get<1>(grad_tuple);
         }
-        if (!is_constant<Tz>::value) {
+        if (GradZ) {
           forward_as<promote_scalar_t<var, Tz>>(z).adj()
               += vi.adj() * std::get<2>(grad_tuple);
         }
