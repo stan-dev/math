@@ -107,11 +107,11 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
 
     if (CalcA) {
       std::get<0>(ret_tuple).array()
-        -= select(a_array == 0.0, 0.0, pfq_val / a_array);
+          -= select(a_array == 0.0, 0.0, pfq_val / a_array);
     }
     if (CalcB) {
       std::get<1>(ret_tuple).array()
-        += select(b_array == 0.0, 0.0, pfq_val / b_array);
+          += select(b_array == 0.0, 0.0, pfq_val / b_array);
     }
   }
   if (CalcZ) {
