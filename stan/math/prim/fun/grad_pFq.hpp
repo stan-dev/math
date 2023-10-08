@@ -57,8 +57,8 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
   Tz log_z = log(abs(z));
   int z_sign = internal::binarysign(z);
 
-  Ta_Array digamma_a = inv(a_k);
-  Tb_Array digamma_b = inv(b_k);
+  Ta_Array digamma_a = select(a_k == 0.0, 0.0, inv(a_k));
+  Tb_Array digamma_b = select(b_k == 0.0, 0.0, inv(b_k));
 
   std::tuple<promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
              promote_scalar_t<T_Rtn, plain_type_t<Tb>>, T_Rtn>
@@ -106,10 +106,12 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
     }
 
     if (CalcA) {
-      std::get<0>(ret_tuple).array() -= pfq_val / a_array;
+      std::get<0>(ret_tuple).array()
+        -= select(a_array == 0.0, 0.0, pfq_val / a_array);
     }
     if (CalcB) {
-      std::get<1>(ret_tuple).array() += pfq_val / b_array;
+      std::get<1>(ret_tuple).array()
+        += select(b_array == 0.0, 0.0, pfq_val / b_array);
     }
   }
   if (CalcZ) {
