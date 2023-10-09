@@ -126,7 +126,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
     while ((k < 10 || curr_log_prec > log(precision)) && (k <= max_steps)) {
       curr_log_prec = NEGATIVE_INFTY;
       if (CalcA) {
-        a_grad = log(select(digamma_a == 0.0, 1.0, abs(digamma_a))) + log_base;
+        a_grad = log(abs(digamma_a)) + log_base;
         std::get<0>(ret_tuple).array()
             += exp(a_grad) * base_sign * internal::binarysign(digamma_a);
 
@@ -135,7 +135,7 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
       }
 
       if (CalcB) {
-        b_grad = log(select(digamma_b == 0.0, 1.0, abs(digamma_b))) + log_base;
+        b_grad = log(abs(digamma_b)) + log_base;
         std::get<1>(ret_tuple).array()
             -= exp(b_grad) * base_sign * internal::binarysign(digamma_b);
 
@@ -143,8 +143,8 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
         digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
       }
 
-      log_base += (sum(log(select(a_k == 0.0, 0.0, abs(a_k)))) + log_z)
-                  - (sum(log(select(b_k == 0.0, 0.0, abs(b_k)))) + log1p(k));
+      log_base += (sum(log(abs(a_k))) + log_z)
+                  - (sum(log(abs(b_k))) + log1p(k));
       base_sign *= z_sign * internal::binarysign(a_k).prod()
                    * internal::binarysign(b_k).prod();
 
