@@ -111,8 +111,8 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
   std::tuple<promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
              promote_scalar_t<T_Rtn, plain_type_t<Tb>>, T_Rtn>
       ret_tuple;
-  std::get<0>(ret_tuple).setConstant(a.size(), 0.0);
-  std::get<1>(ret_tuple).setConstant(b.size(), 0.0);
+  std::get<0>(ret_tuple).setConstant(a.size(), -pfq_val);
+  std::get<1>(ret_tuple).setConstant(b.size(), pfq_val);
   std::get<2>(ret_tuple) = 0.0;
 
   if (CalcA || CalcB) {
@@ -151,13 +151,6 @@ auto grad_pFq(const TpFq& pfq_val, const Ta& a, const Tb& b, const Tz& z,
       a_k += 1.0;
       b_k += 1.0;
       k += 1;
-    }
-
-    if (CalcA) {
-      std::get<0>(ret_tuple).array() -= pfq_val;
-    }
-    if (CalcB) {
-      std::get<1>(ret_tuple).array() += pfq_val;
     }
   }
   if (CalcZ) {
