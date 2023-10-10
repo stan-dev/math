@@ -25,8 +25,7 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Hypergeometric 1F0 function
  */
-template <typename Ta, typename Tz,
-          require_any_fvar_t<Ta, Tz>* = nullptr>
+template <typename Ta, typename Tz, require_any_fvar_t<Ta, Tz>* = nullptr>
 auto hypergeometric_1f0(const Ta& a, const Tz& z) {
   using FvarT = return_type_t<Ta, Tz>;
 

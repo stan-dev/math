@@ -26,8 +26,7 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Hypergeometric 1F0 function
  */
-template <typename Ta, typename Tz,
-          require_all_arithmetic_t<Ta, Tz>* = nullptr>
+template <typename Ta, typename Tz, require_all_arithmetic_t<Ta, Tz>* = nullptr>
 auto hypergeometric_1f0(const Ta& a, const Tz& z) {
   bool condition_1 = z == 1.0;
   bool condition_2 = (1.0 - z < 0.0) && floor(a) != a;
@@ -36,8 +35,7 @@ auto hypergeometric_1f0(const Ta& a, const Tz& z) {
     msg << "Hypergeometric 1F0 is undefined when z == 1.0 or "
         << "1 - z < 0 and a not an integer, but the following "
         << "arguments provided: "
-        << "a: " << a << ", z: " << z
-        << std::endl;
+        << "a: " << a << ", z: " << z << std::endl;
     throw std::domain_error(msg.str());
   }
 

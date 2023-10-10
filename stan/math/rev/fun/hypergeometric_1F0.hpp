@@ -28,8 +28,7 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Hypergeometric 1F0 function
  */
-template <typename Ta, typename Tz,
-          require_any_var_t<Ta, Tz>* = nullptr>
+template <typename Ta, typename Tz, require_any_var_t<Ta, Tz>* = nullptr>
 var hypergeometric_1f0(const Ta& a, const Tz& z) {
   double a_val = value_of(a);
   double z_val = value_of(z);
