@@ -6,8 +6,10 @@ TEST(mathMixScalFun, hypergeometric_1f0) {
     return hypergeometric_1f0(x1, x2);
   };
 
-  stan::test::expect_ad(f, 0.5, 3.3);
+  stan::test::expect_ad(f, 5, 0.3);
   stan::test::expect_ad(f, 3.4, 0.9);
-  stan::test::expect_ad(f, 5.2, 6.7);
-  stan::test::expect_ad(f, 7.5, 1.8);
+  stan::test::expect_ad(f, 3.4, 0.1);
+  stan::test::expect_ad(f, 5, -0.7);
+  stan::test::expect_ad(f, 7, -0.1);
+  stan::test::expect_ad(f, 2.8, 0.8);
 }

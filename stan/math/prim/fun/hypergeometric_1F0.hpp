@@ -2,9 +2,10 @@
 #define STAN_MATH_PRIM_FUN_HYPERGEOMETRIC_1F0_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/check_less.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
-#include <stan/math/prim/fun/floor.hpp>
 #include <boost/math/special_functions/hypergeometric_1F0.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -28,16 +29,8 @@ namespace math {
  */
 template <typename Ta, typename Tz, require_all_arithmetic_t<Ta, Tz>* = nullptr>
 auto hypergeometric_1f0(const Ta& a, const Tz& z) {
-  bool condition_1 = z == 1.0;
-  bool condition_2 = (1.0 - z < 0.0) && floor(a) != a;
-  if (condition_1 || condition_2) {
-    std::stringstream msg;
-    msg << "Hypergeometric 1F0 is undefined when z == 1.0 or "
-        << "1 - z < 0 and a not an integer, but the following "
-        << "arguments provided: "
-        << "a: " << a << ", z: " << z << std::endl;
-    throw std::domain_error(msg.str());
-  }
+  constexpr const char* function = "hypergeometric_1f0";
+  check_less("hypergeometric_1f0", "abs(z)", std::abs(z), 1.0);
 
   return boost::math::hypergeometric_1F0(a, z, boost_policy_t<>());
 }
