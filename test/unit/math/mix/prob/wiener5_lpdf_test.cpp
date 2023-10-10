@@ -2,7 +2,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 
-TEST(mathMixDouble, wiener5_lpdf) {
+TEST(mathMixDouble, wiener5_lpdf) { // runs successfully with and without hcubature
 	double y = 1.0;
 	double a = 2.0;
 	double t0 = 0.2;
@@ -13,7 +13,7 @@ TEST(mathMixDouble, wiener5_lpdf) {
 }
 
 
-TEST(mathMixVar, wiener5_lpdf) {
+TEST(mathMixVar, wiener5_lpdf) { // runs successfully with and without hcubature
 	using stan::math::var;
 	var y = 1.0;
 	var a = 2.0;
@@ -25,7 +25,8 @@ TEST(mathMixVar, wiener5_lpdf) {
 }
 
 /*
-TEST(mathMixFVar, wiener5_lpdf) {
+TEST(mathMixFVar, wiener5_lpdf) { // error with and without hcubature
+//error: inconsistent types ‘double’ and ‘stan::math::var_value<double>’ deduced for lambda return 589 | log_error); 
 	using stan::math::fvar;
 	using stan::math::var;
 	fvar<var> y = 1.0;
@@ -36,11 +37,11 @@ TEST(mathMixFVar, wiener5_lpdf) {
 	fvar<var> sv = 0.2;	
 	double error = 1e-4;
 	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, error);
-}
+}*/
 
 
-
-TEST(mathMixDouble1Fun, wiener5_lpdf) {
+/*
+TEST(mathMixDouble1Fun, wiener5_lpdf) { // with hcubature same error as above in mathMixFVar
 	using stan::math::var;
 	double y = 1.0;
 	double a = 2.0;

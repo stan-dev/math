@@ -1,19 +1,20 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixDouble, wiener_full_lpdf) {
+TEST(mathMixDouble, wiener_full_lpdf) { // runs successfully!
 	double y = 1.0;
 	double a = 2.0;
 	double t0 = 0.2;
 	double w = 0.5;
 	double v = 1.5;
 	double sv = 0.2;
-	double sw = 0; // if = 0 no errors, if = 0.2 'Invalid sizes when resizing a matrix or array.' in hcubature 'points[0] = combos(1, l2, dim);'
+	double sw = 0.2; 
 	double st0 = 0.2;
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 }
 
-TEST(mathMixVar, wiener_full_lpdf) {
+
+TEST(mathMixVar, wiener_full_lpdf) { // error: cannot convert ‘stan::math::var’ {aka ‘stan::math::var_value<double>’} to ‘T_partials_return’ {aka ‘double’} in assignment 428 | = result + wiener5_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
 	using stan::math::var;
 	var y = 1.0;
 	var a = 2.0;
@@ -21,7 +22,7 @@ TEST(mathMixVar, wiener_full_lpdf) {
 	var w = 0.5;
 	var v = 1.5;
 	var sv = 0.2;
-	var sw = 0; // if = 0 no errors, if = 0.2 'Invalid sizes when resizing a matrix or array.' in hcubature 'points[0] = combos(1, l2, dim);'
+	var sw = 0; 
 	var st0 = 0.2;
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0, 1e-4);
 }

@@ -239,10 +239,10 @@ std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
  * @param dim dimension
  */
 template <typename Scalar>
-inline std::tuple<Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1>, Eigen::Matrix<Scalar, -1, 1>,
+inline std::tuple<std::vector<Eigen::Matrix<Scalar, -1, -1>>, Eigen::Matrix<Scalar, -1, 1>,
                   Eigen::Matrix<Scalar, -1, 1>>
 make_GenzMalik(const int dim) {
-  Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1> points(4); // is this line correct? It has been: std::vector<Eigen::MatrixXd> points(4);
+  std::vector<Eigen::Matrix<Scalar, -1, -1>> points(4); // is this line correct? It has been: std::vector<Eigen::MatrixXd> points(4);
   Eigen::Matrix<Scalar, -1, 1> weights(5);
   Eigen::Matrix<Scalar, -1, 1> weights_low_deg(4);
   Scalar l4 = std::sqrt(9 * 1.0 / 10);
@@ -260,14 +260,10 @@ make_GenzMalik(const int dim) {
   weights_low_deg[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
   weights_low_deg[1] = twopn * (245.0 / 486);
   weights_low_deg[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
-std::cout << "In make_GenzMalik Stelle vor combos" << std::endl;
   points[0] = combos(1, l2, dim);
-std::cout << "In make_GenzMalik Stelle vor combos2" << std::endl;
   points[1] = combos(1, l3, dim);
-std::cout << "In make_GenzMalik nach combos" << std::endl;
   points[2] = signcombos(2, l4, dim);
   points[3] = signcombos(dim, l5, dim);
-std::cout << "In make_GenzMalik Stelle 4" << std::endl;
   return std::make_tuple(std::move(points), std::move(weights),
                          std::move(weights_low_deg));
 }
@@ -291,7 +287,7 @@ std::cout << "In make_GenzMalik Stelle 4" << std::endl;
  */
 template <typename Scalar, typename F, typename ParsTupleT>
 std::tuple<Scalar, Scalar, int> integrate_GenzMalik(
-    const F& integrand, const Eigen::Matrix<Eigen::Matrix<Scalar, -1, 1>, -1, 1>& points,
+    const F& integrand, const std::vector<Eigen::Matrix<Scalar, -1, -1>>& points,
     const Eigen::Matrix<Scalar, -1, 1>& weights, const Eigen::Matrix<Scalar, -1, 1>& weights_low_deg,
     const int dim, const Eigen::Matrix<Scalar, -1, 1>& a, const Eigen::Matrix<Scalar, -1, 1>& b,
     const ParsTupleT& pars_tuple) {
@@ -495,7 +491,7 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   Scalar err;
   auto kdivide = 0;
 
-  Eigen::Matrix<eig_vec, -1, 1> p(4);
+  std::vector<Eigen::Matrix<Scalar, -1, -1>> p(4);
   eig_vec w_five(5);
   eig_vec wd_four(4);
 
@@ -503,9 +499,7 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     std::tie(result, err)
         = internal::gauss_kronrod<Scalar>(integrand, a[0], b[0], pars);
   } else {
-std::cout << "vor make_GenzMalik" << std::endl;
     std::tie(p, w_five, wd_four) = internal::make_GenzMalik<Scalar>(dim);
-std::cout << "nach make_GenzMalik" << std::endl;
     std::tie(result, err, kdivide) = internal::integrate_GenzMalik<Scalar>(
         integrand, p, w_five, wd_four, dim, a, b, pars);
   }
