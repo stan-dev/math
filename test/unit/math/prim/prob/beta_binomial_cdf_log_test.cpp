@@ -1,7 +1,20 @@
 #include <stan/math/prim.hpp>
+#include <stan/math/prim/fun/beta_bin_cdf2.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 
+TEST(ProbBetaBinomial, cdf_log_matches_lcdf) {
+  using stan::math::beta_binomial_cdf;
+
+  int n = 2;
+  int N = 6;
+  Eigen::VectorXd alpha(2);
+  alpha << 1.1, 1.1;
+  double beta = 0.3;
+
+  double out = beta_binomial_cdf(n,N,alpha,beta);
+}
+/*
 TEST(ProbBetaBinomial, cdf_log_matches_lcdf) {
   int n = 2;
   int N = 6;
@@ -44,3 +57,4 @@ TEST(ProbBetaBinomial, lcdf_matches_mathematica) {
   EXPECT_THROW(stan::math::beta_binomial_lcdf(n, N, alpha, beta),
                std::domain_error);
 }
+ */

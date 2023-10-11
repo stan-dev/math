@@ -75,6 +75,40 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t max_size_seq_view = max_size(n, N, alpha, beta);
 
+  auto n_val = as_value_column_array_or_scalar(n);
+  auto N_val = as_value_column_array_or_scalar(N);
+  auto alpha_val = as_value_column_array_or_scalar(alpha);
+  auto beta_val = as_value_column_array_or_scalar(beta);
+
+  auto Np1_1 = N_val + 1;
+  auto lbeta_ab_1 = lbeta(alpha_val, beta_val);
+  auto log_a_1 = log(alpha_val);
+  auto log_bpn_1 = log(beta_val + N_val);
+  plain_type_t<decltype(alpha_val)> lgamma_ai_1 = lgamma(alpha_val);
+  auto lgamma_bNi_1 = lgamma(beta_val + N_val);
+  auto lgamma_abN_1 = lgamma(alpha_val + beta_val + N_val);
+  auto log_Np1mi_1 = 0.0;
+  double log_i_1;
+  T_partials_return cdf_1 = 0.0;
+  int broadcast_n = 1;
+  bool broadcast_needed = (size(n_val) > size(N_val)) && size(n_val) > 1;
+  Eigen::Array<T_partials_return, -1, 1> cdf_11 = Eigen::Array<T_partials_return, -1, 1>::Zero(max_size(n,N,alpha,beta));
+
+  //for (int i = 0; i < max(n_val); ++i) {
+  for (int i = 0; i <= n_val; ++i) {
+    if (i != 0) {
+      log_i_1 = log(i);
+      log_Np1mi_1 += log(Np1_1 - i) - log_i_1;
+      lgamma_ai_1 += log(alpha_val + i - 1);
+      lgamma_bNi_1 -= log(beta_val + N_val - i);
+    }
+    auto frac1 = (lgamma_ai_1 + lgamma_bNi_1) - lgamma_abN_1;
+
+    cdf_11 += exp((log_Np1mi_1 + (frac1 - lbeta_ab_1)));
+  }
+  cdf_1 = prod(cdf_11);
+
+
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(n); i++) {
@@ -141,7 +175,7 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
       partials<1>(ops_partials)[i] *= P;
     }
   }
-
+  std::cout << "old: " << P << ", new: " << cdf_1 << std::endl;
   return ops_partials.build(P);
 }
 
