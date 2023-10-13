@@ -24,7 +24,7 @@ TEST(mathMixVar, wiener5_lpdf) { // runs successfully with and without hcubature
 	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, 1e-4);
 }
 
-/*
+
 TEST(mathMixFVar, wiener5_lpdf) { // error with and without hcubature
 //error: inconsistent types ‘double’ and ‘stan::math::var_value<double>’ deduced for lambda return 589 | log_error); 
 	using stan::math::fvar;
@@ -37,7 +37,7 @@ TEST(mathMixFVar, wiener5_lpdf) { // error with and without hcubature
 	fvar<var> sv = 0.2;	
 	double error = 1e-4;
 	stan::math::wiener5_lpdf(y, a, t0, w, v, sv, error);
-}*/
+}
 
 
 /*

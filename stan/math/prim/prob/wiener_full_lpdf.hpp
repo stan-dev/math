@@ -122,7 +122,7 @@ ReturnT wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
           const Scalar new_t0 = (sw_val!= 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
                                        : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0);
           if (y - new_t0 <= 0) {
-            return 0.0;
+            return static_cast<Scalar>(0.0);
           } else {
             return conditionally_grad_sw<Scalar, GradSW>(wiener7_functor, y - new_t0, a,
                                                  v, new_w, sv, sw, 
