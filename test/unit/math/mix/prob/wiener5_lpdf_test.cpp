@@ -2,7 +2,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 
-TEST(mathMixDouble, wiener5_lpdf) { // runs successfully with and without hcubature
+TEST(mathMixDouble, wiener5_lpdf) { // runs successfully 
 	double y = 1.0;
 	double a = 2.0;
 	double t0 = 0.2;
@@ -13,7 +13,7 @@ TEST(mathMixDouble, wiener5_lpdf) { // runs successfully with and without hcubat
 }
 
 
-TEST(mathMixVar, wiener5_lpdf) { // runs successfully with and without hcubature
+TEST(mathMixVar, wiener5_lpdf) { // runs successfully 
 	using stan::math::var;
 	var y = 1.0;
 	var a = 2.0;

@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixDouble, wiener_full_lpdf) { // runs successfully!
+TEST(mathMixDouble, wiener_full_lpdf) { 
 	double y = 1.0;
 	double a = 2.0;
 	double t0 = 0.2;
@@ -14,7 +14,7 @@ TEST(mathMixDouble, wiener_full_lpdf) { // runs successfully!
 }
 
 
-TEST(mathMixVar, wiener_full_lpdf) { // runs successfully!
+TEST(mathMixVar, wiener_full_lpdf) { 
 	using stan::math::var;
 	var y = 1.0;
 	var a = 2.0;
@@ -27,7 +27,8 @@ TEST(mathMixVar, wiener_full_lpdf) { // runs successfully!
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 }
 
-TEST(mathMixFVar, wiener_full_lpdf) { // runs successfully!
+
+TEST(mathMixFVar, wiener_full_lpdf) { 
 	using stan::math::var;
 	using stan::math::fvar;
 	fvar<var> y = 1.0;
@@ -42,28 +43,20 @@ TEST(mathMixFVar, wiener_full_lpdf) { // runs successfully!
 }
 
 
-
-
-/*
-TEST(mathMixScalFun, wiener_full_lpdf) {
-	auto f1 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v) {
-	  return [&y, &a, &t0, &w, &v](const auto& sv, const auto& sw, const auto& st0) {
+TEST(mathMixScalFun, wiener_full_lpdf) { // ... runs within a few minutes when 1 parameter is tested ... TODO: have to add tests for the other 5 parameters
+	
+	auto f_sw = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v, const auto& sv, const auto& st0) {
+	  return [&y, &a, &t0, &w, &v, &sv, &st0](const auto& sw) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
 	};
 	
-/*	auto f2 = [](const auto& y, const auto& a, const auto& sv, const auto& sw, const auto& st0) {
-	  return [&y, &a, &sv, &sw, &st0](const auto& t0, const auto& w, const auto& v) {
+	auto f_st0 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v, const auto& sv, const auto& sw) {
+	  return [&y, &a, &t0, &w, &v, &sv, &sw](const auto& st0) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
 	};
 	
-	auto f3 = [](const auto& w, const auto& v, const auto& sv, const auto& sw, const auto& st0) {
-	  return [&w, &v, &sv, &sw, &st0](const auto& y, const auto& a, const auto& t0) {
-		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
-	  };
-	};
-
 	double y = 0.1;
 	double a = 2.0;
 	double t0 = 0.2;
@@ -73,13 +66,11 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 	double sw = 0.1;
 	double st0 = 0.3;
 
-	stan::test::expect_ad(f1(y, a, t0, w, v), sv, sw, st0);
-//	stan::test::expect_ad(f2(y, a, sv, sw, st0), t0, w, v);
-//	stan::test::expect_ad(f3(w, v, sv, sw, st0), y, a, t0);
-
+	stan::test::expect_ad(f_st0(y, a, t0, w, v, sv, st0), sw);
+	stan::test::expect_ad(f_st0(y, a, t0, w, v, sv, sw), st0);
 
 }
-*/
+
 /*
 TEST(mathMixVecFun, wiener_full_lpdf) {
 	auto f1 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v) {

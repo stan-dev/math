@@ -549,55 +549,6 @@ Scalar estimate_with_err_check(const F& functor, Scalar err,
   }
   return result;
 }
-
-
-
-
-/*
-template <typename Scalar, bool GradSW, typename F, std::enable_if_t<!GradSW>* = nullptr>
-inline Scalar conditionally_grad_sw_2(const F& functor, Scalar y_diff, Scalar a,
-                                    Scalar v, Scalar w, Scalar sv, Scalar sw,
-                                    Scalar log_error) {
-  return functor(y_diff, a, v, w, sv, log_error);
-}
-
-template <typename Scalar, bool GradSW, typename F, std::enable_if_t<GradSW>* = nullptr>
-inline Scalar conditionally_grad_sw_2(const F& functor, Scalar y_diff, Scalar a,
-                                    Scalar v, Scalar w, Scalar sv, Scalar sw,
-                                    Scalar log_error) {
-  return functor(y_diff, a, v, w, sv, sw, log_error);
-}
-
-
-template <typename Scalar, bool GradSW, bool GradW7 = false, typename T_partials, typename Wiener7FunctorT,
-          typename... TArgs, typename ReturnT = return_type_t<T_partials>>
-ReturnT wiener7_integrate_2(const Wiener7FunctorT& wiener7_functor,
-                       Scalar hcubature_err, TArgs&&... args) {
-  const auto wiener7_integrand_impl
-      = [&](auto&& x, Scalar y, Scalar a, Scalar v, Scalar w, Scalar t0,
-            Scalar sv, Scalar sw, Scalar st0, Scalar log_error) {
-          scalar_seq_view<decltype(x)> x_vec(x);
-          const Scalar sw_val = GradSW ? 0 : sw;
-          const Scalar new_w = (sw_val!= 0) ? w + sw_val * (x_vec[0] - 0.5) : w;
-          const Scalar new_t0 = (sw_val!= 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
-                                       : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0);
-          if (y - new_t0 <= 0) {
-            return static_cast<Scalar>(0.0);
-          } else {
-            return conditionally_grad_sw_2<Scalar, GradSW>(wiener7_functor, y - new_t0, a,
-                                                 v, new_w, sv, sw, 
-												 log_error);
-          }
-        };
-  const auto functor = [&](auto&&... int_args) {
-    return hcubature(wiener7_integrand_impl, int_args...);
-  };
-  return estimate_with_err_check<Scalar, 0, GradW7, 8, true>(functor, hcubature_err, args...);
-}*/
-
-
-
-
 }  // namespace internal
 
 /**
@@ -760,22 +711,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i] = internal::wiener5_grad_sv<false, T_partials_return>(
           y_val - t0_val, a_val, v_val, w_val, sv_val);
-	/*	const auto params
-        = std::make_tuple(y_val, a_val, v_val, w_val, t0_val, sv_val, 0,
-                          0, log_error_absolute - LOG_TWO);
-		Eigen::Matrix<T_partials_return, -1, 1> xmin = Eigen::VectorXd::Zero(1);
-		Eigen::Matrix<T_partials_return, -1, 1> xmax = Eigen::VectorXd::Ones(1);
-		int max_eval = 1000;
-		int dim = 1;
-		T_partials_return hcubature_err = 1e-4;
-		T_partials_return abs = 0.0;
-		T_partials_return rel = 1e-5;
-		ops_partials.edge6_.partials_[i] = internal::wiener7_integrate_2<T_partials_return, false, false, T_partials_return>(
-		  [&](auto&&... args) {
-			return internal::wiener5_grad_a<true, T_partials_return, T_partials_return,
-			T_partials_return, T_partials_return, T_partials_return, T_partials_return>(args...);
-		  },
-		  hcubature_err, params, dim, xmin, xmax, max_eval, abs, rel);*/
     }
   }  // end for loop
   return ops_partials.build(log_density);

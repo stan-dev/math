@@ -242,7 +242,7 @@ template <typename Scalar>
 inline std::tuple<std::vector<Eigen::Matrix<Scalar, -1, -1>>, Eigen::Matrix<Scalar, -1, 1>,
                   Eigen::Matrix<Scalar, -1, 1>>
 make_GenzMalik(const int dim) {
-  std::vector<Eigen::Matrix<Scalar, -1, -1>> points(4); // is this line correct? It has been: std::vector<Eigen::MatrixXd> points(4);
+  std::vector<Eigen::Matrix<Scalar, -1, -1>> points(4);
   Eigen::Matrix<Scalar, -1, 1> weights(5);
   Eigen::Matrix<Scalar, -1, 1> weights_low_deg(4);
   Scalar l4 = std::sqrt(9 * 1.0 / 10);
@@ -515,23 +515,19 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   }
   numevals += 2 * evals_per_box;
   std::vector<internal::Box<Scalar>> ms;
-//  Eigen::Matrix<internal::Box<Scalar>, -1, 1> ms;
   ms.reserve(numevals);
-//  ms.conservativeResize(numevals);
   ms.emplace_back(std::move(a), std::move(b), result, kdivide);
   auto get_largest_box_idx = [](auto&& box_vec) {
     auto max_it = std::max_element(box_vec.begin(), box_vec.end());
     return std::distance(box_vec.begin(), max_it);
   };
   std::vector<Scalar> err_vec;
-//  eig_vec err_vec;
   err_vec.reserve(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
          && (error > fmax(reqRelError * fabs(val), reqAbsError))
-         && fabs(val) < INFTY){ //isfinite(val)) {
+         && fabs(val) < INFTY){ 
     auto err_idx = get_largest_box_idx(err_vec);
-//----------------
     auto&& box = ms[err_idx];
 
     Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
@@ -545,24 +541,11 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
 
     int kdivide_1{0};
     int kdivide_2{0};
-//--------------------------	
-	/*		
-    internal::Box box = ms.top();
-    ms.pop();
-
-    Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-//    std::vector<double> ma(box.a);
-	eig_vec ma(box.a_);
-    ma[box.kdiv_] += w;
-//    std::vector<double> mb(box.b);
-	eig_vec mb(box.b_);
-    mb[box.kdiv_] -= w; */
 
     Scalar result_1;
 	Scalar result_2;
 	Scalar err_1;
 	Scalar err_2;
-//-----------------------
     if (dim == 1) {
       std::tie(result_1, err_1)
           = internal::gauss_kronrod<Scalar>(integrand, ma[0], box.b_[0], pars);
