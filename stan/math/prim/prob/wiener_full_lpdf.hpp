@@ -289,7 +289,7 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
 inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 const T_w& w, const T_v& v, const T_sv& sv,
                                 const T_sw& sw, const T_st0& st0,
-                                const ReturnT& precision_derivatives = 1e-4) {
+                                const double& precision_derivatives = 1e-4) {
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
     return 0;
@@ -419,7 +419,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_partials_return log_density = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
                                                v_ref, sv_ref, sw_ref, st0_ref);
-  T_partials_return result = 0;
+  ReturnT result = 0;
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
@@ -467,14 +467,14 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
     const T_partials_return deriv_t_7
-        = 0;/*internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
+        = internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
               [&](auto&&... args) {
                 return internal::wiener5_grad_t<true>(args...);
               },
               hcubature_err, params, dim, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
               relative_error_hcubature / 2)
-          / density;*/
+          / density;
 
     // computation of derivatives and precision checks
     T_partials_return derivative;
@@ -483,7 +483,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
-          = 0;/*internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
+          = internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_a<true, T_partials_return, T_partials_return,
 			T_partials_return, T_partials_return, T_partials_return, T_partials_return>(args...);
@@ -491,63 +491,63 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
-            / density;*/
+            / density;
     }
     if (!is_constant_all<T_t0>::value) {
       partials<2>(ops_partials)[i] = -deriv_t_7;
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = 0;/*internal::wiener7_integrate<T_partials_return, false, true, T_partials_return>(
+          = internal::wiener7_integrate<T_partials_return, false, true, T_partials_return>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_w<true>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
-            / density;*/
+            / density;
     }
     if (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
-          = 0;/*internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
+          = internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_v<true>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
-            / density;*/
+            / density;
     }
     if (!is_constant_all<T_sv>::value) {
       partials<5>(ops_partials)[i]
-          = 0;/*internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
+          = internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
                 [&](auto&&... args) {
                   return internal::wiener5_grad_sv<true>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
-            / density;*/
+            / density;
     }
     if (!is_constant_all<T_sw>::value) {
       if (sw_val == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
         if (st0_val == 0) {
-          derivative = 0;/*internal::estimate_with_err_check<T_partials_return, 6, false, 0, true>(
+          derivative = internal::estimate_with_err_check<T_partials_return, 6, false, 0, true>(
               [&](auto&&... args) {
                 return internal::wiener7_grad_sw<T_partials_return>(args...);
               },
               hcubature_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
-              sw_val, log_error_absolute - LOG_TWO);*/
+              sw_val, log_error_absolute - LOG_TWO);
         } else {
-          derivative = 0;/*internal::wiener7_integrate<T_partials_return, true, false, T_partials_return>(
+          derivative = internal::wiener7_integrate<T_partials_return, true, false, T_partials_return>(
               [&](auto&&... args) {
                 return internal::wiener7_grad_sw<T_partials_return>(args...);
               },
               hcubature_err, params, 1, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
-              relative_error_hcubature / 2);*/
+              relative_error_hcubature / 2);
         }
         partials<6>(ops_partials)[i] = derivative / density - 1 / sw_val;
       }
@@ -561,23 +561,23 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         const T_partials_return t0_st0 = t0_val + st0_val;
         if (sw_val == 0) {
-          f = 0;/*internal::estimate_with_err_check<T_partials_return, 5, false, 0, true>(
+          f = internal::estimate_with_err_check<T_partials_return, 5, false, 0, true>(
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
               log_error_derivative + log(st0_val), y_val - t0_st0, a_val, v_val,
-              w_val, sv_val, log_error_absolute - LOG_TWO);*/
+              w_val, sv_val, log_error_absolute - LOG_TWO);
         } else {
           const T_partials_return new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
               y_val, a_val, v_val, w_val, t0_st0, sv_val, sw_val, 0, new_error);
-          f = 0;/*internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
+          f = internal::wiener7_integrate<T_partials_return, false, false, T_partials_return>(
               [&](auto&&... args) {
                 return internal::wiener5_density<true>(args...);
               },
               hcubature_err, params_st, 1, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
-              relative_error_hcubature / 2);*/
+              relative_error_hcubature / 2);
         }
         partials<7>(ops_partials)[i] = -1 / st0_val + f / st0_val / density;
       }

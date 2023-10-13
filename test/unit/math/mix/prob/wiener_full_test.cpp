@@ -14,8 +14,7 @@ TEST(mathMixDouble, wiener_full_lpdf) { // runs successfully!
 }
 
 
-TEST(mathMixVar, wiener_full_lpdf) { // if hcubature is included in wiener5: error: cannot convert ‘stan::math::var’ {aka ‘stan::math::var_value<double>’} to ‘T_partials_return’ {aka ‘double’} in assignment 428 | = result + wiener5_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
- //without hcubature in wiener5: error: cannot convert ‘const stan::math::var_value<double>’ to ‘const T_partials_return’ {aka ‘const double’} in initialization 411 | const T_partials_return error_bound = precision_derivatives;
+TEST(mathMixVar, wiener_full_lpdf) { // runs successfully!
 	using stan::math::var;
 	var y = 1.0;
 	var a = 2.0;
@@ -27,6 +26,23 @@ TEST(mathMixVar, wiener_full_lpdf) { // if hcubature is included in wiener5: err
 	var st0 = 0.2;
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 }
+
+TEST(mathMixFVar, wiener_full_lpdf) { // runs successfully!
+	using stan::math::var;
+	using stan::math::fvar;
+	fvar<var> y = 1.0;
+	fvar<var> a = 2.0;
+	fvar<var> t0 = 0.2;
+	fvar<var> w = 0.5;
+	fvar<var> v = 1.5;
+	fvar<var> sv = 0.2;
+	fvar<var> sw = 0; 
+	fvar<var> st0 = 0.2;
+	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
+}
+
+
+
 
 /*
 TEST(mathMixScalFun, wiener_full_lpdf) {
