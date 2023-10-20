@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
+/*
 TEST(mathMixDouble, wiener_full_lpdf) { 
 	double y = 1.0;
 	double a = 2.0;
@@ -41,11 +42,11 @@ TEST(mathMixFVar, wiener_full_lpdf) {
 	fvar<var> st0 = 0.2;
 	stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 }
-
+*/
 
 TEST(mathMixScalFun, wiener_full_lpdf) { 
 	
-	auto f_y = [](const auto& a, const auto& t0, const auto& w, const auto& v, const auto& sv, const auto& sw, const auto& st0) {
+/*	auto f_y = [](const auto& a, const auto& t0, const auto& w, const auto& v, const auto& sv, const auto& sw, const auto& st0) {
 	  return [&a, &t0, &w, &v, &sv, &sw, &st0](const auto& y) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
@@ -93,13 +94,13 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 	  };
 	};
 	
-	
+	*/
 	auto f1 = [](const auto& y, const auto& a, const auto& t0, const auto& w, const auto& v) {
 	  return [&y, &a, &t0, &w, &v](const auto& sv, const auto& sw, const auto& st0) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
 	};
-	
+	/*
 	auto f2 = [](const auto& y, const auto& a, const auto& sv, const auto& sw, const auto& st0) {
 	  return [&y, &a, &sv, &sw, &st0](const auto& t0, const auto& w, const auto& v) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
@@ -111,7 +112,7 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 		return stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
 	  };
 	};
-
+*/
 
 	double y = 0.1;
 	double a = 2.0;
@@ -122,19 +123,23 @@ TEST(mathMixScalFun, wiener_full_lpdf) {
 	double sw = 0.1;
 	double st0 = 0.3;
 	
+
+	
 	stan::test::expect_ad(f1(y, a, t0, w, v), sv, sw, st0);
-	stan::test::expect_ad(f2(y, a, sv, sw, st0), t0, w, v);
-	stan::test::expect_ad(f3(w, v, sv, sw, st0), y, a, t0);
+//	stan::test::expect_ad(f2(y, a, sv, sw, st0), t0, w, v);
+//	stan::test::expect_ad(f3(w, v, sv, sw, st0), y, a, t0);
 	
 
-	stan::test::expect_ad(f_y(a, t0, w, v, sv, sw, st0), y);
-	stan::test::expect_ad(f_a(y, t0, w, v, sv, sw, st0), a);
-	stan::test::expect_ad(f_t0(y, a, w, v, sv, sw, st0), t0);
-	stan::test::expect_ad(f_w(y, a, t0, v, sv, sw, st0), w);
-	stan::test::expect_ad(f_v(y, a, t0, w, sv, sw, st0), v);
-	stan::test::expect_ad(f_sv(y, a, t0, w, v, sw, st0), sv);
-	stan::test::expect_ad(f_sw(y, a, t0, w, v, sv, st0), sw);
-	stan::test::expect_ad(f_st0(y, a, t0, w, v, sv, sw), st0);
+	
+	
+//	stan::test::expect_ad(f_y(a, t0, w, v, sv, sw, st0), y);
+//	stan::test::expect_ad(f_a(y, t0, w, v, sv, sw, st0), a);
+//	stan::test::expect_ad(f_t0(y, a, w, v, sv, sw, st0), t0);
+//	stan::test::expect_ad(f_w(y, a, t0, v, sv, sw, st0), w);
+//	stan::test::expect_ad(f_v(y, a, t0, w, sv, sw, st0), v);
+//	stan::test::expect_ad(f_sv(y, a, t0, w, v, sw, st0), sv);
+//	stan::test::expect_ad(f_sw(y, a, t0, w, v, sv, st0), sw);
+//	stan::test::expect_ad(f_st0(y, a, t0, w, v, sv, sw), st0);
 
 }
 

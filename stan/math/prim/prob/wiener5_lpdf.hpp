@@ -200,7 +200,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
     const Scalar mult = Density ? 1 : 3;
     const Scalar offset = GradW ? y_asq : 0;
     const Scalar sqrt_offset = sqrt(offset);
-    for (auto k = n_terms_small_t; k >= 1; k--) { //instead of size_t
+    for (auto k = n_terms_small_t; k >= 1; k--) { 
       const Scalar wp2k = w + 2.0 * k;
       const Scalar wm2k = w - 2.0 * k;
       int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
@@ -235,7 +235,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
     } else if (GradW) {
       mult = 2;
     }
-    for (auto k = n_terms_large_t; k >= 1; k--) { //instead of size_t
+    for (auto k = n_terms_large_t; k >= 1; k--) { 
       const Scalar pi_k = k * pi();
       const Scalar check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
       int check_sign = sign(check);
@@ -277,7 +277,6 @@ inline Scalar wiener5_density(const T_y& y, const T_a& a, const T_v& v_value,
   const Scalar n_terms_large_t
       = wiener5_n_terms_largel_t<true, false, Scalar>(y, a, w_value, error);
 
-  // 0 is result, 1 is newwsign
   auto res = wiener5_log_sum_exp<true, false, Scalar>(y, a, w_value, n_terms_small_t,
                                               n_terms_large_t).first;
   if (2 * n_terms_small_t <= n_terms_large_t) {
@@ -610,22 +609,31 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
                          "A-priori bias", w, "Nondecision time", t0,
                          "Inter-trial variability in drift rate", sv);
 
-  /*
-  check_consistent_size(function_name, "Random variable", y, 1);
-  check_consistent_size(function_name, "Boundary separation", a, 1);
-  check_consistent_size(function_name, "Nondecision time", t0, 1);
-  check_consistent_size(function_name, "A-priori bias", w, 1);
-  check_consistent_size(function_name, "Drift rate", v, 1);
-  check_consistent_size(function_name, "Inter-trial variability in drift rate",
-                        sv, 1);
-  */
-
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_t0_ref t0_ref = t0;
   T_w_ref w_ref = w;
   T_v_ref v_ref = v;
   T_sv_ref sv_ref = sv;
+  
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  decltype(auto) sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
+  check_positive_finite(function_name, "Random variable", y_val);
+  check_positive_finite(function_name, "Boundary separation", a_val);
+  check_finite(function_name, "Drift rate", v_val);
+  check_less(function_name, "A-priori bias", w_val, 1);
+  check_greater(function_name, "A-priori bias", w_val, 0);
+  check_nonnegative(function_name, "Nondecision time", t0_val);
+  check_finite(function_name, "Nondecision time", t0_val);
+  check_nonnegative(function_name, "Inter-trial variability in drift rate",
+                    sv_val);
+  check_finite(function_name, "Inter-trial variability in drift rate", sv_val);
+
+			   
 
   check_positive_finite(function_name, "Random variable", value_of(y_ref));
   check_positive_finite(function_name, "Boundary separation", value_of(a_ref));
@@ -662,7 +670,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   const T_partials_return log_error_density = log(1e-6);
   const T_partials_return log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
-  T_partials_return density = 0.0;
   T_partials_return log_density = 0.0;
   operands_and_partials<T_y_ref, T_a_ref, T_t0_ref, T_w_ref, T_v_ref, T_sv_ref>
       ops_partials(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
@@ -674,25 +681,27 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // Calculate 4-parameter model without inter-trial variabilities (if
     // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
     // drift rate (if sv_vec[i] != 0)
-    const T_partials_return y_val = y_vec.val(i);
-    const T_partials_return a_val = a_vec.val(i);
-    const T_partials_return t0_val = t0_vec.val(i);
-    const T_partials_return w_val = w_vec.val(i);
-    const T_partials_return v_val = v_vec.val(i);
-    const T_partials_return sv_val = sv_vec.val(i);
+    const T_partials_return y_value = y_vec.val(i);
+    const T_partials_return a_value = a_vec.val(i);
+    const T_partials_return t0_value = t0_vec.val(i);
+    const T_partials_return w_value = w_vec.val(i);
+    const T_partials_return v_value = v_vec.val(i);
+    const T_partials_return sv_value = sv_vec.val(i);
 
-    density = internal::estimate_with_err_check<T_partials_return, 5, false, 0, false>(
+    T_partials_return l_density = internal::estimate_with_err_check<T_partials_return, 5, false, 0, false>(
        [&](auto&&... args) { return internal::wiener5_density<false, T_partials_return>(args...); },
-        log_error_density - LOG_TWO, y_val - t0_val, a_val, v_val, w_val,
-        sv_val, log_error_absolute);
+        log_error_density - LOG_TWO, y_value - t0_value, a_value, v_value, w_value,
+        sv_value, log_error_absolute);
+		
+	log_density += l_density;
 
-    const T_partials_return new_est_err = density + log_error_derivative - LOG_FOUR;
+    const T_partials_return new_est_err = l_density + log_error_derivative - LOG_FOUR;
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
     const T_partials_return deriv_y = internal::estimate_with_err_check<T_partials_return, 5, false, 0, true>(
         [&](auto&&... args) { return internal::wiener5_grad_t<false, T_partials_return>(args...); },
-        new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+        new_est_err, y_value - t0_value, a_value, v_value, w_value, sv_value,
         log_error_absolute);
 
     // computation of derivatives and precision checks
@@ -702,7 +711,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_a>::value) {
       ops_partials.edge2_.partials_[i] = internal::estimate_with_err_check<T_partials_return, 5, false, 0, true>(
           [&](auto&&... args) { return internal::wiener5_grad_a<false, T_partials_return>(args...); },
-          new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+          new_est_err, y_value - t0_value, a_value, v_value, w_value, sv_value,
           log_error_absolute);
     }
     if (!is_constant_all<T_t0>::value) {
@@ -711,16 +720,16 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     if (!is_constant_all<T_w>::value) {
       ops_partials.edge4_.partials_[i] = internal::estimate_with_err_check<T_partials_return, 5, false, 0, true>(
           [&](auto&&... args) { return internal::wiener5_grad_w<false, T_partials_return>(args...); },
-          new_est_err, y_val - t0_val, a_val, v_val, w_val, sv_val,
+          new_est_err, y_value - t0_value, a_value, v_value, w_value, sv_value,
           log_error_absolute);
     }
     if (!is_constant_all<T_v>::value) {
       ops_partials.edge5_.partials_[i] = internal::wiener5_grad_v<false, T_partials_return>(
-          y_val - t0_val, a_val, v_val, w_val, sv_val);
+          y_value - t0_value, a_value, v_value, w_value, sv_value);
     }
     if (!is_constant_all<T_sv>::value) {
       ops_partials.edge6_.partials_[i] = internal::wiener5_grad_sv<false, T_partials_return>(
-          y_val - t0_val, a_val, v_val, w_val, sv_val);
+          y_value - t0_value, a_value, v_value, w_value, sv_value);
     }
   }  // end for loop
   return ops_partials.build(log_density);
