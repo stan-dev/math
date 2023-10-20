@@ -24,8 +24,33 @@ using is_container_or_var_matrix
     = bool_constant<math::disjunction<is_container<Container>,
                                       is_var_matrix<Container>>::value>;
 
-STAN_ADD_REQUIRE_UNARY(container_or_var_matrix, is_container_or_var_matrix,
-                       general_types);
+// STAN_ADD_REQUIRE_UNARY(container_or_var_matrix, is_container_or_var_matrix,
+// general_types);
+template <typename T>
+using require_container_or_var_matrix_t = require_t<is_container_or_var_matrix<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_container_or_var_matrix_t
+    = require_not_t<is_container_or_var_matrix<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_container_or_var_matrix_t
+    = require_all_t<is_container_or_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_container_or_var_matrix_t
+    = require_any_t<is_container_or_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_container_or_var_matrix_t
+    = require_all_not_t<is_container_or_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_container_or_var_matrix_t
+    = require_any_not_t<is_container_or_var_matrix<std::decay_t<Types>>...>;
+
+  
+  
 STAN_ADD_REQUIRE_CONTAINER(container_or_var_matrix, is_container_or_var_matrix,
                            general_types);
 

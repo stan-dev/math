@@ -62,7 +62,31 @@ template <typename T>
 struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(constant, is_constant, require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY(constant, is_constant, require_stan_scalar_real);
+template <typename T>
+using require_constant_t = require_t<is_constant<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_constant_t
+    = require_not_t<is_constant<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_constant_t
+    = require_all_t<is_constant<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_constant_t
+    = require_any_t<is_constant<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_constant_t
+    = require_all_not_t<is_constant<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_constant_t
+    = require_any_not_t<is_constant<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(constant, is_constant, require_stan_scalar_real);
 
 }  // namespace stan

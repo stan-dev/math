@@ -35,7 +35,31 @@ template <typename T>
 struct is_vector_like
     : bool_constant<is_detected<T, internal::operator_bracket_t>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like, require_std);
+//STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like, require_std);
+template <typename T>
+using require_vector_like_t = require_t<is_vector_like<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_vector_like_t
+    = require_not_t<is_vector_like<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_vector_like_t
+    = require_all_t<is_vector_like<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_vector_like_t
+    = require_any_t<is_vector_like<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_vector_like_t
+    = require_all_not_t<is_vector_like<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_vector_like_t
+    = require_any_not_t<is_vector_like<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
 
 }  // namespace stan

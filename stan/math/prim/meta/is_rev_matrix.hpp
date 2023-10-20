@@ -14,7 +14,31 @@ namespace stan {
 template <typename T, typename = void>
 struct is_rev_matrix : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(rev_matrix, is_rev_matrix, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(rev_matrix, is_rev_matrix, require_eigens_types);
+template <typename T>
+using require_rev_matrix_t = require_t<is_rev_matrix<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_rev_matrix_t
+    = require_not_t<is_rev_matrix<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_rev_matrix_t
+    = require_all_t<is_rev_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_rev_matrix_t
+    = require_any_t<is_rev_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_rev_matrix_t
+    = require_all_not_t<is_rev_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_rev_matrix_t
+    = require_any_not_t<is_rev_matrix<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(rev_matrix, is_rev_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(rev_matrix, is_rev_matrix, require_eigens_types);
 
@@ -28,7 +52,31 @@ STAN_ADD_REQUIRE_UNARY_INNER(rev_matrix, is_rev_matrix, require_eigens_types);
 template <typename T, typename = void>
 struct is_rev_col_vector : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(rev_col_vector, is_rev_col_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(rev_col_vector, is_rev_col_vector, require_eigens_types);
+template <typename T>
+using require_rev_col_vector_t = require_t<is_rev_col_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_rev_col_vector_t
+    = require_not_t<is_rev_col_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_rev_col_vector_t
+    = require_all_t<is_rev_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_rev_col_vector_t
+    = require_any_t<is_rev_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_rev_col_vector_t
+    = require_all_not_t<is_rev_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_rev_col_vector_t
+    = require_any_not_t<is_rev_col_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector,
                            require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector,
@@ -44,7 +92,31 @@ STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector,
 template <typename T, typename = void>
 struct is_rev_row_vector : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(rev_row_vector, is_rev_row_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(rev_row_vector, is_rev_row_vector, require_eigens_types);
+template <typename T>
+using require_rev_row_vector_t = require_t<is_rev_row_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_rev_row_vector_t
+    = require_not_t<is_rev_row_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_rev_row_vector_t
+    = require_all_t<is_rev_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_rev_row_vector_t
+    = require_any_t<is_rev_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_rev_row_vector_t
+    = require_all_not_t<is_rev_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_rev_row_vector_t
+    = require_any_not_t<is_rev_row_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector,
                            require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector,
@@ -60,7 +132,31 @@ STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector,
 template <typename T, typename = void>
 struct is_rev_vector : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(rev_vector, is_rev_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(rev_vector, is_rev_vector, require_eigens_types);
+template <typename T>
+using require_rev_vector_t = require_t<is_rev_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_rev_vector_t
+    = require_not_t<is_rev_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_rev_vector_t
+    = require_all_t<is_rev_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_rev_vector_t
+    = require_any_t<is_rev_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_rev_vector_t
+    = require_all_not_t<is_rev_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_rev_vector_t
+    = require_any_not_t<is_rev_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(rev_vector, is_rev_vector, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(rev_vector, is_rev_vector, require_eigens_types);
 

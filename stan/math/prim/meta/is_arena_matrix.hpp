@@ -12,7 +12,31 @@ namespace stan {
 template <typename T, typename = void>
 struct is_arena_matrix : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(arena_matrix, is_arena_matrix, require_eigens_types);
+// STAN_ADD_REQUIRE_UNARY(arena_matrix, is_arena_matrix, require_eigens_types);
+template <typename T>
+using require_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_arena_matrix_t
+    = require_not_t<is_arena_matrix<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_arena_matrix_t
+    = require_all_t<is_arena_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_arena_matrix_t
+    = require_any_t<is_arena_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_arena_matrix_t
+    = require_all_not_t<is_arena_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_arena_matrix_t
+    = require_any_not_t<is_arena_matrix<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(arena_matrix, is_arena_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix,
                              require_eigens_types);

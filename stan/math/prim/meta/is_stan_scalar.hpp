@@ -28,7 +28,31 @@ struct is_stan_scalar
           is_fvar<std::decay_t<T>>, std::is_arithmetic<std::decay_t<T>>,
           is_complex<std::decay_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
+template <typename T>
+using require_stan_scalar_t = require_t<is_stan_scalar<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_stan_scalar_t
+    = require_not_t<is_stan_scalar<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_stan_scalar_t
+    = require_all_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_stan_scalar_t
+    = require_any_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_stan_scalar_t
+    = require_all_not_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_stan_scalar_t
+    = require_any_not_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
                              require_stan_scalar_real);
 

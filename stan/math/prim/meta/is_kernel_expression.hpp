@@ -104,16 +104,106 @@ struct is_nonscalar_prim_or_rev_kernel_expression
                                            value_type_t<T>>>> {};
 
 /** @}*/
-STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs,
-                       opencl_kernel_generator);
-STAN_ADD_REQUIRE_UNARY(rev_kernel_expression, is_rev_kernel_expression,
-                       opencl_kernel_generator);
-STAN_ADD_REQUIRE_UNARY(prim_or_rev_kernel_expression,
-                       is_prim_or_rev_kernel_expression,
-                       opencl_kernel_generator);
-STAN_ADD_REQUIRE_UNARY(nonscalar_prim_or_rev_kernel_expression,
-                       is_nonscalar_prim_or_rev_kernel_expression,
-                       opencl_kernel_generator);
+// STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs, opencl_kernel_generator);
+template <typename T>
+using require_kernel_expression_lhs_t = require_t<is_kernel_expression_lhs<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_kernel_expression_lhs_t
+    = require_not_t<is_kernel_expression_lhs<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_kernel_expression_lhs_t
+    = require_all_t<is_kernel_expression_lhs<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_kernel_expression_lhs_t
+    = require_any_t<is_kernel_expression_lhs<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_kernel_expression_lhs_t
+    = require_all_not_t<is_kernel_expression_lhs<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_kernel_expression_lhs_t
+    = require_any_not_t<is_kernel_expression_lhs<std::decay_t<Types>>...>;
+
+  
+// STAN_ADD_REQUIRE_UNARY(rev_kernel_expression, is_rev_kernel_expression, opencl_kernel_generator);
+template <typename T>
+using require_rev_kernel_expression_t = require_t<is_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_rev_kernel_expression_t
+    = require_not_t<is_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_rev_kernel_expression_t
+    = require_all_t<is_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_rev_kernel_expression_t
+    = require_any_t<is_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_rev_kernel_expression_t
+    = require_all_not_t<is_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_rev_kernel_expression_t
+    = require_any_not_t<is_rev_kernel_expression<std::decay_t<Types>>...>;
+
+//  STAN_ADD_REQUIRE_UNARY(prim_or_rev_kernel_expression,
+//  is_prim_or_rev_kernel_expression, opencl_kernel_generator);
+template <typename T>
+using require_prim_or_rev_kernel_expression_t = require_t<is_prim_or_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_prim_or_rev_kernel_expression_t
+    = require_not_t<is_prim_or_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_prim_or_rev_kernel_expression_t
+    = require_all_t<is_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_prim_or_rev_kernel_expression_t
+    = require_any_t<is_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_prim_or_rev_kernel_expression_t
+    = require_all_not_t<is_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_prim_or_rev_kernel_expression_t
+    = require_any_not_t<is_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+  
+// STAN_ADD_REQUIRE_UNARY(nonscalar_prim_or_rev_kernel_expression,
+//    is_nonscalar_prim_or_rev_kernel_expression, opencl_kernel_generator);
+using require_nonscalar_prim_or_rev_kernel_expression_t = require_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_nonscalar_prim_or_rev_kernel_expression_t
+    = require_not_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_nonscalar_prim_or_rev_kernel_expression_t
+    = require_all_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_nonscalar_prim_or_rev_kernel_expression_t
+    = require_any_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_nonscalar_prim_or_rev_kernel_expression_t
+    = require_all_not_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_nonscalar_prim_or_rev_kernel_expression_t
+    = require_any_not_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
+
+  
 }  // namespace stan
 
 #endif
