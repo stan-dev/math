@@ -86,8 +86,31 @@ struct is_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector,
-                       require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector, require_eigens_types);
+template <typename T>
+using require_eigen_col_vector_t = require_t<is_eigen_col_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_eigen_col_vector_t
+    = require_not_t<is_eigen_col_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_eigen_col_vector_t
+    = require_all_t<is_eigen_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_eigen_col_vector_t
+    = require_any_t<is_eigen_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_eigen_col_vector_t
+    = require_all_not_t<is_eigen_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_eigen_col_vector_t
+    = require_any_not_t<is_eigen_col_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
                            require_eigens_types);
 
@@ -100,7 +123,31 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
 template <typename T>
 struct is_col_vector : internal::is_col_vector_impl<T> {};
 
-STAN_ADD_REQUIRE_UNARY(col_vector, is_col_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(col_vector, is_col_vector, require_eigens_types);
+template <typename T>
+using require_col_vector_t = require_t<is_col_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_col_vector_t
+    = require_not_t<is_col_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_col_vector_t
+    = require_all_t<is_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_col_vector_t
+    = require_any_t<is_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_col_vector_t
+    = require_all_not_t<is_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_col_vector_t
+    = require_any_not_t<is_col_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
 
 /** \ingroup type_trait
@@ -111,8 +158,31 @@ STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector,
-                       require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector, require_eigens_types);
+template <typename T>
+using require_eigen_row_vector_t = require_t<is_eigen_row_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_eigen_row_vector_t
+    = require_not_t<is_eigen_row_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_eigen_row_vector_t
+    = require_all_t<is_eigen_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_eigen_row_vector_t
+    = require_any_t<is_eigen_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_eigen_row_vector_t
+    = require_all_not_t<is_eigen_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_eigen_row_vector_t
+    = require_any_not_t<is_eigen_row_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
                            require_eigens_types);
 
@@ -125,7 +195,31 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
 template <typename T>
 struct is_row_vector : internal::is_row_vector_impl<T> {};
 
-STAN_ADD_REQUIRE_UNARY(row_vector, is_row_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(row_vector, is_row_vector, require_eigens_types);
+template <typename T>
+using require_row_vector_t = require_t<is_row_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_row_vector_t
+    = require_not_t<is_row_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_row_vector_t
+    = require_all_t<is_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_row_vector_t
+    = require_any_t<is_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_row_vector_t
+    = require_all_not_t<is_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_row_vector_t
+    = require_any_not_t<is_row_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
 
 /** \ingroup type_trait
@@ -137,7 +231,31 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
+template <typename T>
+using require_eigen_vector_t = require_t<is_eigen_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_eigen_vector_t
+    = require_not_t<is_eigen_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_eigen_vector_t
+    = require_all_t<is_eigen_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_eigen_vector_t
+    = require_any_t<is_eigen_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_eigen_vector_t
+    = require_all_not_t<is_eigen_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_eigen_vector_t
+    = require_any_not_t<is_eigen_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector, require_eigens_types);
 
 /**
@@ -184,7 +302,31 @@ struct is_vector
                     || (is_var<T>::value
                         && is_eigen_vector<value_type_t<T>>::value)> {};
 
-STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
+//STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
+template <typename T>
+using require_vector_t = require_t<is_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_vector_t
+    = require_not_t<is_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_vector_t
+    = require_all_t<is_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_vector_t
+    = require_any_t<is_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_vector_t
+    = require_all_not_t<is_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_vector_t
+    = require_any_not_t<is_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
 
 namespace internal {
@@ -234,7 +376,31 @@ struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::value_type;
 };
 
-STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector, require_std);
+//STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector, require_std);
+template <typename T>
+using require_std_vector_t = require_t<is_std_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_std_vector_t
+    = require_not_t<is_std_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_std_vector_t
+    = require_all_t<is_std_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_std_vector_t
+    = require_any_t<is_std_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_std_vector_t
+    = require_all_not_t<is_std_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_std_vector_t
+    = require_any_not_t<is_std_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
 
 }  // namespace stan

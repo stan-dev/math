@@ -13,7 +13,31 @@ namespace stan {
 template <typename S>
 using is_plain_type = std::is_same<std::decay_t<S>, plain_type_t<S>>;
 
-STAN_ADD_REQUIRE_UNARY(plain_type, is_plain_type, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(plain_type, is_plain_type, require_eigens_types);
+template <typename T>
+using require_plain_type_t = require_t<is_plain_type<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_plain_type_t
+    = require_not_t<is_plain_type<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_plain_type_t
+    = require_all_t<is_plain_type<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_plain_type_t
+    = require_any_t<is_plain_type<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_plain_type_t
+    = require_all_not_t<is_plain_type<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_plain_type_t
+    = require_any_not_t<is_plain_type<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(plain_type, is_plain_type, require_eigens_types);
 
 }  // namespace stan

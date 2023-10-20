@@ -16,7 +16,32 @@ namespace stan {
 template <typename T>
 struct is_matrix
     : bool_constant<math::disjunction<is_rev_matrix<T>, is_eigen<T>>::value> {};
-STAN_ADD_REQUIRE_UNARY(matrix, is_matrix, require_eigens_types);
+
+//STAN_ADD_REQUIRE_UNARY(matrix, is_matrix, require_eigens_types);
+template <typename T>
+using require_matrix_t = require_t<is_matrix<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_matrix_t
+    = require_not_t<is_matrix<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_matrix_t
+    = require_all_t<is_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_matrix_t
+    = require_any_t<is_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_matrix_t
+    = require_all_not_t<is_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_matrix_t
+    = require_any_not_t<is_matrix<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(matrix, is_matrix, require_eigens_types);
 

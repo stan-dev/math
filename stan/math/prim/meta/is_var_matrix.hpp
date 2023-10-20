@@ -19,7 +19,31 @@ struct is_var_matrix
     : bool_constant<
           math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_matrix, is_var_matrix, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(var_matrix, is_var_matrix, require_eigens_types);
+template <typename T>
+using require_var_matrix_t = require_t<is_var_matrix<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_var_matrix_t
+    = require_not_t<is_var_matrix<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_var_matrix_t
+    = require_all_t<is_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_var_matrix_t
+    = require_any_t<is_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_var_matrix_t
+    = require_all_not_t<is_var_matrix<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_var_matrix_t
+    = require_any_not_t<is_var_matrix<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(var_matrix, is_var_matrix, require_eigens_types);
 
 /**
@@ -34,7 +58,31 @@ struct is_var_col_vector
     : bool_constant<math::conjunction<
           is_var<T>, is_eigen_col_vector<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_col_vector, is_var_col_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(var_col_vector, is_var_col_vector, require_eigens_types);
+template <typename T>
+using require_var_col_vector_t = require_t<is_var_col_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_var_col_vector_t
+    = require_not_t<is_var_col_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_var_col_vector_t
+    = require_all_t<is_var_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_var_col_vector_t
+    = require_any_t<is_var_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_var_col_vector_t
+    = require_all_not_t<is_var_col_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_var_col_vector_t
+    = require_any_not_t<is_var_col_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(var_col_vector, is_var_col_vector,
                              require_eigens_types);
 
@@ -50,7 +98,31 @@ struct is_var_row_vector
     : bool_constant<math::conjunction<
           is_var<T>, is_eigen_row_vector<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_row_vector, is_var_row_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(var_row_vector, is_var_row_vector, require_eigens_types);
+template <typename T>
+using require_var_row_vector_t = require_t<is_var_row_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_var_row_vector_t
+    = require_not_t<is_var_row_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_var_row_vector_t
+    = require_all_t<is_var_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_var_row_vector_t
+    = require_any_t<is_var_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_var_row_vector_t
+    = require_all_not_t<is_var_row_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_var_row_vector_t
+    = require_any_not_t<is_var_row_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(var_row_vector, is_var_row_vector,
                              require_eigens_types);
 
@@ -66,7 +138,31 @@ struct is_var_vector
     : bool_constant<math::disjunction<is_var_col_vector<T>,
                                       is_var_row_vector<T>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_vector, is_var_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY(var_vector, is_var_vector, require_eigens_types);
+template <typename T>
+using require_var_vector_t = require_t<is_var_vector<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_var_vector_t
+    = require_not_t<is_var_vector<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_var_vector_t
+    = require_all_t<is_var_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_var_vector_t
+    = require_any_t<is_var_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_var_vector_t
+    = require_all_not_t<is_var_vector<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_var_vector_t
+    = require_any_not_t<is_var_vector<std::decay_t<Types>>...>;
+
+  
 STAN_ADD_REQUIRE_UNARY_INNER(var_vector, is_var_vector, require_eigens_types);
 
 /**

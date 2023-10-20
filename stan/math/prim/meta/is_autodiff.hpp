@@ -19,7 +19,30 @@ struct is_autodiff
     : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                       is_fvar<std::decay_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff, require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff, require_stan_scalar_real);
+template <typename T>
+using require_autodiff_t = require_t<is_autodiff<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_autodiff_t
+    = require_not_t<is_autodiff<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_autodiff_t
+    = require_all_t<is_autodiff<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_autodiff_t
+    = require_any_t<is_autodiff<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_autodiff_t
+    = require_all_not_t<is_autodiff<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_autodiff_t
+    = require_any_not_t<is_autodiff<std::decay_t<Types>>...>;
+  
 STAN_ADD_REQUIRE_UNARY_INNER(autodiff, is_autodiff, require_stan_scalar_real);
 
 }  // namespace stan
