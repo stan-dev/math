@@ -26,8 +26,6 @@ Replace this text with a short note on what will change if this pull request is 
 
 ## Checklist
 
-- [ ] Math issue #(issue number)
-
 - [ ] Copyright holder: (fill in copyright holder information)
 
     The copyright holder is typically you or your assignee, such as a university or company. By submitting this pull request, the copyright holder is agreeing to the license the submitted work under the following licenses:

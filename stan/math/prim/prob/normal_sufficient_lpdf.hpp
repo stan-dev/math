@@ -55,11 +55,11 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_s_ref = ref_type_if_t<!is_constant<T_s>::value, T_s>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_s_ref = ref_type_if_not_constant_t<T_s>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   static const char* function = "normal_sufficient_lpdf";
   check_consistent_sizes(function, "Location parameter sufficient statistic",
                          y_bar, "Scale parameter sufficient statistic",

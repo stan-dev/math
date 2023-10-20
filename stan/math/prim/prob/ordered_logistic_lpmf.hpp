@@ -78,8 +78,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   using T_partials_return = partials_return_t<T_loc, T_cut>;
   using T_cuts_val = partials_return_t<T_cut>;
   using T_y_ref = ref_type_t<T_y>;
-  using T_lambda_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_cut_ref = ref_type_if_t<!is_constant<T_cut>::value, T_cut>;
+  using T_lambda_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_cut_ref = ref_type_if_not_constant_t<T_cut>;
   using Eigen::Array;
   using Eigen::Dynamic;
   static const char* function = "ordered_logistic";
