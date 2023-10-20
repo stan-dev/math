@@ -40,9 +40,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_scale>;
   static const char* function = "gumbel_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", beta);

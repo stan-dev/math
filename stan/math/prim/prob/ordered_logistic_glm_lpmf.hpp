@@ -63,9 +63,9 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       Eigen::Matrix<T_xbeta_partials, Eigen::Dynamic, 1>>
       T_location;
   using T_y_ref = ref_type_t<T_y>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_cuts_ref = ref_type_if_t<!is_constant<T_cuts>::value, T_cuts>;
+  using T_x_ref = ref_type_if_not_constant_t<T_x>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
+  using T_cuts_ref = ref_type_if_not_constant_t<T_cuts>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
