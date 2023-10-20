@@ -43,6 +43,7 @@ inline ReturnT wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v, const T
  *
  * Specialisation for wiener5 functions
  *
+ * @tparam Scalar type of scalars
  * @tparam GradSW Whether the wiener7 gradient function is passed
  * @tparam F Type of Gradient/density functor
  *
@@ -72,6 +73,7 @@ inline Scalar conditionally_grad_sw(const F& functor, Scalar y_diff, Scalar a,
  *
  * Specialisation for wiener7 functions
  *
+ * @tparam Scalar type of scalars
  * @tparam GradSW Whether the wiener7 gradient function is passed
  * @tparam F Type of Gradient/density functor
  *
@@ -100,6 +102,7 @@ inline Scalar conditionally_grad_sw(const F& functor, Scalar y_diff, Scalar a,
  * to the hcubature() function for calculating wiener7 parameters via
  * integration
  *
+ * @tparam Scalar type of scalars
  * @tparam GradSW Whether the wiener7 gradient function is passed
  * @tparam Wiener7FunctorT Type of functor
  * @tparam Targs... Types of arguments in parameter pack

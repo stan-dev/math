@@ -40,6 +40,7 @@ inline Scalar wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
  *
  * @tparam GradA Whether the calculation is for gradient w.r.t. 'a'
  * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -83,6 +84,7 @@ inline Scalar wiener5_density_part_one(T_y&& y, T_a&& a, T_v_value&& v_value,
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -121,6 +123,7 @@ inline Scalar wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -167,6 +170,7 @@ inline Scalar wiener5_n_terms_largel_t(T_y&& y, T_a&& a, T_w_value&& w_value,
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -291,6 +295,7 @@ inline Scalar wiener5_density(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -345,6 +350,7 @@ inline Scalar wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -399,6 +405,7 @@ inline Scalar wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -425,6 +432,7 @@ inline Scalar wiener5_grad_v(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -475,6 +483,7 @@ inline Scalar wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
+ * @tparam Scalar type of scalars
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -522,6 +531,7 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
  * checking the result against a provided error tolerance, and re-estimating
  * the function with the increased error if it fails.
  *
+ * @tparam Scalar type of scalars
  * @tparam ErrIndex Position of the error argument in the provided arguments
  * @tparam NestedIndex Nested position if the error argument is within a tuple
  * @tparam F Type of functor
