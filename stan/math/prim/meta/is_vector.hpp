@@ -111,8 +111,55 @@ using require_any_not_eigen_col_vector_t
     = require_any_not_t<is_eigen_col_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_col_vector_vt = require_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_col_vector_vt = require_not_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_col_vector_vt = require_any_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_col_vector_vt = require_any_not_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_col_vector_vt = require_all_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_col_vector_vt = require_all_not_t<
+    container_type_check_base<is_eigen_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_col_vector_st = require_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_col_vector_st = require_not_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_col_vector_st = require_any_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_col_vector_st = require_any_not_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_col_vector_st = require_all_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_col_vector_st = require_all_not_t<
+    container_type_check_base<is_eigen_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 /** \ingroup type_trait
  * If the input type T has a static comple time constant type
@@ -148,7 +195,55 @@ using require_any_not_col_vector_t
     = require_any_not_t<is_col_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_col_vector_vt = require_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_col_vector_vt = require_not_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_col_vector_vt = require_any_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_col_vector_vt = require_any_not_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_col_vector_vt = require_all_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_col_vector_vt = require_all_not_t<
+    container_type_check_base<is_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_col_vector_st = require_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_col_vector_st = require_not_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_col_vector_st = require_any_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_col_vector_st = require_any_not_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_col_vector_st = require_all_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_col_vector_st = require_all_not_t<
+    container_type_check_base<is_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
@@ -183,8 +278,55 @@ using require_any_not_eigen_row_vector_t
     = require_any_not_t<is_eigen_row_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_row_vector_vt = require_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_row_vector_vt = require_not_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_row_vector_vt = require_any_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_row_vector_vt = require_any_not_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_row_vector_vt = require_all_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_row_vector_vt = require_all_not_t<
+    container_type_check_base<is_eigen_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_row_vector_st = require_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_row_vector_st = require_not_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_row_vector_st = require_any_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_row_vector_st = require_any_not_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_row_vector_st = require_all_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_row_vector_st = require_all_not_t<
+    container_type_check_base<is_eigen_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 /** \ingroup type_trait
  * If the input type T has a static comple time constant type
@@ -220,7 +362,55 @@ using require_any_not_row_vector_t
     = require_any_not_t<is_row_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_row_vector_vt = require_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_row_vector_vt = require_not_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_row_vector_vt = require_any_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_row_vector_vt = require_any_not_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_row_vector_vt = require_all_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_row_vector_vt = require_all_not_t<
+    container_type_check_base<is_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_row_vector_st = require_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_row_vector_st = require_not_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_row_vector_st = require_any_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_row_vector_st = require_any_not_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_row_vector_st = require_all_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_row_vector_st = require_all_not_t<
+    container_type_check_base<is_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
@@ -256,7 +446,55 @@ using require_any_not_eigen_vector_t
     = require_any_not_t<is_eigen_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_vector_vt = require_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_vector_vt = require_not_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_vector_vt = require_any_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_vector_vt = require_any_not_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_vector_vt = require_all_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_vector_vt = require_all_not_t<
+    container_type_check_base<is_eigen_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_vector_st = require_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_vector_st = require_not_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_vector_st = require_any_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_vector_st = require_any_not_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_vector_st = require_all_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_vector_st = require_all_not_t<
+    container_type_check_base<is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 /**
  * Require `Row` is a row vector and `Col` is a column vector.
@@ -327,7 +565,55 @@ using require_any_not_vector_t
     = require_any_not_t<is_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
+//STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
+template <template <class...> class TypeCheck, class... Check>
+using require_vector_vt = require_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_vector_vt = require_not_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_vector_vt = require_any_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_vector_vt = require_any_not_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_vector_vt = require_all_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_vector_vt = require_all_not_t<
+    container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_vector_st = require_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_vector_st = require_not_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_vector_st = require_any_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_vector_st = require_any_not_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_vector_st = require_all_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_vector_st = require_all_not_t<
+    container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 namespace internal {
 
@@ -401,7 +687,55 @@ using require_any_not_std_vector_t
     = require_any_not_t<is_std_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
+//STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
+template <template <class...> class TypeCheck, class... Check>
+using require_std_vector_vt = require_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_std_vector_vt = require_not_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_std_vector_vt = require_any_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_std_vector_vt = require_any_not_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_std_vector_vt = require_all_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_std_vector_vt = require_all_not_t<
+    container_type_check_base<is_std_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_std_vector_st = require_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_std_vector_st = require_not_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_std_vector_st = require_any_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_std_vector_st = require_any_not_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_std_vector_st = require_all_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_std_vector_st = require_all_not_t<
+    container_type_check_base<is_std_vector, scalar_type_t, TypeCheck, Check>...>;
+
 
 }  // namespace stan
 #endif

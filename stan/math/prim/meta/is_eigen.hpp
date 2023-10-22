@@ -69,7 +69,55 @@ using require_any_not_eigen_t
     = require_any_not_t<is_eigen<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_vt = require_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_vt = require_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_vt = require_any_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_vt = require_any_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_vt = require_all_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_vt = require_all_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_st = require_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_st = require_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_st = require_any_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_st = require_any_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_st = require_all_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_st = require_all_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
 
 /**
  * Check if a type is derived from `Eigen::ArrayBase`
@@ -105,7 +153,55 @@ using require_any_not_eigen_array_t
     = require_any_not_t<is_eigen_array<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_array_vt = require_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_array_vt = require_not_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_array_vt = require_any_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_array_vt = require_any_not_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_array_vt = require_all_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_array_vt = require_all_not_t<
+    container_type_check_base<is_eigen_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_array_st = require_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_array_st = require_not_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_array_st = require_any_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_array_st = require_any_not_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_array_st = require_all_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_array_st = require_all_not_t<
+    container_type_check_base<is_eigen_array, scalar_type_t, TypeCheck, Check>...>;
+
 
 /**
  * Check if a type is derived from `Eigen::MatrixBase` or `Eigen::ArrayBase`
@@ -141,8 +237,55 @@ using require_any_not_eigen_matrix_or_array_t
     = require_any_not_t<is_eigen_matrix_or_array<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_matrix_or_array_vt = require_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_matrix_or_array_vt = require_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_matrix_or_array_vt = require_any_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_matrix_or_array_vt = require_any_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_matrix_or_array_vt = require_all_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_matrix_or_array_vt = require_all_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_matrix_or_array_st = require_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_matrix_or_array_st = require_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_matrix_or_array_st = require_any_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_matrix_or_array_st = require_any_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_matrix_or_array_st = require_all_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_matrix_or_array_st = require_all_not_t<
+    container_type_check_base<is_eigen_matrix_or_array, scalar_type_t, TypeCheck, Check>...>;
+
 
 namespace internal {
 template <typename T>
@@ -186,8 +329,55 @@ using require_any_not_eigen_contiguous_map_t
     = require_any_not_t<is_eigen_contiguous_map<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_contiguous_map_vt = require_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_contiguous_map_vt = require_not_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_contiguous_map_vt = require_any_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_contiguous_map_vt = require_any_not_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_contiguous_map_vt = require_all_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_contiguous_map_vt = require_all_not_t<
+    container_type_check_base<is_eigen_contiguous_map, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_contiguous_map_st = require_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_contiguous_map_st = require_not_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_contiguous_map_st = require_any_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_contiguous_map_st = require_any_not_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_contiguous_map_st = require_all_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_contiguous_map_st = require_all_not_t<
+    container_type_check_base<is_eigen_contiguous_map, scalar_type_t, TypeCheck, Check>...>;
+
 
 }  // namespace stan
 #endif
