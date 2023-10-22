@@ -44,7 +44,7 @@ using require_all_not_container_t
 template <typename... Types>
 using require_any_not_container_t = require_any_not_t<is_container<
     std::decay_t<Types>>...>;  //// STAN_ADD_REQUIRE_CONTAINER(container,
-                               ///is_container, general_types);
+                               /// is_container, general_types);
 template <template <class...> class TypeCheck, class... Check>
 using require_container_vt = require_t<
     container_type_check_base<is_container, value_type_t, TypeCheck, Check...>>;
