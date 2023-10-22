@@ -87,7 +87,55 @@ using require_any_not_constant_t
     = require_any_not_t<is_constant<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(constant, is_constant, require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY_INNER(constant, is_constant, require_stan_scalar_real);
+template <typename T>
+using require_vt_constant
+    = require_t<is_constant<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_constant
+    = require_not_t<is_constant<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_constant
+    = require_all_t<is_constant<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_constant
+    = require_any_t<is_constant<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_constant
+    = require_all_not_t<is_constant<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_constant
+    = require_any_not_t<is_constant<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_constant
+    = require_t<is_constant<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_constant
+    = require_not_t<is_constant<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_constant
+    = require_all_t<is_constant<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_constant
+    = require_any_t<is_constant<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_constant
+    = require_all_not_t<is_constant<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_constant
+    = require_any_not_t<is_constant<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 }  // namespace stan
 #endif
