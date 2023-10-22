@@ -51,8 +51,55 @@ using require_any_not_container_or_var_matrix_t
 
   
   
-STAN_ADD_REQUIRE_CONTAINER(container_or_var_matrix, is_container_or_var_matrix,
-                           general_types);
+//STAN_ADD_REQUIRE_CONTAINER(container_or_var_matrix, is_container_or_var_matrix, general_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_container_or_var_matrix_vt = require_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_container_or_var_matrix_vt = require_not_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_container_or_var_matrix_vt = require_any_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_container_or_var_matrix_vt = require_any_not_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_container_or_var_matrix_vt = require_all_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_container_or_var_matrix_vt = require_all_not_t<
+    container_type_check_base<is_container_or_var_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_container_or_var_matrix_st = require_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_container_or_var_matrix_st = require_not_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_container_or_var_matrix_st = require_any_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_container_or_var_matrix_st = require_any_not_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_container_or_var_matrix_st = require_all_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_container_or_var_matrix_st = require_all_not_t<
+    container_type_check_base<is_container_or_var_matrix, scalar_type_t, TypeCheck, Check>...>;
+
 
 }  // namespace stan
 

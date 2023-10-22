@@ -39,7 +39,55 @@ using require_any_not_rev_matrix_t
     = require_any_not_t<is_rev_matrix<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(rev_matrix, is_rev_matrix, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(rev_matrix, is_rev_matrix, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_matrix_vt = require_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_matrix_vt = require_not_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_matrix_vt = require_any_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_matrix_vt = require_any_not_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_matrix_vt = require_all_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_matrix_vt = require_all_not_t<
+    container_type_check_base<is_rev_matrix, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_matrix_st = require_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_matrix_st = require_not_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_matrix_st = require_any_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_matrix_st = require_any_not_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_matrix_st = require_all_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_matrix_st = require_all_not_t<
+    container_type_check_base<is_rev_matrix, scalar_type_t, TypeCheck, Check>...>;
+
 //STAN_ADD_REQUIRE_UNARY_INNER(rev_matrix, is_rev_matrix, require_eigens_types);
 template <typename T>
 using require_vt_rev_matrix
@@ -125,8 +173,55 @@ using require_any_not_rev_col_vector_t
     = require_any_not_t<is_rev_col_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_col_vector_vt = require_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_col_vector_vt = require_not_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_col_vector_vt = require_any_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_col_vector_vt = require_any_not_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_col_vector_vt = require_all_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_col_vector_vt = require_all_not_t<
+    container_type_check_base<is_rev_col_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_col_vector_st = require_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_col_vector_st = require_not_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_col_vector_st = require_any_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_col_vector_st = require_any_not_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_col_vector_st = require_all_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_col_vector_st = require_all_not_t<
+    container_type_check_base<is_rev_col_vector, scalar_type_t, TypeCheck, Check>...>;
+
 //STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector, require_eigens_types);
 template <typename T>
 using require_vt_rev_col_vector
@@ -212,8 +307,55 @@ using require_any_not_rev_row_vector_t
     = require_any_not_t<is_rev_row_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector,
-                           require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_row_vector_vt = require_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_row_vector_vt = require_not_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_row_vector_vt = require_any_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_row_vector_vt = require_any_not_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_row_vector_vt = require_all_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_row_vector_vt = require_all_not_t<
+    container_type_check_base<is_rev_row_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_row_vector_st = require_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_row_vector_st = require_not_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_row_vector_st = require_any_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_row_vector_st = require_any_not_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_row_vector_st = require_all_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_row_vector_st = require_all_not_t<
+    container_type_check_base<is_rev_row_vector, scalar_type_t, TypeCheck, Check>...>;
+
 //STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector, require_eigens_types);
 template <typename T>
 using require_vt_rev_row_vector
@@ -299,7 +441,55 @@ using require_any_not_rev_vector_t
     = require_any_not_t<is_rev_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_CONTAINER(rev_vector, is_rev_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_CONTAINER(rev_vector, is_rev_vector, require_eigens_types);
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_vector_vt = require_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_vector_vt = require_not_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_vector_vt = require_any_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_vector_vt = require_any_not_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_vector_vt = require_all_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_vector_vt = require_all_not_t<
+    container_type_check_base<is_rev_vector, value_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_rev_vector_st = require_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_rev_vector_st = require_not_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_rev_vector_st = require_any_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_rev_vector_st = require_any_not_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_rev_vector_st = require_all_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_rev_vector_st = require_all_not_t<
+    container_type_check_base<is_rev_vector, scalar_type_t, TypeCheck, Check>...>;
+
 //STAN_ADD_REQUIRE_UNARY_INNER(rev_vector, is_rev_vector, require_eigens_types);
 template <typename T>
 using require_vt_rev_vector
