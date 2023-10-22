@@ -21,9 +21,11 @@ template <typename T>
 struct is_eigen_dense_base
     : bool_constant<is_base_pointer_convertible<Eigen::DenseBase, T>::value> {};
 
-//STAN_ADD_REQUIRE_UNARY(eigen_dense_base, is_eigen_dense_base, require_eigens_types);
+// STAN_ADD_REQUIRE_UNARY(eigen_dense_base, is_eigen_dense_base,
+// require_eigens_types);
 template <typename T>
-using require_eigen_dense_base_t = require_t<is_eigen_dense_base<std::decay_t<T>>>;
+using require_eigen_dense_base_t
+    = require_t<is_eigen_dense_base<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_eigen_dense_base_t
@@ -45,56 +47,64 @@ template <typename... Types>
 using require_any_not_eigen_dense_base_t
     = require_any_not_t<is_eigen_dense_base<std::decay_t<Types>>...>;
 
-  
-//STAN_ADD_REQUIRE_CONTAINER(eigen_dense_base, is_eigen_dense_base, require_eigens_types);
+// STAN_ADD_REQUIRE_CONTAINER(eigen_dense_base, is_eigen_dense_base,
+// require_eigens_types);
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_dense_base_vt = require_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check...>>;
+using require_eigen_dense_base_vt
+    = require_t<container_type_check_base<is_eigen_dense_base, value_type_t,
+                                          TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_eigen_dense_base_vt = require_not_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check...>>;
+using require_not_eigen_dense_base_vt
+    = require_not_t<container_type_check_base<is_eigen_dense_base, value_type_t,
+                                              TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_eigen_dense_base_vt = require_any_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
+using require_any_eigen_dense_base_vt
+    = require_any_t<container_type_check_base<is_eigen_dense_base, value_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_eigen_dense_base_vt = require_any_not_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
+using require_any_not_eigen_dense_base_vt
+    = require_any_not_t<container_type_check_base<
+        is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_eigen_dense_base_vt = require_all_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
+using require_all_eigen_dense_base_vt
+    = require_all_t<container_type_check_base<is_eigen_dense_base, value_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_eigen_dense_base_vt = require_all_not_t<
-    container_type_check_base<is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
+using require_all_not_eigen_dense_base_vt
+    = require_all_not_t<container_type_check_base<
+        is_eigen_dense_base, value_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_dense_base_st = require_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check...>>;
+using require_eigen_dense_base_st
+    = require_t<container_type_check_base<is_eigen_dense_base, scalar_type_t,
+                                          TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_eigen_dense_base_st = require_not_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check...>>;
+using require_not_eigen_dense_base_st = require_not_t<container_type_check_base<
+    is_eigen_dense_base, scalar_type_t, TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_eigen_dense_base_st = require_any_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
+using require_any_eigen_dense_base_st = require_any_t<container_type_check_base<
+    is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_eigen_dense_base_st = require_any_not_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
+using require_any_not_eigen_dense_base_st
+    = require_any_not_t<container_type_check_base<
+        is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_eigen_dense_base_st = require_all_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
+using require_all_eigen_dense_base_st = require_all_t<container_type_check_base<
+    is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_eigen_dense_base_st = require_all_not_t<
-    container_type_check_base<is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
-
+using require_all_not_eigen_dense_base_st
+    = require_all_not_t<container_type_check_base<
+        is_eigen_dense_base, scalar_type_t, TypeCheck, Check>...>;
 
 }  // namespace stan
 
