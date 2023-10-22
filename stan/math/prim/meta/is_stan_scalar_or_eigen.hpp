@@ -21,9 +21,11 @@ using is_stan_scalar_or_eigen
     = bool_constant<is_stan_scalar<std::decay_t<T>>::value
                     || is_eigen<std::decay_t<T>>::value>;
 
-//STAN_ADD_REQUIRE_UNARY(stan_scalar_or_eigen, is_stan_scalar_or_eigen, require_stan_scalar_real);
+// STAN_ADD_REQUIRE_UNARY(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
+// require_stan_scalar_real);
 template <typename T>
-using require_stan_scalar_or_eigen_t = require_t<is_stan_scalar_or_eigen<std::decay_t<T>>>;
+using require_stan_scalar_or_eigen_t
+    = require_t<is_stan_scalar_or_eigen<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_stan_scalar_or_eigen_t
@@ -45,8 +47,8 @@ template <typename... Types>
 using require_any_not_stan_scalar_or_eigen_t
     = require_any_not_t<is_stan_scalar_or_eigen<std::decay_t<Types>>...>;
 
-  
-//STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen, require_stan_scalar_real);
+// STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
+// require_stan_scalar_real);
 template <typename T>
 using require_vt_stan_scalar_or_eigen
     = require_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<T>>>>;
@@ -56,20 +58,20 @@ using require_not_vt_stan_scalar_or_eigen
     = require_not_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<T>>>>;
 
 template <typename... Types>
-using require_all_vt_stan_scalar_or_eigen
-    = require_all_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
+using require_all_vt_stan_scalar_or_eigen = require_all_t<
+    is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_vt_stan_scalar_or_eigen
-    = require_any_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
+using require_any_vt_stan_scalar_or_eigen = require_any_t<
+    is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_all_not_vt_stan_scalar_or_eigen
-    = require_all_not_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
+using require_all_not_vt_stan_scalar_or_eigen = require_all_not_t<
+    is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_not_vt_stan_scalar_or_eigen
-    = require_any_not_t<is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
+using require_any_not_vt_stan_scalar_or_eigen = require_any_not_t<
+    is_stan_scalar_or_eigen<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename T>
 using require_st_stan_scalar_or_eigen
@@ -80,21 +82,20 @@ using require_not_st_stan_scalar_or_eigen
     = require_not_t<is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<T>>>>;
 
 template <typename... Types>
-using require_all_st_stan_scalar_or_eigen
-    = require_all_t<is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
+using require_all_st_stan_scalar_or_eigen = require_all_t<
+    is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_st_stan_scalar_or_eigen
-    = require_any_t<is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
+using require_any_st_stan_scalar_or_eigen = require_any_t<
+    is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_all_not_st_stan_scalar_or_eigen
-    = require_all_not_t<is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
+using require_all_not_st_stan_scalar_or_eigen = require_all_not_t<
+    is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_not_st_stan_scalar_or_eigen
-    = require_any_not_t<is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
-
+using require_any_not_st_stan_scalar_or_eigen = require_any_not_t<
+    is_stan_scalar_or_eigen<scalar_type_t<std::decay_t<Types>>>...>;
 
 }  // namespace stan
 #endif

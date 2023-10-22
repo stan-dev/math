@@ -29,9 +29,11 @@ struct is_var_or_arithmetic_type
 template <typename... T>
 using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 
-//STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic, require_stan_scalar_real);
+// STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic,
+// require_stan_scalar_real);
 template <typename T>
-using require_var_or_arithmetic_t = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
+using require_var_or_arithmetic_t
+    = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_var_or_arithmetic_t
@@ -53,8 +55,8 @@ template <typename... Types>
 using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
-  
-//STAN_ADD_REQUIRE_UNARY_INNER(var_or_arithmetic, is_var_or_arithmetic, require_stan_scalar_real);
+// STAN_ADD_REQUIRE_UNARY_INNER(var_or_arithmetic, is_var_or_arithmetic,
+// require_stan_scalar_real);
 template <typename T>
 using require_vt_var_or_arithmetic
     = require_t<is_var_or_arithmetic<value_type_t<std::decay_t<T>>>>;
@@ -72,12 +74,12 @@ using require_any_vt_var_or_arithmetic
     = require_any_t<is_var_or_arithmetic<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_all_not_vt_var_or_arithmetic
-    = require_all_not_t<is_var_or_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+using require_all_not_vt_var_or_arithmetic = require_all_not_t<
+    is_var_or_arithmetic<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_not_vt_var_or_arithmetic
-    = require_any_not_t<is_var_or_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+using require_any_not_vt_var_or_arithmetic = require_any_not_t<
+    is_var_or_arithmetic<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename T>
 using require_st_var_or_arithmetic
@@ -88,21 +90,20 @@ using require_not_st_var_or_arithmetic
     = require_not_t<is_var_or_arithmetic<scalar_type_t<std::decay_t<T>>>>;
 
 template <typename... Types>
-using require_all_st_var_or_arithmetic
-    = require_all_t<is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+using require_all_st_var_or_arithmetic = require_all_t<
+    is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_st_var_or_arithmetic
-    = require_any_t<is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+using require_any_st_var_or_arithmetic = require_any_t<
+    is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_all_not_st_var_or_arithmetic
-    = require_all_not_t<is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+using require_all_not_st_var_or_arithmetic = require_all_not_t<
+    is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename... Types>
-using require_any_not_st_var_or_arithmetic
-    = require_any_not_t<is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
-
+using require_any_not_st_var_or_arithmetic = require_any_not_t<
+    is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
 
 }  // namespace stan
 #endif

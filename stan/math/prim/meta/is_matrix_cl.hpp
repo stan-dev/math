@@ -25,13 +25,12 @@ template <typename T>
 struct is_matrix_cl
     : public std::is_base_of<math::matrix_cl_base, std::decay_t<T>> {};
 
-//STAN_ADD_REQUIRE_UNARY(matrix_cl, is_matrix_cl, matrix_cl_group);
+// STAN_ADD_REQUIRE_UNARY(matrix_cl, is_matrix_cl, matrix_cl_group);
 template <typename T>
 using require_matrix_cl_t = require_t<is_matrix_cl<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_matrix_cl_t
-    = require_not_t<is_matrix_cl<std::decay_t<T>>>;
+using require_not_matrix_cl_t = require_not_t<is_matrix_cl<std::decay_t<T>>>;
 
 template <typename... Types>
 using require_all_matrix_cl_t
@@ -49,8 +48,7 @@ template <typename... Types>
 using require_any_not_matrix_cl_t
     = require_any_not_t<is_matrix_cl<std::decay_t<Types>>...>;
 
-  
-//STAN_ADD_REQUIRE_CONTAINER(matrix_cl, is_matrix_cl, matrix_cl_group);
+// STAN_ADD_REQUIRE_CONTAINER(matrix_cl, is_matrix_cl, matrix_cl_group);
 template <template <class...> class TypeCheck, class... Check>
 using require_matrix_cl_vt = require_t<
     container_type_check_base<is_matrix_cl, value_type_t, TypeCheck, Check...>>;
@@ -76,29 +74,34 @@ using require_all_not_matrix_cl_vt = require_all_not_t<
     container_type_check_base<is_matrix_cl, value_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_matrix_cl_st = require_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check...>>;
+using require_matrix_cl_st
+    = require_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                          TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_matrix_cl_st = require_not_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check...>>;
+using require_not_matrix_cl_st
+    = require_not_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_matrix_cl_st = require_any_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_any_matrix_cl_st
+    = require_any_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_matrix_cl_st = require_any_not_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_any_not_matrix_cl_st
+    = require_any_not_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                                  TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_matrix_cl_st = require_all_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_all_matrix_cl_st
+    = require_all_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_matrix_cl_st = require_all_not_t<
-    container_type_check_base<is_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
-
+using require_all_not_matrix_cl_st
+    = require_all_not_t<container_type_check_base<is_matrix_cl, scalar_type_t,
+                                                  TypeCheck, Check>...>;
 
 namespace internal {
 
@@ -115,9 +118,10 @@ template <typename T>
 struct is_arena_matrix_cl
     : public internal::is_arena_matrix_cl_impl<std::decay_t<T>> {};
 
-//STAN_ADD_REQUIRE_UNARY(arena_matrix_cl, is_arena_matrix_cl, matrix_cl_group);
+// STAN_ADD_REQUIRE_UNARY(arena_matrix_cl, is_arena_matrix_cl, matrix_cl_group);
 template <typename T>
-using require_arena_matrix_cl_t = require_t<is_arena_matrix_cl<std::decay_t<T>>>;
+using require_arena_matrix_cl_t
+    = require_t<is_arena_matrix_cl<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_arena_matrix_cl_t
@@ -139,56 +143,67 @@ template <typename... Types>
 using require_any_not_arena_matrix_cl_t
     = require_any_not_t<is_arena_matrix_cl<std::decay_t<Types>>...>;
 
-  
-//STAN_ADD_REQUIRE_CONTAINER(arena_matrix_cl, is_arena_matrix_cl, matrix_cl_group);
+// STAN_ADD_REQUIRE_CONTAINER(arena_matrix_cl, is_arena_matrix_cl,
+// matrix_cl_group);
 template <template <class...> class TypeCheck, class... Check>
-using require_arena_matrix_cl_vt = require_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check...>>;
+using require_arena_matrix_cl_vt
+    = require_t<container_type_check_base<is_arena_matrix_cl, value_type_t,
+                                          TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_arena_matrix_cl_vt = require_not_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check...>>;
+using require_not_arena_matrix_cl_vt
+    = require_not_t<container_type_check_base<is_arena_matrix_cl, value_type_t,
+                                              TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_arena_matrix_cl_vt = require_any_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
+using require_any_arena_matrix_cl_vt
+    = require_any_t<container_type_check_base<is_arena_matrix_cl, value_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_arena_matrix_cl_vt = require_any_not_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
+using require_any_not_arena_matrix_cl_vt
+    = require_any_not_t<container_type_check_base<
+        is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_arena_matrix_cl_vt = require_all_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
+using require_all_arena_matrix_cl_vt
+    = require_all_t<container_type_check_base<is_arena_matrix_cl, value_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_arena_matrix_cl_vt = require_all_not_t<
-    container_type_check_base<is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
+using require_all_not_arena_matrix_cl_vt
+    = require_all_not_t<container_type_check_base<
+        is_arena_matrix_cl, value_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_arena_matrix_cl_st = require_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check...>>;
+using require_arena_matrix_cl_st
+    = require_t<container_type_check_base<is_arena_matrix_cl, scalar_type_t,
+                                          TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_arena_matrix_cl_st = require_not_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check...>>;
+using require_not_arena_matrix_cl_st
+    = require_not_t<container_type_check_base<is_arena_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_arena_matrix_cl_st = require_any_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_any_arena_matrix_cl_st
+    = require_any_t<container_type_check_base<is_arena_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_arena_matrix_cl_st = require_any_not_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_any_not_arena_matrix_cl_st
+    = require_any_not_t<container_type_check_base<
+        is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_arena_matrix_cl_st = require_all_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
+using require_all_arena_matrix_cl_st
+    = require_all_t<container_type_check_base<is_arena_matrix_cl, scalar_type_t,
+                                              TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_arena_matrix_cl_st = require_all_not_t<
-    container_type_check_base<is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
-
+using require_all_not_arena_matrix_cl_st
+    = require_all_not_t<container_type_check_base<
+        is_arena_matrix_cl, scalar_type_t, TypeCheck, Check>...>;
 
 }  // namespace stan
 #endif
