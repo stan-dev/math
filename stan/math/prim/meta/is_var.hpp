@@ -39,7 +39,55 @@ using require_any_not_var_t
 
   
 STAN_ADD_REQUIRE_CONTAINER(var, is_var, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(var, is_var, require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY_INNER(var, is_var, require_stan_scalar_real);
+template <typename T>
+using require_vt_var
+    = require_t<is_var<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_var
+    = require_not_t<is_var<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_var
+    = require_all_t<is_var<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_var
+    = require_any_t<is_var<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_var
+    = require_all_not_t<is_var<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_var
+    = require_any_not_t<is_var<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_var
+    = require_t<is_var<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_var
+    = require_not_t<is_var<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_var
+    = require_all_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_var
+    = require_any_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_var
+    = require_all_not_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_var
+    = require_any_not_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 template <typename T>
 struct value_type<T, std::enable_if_t<is_var<T>::value>> {

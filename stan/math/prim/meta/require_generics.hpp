@@ -43,8 +43,55 @@ using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(arithmetic, std::is_arithmetic,
-                             require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY_INNER(arithmetic, std::is_arithmetic, require_stan_scalar_real);
+template <typename T>
+using require_vt_arithmetic
+    = require_t<std::is_arithmetic<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_arithmetic
+    = require_not_t<std::is_arithmetic<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_arithmetic
+    = require_all_t<std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_arithmetic
+    = require_any_t<std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_arithmetic
+    = require_all_not_t<std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_arithmetic
+    = require_any_not_t<std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_arithmetic
+    = require_t<std::is_arithmetic<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_arithmetic
+    = require_not_t<std::is_arithmetic<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_arithmetic
+    = require_all_t<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_arithmetic
+    = require_any_t<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_arithmetic
+    = require_all_not_t<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_arithmetic
+    = require_any_not_t<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+
 //STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point, require_stan_scalar_real);
 template <typename T>
 using require_floating_point_t = require_t<std::is_floating_point<std::decay_t<T>>>;
@@ -70,8 +117,56 @@ using require_any_not_floating_point_t
     = require_any_not_t<std::is_floating_point<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
-                             require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point, require_stan_scalar_real);
+template <typename T>
+using require_vt_floating_point
+    = require_t<std::is_floating_point<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_floating_point
+    = require_not_t<std::is_floating_point<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_floating_point
+    = require_all_t<std::is_floating_point<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_floating_point
+    = require_any_t<std::is_floating_point<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_floating_point
+    = require_all_not_t<std::is_floating_point<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_floating_point
+    = require_any_not_t<std::is_floating_point<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_floating_point
+    = require_t<std::is_floating_point<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_floating_point
+    = require_not_t<std::is_floating_point<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_floating_point
+    = require_all_t<std::is_floating_point<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_floating_point
+    = require_any_t<std::is_floating_point<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_floating_point
+    = require_all_not_t<std::is_floating_point<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_floating_point
+    = require_any_not_t<std::is_floating_point<scalar_type_t<std::decay_t<Types>>>...>;
+
+
 //STAN_ADD_REQUIRE_UNARY(integral, std::is_integral, require_stan_scalar_real);
 template <typename T>
 using require_integral_t = require_t<std::is_integral<std::decay_t<T>>>;
@@ -97,8 +192,54 @@ using require_any_not_integral_t
     = require_any_not_t<std::is_integral<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral,
-                             require_stan_scalar_real);
+//STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral, require_stan_scalar_real);
+template <typename T>
+using require_vt_integral
+    = require_t<std::is_integral<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_integral
+    = require_not_t<std::is_integral<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_integral
+    = require_all_t<std::is_integral<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_integral
+    = require_any_t<std::is_integral<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_integral
+    = require_all_not_t<std::is_integral<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_integral
+    = require_any_not_t<std::is_integral<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_integral
+    = require_t<std::is_integral<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_integral
+    = require_not_t<std::is_integral<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_integral
+    = require_all_t<std::is_integral<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_integral
+    = require_any_t<std::is_integral<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_integral
+    = require_all_not_t<std::is_integral<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_integral
+    = require_any_not_t<std::is_integral<scalar_type_t<std::decay_t<Types>>>...>;
 
 }  // namespace stan
 #endif

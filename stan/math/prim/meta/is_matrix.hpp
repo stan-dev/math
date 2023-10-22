@@ -42,7 +42,55 @@ using require_any_not_matrix_t
     = require_any_not_t<is_matrix<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
+template <typename T>
+using require_vt_matrix
+    = require_t<is_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_matrix
+    = require_not_t<is_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_matrix
+    = require_all_t<is_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_matrix
+    = require_any_t<is_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_matrix
+    = require_all_not_t<is_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_matrix
+    = require_any_not_t<is_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_matrix
+    = require_t<is_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_matrix
+    = require_not_t<is_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_matrix
+    = require_all_t<is_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_matrix
+    = require_any_t<is_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_matrix
+    = require_all_not_t<is_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_matrix
+    = require_any_not_t<is_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
 STAN_ADD_REQUIRE_CONTAINER(matrix, is_matrix, require_eigens_types);
 
 }  // namespace stan

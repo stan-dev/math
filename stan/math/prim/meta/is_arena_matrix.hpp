@@ -38,8 +38,55 @@ using require_any_not_arena_matrix_t
 
   
 STAN_ADD_REQUIRE_CONTAINER(arena_matrix, is_arena_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix,
-                             require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix, require_eigens_types);
+template <typename T>
+using require_vt_arena_matrix
+    = require_t<is_arena_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_arena_matrix
+    = require_not_t<is_arena_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_arena_matrix
+    = require_all_t<is_arena_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_arena_matrix
+    = require_any_t<is_arena_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_arena_matrix
+    = require_all_not_t<is_arena_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_arena_matrix
+    = require_any_not_t<is_arena_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_arena_matrix
+    = require_t<is_arena_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_arena_matrix
+    = require_not_t<is_arena_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_arena_matrix
+    = require_all_t<is_arena_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_arena_matrix
+    = require_any_t<is_arena_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_arena_matrix
+    = require_all_not_t<is_arena_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_arena_matrix
+    = require_any_not_t<is_arena_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 }  // namespace stan
 #endif

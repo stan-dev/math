@@ -44,7 +44,55 @@ using require_any_not_var_matrix_t
     = require_any_not_t<is_var_matrix<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(var_matrix, is_var_matrix, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(var_matrix, is_var_matrix, require_eigens_types);
+template <typename T>
+using require_vt_var_matrix
+    = require_t<is_var_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_var_matrix
+    = require_not_t<is_var_matrix<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_var_matrix
+    = require_all_t<is_var_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_var_matrix
+    = require_any_t<is_var_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_var_matrix
+    = require_all_not_t<is_var_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_var_matrix
+    = require_any_not_t<is_var_matrix<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_var_matrix
+    = require_t<is_var_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_var_matrix
+    = require_not_t<is_var_matrix<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_var_matrix
+    = require_all_t<is_var_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_var_matrix
+    = require_any_t<is_var_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_var_matrix
+    = require_all_not_t<is_var_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_var_matrix
+    = require_any_not_t<is_var_matrix<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
@@ -83,8 +131,55 @@ using require_any_not_var_col_vector_t
     = require_any_not_t<is_var_col_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(var_col_vector, is_var_col_vector,
-                             require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(var_col_vector, is_var_col_vector, require_eigens_types);
+template <typename T>
+using require_vt_var_col_vector
+    = require_t<is_var_col_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_var_col_vector
+    = require_not_t<is_var_col_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_var_col_vector
+    = require_all_t<is_var_col_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_var_col_vector
+    = require_any_t<is_var_col_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_var_col_vector
+    = require_all_not_t<is_var_col_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_var_col_vector
+    = require_any_not_t<is_var_col_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_var_col_vector
+    = require_t<is_var_col_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_var_col_vector
+    = require_not_t<is_var_col_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_var_col_vector
+    = require_all_t<is_var_col_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_var_col_vector
+    = require_any_t<is_var_col_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_var_col_vector
+    = require_all_not_t<is_var_col_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_var_col_vector
+    = require_any_not_t<is_var_col_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
@@ -123,8 +218,55 @@ using require_any_not_var_row_vector_t
     = require_any_not_t<is_var_row_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(var_row_vector, is_var_row_vector,
-                             require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(var_row_vector, is_var_row_vector, require_eigens_types);
+template <typename T>
+using require_vt_var_row_vector
+    = require_t<is_var_row_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_var_row_vector
+    = require_not_t<is_var_row_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_var_row_vector
+    = require_all_t<is_var_row_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_var_row_vector
+    = require_any_t<is_var_row_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_var_row_vector
+    = require_all_not_t<is_var_row_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_var_row_vector
+    = require_any_not_t<is_var_row_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_var_row_vector
+    = require_t<is_var_row_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_var_row_vector
+    = require_not_t<is_var_row_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_var_row_vector
+    = require_all_t<is_var_row_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_var_row_vector
+    = require_any_t<is_var_row_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_var_row_vector
+    = require_all_not_t<is_var_row_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_var_row_vector
+    = require_any_not_t<is_var_row_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
@@ -163,7 +305,55 @@ using require_any_not_var_vector_t
     = require_any_not_t<is_var_vector<std::decay_t<Types>>...>;
 
   
-STAN_ADD_REQUIRE_UNARY_INNER(var_vector, is_var_vector, require_eigens_types);
+//STAN_ADD_REQUIRE_UNARY_INNER(var_vector, is_var_vector, require_eigens_types);
+template <typename T>
+using require_vt_var_vector
+    = require_t<is_var_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_vt_var_vector
+    = require_not_t<is_var_vector<value_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_vt_var_vector
+    = require_all_t<is_var_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_vt_var_vector
+    = require_any_t<is_var_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_vt_var_vector
+    = require_all_not_t<is_var_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_vt_var_vector
+    = require_any_not_t<is_var_vector<value_type_t<std::decay_t<Types>>>...>;
+
+template <typename T>
+using require_st_var_vector
+    = require_t<is_var_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_not_st_var_vector
+    = require_not_t<is_var_vector<scalar_type_t<std::decay_t<T>>>>;
+
+template <typename... Types>
+using require_all_st_var_vector
+    = require_all_t<is_var_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_st_var_vector
+    = require_any_t<is_var_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_all_not_st_var_vector
+    = require_all_not_t<is_var_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
+template <typename... Types>
+using require_any_not_st_var_vector
+    = require_any_not_t<is_var_vector<scalar_type_t<std::decay_t<Types>>>...>;
+
 
 /**
  * Check if any types in a parameter pack are a `var_value` whose `value_type`
