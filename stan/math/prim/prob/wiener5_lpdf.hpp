@@ -610,7 +610,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
 	
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
-    return static_cast<T_partials_return>(0.0);
+    return 0;
   }
   
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
@@ -650,18 +650,6 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   check_nonnegative(function_name, "Inter-trial variability in drift rate",
                     sv_val);
   check_finite(function_name, "Inter-trial variability in drift rate", sv_val);
-
-  check_positive_finite(function_name, "Random variable", value_of(y_ref));
-  check_positive_finite(function_name, "Boundary separation", value_of(a_ref));
-  check_nonnegative(function_name, "Nondecision time", value_of(t0_ref));
-  check_finite(function_name, "Nondecision time", value_of(t0_ref));
-  check_less(function_name, "A-priori bias", value_of(w_ref), 1);
-  check_greater(function_name, "A-priori bias", value_of(w_ref), 0);
-  check_finite(function_name, "Drift rate", value_of(v_ref));
-  check_nonnegative(function_name, "Inter-trial variability in drift rate",
-                    value_of(sv_ref));
-  check_finite(function_name, "Inter-trial variability in drift rate",
-               value_of(sv_ref));
 			 
   if (size_zero(y, a, t0, w, v, sv)) {
     return 0;
