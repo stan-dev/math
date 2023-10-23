@@ -45,28 +45,12 @@ using require_any_not_autodiff_t
 // STAN_ADD_REQUIRE_UNARY_INNER(autodiff, is_autodiff,
 // require_stan_scalar_real);
 template <typename T>
-using require_vt_autodiff
-    = require_t<is_autodiff<value_type_t<std::decay_t<T>>>>;
-
-template <typename T>
 using require_not_vt_autodiff
     = require_not_t<is_autodiff<value_type_t<std::decay_t<T>>>>;
 
 template <typename... Types>
-using require_all_vt_autodiff
-    = require_all_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
-using require_any_vt_autodiff
-    = require_any_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
 using require_all_not_vt_autodiff
     = require_all_not_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
-using require_any_not_vt_autodiff
-    = require_any_not_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
 
 template <typename T>
 using require_st_autodiff
@@ -77,20 +61,8 @@ using require_not_st_autodiff
     = require_not_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
 template <typename... Types>
-using require_all_st_autodiff
-    = require_all_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
 using require_any_st_autodiff
     = require_any_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
-using require_all_not_st_autodiff
-    = require_all_not_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename... Types>
-using require_any_not_st_autodiff
-    = require_any_not_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;
 
 }  // namespace stan
 
