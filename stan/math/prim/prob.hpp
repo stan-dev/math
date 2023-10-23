@@ -46,6 +46,7 @@
 #include <stan/math/prim/prob/binomial_log.hpp>
 #include <stan/math/prim/prob/binomial_logit_log.hpp>
 #include <stan/math/prim/prob/binomial_logit_lpmf.hpp>
+#include <stan/math/prim/prob/binomial_logit_glm_lpmf.hpp>
 #include <stan/math/prim/prob/binomial_lpmf.hpp>
 #include <stan/math/prim/prob/binomial_rng.hpp>
 #include <stan/math/prim/prob/categorical_log.hpp>

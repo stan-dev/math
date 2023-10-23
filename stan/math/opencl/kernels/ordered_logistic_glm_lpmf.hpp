@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 
 namespace stan {
 namespace math {
@@ -87,20 +88,10 @@ static const char* ordered_logistic_glm_kernel_code = STRINGIFY(
 
           if (need_location_derivative || need_cuts_derivative) {
             double exp_cuts_diff = exp(cut_y2 - cut_y1);
-            if (cut2 > 0) {
-              double exp_m_cut2 = exp(-cut2);
-              d1 = exp_m_cut2 / (1 + exp_m_cut2);
-            } else {
-              d1 = 1 / (1 + exp(cut2));
-            }
+            d1 = inv_logit(-cut2);
             d1 -= exp_cuts_diff / (exp_cuts_diff - 1);
             d2 = 1 / (1 - exp_cuts_diff);
-            if (cut1 > 0) {
-              double exp_m_cut1 = exp(-cut1);
-              d2 -= exp_m_cut1 / (1 + exp_m_cut1);
-            } else {
-              d2 -= 1 / (1 + exp(cut1));
-            }
+            d2 -= inv_logit(-cut1);
 
             if (need_location_derivative) {
               location_derivative[gid] = d1 - d2;
@@ -181,6 +172,7 @@ const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
                 in_buffer, in_buffer, in_buffer, int, int, int, int, int, int>
     ordered_logistic_glm("ordered_logistic_glm",
                          {log1p_exp_device_function, log1m_exp_device_function,
+                          inv_logit_device_function,
                           ordered_logistic_glm_kernel_code},
                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 

@@ -84,7 +84,7 @@ static const char* tridiagonalization_householder_kernel_code = STRINGIFY(
       q = q_local[0];
       alpha = q_local[1];
       if (q != 0) {
-        double multi = sqrt(2.) / q;
+        double multi = M_SQRT2 / q;
         // normalize the Householder vector
         for (int i = lid + 1; i < P_span; i += lsize) {
           P[P_start + i] *= multi;
@@ -92,7 +92,7 @@ static const char* tridiagonalization_householder_kernel_code = STRINGIFY(
       }
       if (gid == 0) {
         P[P_rows * (k + j + 1) + k + j]
-            = P[P_rows * (k + j) + k + j + 1] * q / sqrt(2.) + alpha;
+            = P[P_rows * (k + j) + k + j + 1] * q / M_SQRT2 + alpha;
       }
     }
     // \cond
@@ -291,7 +291,7 @@ static const char* tridiagonalization_v_step_3_kernel_code = STRINGIFY(
         v[i] -= acc * u[i];
       }
       if (gid == 0) {
-        P[P_rows * (k + j + 1) + k + j] -= *q / sqrt(2.) * u[0];
+        P[P_rows * (k + j + 1) + k + j] -= *q / M_SQRT2 * u[0];
       }
     }
     // \cond

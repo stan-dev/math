@@ -27,8 +27,8 @@ namespace math {
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_lambda_ref = ref_type_if_t<!is_constant<T_rate>::value, T_rate>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;
   static const char* function = "poisson_lccdf";
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);

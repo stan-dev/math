@@ -4,6 +4,8 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
+
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
@@ -23,17 +25,20 @@ namespace math {
 /**
  * Represents an access to a \c matrix_cl in kernel generator expressions
  * @tparam T \c matrix_cl
+ * @tparam AssignOp tells higher level operations whether the final operation
+ * should be an assignment or a type of compound assignment.
  */
-template <typename T>
+template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
 class load_
-    : public operation_cl_lhs<load_<T>,
+    : public operation_cl_lhs<load_<T, AssignOp>,
                               typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
  public:
+  static constexpr assign_op_cl assignment_op = AssignOp;
   using Scalar = typename std::remove_reference_t<T>::type;
-  using base = operation_cl<load_<T>, Scalar>;
+  using base = operation_cl<load_<T, AssignOp>, Scalar>;
   using base::var_name_;
   static_assert(disjunction<is_matrix_cl<T>, is_arena_matrix_cl<T>>::value,
                 "load_: argument a must be a matrix_cl<T>!");
@@ -51,9 +56,13 @@ class load_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline load_<T&> deep_copy() & { return load_<T&>(a_); }
-  inline load_<const T&> deep_copy() const& { return load_<const T&>(a_); }
-  inline load_<T> deep_copy() && { return load_<T>(std::forward<T>(a_)); }
+  inline load_<T&, AssignOp> deep_copy() & { return load_<T&, AssignOp>(a_); }
+  inline load_<const T&, AssignOp> deep_copy() const& {
+    return load_<const T&, AssignOp>(a_);
+  }
+  inline load_<T, AssignOp> deep_copy() && {
+    return load_<T, AssignOp>(std::forward<T>(a_));
+  }
 
   /**
    * Generates kernel code for this expression.
@@ -327,6 +336,7 @@ class load_
     }
   }
 };
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

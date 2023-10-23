@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -39,9 +40,9 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using std::pow;
   static const char* function = "weibull_lcdf";
 
@@ -67,7 +68,8 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   const auto& pow_n = to_ref_if<any_derivs>(pow(y_val / sigma_val, alpha_val));
   const auto& exp_n = to_ref_if<any_derivs>(exp(-pow_n));
 
-  T_partials_return cdf_log = sum(log(1 - exp_n));
+  // TODO(Andrew) Further simplify derivatives and log1m_exp below
+  T_partials_return cdf_log = sum(log1m(exp_n));
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value

@@ -98,7 +98,6 @@ class broadcast_
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    int bottom, top;
     std::pair<int, int> arg_diags
         = this->template get_arg<0>().extreme_diagonals();
     return {Colwise ? std::numeric_limits<int>::min() : arg_diags.first,

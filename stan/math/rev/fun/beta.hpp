@@ -66,10 +66,9 @@ inline var beta(const var& a, const var& b) {
  */
 inline var beta(const var& a, double b) {
   auto digamma_ab = digamma(a.val()) - digamma(a.val() + b);
-  return make_callback_var(beta(a.val(), b),
-                           [a, b, digamma_ab](auto& vi) mutable {
-                             a.adj() += vi.adj() * digamma_ab * vi.val();
-                           });
+  return make_callback_var(beta(a.val(), b), [a, digamma_ab](auto& vi) mutable {
+    a.adj() += vi.adj() * digamma_ab * vi.val();
+  });
 }
 
 /**
@@ -180,10 +179,9 @@ inline auto beta(const Scalar& a, const VarMat& b) {
     auto digamma_ab = to_arena((digamma(arena_b.val()).array()
                                 - digamma(arena_a + arena_b.val().array()))
                                * beta_val.array());
-    return make_callback_var(
-        beta_val, [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          arena_b.adj().array() += vi.adj().array() * digamma_ab.array();
-        });
+    return make_callback_var(beta_val, [arena_b, digamma_ab](auto& vi) mutable {
+      arena_b.adj().array() += vi.adj().array() * digamma_ab.array();
+    });
   }
 }
 
@@ -210,12 +208,11 @@ inline auto beta(const VarMat& a, const Scalar& b) {
     double arena_b = value_of(b);
     auto digamma_ab = to_arena(digamma(arena_a.val()).array()
                                - digamma(arena_a.val().array() + arena_b));
-    return make_callback_var(beta(arena_a.val(), arena_b),
-                             [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-                               arena_a.adj().array() += vi.adj().array()
-                                                        * digamma_ab
-                                                        * vi.val().array();
-                             });
+    return make_callback_var(
+        beta(arena_a.val(), arena_b), [arena_a, digamma_ab](auto& vi) mutable {
+          arena_a.adj().array()
+              += vi.adj().array() * digamma_ab * vi.val().array();
+        });
   } else if (!is_constant<Scalar>::value) {
     arena_t<promote_scalar_t<double, VarMat>> arena_a = value_of(a);
     var arena_b = b;
