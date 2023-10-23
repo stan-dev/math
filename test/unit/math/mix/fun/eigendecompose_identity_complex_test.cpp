@@ -24,6 +24,12 @@ void expectComplexEigenvectorsId() {
             * eigenvalues.asDiagonal().inverse());
 
   expect_identity_matrix_complex(I);
+
+  std::tie(eigenvectors, eigenvalues) = stan::math::eigendecompose(c22);
+  auto I2 = (eigenvectors.inverse() * c22 * eigenvectors
+             * eigenvalues.asDiagonal().inverse());
+
+  expect_identity_matrix_complex(I2);
 }
 
 TEST(mathMixFun, eigenvectorsIdComplex) {
@@ -34,6 +40,7 @@ TEST(mathMixFun, eigenvectorsIdComplex) {
   using fv_t = stan::math::fvar<stan::math::var>;
   using ffv_t = stan::math::fvar<fv_t>;
 
+  expectComplexEigenvectorsId<d_t>();
   expectComplexEigenvectorsId<v_t>();
   expectComplexEigenvectorsId<fd_t>();
   expectComplexEigenvectorsId<ffd_t>();

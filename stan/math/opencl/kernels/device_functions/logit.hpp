@@ -49,7 +49,7 @@ static const char* logit_device_function
           * @param x argument
           * @return log odds of argument
           */
-          double logit(double x) { return log(x / (1 - x)); }
+          double logit(double x) { return log(x) - log1m(x); }
           // \cond
           ) "\n#endif\n";  // NOLINT
 // \endcond

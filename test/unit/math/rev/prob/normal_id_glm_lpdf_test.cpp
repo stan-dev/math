@@ -74,7 +74,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -136,9 +135,7 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
-  using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double eps = 1e-9;
   Matrix<double, Dynamic, 1> y(3, 1);
@@ -217,7 +214,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   double y = 13;
   var y1 = y;
@@ -261,12 +257,10 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   Matrix<double, Dynamic, 1> y_val(0, 1);
   vector_v y = y_val;
   Matrix<double, Dynamic, Dynamic> x_val(0, 2);
-  matrix_v x = x_val;
   Matrix<double, Dynamic, 1> beta_val(2, 1);
   beta_val << 0.3, 2;
   vector_v beta = beta_val;
@@ -313,7 +307,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   Matrix<double, Dynamic, 1> y_val(3, 1);
   y_val << 14, 32, 21;
@@ -366,7 +359,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
@@ -436,7 +428,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
@@ -497,7 +488,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
@@ -568,7 +558,6 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
   using vector_v = typename TypeParam::vector_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
 
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);

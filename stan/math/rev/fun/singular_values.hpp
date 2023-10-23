@@ -22,7 +22,9 @@ namespace math {
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto singular_values(const EigMat& m) {
   using ret_type = return_var_matrix_t<Eigen::VectorXd, EigMat>;
-  check_nonzero_size("singular_values", "m", m);
+  if (unlikely(m.size() == 0)) {
+    return ret_type(Eigen::VectorXd(0));
+  }
 
   auto arena_m = to_arena(m);
 

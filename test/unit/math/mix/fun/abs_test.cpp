@@ -17,6 +17,11 @@ TEST(mixFun, absBasics) {
   // test int -> int vectorization
   std::vector<int> u{1, 2, 3, 4};
   std::vector<int> v = abs(u);
+
+  EXPECT_FLOAT_EQ(a, 1);
+  EXPECT_FLOAT_EQ(b, 2.3);
+  EXPECT_MATRIX_EQ(x, y);
+  EXPECT_STD_VECTOR_EQ(u, v);
 }
 
 template <typename T1, typename T2>
@@ -231,9 +236,11 @@ TEST(mixFun, absReturnType) {
   // validate return types not overpromoted to complex by assignability
   std::complex<stan::math::var> a = 3;
   stan::math::var b = abs(a);
+  EXPECT_FLOAT_EQ(b.val(), 3);
 
   std::complex<stan::math::fvar<double>> c = 3;
   stan::math::fvar<double> d = abs(c);
+  EXPECT_FLOAT_EQ(d.val(), 3);
   SUCCEED();
 }
 

@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -47,8 +48,8 @@ namespace math {
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
  *
- * @param y failures count scalar or vector parameter. If it is a scalar it will
- * be broadcast - used for all instances.
+ * @param y failures count scalar or vector parameter. If it is a scalar it
+ * will be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept (in log odds)
@@ -89,11 +90,10 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using T_xbeta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
                                   Array<T_xbeta_partials, Dynamic, 1>>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_phi_ref
-      = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
+  using T_x_ref = ref_type_if_not_constant_t<T_x>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_alpha>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
+  using T_phi_ref = ref_type_if_not_constant_t<T_precision>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -153,8 +153,8 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   T_precision_val log_phi = log(phi_arr);
   Array<T_partials_return, Dynamic, 1> logsumexp_theta_logphi
       = (theta > log_phi)
-            .select(theta + log1p(exp(log_phi - theta)),
-                    log_phi + log1p(exp(theta - log_phi)));
+            .select(theta + log1p_exp(log_phi - theta),
+                    log_phi + log1p_exp(theta - log_phi));
 
   T_sum_val y_plus_phi = y_arr + phi_arr;
 

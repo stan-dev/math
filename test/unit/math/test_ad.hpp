@@ -6,7 +6,6 @@
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <test/unit/math/serializer.hpp>
 #include <test/unit/math/test_ad_matvar.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -402,6 +401,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1) {
+  using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
@@ -419,6 +419,7 @@ void expect_all_throw(const F& f, double x1) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
+  using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
@@ -437,6 +438,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
+  using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
   x << x1, x2, x3;
@@ -467,6 +469,7 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
 template <typename F, typename G, typename... Ts>
 void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
                       const Eigen::VectorXd& x, Ts... xs) {
+  using stan::math::serialize;
   auto h
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
@@ -498,6 +501,9 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  */
 template <typename F, typename T>
 void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
+  using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
@@ -559,6 +565,9 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
+  using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   // d.x1
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
@@ -671,6 +680,9 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, const T3& x3) {
+  using stan::math::serialize_args;
+  using stan::math::serialize_return;
+  using stan::math::to_deserializer;
   // d.x1
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);

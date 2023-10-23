@@ -81,10 +81,6 @@ TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
 
-  auto f1 = [&](const auto& c) {
-    return [&](const auto& a, const auto& b) { return f(c, a, b); };
-  };
-
   Eigen::MatrixXd a00(0, 0);
   Eigen::MatrixXd b00(0, 0);
   Eigen::VectorXd c0(0);

@@ -505,6 +505,7 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   }
   auto numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
+
   auto evals_per_box = numevals;
   Scalar error = err;
   Scalar val = result;

@@ -37,8 +37,8 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_theta_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_theta_ref = ref_type_if_not_constant_t<T_prob>;
   static const char* function = "bernoulli_logit_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);

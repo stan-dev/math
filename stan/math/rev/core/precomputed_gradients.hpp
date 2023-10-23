@@ -80,10 +80,10 @@ class precomputed_gradients_vari_template : public vari {
         size_(size),
         varis_(varis),
         gradients_(gradients),
-        container_operands_(index_apply<N_containers>([&, this](auto... Is) {
+        container_operands_(index_apply<N_containers>([&](auto... Is) {
           return std::make_tuple(to_arena(std::get<Is>(container_operands))...);
         })),
-        container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
+        container_gradients_(index_apply<N_containers>([&](auto... Is) {
           return std::make_tuple(
               to_arena(std::get<Is>(container_gradients))...);
         })) {
@@ -123,10 +123,10 @@ class precomputed_gradients_vari_template : public vari {
             vars.size())),
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
-        container_operands_(index_apply<N_containers>([&, this](auto... Is) {
+        container_operands_(index_apply<N_containers>([&](auto... Is) {
           return std::make_tuple(to_arena(std::get<Is>(container_operands))...);
         })),
-        container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
+        container_gradients_(index_apply<N_containers>([&](auto... Is) {
           return std::make_tuple(
               to_arena(std::get<Is>(container_gradients))...);
         })) {

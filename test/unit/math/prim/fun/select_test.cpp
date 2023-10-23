@@ -11,8 +11,6 @@ TEST(MathFunctions, select_scalar_scalar) {
   EXPECT_FLOAT_EQ(5.5, select(false, 2.0, 5.5));
 
   double dbl_a = -5.5;
-  int int_a = -5;
-  double dbl_b = 6.3251;
   int int_b = 6;
 
   int int_res = select(false, dbl_a, int_b);

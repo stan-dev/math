@@ -12,7 +12,7 @@ namespace math {
 template <typename T>
 inline fvar<T> log1p_exp(const fvar<T>& x) {
   using std::exp;
-  return fvar<T>(log1p_exp(x.val_), x.d_ / (1 + exp(-x.val_)));
+  return fvar<T>(log1p_exp(x.val_), x.d_ * inv_logit(x.val_));
 }
 
 }  // namespace math

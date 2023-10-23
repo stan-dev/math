@@ -7,6 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -75,7 +76,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
   auto y_minus_mu = y_val - mu_val;
   auto y_minus_mu_div_sigma = elt_multiply(y_minus_mu, inv_sigma);
 
-  auto logp1 = -y_minus_mu_div_sigma - 2.0 * log1p(exp(-y_minus_mu_div_sigma));
+  auto logp1 = -y_minus_mu_div_sigma - 2.0 * log1p_exp(-y_minus_mu_div_sigma);
   auto logp_expr
       = colwise_sum(static_select<include_summand<propto, T_scale_cl>::value>(
           logp1 - log(sigma_val), logp1));

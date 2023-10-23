@@ -34,7 +34,6 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   using T_partials_return = partials_return_t<T_rate_cl>;
   using std::isinf;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_lambda_vector = !is_stan_scalar<T_rate_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);

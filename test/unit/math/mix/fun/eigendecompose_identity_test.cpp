@@ -14,10 +14,14 @@ template <typename T>
 void expectEigenvectorsId() {
   for (const auto& m_d : stan::test::square_test_matrices(1, 2)) {
     Eigen::Matrix<T, -1, -1> m(m_d);
-    auto vecs = eigenvectors(m).eval();
-    auto vals = eigenvalues(m).eval();
+    auto vecs = stan::math::eigenvectors(m).eval();
+    auto vals = stan::math::eigenvalues(m).eval();
     auto I = (vecs.inverse() * m * vecs * vals.asDiagonal().inverse()).real();
     expect_identity_matrix(I);
+
+    std::tie(vecs, vals) = stan::math::eigendecompose(m);
+    auto I2 = (vecs.inverse() * m * vecs * vals.asDiagonal().inverse()).real();
+    expect_identity_matrix(I2);
   }
 }
 
@@ -29,6 +33,7 @@ TEST(mathMixFun, eigenvectorsId) {
   using fv_t = stan::math::fvar<stan::math::var>;
   using ffv_t = stan::math::fvar<fv_t>;
 
+  expectEigenvectorsId<d_t>();
   expectEigenvectorsId<v_t>();
   expectEigenvectorsId<fd_t>();
   expectEigenvectorsId<ffd_t>();
