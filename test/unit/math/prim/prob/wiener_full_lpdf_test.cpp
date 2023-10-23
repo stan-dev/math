@@ -311,6 +311,9 @@ TEST(mathPrimScalProbWienerFullPrecScal, invalid_st0) {
 }
 
 TEST(mathPrimCorrectValues, wiener_full_lpdf) {
+/* Test concrete values. True values are computed in R using the R-package
+ * WienR and the function WienerPDF.
+ */
   std::vector<double> y_vec = {2, 3, 4, 5, 6, 7, 8, 8.85, 8.9, 9, 1};
   std::vector<double> a_vec
       = {2.0, 2.0, 10.0, 4.0, 10.0, 1.0, 3.0, 1.7, 2.4, 11.0, 1.5};
