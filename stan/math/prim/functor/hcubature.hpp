@@ -71,8 +71,9 @@ static constexpr std::array<double, 4> gwd7{
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline Eigen::Matrix<int, -1, 1> combination(Eigen::Matrix<int, -1, 1>& c, const int dim,
-                                   const int p, const int x) {
+inline Eigen::Matrix<int, -1, 1> combination(Eigen::Matrix<int, -1, 1>& c,
+                                             const int dim, const int p,
+                                             const int x) {
   int r = 0;
   int k = 0;
   c[0] = 0;
@@ -107,7 +108,8 @@ inline Eigen::Matrix<int, -1, 1> combination(Eigen::Matrix<int, -1, 1>& c, const
  * @param dim dimension
  */
 template <typename Scalar>
-inline Eigen::Matrix<Scalar, -1, -1> combos(const int k, const Scalar lambda, const int dim) {
+inline Eigen::Matrix<Scalar, -1, -1> combos(const int k, const Scalar lambda,
+                                            const int dim) {
   Eigen::Matrix<int, -1, 1> c(k);
   const auto choose_dimk = choose(dim, k);
   Eigen::Matrix<Scalar, -1, -1> p = Eigen::MatrixXd::Zero(dim, choose_dimk);
@@ -131,13 +133,16 @@ inline Eigen::Matrix<Scalar, -1, -1> combos(const int k, const Scalar lambda, co
  * @param dim dimension
  */
 template <typename Scalar>
-inline Eigen::Matrix<Scalar, -1, -1> signcombos(const int k, const Scalar lambda,
-                                  const int dim) {
-//  Eigen::VectorXi c(k);
+inline Eigen::Matrix<Scalar, -1, -1> signcombos(const int k,
+                                                const Scalar lambda,
+                                                const int dim) {
+  //  Eigen::VectorXi c(k);
   Eigen::Matrix<int, -1, 1> c(k);
   const auto choose_dimk = choose(dim, k);
-//  Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
-  Eigen::Matrix<Scalar, -1, -1> p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
+  //  Eigen::MatrixXd p = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2,
+  //  k));
+  Eigen::Matrix<Scalar, -1, -1> p
+      = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
   int current_col = 0;
   for (int i = 1; i != choose_dimk + 1; i++) {
     c = combination(c, dim, k, i);
@@ -239,8 +244,8 @@ std::pair<Scalar, Scalar> gauss_kronrod(const F& integrand, const Scalar a,
  * @param dim dimension
  */
 template <typename Scalar>
-inline std::tuple<std::vector<Eigen::Matrix<Scalar, -1, -1>>, Eigen::Matrix<Scalar, -1, 1>,
-                  Eigen::Matrix<Scalar, -1, 1>>
+inline std::tuple<std::vector<Eigen::Matrix<Scalar, -1, -1>>,
+                  Eigen::Matrix<Scalar, -1, 1>, Eigen::Matrix<Scalar, -1, 1>>
 make_GenzMalik(const int dim) {
   std::vector<Eigen::Matrix<Scalar, -1, -1>> points(4);
   Eigen::Matrix<Scalar, -1, 1> weights(5);
@@ -287,10 +292,12 @@ make_GenzMalik(const int dim) {
  */
 template <typename Scalar, typename F, typename ParsTupleT>
 std::tuple<Scalar, Scalar, int> integrate_GenzMalik(
-    const F& integrand, const std::vector<Eigen::Matrix<Scalar, -1, -1>>& points,
-    const Eigen::Matrix<Scalar, -1, 1>& weights, const Eigen::Matrix<Scalar, -1, 1>& weights_low_deg,
-    const int dim, const Eigen::Matrix<Scalar, -1, 1>& a, const Eigen::Matrix<Scalar, -1, 1>& b,
-    const ParsTupleT& pars_tuple) {
+    const F& integrand,
+    const std::vector<Eigen::Matrix<Scalar, -1, -1>>& points,
+    const Eigen::Matrix<Scalar, -1, 1>& weights,
+    const Eigen::Matrix<Scalar, -1, 1>& weights_low_deg, const int dim,
+    const Eigen::Matrix<Scalar, -1, 1>& a,
+    const Eigen::Matrix<Scalar, -1, 1>& b, const ParsTupleT& pars_tuple) {
   using eig_vec = Eigen::Matrix<Scalar, -1, 1>;
   Eigen::Matrix<Scalar, -1, 1> c = Eigen::VectorXd::Zero(dim);
   for (auto i = 0; i != dim; i++) {
@@ -482,9 +489,9 @@ struct Box {
  */
 template <typename Scalar, typename F, typename ParsTuple>
 Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
-                 const Eigen::Matrix<Scalar,-1,1>& a, const Eigen::Matrix<Scalar,-1,1>& b,
-                 const int max_eval, const Scalar reqAbsError,
-                 const Scalar reqRelError) {
+                 const Eigen::Matrix<Scalar, -1, 1>& a,
+                 const Eigen::Matrix<Scalar, -1, 1>& b, const int max_eval,
+                 const Scalar reqAbsError, const Scalar reqRelError) {
   using eig_vec = Eigen::Matrix<Scalar, -1, 1>;
   const Scalar maxEval = max_eval <= 0 ? 1000000 : max_eval;
   Scalar result;
@@ -527,39 +534,41 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   err_vec.push_back(err);
   while ((numevals < maxEval)
          && (error > fmax(reqRelError * fabs(val), reqAbsError))
-         && fabs(val) < INFTY){ 
+         && fabs(val) < INFTY) {
     auto err_idx = get_largest_box_idx(err_vec);
     auto&& box = ms[err_idx];
 
     Scalar w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
-    eig_vec ma
-        = Eigen::Map<const eig_vec>(box.a_.data(), box.a_.size());
+    eig_vec ma = Eigen::Map<const eig_vec>(box.a_.data(), box.a_.size());
 
     ma[box.kdiv_] += w;
-    eig_vec mb
-        = Eigen::Map<const eig_vec>(box.b_.data(), box.b_.size());
+    eig_vec mb = Eigen::Map<const eig_vec>(box.b_.data(), box.b_.size());
     mb[box.kdiv_] -= w;
 
     int kdivide_1{0};
     int kdivide_2{0};
 
     Scalar result_1;
-	Scalar result_2;
-	Scalar err_1;
-	Scalar err_2;
+    Scalar result_2;
+    Scalar err_1;
+    Scalar err_2;
     if (dim == 1) {
       std::tie(result_1, err_1)
           = internal::gauss_kronrod<Scalar>(integrand, ma[0], box.b_[0], pars);
       std::tie(result_2, err_2)
           = internal::gauss_kronrod<Scalar>(integrand, box.a_[0], mb[0], pars);
     } else {
-      std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik<Scalar>(
-          integrand, p, w_five, wd_four, dim, ma, box.b_, pars);
-      std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik<Scalar>(
-          integrand, p, w_five, wd_four, dim, box.a_, mb, pars);
+      std::tie(result_1, err_1, kdivide_1)
+          = internal::integrate_GenzMalik<Scalar>(integrand, p, w_five, wd_four,
+                                                  dim, ma, box.b_, pars);
+      std::tie(result_2, err_2, kdivide_2)
+          = internal::integrate_GenzMalik<Scalar>(integrand, p, w_five, wd_four,
+                                                  dim, box.a_, mb, pars);
     }
-    internal::Box<Scalar> box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
-    internal::Box<Scalar> box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
+    internal::Box<Scalar> box1(std::move(ma), std::move(box.b_), result_1,
+                               kdivide_1);
+    internal::Box<Scalar> box2(std::move(box.a_), std::move(mb), result_2,
+                               kdivide_2);
     result += result_1 + result_2 - box.I_;
     err += err_1 + err_2 - err_vec[err_idx];
     ms[err_idx].I_ = 0;

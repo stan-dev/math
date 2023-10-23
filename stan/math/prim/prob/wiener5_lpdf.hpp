@@ -606,13 +606,12 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
 inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
     const T_sv& sv, const ReturnT& precision_derivatives) {
-	
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
-	
+
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
     return 0;
   }
-  
+
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
   using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
@@ -650,7 +649,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   check_nonnegative(function_name, "Inter-trial variability in drift rate",
                     sv_val);
   check_finite(function_name, "Inter-trial variability in drift rate", sv_val);
-			 
+
   if (size_zero(y, a, t0, w, v, sv)) {
     return 0;
   }
@@ -681,8 +680,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
   const T_partials_return log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return log_density = 0.0;
-  auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
-                                               v_ref, sv_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
 
   static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
 
