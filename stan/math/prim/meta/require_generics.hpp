@@ -63,7 +63,7 @@ using require_any_not_st_same
 
 template <typename T, typename S>
 using require_vt_same = require_t<
-  std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename S>
 using require_not_vt_same = require_not_t<
@@ -144,12 +144,14 @@ using require_any_not_st_convertible = require_any_not_t<std::is_convertible<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename T, typename S>
-using require_vt_convertible = require_t<
-    std::is_convertible<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_vt_convertible
+    = require_t<std::is_convertible<value_type_t<std::decay_t<T>>,
+                                    value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename S>
-using require_not_vt_convertible = require_not_t<
-    std::is_convertible<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_not_vt_convertible
+    = require_not_t<std::is_convertible<value_type_t<std::decay_t<T>>,
+                                        value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename... Types>
 using require_all_vt_convertible
@@ -224,12 +226,14 @@ using require_any_not_st_assignable = require_any_not_t<std::is_assignable<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename T, typename S>
-using require_vt_assignable = require_t<
-    std::is_assignable<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_vt_assignable
+    = require_t<std::is_assignable<value_type_t<std::decay_t<T>>,
+                                   value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename S>
-using require_not_vt_assignable = require_not_t<
-    std::is_assignable<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_not_vt_assignable
+    = require_not_t<std::is_assignable<value_type_t<std::decay_t<T>>,
+                                       value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename... Types>
 using require_all_vt_assignable
@@ -305,12 +309,14 @@ using require_any_not_st_constructible
         scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename T, typename S>
-using require_vt_constructible = require_t<
-    std::is_constructible<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_vt_constructible
+    = require_t<std::is_constructible<value_type_t<std::decay_t<T>>,
+                                      value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename S>
-using require_not_vt_constructible = require_not_t<
-    std::is_constructible<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_not_vt_constructible
+    = require_not_t<std::is_constructible<value_type_t<std::decay_t<T>>,
+                                          value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename... Types>
 using require_all_vt_constructible = require_all_t<std::is_constructible<
