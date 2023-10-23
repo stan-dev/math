@@ -88,7 +88,6 @@ auto exp_mod_normal_lcdf_functor
 
 TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, 1.4;
@@ -109,7 +108,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
 TEST(ProbDistributionsDoubleExpModNormalLcdf,
      opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, INFINITY;
@@ -130,7 +128,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf,
 TEST(ProbDistributionsDoubleExpModNormalLcdf,
      opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, -INFINITY;

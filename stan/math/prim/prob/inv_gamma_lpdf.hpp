@@ -45,9 +45,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_scale>;
   static const char* function = "inv_gamma_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", beta);

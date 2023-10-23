@@ -13,7 +13,7 @@ TEST(MathMatrixPrimMat, singular_values) {
   using matrix_c = Eigen::Matrix<compl_t, Eigen::Dynamic, Eigen::Dynamic>;
 
   matrix_d m0(0, 0);
-  EXPECT_THROW(singular_values(m0), std::invalid_argument);
+  EXPECT_NO_THROW(singular_values(m0));
 
   matrix_d m1(1, 1);
   m1 << 1.0;

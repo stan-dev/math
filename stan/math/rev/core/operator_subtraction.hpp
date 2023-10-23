@@ -101,7 +101,7 @@ template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, const var& b) {
   return make_callback_vari(
       a - b.vi_->val_,
-      [bvi = b.vi_, a](const auto& vi) mutable { bvi->adj_ -= vi.adj_; });
+      [bvi = b.vi_](const auto& vi) mutable { bvi->adj_ -= vi.adj_; });
 }
 
 /**

@@ -48,8 +48,8 @@ template <bool propto, typename T_y, typename T_dof,
               T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_nu_ref = ref_type_if_t<!is_constant<T_dof>::value, T_dof>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_nu_ref = ref_type_if_not_constant_t<T_dof>;
   static const char* function = "inv_chi_square_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);

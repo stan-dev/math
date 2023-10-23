@@ -4,6 +4,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -60,7 +61,7 @@ struct kernel_parts {
             args + other.args};
   }
 
-  kernel_parts operator+=(const kernel_parts& other) {
+  kernel_parts& operator+=(const kernel_parts& other) {
     includes += other.includes;
     declarations += other.declarations;
     initialization += other.initialization;
@@ -73,6 +74,24 @@ struct kernel_parts {
     return *this;
   }
 };
+
+inline std::ostream& operator<<(std::ostream& os, kernel_parts& parts) {
+  os << "args:" << std::endl;
+  os << parts.args.substr(0, parts.args.size() - 2) << std::endl;
+  os << "Decl:" << std::endl;
+  os << parts.declarations << std::endl;
+  os << "Init:" << std::endl;
+  os << parts.initialization << std::endl;
+  os << "body:" << std::endl;
+  os << parts.body << std::endl;
+  os << "body_suffix:" << std::endl;
+  os << parts.body_suffix << std::endl;
+  os << "reduction_1d:" << std::endl;
+  os << parts.reduction_1d << std::endl;
+  os << "reduction_2d:" << std::endl;
+  os << parts.reduction_2d << std::endl;
+  return os;
+}
 
 /**
  * Base for all kernel generator operations.
@@ -201,7 +220,7 @@ class operation_cl : public operation_cl_base {
         generated, generated_all, ng, row_index_name, col_index_name, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(
         generated, generated_all, ng, row_index_name, col_index_name);
-    out_parts.body += " = " + derived().var_name_ + ";\n";
+    out_parts.body += assignment_op<T_result>() + derived().var_name_ + ";\n";
     parts += out_parts;
     return parts;
   }

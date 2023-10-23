@@ -28,7 +28,7 @@ static const char* lgamma_stirling_device_function
            * @return Stirling's approximation to lgamma(x).
            */
           double lgamma_stirling(double x) {
-            return 0.5 * log(2.0 * M_PI) + (x - 0.5) * log(x) - x;
+            return 0.5 * (M_LN2 + log(M_PI)) + (x - 0.5) * log(x) - x;
           }
           // \cond
           ) "\n#endif\n";  // NOLINT

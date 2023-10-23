@@ -56,7 +56,7 @@ static const char* inv_logit_device_function
            */
           double inv_logit(double x) {
             if (x < 0) {
-              if (x < log(2.2204460492503131E-16)) {
+              if (x < log(DBL_EPSILON)) {
                 return exp(x);
               }
               return exp(x) / (1 + exp(x));

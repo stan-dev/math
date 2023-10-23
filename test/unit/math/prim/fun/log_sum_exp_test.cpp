@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -128,4 +129,17 @@ TEST(MathFunctions, log_sum_exp_mat) {
   Matrix<double, Dynamic, 1> ii(1);
   ii << -std::numeric_limits<double>::infinity();
   test_log_sum_exp(ii);
+}
+
+TEST(MathFunctions, log_sum_exp_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::log_sum_exp;
+    return log_sum_exp(x1, x2);
+  };
+
+  Eigen::VectorXd in1(3);
+  in1 << 4.1, 3.24, 6.8;
+  Eigen::VectorXd in2(3);
+  in2 << 2.8, 1.7, 3.1;
+  stan::test::binary_scalar_tester(f, in1, in2);
 }

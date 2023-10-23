@@ -71,7 +71,6 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   scalar_seq_view<std::decay_t<decltype(sigma_val)>> sigma_vec(sigma_val);
   scalar_seq_view<std::decay_t<decltype(tau_val)>> tau_vec(tau_val);
 
-  const int size_sigma = stan::math::size(sigma);
   const auto N = max_size(y, mu, sigma, tau);
   auto inv_sigma_val = to_ref(inv(sigma_val));
   scalar_seq_view<decltype(inv_sigma_val)> inv_sigma(inv_sigma_val);
@@ -110,7 +109,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
     if (y_dbl <= mu_dbl) {
       cdf_log += log1m(tau_dbl * exp(-2.0 * expo));
     } else {
-      cdf_log += log(1 - tau_dbl) - 2.0 * expo;
+      cdf_log += log1m(tau_dbl) - 2.0 * expo;
     }
 
     if (!is_constant_all<T_y>::value) {

@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
 namespace stan {
@@ -87,7 +87,7 @@ T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
     }
   }
 
-  return inc_beta(a, b, z) * (log(1 - z) - digamma_b + sum_numer / sum_denom);
+  return inc_beta(a, b, z) * (log1m(z) - digamma_b + sum_numer / sum_denom);
 }
 
 }  // namespace math

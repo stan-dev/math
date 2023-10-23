@@ -6,8 +6,8 @@
 TEST(ErrorHandlingMat, CheckGreaterOrEqualMatrix) {
   using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
-  double x;
-  double low;
+  double x = 0;
+  double low = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat;
   x_mat.resize(3, 3);
@@ -161,8 +161,8 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqualMatrix) {
 TEST(ErrorHandlingMat, CheckGreaterOrEqual_Matrix_one_indexed_message) {
   using stan::math::check_greater_or_equal;
   static const char* function = "check_greater_or_equal";
-  double x;
-  double low;
+  double x = 0;
+  double low = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat;
   x_mat.resize(3, 3);
@@ -234,8 +234,8 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
   const char* function = "check_greater_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  double x;
-  double low;
+  double x = 0;
+  double low = 0;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat(3, 3);
   x_mat << -1, 0, 1, -1, 0, 1, -1, 0, 1;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat(3, 3);

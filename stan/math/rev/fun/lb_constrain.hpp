@@ -111,7 +111,7 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
                                });
     } else {
       return make_callback_var(std::exp(value_of(x)) + lb_val,
-                               [lp, arena_lb = var(lb)](auto& vi) mutable {
+                               [arena_lb = var(lb)](auto& vi) mutable {
                                  arena_lb.adj() += vi.adj();
                                });
     }
@@ -211,7 +211,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
       const auto& x_ref = to_ref(x);
       lp += sum(x_ref);
       arena_t<ret_type> ret = value_of(x_ref).array().exp() + lb_val;
-      reverse_pass_callback([ret, lp, arena_lb = var(lb)]() mutable {
+      reverse_pass_callback([ret, arena_lb = var(lb)]() mutable {
         arena_lb.adj() += ret.adj().sum();
       });
       return ret_type(ret);
@@ -333,7 +333,6 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
     auto exp_x = to_arena(arena_x.val().array().exp());
     arena_t<ret_type> ret
         = (is_not_inf_lb).select(exp_x + lb_val, arena_x.val().array());
-    auto lp_old = lp;
     lp += (is_not_inf_lb).select(arena_x.val(), 0).sum();
     reverse_pass_callback([arena_x, ret, exp_x, lp, is_not_inf_lb]() mutable {
       const auto lp_adj = lp.adj();

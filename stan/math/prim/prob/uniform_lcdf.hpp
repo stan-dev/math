@@ -25,9 +25,9 @@ template <typename T_y, typename T_low, typename T_high,
 return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_low>::value, T_low>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_high>::value, T_high>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_high>;
   static const char* function = "uniform_lcdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Lower bound parameter", alpha,

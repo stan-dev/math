@@ -29,8 +29,29 @@ TEST(mathMixFun, complexSchurDecomposeU) {
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
 
+TEST(mathMixFun, complexSchurDecompose) {
+  auto f = [](const auto& x) {
+    using stan::math::complex_schur_decompose;
+    return std::get<0>(complex_schur_decompose(x));
+  };
+  auto g = [](const auto& x) {
+    using stan::math::complex_schur_decompose;
+    return std::get<1>(complex_schur_decompose(x));
+  };
+  for (const auto& x : stan::test::square_test_matrices(0, 2)) {
+    stan::test::expect_ad(f, x);
+    stan::test::expect_ad(g, x);
+  }
+
+  Eigen::MatrixXd a32(3, 2);
+  a32 << 3, -5, 7, -7.2, 9.1, -6.3;
+  EXPECT_THROW(f(a32), std::invalid_argument);
+  EXPECT_THROW(g(a32), std::invalid_argument);
+}
+
 template <typename V>
 void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
+  using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
   using stan::math::get_real;
@@ -42,10 +63,15 @@ void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
   auto X2 = U * T * U.adjoint();
 
   EXPECT_MATRIX_NEAR(x, value_of_rec(get_real(X2)), 1e-8);
+
+  std::tie(U, T) = complex_schur_decompose(X);
+  auto X3 = U * T * U.adjoint();
+  EXPECT_MATRIX_NEAR(x, value_of_rec(get_real(X3)), 1e-8);
 }
 
 template <typename V>
 void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
+  using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
   using stan::math::value_of_rec;
@@ -57,9 +83,13 @@ void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
   auto X2 = U * T * U.adjoint();
 
   EXPECT_MATRIX_COMPLEX_NEAR(value_of_rec(X), value_of_rec(X2), 1e-8);
+
+  std::tie(U, T) = complex_schur_decompose(X);
+  auto X3 = U * T * U.adjoint();
+  EXPECT_MATRIX_COMPLEX_NEAR(value_of_rec(X), value_of_rec(X3), 1e-8);
 }
 
-TEST(mathMixFun, complexSchurDecompose) {
+TEST(mathMixFun, complexSchurDecomposeIdent) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<d_t>;
