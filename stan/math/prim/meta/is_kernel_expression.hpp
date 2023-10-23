@@ -184,6 +184,7 @@ using require_any_not_prim_or_rev_kernel_expression_t = require_any_not_t<
 
 // STAN_ADD_REQUIRE_UNARY(nonscalar_prim_or_rev_kernel_expression,
 //    is_nonscalar_prim_or_rev_kernel_expression, opencl_kernel_generator);
+template <typename T>
 using require_nonscalar_prim_or_rev_kernel_expression_t
     = require_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
 
