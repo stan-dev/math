@@ -15,7 +15,9 @@
 namespace stan {
 namespace math {
 
-template <bool propto, typename T_y, typename T_loc, typename T_covar>
+template <bool propto, typename T_y, typename T_loc, typename T_covar,
+ require_not_eigen_matrix_dynamic_t<T_y>* = nullptr,
+ require_not_eigen_matrix_dynamic_t<T_loc>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
@@ -101,6 +103,89 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   }
   return lp;
 }
+
+template <bool propto, typename T_y, typename T_loc, typename T_covar,
+ require_all_eigen_matrix_dynamic_t<T_y, T_loc>* = nullptr>
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_covar& Sigma) {
+  using T_covar_elem = typename scalar_type<T_covar>::type;
+  using lp_type = return_type_t<T_y, T_loc, T_covar>;
+  using Eigen::Dynamic;
+  static const char* function = "multi_normal_lpdf";
+  check_positive(function, "Covariance matrix rows", Sigma.rows());
+
+  constexpr size_t number_of_y = 2;
+  constexpr size_t number_of_mu = 2;
+  if (number_of_y == 0 || number_of_mu == 0) {
+    return 0.0;
+  }
+
+  lp_type lp(0.0);
+  constexpr size_t size_vec = 2;
+
+  int size_y = y.rows();
+  int size_mu = mu.rows();
+  if (size_vec > 1) {
+      check_size_match(function,
+                       "Size of one of the vectors of "
+                       "the random variable",
+                       y.rows(),
+                       "Size of the first vector of the "
+                       "random variable",
+                       size_y);
+      check_size_match(function,
+                       "Size of one of the vectors of "
+                       "the location variable",
+                       mu.rows(),
+                       "Size of the first vector of the "
+                       "location variable",
+                       size_mu);
+  }
+
+  check_size_match(function, "Size of random variable", size_y,
+                   "size of location parameter", size_mu);
+  check_size_match(function, "Size of random variable", size_y,
+                   "rows of covariance parameter", Sigma.rows());
+  check_size_match(function, "Size of random variable", size_y,
+                   "columns of covariance parameter", Sigma.cols());
+  auto&& mu_ref = to_ref(mu);
+  auto&& y_ref = to_ref(y);
+  check_finite(function, "Location parameter", mu_ref);
+  check_not_nan(function, "Random variable", y_ref);
+
+  auto&& Sigma_ref = to_ref(Sigma);
+  check_symmetric(function, "Covariance matrix", Sigma_ref);
+
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
+  check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
+                    ldlt_Sigma);
+
+  if (size_y == 0) {
+    return lp;
+  }
+
+  if (include_summand<propto>::value) {
+    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
+  }
+
+  if (include_summand<propto, T_covar_elem>::value) {
+    lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
+  }
+
+  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+    lp_type sum_lp_vec(0.0);
+      sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_ref - mu_ref);
+/*    for (size_t i = 0; i < size_vec; i++) {
+      const auto& y_col = y_ref.col(i);
+      const auto& mu_col = mu_ref.col(i);
+      sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col);
+    }
+*/    lp -= 0.5 * sum_lp_vec;
+  }
+  return lp;
+}
+
 
 template <typename T_y, typename T_loc, typename T_covar>
 inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(

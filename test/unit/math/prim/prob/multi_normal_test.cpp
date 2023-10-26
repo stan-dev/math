@@ -85,6 +85,51 @@ TEST(ProbDistributionsMultiNormal, Vectorized) {
   EXPECT_NO_THROW(stan::math::multi_normal_rng(vec_mu, Sigma, rng));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(vec_mu_t, Sigma, rng));
 }
+
+
+TEST(ProbDistributionsMultiNormal, VectorizedColMatrix) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, Dynamic> vec_y(3, 2);
+  Matrix<double, Dynamic, Dynamic> vec_y_t(3, 2);
+  Matrix<double, Dynamic, 1> y(3);
+  Matrix<double, 1, Dynamic> y_t(3);
+  y << 2.0, -2.0, 11.0;
+  vec_y.col(0) = y;
+  vec_y_t.col(0) = y;
+  y << 4.0, -2.0, 1.0;
+  vec_y.col(1) = y;
+  vec_y_t.col(1) = y;
+  y_t = y;
+
+  Matrix<double, Dynamic, -1> vec_mu(3, 2);
+  Matrix<double, -1, Dynamic> vec_mu_t(3, 2);
+  Matrix<double, Dynamic, 1> mu(3);
+  Matrix<double, 1, Dynamic> mu_t(3);
+  mu << 1.0, -1.0, 3.0;
+  vec_mu.col(0) = mu;
+  vec_mu_t.col(0) = mu;
+  mu << 2.0, -1.0, 4.0;
+  vec_mu.col(1) = mu;
+  vec_mu_t.col(1) = mu;
+  mu_t = mu;
+
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
+
+  // y and mu vectorized
+  EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
+                  stan::math::multi_normal_log(vec_y, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
+                  stan::math::multi_normal_log(vec_y_t, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
+                  stan::math::multi_normal_log(vec_y, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
+                  stan::math::multi_normal_log(vec_y_t, vec_mu_t, Sigma));
+
+}
 TEST(ProbDistributionsMultiNormal, Sigma) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
