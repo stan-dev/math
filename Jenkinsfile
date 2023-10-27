@@ -44,6 +44,7 @@ pipeline {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
         parallelsAlwaysFailFast()
+        buildDiscarder(logRotator(numToKeepStr: '20', daysToKeepStr: '30'))
     }
     environment {
         STAN_NUM_THREADS = 4
