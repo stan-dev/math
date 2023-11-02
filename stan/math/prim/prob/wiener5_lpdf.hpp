@@ -340,20 +340,31 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
       });
       auto check4 = log(check3);
-      reverse_pass_callback([k, check, check4] {
-        std::cout << "k: " << k << std::endl;
+      reverse_pass_callback([k, check, check4, scaling, pi_k] {
         std::cout << "check4 partial log_sum val.val 6 = " << check4.val().val() << std::endl;
         std::cout << "check4 partial log_sum val.adj 6 = " << check4.val().adj() << std::endl;
         std::cout << "check4 partial log_sum d.val 6 = " << check4.d().val() << std::endl;
         std::cout << "check4 partial log_sum d.adj 6 = " << check4.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "pi_k partial log_sum val.val 6 = " << pi_k.val().val() << std::endl;
+        std::cout << "pi_k partial log_sum val.adj 6 = " << pi_k.val().adj() << std::endl;
+        std::cout << "pi_k partial log_sum d.val 6 = " << pi_k.d().val() << std::endl;
+        std::cout << "pi_k partial log_sum d.adj 6 = " << pi_k.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "scaling partial log_sum val 6 = " << scaling << std::endl;
         std::cout << std::endl;
       });
       auto n_terms_large_t_quant
           = mult * log(k) - square(pi_k) * scaling + check4;
       // this call injects a node into the reverse pass that just prints the current values
       // of the adjoints
-      reverse_pass_callback([k, check, check3] {
+      reverse_pass_callback([k, check, check3, pi_k] {
         std::cout << "k: " << k << std::endl;
+        std::cout << "pi_k partial log_sum val.val 6 = " << pi_k.val().val() << std::endl;
+        std::cout << "pi_k partial log_sum val.adj 6 = " << pi_k.val().adj() << std::endl;
+        std::cout << "pi_k partial log_sum d.val 6 = " << pi_k.d().val() << std::endl;
+        std::cout << "pi_k partial log_sum d.adj 6 = " << pi_k.d().adj() << std::endl;
+        std::cout << std::endl;
         std::cout << "check3 partial log_sum val.val 9 = " << check3.val().val() << std::endl;
         std::cout << "check3 partial log_sum val.adj 9 = " << check3.val().adj() << std::endl;
         std::cout << "check3 partial log_sum d.val 9 = " << check3.d().val() << std::endl;
