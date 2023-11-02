@@ -331,10 +331,32 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << "check partial log_sum d.adj 7 = " << check.d().adj() << std::endl;
         std::cout << std::endl;
       });
-      auto n_terms_large_t_quant
-          = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
-      reverse_pass_callback([k, check]{
+      auto check3 = fabs(check);
+      reverse_pass_callback([check3]{
+        std::cout << "check3 partial log_sum val.val 8 = " << check3.val().val() << std::endl;
+        std::cout << "check3 partial log_sum val.adj 8 = " << check3.val().adj() << std::endl;
+        std::cout << "check3 partial log_sum d.val 8 = " << check3.d().val() << std::endl;
+        std::cout << "check3 partial log_sum d.adj 8 = " << check3.d().adj() << std::endl;
+        std::cout << std::endl;
+      });
+      auto check4 = log(check3);
+      reverse_pass_callback([k, check, check4] {
         std::cout << "k: " << k << std::endl;
+        std::cout << "check4 partial log_sum val.val 6 = " << check4.val().val() << std::endl;
+        std::cout << "check4 partial log_sum val.adj 6 = " << check4.val().adj() << std::endl;
+        std::cout << "check4 partial log_sum d.val 6 = " << check4.d().val() << std::endl;
+        std::cout << "check4 partial log_sum d.adj 6 = " << check4.d().adj() << std::endl;
+        std::cout << std::endl;
+      });
+      auto n_terms_large_t_quant
+          = mult * log(k) - square(pi_k) * scaling + check4;
+      reverse_pass_callback([k, check, check3] {
+        std::cout << "k: " << k << std::endl;
+        std::cout << "check3 partial log_sum val.val 9 = " << check3.val().val() << std::endl;
+        std::cout << "check3 partial log_sum val.adj 9 = " << check3.val().adj() << std::endl;
+        std::cout << "check3 partial log_sum d.val 9 = " << check3.d().val() << std::endl;
+        std::cout << "check3 partial log_sum d.adj 9 = " << check3.d().adj() << std::endl;
+        std::cout << std::endl;
         std::cout << "check partial log_sum val.val 6 = " << check.val().val() << std::endl;
         std::cout << "check partial log_sum val.adj 6 = " << check.val().adj() << std::endl;
         std::cout << "check partial log_sum d.val 6 = " << check.d().val() << std::endl;
