@@ -350,6 +350,8 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
       });
       auto n_terms_large_t_quant
           = mult * log(k) - square(pi_k) * scaling + check4;
+      // this call injects a node into the reverse pass that just prints the current values
+      // of the adjoints
       reverse_pass_callback([k, check, check3] {
         std::cout << "k: " << k << std::endl;
         std::cout << "check3 partial log_sum val.val 9 = " << check3.val().val() << std::endl;
