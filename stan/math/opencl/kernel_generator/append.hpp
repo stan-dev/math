@@ -88,8 +88,8 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -101,7 +101,7 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
           true);
       std::string row_index_name_b
           = "(" + row_index_name + " - " + var_name_ + "_first_rows)";
-      std::map<const void*, const char*> generated_b;
+      std::unordered_map<const void*, const char*> generated_b;
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
           generated_b, generated_all, name_gen, row_index_name_b,
           col_index_name, true);
@@ -129,14 +129,15 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       this->template get_arg<0>().set_args(generated, generated_all, kernel,
                                            arg_num);
-      std::map<const void*, const char*> generated_b;
+      std::unordered_map<const void*, const char*> generated_b;
       this->template get_arg<1>().set_args(generated_b, generated_all, kernel,
                                            arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().rows());
@@ -250,8 +251,8 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -263,7 +264,7 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
           true);
       std::string col_index_name_b
           = "(" + col_index_name + " - " + var_name_ + "_first_cols)";
-      std::map<const void*, const char*> generated_b;
+      std::unordered_map<const void*, const char*> generated_b;
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
           generated_b, generated_all, name_gen, row_index_name,
           col_index_name_b, true);
@@ -291,14 +292,15 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       this->template get_arg<0>().set_args(generated, generated_all, kernel,
                                            arg_num);
-      std::map<const void*, const char*> generated_b;
+      std::unordered_map<const void*, const char*> generated_b;
       this->template get_arg<1>().set_args(generated_b, generated_all, kernel,
                                            arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());

@@ -66,10 +66,10 @@ class calc_if_
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all, name_generator& ng,
-      const std::string& row_index_name, const std::string& col_index_name,
-      const T_result& result) const {
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      name_generator& ng, const std::string& row_index_name,
+      const std::string& col_index_name, const T_result& result) const {
     if (Do_Calculate) {
       return this->template get_arg<0>().get_whole_kernel_parts(
           generated, generated_all, ng, row_index_name, col_index_name, result);
@@ -88,9 +88,10 @@ class calc_if_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (Do_Calculate) {
       this->template get_arg<0>().set_args(generated, generated_all, kernel,
                                            arg_num);
