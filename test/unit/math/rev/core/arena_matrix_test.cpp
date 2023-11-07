@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevArenaMat, arena_matrix_matrix_test) {
+TEST(AgradRev, arena_matrix_matrix_test) {
   using Eigen::MatrixXd;
   using stan::math::arena_matrix;
 
@@ -29,7 +29,7 @@ TEST(AgradRevArenaMat, arena_matrix_matrix_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevArenaMat, arena_matrix_vector_test) {
+TEST(AgradRev, arena_matrix_vector_test) {
   using Eigen::VectorXd;
   using stan::math::arena_matrix;
 
@@ -56,7 +56,7 @@ TEST(AgradRevArenaMat, arena_matrix_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevArenaMat, arena_matrix_row_vector_test) {
+TEST(AgradRev, arena_matrix_row_vector_test) {
   using Eigen::RowVectorXd;
   using stan::math::arena_matrix;
 
@@ -83,7 +83,7 @@ TEST(AgradRevArenaMat, arena_matrix_row_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevArenaMat, arena_matrix_transpose_test) {
+TEST(AgradRev, arena_matrix_transpose_test) {
   using stan::math::arena_matrix;
 
   Eigen::VectorXd c = Eigen::VectorXd::Random(3);
@@ -103,4 +103,80 @@ TEST(AgradRevArenaMat, arena_matrix_transpose_test) {
   EXPECT_MATRIX_EQ(a, b.transpose());
 
   stan::math::recover_memory();
+}
+
+template <typename T_map, typename T_mat>
+void expect_sparse_matrix_equal(T_map&& map_x, T_mat&& mat_x) {
+  using inner_iterator = typename std::decay_t<T_mat>::InnerIterator;
+  using map_inner_iterator = typename std::decay_t<T_map>::InnerIterator;
+  Eigen::Index nnz_m = map_x.nonZeros();
+  Eigen::Index nnz = mat_x.nonZeros();
+  EXPECT_EQ(map_x.nonZeros(), mat_x.nonZeros());
+  for (int k = 0; k < mat_x.outerSize(); ++k) {
+    inner_iterator it(mat_x, k);
+    map_inner_iterator iz(map_x, k);
+    for (; it && iz; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+}
+
+TEST(AgradRev, arena_sparse_matrix_constructors) {
+  using eig_mat = Eigen::SparseMatrix<double>;
+  using stan::math::arena_matrix;
+  using arena_mat = arena_matrix<eig_mat>;
+  using inner_iterator = typename eig_mat::InnerIterator;
+  using map_inner_iterator = typename Eigen::Map<eig_mat>::InnerIterator;
+  using stan::test::make_sparse_matrix_random;
+  eig_mat A = make_sparse_matrix_random(10, 10);
+  // Testing each constructor
+  arena_mat empty_m();
+  arena_mat nocopy(A.rows(), A.cols(), A.nonZeros(),
+    A.outerIndexPtr(), A.innerIndexPtr(), A.valuePtr(),
+    A.innerNonZeroPtr());
+  Eigen::Map<eig_mat> sparse_map(A.rows(), A.cols(), A.nonZeros(),
+    A.outerIndexPtr(), A.innerIndexPtr(), A.valuePtr(),
+    A.innerNonZeroPtr());
+  arena_mat sparse_map_constructor(sparse_map);
+  arena_mat A_m(A);
+  expect_sparse_matrix_equal(A_m, A);
+  arena_mat arena_mat_constructor(A_m);
+  expect_sparse_matrix_equal(arena_mat_constructor, A);
+  eig_mat mul_A = A * A;
+  arena_mat mul_A_m(A * A_m);
+  expect_sparse_matrix_equal(mul_A_m, mul_A);
+  eig_mat mul_B = mul_A * A;
+  arena_mat mul_B_m(mul_A_m * A_m);
+  expect_sparse_matrix_equal(mul_B_m, mul_B);
+
+}
+
+TEST(AgradRev, arena_sparse_matrix_equals) {
+  using eig_mat = Eigen::SparseMatrix<double>;
+  using stan::math::arena_matrix;
+  using arena_mat = arena_matrix<eig_mat>;
+  using inner_iterator = typename eig_mat::InnerIterator;
+  using map_inner_iterator = typename Eigen::Map<eig_mat>::InnerIterator;
+  using stan::test::make_sparse_matrix_random;
+  eig_mat A = make_sparse_matrix_random(10, 10);
+  // Testing each constructor
+  arena_mat empty_m = arena_mat{};
+  arena_mat nocopy = arena_mat(A.rows(), A.cols(), A.nonZeros(),
+    A.outerIndexPtr(), A.innerIndexPtr(), A.valuePtr(),
+    A.innerNonZeroPtr());
+  Eigen::Map<eig_mat> sparse_map(A.rows(), A.cols(), A.nonZeros(),
+    A.outerIndexPtr(), A.innerIndexPtr(), A.valuePtr(),
+    A.innerNonZeroPtr());
+  arena_mat sparse_map_constructor = sparse_map;
+  arena_mat A_m = A;
+  expect_sparse_matrix_equal(A_m, A);
+  arena_mat arena_mat_constructor = A_m;
+  expect_sparse_matrix_equal(arena_mat_constructor, A);
+  eig_mat mul_A = A * A;
+  arena_mat mul_A_m = A * A_m;
+  expect_sparse_matrix_equal(mul_A_m, mul_A);
+  eig_mat mul_B = mul_A * A;
+  arena_mat mul_B_m = mul_A_m * A_m;
+  expect_sparse_matrix_equal(mul_B_m, mul_B);
+
 }

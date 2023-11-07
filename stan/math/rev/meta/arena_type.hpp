@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 // forward declaration
-template <typename MatrixType>
+template <typename MatrixType, typename = void>
 class arena_matrix;
 }  // namespace math
 

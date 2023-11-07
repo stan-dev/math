@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
-
+#include <iostream>
 namespace stan {
 namespace math {
 
@@ -15,8 +15,11 @@ namespace math {
  * @tparam MatrixType Eigen matrix type this works as (`MatrixXd`, `VectorXd`
  * ...)
  */
+template <typename MatrixType, typename>
+class arena_matrix;
+
 template <typename MatrixType>
-class arena_matrix : public Eigen::Map<MatrixType> {
+class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>> : public Eigen::Map<MatrixType> {
  public:
   using Scalar = value_type_t<MatrixType>;
   using Base = Eigen::Map<MatrixType>;
@@ -128,6 +131,131 @@ class arena_matrix : public Eigen::Map<MatrixType> {
     Base::operator=(a);
     return *this;
   }
+};
+
+template <typename MatrixType>
+class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>> : public Eigen::Map<MatrixType> {
+ public:
+  using Scalar = value_type_t<MatrixType>;
+  using Base = Eigen::Map<MatrixType>;
+  using PlainObject = std::decay_t<MatrixType>;
+  using StorageIndex = typename PlainObject::StorageIndex;
+  using storage_idx_t = arena_matrix<Eigen::Matrix<StorageIndex, Eigen::Dynamic, 1>>;
+  using data_t = arena_matrix<Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>;
+  /**
+   * Default constructor.
+   */
+  arena_matrix()
+      : Base::Map(0, 0, 0, nullptr, nullptr, nullptr) {
+  }
+
+private:
+  template <typename T, typename Integral>
+  auto* copy_vector(T* ptr, Integral size) {
+    arena_matrix<Eigen::Matrix<T, Eigen::Dynamic, 1>> ret(size);
+    std::copy_n(ptr, size, ret.data());
+    return ret.data();
+  }
+public:
+  arena_matrix(Eigen::Index rows, Eigen::Index cols, Eigen::Index nnz,
+   StorageIndex* outerIndexPtr, StorageIndex* innerIndexPtr,
+   Scalar* valuePtr, StorageIndex* innerNonZerosPtr = nullptr) :
+   Base::Map(rows, cols, nnz, outerIndexPtr, innerIndexPtr, valuePtr, innerNonZerosPtr) {}
+  /**
+   * Constructs `arena_matrix` from an expression.
+   * @param other expression
+   */
+  template <typename T, require_same_t<T, PlainObject>* = nullptr>
+  arena_matrix(T&& other)  // NOLINT
+      :  Base::Map(other.rows(), other.cols(), other.nonZeros(),
+       copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
+       copy_vector(other.innerIndexPtr(), other.nonZeros()),
+       copy_vector(other.valuePtr(), other.nonZeros())) {
+  }
+
+  template <typename S, require_convertible_t<S&, PlainObject>* = nullptr,
+   require_not_same_t<S, PlainObject>* = nullptr>
+  arena_matrix(S&& x) : arena_matrix(PlainObject(x)) {}
+
+  /**
+   * Constructs `arena_matrix` from an expression. This makes an assumption that
+   * any other `Eigen::Map` also contains memory allocated in the arena.
+   * @param other expression
+   */
+  arena_matrix(const Base& other)  // NOLINT
+      : Base(other) {}
+
+  /**
+   * Copy constructor.
+   * @param other matrix to copy from
+   */
+  arena_matrix(const arena_matrix<MatrixType>& other)
+      : Base::Map(other.rows(), other.cols(), other.nonZeros(),
+         other.outerIndexPtr(), other.innerIndexPtr(), other.valuePtr()) {}
+
+
+  // without this using, compiler prefers combination of implicit construction
+  // and copy assignment to the inherited operator when assigned an expression
+  using Base::operator=;
+
+  /**
+   * Copy assignment operator.
+   * @param other matrix to copy from
+   * @return `*this`
+   */
+  arena_matrix& operator=(const arena_matrix<MatrixType>& other) {
+    // placement new changes what data map points to - there is no allocation
+    new (this)
+        Base(other.rows(), other.cols(), other.nonZeros(),
+        other.outerIndexPtr(), other.innerIndexPtr(), other.valuePtr());
+    return *this;
+  }
+      /**
+   * Assignment operator for assigning an expression.
+   * @param a expression to evaluate into this
+   * @return `*this`
+   */
+  template <typename T>
+  arena_matrix& operator=(const T& expr) {
+    PlainObject x = expr;
+    const auto alloc_storage = [](auto size) {
+      ChainableStack::instance_->memalloc_.alloc_array<StorageIndex>(size);
+    };
+    std::cout << "Got1" << std::endl;
+    new (this) Base(x.rows(), x.cols(), x.nonZeros(), alloc_storage(x.innerSize()),
+      alloc_storage(x.outerSize()),
+      ChainableStack::instance_->memalloc_.alloc_array<Scalar>(x.nonZeros()));
+    std::cout << "Got2" << std::endl;
+    Base::operator=(x);
+    std::cout << "Got3" << std::endl;
+    return *this;
+  }
+
+  arena_matrix& operator+=(const arena_matrix<MatrixType>& other) {
+    using inner_iterator = typename Base::InnerIterator;
+    for (int k = 0; k < (*this).outerSize(); ++k) {
+      for (inner_iterator it(*this, k), iz(other, k); it; ++it, ++iz) {
+        iz.value() += it.value();
+      }
+    }
+    return *this;
+  }
+
+  template <typename Expr, require_convertible_t<Expr&, MatrixType>* = nullptr,
+   require_not_same_t<Expr, arena_matrix<MatrixType>>* = nullptr>
+  arena_matrix& operator+=(Expr&& other) {
+    using inner_iterator = typename Base::InnerIterator;
+    auto&& x = to_ref(other);
+    for (int k = 0; k < (*this).outerSize(); ++k) {
+      inner_iterator it(*this, k);
+      typename Expr::InnerIterator iz(x, k);
+      for (; it; ++it, ++iz) {
+        iz.value() += it.value();
+      }
+    }
+    return *this;
+  }
+
 };
 
 }  // namespace math
