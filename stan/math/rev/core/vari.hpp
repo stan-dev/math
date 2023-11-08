@@ -811,6 +811,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
   using value_type = PlainObject;       // vari's adj_ and val_ member type
+  using InnerIterator = typename arena_matrix<PlainObject>::InnerIterator;
   /**
    * Rows at compile time
    */
@@ -919,11 +920,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
    * result with respect to itself to be 1.
    */
   inline void init_dependent() {
-    for (int k = 0; k < adj_.outerSize(); ++k) {
-      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
-        it.valueRef() = 1.0;
-      }
-    }
+    std::fill(adj_.valuePtr(), adj_.valuePtr() + adj_.nonZeros(), 1.0);
   }
 
   /**
@@ -932,11 +929,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
    * example in a Jacobian calculation).
    */
   inline void set_zero_adjoint() noexcept final {
-    for (int k = 0; k < adj_.outerSize(); ++k) {
-      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
-        it.valueRef() = 0.0;
-      }
-    }
+    std::fill(adj_.valuePtr(), adj_.valuePtr() + adj_.nonZeros(), 0.0);
   }
 
   /**

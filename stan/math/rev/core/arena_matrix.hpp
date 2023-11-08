@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <iostream>
 namespace stan {
 namespace math {
@@ -19,7 +20,8 @@ template <typename MatrixType, typename>
 class arena_matrix;
 
 template <typename MatrixType>
-class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>> : public Eigen::Map<MatrixType> {
+class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
+    : public Eigen::Map<MatrixType> {
  public:
   using Scalar = value_type_t<MatrixType>;
   using Base = Eigen::Map<MatrixType>;
@@ -134,48 +136,72 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>> : public 
 };
 
 template <typename MatrixType>
-class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>> : public Eigen::Map<MatrixType> {
+class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
+    : public Eigen::Map<MatrixType> {
  public:
   using Scalar = value_type_t<MatrixType>;
   using Base = Eigen::Map<MatrixType>;
   using PlainObject = std::decay_t<MatrixType>;
   using StorageIndex = typename PlainObject::StorageIndex;
-  using storage_idx_t = arena_matrix<Eigen::Matrix<StorageIndex, Eigen::Dynamic, 1>>;
-  using data_t = arena_matrix<Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>;
+
   /**
    * Default constructor.
    */
-  arena_matrix()
-      : Base::Map(0, 0, 0, nullptr, nullptr, nullptr) {
+  arena_matrix() : Base::Map(0, 0, 0, nullptr, nullptr, nullptr) {}
+  /**
+   * Constructor for CDC formatted data. Assumes compressed and does not own
+   * memory.
+   *
+   * Constructs a read-write Map to a sparse matrix of size rows x cols,
+   * containing nnz non-zero coefficients, stored as a sparse format as defined
+   * by the pointers outerIndexPtr, innerIndexPtr, and valuePtr. If the optional
+   * parameter innerNonZerosPtr is the null pointer, then a standard compressed
+   * format is assumed.
+   *
+   * @param rows Number of rows
+   * @param cols Number of columns
+   * @param nnz Number of nonzero items in matrix
+   * @param outerIndexPtr A pointer to the array of outer indices.
+   * @param innerIndexPtr A pointer to the array of inner indices.
+   * @param valuePtr A pointer to the array of values.
+   * @param innerNonZerosPtr A pointer to the array of the number of non zeros
+   * of the inner vectors.
+   *
+   */
+  arena_matrix(Eigen::Index rows, Eigen::Index cols, Eigen::Index nnz,
+               StorageIndex* outerIndexPtr, StorageIndex* innerIndexPtr,
+               Scalar* valuePtr, StorageIndex* innerNonZerosPtr = nullptr)
+      : Base::Map(rows, cols, nnz, outerIndexPtr, innerIndexPtr, valuePtr,
+                  innerNonZerosPtr) {}
+
+ private:
+  template <typename T, typename Integral>
+  auto* copy_vector(const T* ptr, Integral size) {
+    T* ret = ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+    std::copy_n(ptr, size, ret);
+    return ret;
   }
 
-private:
-  template <typename T, typename Integral>
-  auto* copy_vector(T* ptr, Integral size) {
-    arena_matrix<Eigen::Matrix<T, Eigen::Dynamic, 1>> ret(size);
-    std::copy_n(ptr, size, ret.data());
-    return ret.data();
-  }
-public:
-  arena_matrix(Eigen::Index rows, Eigen::Index cols, Eigen::Index nnz,
-   StorageIndex* outerIndexPtr, StorageIndex* innerIndexPtr,
-   Scalar* valuePtr, StorageIndex* innerNonZerosPtr = nullptr) :
-   Base::Map(rows, cols, nnz, outerIndexPtr, innerIndexPtr, valuePtr, innerNonZerosPtr) {}
+ public:
   /**
-   * Constructs `arena_matrix` from an expression.
-   * @param other expression
+   * Constructs `arena_matrix` from an `Eigen::SparseMatrix`.
+   * @param other Eigen Sparse Matrix class
    */
   template <typename T, require_same_t<T, PlainObject>* = nullptr>
   arena_matrix(T&& other)  // NOLINT
-      :  Base::Map(other.rows(), other.cols(), other.nonZeros(),
-       copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
-       copy_vector(other.innerIndexPtr(), other.nonZeros()),
-       copy_vector(other.valuePtr(), other.nonZeros())) {
-  }
+      : Base::Map(other.rows(), other.cols(), other.nonZeros(),
+                  copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
+                  copy_vector(other.innerIndexPtr(), other.nonZeros()),
+                  copy_vector(other.valuePtr(), other.nonZeros())) {}
 
+  /**
+   * Constructs `arena_matrix` from an Eigen expression
+   * @param other An expression
+   */
   template <typename S, require_convertible_t<S&, PlainObject>* = nullptr,
-   require_not_same_t<S, PlainObject>* = nullptr>
-  arena_matrix(S&& x) : arena_matrix(PlainObject(x)) {}
+            require_not_same_t<S, PlainObject>* = nullptr>
+  arena_matrix(S&& x)  // NOLINT
+      : arena_matrix(PlainObject(x)) {}
 
   /**
    * Constructs `arena_matrix` from an expression. This makes an assumption that
@@ -186,13 +212,35 @@ public:
       : Base(other) {}
 
   /**
-   * Copy constructor.
+   * Const copy constructor. No actual copy is performed
+   * @note Since the memory for the arena matrix sits in Stan's memory arena all
+   * copies/moves of arena matrices are shallow moves
    * @param other matrix to copy from
    */
   arena_matrix(const arena_matrix<MatrixType>& other)
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
-         other.outerIndexPtr(), other.innerIndexPtr(), other.valuePtr()) {}
-
+                  other.outerIndexPtr(), other.innerIndexPtr(),
+                  other.valuePtr()) {}
+  /**
+   * Move constructor.
+   * @note Since the memory for the arena matrix sits in Stan's memory arena all
+   * copies/moves of arena matrices are shallow moves
+   * @param other matrix to copy from
+   */
+  arena_matrix(arena_matrix<MatrixType>&& other)
+      : Base::Map(other.rows(), other.cols(), other.nonZeros(),
+                  other.outerIndexPtr(), other.innerIndexPtr(),
+                  other.valuePtr()) {}
+  /**
+   * Copy constructor. No actual copy is performed
+   * @note Since the memory for the arena matrix sits in Stan's memory arena all
+   * copies/moves of arena matrices are shallow moves
+   * @param other matrix to copy from
+   */
+  arena_matrix(arena_matrix<MatrixType>& other)
+      : Base::Map(other.rows(), other.cols(), other.nonZeros(),
+                  other.outerIndexPtr(), other.innerIndexPtr(),
+                  other.valuePtr()) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -200,62 +248,149 @@ public:
 
   /**
    * Copy assignment operator.
+   * @tparam ArenaMatrix An `arena_matrix` type
    * @param other matrix to copy from
    * @return `*this`
    */
-  arena_matrix& operator=(const arena_matrix<MatrixType>& other) {
+  template <typename ArenaMatrix,
+            require_same_t<ArenaMatrix, arena_matrix<MatrixType>>* = nullptr>
+  arena_matrix& operator=(ArenaMatrix&& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this)
-        Base(other.rows(), other.cols(), other.nonZeros(),
-        other.outerIndexPtr(), other.innerIndexPtr(), other.valuePtr());
+    new (this) Base(other.rows(), other.cols(), other.nonZeros(),
+                    const_cast<StorageIndex*>(other.outerIndexPtr()),
+                    const_cast<StorageIndex*>(other.innerIndexPtr()),
+                    const_cast<Scalar*>(other.valuePtr()));
     return *this;
   }
-      /**
+
+  /**
    * Assignment operator for assigning an expression.
-   * @param a expression to evaluate into this
+   * @tparam Expr An expression that an `arena_matrix<MatrixType>` can be
+   * constructed from
+   * @param expr expression to evaluate into this
    * @return `*this`
    */
-  template <typename T>
-  arena_matrix& operator=(const T& expr) {
-    PlainObject x = expr;
-    const auto alloc_storage = [](auto size) {
-      ChainableStack::instance_->memalloc_.alloc_array<StorageIndex>(size);
-    };
-    std::cout << "Got1" << std::endl;
-    new (this) Base(x.rows(), x.cols(), x.nonZeros(), alloc_storage(x.innerSize()),
-      alloc_storage(x.outerSize()),
-      ChainableStack::instance_->memalloc_.alloc_array<Scalar>(x.nonZeros()));
-    std::cout << "Got2" << std::endl;
-    Base::operator=(x);
-    std::cout << "Got3" << std::endl;
+  template <typename Expr,
+            require_not_same_t<Expr, arena_matrix<MatrixType>>* = nullptr>
+  arena_matrix& operator=(Expr&& expr) {
+    *this = arena_matrix(std::forward<Expr>(expr));
     return *this;
   }
 
-  arena_matrix& operator+=(const arena_matrix<MatrixType>& other) {
-    using inner_iterator = typename Base::InnerIterator;
-    for (int k = 0; k < (*this).outerSize(); ++k) {
-      for (inner_iterator it(*this, k), iz(other, k); it; ++it, ++iz) {
-        iz.value() += it.value();
-      }
-    }
-    return *this;
-  }
-
-  template <typename Expr, require_convertible_t<Expr&, MatrixType>* = nullptr,
-   require_not_same_t<Expr, arena_matrix<MatrixType>>* = nullptr>
-  arena_matrix& operator+=(Expr&& other) {
-    using inner_iterator = typename Base::InnerIterator;
+ private:
+  /**
+   * inplace operations functor for `Sparse (.*)= Sparse`.
+   * @note This assumes that each matrix is of the same size and sparsity
+   * pattern.
+   * @tparam F A type with a valid `operator()(Scalar& x, const Scalar& y)`
+   * method
+   * @tparam Expr Type derived from `Eigen::SparseMatrixBase`
+   * @param f Functor that performs the inplace operation
+   * @param other The right hand side of the inplace operation
+   */
+  template <typename F, typename Expr,
+            require_convertible_t<Expr&, MatrixType>* = nullptr>
+  void inplace_ops_impl(F&& f, Expr&& other) {
     auto&& x = to_ref(other);
     for (int k = 0; k < (*this).outerSize(); ++k) {
-      inner_iterator it(*this, k);
-      typename Expr::InnerIterator iz(x, k);
-      for (; it; ++it, ++iz) {
-        iz.value() += it.value();
+      typename Base::InnerIterator it(*this, k);
+      typename std::decay_t<Expr>::InnerIterator iz(x, k);
+      for (; bool(it) && bool(iz); ++it, ++iz) {
+        f(it.valueRef(), iz.value());
       }
     }
+  }
+
+  /**
+   * inplace operations functor for `Sparse (.*)= Dense`.
+   * @note This assumes the user intends to perform the inplace operation for
+   * the nonzero parts of `this`
+   * @tparam F A type with a valid `operator()(Scalar& x, const Scalar& y)`
+   * method
+   * @tparam Expr Type derived from `Eigen::DenseBase`
+   * @param f Functor that performs the inplace operation
+   * @param other The right hand side of the inplace operation
+   */
+  template <typename F, typename Expr,
+            require_not_convertible_t<Expr&, MatrixType>* = nullptr,
+            require_eigen_dense_base_t<Expr>* = nullptr>
+  void inplace_ops_impl(F&& f, Expr&& other) {
+    auto&& x = to_ref(other);
+    for (int k = 0; k < (*this).outerSize(); ++k) {
+      typename Base::InnerIterator it(*this, k);
+      for (; bool(it); ++it) {
+        f(it.valueRef(), x(it.row(), it.col()));
+      }
+    }
+  }
+
+  /**
+   * inplace operations functor for `Sparse (.*)= Scalar`.
+   * @note This assumes the user intends to perform the inplace operation for
+   * the nonzero parts of `this`
+   * @tparam F A type with a valid `operator()(Scalar& x, const Scalar& y)`
+   * method
+   * @tparam T A scalar type
+   * @param f Functor that performs the inplace operation
+   * @param other The right hand side of the inplace operation
+   */
+  template <typename F, typename T,
+            require_convertible_t<T&, Scalar>* = nullptr>
+  void inplace_ops_impl(F&& f, T&& other) {
+    for (int k = 0; k < (*this).outerSize(); ++k) {
+      typename Base::InnerIterator it(*this, k);
+      for (; bool(it); ++it) {
+        f(it.valueRef(), other);
+      }
+    }
+  }
+
+ public:
+  /**
+   * Inplace operator `+=`
+   * @note Caution!! Inplace operators assume that either
+   *  1. The right hand side sparse matrix has the same sparcity pattern
+   *  2. You only intend to add a scalar or dense matrix coefficients to the
+   * nonzero values of `this` This is intended to be used within the reverse
+   * pass for accumulation of the adjoint and is built as such. Any other use
+   * case should be be sure the above assumptions are satisfied.
+   * @tparam T A type derived from `Eigen::SparseMatrixBase` or
+   * `Eigen::DenseMatrixBase` or a `Scalar`
+   * @param other value to be added inplace to the matrix.
+   */
+  template <typename T>
+  arena_matrix& operator+=(T&& other) {
+    inplace_ops_impl(
+        [](auto&& x, auto&& y) {
+          x += y;
+          return;
+        },
+        std::forward<T>(other));
     return *this;
   }
 
+  /**
+   * Inplace operator `+=`
+   * @note Caution!! Inplace operators assume that either
+   *  1. The right hand side sparse matrix has the same sparcity pattern
+   *  2. You only intend to add a scalar or dense matrix coefficients to the
+   * nonzero values of `this` This is intended to be used within the reverse
+   * pass for accumulation of the adjoint and is built as such. Any other use
+   * case should be be sure the above assumptions are satisfied.
+   * @tparam T A type derived from `Eigen::SparseMatrixBase` or
+   * `Eigen::DenseMatrixBase` or a `Scalar`
+   * @param other value to be added inplace to the matrix.
+   */
+  template <typename T>
+  arena_matrix& operator-=(T&& other) {
+    inplace_ops_impl(
+        [](auto&& x, auto&& y) {
+          x -= y;
+          return;
+        },
+        std::forward<T>(other));
+    return *this;
+  }
 };
 
 }  // namespace math
