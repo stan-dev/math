@@ -4,20 +4,12 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <iostream>
 namespace stan {
 namespace math {
 
-/**
- * Equivalent to `Eigen::Matrix`, except that the data is stored on AD stack.
- * That makes these objects triviali destructible and usable in `vari`s.
- *
- * @tparam MatrixType Eigen matrix type this works as (`MatrixXd`, `VectorXd`
- * ...)
- */
-template <typename MatrixType, typename>
-class arena_matrix;
 
 template <typename MatrixType>
 class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
