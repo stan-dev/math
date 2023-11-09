@@ -45,6 +45,7 @@ pipeline {
         preserveStashes(buildCount: 7)
         parallelsAlwaysFailFast()
         buildDiscarder(logRotator(numToKeepStr: '20', daysToKeepStr: '30'))
+        disableConcurrentBuilds(abortPrevious: true)
     }
     environment {
         STAN_NUM_THREADS = 4
@@ -65,18 +66,6 @@ pipeline {
         GIT_COMMITTER_EMAIL = 'mc.stanislaw@gmail.com'
     }
     stages {
-
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
 
         stage("Clang-format") {
             agent {
