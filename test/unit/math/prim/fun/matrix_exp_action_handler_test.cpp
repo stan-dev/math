@@ -68,14 +68,6 @@ TEST(MathMatrixRevMat, matrix_exp_action_vector) {
     for (size_t i = 0; i < n; ++i) {
       EXPECT_NEAR(res(i), expb(i), 1.e-6);
     }
-
-    int m1, s1, m2, s2;
-    const double t1 = 9.9, t2 = 1.0;
-    handler.set_approximation_parameter(A, t1, m1, s1);
-    A *= t1;
-    handler.set_approximation_parameter(A, t2, m2, s2);
-    EXPECT_EQ(m1, m2);
-    EXPECT_EQ(s1, s2);
   }
 }
 

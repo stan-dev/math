@@ -25,7 +25,7 @@ double atan2(T1 y, T2 x) {
 }
 
 /**
- * Enables the vectorised application of the atan2 function, when
+ * Enables the vectorized application of the atan2 function, when
  * the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

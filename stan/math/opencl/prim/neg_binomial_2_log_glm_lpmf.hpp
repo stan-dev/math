@@ -178,11 +178,10 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
   }
 
-  operands_and_partials<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl> ops_partials(
-      x, alpha, beta, phi);
+  auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
   if (!is_constant<T_x_cl>::value) {
-    ops_partials.edge1_.partials_
+    partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
   if (!is_constant_all<T_beta_cl>::value) {
@@ -191,29 +190,30 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    ops_partials.edge3_.partials_
+    partials<2>(ops_partials)
         = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
                             edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      ops_partials.edge3_.partials_.add_write_event(
-          edge3_partials_transpose_cl.write_events().back());
+      edge<2>(ops_partials)
+          .partials_.add_write_event(
+              edge3_partials_transpose_cl.write_events().back());
     }
   }
   if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      ops_partials.edge2_.partials_ = std::move(theta_derivative_cl);
+      partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge2_.partials_)[0]
+          partials<1>(ops_partials))[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_phi_cl>::value) {
     if (is_phi_vector) {
-      ops_partials.edge4_.partials_ = std::move(phi_derivative_cl);
+      partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge4_.partials_)[0]
+          partials<3>(ops_partials))[0]
           = sum(from_matrix_cl(phi_derivative_cl));
     }
   }

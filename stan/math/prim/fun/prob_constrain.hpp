@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_FUN_PROB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/log_inv_logit.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <cmath>
 
 namespace stan {
@@ -49,10 +49,9 @@ inline T prob_constrain(const T& x) {
  */
 template <typename T>
 inline T prob_constrain(const T& x, T& lp) {
-  using std::log;
-  T inv_logit_x = inv_logit(x);
-  lp += log(inv_logit_x) + log1m(inv_logit_x);
-  return inv_logit_x;
+  T log_inv_logit_x = log_inv_logit(x);
+  lp += log_inv_logit_x + log1m_inv_logit(x);
+  return exp(log_inv_logit_x);
 }
 
 /**

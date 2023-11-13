@@ -16,16 +16,15 @@ namespace math {
 
 /**
  * Return the eigenvalues of the specified symmetric matrix.
- * <p>See <code>eigen_decompose()</code> for more information.
  * @tparam T type of input matrix.
  * @param m Specified matrix.
  * @return Eigenvalues of matrix.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvalues_sym(const T& m) {
-  using return_t = return_var_matrix_t<T>;
+  using return_t = return_var_matrix_t<Eigen::VectorXd, T>;
   if (unlikely(m.size() == 0)) {
-    return return_t(m);
+    return return_t(Eigen::VectorXd(0));
   }
   check_symmetric("eigenvalues_sym", "m", m);
 

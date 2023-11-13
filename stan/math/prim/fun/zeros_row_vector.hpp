@@ -11,7 +11,7 @@ namespace math {
  * Return a row vector of zeros
  *
  * @param K size of the row vector
- * @return A row vector of size K with all elements initialised to 0.
+ * @return A row vector of size K with all elements initialized to 0.
  * @throw std::domain_error if K is negative.
  */
 inline auto zeros_row_vector(int K) {

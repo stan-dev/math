@@ -8,11 +8,11 @@ TEST(MathMatrixPrimMat, dims) {
   using stan::math::dims;
   using std::vector;
 
-  double x1;
+  double x1 = 0;
   vector<int> dims1 = dims(x1);
   EXPECT_EQ(0U, dims1.size());
 
-  int x2;
+  int x2 = 0;
   vector<int> dims2 = dims(x2);
   EXPECT_EQ(0U, dims2.size());
 

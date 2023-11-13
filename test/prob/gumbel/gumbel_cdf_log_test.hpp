@@ -1,5 +1,6 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/gumbel_cdf_log.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

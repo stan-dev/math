@@ -93,8 +93,7 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       calc_if<!is_constant_all<T_theta_cl, T_lambda_cl>::value>(logp_vec_expr),
       colwise_sum(logp_vec_expr));
 
-  operands_and_partials<decltype(theta_col), decltype(lambda)> ops_partials(
-      theta_col, lambda);
+  auto ops_partials = make_partials_propagator(theta_col, lambda);
   if (!is_constant_all<T_theta_cl, T_lambda_cl>::value) {
     auto derivs_expr = exp(lambda_val - colwise_broadcast(transpose(logp_vec)));
     if (!is_constant<T_lambda_cl>::value) {
@@ -105,12 +104,12 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
           = expressions(calc_if<!is_constant<T_theta_cl>::value>(derivs_expr),
                         lambda_deriv_expr);
 
-      ops_partials.edge2_.partials_ = std::move(lambda_deriv);
+      partials<1>(ops_partials) = std::move(lambda_deriv);
       if (!is_constant<T_theta_cl>::value) {
-        ops_partials.edge1_.partials_ = rowwise_sum(derivs);
+        partials<0>(ops_partials) = rowwise_sum(derivs);
       }
     } else if (!is_constant<T_theta_cl>::value) {
-      ops_partials.edge1_.partials_ = rowwise_sum(derivs_expr);
+      partials<0>(ops_partials) = rowwise_sum(derivs_expr);
     }
   }
   return ops_partials.build(sum(from_matrix_cl(logp_sum)));

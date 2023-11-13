@@ -69,7 +69,7 @@ inline return_type_t<T> falling_factorial(const T& x, int n) {
 }
 
 /**
- * Enables the vectorised application of the falling factorial function, when
+ * Enables the vectorized application of the falling factorial function, when
  * the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

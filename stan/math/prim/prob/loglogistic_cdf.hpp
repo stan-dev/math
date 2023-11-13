@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <cmath>
 #include <iostream>
@@ -70,8 +70,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   if (sum(promote_scalar<int>(y_val == 0))) {
     return ops_partials.build(0.0);
@@ -103,18 +102,18 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
           alpha_div_y_pow_beta * beta_val);
       if (!is_constant_all<T_y>::value) {
         const auto& y_deriv = alpha_div_times_beta / y_val * prod_all_sq;
-        ops_partials.edge1_.partials_ = y_deriv * cdf_div_elt;
+        partials<0>(ops_partials) = y_deriv * cdf_div_elt;
       }
       if (!is_constant_all<T_scale>::value) {
         const auto& alpha_deriv
             = -alpha_div_times_beta / alpha_val * prod_all_sq;
-        ops_partials.edge2_.partials_ = alpha_deriv * cdf_div_elt;
+        partials<1>(ops_partials) = alpha_deriv * cdf_div_elt;
       }
     }
     if (!is_constant_all<T_shape>::value) {
       const auto& beta_deriv
           = -multiply_log(alpha_div_y_pow_beta, alpha_div_y) * prod_all_sq;
-      ops_partials.edge3_.partials_ = beta_deriv * cdf_div_elt;
+      partials<2>(ops_partials) = beta_deriv * cdf_div_elt;
     }
   }
 

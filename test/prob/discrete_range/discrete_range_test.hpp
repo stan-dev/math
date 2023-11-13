@@ -1,5 +1,7 @@
 // Arguments: Ints, Ints, Ints
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/discrete_range_lpmf.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 using std::vector;
 

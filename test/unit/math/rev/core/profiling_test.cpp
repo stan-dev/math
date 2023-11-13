@@ -100,6 +100,7 @@ TEST(Profiling, var_loop) {
     var a = i;
     var b = 2.0;
     c = c + a;
+    b = b + 0;
     std::chrono::milliseconds timespan(10);
     std::this_thread::sleep_for(timespan);
   }

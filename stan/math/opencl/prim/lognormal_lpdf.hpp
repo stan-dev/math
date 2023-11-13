@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -61,8 +61,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
   const auto& mu_val = value_of(mu_col);
   const auto& sigma_val = value_of(sigma_col);
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col)>
-      ops_partials(y_col, mu_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -115,13 +114,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
       = sum(from_matrix_cl(logp_cl)) + N * NEG_LOG_SQRT_TWO_PI;
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+    partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
+    partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
 
   return ops_partials.build(logp);

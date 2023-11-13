@@ -56,7 +56,7 @@ inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
 }
 
 /**
- * Enables the vectorised application of the beta function, when
+ * Enables the vectorized application of the beta function, when
  * the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

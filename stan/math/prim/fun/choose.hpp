@@ -39,7 +39,7 @@ inline int choose(int n, int k) {
 }
 
 /**
- * Enables the vectorised application of the binomial coefficient function,
+ * Enables the vectorized application of the binomial coefficient function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

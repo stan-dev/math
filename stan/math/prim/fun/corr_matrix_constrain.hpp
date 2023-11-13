@@ -118,8 +118,8 @@ inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @param x Vector of unconstrained partial correlations
- * @param k Dimensionality of returned correlation matrix
+ * @param y Vector of unconstrained partial correlations
+ * @param K Dimensionality of returned correlation matrix
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
