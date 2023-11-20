@@ -97,10 +97,12 @@ inline auto from_matrix_cl(const T& src) {
   } else {
     try {
       cl::Event copy_event;
-      const cl::CommandQueue queue = opencl_context.queue();
+      const cl::CommandQueue& queue = opencl_context.queue();
+      std::vector<cl::Event> copy_write_events(src.write_events().begin(),
+                                               src.write_events().end());
       queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
                               sizeof(T_val) * dst.size(), dst.data(),
-                              &src.write_events(), &copy_event);
+                              &copy_write_events, &copy_event);
       copy_event.wait();
       src.clear_write_events();
     } catch (const cl::Error& e) {
@@ -150,9 +152,11 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
                    "dst.cols()", 1);
   try {
     cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
+    std::vector<cl::Event> copy_write_events(src.write_events().begin(),
+                                             src.write_events().end());
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T), &dst, &src.write_events(), &copy_event);
+                            sizeof(T), &dst, &copy_write_events, &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -182,10 +186,12 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   }
   try {
     cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
+    std::vector<cl::Event> copy_write_events(src.write_events().begin(),
+                                             src.write_events().end());
     queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
                             sizeof(T) * src.rows(), dst.data(),
-                            &src.write_events(), &copy_event);
+                            &copy_write_events, &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -251,13 +257,14 @@ inline auto packed_copy(const T& src) {
     return dst;
   }
   try {
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     matrix_cl<T_val> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      src.view());
     const std::vector<cl::Event> mat_events
-        = vec_concat(packed.read_write_events(), src.write_events());
+        = vec_concat(std::vector<cl::Event>{}, packed.read_write_events(),
+                     src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), opencl_context.in_order(), 0,
                             sizeof(T_val) * packed_size, dst.data(),
@@ -303,7 +310,7 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   try {
     matrix_cl<Vec_scalar> packed(packed_size, 1);
     cl::Event packed_event;
-    const cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(
         packed.buffer(),
         opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,

@@ -14,10 +14,11 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 
 #include <CL/opencl.hpp>
+#include <tbb/concurrent_vector.h>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <cmath>
 #include <cerrno>
@@ -160,7 +161,7 @@ class opencl_context_base {
                                   // the device
   bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
-  using map_base_opts = std::map<std::string, int>;
+  using map_base_opts = std::unordered_map<std::string, int>;
   map_base_opts base_opts_
       = {{"LOWER", static_cast<int>(matrix_cl_view::Lower)},
          {"UPPER", static_cast<int>(matrix_cl_view::Upper)},
@@ -193,7 +194,7 @@ class opencl_context_base {
   } tuning_opts_;
 
  protected:
-  static opencl_context_base& getInstance() {
+  static opencl_context_base& getInstance() noexcept {
     static opencl_context_base instance_;
     return instance_;
   }
@@ -207,7 +208,7 @@ class opencl_context_base {
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
-  std::vector<cl::Kernel*> kernel_caches_;
+  tbb::concurrent_vector<cl::Kernel*> kernel_caches_;
 
  public:
   opencl_context() = default;
@@ -351,7 +352,7 @@ class opencl_context {
    * objects. For stan, there should only be one context, queue, device, and
    * program with multiple kernels.
    */
-  inline cl::Context& context() {
+  inline cl::Context& context() noexcept {
     return opencl_context_base::getInstance().context_;
   }
   /** \ingroup opencl_context_group
@@ -359,13 +360,13 @@ class opencl_context {
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
    */
-  inline cl::CommandQueue& queue() {
+  inline cl::CommandQueue& queue() noexcept {
     return opencl_context_base::getInstance().command_queue_;
   }
   /** \ingroup opencl_context_group
    * Returns a copy of the map of kernel defines
    */
-  inline opencl_context_base::map_base_opts& base_opts() {
+  inline opencl_context_base::map_base_opts& base_opts() noexcept {
     return opencl_context_base::getInstance().base_opts_;
   }
   /** \ingroup opencl_context_group
@@ -375,35 +376,35 @@ class opencl_context {
    * max workgroup of 256 would allow thread blocks of sizes (16,16), (128,2),
    * (8, 32), etc.
    */
-  inline int max_thread_block_size() {
+  inline int max_thread_block_size() noexcept {
     return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
   /** \ingroup opencl_context_group
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
-  inline opencl_context_base::tuning_struct& tuning_opts() {
+  inline opencl_context_base::tuning_struct& tuning_opts() noexcept {
     return opencl_context_base::getInstance().tuning_opts_;
   }
 
   /** \ingroup opencl_context_group
    * Returns a vector containing the OpenCL device used to create the context
    */
-  inline std::vector<cl::Device>& device() {
+  inline std::vector<cl::Device>& device() noexcept {
     return opencl_context_base::getInstance().device_;
   }
 
   /** \ingroup opencl_context_group
    * Returns a vector containing the OpenCL platform used to create the context
    */
-  inline std::vector<cl::Platform>& platform() {
+  inline std::vector<cl::Platform>& platform() noexcept {
     return opencl_context_base::getInstance().platform_;
   }
   /** \ingroup opencl_context_group
    * Return a bool representing whether the write to the OpenCL device are
    * blocking
    */
-  inline bool& in_order() {
+  inline bool& in_order() noexcept {
     return opencl_context_base::getInstance().in_order_;
   }
 
