@@ -339,7 +339,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
  public:
   /**
    * Inplace operator `+=`
-   * @note Caution!! Inplace operators assume that either
+   * @note Caution! Inplace operators assume that either
    *  1. The right hand side sparse matrix has the same sparcity pattern
    *  2. You only intend to add a scalar or dense matrix coefficients to the
    * nonzero values of `this` This is intended to be used within the reverse
