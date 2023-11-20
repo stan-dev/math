@@ -10,7 +10,6 @@
 namespace stan {
 namespace math {
 
-
 template <typename MatrixType>
 class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
     : public Eigen::Map<MatrixType> {

@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-
 namespace stan {
 namespace test {
 template <typename T, typename S>
@@ -124,7 +123,8 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   inplace_add_var.adj() += test_y;
   // adjoints sparsity pattern will be pattern of x and test_y for addition
   for (int k = 0; k < x.outerSize(); ++k) {
-    typename vari_value<eigen_plain>::InnerIterator iz(inplace_add_var.adj(), k);
+    typename vari_value<eigen_plain>::InnerIterator iz(inplace_add_var.adj(),
+                                                       k);
     for (inner_iterator it(test_y, k); bool(iz) && bool(it); ++iz) {
       if (iz.row() == it.row() && iz.col() == it.col()) {
         EXPECT_FLOAT_EQ(iz.value() - 1, it.value());
