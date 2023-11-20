@@ -287,7 +287,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
     for (int k = 0; k < (*this).outerSize(); ++k) {
       typename Base::InnerIterator it(*this, k);
       typename std::decay_t<Expr>::InnerIterator iz(x, k);
-      for (; bool(it) && bool(iz); ++it, ++iz) {
+      for (; static_cast<bool>(it) && static_cast<bool>(iz); ++it, ++iz) {
         f(it.valueRef(), iz.value());
       }
     }
@@ -310,7 +310,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
     auto&& x = to_ref(other);
     for (int k = 0; k < (*this).outerSize(); ++k) {
       typename Base::InnerIterator it(*this, k);
-      for (; bool(it); ++it) {
+      for (; static_cast<bool>(it); ++it) {
         f(it.valueRef(), x(it.row(), it.col()));
       }
     }
@@ -331,7 +331,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   void inplace_ops_impl(F&& f, T&& other) {
     for (int k = 0; k < (*this).outerSize(); ++k) {
       typename Base::InnerIterator it(*this, k);
-      for (; bool(it); ++it) {
+      for (; static_cast<bool>(it); ++it) {
         f(it.valueRef(), other);
       }
     }
