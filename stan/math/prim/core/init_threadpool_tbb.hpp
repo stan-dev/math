@@ -5,7 +5,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-
 #ifndef TBB_INTERFACE_NEW
 
 #if __has_include(<tbb/tbb_stddef.h>)
@@ -25,8 +24,6 @@
 #else
 #include <tbb/task_scheduler_init.h>
 #endif
-
-
 
 #include <cstdlib>
 #include <thread>
