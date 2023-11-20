@@ -289,6 +289,7 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
   } else {
     constexpr auto mult = 2.0;
     for (auto k = n_terms_large_t; k >= 1; k--) {
+      std::cout << "-------" << std::endl;
       const auto pi_k = k * pi();
       reverse_pass_callback([w]{
         std::cout << "w partial log_sum val.val 4 = " << w.val().val() << std::endl;
@@ -311,6 +312,8 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
       });
       const auto check = cos(check2);
+      std::cout << "check2 partial log_sum val.val 5 = " << check2.val().val() << std::endl;
+      std::cout << "check2 partial log_sum d.val 5 = " << check2.d().val() << std::endl;
       reverse_pass_callback([w, check]{
         std::cout << "w partial log_sum val.val 6 = " << w.val().val() << std::endl;
         std::cout << "w partial log_sum val.adj 6 = " << w.val().adj() << std::endl;
@@ -332,6 +335,8 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
       });
       auto check3 = fabs(check);
+      std::cout << "check partial log_sum val.val 8 = " << check.val().val() << std::endl;
+      std::cout << "check partial log_sum d.val 8 = " << check.d().val() << std::endl;
       reverse_pass_callback([check3]{
         std::cout << "check3 partial log_sum val.val 8 = " << check3.val().val() << std::endl;
         std::cout << "check3 partial log_sum val.adj 8 = " << check3.val().adj() << std::endl;
@@ -340,6 +345,8 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
       });
       auto check4 = log(check3);
+      std::cout << "check3 partial log_sum val.val 8 = " << check3.val().val() << std::endl;
+      std::cout << "check3 partial log_sum d.val 8 = " << check3.d().val() << std::endl;
       reverse_pass_callback([k, check, check4, scaling, pi_k] {
         std::cout << "k partial log_sum val.val 10 = " << k.val().val() << std::endl;
         std::cout << "k partial log_sum val.adj 10 = " << k.val().adj() << std::endl;
@@ -363,14 +370,19 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
         std::cout << "scaling partial log_sum val.adj 9 = " << scaling << std::endl;
       });
+      auto n_terms_large_t_quant = mult * log(k) - square(pi_k) * scaling + check4;
       std::cout << "Fwd" << std::endl;
       std::cout << "mult: " << mult << std::endl;
-      std::cout << "k: " << k << std::endl;
-      std::cout << "pi_k: " << pi_k << std::endl;
+      std::cout << "k val val: " << k.val().val() << std::endl;
+      std::cout << "k d val: " << k.d().val() << std::endl;
+      std::cout << "pi_k val val: " << pi_k.val().val() << std::endl;
+      std::cout << "pi_k d val: " << pi_k.d().val() << std::endl;
       std::cout << "scaling: " << scaling << std::endl;
-      std::cout << "check4: " << check4 << std::endl;
+      std::cout << "check4 val val: " << check4.val().val() << std::endl;
+      std::cout << "check4 d val: " << check4.d().val() << std::endl;
+      std::cout << "n_terms_large_t_quant val val: " << n_terms_large_t_quant.val().val() << std::endl;
+      std::cout << "n_terms_large_t_quant d val: " << n_terms_large_t_quant.d().val() << std::endl;
 
-      auto n_terms_large_t_quant = mult * log(k) - square(pi_k) * scaling + check4;
       // this call injects a node into the reverse pass that just prints the current values
       // of the adjoints
       reverse_pass_callback([k, check, check3, pi_k, n_terms_large_t_quant, prev_val, prev_sign, check_sign] {
