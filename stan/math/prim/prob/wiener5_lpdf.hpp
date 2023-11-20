@@ -363,6 +363,13 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << std::endl;
         std::cout << "scaling partial log_sum val.adj 9 = " << scaling << std::endl;
       });
+      std::cout << "Fwd" << std::endl;
+      std::cout << "mult: " << mult << std::endl;
+      std::cout << "k: " << k << std::endl;
+      std::cout << "pi_k: " << pi_k << std::endl;
+      std::cout << "scaling: " << scaling << std::endl;
+      std::cout << "check4: " << check4 << std::endl;
+
       auto n_terms_large_t_quant = mult * log(k) - square(pi_k) * scaling + check4;
       // this call injects a node into the reverse pass that just prints the current values
       // of the adjoints
