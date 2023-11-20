@@ -6,24 +6,20 @@
 #include <boost/lexical_cast.hpp>
 
 #ifndef TBB_INTERFACE_NEW
-
-#if __has_include(<tbb/tbb_stddef.h>)
-#include <tbb/tbb_stddef.h>
-#else
+#if TBB_VERSION_MAJOR >= 2021
 #include <tbb/tbb.h>
+#else
+#include <tbb/tbb_stddef.h>
 #endif
 
 #if TBB_VERSION_MAJOR >= 2020
 #define TBB_INTERFACE_NEW
-#endif
-#endif
-
-#ifdef TBB_INTERFACE_NEW
 #include <tbb/global_control.h>
 #include <tbb/task_arena.h>
 #else
 #include <tbb/task_scheduler_init.h>
 #endif
+#endif // TBB_INTERFACE_NEW
 
 #include <cstdlib>
 #include <thread>
