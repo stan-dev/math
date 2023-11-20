@@ -289,7 +289,7 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
   } else {
     constexpr auto mult = 2.0;
     for (auto k = n_terms_large_t; k >= 1; k--) {
-      std::cout << "-------" << std::endl;
+              std::cout << "FORWARD--------" << std::endl;
       const auto pi_k = k * pi();
       reverse_pass_callback([w]{
         std::cout << "w partial log_sum val.val 4 = " << w.val().val() << std::endl;
@@ -422,6 +422,7 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
       std::forward_as_tuple(current_val, current_sign) = log_sum_exp_signed(
           prev_val, prev_sign, n_terms_large_t_quant, check_sign);
       reverse_pass_callback([current_val, k, check, check3, pi_k, n_terms_large_t_quant, prev_val, prev_sign, check_sign] {
+        std::cout << "REVERSE--------" << std::endl;
         std::cout << "k: " << k << std::endl;
         std::cout << "n_terms_large_t_quant partial log_sum val.val 10 = " << n_terms_large_t_quant.val().val() << std::endl;
         std::cout << "n_terms_large_t_quant partial log_sum val.adj 10 = " << n_terms_large_t_quant.val().adj() << std::endl;
@@ -441,6 +442,8 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
         std::cout << "current_val partial log_sum d.adj 10 = " << current_val.d().adj() << std::endl;
         std::cout << std::endl;
       });
+      std::cout << "current val: " << current_val << std::endl;
+      std::cout << "prev_val: " << prev_val << std::endl;
       prev_val = current_val;
       prev_sign = current_sign;
     }
