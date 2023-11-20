@@ -53,7 +53,8 @@ TEST(AgradRevVari, sparse_matrix_vari) {
   vari_value<eig_mat> B_vari(B);
   for (int k = 0; k < B.outerSize(); ++k) {
     typename vari_value<eig_mat>::InnerIterator iz(B_vari.val(), k);
-    for (inner_iterator it(B, k); static_cast<bool>(it) && static_cast<bool>(iz); ++it, ++iz) {
+    for (inner_iterator it(B, k);
+         static_cast<bool>(it) && static_cast<bool>(iz); ++it, ++iz) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
