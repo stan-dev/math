@@ -19,7 +19,7 @@
 #else
 #include <tbb/task_scheduler_init.h>
 #endif
-#endif // TBB_INTERFACE_NEW
+#endif  // TBB_INTERFACE_NEW
 
 #include <cstdlib>
 #include <thread>
