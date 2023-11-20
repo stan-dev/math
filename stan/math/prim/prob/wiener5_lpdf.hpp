@@ -223,24 +223,24 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
   const auto y_asq = y / square(a);
   reverse_pass_callback([w_value]{
       std::cout << std::endl;
-      std::cout << "w_value partial log_sum val.val 2 = " << w_value.val().val() << std::endl;
-      std::cout << "w_value partial log_sum val.adj 2 = " << w_value.val().adj() << std::endl;
-      std::cout << "w_value partial log_sum d.val 2 = " << w_value.d().val() << std::endl;
-      std::cout << "w_value partial log_sum d.adj 2 = " << w_value.d().adj() << std::endl;
+      std::cout << "w_value partial log_sum val.val 1 = " << w_value.val().val() << std::endl;
+      std::cout << "w_value partial log_sum val.adj 1 = " << w_value.val().adj() << std::endl;
+      std::cout << "w_value partial log_sum d.val 1 = " << w_value.d().val() << std::endl;
+      std::cout << "w_value partial log_sum d.adj 1 = " << w_value.d().adj() << std::endl;
       std::cout << std::endl;
   });
   const auto w = 1.0 - w_value;
   reverse_pass_callback([w, w_value]{
       std::cout << std::endl;
-      std::cout << "w partial log_sum val.val 1 = " << w.val().val() << std::endl;
-      std::cout << "w partial log_sum val.adj 1 = " << w.val().adj() << std::endl;
-      std::cout << "w partial log_sum d.val 1 = " << w.d().val() << std::endl;
-      std::cout << "w partial log_sum d.adj 1 = " << w.d().adj() << std::endl;
+      std::cout << "w partial log_sum val.val 2 = " << w.val().val() << std::endl;
+      std::cout << "w partial log_sum val.adj 2 = " << w.val().adj() << std::endl;
+      std::cout << "w partial log_sum d.val 2 = " << w.d().val() << std::endl;
+      std::cout << "w partial log_sum d.adj 2 = " << w.d().adj() << std::endl;
       std::cout << std::endl;
-      std::cout << "w_value partial log_sum val.val 1 = " << w_value.val().val() << std::endl;
-      std::cout << "w_value partial log_sum val.adj 1 = " << w_value.val().adj() << std::endl;
-      std::cout << "w_value partial log_sum d.val 1 = " << w_value.d().val() << std::endl;
-      std::cout << "w_value partial log_sum d.adj 1 = " << w_value.d().adj() << std::endl;
+      std::cout << "w_value partial log_sum val.val 2 = " << w_value.val().val() << std::endl;
+      std::cout << "w_value partial log_sum val.adj 2 = " << w_value.val().adj() << std::endl;
+      std::cout << "w_value partial log_sum d.val 2 = " << w_value.d().val() << std::endl;
+      std::cout << "w_value partial log_sum d.adj 2 = " << w_value.d().adj() << std::endl;
       std::cout << std::endl;
   });
 
@@ -253,7 +253,7 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
   int current_sign = 1;
 
   if (small_n_terms_small_t) {
-    const auto mult = 3;
+    constexpr auto mult = 3.0;
     const auto offset = y_asq;
     const auto sqrt_offset = sqrt(offset);
     for (auto k = n_terms_small_t; k >= 1; k--) {
@@ -291,10 +291,10 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
     for (auto k = n_terms_large_t; k >= 1; k--) {
       const auto pi_k = k * pi();
       reverse_pass_callback([w]{
-        std::cout << "w partial log_sum val.val 6 = " << w.val().val() << std::endl;
-        std::cout << "w partial log_sum val.adj 6 = " << w.val().adj() << std::endl;
-        std::cout << "w partial log_sum d.val 6 = " << w.d().val() << std::endl;
-        std::cout << "w partial log_sum d.adj 6 = " << w.d().adj() << std::endl;
+        std::cout << "w partial log_sum val.val 4 = " << w.val().val() << std::endl;
+        std::cout << "w partial log_sum val.adj 4 = " << w.val().adj() << std::endl;
+        std::cout << "w partial log_sum d.val 4 = " << w.d().val() << std::endl;
+        std::cout << "w partial log_sum d.adj 4 = " << w.d().adj() << std::endl;
         std::cout << std::endl;
       });
       const auto check2 = pi_k * w;
@@ -312,23 +312,23 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
       });
       const auto check = cos(check2);
       reverse_pass_callback([w, check]{
-        std::cout << "w partial log_sum val.val 4 = " << w.val().val() << std::endl;
-        std::cout << "w partial log_sum val.adj 4 = " << w.val().adj() << std::endl;
-        std::cout << "w partial log_sum d.val 4 = " << w.d().val() << std::endl;
-        std::cout << "w partial log_sum d.adj 4 = " << w.d().adj() << std::endl;
+        std::cout << "w partial log_sum val.val 6 = " << w.val().val() << std::endl;
+        std::cout << "w partial log_sum val.adj 6 = " << w.val().adj() << std::endl;
+        std::cout << "w partial log_sum d.val 6 = " << w.d().val() << std::endl;
+        std::cout << "w partial log_sum d.adj 6 = " << w.d().adj() << std::endl;
         std::cout << std::endl;
-        std::cout << "check partial log_sum val.val 5 = " << check.val().val() << std::endl;
-        std::cout << "check partial log_sum val.adj 5 = " << check.val().adj() << std::endl;
-        std::cout << "check partial log_sum d.val 5 = " << check.d().val() << std::endl;
-        std::cout << "check partial log_sum d.adj 5 = " << check.d().adj() << std::endl;
-        std::cout << std::endl;
-      });
-      int check_sign = sign(check);
-      reverse_pass_callback([check]{
         std::cout << "check partial log_sum val.val 7 = " << check.val().val() << std::endl;
         std::cout << "check partial log_sum val.adj 7 = " << check.val().adj() << std::endl;
         std::cout << "check partial log_sum d.val 7 = " << check.d().val() << std::endl;
         std::cout << "check partial log_sum d.adj 7 = " << check.d().adj() << std::endl;
+        std::cout << std::endl;
+      });
+      int check_sign = sign(check);
+      reverse_pass_callback([check]{
+        std::cout << "check partial log_sum val.val 8 = " << check.val().val() << std::endl;
+        std::cout << "check partial log_sum val.adj 8 = " << check.val().adj() << std::endl;
+        std::cout << "check partial log_sum d.val 8 = " << check.d().val() << std::endl;
+        std::cout << "check partial log_sum d.adj 8 = " << check.d().adj() << std::endl;
         std::cout << std::endl;
       });
       auto check3 = fabs(check);
@@ -341,61 +341,87 @@ inline auto wiener5_log_sum_exp_gradw(T_y&& y, T_a&& a, T_w&& w_value,
       });
       auto check4 = log(check3);
       reverse_pass_callback([k, check, check4, scaling, pi_k] {
-        std::cout << "check4 partial log_sum val.val 6 = " << check4.val().val() << std::endl;
-        std::cout << "check4 partial log_sum val.adj 6 = " << check4.val().adj() << std::endl;
-        std::cout << "check4 partial log_sum d.val 6 = " << check4.d().val() << std::endl;
-        std::cout << "check4 partial log_sum d.adj 6 = " << check4.d().adj() << std::endl;
+        std::cout << "k partial log_sum val.val 10 = " << k.val().val() << std::endl;
+        std::cout << "k partial log_sum val.adj 10 = " << k.val().adj() << std::endl;
+        std::cout << "k partial log_sum d.val 10 = " << k.d().val() << std::endl;
+        std::cout << "k partial log_sum d.adj 10 = " << k.d().adj() << std::endl;
         std::cout << std::endl;
-        std::cout << "pi_k partial log_sum val.val 6 = " << pi_k.val().val() << std::endl;
-        std::cout << "pi_k partial log_sum val.adj 6 = " << pi_k.val().adj() << std::endl;
-        std::cout << "pi_k partial log_sum d.val 6 = " << pi_k.d().val() << std::endl;
-        std::cout << "pi_k partial log_sum d.adj 6 = " << pi_k.d().adj() << std::endl;
+        std::cout << "check4 partial log_sum val.val 9 = " << check4.val().val() << std::endl;
+        std::cout << "check4 partial log_sum val.adj 9 = " << check4.val().adj() << std::endl;
+        std::cout << "check4 partial log_sum d.val 9 = " << check4.d().val() << std::endl;
+        std::cout << "check4 partial log_sum d.adj 9 = " << check4.d().adj() << std::endl;
         std::cout << std::endl;
-      });
-      auto n_terms_large_t_quant
-          = mult * log(k) - square(pi_k) * scaling + check4;
-      // this call injects a node into the reverse pass that just prints the current values
-      // of the adjoints
-      reverse_pass_callback([k, check, check3, pi_k, n_terms_large_t_quant] {
-        std::cout << "k: " << k << std::endl;
         std::cout << "pi_k partial log_sum val.val 9 = " << pi_k.val().val() << std::endl;
         std::cout << "pi_k partial log_sum val.adj 9 = " << pi_k.val().adj() << std::endl;
         std::cout << "pi_k partial log_sum d.val 9 = " << pi_k.d().val() << std::endl;
         std::cout << "pi_k partial log_sum d.adj 9 = " << pi_k.d().adj() << std::endl;
         std::cout << std::endl;
-        std::cout << "check3 partial log_sum val.val 9 = " << check3.val().val() << std::endl;
-        std::cout << "check3 partial log_sum val.adj 9 = " << check3.val().adj() << std::endl;
-        std::cout << "check3 partial log_sum d.val 9 = " << check3.d().val() << std::endl;
-        std::cout << "check3 partial log_sum d.adj 9 = " << check3.d().adj() << std::endl;
+        std::cout << "k partial log_sum val.val 9 = " << k.val().val() << std::endl;
+        std::cout << "k partial log_sum val.adj 9 = " << k.val().adj() << std::endl;
+        std::cout << "k partial log_sum d.val 9 = " << k.d().val() << std::endl;
+        std::cout << "k partial log_sum d.adj 9 = " << k.d().adj() << std::endl;
         std::cout << std::endl;
-        std::cout << "check partial log_sum val.val 9 = " << check.val().val() << std::endl;
-        std::cout << "check partial log_sum val.adj 9 = " << check.val().adj() << std::endl;
-        std::cout << "check partial log_sum d.val 9 = " << check.d().val() << std::endl;
-        std::cout << "check partial log_sum d.adj 9 = " << check.d().adj() << std::endl;
-        std::cout << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum val.val 9 = " << n_terms_large_t_quant.val().val() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum val.adj 9 = " << n_terms_large_t_quant.val().adj() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum d.val 9 = " << n_terms_large_t_quant.d().val() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum d.adj 9 = " << n_terms_large_t_quant.d().adj() << std::endl;
-        std::cout << std::endl;
+        std::cout << "scaling partial log_sum val.adj 9 = " << scaling << std::endl;
       });
-      reverse_pass_callback([k, prev_val, prev_sign, check_sign, n_terms_large_t_quant] {
-        std::cout << "k: " << k << std::endl;
-      std::cout << "prev_sign: " << prev_sign << std::endl;
-      std::cout << "check_sign: " << check_sign << std::endl;
-        std::cout << "prev_val partial log_sum val.val 9 = " << prev_val.val().val() << std::endl;
-        std::cout << "prev_val partial log_sum val.adj 9 = " << prev_val.val().adj() << std::endl;
-        std::cout << "prev_val partial log_sum d.val 9 = " << prev_val.d().val() << std::endl;
-        std::cout << "prev_val partial log_sum d.adj 9 = " << prev_val.d().adj() << std::endl;
+      auto n_terms_large_t_quant = mult * log(k) - square(pi_k) * scaling + check4;
+      // this call injects a node into the reverse pass that just prints the current values
+      // of the adjoints
+      reverse_pass_callback([k, check, check3, pi_k, n_terms_large_t_quant, prev_val, prev_sign, check_sign] {
+        std::cout << "k partial log_sum val.val 10 = " << k.val().val() << std::endl;
+        std::cout << "k partial log_sum val.adj 10 = " << k.val().adj() << std::endl;
+        std::cout << "k partial log_sum d.val 10 = " << k.d().val() << std::endl;
+        std::cout << "k partial log_sum d.adj 10 = " << k.d().adj() << std::endl;
         std::cout << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum val.val 9 = " << n_terms_large_t_quant.val().val() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum val.adj 9 = " << n_terms_large_t_quant.val().adj() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum d.val 9 = " << n_terms_large_t_quant.d().val() << std::endl;
-        std::cout << "n_terms_large_t_quant partial log_sum d.adj 9 = " << n_terms_large_t_quant.d().adj() << std::endl;
+        std::cout << "pi_k partial log_sum val.val 10 = " << pi_k.val().val() << std::endl;
+        std::cout << "pi_k partial log_sum val.adj 10 = " << pi_k.val().adj() << std::endl;
+        std::cout << "pi_k partial log_sum d.val 10 = " << pi_k.d().val() << std::endl;
+        std::cout << "pi_k partial log_sum d.adj 10 = " << pi_k.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "check3 partial log_sum val.val 10 = " << check3.val().val() << std::endl;
+        std::cout << "check3 partial log_sum val.adj 10 = " << check3.val().adj() << std::endl;
+        std::cout << "check3 partial log_sum d.val 10 = " << check3.d().val() << std::endl;
+        std::cout << "check3 partial log_sum d.adj 10 = " << check3.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "check partial log_sum val.val 10 = " << check.val().val() << std::endl;
+        std::cout << "check partial log_sum val.adj 10 = " << check.val().adj() << std::endl;
+        std::cout << "check partial log_sum d.val 10 = " << check.d().val() << std::endl;
+        std::cout << "check partial log_sum d.adj 10 = " << check.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum val.val 10 = " << n_terms_large_t_quant.val().val() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum val.adj 10 = " << n_terms_large_t_quant.val().adj() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum d.val 10 = " << n_terms_large_t_quant.d().val() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum d.adj 10 = " << n_terms_large_t_quant.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "prev_sign: " << prev_sign << std::endl;
+        std::cout << "check_sign: " << check_sign << std::endl;
+        std::cout << "prev_val partial log_sum val.val 10 = " << prev_val.val().val() << std::endl;
+        std::cout << "prev_val partial log_sum val.adj 10 = " << prev_val.val().adj() << std::endl;
+        std::cout << "prev_val partial log_sum d.val 10 = " << prev_val.d().val() << std::endl;
+        std::cout << "prev_val partial log_sum d.adj 10 = " << prev_val.d().adj() << std::endl;
         std::cout << std::endl;
       });
       std::forward_as_tuple(current_val, current_sign) = log_sum_exp_signed(
           prev_val, prev_sign, n_terms_large_t_quant, check_sign);
+      reverse_pass_callback([current_val, k, check, check3, pi_k, n_terms_large_t_quant, prev_val, prev_sign, check_sign] {
+        std::cout << "k: " << k << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum val.val 10 = " << n_terms_large_t_quant.val().val() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum val.adj 10 = " << n_terms_large_t_quant.val().adj() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum d.val 10 = " << n_terms_large_t_quant.d().val() << std::endl;
+        std::cout << "n_terms_large_t_quant partial log_sum d.adj 10 = " << n_terms_large_t_quant.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "prev_sign: " << prev_sign << std::endl;
+        std::cout << "check_sign: " << check_sign << std::endl;
+        std::cout << "prev_val partial log_sum val.val 10 = " << prev_val.val().val() << std::endl;
+        std::cout << "prev_val partial log_sum val.adj 10 = " << prev_val.val().adj() << std::endl;
+        std::cout << "prev_val partial log_sum d.val 10 = " << prev_val.d().val() << std::endl;
+        std::cout << "prev_val partial log_sum d.adj 10 = " << prev_val.d().adj() << std::endl;
+        std::cout << std::endl;
+        std::cout << "current_val partial log_sum val.val 10 = " << current_val.val().val() << std::endl;
+        std::cout << "current_val partial log_sum val.adj 10 = " << current_val.val().adj() << std::endl;
+        std::cout << "current_val partial log_sum d.val 10 = " << current_val.d().val() << std::endl;
+        std::cout << "current_val partial log_sum d.adj 10 = " << current_val.d().adj() << std::endl;
+        std::cout << std::endl;
+      });
       prev_val = current_val;
       prev_sign = current_sign;
     }
