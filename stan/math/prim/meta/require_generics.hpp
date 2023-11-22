@@ -44,7 +44,7 @@ using require_all_st_same
 
 template <typename T, typename S>
 using require_vt_same = require_t<
-  std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 template <typename T, typename... Types>
 using require_all_vt_same
@@ -56,20 +56,16 @@ template <typename T, typename S>
 using require_convertible_t
     = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
-// STAN_ADD_REQUIRE_BINARY_INNER(convertible, std::is_convertible, require_std);
 // STAN_ADD_REQUIRE_BINARY(assignable, std::is_assignable, require_std);
 template <typename T, typename S>
 using require_assignable_t
     = require_t<std::is_assignable<std::decay_t<T>, std::decay_t<S>>>;
 
-// STAN_ADD_REQUIRE_BINARY_INNER(assignable, std::is_assignable, require_std);
 // STAN_ADD_REQUIRE_BINARY(constructible, std::is_constructible, require_std);
 template <typename T, typename S>
 using require_constructible_t
     = require_t<std::is_constructible<std::decay_t<T>, std::decay_t<S>>>;
 
-// STAN_ADD_REQUIRE_BINARY_INNER(constructible, std::is_constructible,
-// require_std);
 // STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
 // require_stan_scalar_real);
 template <typename T>
