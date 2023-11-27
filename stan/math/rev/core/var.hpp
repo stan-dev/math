@@ -1022,7 +1022,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param other the value to assign
    * @return this
    */
-  template <typename S, typename T_ = T, require_assignable_t<value_type, S>* = nullptr,
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
             require_all_plain_type_t<T_, S>* = nullptr,
             require_not_same_t<plain_type_t<T_>, plain_type_t<S>>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
@@ -1049,7 +1050,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     if (!(this->vi_)) {
       *this = var_value<T>(other);
       return *this;
-    } 
+    }
     arena_t<plain_type_t<T>> prev_val(vi_->val_.rows(), vi_->val_.cols());
     prev_val.hard_copy(vi_->val_);
     vi_->val_.hard_copy(other.val());
@@ -1086,11 +1087,11 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     if (!(this->vi_)) {
       []() STAN_COLD_PATH {
         throw std::domain_error(
-          "var_value<matrix>::operator=(var_value<expression>):"
-          " Internal Bug! Please report this with an example"
-          " of your model to the Stan math github repository.");
+            "var_value<matrix>::operator=(var_value<expression>):"
+            " Internal Bug! Please report this with an example"
+            " of your model to the Stan math github repository.");
       }();
-    } 
+    }
     arena_t<plain_type_t<T>> prev_val = vi_->val_;
     vi_->val_ = other.val();
     // no need to change any adjoints - these are just zeros before the reverse
@@ -1110,7 +1111,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
         });
     return *this;
   }
-
 
   /**
    * No-op to match with Eigen methods which call eval
