@@ -40,5 +40,9 @@ template <typename T>
 using require_vector_like_t = require_t<is_vector_like<std::decay_t<T>>>;
 
 // STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
+template <template <class...> class TypeCheck, class... Check>
+using require_vector_like_vt
+    = require_t<container_type_check_base<is_vector_like, value_type_t,
+                                          TypeCheck, Check...>>;  
 }  // namespace stan
 #endif
