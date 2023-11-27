@@ -128,6 +128,10 @@ class arena_matrix : public Eigen::Map<MatrixType> {
     Base::operator=(a);
     return *this;
   }
+  template <typename T>
+  void hard_copy(const T& x) {
+    Base::operator=(x);
+  }
 };
 
 }  // namespace math
