@@ -36,7 +36,7 @@ namespace math {
  * \prod_{k=1}^K \frac{\Gamma(n_k + \alpha_k)}{\Gamma(\alpha_k) 
  * \Gamma(n_k+1)} \right)\\
  * = \log(N) + \log(B(\alpha_0, N)) - 
- * \sum_{k=1}^K \bigl(\log(n_k) + \log(B(\alpha_k, n_k))\bigr)
+ * \sum_{k : n_k > 0} \bigl(\log(n_k) + \log(B(\alpha_k, n_k))\bigr)
  * \f]
  * 
  * The second identity is only valid for \f$N > 0\f$. For \f$N=0\f$, 
