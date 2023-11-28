@@ -29,6 +29,10 @@ using require_any_var_t = require_any_t<is_var<std::decay_t<Types>>...>;
 template <typename... Types>
 using require_all_not_var_t = require_all_not_t<is_var<std::decay_t<Types>>...>;
 
+template <typename... Types>
+using require_any_not_var_t
+    = require_any_not_t<is_var<std::decay_t<Types>>...>;
+
 // STAN_ADD_REQUIRE_CONTAINER(var, is_var, require_stan_scalar_real);
 template <template <class...> class TypeCheck, class... Check>
 using require_var_vt = require_t<
