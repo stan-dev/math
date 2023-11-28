@@ -5,7 +5,7 @@
 #include <limits>
 #include <vector>
 
-using stan::math::dirichlet_multinomial_log;
+using stan::math::dirichlet_multinomial_lpmf;
 using stan::math::dirichlet_multinomial_rng;
 
 TEST(ProbDistributionsDirichletMultinomial, DirichletMultinomial) {
@@ -17,7 +17,8 @@ TEST(ProbDistributionsDirichletMultinomial, DirichletMultinomial) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
-  EXPECT_FLOAT_EQ(-2.477938, dirichlet_multinomial_log(ns, theta));
+  // test against pre-computed log-prob value
+  EXPECT_FLOAT_EQ(-2.477938, dirichlet_multinomial_lpmf(ns, theta));
 }
 
 TEST(ProbDistributionsDirichletMultinomial, Propto) {
@@ -29,7 +30,8 @@ TEST(ProbDistributionsDirichletMultinomial, Propto) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
-  EXPECT_FLOAT_EQ(0.0, dirichlet_multinomial_log<true>(ns, theta));
+  // if propto is true, then result should be 0.0
+  EXPECT_FLOAT_EQ(0.0, dirichlet_multinomial_lpmf<true>(ns, theta));
 }
 
 TEST(ProbDistributionsDirichletMultinomial, error) {
@@ -45,28 +47,33 @@ TEST(ProbDistributionsDirichletMultinomial, error) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
 
-  EXPECT_NO_THROW(dirichlet_multinomial_log(ns, theta));
+  EXPECT_NO_THROW(dirichlet_multinomial_lpmf(ns, theta));
 
+  // zero ns are fine
   ns[1] = 0;
-  EXPECT_NO_THROW(dirichlet_multinomial_log(ns, theta));
+  EXPECT_NO_THROW(dirichlet_multinomial_lpmf(ns, theta));
+
+  // negative values for ns are not allowed
   ns[1] = -1;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   ns[1] = 1;
 
+  // prior sizes should be strictly positive, finite, and not NaN
   theta(0) = 0.0;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = -1.0;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = nan;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = inf;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = -inf;
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = 2.0;
 
+  // the size of ns and theta should be identical
   ns.resize(2);
-  EXPECT_THROW(dirichlet_multinomial_log(ns, theta), std::invalid_argument);
+  EXPECT_THROW(dirichlet_multinomial_lpmf(ns, theta), std::invalid_argument);
 }
 
 TEST(ProbDistributionsDirichletMultinomial, zeros) {
@@ -79,7 +86,8 @@ TEST(ProbDistributionsDirichletMultinomial, zeros) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
 
-  double result = dirichlet_multinomial_log(ns, theta);
+  // if all ns are zero, then the log prob is zero
+  double result = dirichlet_multinomial_lpmf(ns, theta);
   EXPECT_FLOAT_EQ(0.0, result);
 }
 
@@ -95,9 +103,11 @@ TEST(ProbDistributionsDirichletMultinomial, rng) {
 
   std::vector<int> a = dirichlet_multinomial_rng(theta, n, rng);
 
+  // PRNG samples should sum to n, and each element is non-negative
   EXPECT_EQ(std::accumulate(a.begin(), a.end(), 0), n);
   for (int k : a) EXPECT_GE(k, 0);
 
+  // if n is zero, then each element of the sample is zero
   std::vector<int> b = dirichlet_multinomial_rng(theta, 0, rng);
   for (int k : b) EXPECT_EQ(k, 0);
 }
@@ -110,10 +120,13 @@ TEST(ProbDistributionsDirichletMultinomial, rngError) {
   Matrix<double, Dynamic, 1> theta(3);
   theta << 0.5, 1.5, 4.0;
 
+  // number of trials parameter should be non-negative
   EXPECT_THROW(dirichlet_multinomial_rng(theta, -3, rng), std::domain_error);
 
+  // but zero trials is a valid argument
   EXPECT_NO_THROW(dirichlet_multinomial_rng(theta, 0, rng));
 
+  // prior sizes should be strictly positive
   theta << 0.0, 2.5, 5.0;
   EXPECT_THROW(dirichlet_multinomial_rng(theta, 3, rng), std::domain_error);
 
@@ -153,4 +166,42 @@ TEST(ProbDistributionsDirichletMultinomial, chiSquareGoodnessFitTest) {
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j])) / expect[j];
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+
+TEST(ProbDistributionsDirichletMultinomial, equivBetaBinomial) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::beta_binomial_lpmf;
+
+  boost::random::mt19937 rng;
+  std::vector<int> ns;
+  Matrix<double, Dynamic, 1> theta(2, 1);
+  double alpha = 4.0;
+  double beta = 5.0;
+  theta << alpha, beta;
+
+  // number of random samples from DirMult distribution
+  int draws = 100;
+  // population size parameter
+  int N = 25;
+
+  for (int i = 0; i < draws; ++i) {
+    ns = dirichlet_multinomial_rng(theta, N, rng);
+    // For K = 2, BetaBinom and DirMult should be identical
+    EXPECT_FLOAT_EQ(beta_binomial_lpmf(ns[0], N, alpha, beta),
+                    dirichlet_multinomial_lpmf(ns, theta));
+  }
+
+  // test again with small prior sizes
+  alpha = 0.5;
+  beta = 0.1;
+  theta << alpha, beta;
+
+  for (int i = 0; i < draws; ++i) {
+    ns = dirichlet_multinomial_rng(theta, N, rng);
+    // For K = 2, BetaBinom and DirMult should be identical
+    EXPECT_FLOAT_EQ(beta_binomial_lpmf(ns[0], N, alpha, beta),
+                    dirichlet_multinomial_lpmf(ns, theta));
+  }
 }
