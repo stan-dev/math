@@ -70,7 +70,7 @@ using require_not_st_stan_scalar
 template <typename... Types>
 using require_all_st_stan_scalar
     = require_all_t<is_stan_scalar<scalar_type_t<std::decay_t<Types>>>...>;
-  
+
 }  // namespace stan
 
 #endif

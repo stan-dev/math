@@ -155,7 +155,7 @@ template <template <class...> class TypeCheck, class... Check>
 using require_eigen_array_vt
     = require_t<container_type_check_base<is_eigen_array, value_type_t,
                                           TypeCheck, Check...>>;
-  
+
 namespace internal {
 template <typename T>
 struct is_eigen_contiguous_map_impl : std::false_type {};
