@@ -11,23 +11,25 @@ using stan::math::dirichlet_multinomial_rng;
 TEST(ProbDistributionsDirichletMultinomial, DirichletMultinomial) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  std::vector<int> ns;
-  ns.push_back(1);
-  ns.push_back(2);
-  ns.push_back(3);
+  std::vector<int> ns = {1, 2, 3};
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
-  // test against pre-computed log-prob value
+  // test against some pre-computed log-prob values
   EXPECT_FLOAT_EQ(-2.477938, dirichlet_multinomial_lpmf(ns, theta));
+
+  ns = {2, 12, 31};
+  theta << 0.2, 6.1, 3.0;
+  EXPECT_FLOAT_EQ(-8.1557148, dirichlet_multinomial_lpmf(ns, theta));
+
+  ns = {106, 1203, 31020};
+  theta << 50.0, 40.0, 20.0;
+  EXPECT_FLOAT_EQ(-304.5664433, dirichlet_multinomial_lpmf(ns, theta));
 }
 
 TEST(ProbDistributionsDirichletMultinomial, Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  std::vector<int> ns;
-  ns.push_back(1);
-  ns.push_back(2);
-  ns.push_back(3);
+  std::vector<int> ns = {1, 2, 3};
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
   // if propto is true, then result should be 0.0
@@ -40,10 +42,7 @@ TEST(ProbDistributionsDirichletMultinomial, error) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
-  std::vector<int> ns;
-  ns.push_back(1);
-  ns.push_back(2);
-  ns.push_back(3);
+  std::vector<int> ns = {1, 2, 3};
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
 
@@ -79,10 +78,7 @@ TEST(ProbDistributionsDirichletMultinomial, error) {
 TEST(ProbDistributionsDirichletMultinomial, zeros) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  std::vector<int> ns;
-  ns.push_back(0);
-  ns.push_back(0);
-  ns.push_back(0);
+  std::vector<int> ns(3, 0);
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 2.0, 3.0, 5.0;
 
