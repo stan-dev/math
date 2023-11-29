@@ -101,11 +101,13 @@ TEST(ProbDistributionsDirichletMultinomial, rng) {
 
   // PRNG samples should sum to n, and each element is non-negative
   EXPECT_EQ(std::accumulate(a.begin(), a.end(), 0), n);
-  for (int k : a) EXPECT_GE(k, 0);
+  for (int k : a)
+    EXPECT_GE(k, 0);
 
   // if n is zero, then each element of the sample is zero
   std::vector<int> b = dirichlet_multinomial_rng(theta, 0, rng);
-  for (int k : b) EXPECT_EQ(k, 0);
+  for (int k : b)
+    EXPECT_EQ(k, 0);
 }
 
 TEST(ProbDistributionsDirichletMultinomial, rngError) {
@@ -163,7 +165,6 @@ TEST(ProbDistributionsDirichletMultinomial, chiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
-
 
 TEST(ProbDistributionsDirichletMultinomial, equivBetaBinomial) {
   using Eigen::Dynamic;
