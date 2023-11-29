@@ -7,7 +7,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 
-
 namespace stan {
 namespace math {
 
@@ -17,7 +16,7 @@ namespace math {
  * sizes, \f$\alpha\f$.
  * Each element of \f$\alpha\f$ must be greater than 0.
  * Each element of \f$n\f$ must be greater than or equal to 0.
- * 
+ *
  * Suppose that \f$n = (n_1, \ldots, n_K)\f$ has a Dirichlet-multinomial
  * distribution with prior sample size
  * \f$\alpha = (\alpha_1,\ldots,\alpha_K)\f$ (also called the intensity):
@@ -25,21 +24,21 @@ namespace math {
  * \f[
  * (n_1,\ldots,n_K)\sim\mbox{DirMult}(\alpha_1,\ldots,\alpha_K)
  * \f]
- * 
- * Write \f$N = n_1 + \cdots + n_K\f$ and 
+ *
+ * Write \f$N = n_1 + \cdots + n_K\f$ and
  * \f$\alpha_0 = \alpha_1 + \cdots + \alpha_K\f$,
  * then the log probability mass function is given by
- * 
+ *
  * \f[
  * \log(p(n_1, \ldots, n_K\,|\,\alpha_1,\ldots,\alpha_K))=\log\left(
  * \frac{\Gamma(\alpha_0)\Gamma(N+1)}{\Gamma(\alpha_0 + N)}
- * \prod_{k=1}^K \frac{\Gamma(n_k + \alpha_k)}{\Gamma(\alpha_k) 
+ * \prod_{k=1}^K \frac{\Gamma(n_k + \alpha_k)}{\Gamma(\alpha_k)
  * \Gamma(n_k+1)} \right)\\
- * = \log(N) + \log(B(\alpha_0, N)) - 
+ * = \log(N) + \log(B(\alpha_0, N)) -
  * \sum_{k : n_k > 0} \bigl(\log(n_k) + \log(B(\alpha_k, n_k))\bigr)
  * \f]
- * 
- * The second identity is only valid for \f$N > 0\f$. For \f$N=0\f$, 
+ *
+ * The second identity is only valid for \f$N > 0\f$. For \f$N=0\f$,
  * we have \f$\log(p(n\,|\,\alpha)) = 0\f$.
  *
  * @tparam T_prior_size type of prior sample sizes
@@ -64,7 +63,8 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
 
   return_type_t<T_prior_size> lp(0.0);
 
-  if (!include_summand<propto, T_prior_size>::value) return lp;
+  if (!include_summand<propto, T_prior_size>::value)
+    return lp;
 
   int sum_ns = 0;
 
@@ -75,7 +75,8 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
     }
   }
 
-  if (sum_ns == 0) return lp;
+  if (sum_ns == 0)
+    return lp;
 
   value_type_t<T_prior_size> sum_alpha = alpha_ref.sum();
 

@@ -14,15 +14,15 @@ namespace math {
 /** \ingroup multivar_dists
  * Return a draw from a Dirichlet-Multinomial distribution with specified
  * parameters \f$\alpha\f$ and \f$N\f$ and pseudo-random number generator rng.
- * 
+ *
  * The Dirichlet-Multinomial distribution is a continuous mixture of
  * Multinomial distirbutions, where the mixing distribution is the Dirichlet
  * distribution. This fact is used for generating DirMult random draws.
- * First, we sample a probability vector 
+ * First, we sample a probability vector
  * \f$\theta \sim \mbox{Dirichlet}(\alpha)\f$.
- * Then, we sample a \f$n \sim \mbox{Multinomial}(\theta, N)\f$, 
+ * Then, we sample a \f$n \sim \mbox{Multinomial}(\theta, N)\f$,
  * and return \f$n\f$.
- * 
+ *
  * @tparam RNG type of pseudo-random number generator
  * @param alpha Prior sample sizes (or intensity vector).
  * @param N Number of trials.
