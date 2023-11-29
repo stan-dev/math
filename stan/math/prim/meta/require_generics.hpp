@@ -27,6 +27,14 @@ template <typename T, typename... Types>
 using require_all_not_same_t
     = require_all_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
+template <typename T, typename... Types>
+using require_any_not_same_t
+    = require_any_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
+
+template <typename T, typename... Types>
+using require_any_not_convertible_t = require_any_not_t<
+    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+
 // STAN_ADD_REQUIRE_BINARY_INNER(same, std::is_same, require_std);
 template <typename T, typename S>
 using require_st_same = require_t<std::is_same<scalar_type_t<std::decay_t<T>>,
@@ -42,6 +50,11 @@ using require_all_st_same
     = require_all_t<std::is_same<scalar_type_t<std::decay_t<T>>,
                                  scalar_type_t<std::decay_t<Types>>>...>;
 
+template <typename T, typename... Types>
+using require_any_not_st_same
+    = require_any_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+                                scalar_type_t<std::decay_t<Types>>>...>;
+  
 template <typename T, typename S>
 using require_vt_same = require_t<
     std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
@@ -56,62 +69,13 @@ template <typename T, typename S>
 using require_convertible_t
     = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
-// STAN_ADD_REQUIRE_BINARY_INNER(convertible, std::is_convertible, require_std);
 template <typename T, typename S>
-using require_st_convertible
-    = require_t<std::is_convertible<scalar_type_t<std::decay_t<T>>,
-                                    scalar_type_t<std::decay_t<S>>>>;
-
-template <typename T, typename S>
-using require_not_st_convertible
-    = require_not_t<std::is_convertible<scalar_type_t<std::decay_t<T>>,
-                                        scalar_type_t<std::decay_t<S>>>>;
+using require_not_convertible_t
+    = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename... Types>
-using require_all_st_convertible
-    = require_all_t<std::is_convertible<scalar_type_t<std::decay_t<T>>,
-                                        scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_any_st_convertible
-    = require_any_t<std::is_convertible<scalar_type_t<std::decay_t<T>>,
-                                        scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_all_not_st_convertible = require_all_not_t<std::is_convertible<
-    scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_any_not_st_convertible = require_any_not_t<std::is_convertible<
-    scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename S>
-using require_vt_convertible
-    = require_t<std::is_convertible<value_type_t<std::decay_t<T>>,
-                                    value_type_t<std::decay_t<S>>>>;
-
-template <typename T, typename S>
-using require_not_vt_convertible
-    = require_not_t<std::is_convertible<value_type_t<std::decay_t<T>>,
-                                        value_type_t<std::decay_t<S>>>>;
-
-template <typename T, typename... Types>
-using require_all_vt_convertible
-    = require_all_t<std::is_convertible<value_type_t<std::decay_t<T>>,
-                                        value_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_any_vt_convertible
-    = require_any_t<std::is_convertible<value_type_t<std::decay_t<T>>,
-                                        value_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_all_not_vt_convertible = require_all_not_t<std::is_convertible<
-    value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_any_not_vt_convertible = require_any_not_t<std::is_convertible<
-    value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
+using require_all_convertible_t
+    = require_all_t<std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
 // STAN_ADD_REQUIRE_BINARY(assignable, std::is_assignable, require_std);
 template <typename T, typename S>
@@ -255,6 +219,10 @@ template <typename... Types>
 using require_any_arithmetic_t
     = require_any_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
+template <typename... Types>
+using require_all_not_arithmetic_t
+    = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
+  
 template <typename... Types>
 using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
