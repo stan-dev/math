@@ -58,7 +58,7 @@ using require_all_not_vector_like_t
 template <typename... Types>
 using require_any_not_vector_like_t
     = require_any_not_t<is_vector_like<std::decay_t<Types>>...>;
-  
+
 // STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_like_vt

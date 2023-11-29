@@ -32,7 +32,8 @@ using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 // STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic,
 // require_stan_scalar_real);
 template <typename T>
-using require_var_or_arithmetic_t = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
+using require_var_or_arithmetic_t
+    = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_var_or_arithmetic_t
@@ -45,7 +46,7 @@ using require_all_var_or_arithmetic_t
 template <typename... Types>
 using require_any_var_or_arithmetic_t
     = require_any_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-  
+
 template <typename... Types>
 using require_all_not_var_or_arithmetic_t
     = require_all_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
@@ -53,7 +54,7 @@ using require_all_not_var_or_arithmetic_t
 template <typename... Types>
 using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-  
+
 // STAN_ADD_REQUIRE_UNARY_INNER(var_or_arithmetic, is_var_or_arithmetic,
 // require_stan_scalar_real);
 template <typename... Types>

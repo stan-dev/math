@@ -18,7 +18,8 @@ using is_string_convertible = std::is_convertible<T, std::string>;
 // STAN_ADD_REQUIRE_UNARY(string_convertible, is_string_convertible,
 // require_std);
 template <typename T>
-using require_string_convertible_t = require_t<is_string_convertible<std::decay_t<T>>>;
+using require_string_convertible_t
+    = require_t<is_string_convertible<std::decay_t<T>>>;
 
 template <typename T>
 using require_not_string_convertible_t
@@ -31,7 +32,7 @@ using require_all_string_convertible_t
 template <typename... Types>
 using require_any_string_convertible_t
     = require_any_t<is_string_convertible<std::decay_t<Types>>...>;
-  
+
 template <typename... Types>
 using require_all_not_string_convertible_t
     = require_all_not_t<is_string_convertible<std::decay_t<Types>>...>;
@@ -39,7 +40,7 @@ using require_all_not_string_convertible_t
 template <typename... Types>
 using require_any_not_string_convertible_t
     = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;
-  
+
 // STAN_ADD_REQUIRE_UNARY_INNER(string_convertible, is_string_convertible,
 // require_std);
 }  // namespace stan

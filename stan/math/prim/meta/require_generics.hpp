@@ -53,8 +53,8 @@ using require_all_st_same
 template <typename T, typename... Types>
 using require_any_not_st_same
     = require_any_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
-                                scalar_type_t<std::decay_t<Types>>>...>;
-  
+                                     scalar_type_t<std::decay_t<Types>>>...>;
+
 template <typename T, typename S>
 using require_vt_same = require_t<
     std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
@@ -74,8 +74,8 @@ using require_not_convertible_t
     = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename... Types>
-using require_all_convertible_t
-    = require_all_t<std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+using require_all_convertible_t = require_all_t<
+    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
 // STAN_ADD_REQUIRE_BINARY(assignable, std::is_assignable, require_std);
 template <typename T, typename S>
@@ -222,7 +222,7 @@ using require_any_arithmetic_t
 template <typename... Types>
 using require_all_not_arithmetic_t
     = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
-  
+
 template <typename... Types>
 using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
