@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 #include <vector>
-/*
+
 TEST(mathPrimScalProbWienerFullLcdfScal, valid) {
   using stan::math::INFTY;
   using stan::math::wiener_full_lcdf;
@@ -309,7 +309,7 @@ TEST(mathPrimScalProbWienerFullLcdfPrecScal, invalid_st0) {
   EXPECT_THROW(wiener_full_lcdf(rt, a, t0, w, v, sv, sw, NAN, 1e-4),
                std::domain_error);
 }
-*/
+
 TEST(mathPrimCorrectValues, wiener_full_lcdf) {
 /* Test concrete values. True values are computed in R using the R-package
  * WienR and the function WienerCDF() with its partial derivatives
