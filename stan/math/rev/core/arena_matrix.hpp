@@ -134,7 +134,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param x the values to write to `this`
    */
   template <typename T>
-  void hard_copy(const T& x) {
+  void deep_copy(const T& x) {
     Base::operator=(x);
   }
 };

@@ -509,7 +509,6 @@ class matrix_cl : public matrix_cl_base {
       return;
     }
     cl::Event zero_event;
-    this->wait_for_read_write_events();
     const std::size_t write_events_size = this->write_events().size();
     const std::size_t read_events_size = this->read_events().size();
     const std::size_t read_write_size = write_events_size + read_events_size;

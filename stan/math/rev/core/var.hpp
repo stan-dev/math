@@ -1052,20 +1052,20 @@ class var_value<T, internal::require_matrix_var_value<T>> {
       return *this;
     }
     arena_t<plain_type_t<T>> prev_val(vi_->val_.rows(), vi_->val_.cols());
-    prev_val.hard_copy(vi_->val_);
-    vi_->val_.hard_copy(other.val());
+    prev_val.deep_copy(vi_->val_);
+    vi_->val_.deep_copy(other.val());
     // no need to change any adjoints - these are just zeros before the reverse
     // pass
 
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
-          this_vi->val_.hard_copy(prev_val);
+          this_vi->val_.deep_copy(prev_val);
 
           // we have no way of detecting aliasing between this->vi_->adj_ and
           // other.vi_->adj_, so we must copy adjoint before reseting to zero
 
           // we can reuse prev_val instead of allocating a new matrix
-          prev_val.hard_copy(this_vi->adj_);
+          prev_val.deep_copy(this_vi->adj_);
           this_vi->adj_.setZero();
           other_vi->adj_ += prev_val;
         });
@@ -1074,13 +1074,15 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Assignment of another var value, when either both `this` or other does not
    * contain a plain type.
+   * @note Here we do not need to use `deep_copy` as the `var_value`'s
+   * inner `vari_type` holds a view which will call the assignment operator
+   *  that does not perform a placement new.
    * @tparam S type of the value in the `var_value` to assign
    * @param other the value to assign
    * @return this
    */
   template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
-            require_any_not_plain_type_t<T_, S>* = nullptr,
             require_not_plain_type_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     // If vi_ is nullptr then the var needs initialized via copy constructor
@@ -1105,7 +1107,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
           // other.vi_->adj_, so we must copy adjoint before reseting to zero
 
           // we can reuse prev_val instead of allocating a new matrix
-          prev_val.hard_copy(this_vi->adj_);
+          prev_val = this_vi->adj_;
           this_vi->adj_.setZero();
           other_vi->adj_ += prev_val;
         });
