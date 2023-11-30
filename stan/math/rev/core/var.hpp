@@ -390,8 +390,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_]() mutable {
           other_vi->adj_ += this_vi->adj_;
-          // Reset the adjoint for `this` to replicate SoA before assignment
-          this_vi->adj_.setZero();
         });
   }
 

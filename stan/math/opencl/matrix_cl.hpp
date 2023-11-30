@@ -518,13 +518,14 @@ class matrix_cl : public matrix_cl_base {
     for (std::size_t i = 0; i < write_events_size; ++i) {
       read_write_events[i] = read_events_vec[i];
     }
-    for (std::size_t i = write_events_size, j = 0; i < read_write_size; ++i, ++j) {
+    for (std::size_t i = write_events_size, j = 0; i < read_write_size;
+         ++i, ++j) {
       read_write_events[i] = write_events_vec[j];
     }
     try {
-      opencl_context.queue().enqueueFillBuffer(
-          buffer_cl_, static_cast<T>(0), 0, sizeof(T) * this->size(),
-          &read_write_events, &zero_event);
+      opencl_context.queue().enqueueFillBuffer(buffer_cl_, static_cast<T>(0), 0,
+                                               sizeof(T) * this->size(),
+                                               &read_write_events, &zero_event);
     } catch (const cl::Error& e) {
       check_opencl_error("setZero", e);
     }

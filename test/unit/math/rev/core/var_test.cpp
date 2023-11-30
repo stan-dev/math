@@ -960,8 +960,7 @@ TEST_F(AgradRev, assign_nan_matvar) {
   EXPECT_MATRIX_EQ(z_ans_adj, z.adj());
 }
 
-
-TEST_F(AgradRev, assign_nullptr_vari) {
+TEST_F(AgradRev, assign_nullptr_var) {
   using stan::math::var_value;
   using var_vector = var_value<Eigen::Matrix<double, -1, 1>>;
   using stan::math::var;
@@ -980,6 +979,5 @@ TEST_F(AgradRev, assign_nullptr_vari) {
     x_ans_adj(i) = -(i + 0.1);
   }
   EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
-  Eigen::VectorXd y_ans_adj = Eigen::VectorXd::Zero(10);
-  EXPECT_MATRIX_EQ(y_ans_adj, y.adj());
+  EXPECT_MATRIX_EQ(x_ans_adj, y.adj());
 }
