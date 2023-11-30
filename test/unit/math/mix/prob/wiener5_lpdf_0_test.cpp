@@ -3,7 +3,7 @@
 
 TEST(mathMixDouble, wiener5_lpdf) {
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 1.5;
@@ -14,7 +14,7 @@ TEST(mathMixDouble, wiener5_lpdf) {
 TEST(mathMixVar, wiener5_lpdf) {
   using stan::math::var;
   var y = 1.0;
-  var a = 2.0;
+  var a = 2.5;
   var t0 = 0.2;
   var w = 0.5;
   var v = 1.5;
@@ -26,7 +26,7 @@ TEST(mathMixFVar, wiener5_lpdf) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> y = 1.0;
-  fvar<var> a = 2.0;
+  fvar<var> a = 2.5;
   fvar<var> t0 = 0.2;
   fvar<var> w = 0.5;
   fvar<var> v = 1.5;
