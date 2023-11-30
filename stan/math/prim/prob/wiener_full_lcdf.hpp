@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_PROB_WIENER_FULL_LCDF_HPP
 
 #include <stan/math/prim/fun.hpp>
-#include <stan/math/prim/prob.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 
 namespace stan {

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_PROB_WIENER4_LCCDF_HPP
 
 #include <stan/math/prim/fun.hpp>
-#include <stan/math/prim/prob.hpp>
 
 namespace stan {
 namespace math {
