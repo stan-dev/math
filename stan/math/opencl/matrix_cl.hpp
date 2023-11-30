@@ -526,7 +526,6 @@ class matrix_cl : public matrix_cl_base {
       opencl_context.queue().enqueueFillBuffer(buffer_cl_, static_cast<T>(0), 0,
                                                sizeof(T) * this->size(),
                                                &read_write_events, &zero_event);
-      zero_event.wait();
     } catch (const cl::Error& e) {
       check_opencl_error("setZero", e);
     }
