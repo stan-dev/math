@@ -960,6 +960,19 @@ TEST_F(AgradRev, assign_nan_matvar) {
   EXPECT_MATRIX_EQ(z_ans_adj, z.adj());
 }
 
+/**
+ * For var<Matrix> and Matrix<var>, we need to make sure
+ *  the tape, when going through reverse mode, leads to the same outcomes.
+ * In the case where we declare a var<Matrix> without initializing it, aka
+ * `var_value<Eigen::MatrixXd>`, we need to think about what the equivalent
+ *  behavior is for `Eigen::Matrix<var, -1, -1>`.
+ * When default constructing `Eigen::Matrix<var, -1, -1>` we would have an array of `var` types
+ * with `nullptr` as the vari. The first assignment to that array would then
+ * just copy the vari pointer from the other array. This is the behavior we
+ * want to mimic for `var_value<Eigen::MatrixXd>`. So in this test show that
+ * for uninitialized `var_value<Eigen::MatrixXd>`, we can assign it and the
+ * adjoints are the same as x.
+ */
 TEST_F(AgradRev, assign_nullptr_var) {
   using stan::math::var_value;
   using var_vector = var_value<Eigen::Matrix<double, -1, 1>>;
