@@ -119,8 +119,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
 
     matrix_partials_t half;
-    vector_partials_t D_inv
-        = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
+    vector_partials_t D_inv = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -222,8 +221,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    vector_partials_t D_inv
-        = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
+    vector_partials_t D_inv = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
