@@ -60,24 +60,24 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   // check size consistency of all random variables y
   for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      check_size_match(function,
-                       "Size of one of the vectors of "
-                       "the random variable",
-                       y_vec[i].size(),
-                       "Size of the first vector of the "
-                       "random variable",
-                       size_y);
-    }
-    // check size consistency of all means mu
-    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      check_size_match(function,
-                       "Size of one of the vectors of "
-                       "the location variable",
-                       mu_vec[i].size(),
-                       "Size of the first vector of the "
-                       "location variable",
-                       size_mu);
-    }
+    check_size_match(function,
+                     "Size of one of the vectors of "
+                     "the random variable",
+                     y_vec[i].size(),
+                     "Size of the first vector of the "
+                     "random variable",
+                     size_y);
+  }
+  // check size consistency of all means mu
+  for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+    check_size_match(function,
+                     "Size of one of the vectors of "
+                     "the location variable",
+                     mu_vec[i].size(),
+                     "Size of the first vector of the "
+                     "location variable",
+                     size_mu);
+  }
 
   check_size_match(function, "Size of random variable", size_y,
                    "size of location parameter", size_mu);
@@ -116,24 +116,25 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
       y_val_minus_mu_val.col(i) = y_val - mu_val;
-   }
+    }
 
     matrix_partials_t half;
-    vector_partials_t D_inv = 1.0 / value_of(ldlt_Sigma.ldlt().vectorD().array());
+    vector_partials_t D_inv
+        = 1.0 / value_of(ldlt_Sigma.ldlt().vectorD().array());
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
-     half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
-      
+      half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
+
       if (include_summand<propto>::value) {
         logp += 0.5 * sum(log(D_inv)) * size_vec;
       }
     } else {
       matrix_partials_t inv_Sigma
-          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K,K));
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
 
-     half = (inv_Sigma * y_val_minus_mu_val);
+      half = (inv_Sigma * y_val_minus_mu_val);
 
       logp += 0.5 * sum(log(D_inv)) * size_vec;
 
@@ -222,29 +223,31 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    vector_partials_t D_inv = 1.0 / value_of(ldlt_Sigma.ldlt().vectorD().array());
+    vector_partials_t D_inv
+        = 1.0 / value_of(ldlt_Sigma.ldlt().vectorD().array());
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
-     half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
+      half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
         logp += 0.5 * sum(log(D_inv));
       }
     } else {
-     matrix_partials_t inv_Sigma
-          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K,K));
-       half = (inv_Sigma * y_val_minus_mu_val);
- 
-     logp += 0.5 * sum(log(D_inv));
-      edge<2>(ops_partials).partials_ += 0.5 * (half * half.transpose() - inv_Sigma) ;
+      matrix_partials_t inv_Sigma
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
+      half = (inv_Sigma * y_val_minus_mu_val);
+
+      logp += 0.5 * sum(log(D_inv));
+      edge<2>(ops_partials).partials_
+          += 0.5 * (half * half.transpose() - inv_Sigma);
     }
-    
+
     // logp = sum(half.cwiseAbs2());
-   // std::cout << " * \n\t" << half << std::endl;
+    // std::cout << " * \n\t" << half << std::endl;
     logp += -0.5 * dot_product(y_val_minus_mu_val.transpose(), half);
- 
+
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) -= half;
     }
