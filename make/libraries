@@ -169,7 +169,7 @@ endif
 	touch $(TBB_BIN)/tbb-make-check
 
 
-$(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/version_$(notdir $(TBB))
 	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"

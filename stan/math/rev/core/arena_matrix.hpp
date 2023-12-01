@@ -124,6 +124,15 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
     Base::operator=(a);
     return *this;
   }
+  /**
+   * Forces hard copying matrices into an arena matrix
+   * @tparam T Any type assignable to `Base`
+   * @param x the values to write to `this`
+   */
+  template <typename T>
+  void deep_copy(const T& x) {
+    Base::operator=(x);
+  }
 };
 
 template <typename MatrixType>

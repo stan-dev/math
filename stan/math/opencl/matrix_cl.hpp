@@ -501,6 +501,37 @@ class matrix_cl : public matrix_cl_base {
    */
   ~matrix_cl() { wait_for_read_write_events(); }
 
+  /**
+   * Set the values of a `matrix_cl` to zero.
+   */
+  void setZero() {
+    if (this->size() == 0) {
+      return;
+    }
+    cl::Event zero_event;
+    const std::size_t write_events_size = this->write_events().size();
+    const std::size_t read_events_size = this->read_events().size();
+    const std::size_t read_write_size = write_events_size + read_events_size;
+    std::vector<cl::Event> read_write_events(read_write_size, cl::Event{});
+    auto&& read_events_vec = this->read_events();
+    auto&& write_events_vec = this->write_events();
+    for (std::size_t i = 0; i < read_events_size; ++i) {
+      read_write_events[i] = read_events_vec[i];
+    }
+    for (std::size_t i = read_events_size, j = 0; j < write_events_size;
+         ++i, ++j) {
+      read_write_events[i] = write_events_vec[j];
+    }
+    try {
+      opencl_context.queue().enqueueFillBuffer(buffer_cl_, static_cast<T>(0), 0,
+                                               sizeof(T) * this->size(),
+                                               &read_write_events, &zero_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("setZero", e);
+    }
+    this->add_write_event(zero_event);
+  }
+
  private:
   /**
    * Initializes the OpenCL buffer of this matrix by copying the data from given
