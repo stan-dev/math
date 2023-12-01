@@ -92,7 +92,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   }
   check_symmetric(function, "Covariance matrix", Sigma_ref);
 
-  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
+  auto ldlt_Sigma = make_ldlt_factor(value_of(Sigma_ref));
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                     ldlt_Sigma);
 
