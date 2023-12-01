@@ -141,7 +141,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       partials<2>(ops_partials) += -0.5 * size_vec * inv_Sigma;
 
       for (size_t i = 0; i < size_vec; i++) {
-        partials_vec<2>(ops_partials)[i] += 0.5 * half.col(i) * half.row(i);
+        partials_vec<2>(ops_partials)[i] += 0.5 * half.col(i) * half.transpose().row(i);
       }
     }
 
