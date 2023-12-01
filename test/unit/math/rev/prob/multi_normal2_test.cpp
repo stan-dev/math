@@ -120,7 +120,7 @@ TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiNormal, MultiNormalVar) {
+TEST(ProbDistributionsMultiNormal, MultiNormalVar2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

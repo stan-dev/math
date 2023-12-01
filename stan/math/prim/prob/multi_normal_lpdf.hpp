@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_MULTI_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_PROB_MULTI_NORMAL_LPDF_HPP
 
-#include <ostream>
-
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
@@ -10,16 +8,11 @@
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/fun/mdivide_right.hpp>
-#include <stan/math/prim/fun/mdivide_left_tri.hpp>
-#include <stan/math/prim/fun/mdivide_right_tri.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -244,7 +237,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
           = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K,K));
        half = (inv_Sigma * y_val_minus_mu_val);
  
-     
      logp += 0.5 * sum(log(D_inv));
       edge<2>(ops_partials).partials_ += 0.5 * (half * half.transpose() - inv_Sigma) ;
     }
