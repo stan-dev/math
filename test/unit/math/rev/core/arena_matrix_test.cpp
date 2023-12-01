@@ -224,7 +224,7 @@ TEST_F(AgradRev, arena_sparse_matrix_inplace_ops) {
   eig_mat C = A;
   for (int k = 0; k < C.outerSize(); ++k) {
     inner_iterator it(C, k);
-    for (; bool(it); ++it) {
+    for (; static_cast<bool>(it); ++it) {
       it.valueRef() += c;
     }
   }
