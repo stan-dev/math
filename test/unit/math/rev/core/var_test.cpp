@@ -125,7 +125,8 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   for (int k = 0; k < x.outerSize(); ++k) {
     typename vari_value<eigen_plain>::InnerIterator iz(inplace_add_var.adj(),
                                                        k);
-    for (inner_iterator it(test_y, k); static_cast<bool>(iz) && static_cast<bool>(it); ++iz) {
+    for (inner_iterator it(test_y, k);
+         static_cast<bool>(iz) && static_cast<bool>(it); ++iz) {
       if (iz.row() == it.row() && iz.col() == it.col()) {
         EXPECT_FLOAT_EQ(iz.value() - 1, it.value());
         ++it;
