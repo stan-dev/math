@@ -32,7 +32,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
-  using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_Sigma_ref = ref_type_t<T_covar>;
@@ -119,7 +118,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
 
     matrix_partials_t half;
-    auto neg_half_log_det = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
+    auto neg_half_log_det = 0.5 * sum(log(1 / ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -221,7 +220,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    auto neg_half_log_det = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
+    auto neg_half_log_det = 0.5 * sum(log(1 / ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
