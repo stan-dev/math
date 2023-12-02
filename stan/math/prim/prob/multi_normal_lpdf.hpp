@@ -118,7 +118,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
 
     matrix_partials_t half;
-    auto neg_half_log_det = 0.5 * sum(log(1 / ldlt_Sigma.ldlt().vectorD().array()));
+    auto neg_half_log_det
+        = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -126,7 +127,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
-         logp += neg_half_log_det * size_vec;
+        logp += neg_half_log_det * size_vec;
       }
     } else {
       matrix_partials_t inv_Sigma
@@ -220,7 +221,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    auto neg_half_log_det = 0.5 * sum(log(1 / ldlt_Sigma.ldlt().vectorD().array()));
+    auto neg_half_log_det
+        = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
