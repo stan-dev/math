@@ -119,7 +119,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
 
     matrix_partials_t half;
-    vector_partials_t D_inv = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
+    auto neg_half_log_det = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -127,7 +127,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
-        logp += 0.5 * sum(log(D_inv)) * size_vec;
+         logp += neg_half_log_det * size_vec;
       }
     } else {
       matrix_partials_t inv_Sigma
@@ -135,7 +135,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
       half = (inv_Sigma * y_val_minus_mu_val);
 
-      logp += 0.5 * sum(log(D_inv)) * size_vec;
+      logp += neg_half_log_det * size_vec;
 
       partials<2>(ops_partials) += -0.5 * size_vec * inv_Sigma;
 
@@ -221,7 +221,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    vector_partials_t D_inv = 1.0 / ldlt_Sigma.ldlt().vectorD().array();
+    auto neg_half_log_det = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -229,20 +229,18 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
-        logp += 0.5 * sum(log(D_inv));
+        logp += neg_half_log_det;
       }
     } else {
       matrix_partials_t inv_Sigma
           = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
       half = (inv_Sigma * y_val_minus_mu_val);
 
-      logp += 0.5 * sum(log(D_inv));
+      logp += neg_half_log_det;
       edge<2>(ops_partials).partials_
           += 0.5 * (half * half.transpose() - inv_Sigma);
     }
 
-    // logp = sum(half.cwiseAbs2());
-    // std::cout << " * \n\t" << half << std::endl;
     logp += -0.5 * dot_product(y_val_minus_mu_val.transpose(), half);
 
     if (!is_constant_all<T_y>::value) {
