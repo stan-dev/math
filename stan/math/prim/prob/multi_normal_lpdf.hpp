@@ -132,11 +132,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       matrix_partials_t inv_Sigma
           = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
 
-      half = (inv_Sigma.template selfadjointView<Eigen::Lower>() * y_val_minus_mu_val);
+      half = (inv_Sigma.template selfadjointView<Eigen::Lower>()
+              * y_val_minus_mu_val);
 
       logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
 
-      partials<2>(ops_partials) += -0.5 * size_vec * inv_Sigma.template selfadjointView<Eigen::Lower>() ;
+      partials<2>(ops_partials)
+          += -0.5 * size_vec
+             * inv_Sigma.template selfadjointView<Eigen::Lower>();
 
       for (size_t i = 0; i < size_vec; i++) {
         partials_vec<2>(ops_partials)[i]
@@ -220,7 +223,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
- 
+
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
@@ -232,13 +235,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     } else {
       matrix_partials_t inv_Sigma
           = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
-      half = (inv_Sigma.template selfadjointView<Eigen::Lower>() * y_val_minus_mu_val);
+      half = (inv_Sigma.template selfadjointView<Eigen::Lower>()
+              * y_val_minus_mu_val);
 
       logp += -0.5 * log_determinant_ldlt(ldlt_Sigma);
+      edge<2>(ops_partials).partials_ += 0.5 * (half * half.transpose());
+
       edge<2>(ops_partials).partials_
-          += 0.5 * (half * half.transpose());
-      
-      edge<2>(ops_partials).partials_ += -0.5 * inv_Sigma.template selfadjointView<Eigen::Lower>() ;
+          += -0.5 * inv_Sigma.template selfadjointView<Eigen::Lower>();
     }
 
     logp += -0.5 * dot_product(y_val_minus_mu_val.transpose(), half);
