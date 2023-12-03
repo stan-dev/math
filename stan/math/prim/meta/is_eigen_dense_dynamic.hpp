@@ -28,6 +28,10 @@ template <typename T>
 using require_eigen_dense_dynamic_t
     = require_t<is_eigen_dense_dynamic<std::decay_t<T>>>;
 
+template <typename... Types>
+using require_all_eigen_dense_dynamic_t
+    = require_all_t<is_eigen_dense_dynamic<std::decay_t<Types>>...>;
+  
 // STAN_ADD_REQUIRE_CONTAINER(eigen_dense_dynamic, is_eigen_dense_dynamic,
 // require_eigens_types);
 template <template <class...> class TypeCheck, class... Check>

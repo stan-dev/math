@@ -75,6 +75,9 @@ using require_all_not_complex_t
 // STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex,
 // require_stan_scalar_complex);
 template <typename T>
+using require_vt_complex = require_t<is_complex<value_type_t<std::decay_t<T>>>>;
+
+template <typename T>
 using require_not_vt_complex
     = require_not_t<is_complex<value_type_t<std::decay_t<T>>>>;
 

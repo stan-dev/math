@@ -154,6 +154,9 @@ template <typename T>
 struct is_row_vector : internal::is_row_vector_impl<T> {};
 
 // STAN_ADD_REQUIRE_UNARY(row_vector, is_row_vector, require_eigens_types);
+template <typename T>
+using require_row_vector_t = require_t<is_row_vector<std::decay_t<T>>>;
+  
 // STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
