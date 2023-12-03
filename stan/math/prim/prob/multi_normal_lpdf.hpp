@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
@@ -118,8 +119,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
 
     matrix_partials_t half;
-    auto neg_half_log_det
-        = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
@@ -127,17 +126,17 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
-        logp += neg_half_log_det * size_vec;
+        logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
       }
     } else {
       matrix_partials_t inv_Sigma
-          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
+          = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
 
-      half = (inv_Sigma * y_val_minus_mu_val);
+      half = (inv_Sigma.template selfadjointView<Eigen::Lower>() * y_val_minus_mu_val);
 
-      logp += neg_half_log_det * size_vec;
+      logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
 
-      partials<2>(ops_partials) += -0.5 * size_vec * inv_Sigma;
+      partials<2>(ops_partials) += -0.5 * size_vec * inv_Sigma.template selfadjointView<Eigen::Lower>() ;
 
       for (size_t i = 0; i < size_vec; i++) {
         partials_vec<2>(ops_partials)[i]
@@ -221,25 +220,25 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
-    auto neg_half_log_det
-        = -0.5 * sum(log(ldlt_Sigma.ldlt().vectorD().array()));
-
+ 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
       if (include_summand<propto>::value) {
-        logp += neg_half_log_det;
+        logp += -0.5 * log_determinant_ldlt(ldlt_Sigma);
       }
     } else {
       matrix_partials_t inv_Sigma
-          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
-      half = (inv_Sigma * y_val_minus_mu_val);
+          = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
+      half = (inv_Sigma.template selfadjointView<Eigen::Lower>() * y_val_minus_mu_val);
 
-      logp += neg_half_log_det;
+      logp += -0.5 * log_determinant_ldlt(ldlt_Sigma);
       edge<2>(ops_partials).partials_
-          += 0.5 * (half * half.transpose() - inv_Sigma);
+          += 0.5 * (half * half.transpose());
+      
+      edge<2>(ops_partials).partials_ += -0.5 * inv_Sigma.template selfadjointView<Eigen::Lower>() ;
     }
 
     logp += -0.5 * dot_product(y_val_minus_mu_val.transpose(), half);
