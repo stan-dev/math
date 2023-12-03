@@ -29,7 +29,7 @@ using require_not_var_matrix_t = require_not_t<is_var_matrix<std::decay_t<T>>>;
 template <typename... Types>
 using require_all_var_matrix_t
     = require_all_t<is_var_matrix<std::decay_t<Types>>...>;
-  
+
 template <typename... Types>
 using require_any_var_matrix_t
     = require_any_t<is_var_matrix<std::decay_t<Types>>...>;
