@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
@@ -130,7 +129,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       }
     } else {
       matrix_partials_t inv_Sigma
-          = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
 
       half = (inv_Sigma.template selfadjointView<Eigen::Lower>()
               * y_val_minus_mu_val);
@@ -234,7 +233,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       }
     } else {
       matrix_partials_t inv_Sigma
-          = ldlt_Sigma.ldlt().solve(Eigen::MatrixXd::Identity(K, K));
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
       half = (inv_Sigma.template selfadjointView<Eigen::Lower>()
               * y_val_minus_mu_val);
 
