@@ -117,9 +117,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_val = as_value_column_vector_or_scalar(y_vec[i]);
       const auto& mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-      y_val_minus_mu_val = eval(y_val - mu_val); 
+      y_val_minus_mu_val = eval(y_val - mu_val);
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
-      
+
       sum_lp_vec += y_val_minus_mu_val.cwiseProduct(half).sum();
 
       if (!is_constant_all<T_y>::value) {
@@ -129,8 +129,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
         partials_vec<1>(ops_partials)[i] += half;
       }
       if (!is_constant<T_covar_elem>::value) {
-               partials_vec<2>(ops_partials)[i]
-            += 0.5 * half * half.transpose();
+        partials_vec<2>(ops_partials)[i] += 0.5 * half * half.transpose();
       }
     }
 
@@ -138,14 +137,13 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
-   
       if (include_summand<propto>::value) {
         logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
       }
     } else {
-      matrix_partials_t inv_Sigma = 
-      mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
-     
+      matrix_partials_t inv_Sigma
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
+
       logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
 
       partials<2>(ops_partials)
@@ -229,8 +227,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       }
     } else {
       matrix_partials_t inv_Sigma
-         = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
-          
+          = mdivide_left_ldlt(ldlt_Sigma, Eigen::MatrixXd::Identity(K, K));
+
       half = (inv_Sigma.template selfadjointView<Eigen::Lower>()
               * y_val_minus_mu_val);
 
