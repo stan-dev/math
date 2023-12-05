@@ -158,6 +158,7 @@
 #include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/inverse.hpp>
+#include <stan/math/prim/fun/inverse_ldlt.hpp>
 #include <stan/math/prim/fun/inverse_softmax.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>

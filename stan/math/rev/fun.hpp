@@ -94,6 +94,7 @@
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
 #include <stan/math/rev/fun/inverse.hpp>
+#include <stan/math/rev/fun/inverse_ldlt.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>
