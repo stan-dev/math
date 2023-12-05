@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
   const size_t size_vec = max_size_mvt(y, mu);
-  const unsigned int K = Sigma.rows();
+  const int K = Sigma.rows();
 
   int size_y = y_vec[0].size();
   int size_mu = mu_vec[0].size();
