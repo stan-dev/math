@@ -145,7 +145,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
         partials_vec<1>(ops_partials)[i] += scaled_diff;
       }
       if (!is_constant<T_covar_elem>::value) {
-        partials_vec<2>(ops_partials)[i] += scaled_diff * half;;
+        partials_vec<2>(ops_partials)[i] += scaled_diff * half;
       }
     }
 
