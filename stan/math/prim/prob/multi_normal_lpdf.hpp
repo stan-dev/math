@@ -234,7 +234,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
       logp += -0.5 * log_determinant_ldlt(ldlt_Sigma);
 
-      edge<2>(ops_partials).partials_ += 0.5 * (half * half.transpose() - inv_Sigma);
+      edge<2>(ops_partials).partials_
+          += 0.5 * (half * half.transpose() - inv_Sigma);
     }
 
     logp += -0.5 * dot_product(y_val_minus_mu_val, half);
