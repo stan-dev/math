@@ -53,6 +53,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
+  using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
+    using row_vector_partials_t
+      = Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_L_ref = ref_type_t<T_covar>;
@@ -119,59 +122,48 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   }
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
-    Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
-        y_val_minus_mu_val(size_y, size_vec);
+    row_vector_partials_t half(size_vec);
+    vector_partials_t y_val_minus_mu_val(size_vec);
+    vector_partials_t scaled_diff(size_vec);
+    matrix_partials_t L_val = value_of(L_ref);
+
+    T_partials_return sum_lp_vec(0.0);
 
     for (size_t i = 0; i < size_vec; i++) {
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-      y_val_minus_mu_val.col(i) = y_val - mu_val;
+       y_val_minus_mu_val = eval(y_val - mu_val);
+       half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val).transpose();
+       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
+
+      sum_lp_vec += dot_self(half);
+
+      if (!is_constant_all<T_y>::value) {
+        partials_vec<0>(ops_partials)[i] += -scaled_diff;
+      }
+      if (!is_constant_all<T_loc>::value) {
+        partials_vec<1>(ops_partials)[i] += scaled_diff;
+      }
+      if (!is_constant<T_covar_elem>::value) {
+        partials_vec<2>(ops_partials)[i] += scaled_diff * half;;
+      }
     }
 
-    matrix_partials_t half;
-    matrix_partials_t scaled_diff;
+    logp += -0.5 * sum_lp_vec;
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
     if (is_constant<T_covar_elem>::value) {
-      matrix_partials_t L_val = value_of(L_ref);
-
-      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
-                 .transpose();
-
-      scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
-
       if (include_summand<propto>::value) {
         logp -= sum(log(L_val.diagonal())) * size_vec;
       }
     } else {
-      matrix_partials_t inv_L_val
+       matrix_partials_t inv_L_val
           = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
 
-      half = (inv_L_val.template triangularView<Eigen::Lower>()
-              * y_val_minus_mu_val)
-                 .transpose();
-
-      scaled_diff = (half * inv_L_val.template triangularView<Eigen::Lower>())
-                        .transpose();
-
       logp += sum(log(inv_L_val.diagonal())) * size_vec;
+
       partials<2>(ops_partials) -= size_vec * inv_L_val.transpose();
-
-      for (size_t i = 0; i < size_vec; i++) {
-        partials_vec<2>(ops_partials)[i] += scaled_diff.col(i) * half.row(i);
-      }
-    }
-
-    logp -= 0.5 * sum(columns_dot_self(half));
-
-    for (size_t i = 0; i < size_vec; i++) {
-      if (!is_constant_all<T_y>::value) {
-        partials_vec<0>(ops_partials)[i] -= scaled_diff.col(i);
-      }
-      if (!is_constant_all<T_loc>::value) {
-        partials_vec<1>(ops_partials)[i] += scaled_diff.col(i);
-      }
     }
   }
 
