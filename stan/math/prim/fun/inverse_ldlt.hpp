@@ -26,7 +26,7 @@ inline plain_type_t<T> inverse_ldlt(LDLT_factor<T>& A) {
   if (A.matrix().cols() == 0) {
     return {0, 0};
   }
-  const Eigen::Ref<const plain_type_t<T>>& A_ref = A.matrix().eval(); 
+  const Eigen::Ref<const plain_type_t<T>>& A_ref = A.matrix(); 
   const int n = A_ref.rows();
   
   plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
