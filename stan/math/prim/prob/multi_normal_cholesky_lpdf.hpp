@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
   using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
-    using row_vector_partials_t
+  using row_vector_partials_t
       = Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
@@ -132,9 +132,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     for (size_t i = 0; i < size_vec; i++) {
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-       y_val_minus_mu_val = eval(y_val - mu_val);
-       half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val).transpose();
-       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
+      y_val_minus_mu_val = eval(y_val - mu_val);
+      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
+                 .transpose();
+      scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
       sum_lp_vec += dot_self(half);
 
@@ -145,7 +146,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
         partials_vec<1>(ops_partials)[i] += scaled_diff;
       }
       if (!is_constant<T_covar_elem>::value) {
-        partials_vec<2>(ops_partials)[i] += scaled_diff * half;;
+        partials_vec<2>(ops_partials)[i] += scaled_diff * half;
+        ;
       }
     }
 
@@ -158,7 +160,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
         logp -= sum(log(L_val.diagonal())) * size_vec;
       }
     } else {
-       matrix_partials_t inv_L_val
+      matrix_partials_t inv_L_val
           = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
 
       logp += sum(log(inv_L_val.diagonal())) * size_vec;
