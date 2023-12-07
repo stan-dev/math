@@ -14,9 +14,9 @@ namespace math {
  * from the inverse Wishart distribution with the specified degrees of freedom
  * using the specified random number generator.
  *
- * Axen, Seth D. "Efficiently generating inverse-Wishart matrices and their Cholesky factors."
- * arXiv preprint arXiv:2310.15884 (2023).
- * 
+ * Axen, Seth D. "Efficiently generating inverse-Wishart matrices and their
+ * Cholesky factors." arXiv preprint arXiv:2310.15884 (2023).
+ *
  * @tparam RNG Random number generator type
  * @param[in] nu scalar degrees of freedom
  * @param[in] L_S lower Cholesky factor of the scale matrix

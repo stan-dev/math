@@ -98,7 +98,8 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
     MatrixXd L = MatrixXd::Identity(k, k);
     MatrixXd Z = MatrixXd::Zero(k, k);
     for (int i = 0; i < N; i++) {
-      Z += multiply_lower_tri_self_transpose(inv_wishart_cholesky_rng(k + 2, L, rng));
+      Z += multiply_lower_tri_self_transpose(
+          inv_wishart_cholesky_rng(k + 2, L, rng));
     }
     Z /= N;
     for (int j = 0; j < k; j++) {
@@ -113,7 +114,7 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
 }
 
 TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
-  // Compare the marginal mean 
+  // Compare the marginal mean
 
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
@@ -132,12 +133,13 @@ TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
     MatrixXd Z_mean = sigma / (k + 3);
     MatrixXd Z_est = MatrixXd::Zero(k, k);
     for (int i = 0; i < N; i++) {
-      Z_est += multiply_lower_tri_self_transpose(inv_wishart_cholesky_rng(k + 4, L, rng));
+      Z_est += multiply_lower_tri_self_transpose(
+          inv_wishart_cholesky_rng(k + 4, L, rng));
     }
     Z_est /= N;
     for (int j = 0; j < k; j++) {
       for (int i = 0; i < j; i++) {
-          EXPECT_NEAR(Z_est(i, j), Z_mean(i, j), tol);
+        EXPECT_NEAR(Z_est(i, j), Z_mean(i, j), tol);
       }
     }
   }
