@@ -118,25 +118,23 @@ TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::inv_wishart_cholesky_rng;
-  using stan::math::multi_normal_rng;
   using stan::math::inv_wishart_rng;
-  using stan::math::lkj_corr_cholesky_rng;
-  using stan::math::qr_thin_R;
   using stan::math::multiply_lower_tri_self_transpose;
+  using stan::math::qr_thin_Q;
 
   boost::random::mt19937 rng(92343U);
   int N = 1e5;
-  double tol = 0.1;
+  double tol = 0.05;
   for (int k = 1; k < 5; k++) {
-    MatrixXd sigma = inv_wishart_rng(15, MatrixXd::Identity(k, k), rng);
-    MatrixXd L = stan::math::cholesky_decompose(sigma);
+    MatrixXd L = qr_thin_Q(MatrixXd::Random(k, k)).transpose();
+    L.diagonal() = stan::math::abs(L.diagonal());
+    MatrixXd sigma = multiply_lower_tri_self_transpose(L);
     MatrixXd Z_mean = sigma / (k + 3);
     MatrixXd Z_est = MatrixXd::Zero(k, k);
     for (int i = 0; i < N; i++) {
-      Z_est += inv_wishart_cholesky_rng(k + 4, L, rng);
+      Z_est += multiply_lower_tri_self_transpose(inv_wishart_cholesky_rng(k + 4, L, rng));
     }
     Z_est /= N;
-    Z_est = multiply_lower_tri_self_transpose(Z_est);
     for (int j = 0; j < k; j++) {
       for (int i = 0; i < j; i++) {
           EXPECT_NEAR(Z_est(i, j), Z_mean(i, j), tol);
