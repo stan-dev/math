@@ -89,9 +89,9 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
 
   auto ops_partials = make_partials_propagator(alpha_ref);
   if (!is_constant_all<T_prior_size>::value) {
-    partials<0>(ops_partials) =
-      digamma(alpha_val + ns_array) - digamma(alpha_val)
-        + digamma(a_sum) - digamma(a_sum + n_sum);
+    partials<0>(ops_partials) = digamma(alpha_val + ns_array)
+                                - digamma(alpha_val) + digamma(a_sum)
+                                - digamma(a_sum + n_sum);
   }
   return ops_partials.build(lp);
 }
