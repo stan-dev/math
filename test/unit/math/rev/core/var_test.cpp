@@ -910,3 +910,87 @@ TEST_F(AgradRev, matrix_compile_time_conversions) {
   EXPECT_MATRIX_FLOAT_EQ(colvec.val(), rowvec.val());
   EXPECT_MATRIX_FLOAT_EQ(x11.val(), rowvec.val());
 }
+
+TEST_F(AgradRev, assign_nan_varmat) {
+  using stan::math::var_value;
+  using var_vector = var_value<Eigen::Matrix<double, -1, 1>>;
+  using stan::math::var;
+  Eigen::VectorXd x_val(10);
+  for (int i = 0; i < 10; ++i) {
+    x_val(i) = i + 0.1;
+  }
+  var_vector x(x_val);
+  var_vector y = var_vector(Eigen::Matrix<double, -1, 1>::Constant(
+      10, std::numeric_limits<double>::quiet_NaN()));
+  y = stan::math::head(x, 10);
+  var sigma = 1.0;
+  var lp = stan::math::normal_lpdf<false>(y, 0, sigma);
+  lp.grad();
+  Eigen::VectorXd x_ans_adj(10);
+  for (int i = 0; i < 10; ++i) {
+    x_ans_adj(i) = -(i + 0.1);
+  }
+  EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
+  Eigen::VectorXd y_ans_adj = Eigen::VectorXd::Zero(10);
+  EXPECT_MATRIX_EQ(y_ans_adj, y.adj());
+}
+
+TEST_F(AgradRev, assign_nan_matvar) {
+  using stan::math::var;
+  using var_vector = Eigen::Matrix<var, -1, 1>;
+  Eigen::VectorXd x_val(10);
+  for (int i = 0; i < 10; ++i) {
+    x_val(i) = i + 0.1;
+  }
+  var_vector x(x_val);
+  var_vector y = var_vector(Eigen::Matrix<double, -1, 1>::Constant(
+      10, std::numeric_limits<double>::quiet_NaN()));
+  // need to store y's previous vari pointers
+  var_vector z = y;
+  y = stan::math::head(x, 10);
+  var sigma = 1.0;
+  var lp = stan::math::normal_lpdf<false>(y, 0, sigma);
+  lp.grad();
+  Eigen::VectorXd x_ans_adj(10);
+  for (int i = 0; i < 10; ++i) {
+    x_ans_adj(i) = -(i + 0.1);
+  }
+  EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
+  Eigen::VectorXd z_ans_adj = Eigen::VectorXd::Zero(10);
+  EXPECT_MATRIX_EQ(z_ans_adj, z.adj());
+}
+
+/**
+ * For var<Matrix> and Matrix<var>, we need to make sure
+ *  the tape, when going through reverse mode, leads to the same outcomes.
+ * In the case where we declare a var<Matrix> without initializing it, aka
+ * `var_value<Eigen::MatrixXd>`, we need to think about what the equivalent
+ *  behavior is for `Eigen::Matrix<var, -1, -1>`.
+ * When default constructing `Eigen::Matrix<var, -1, -1>` we would have an array
+ * of `var` types with `nullptr` as the vari. The first assignment to that array
+ * would then just copy the vari pointer from the other array. This is the
+ * behavior we want to mimic for `var_value<Eigen::MatrixXd>`. So in this test
+ * show that for uninitialized `var_value<Eigen::MatrixXd>`, we can assign it
+ * and the adjoints are the same as x.
+ */
+TEST_F(AgradRev, assign_nullptr_var) {
+  using stan::math::var_value;
+  using var_vector = var_value<Eigen::Matrix<double, -1, 1>>;
+  using stan::math::var;
+  Eigen::VectorXd x_val(10);
+  for (int i = 0; i < 10; ++i) {
+    x_val(i) = i + 0.1;
+  }
+  var_vector x(x_val);
+  var_vector y;
+  y = stan::math::head(x, 10);
+  var sigma = 1.0;
+  var lp = stan::math::normal_lpdf<false>(y, 0, sigma);
+  lp.grad();
+  Eigen::VectorXd x_ans_adj(10);
+  for (int i = 0; i < 10; ++i) {
+    x_ans_adj(i) = -(i + 0.1);
+  }
+  EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
+  EXPECT_MATRIX_EQ(x_ans_adj, y.adj());
+}
