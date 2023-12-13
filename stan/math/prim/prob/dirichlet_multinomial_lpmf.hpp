@@ -5,6 +5,11 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 
 namespace stan {
@@ -59,39 +64,36 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
                    "rows of prior size parameter", alpha.rows());
   check_nonnegative(function, "Number of trials variable", ns);
   const auto& alpha_ref = to_ref(alpha);
+  const auto& alpha_val = as_value_array_or_scalar(alpha_ref);
   check_positive_finite(function, "Prior size parameter", alpha_ref);
 
-  return_type_t<T_prior_size> lp(0.0);
-
-  if (!include_summand<propto, T_prior_size>::value)
-    return lp;
-
-  int sum_ns = 0;
-
-  for (size_t i = 0; i < ns.size(); ++i) {
-    if (ns[i] > 0) {
-      lp -= lbeta(alpha_ref.coeff(i), ns[i]);
-      sum_ns += ns[i];
-    }
+  if (!include_summand<propto, T_prior_size>::value) {
+    return 0.0;
   }
 
-  if (sum_ns == 0)
-    return lp;
+  int n_sum = sum(ns);
+  if (n_sum == 0) {
+    return 0.0;
+  }
 
-  value_type_t<T_prior_size> sum_alpha = alpha_ref.sum();
-
-  lp += lbeta(sum_alpha, sum_ns);
-
+  // Need to treat as double otherwise Eigen's array log truncates
+  auto ns_array = as_array_or_scalar(ns).template cast<double>();
+  partials_return_t<T_prior_size> a_sum = sum(alpha_val);
+  partials_return_t<T_prior_size> lp(0.0);
   if (include_summand<propto>::value) {
-    for (size_t i = 0; i < ns.size(); ++i) {
-      if (ns[i] > 0) {
-        lp -= log(ns[i]);
-      }
-    }
-    lp += log(sum_ns);
+    lp += log(n_sum) - (ns_array > 0).select(log(ns_array), 0.0).sum();
   }
 
-  return lp;
+  lp += lbeta(a_sum, n_sum)
+        - (ns_array > 0).select(lbeta(alpha_val, ns_array), 0.0).sum();
+
+  auto ops_partials = make_partials_propagator(alpha_ref);
+  if (!is_constant_all<T_prior_size>::value) {
+    partials<0>(ops_partials) =
+      digamma(alpha_val + ns_array) - digamma(alpha_val)
+        + digamma(a_sum) - digamma(a_sum + n_sum);
+  }
+  return ops_partials.build(lp);
 }
 
 template <typename T_prior_size>
