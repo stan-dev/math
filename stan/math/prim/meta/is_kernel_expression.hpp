@@ -115,7 +115,7 @@ using require_kernel_expression_lhs_t
 template <typename T>
 using require_rev_kernel_expression_t
     = require_t<is_rev_kernel_expression<std::decay_t<T>>>;
-  
+
 //  STAN_ADD_REQUIRE_UNARY(prim_or_rev_kernel_expression,
 //  is_prim_or_rev_kernel_expression, opencl_kernel_generator);
 template <typename... Types>
