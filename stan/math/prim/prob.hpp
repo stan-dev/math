@@ -76,7 +76,6 @@
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/prob/dirichlet_rng.hpp>
-#include <stan/math/prim/prob/dirichlet_multinomial_log.hpp>
 #include <stan/math/prim/prob/dirichlet_multinomial_lpmf.hpp>
 #include <stan/math/prim/prob/dirichlet_multinomial_rng.hpp>
 #include <stan/math/prim/prob/discrete_range_ccdf_log.hpp>

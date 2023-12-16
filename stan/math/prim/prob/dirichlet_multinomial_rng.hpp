@@ -42,8 +42,9 @@ inline std::vector<int> dirichlet_multinomial_rng(
   check_nonnegative(function, "number of trials variables", N);
 
   // special case N = 0 would lead to an exception thrown by multinomial_rng
-  if (N == 0)
+  if (N == 0) {
     return std::vector<int>(alpha.size(), 0);
+  }
 
   // sample a simplex theta from the Dirichlet distribution
   auto theta = dirichlet_rng(alpha_ref, rng);
