@@ -1,10 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(ProbDistributionsMultiStudentTCholesky, matvar) {
-  auto f
-      = [](const auto& y, const auto& nu, const auto& mu, const auto& L) {
-          return stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L);
-        };
+  auto f = [](const auto& y, const auto& nu, const auto& mu, const auto& L) {
+    return stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L);
+  };
 
   auto f_const_y = [](const auto& y) {
     return [&y](const auto& nu, const auto& mu, const auto& L) {
@@ -17,7 +16,6 @@ TEST(ProbDistributionsMultiStudentTCholesky, matvar) {
       return stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L);
     };
   };
-
 
   Eigen::VectorXd y1(1);
   y1 << 1;
@@ -89,7 +87,6 @@ TEST(ProbDistributionsMultiStudentTCholesky, fvar_var) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
-
   for (int i = 0; i < 3; i++) {
     y(i).d_ = 1.0;
     mu(i).d_ = 1.0;
@@ -117,7 +114,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, fvar_fvar_var) {
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
- double nu = 4.0;
+  double nu = 4.0;
 
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   for (int i = 0; i < 3; i++) {
@@ -130,8 +127,10 @@ TEST(ProbDistributionsMultiStudentTCholesky, fvar_fvar_var) {
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_NEAR(
       -10.1246,
-      stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).val_.val_.val(), 0.0001);
+      stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).val_.val_.val(),
+      0.0001);
   EXPECT_NEAR(
       -0.0411685,
-      stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).d_.val_.val(), 0.0001);
+      stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).d_.val_.val(),
+      0.0001);
 }
