@@ -277,7 +277,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize0) {
   EXPECT_THROW(multi_student_t_cholesky_lpdf(y_empty, nu, mu_empty, L),
                std::invalid_argument);
   EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, Sigma_empty),
-               std::invalid_argument);
+               std::domain_error);
 
   EXPECT_THROW(multi_student_t_cholesky_rng(nu_empty, mu, L, rng),
                std::domain_error);
