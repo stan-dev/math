@@ -32,9 +32,9 @@ TEST(ProbDistributionsMultiStudentTCholesky, matvar) {
   Eigen::MatrixXd Sigma11(1, 1);
   Sigma11 << 1;
   double nu = 1.1;
-//  stan::test::expect_ad(f_const_y(y1), nu, mu1, Sigma11);
-//   stan::test::expect_ad(f_const_nu(nu), y1, mu1, Sigma11);
-//   stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma11);
+ stan::test::expect_ad(f_const_y(y1), nu, mu1, Sigma11);
+  // stan::test::expect_ad(f_const_nu(nu), y1, mu1, Sigma11);
+  // stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma11);
 
 //   Eigen::VectorXd y0(0);
 //   Eigen::VectorXd mu0(0);
