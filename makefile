@@ -25,9 +25,7 @@ include make/clang-tidy
 help:
 	@echo '--------------------------------------------------------------------------------'
 	@echo 'Note: testing of Math is typically done with the `runTests.py` python script.'
-	@echo '  See https://github.com/stan-dev/math/wiki/Developer-Doc#building-and-running-tests'
-	@echo '  for more detail on testing.'
-	@echo  ''
+	@echo ''
 	@echo 'Stan Math makefile:'
 	@$(MAKE) print-compiler-flags
 	@echo 'Tests:'
@@ -88,8 +86,9 @@ help:
 .PHONY: doxygen
 doxygen:
 	mkdir -p doc/api
+	doxygen -v
 	doxygen doxygen/doxygen.cfg
-
+	cp ./doxygen/pretty_stuff/eigen_navtree_hacks.js ./doc/api/html
 ##
 # Clean up.
 ##
@@ -126,6 +125,7 @@ clean-deps:
 	@$(RM) $(call findfiles,test,*.d.*)
 	@$(RM) $(call findfiles,lib,*.d.*)
 	@$(RM) $(call findfiles,stan,*.dSYM)
+	@$(RM) $(call findfiles,make,ucrt)
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 

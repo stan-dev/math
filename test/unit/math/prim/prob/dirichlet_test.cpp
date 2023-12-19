@@ -21,7 +21,7 @@ TEST(ProbDistributions, Dirichlet) {
   EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2, alpha2));
 }
 
-TEST(ProbDistributions, DirichletVectorised) {
+TEST(ProbDistributions, DirichletVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;

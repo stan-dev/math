@@ -5,7 +5,7 @@ TEST(MathMixMatFun, singularValues) {
   auto f = [](const auto& x) { return stan::math::singular_values(x); };
 
   Eigen::MatrixXd m00(0, 0);
-  EXPECT_THROW(f(m00), std::invalid_argument);
+  EXPECT_NO_THROW(f(m00));
 
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.1;

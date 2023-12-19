@@ -291,7 +291,8 @@ struct mrrr_task {
  * @param[out] eigenvectors Eigenvectors.
  * @param min_rel_sep Minimal relative separation of eigenvalues before
  * computing eigenvectors.
- * @param max_ele_growth Maximal desired element growth of LDL decompositions.
+ * @param maximum_ele_growth Maximal desired element growth of LDL
+ * decompositions.
  */
 template <bool need_eigenvectors = true>
 inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
@@ -372,7 +373,6 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
       cluster_end--;  // now this is the index of the last element of the
                       // cluster
       if (cluster_end > i) {  // cluster
-        double_d a = high[cluster_end - 1], b = low[cluster_end];
         double_d max_shift
             = (high[cluster_end - 1] - low[cluster_end]) / min_rel_sep;
         double_d next_shift;
@@ -395,7 +395,6 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 
         i = cluster_end;
       } else {  // isolated eigenvalue
-        int twist_idx;
         const double_d low_gap
             = i == block.start
                   ? double_d(std::numeric_limits<double>::infinity())
@@ -443,10 +442,10 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR
  * algorithm. If a subdiagonal element is close to zero compared to neighbors on
  * diagonal, the problem can be split into smaller ones.
- * @param diagonal Diagonal of of T.
- * @param subdiagonal Subdiagonal of T.
- * @param[out] eigenvalues Eigenvlues.
- * @param[out] eigenvectors Eigenvectors.
+ * @param diagonal_cl Diagonal of of T.
+ * @param subdiagonal_cl Subdiagonal of T.
+ * @param[out] eigenvalues_cl Eigenvlues.
+ * @param[out] eigenvectors_cl Eigenvectors.
  * @param split_threshold Threshold for splitting the problem
  */
 template <bool need_eigenvectors = true>

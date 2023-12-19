@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -36,9 +36,9 @@ namespace math {
 inline double log1m_inv_logit(double u) {
   using std::exp;
   if (u > 0.0) {
-    return -u - log1p(exp(-u));  // prevent underflow
+    return -u - log1p_exp(-u);  // prevent underflow
   }
-  return -log1p(exp(u));
+  return -log1p_exp(u);
 }
 
 /**

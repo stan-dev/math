@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>
 
@@ -29,7 +30,7 @@ template <typename T>
 T inc_beta_ddz(T a, T b, T z) {
   using std::exp;
   using std::log;
-  return exp((b - 1) * log(1 - z) + (a - 1) * log(z) + lgamma(a + b) - lgamma(a)
+  return exp((b - 1) * log1m(z) + (a - 1) * log(z) + lgamma(a + b) - lgamma(a)
              - lgamma(b));
 }
 

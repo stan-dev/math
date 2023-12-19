@@ -1,4 +1,4 @@
-# Developers Guide {#developer_guide}
+# Developer Guide {#developer_guide}
 
 Thanks for checking out these docs. This is where you'll find information on contributing to the [Math library](https://github.com/stan-dev/math), how the source code is laid out, and other technical details that could help. This wiki focuses on things relevant to the Math library. There's also a separate [Stan wiki](https://github.com/stan-dev/stan/wiki) for things related to the language, services, algorithms.
 
@@ -19,7 +19,7 @@ This wiki is a work in progress. If you have suggestions, please update the wiki
 
 -----------------
 
-# Overview
+# Overview {#overview}
 
 
 The Stan Math library, referred to as Math or the Math library, is a C++ library for automatic differentiation. It's designed to be usable, extensive and extensible, efficient, scalable, stable, portable, and redistributable in order to facilitate the construction and utilization of algorithms that utilize derivatives.
@@ -37,17 +37,13 @@ Some key features of the Math library's reverse mode automatic differentiation:
 For implementation details of the Math library's automatic differentiation, please read the arXiv paper "[The Stan Math Library: Reverse-Mode Automatic Differentiation in C++](https://arxiv.org/abs/1509.07164)."
 
 
-# Licensing
+# Licensing {#licensing}
 
 We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd) and we only accept changes to the code base that compatible with this license.
 
-# Contributing
+# Contributing {#contributing}
 
 Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
-
-This is the short version. There's more information on the [wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
-
-It is the responsibility of the contributor submitting the pull request that the code meets these requirements. We're open-source. Once the code gets into the code base, the community of developers take ownership of it.
 
 ## Issues
 
@@ -76,29 +72,30 @@ Open feature requests should be the ones we want to implement in the Math librar
 
 ## Pull Requests
 
-All changes to the Math library are handled through [pull requests](https://github.com/stan-dev/math/pulls). Each pull request should correspond to an issue. We follow a [modified GitFlow branching model](https://github.com/stan-dev/stan/wiki/Dev:-Git-Process) for development.
+All changes to the Math library are handled through [pull requests](https://github.com/stan-dev/math/pulls). Each pull request should correspond to an issue. We follow a [modified GitFlow branching model](https://github.com/stan-dev/stan/wiki/Developer-process-overview#2-create-a-branch-for-the-issue) for development.
 
 When a contributor creates a pull request for inclusion to the Math library, here are some of the things we expect:
 
-1. the contribution maintains the Math library's open-source [license](https://github.com/stan-dev/math/wiki/Developer-Doc#licensing): 3-clause BSD
+1. the contribution maintains the Math library's open-source [license](https://github.com/stan-dev/stan/wiki/Stan-Licensing): 3-clause BSD
 2. the code base remains stable after merging the pull request; we expect the `develop` branch to always be in a good state
-3. the changes are maintainable. In code review, we look at the design of the proposed code. We also expect documentation.
+3. the changes are maintainable. In code review, we look at the design of the proposed code. We also expect documentation. It should look like idiomatic C++.
 4. the changes are tested. For bugs, we expect at least one test that fails before the patch and is fixed after the patch. For new features, we expect at least one test that shows expected behavior and one test that shows the behavior when there's an error.
-5. the changes adhere to the Math library's [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality). Consistency really helps.
+5. the changes adhere to the Math library's [C++ standards](https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms). Consistency really helps.
 
 Pull requests are code reviewed after they pass our continuous integration tests. We expect all the above before a pull request is merged. We are an open-source project and once code makes it into the repository, it's on the community to maintain.
 
-### Code Reviews
-See the [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer-Doc#code-review-guidelines) on the Math wiki.
+It is the responsibility of the contributor submitting the pull request that the code meets these requirements. We're open-source. Once the code gets into the code base, the community of developers take ownership of it.
 
 
 ## Discussion
 
-For general questions, please ask on the forums with the ["Developers" tag](https://discourse.mc-stan.org/c/stan-dev).
+For general questions, please ask on the forums with the ["Developers" tag](http://discourse.mc-stan.org/c/stan-dev).
 
 
+# Code Review Guidelines {#code-review-guidelines}
 
-# Code Review Guidelines
+(These are also listed on the
+[wiki](https://github.com/stan-dev/stan/wiki/Developer-process-overview#code-review-guidelines))
 
 All pull requests must have these things:
 
@@ -109,7 +106,7 @@ All pull requests must have these things:
     - code design. It should either be designed with well-known C++ patterns or there should be a good reason it isn't.
     - documentation. The documentation that goes with the changes should go in this pull request.
 4. the changes are tested. Please verify that there's at least one new test that forces the code to execute. Please also verify there's at least one test that shows how to handle errors in the code. Having just these two tests (without full coverage) is usually enough to trap errors in the future. It is also enough to use these to refactor the code when the time comes.
-5. the changes adhere to the Math library's [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality). This is a large code base. We want the quality to be consistent so it's easy to navigate and understand other parts of the code base.
+5. the changes adhere to the Math library's [C++ standards](https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms). This is a large code base. We want the quality to be consistent so it's easy to navigate and understand other parts of the code base.
 
 Most of the above is subjective, so please use your best judgement.
 
@@ -150,7 +147,7 @@ Feel free to review a narrow part of the pull request. By that, I mean one of th
     3. **Approve**. Finalize the pull request with "Approve" when the pull request is ready to be merged. If you're looking at the whole pull request, then feel free to approve when it's ready. If you're only looking at a part of the pull request, please do not approve. One of the core Math developers will coordinate the different reviewers and approve based on the feedback.
 
 
-# Building and Running Tests
+# Building and Running Tests {#building-and-running-tests}
 
 **Nota bene:** these build instructions are not in the released version yet. This is for the `develop` branch (post v2.18.0. Prior to this, the build instructions are similar, but not identical.
 
@@ -280,14 +277,20 @@ The easiest way to build and run tests is to use the `runTests.py` python script
 
 ## Misc: Stan Testing
 
-The [Stan testing](https://github.com/stan-dev/stan/wiki/Testing-Stan-using-Gnu-Make-and-Python) process depends on the makefiles in Math.
+The [Stan testing](https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms#unit-testing) process depends on the makefiles in Math.
 
 
 
 # Where do I create a new issue
 
-Stan's development is across multiple repositories. See this page for details on where to put new issues:
-https://github.com/stan-dev/stan/wiki/Where-do-I-create-a-new-issue
+Stan's development is across multiple repositories. When in doubt of which one
+to open an issue in, we ask that you make your best guess. We can always move it for you.
+
+Language or compiler issues: stanc3
+
+Algorithm issues: stan
+
+Function or derivative issues: math
 
 # Running tests from the math library
 
@@ -352,7 +355,7 @@ To test headers,
 ```
 
 --------
-# Questions
+# Questions {#questions}
 
 This would have been an "faq," but nothing really gets asked frequently. We'll just collect thoughts on the Math library here.
 

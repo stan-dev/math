@@ -37,8 +37,7 @@ mdivide_right(const EigMat1& b, const EigMat2& A) {
                        EigMat2::ColsAtCompileTime>(A)
       .transpose()
       .lu()
-      .solve(Eigen::Matrix<T_return, EigMat1::RowsAtCompileTime,
-                           EigMat1::ColsAtCompileTime>(b)
+      .solve(Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>(b)
                  .transpose())
       .transpose();
 }

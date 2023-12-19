@@ -1,5 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/lognormal_cdf.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

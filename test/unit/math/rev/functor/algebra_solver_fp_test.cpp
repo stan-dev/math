@@ -10,15 +10,15 @@
 #include <string>
 #include <limits>
 
-using stan::math::algebra_solver_fp;
-using stan::math::finite_diff_gradient_auto;
-using stan::math::FixedPointADJac;
-using stan::math::FixedPointSolver;
-using stan::math::KinsolFixedPointEnv;
-using stan::math::to_array_1d;
-using stan::math::to_var;
-using stan::math::value_of;
-using stan::math::var;
+using ::stan::math::algebra_solver_fp;
+using ::stan::math::finite_diff_gradient_auto;
+using ::stan::math::FixedPointADJac;
+using ::stan::math::FixedPointSolver;
+using ::stan::math::KinsolFixedPointEnv;
+using ::stan::math::to_array_1d;
+using ::stan::math::to_var;
+using ::stan::math::value_of;
+using ::stan::math::var;
 
 /*
  * Solve eq
@@ -66,7 +66,7 @@ struct FP_exp_func_test : public ::testing::Test {
         f_scale{1.0} {}
 
   auto fd_functor(int i) {
-    auto f_fd = [this, i](const Eigen::VectorXd& y_) {
+    auto f_fd = [this](const Eigen::VectorXd& y_) {
       KinsolFixedPointEnv<FP_exp_func> env(f, x, y_, x_r, x_i, msgs, u_scale,
                                            f_scale);
       FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;

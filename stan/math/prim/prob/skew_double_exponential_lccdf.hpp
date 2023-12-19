@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -49,10 +49,6 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   auto&& tau_ref = to_ref(tau);
-  using T_y_ref = std::decay_t<decltype(y_ref)>;
-  using T_mu_ref = std::decay_t<decltype(mu_ref)>;
-  using T_sigma_ref = std::decay_t<decltype(sigma_ref)>;
-  using T_tau_ref = std::decay_t<decltype(tau_ref)>;
 
   auto&& y_val = as_value_array_or_scalar(y_ref);
   auto&& mu_val = as_value_array_or_scalar(mu_ref);
@@ -67,15 +63,14 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
   scalar_seq_view<std::decay_t<decltype(mu_val)>> mu_vec(mu_val);
   scalar_seq_view<std::decay_t<decltype(sigma_val)>> sigma_vec(sigma_val);
   scalar_seq_view<std::decay_t<decltype(tau_val)>> tau_vec(tau_val);
 
-  const int size_sigma = stan::math::size(sigma);
   const auto N = max_size(y, mu, sigma, tau);
   auto inv_sigma_val = to_ref(inv(sigma_val));
   scalar_seq_view<decltype(inv_sigma_val)> inv_sigma(inv_sigma_val);
@@ -114,20 +109,20 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
     if (y_dbl <= mu_dbl) {
       cdf_log += log1m(tau_dbl * exp(-2.0 * expo));
     } else {
-      cdf_log += log(1 - tau_dbl) - 2.0 * expo;
+      cdf_log += log1m(tau_dbl) - 2.0 * expo;
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[i] += rep_deriv;
+      partials<0>(ops_partials)[i] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[i] -= rep_deriv;
+      partials<1>(ops_partials)[i] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[i] += sig_deriv;
+      partials<2>(ops_partials)[i] += sig_deriv;
     }
     if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_[i] += skew_deriv;
+      partials<3>(ops_partials)[i] += skew_deriv;
     }
   }
   return ops_partials.build(cdf_log);

@@ -32,15 +32,15 @@ namespace math {
  * @tparam T_yp0 Type of initial state derivatives
  * @tparam T_Args Types of pass-through parameters
  *
- * @param function_name Calling function name (for printing debugging messages)
+ * @param func Calling function name (for printing debugging messages)
  * @param f DAE residual functor
  * @param yy0 Initial state
  * @param yp0 Initial state derivatives
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
@@ -111,8 +111,8 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages

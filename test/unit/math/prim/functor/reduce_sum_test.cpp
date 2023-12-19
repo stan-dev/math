@@ -10,7 +10,6 @@ TEST(StanMathPrim_reduce_sum, value) {
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
-  const std::size_t num_iter = 1000;
   std::vector<int> data(elems);
 
   for (std::size_t i = 0; i != elems; ++i)

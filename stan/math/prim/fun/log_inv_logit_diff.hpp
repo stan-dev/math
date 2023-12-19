@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_LOG_INV_LOGIT_DIFF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
@@ -34,11 +35,14 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_inv_logit_diff(const T1& x, const T2& y) {
+  if (is_inf(x) && x >= 0) {
+    return -log1p_exp(y);
+  }
   return x - log1p_exp(x) + log1m_exp(y - x) - log1p_exp(y);
 }
 
 /**
- * Enables the vectorised application of the log_inv_logit_diff function,
+ * Enables the vectorized application of the log_inv_logit_diff function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

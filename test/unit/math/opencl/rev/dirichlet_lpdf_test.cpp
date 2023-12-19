@@ -76,7 +76,6 @@ auto dirichlet_lpdf_functor_propto = [](const auto& theta, const auto& alpha) {
 
 TEST(ProbDistributionsDirichlet, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd theta1(N);
   theta1 << 0.5, 0.4, 0.1;

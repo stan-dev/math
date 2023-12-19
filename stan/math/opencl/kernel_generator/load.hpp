@@ -4,6 +4,8 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
+
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
@@ -23,17 +25,20 @@ namespace math {
 /**
  * Represents an access to a \c matrix_cl in kernel generator expressions
  * @tparam T \c matrix_cl
+ * @tparam AssignOp tells higher level operations whether the final operation
+ * should be an assignment or a type of compound assignment.
  */
-template <typename T>
+template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
 class load_
-    : public operation_cl_lhs<load_<T>,
+    : public operation_cl_lhs<load_<T, AssignOp>,
                               typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
  public:
+  static constexpr assign_op_cl assignment_op = AssignOp;
   using Scalar = typename std::remove_reference_t<T>::type;
-  using base = operation_cl<load_<T>, Scalar>;
+  using base = operation_cl<load_<T, AssignOp>, Scalar>;
   using base::var_name_;
   static_assert(disjunction<is_matrix_cl<T>, is_arena_matrix_cl<T>>::value,
                 "load_: argument a must be a matrix_cl<T>!");
@@ -51,9 +56,13 @@ class load_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline load_<T&> deep_copy() & { return load_<T&>(a_); }
-  inline load_<const T&> deep_copy() const& { return load_<const T&>(a_); }
-  inline load_<T> deep_copy() && { return load_<T>(std::forward<T>(a_)); }
+  inline load_<T&, AssignOp> deep_copy() & { return load_<T&, AssignOp>(a_); }
+  inline load_<const T&, AssignOp> deep_copy() const& {
+    return load_<const T&, AssignOp>(a_);
+  }
+  inline load_<T, AssignOp> deep_copy() && {
+    return load_<T, AssignOp>(std::forward<T>(a_));
+  }
 
   /**
    * Generates kernel code for this expression.
@@ -68,8 +77,8 @@ class load_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -137,8 +146,8 @@ class load_
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated_all.count(&a_) == 0) {
@@ -184,9 +193,10 @@ class load_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated_all.count(&a_) == 0) {
       generated_all[&a_] = "";
       kernel.setArg(arg_num++, a_.buffer());
@@ -315,9 +325,9 @@ class load_
    * @param[in,out] id_map map from memory addresses to unique ids
    * @param[in,out] next_id neqt unique id to use
    */
-  inline void get_unique_matrix_accesses(std::vector<int>& uids,
-                                         std::map<const void*, int>& id_map,
-                                         int& next_id) const {
+  inline void get_unique_matrix_accesses(
+      std::vector<int>& uids, std::unordered_map<const void*, int>& id_map,
+      int& next_id) const {
     if (id_map.count(&a_) == 0) {
       id_map[&a_] = next_id;
       uids.push_back(next_id);
@@ -327,6 +337,7 @@ class load_
     }
   }
 };
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

@@ -48,7 +48,8 @@ namespace math {
  *            If equal to 1, the algorithm computes exact Newton steps.
  * @param[in] global_line_search does the solver use a global line search?
  *            If equal to KIN_NONE, no, if KIN_LINESEARCH, yes.
- * @return x_solution Vector of solutions to the system of equations.
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args Extra arguments passed unmodified through to DAE right hand side
  * @throw <code>std::invalid_argument</code> if Kinsol returns a negative
  *        flag when setting up the solver.
  * @throw <code>std::domain_error</code> if Kinsol fails to solve

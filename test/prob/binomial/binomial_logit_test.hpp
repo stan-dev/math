@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/binomial_logit_log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

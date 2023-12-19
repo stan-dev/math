@@ -124,6 +124,7 @@ special_arg_values = {
     "ordered_free": [1.0],
     "simplex_constrain": [None, scalar_return_type],
     "simplex_free": [simplex],
+    "std_normal_log_qf": [-0.1],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
@@ -146,14 +147,9 @@ special_arg_values = {
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
-    "lchoose",
-    "lmultiply",
-    "assign_add",
-    "assign_divide",
-    "assign_elt_divide",
-    "assign_elt_times",
-    "assign_multiply",
-    "assign_subtract",
+    "lchoose", # synonym for binomial_coefficient_log
+    "lmultiply", # synonym for multiply_log
+    "std_normal_qf", # synonym for inv_Phi
     "if_else",
 ]
 
