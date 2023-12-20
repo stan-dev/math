@@ -32,8 +32,8 @@ template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
 inline void check_symmetric(const char* function, const char* name,
                             const EigMat& y) {
   check_square(function, name, y);
-  using std::fabs;
   using stan::math::fabs;
+  using std::fabs;
 
   Eigen::Index k = y.rows();
   if (k <= 1) {
