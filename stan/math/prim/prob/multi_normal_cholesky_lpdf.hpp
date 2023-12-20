@@ -132,7 +132,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     for (size_t i = 0; i < size_vec; i++) {
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-      y_val_minus_mu_val = eval(y_val - mu_val);
+      y_val_minus_mu_val = y_val - mu_val;
       half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
                  .transpose();
       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
