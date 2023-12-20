@@ -115,8 +115,8 @@ inline Scalar wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_error));
   }
   const Scalar arg_mult = (Density || GradW) ? 1 : 3;
-  const Scalar arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));  
-  
+  const Scalar arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+
   const Scalar n_2
       = (arg > 0) ? GradW ? 0.5 * (sqrt(arg) + w) : 0.5 * (sqrt(arg) - w) : n_1;
 
@@ -139,7 +139,7 @@ inline Scalar wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
 template <bool Density, bool GradW, typename Scalar, typename T_y, typename T_a,
           typename T_w_value>
 inline Scalar wiener5_n_terms_large_t(T_y&& y, T_a&& a, T_w_value&& w_value,
-                                       Scalar error) noexcept {
+                                      Scalar error) noexcept {
   const Scalar two_error = 2.0 * error;
   const Scalar y_asq = y / square(a);
   const Scalar two_log_a = 2 * log(a);
@@ -197,112 +197,114 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
                 : (2 * n_terms_small_t < n_terms_large_t);
   const auto scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
 
-    using ret_t = return_type_t<T_y, T_a, T_w>;
-    ret_t current_val;
-    int current_sign;
-	if (small_n_terms_small_t) {
-	ret_t fplus = NEGATIVE_INFTY;
-	ret_t fminus = NEGATIVE_INFTY;
+  using ret_t = return_type_t<T_y, T_a, T_w>;
+  ret_t current_val;
+  int current_sign;
+  if (small_n_terms_small_t) {
+    ret_t fplus = NEGATIVE_INFTY;
+    ret_t fminus = NEGATIVE_INFTY;
     const auto mult = Density ? 1 : 3;
     const auto offset = GradW ? y_asq : 0;
-	
-    for (auto k = n_terms_small_t; k >= 1; k--) {
-        const auto wp2k = w + 2.0 * k;
-        const auto wm2k = w - 2.0 * k;
-		if (GradW) {
-			const auto sqwp2k_mo = square(wp2k) - offset;
-			if (sqwp2k_mo > 0) {
-				const auto wp2k_quant = log(sqwp2k_mo) - square(wp2k) * scaling;
-				fplus = log_sum_exp(fplus, wp2k_quant);
-			} else if (sqwp2k_mo < 0) {
-				const auto wp2k_quant = log(-sqwp2k_mo) - square(wp2k) * scaling;
-				fminus = log_sum_exp(fminus, wp2k_quant);
-			}
-		} else {
-			const auto wp2k_quant = mult * log(wp2k) - square(wp2k) * scaling;
-			fplus = log_sum_exp(fplus, wp2k_quant);
-		}
 
-		if (GradW) {
-			const auto sqwm2k_mo = square(wm2k) - offset;
-			if (sqwm2k_mo > 0) {
-				const auto wm2k_quant = log(sqwm2k_mo) - square(wm2k) * scaling;
-				fplus = log_sum_exp(fplus, wm2k_quant);
-			} else if (sqwm2k_mo < 0) {
-				const auto wm2k_quant = log(-sqwm2k_mo) - square(wm2k) * scaling;
-				fminus = log_sum_exp(fminus, wm2k_quant);
-			}
-		} else {
-			const auto wm2k_quant = mult * log(-wm2k) - square(wm2k) * scaling;
-			if (fminus <= NEGATIVE_INFTY) {
-				fminus = wm2k_quant;
-			} else if (wm2k_quant <= NEGATIVE_INFTY) {
-				fminus = fminus;
-			} else if (fminus > wm2k_quant) {
-				fminus = fminus + log1p(exp(wm2k_quant - fminus));
-			} else {
-				fminus = wm2k_quant + log1p(exp(fminus - wm2k_quant));
-			}
-		}
+    for (auto k = n_terms_small_t; k >= 1; k--) {
+      const auto wp2k = w + 2.0 * k;
+      const auto wm2k = w - 2.0 * k;
+      if (GradW) {
+        const auto sqwp2k_mo = square(wp2k) - offset;
+        if (sqwp2k_mo > 0) {
+          const auto wp2k_quant = log(sqwp2k_mo) - square(wp2k) * scaling;
+          fplus = log_sum_exp(fplus, wp2k_quant);
+        } else if (sqwp2k_mo < 0) {
+          const auto wp2k_quant = log(-sqwp2k_mo) - square(wp2k) * scaling;
+          fminus = log_sum_exp(fminus, wp2k_quant);
+        }
+      } else {
+        const auto wp2k_quant = mult * log(wp2k) - square(wp2k) * scaling;
+        fplus = log_sum_exp(fplus, wp2k_quant);
+      }
+
+      if (GradW) {
+        const auto sqwm2k_mo = square(wm2k) - offset;
+        if (sqwm2k_mo > 0) {
+          const auto wm2k_quant = log(sqwm2k_mo) - square(wm2k) * scaling;
+          fplus = log_sum_exp(fplus, wm2k_quant);
+        } else if (sqwm2k_mo < 0) {
+          const auto wm2k_quant = log(-sqwm2k_mo) - square(wm2k) * scaling;
+          fminus = log_sum_exp(fminus, wm2k_quant);
+        }
+      } else {
+        const auto wm2k_quant = mult * log(-wm2k) - square(wm2k) * scaling;
+        if (fminus <= NEGATIVE_INFTY) {
+          fminus = wm2k_quant;
+        } else if (wm2k_quant <= NEGATIVE_INFTY) {
+          fminus = fminus;
+        } else if (fminus > wm2k_quant) {
+          fminus = fminus + log1p(exp(wm2k_quant - fminus));
+        } else {
+          fminus = wm2k_quant + log1p(exp(fminus - wm2k_quant));
+        }
+      }
     }
 
-	if (GradW) {
-		const auto sqw_mo = square(w) - offset;
-		if (sqw_mo > 0) {
-		  const auto new_val = log(sqw_mo) - square(w) * scaling;
-		  fplus = log_sum_exp(fplus, new_val);
-		} else if (sqw_mo < 0) {
-		  const auto new_val = log(-sqw_mo) - square(w) * scaling;
-		  fminus = log_sum_exp(fminus, new_val);
-		}
-	} else {
-		const auto new_val = mult * log(w) - square(w) * scaling;
-		fplus = log_sum_exp(fplus, new_val);
-	}
+    if (GradW) {
+      const auto sqw_mo = square(w) - offset;
+      if (sqw_mo > 0) {
+        const auto new_val = log(sqw_mo) - square(w) * scaling;
+        fplus = log_sum_exp(fplus, new_val);
+      } else if (sqw_mo < 0) {
+        const auto new_val = log(-sqw_mo) - square(w) * scaling;
+        fminus = log_sum_exp(fminus, new_val);
+      }
+    } else {
+      const auto new_val = mult * log(w) - square(w) * scaling;
+      fplus = log_sum_exp(fplus, new_val);
+    }
 
-	if (fplus == NEGATIVE_INFTY) {
-		current_val = fminus;
-	} else if (fminus == NEGATIVE_INFTY) {
-		current_val = fplus;
-	} else if (fplus > fminus) {
-		current_val = log_diff_exp(fplus, fminus);
-	} else if (fplus < fminus) {
-		current_val = log_diff_exp(fminus, fplus);
-	} else {
-		current_val = NEGATIVE_INFTY;
-	}
-	current_sign = (fplus < fminus)? -1: 1;
-	
-  } else { // for large t
+    if (fplus == NEGATIVE_INFTY) {
+      current_val = fminus;
+    } else if (fminus == NEGATIVE_INFTY) {
+      current_val = fplus;
+    } else if (fplus > fminus) {
+      current_val = log_diff_exp(fplus, fminus);
+    } else if (fplus < fminus) {
+      current_val = log_diff_exp(fminus, fplus);
+    } else {
+      current_val = NEGATIVE_INFTY;
+    }
+    current_sign = (fplus < fminus) ? -1 : 1;
+
+  } else {  // for large t
     auto mult = 3;
     if (Density) {
       mult = 1;
     } else if (GradW) {
       mult = 2;
     }
-	ret_t fplus = NEGATIVE_INFTY;
-	ret_t fminus = NEGATIVE_INFTY;
+    ret_t fplus = NEGATIVE_INFTY;
+    ret_t fminus = NEGATIVE_INFTY;
     for (auto k = n_terms_large_t; k >= 1; k--) {
-        const auto pi_k = k * pi();
-        const auto check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
-		if (check > 0) {
-		  fplus = log_sum_exp(fplus, mult*log(k) - square(pi_k) * scaling + log(check));
-		} else if ((GradW && check < 0) || !GradW) {
-		  fminus = log_sum_exp(fminus, mult*log(k) - square(pi_k) * scaling + log(-check));
-		}
-	}
-	if (fplus == NEGATIVE_INFTY) {
-		current_val = fminus;
-	} else if (fminus == NEGATIVE_INFTY) {
-		current_val = fplus;
-	} else if (fplus > fminus) {
-		current_val = log_diff_exp(fplus, fminus);
-	} else if (fplus < fminus) {
-		current_val = log_diff_exp(fminus, fplus);
-	} else {
-		current_val = NEGATIVE_INFTY;
-	}
-	current_sign = (fplus < fminus)? -1: 1;
+      const auto pi_k = k * pi();
+      const auto check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
+      if (check > 0) {
+        fplus = log_sum_exp(
+            fplus, mult * log(k) - square(pi_k) * scaling + log(check));
+      } else if ((GradW && check < 0) || !GradW) {
+        fminus = log_sum_exp(
+            fminus, mult * log(k) - square(pi_k) * scaling + log(-check));
+      }
+    }
+    if (fplus == NEGATIVE_INFTY) {
+      current_val = fminus;
+    } else if (fminus == NEGATIVE_INFTY) {
+      current_val = fplus;
+    } else if (fplus > fminus) {
+      current_val = log_diff_exp(fplus, fminus);
+    } else if (fplus < fminus) {
+      current_val = log_diff_exp(fminus, fplus);
+    } else {
+      current_val = NEGATIVE_INFTY;
+    }
+    current_sign = (fplus < fminus) ? -1 : 1;
   }
   return std::make_pair(current_val, current_sign);
 }
@@ -545,7 +547,6 @@ inline Scalar wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
   return WrtLog ? ans * exp(log_density) : ans;
 }
 
-
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'sv'
  *
@@ -743,14 +744,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // Calculate 4-parameter model without inter-trial variabilities (if
     // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
     // drift rate (if sv_vec[i] != 0)
-	
+
     const T_partials_return y_value = y_vec.val(i);
     const T_partials_return a_value = a_vec.val(i);
     const T_partials_return t0_value = t0_vec.val(i);
     const T_partials_return w_value = w_vec.val(i);
     const T_partials_return v_value = v_vec.val(i);
     const T_partials_return sv_value = sv_vec.val(i);
-   
+
     T_partials_return l_density = internal::estimate_with_err_check<
         T_partials_return, 5, false, 0, false>(
         [&](auto&&... args) {
