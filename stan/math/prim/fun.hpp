@@ -315,8 +315,10 @@
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/signbit.hpp>
+#include <stan/math/prim/fun/simplex_column_constrain.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
+#include <stan/math/prim/fun/simplex_row_constrain.hpp>
 #include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/singular_values.hpp>
 #include <stan/math/prim/fun/sinh.hpp>
