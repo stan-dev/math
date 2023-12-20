@@ -33,6 +33,7 @@ inline void check_symmetric(const char* function, const char* name,
                             const EigMat& y) {
   check_square(function, name, y);
   using std::fabs;
+  using stan::math::fabs;
 
   Eigen::Index k = y.rows();
   if (k <= 1) {
