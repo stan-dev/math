@@ -89,7 +89,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   check_not_nan(function, "Degrees of freedom parameter", nu_ref);
   check_positive(function, "Degrees of freedom parameter", nu_ref);
   check_finite(function, "Degrees of freedom parameter", nu_ref);
-  // check_cholesky_factor(function, "scale parameter", L_ref);
+  check_cholesky_factor(function, "scale parameter", L_ref);
 
   const int size_y = y_vec[0].size();
   const int size_mu = mu_vec[0].size();
@@ -286,7 +286,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   check_finite(function, "Location parameter", mu_val);
   check_not_nan(function, "Random variable", y_val);
 
-  // check_cholesky_factor(function, "scale parameter", L_ref);
+  check_cholesky_factor(function, "scale parameter", L_ref);
 
   T_partials_return lp(0);
 
