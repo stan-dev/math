@@ -195,9 +195,11 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
       if (!is_constant_all<T_covar_elem>::value) {
         if (i == 0) {
-          L_deriv = (scaled_diff * half).template triangularView<Eigen::Lower>();
+          L_deriv
+              = (scaled_diff * half).template triangularView<Eigen::Lower>();
         } else {
-          L_deriv += (scaled_diff * half).template triangularView<Eigen::Lower>();
+          L_deriv
+              += (scaled_diff * half).template triangularView<Eigen::Lower>();
         }
       }
 
