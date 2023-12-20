@@ -9,7 +9,7 @@ TEST(mathMixScalFun_a_t0_w, wiener5_lpdf) {
   };
 
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 2.0;
@@ -26,7 +26,7 @@ TEST(mathMixScalFun_a_t0_v, wiener5_lpdf) {
   };
 
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 2.0;
@@ -43,7 +43,7 @@ TEST(mathMixScalFun_a_t0_sv, wiener5_lpdf) {
   };
 
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 2.0;
@@ -60,7 +60,7 @@ TEST(mathMixScalFun_a_w_v, wiener5_lpdf) {
   };
 
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 2.0;
@@ -77,7 +77,7 @@ TEST(mathMixScalFun_a_w_sv, wiener5_lpdf) {
   };
 
   double y = 1.0;
-  double a = 2.0;
+  double a = 2.5;
   double t0 = 0.2;
   double w = 0.5;
   double v = 2.0;

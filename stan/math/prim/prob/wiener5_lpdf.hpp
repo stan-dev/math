@@ -115,10 +115,11 @@ inline Scalar wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
                  (log(8.0) - log(27.0) + LOG_PI + 4.0 * log_y_asq + two_error));
   }
   const Scalar arg_mult = (Density || GradW) ? 1 : 3;
-  const Scalar arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-
+  const Scalar arg = -arg_mult * y_asq * (u_eps - sqrt(-2.0 * u_eps - 2.0));  
+  
   const Scalar n_2
       = (arg > 0) ? GradW ? 0.5 * (sqrt(arg) + w) : 0.5 * (sqrt(arg) - w) : n_1;
+
   return ceil(fmax(n_1, n_2));
 }
 
@@ -137,7 +138,7 @@ inline Scalar wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
  */
 template <bool Density, bool GradW, typename Scalar, typename T_y, typename T_a,
           typename T_w_value>
-inline Scalar wiener5_n_terms_largel_t(T_y&& y, T_a&& a, T_w_value&& w_value,
+inline Scalar wiener5_n_terms_large_t(T_y&& y, T_a&& a, T_w_value&& w_value,
                                        Scalar error) noexcept {
   const Scalar two_error = 2.0 * error;
   const Scalar y_asq = y / square(a);
@@ -189,68 +190,119 @@ template <bool Density, bool GradW, typename Scalar, typename T_y, typename T_a,
 inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
                                 T_nsmall&& n_terms_small_t,
                                 T_nlarge&& n_terms_large_t) noexcept {
-  const Scalar y_asq = y / square(a);
-  const Scalar w = 1.0 - w_value;
+  const auto y_asq = y / square(a);
+  const auto w = 1.0 - w_value;
   const bool small_n_terms_small_t
       = Density ? (2 * n_terms_small_t <= n_terms_large_t)
                 : (2 * n_terms_small_t < n_terms_large_t);
-  const Scalar scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
+  const auto scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
 
-  Scalar prev_val = NEGATIVE_INFTY;
-  Scalar current_val = NEGATIVE_INFTY;
-  int prev_sign = 1;
-  int current_sign = 1;
-
-  if (small_n_terms_small_t) {
-    const Scalar mult = Density ? 1 : 3;
-    const Scalar offset = GradW ? y_asq : 0;
-    const Scalar sqrt_offset = sqrt(offset);
+    using ret_t = return_type_t<T_y, T_a, T_w>;
+    ret_t current_val;
+    int current_sign;
+	if (small_n_terms_small_t) {
+	ret_t fplus = NEGATIVE_INFTY;
+	ret_t fminus = NEGATIVE_INFTY;
+    const auto mult = Density ? 1 : 3;
+    const auto offset = GradW ? y_asq : 0;
+	
     for (auto k = n_terms_small_t; k >= 1; k--) {
-      const Scalar wp2k = w + 2.0 * k;
-      const Scalar wm2k = w - 2.0 * k;
-      int wp2k_sign = (wp2k > sqrt_offset) ? 1 : -1;
-      int wm2k_sign = (wm2k > sqrt_offset) ? 1 : -1;
-      Scalar wp2k_quant
-          = GradW ? log(fabs((square(wp2k) - offset))) - square(wp2k) * scaling
-                  : mult * log(wp2k_sign * wp2k) - square(wp2k) * scaling;
-      Scalar wm2k_quant
-          = GradW ? log(fabs((square(wm2k) - offset))) - square(wm2k) * scaling
-                  : mult * log(wm2k_sign * wm2k) - square(wm2k) * scaling;
-      Scalar k_term;
-      int k_sign;
-      std::forward_as_tuple(k_term, k_sign) = log_sum_exp_signed(
-          wm2k_quant, -1 * wm2k_sign, wp2k_quant, wp2k_sign);
-      std::forward_as_tuple(current_val, current_sign)
-          = log_sum_exp_signed(k_term, k_sign, prev_val, prev_sign);
-      prev_val = current_val;
-      prev_sign = current_sign;
+        const auto wp2k = w + 2.0 * k;
+        const auto wm2k = w - 2.0 * k;
+		if (GradW) {
+			const auto sqwp2k_mo = square(wp2k) - offset;
+			if (sqwp2k_mo > 0) {
+				const auto wp2k_quant = log(sqwp2k_mo) - square(wp2k) * scaling;
+				fplus = log_sum_exp(fplus, wp2k_quant);
+			} else if (sqwp2k_mo < 0) {
+				const auto wp2k_quant = log(-sqwp2k_mo) - square(wp2k) * scaling;
+				fminus = log_sum_exp(fminus, wp2k_quant);
+			}
+		} else {
+			const auto wp2k_quant = mult * log(wp2k) - square(wp2k) * scaling;
+			fplus = log_sum_exp(fplus, wp2k_quant);
+		}
+
+		if (GradW) {
+			const auto sqwm2k_mo = square(wm2k) - offset;
+			if (sqwm2k_mo > 0) {
+				const auto wm2k_quant = log(sqwm2k_mo) - square(wm2k) * scaling;
+				fplus = log_sum_exp(fplus, wm2k_quant);
+			} else if (sqwm2k_mo < 0) {
+				const auto wm2k_quant = log(-sqwm2k_mo) - square(wm2k) * scaling;
+				fminus = log_sum_exp(fminus, wm2k_quant);
+			}
+		} else {
+			const auto wm2k_quant = mult * log(-wm2k) - square(wm2k) * scaling;
+			if (fminus <= NEGATIVE_INFTY) {
+				fminus = wm2k_quant;
+			} else if (wm2k_quant <= NEGATIVE_INFTY) {
+				fminus = fminus;
+			} else if (fminus > wm2k_quant) {
+				fminus = fminus + log1p(exp(wm2k_quant - fminus));
+			} else {
+				fminus = wm2k_quant + log1p(exp(fminus - wm2k_quant));
+			}
+		}
     }
-    Scalar new_val = GradW ? log(fabs(square(w) - offset)) - square(w) * scaling
-                           : mult * log(w) - square(w) * scaling;
-    int new_val_sign
-        = GradW ? (w > sqrt_offset ? 1 : -1) : (new_val > 0 ? 1 : -1);
-    int factor_sign = GradW ? 1 : -1;
-    std::forward_as_tuple(current_val, current_sign)
-        = log_sum_exp_signed(new_val, factor_sign * new_val_sign, current_val,
-                             factor_sign * current_sign);
-  } else {
-    Scalar mult = 3;
+
+	if (GradW) {
+		const auto sqw_mo = square(w) - offset;
+		if (sqw_mo > 0) {
+		  const auto new_val = log(sqw_mo) - square(w) * scaling;
+		  fplus = log_sum_exp(fplus, new_val);
+		} else if (sqw_mo < 0) {
+		  const auto new_val = log(-sqw_mo) - square(w) * scaling;
+		  fminus = log_sum_exp(fminus, new_val);
+		}
+	} else {
+		const auto new_val = mult * log(w) - square(w) * scaling;
+		fplus = log_sum_exp(fplus, new_val);
+	}
+
+	if (fplus == NEGATIVE_INFTY) {
+		current_val = fminus;
+	} else if (fminus == NEGATIVE_INFTY) {
+		current_val = fplus;
+	} else if (fplus > fminus) {
+		current_val = log_diff_exp(fplus, fminus);
+	} else if (fplus < fminus) {
+		current_val = log_diff_exp(fminus, fplus);
+	} else {
+		current_val = NEGATIVE_INFTY;
+	}
+	current_sign = (fplus < fminus)? -1: 1;
+	
+  } else { // for large t
+    auto mult = 3;
     if (Density) {
       mult = 1;
     } else if (GradW) {
       mult = 2;
     }
+	ret_t fplus = NEGATIVE_INFTY;
+	ret_t fminus = NEGATIVE_INFTY;
     for (auto k = n_terms_large_t; k >= 1; k--) {
-      const Scalar pi_k = k * pi();
-      const Scalar check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
-      int check_sign = sign(check);
-      Scalar n_terms_large_t_quant
-          = mult * log(k) - square(pi_k) * scaling + log(fabs(check));
-      std::forward_as_tuple(current_val, current_sign) = log_sum_exp_signed(
-          prev_val, prev_sign, n_terms_large_t_quant, check_sign);
-      prev_val = current_val;
-      prev_sign = current_sign;
-    }
+        const auto pi_k = k * pi();
+        const auto check = (GradW) ? cos(pi_k * w) : sin(pi_k * w);
+		if (check > 0) {
+		  fplus = log_sum_exp(fplus, mult*log(k) - square(pi_k) * scaling + log(check));
+		} else if ((GradW && check < 0) || !GradW) {
+		  fminus = log_sum_exp(fminus, mult*log(k) - square(pi_k) * scaling + log(-check));
+		}
+	}
+	if (fplus == NEGATIVE_INFTY) {
+		current_val = fminus;
+	} else if (fminus == NEGATIVE_INFTY) {
+		current_val = fplus;
+	} else if (fplus > fminus) {
+		current_val = log_diff_exp(fplus, fminus);
+	} else if (fplus < fminus) {
+		current_val = log_diff_exp(fminus, fplus);
+	} else {
+		current_val = NEGATIVE_INFTY;
+	}
+	current_sign = (fplus < fminus)? -1: 1;
   }
   return std::make_pair(current_val, current_sign);
 }
@@ -280,7 +332,7 @@ inline Scalar wiener5_density(const T_y& y, const T_a& a, const T_v& v_value,
   const Scalar n_terms_small_t
       = wiener5_n_terms_small_t<true, false, Scalar>(y, a, w_value, error);
   const Scalar n_terms_large_t
-      = wiener5_n_terms_largel_t<true, false, Scalar>(y, a, w_value, error);
+      = wiener5_n_terms_large_t<true, false, Scalar>(y, a, w_value, error);
 
   auto res = wiener5_log_sum_exp<true, false, Scalar>(
                  y, a, w_value, n_terms_small_t, n_terms_large_t)
@@ -326,7 +378,7 @@ inline Scalar wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v_value,
   const Scalar n_terms_small_t
       = wiener5_n_terms_small_t<false, false, Scalar>(y, a, w_value, error);
   const Scalar n_terms_large_t
-      = wiener5_n_terms_largel_t<false, false, Scalar>(y, a, w_value, error);
+      = wiener5_n_terms_large_t<false, false, Scalar>(y, a, w_value, error);
   Scalar result;
   int newsign;
   std::forward_as_tuple(result, newsign)
@@ -383,7 +435,7 @@ inline Scalar wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v_value,
   const Scalar n_terms_small_t
       = wiener5_n_terms_small_t<false, false, Scalar>(y, a, w_value, error);
   const Scalar n_terms_large_t
-      = wiener5_n_terms_largel_t<false, false, Scalar>(y, a, w_value, error);
+      = wiener5_n_terms_large_t<false, false, Scalar>(y, a, w_value, error);
   Scalar result;
   int newsign;
   std::forward_as_tuple(result, newsign)
@@ -471,7 +523,7 @@ inline Scalar wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
   const Scalar n_terms_small_t
       = wiener5_n_terms_small_t<false, true, Scalar>(y, a, w_value, error);
   const Scalar n_terms_large_t
-      = wiener5_n_terms_largel_t<false, true, Scalar>(y, a, w_value, error);
+      = wiener5_n_terms_large_t<false, true, Scalar>(y, a, w_value, error);
   Scalar result;
   int newsign;
   std::forward_as_tuple(result, newsign)
@@ -492,6 +544,7 @@ inline Scalar wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
   }
   return WrtLog ? ans * exp(log_density) : ans;
 }
+
 
 /**
  * Calculate the derivative of the wiener5 density w.r.t. 'sv'
@@ -690,13 +743,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv> wiener5_lpdf(
     // Calculate 4-parameter model without inter-trial variabilities (if
     // sv_vec[i] == 0) or 5-parameter model with inter-trial variability in
     // drift rate (if sv_vec[i] != 0)
+	
     const T_partials_return y_value = y_vec.val(i);
     const T_partials_return a_value = a_vec.val(i);
     const T_partials_return t0_value = t0_vec.val(i);
     const T_partials_return w_value = w_vec.val(i);
     const T_partials_return v_value = v_vec.val(i);
     const T_partials_return sv_value = sv_vec.val(i);
-
+   
     T_partials_return l_density = internal::estimate_with_err_check<
         T_partials_return, 5, false, 0, false>(
         [&](auto&&... args) {
