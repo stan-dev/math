@@ -44,7 +44,7 @@ inline void matrix_cl<T>::zeros_strict_tri() try {
     return;
   }
   this->view_ = both(this->view_, invert(matrix_view));
-  cl::CommandQueue cmdQueue = opencl_context.queue();
+  cl::CommandQueue& cmdQueue = opencl_context.queue();
   opencl_kernels::fill_strict_tri(cl::NDRange(this->rows(), this->cols()),
                                   *this, 0.0, this->rows(), this->cols(),
                                   matrix_view);
