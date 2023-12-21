@@ -41,12 +41,13 @@ TEST(MathMixMatFun, simplexTransform1) {
   v1 << .01, .1, 1;
   simplex_row_constrain_test::expect_simplex_transform(v1);
 }
-/*
+
 TEST(MathMixMatFun, simplexTransform2) {
   Eigen::MatrixXd v2(2, 3);
   v2 << 3, -1, 3, -1, 3, -1;
   simplex_row_constrain_test::expect_simplex_transform(v2);
 }
+
 TEST(MathMixMatFun, simplexTransform3) {
   Eigen::MatrixXd v3(3, 3);
   v3 << 2, 3, -1, 2, 3, -1, 2, 3, -1;
@@ -62,4 +63,4 @@ TEST(MathMixMatFun, simplexTransform5) {
   v5 << 1, -3, 2, 0, -1, 1, -3, 2, 0, -1, 1, -3, 2, 0, -1;
   simplex_row_constrain_test::expect_simplex_transform(v5);
 }
-*/
+
