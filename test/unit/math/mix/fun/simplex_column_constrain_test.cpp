@@ -32,7 +32,7 @@ void expect_simplex_transform(const T& x) {
 }
 }  // namespace simplex_column_constrain_test
 
-TEST(MathMixMatFun, simplexTransform) {
+TEST(MathMixMatFun, simplexColumnTransform) {
   Eigen::MatrixXd v0(0, 0);
   simplex_column_constrain_test::expect_simplex_transform(v0);
 

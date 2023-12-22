@@ -32,33 +32,33 @@ void expect_simplex_transform(const T& x) {
 }
 }  // namespace simplex_row_constrain_test
 
-TEST(MathMixMatFun, simplexTransform0) {
+TEST(MathMixMatFun, simplexRowTransform0) {
   Eigen::MatrixXd v0(0, 0);
   simplex_row_constrain_test::expect_simplex_transform(v0);
 }
-TEST(MathMixMatFun, simplexTransform1) {
+TEST(MathMixMatFun, simplexRowTransform1) {
   Eigen::MatrixXd v1(1, 3);
   v1 << .01, .1, 1;
   simplex_row_constrain_test::expect_simplex_transform(v1);
 }
 
-TEST(MathMixMatFun, simplexTransform2) {
+TEST(MathMixMatFun, simplexRowTransform2) {
   Eigen::MatrixXd v2(2, 3);
   v2 << 3, -1, 3, -1, 3, -1;
   simplex_row_constrain_test::expect_simplex_transform(v2);
 }
 
-TEST(MathMixMatFun, simplexTransform3) {
+TEST(MathMixMatFun, simplexRowTransform3) {
   Eigen::MatrixXd v3(3, 3);
   v3 << 2, 3, -1, 2, 3, -1, 2, 3, -1;
   simplex_row_constrain_test::expect_simplex_transform(v3);
 }
-TEST(MathMixMatFun, simplexTransform4) {
+TEST(MathMixMatFun, simplexRowTransform4) {
   Eigen::MatrixXd v4(4, 3);
   v4 << 2, -1, 0, -1.1, 2, -1, 0, -1.1, 2, -1, 0, -1.1;
   simplex_row_constrain_test::expect_simplex_transform(v4);
 }
-TEST(MathMixMatFun, simplexTransform5) {
+TEST(MathMixMatFun, simplexRowTransform5) {
   Eigen::MatrixXd v5(5, 3);
   v5 << 1, -3, 2, 0, -1, 1, -3, 2, 0, -1, 1, -3, 2, 0, -1;
   simplex_row_constrain_test::expect_simplex_transform(v5);
