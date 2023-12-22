@@ -10,7 +10,8 @@ TEST(prob_transform, simplex_rt0) {
     x(i) = static_cast<double>(i);
   }
   double lp = 0;
-  Matrix<double, Dynamic, Dynamic> x_test = stan::math::simplex_row_constrain<false>(x, lp);
+  Matrix<double, Dynamic, Dynamic> x_test
+      = stan::math::simplex_row_constrain<false>(x, lp);
   EXPECT_EQ(lp, 0.0);
   Matrix<double, Dynamic, Dynamic> x_res(4, 5);
   double lp_orig = 0.0;
@@ -19,10 +20,10 @@ TEST(prob_transform, simplex_rt0) {
   }
   EXPECT_EQ(lp_orig, 0.0);
   EXPECT_MATRIX_EQ(x_test, x_res);
-  Matrix<double, Dynamic, Dynamic> x_lp_test = stan::math::simplex_row_constrain<true>(x, lp);
+  Matrix<double, Dynamic, Dynamic> x_lp_test
+      = stan::math::simplex_row_constrain<true>(x, lp);
   for (Eigen::Index i = 0; i < x.cols(); ++i) {
     x_res.row(i) = stan::math::simplex_constrain<true>(x.row(i), lp_orig);
   }
   EXPECT_MATRIX_EQ(x_lp_test, x_res);
-
 }

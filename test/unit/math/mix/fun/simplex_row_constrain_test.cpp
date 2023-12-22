@@ -63,4 +63,3 @@ TEST(MathMixMatFun, simplexTransform5) {
   v5 << 1, -3, 2, 0, -1, 1, -3, 2, 0, -1, 1, -3, 2, 0, -1;
   simplex_row_constrain_test::expect_simplex_transform(v5);
 }
-
