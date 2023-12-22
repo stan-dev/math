@@ -1155,7 +1155,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return this
    */
   inline var_value<T>& operator=(const var_value<T>& other) {
-    return operator= <T>(other);
+    return operator=<T>(other);
   }
 };
 
