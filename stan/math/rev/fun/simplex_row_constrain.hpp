@@ -16,39 +16,39 @@ namespace stan {
 namespace math {
 
 /**
- * Return the simplex corresponding to the specified free vector.
- * A simplex is a vector containing values greater than or equal
- * to 0 that sum to 1.  A vector with (K-1) unconstrained values
- * will produce a simplex of size K.
+ * Return a matrix of simplex columns corresponding to the specified free
+ * matrix. A simplex is a vector containing values greater than or equal to 0
+ * that sum to 1.  A matrix with (N, K - 1) unconstrained values will produce a
+ * matrix with simplexes on the rows of size (N, K).
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam T Type of vector to constrain
- * @param y Free vector input of dimensionality K - 1
- * @return Simplex of dimensionality K
+ * @tparam T Type of matrix to constrain
+ * @param y Free vector input of dimensionality (N, K - 1)
+ * @return Matrix with Simplexes along the rows of dimensionality (N, K)
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto simplex_row_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
-  arena_t<T> arena_y = y;
-  arena_t<Eigen::MatrixXd> arena_z(N, M);
   arena_t<Eigen::MatrixXd> x_val(N, M + 1);
   if (unlikely(N == 0 || M == 0)) {
     return ret_type(x_val);
   }
+  arena_t<T> arena_y = y;
+  arena_t<Eigen::MatrixXd> arena_z(N, M);
   Eigen::Array<double, -1, 1> stick_len = Eigen::Array<double, -1, 1>::Ones(N);
   for (Eigen::Index j = 0; j < M; ++j) {
     double log_N_minus_k = std::log(M - j);
-    arena_z.col(j).array() = inv_logit((arena_y.col(j).val_op().array() - log_N_minus_k).matrix());
+    arena_z.col(j).array()
+        = inv_logit((arena_y.col(j).val_op().array() - log_N_minus_k).matrix());
     x_val.col(j).array() = stick_len * arena_z.col(j).array();
     stick_len -= x_val.col(j).array();
   }
   x_val.col(M).array() = stick_len;
   arena_t<ret_type> arena_x = x_val;
   reverse_pass_callback([arena_y, arena_x, arena_z]() mutable {
-    const Eigen::Index N = arena_y.rows();
     const Eigen::Index M = arena_y.cols();
     auto arena_y_arr = arena_y.array();
     auto arena_x_arr = arena_x.array();
@@ -59,51 +59,52 @@ inline auto simplex_row_constrain(const T& y) {
       arena_x_arr.col(k).adj() -= stick_len_adj_arr;
       stick_len_val_arr += arena_x_arr.col(k).val_op();
       stick_len_adj_arr += arena_x_arr.col(k).adj_op() * arena_z_arr.col(k);
-      arena_y_arr.col(k).adj() += arena_x_arr.adj_op().col(k) * stick_len_val_arr * arena_z_arr.col(k) * (1.0 - arena_z_arr.col(k));
+      arena_y_arr.col(k).adj() += arena_x_arr.adj_op().col(k)
+                                  * stick_len_val_arr * arena_z_arr.col(k)
+                                  * (1.0 - arena_z_arr.col(k));
     }
   });
-
 
   return ret_type(arena_x);
 }
 
 /**
- * Return the simplex corresponding to the specified free vector
+ * Return a matrix of simplex columns corresponding to the specified free matrix
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of the vector to constrain
- * @param y Free vector input of dimensionality N.
+ * @tparam T type of the matrix to constrain
+ * @param y Free matrix input of dimensionality (N, M).
  * @param lp Log probability reference to increment.
- * @return Simplex of dimensionality N + 1.
+ * @return Matrix with simplexes along the rows of dimensionality (N, M + 1).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
-  arena_t<T> arena_y = y;
-  arena_t<Eigen::MatrixXd> arena_z(N, M);
   arena_t<Eigen::MatrixXd> x_val(N, M + 1);
   if (unlikely(N == 0 || M == 0)) {
     return ret_type(x_val);
   }
+  arena_t<T> arena_y = y;
+  arena_t<Eigen::MatrixXd> arena_z(N, M);
   Eigen::Array<double, -1, 1> stick_len = Eigen::Array<double, -1, 1>::Ones(N);
   for (Eigen::Index j = 0; j < M; ++j) {
     double log_N_minus_k = std::log(M - j);
     auto adj_y_k = arena_y.col(j).val_op().array() - log_N_minus_k;
     arena_z.col(j).array() = inv_logit(adj_y_k);
     x_val.col(j).array() = stick_len * arena_z.col(j).array();
-    lp += sum(log(stick_len)) - sum(log1p_exp(-adj_y_k)) - sum(log1p_exp(adj_y_k));
+    lp += sum(log(stick_len)) - sum(log1p_exp(-adj_y_k))
+          - sum(log1p_exp(adj_y_k));
     stick_len -= x_val.col(j).array();
   }
   x_val.col(M).array() = stick_len;
   arena_t<ret_type> arena_x = x_val;
   reverse_pass_callback([arena_y, arena_x, arena_z, lp]() mutable {
-    const Eigen::Index N = arena_y.rows();
     const Eigen::Index M = arena_y.cols();
     auto arena_y_arr = arena_y.array();
     auto arena_x_arr = arena_x.array();
@@ -114,13 +115,15 @@ inline auto simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
       const double log_N_minus_k = std::log(M - k);
       arena_x_arr.col(k).adj() -= stick_len_adj;
       stick_len_val += arena_x_arr.col(k).val_op();
-      stick_len_adj += lp.adj() / stick_len_val + arena_x_arr.adj_op().col(k) * arena_z_arr.col(k);
+      stick_len_adj += lp.adj() / stick_len_val
+                       + arena_x_arr.adj_op().col(k) * arena_z_arr.col(k);
       auto adj_y_k = arena_y_arr.col(k).val_op() - log_N_minus_k;
-      arena_y_arr.col(k).adj() += -(lp.adj() * inv_logit(adj_y_k)) + lp.adj() * inv_logit(-adj_y_k) +
-        arena_x_arr.col(k).adj_op() * stick_len_val * arena_z_arr.col(k) * (1.0 - arena_z_arr.col(k));
+      arena_y_arr.col(k).adj()
+          += -(lp.adj() * inv_logit(adj_y_k)) + lp.adj() * inv_logit(-adj_y_k)
+             + arena_x_arr.col(k).adj_op() * stick_len_val * arena_z_arr.col(k)
+                   * (1.0 - arena_z_arr.col(k));
     }
   });
-
 
   return ret_type(arena_x);
 }

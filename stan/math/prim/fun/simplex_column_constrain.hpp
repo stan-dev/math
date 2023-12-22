@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the simplex corresponding to the specified free vector.
+ * Return a matrix with columns as simplex vectors.
  * A simplex is a vector containing values greater than or equal
  * to 0 that sum to 1.  A vector with (K-1) unconstrained values
  * will produce a simplex of size K.
@@ -22,8 +22,8 @@ namespace math {
  * The transform is based on a centered stick-breaking process.
  *
  * @tparam Mat type of the Matrix
- * @param y Free Matrix input of dimensionality K - 1.
- * @return Simplex of dimensionality K.
+ * @param y Free Matrix input of dimensionality (K - 1, M).
+ * @return Matrix with simplex columns of dimensionality (K, M).
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
@@ -39,17 +39,17 @@ inline auto simplex_column_constrain(const Mat& y) {
 }
 
 /**
- * Return the simplex corresponding to the specified free vector
+ * Return a matrix with columns as simplex vectors
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Mat type of the vector
- * @param y Free vector input of dimensionality K - 1.
+ * @tparam Mat type of the Matrix
+ * @param y Free Matrix input of dimensionality (K - 1, M).
  * @param lp Log probability reference to increment.
- * @return Simplex of dimensionality K.
+ * @return Matrix with simplex columns of dimensionality (K, M).
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
@@ -64,7 +64,7 @@ inline auto simplex_column_constrain(const Mat& y, value_type_t<Mat>& lp) {
 }
 
 /**
- * Return the simplex corresponding to the specified free vector. If the
+ * Return a matrix with columns as simplex vectors. If the
  * `Jacobian` parameter is `true`, the log density accumulator is incremented
  * with the log absolute Jacobian determinant of the transform.  All of the
  * transforms are specified with their Jacobians in the *Stan Reference Manual*
@@ -72,12 +72,10 @@ inline auto simplex_column_constrain(const Mat& y, value_type_t<Mat>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Mat A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
- * @param[in] y free vector
+ * @tparam Mat type of the Matrix
+ * @param y Free Matrix input of dimensionality (K - 1, M).
  * @param[in, out] lp log density accumulator
- * @return simplex of dimensionality one greater than `y`
+ * @return Matrix with simplex columns of dimensionality (K, M).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
 auto simplex_column_constrain(const Mat& y, return_type_t<Mat>& lp) {
@@ -89,7 +87,7 @@ auto simplex_column_constrain(const Mat& y, return_type_t<Mat>& lp) {
 }
 
 /**
- * Return the simplex corresponding to the specified free vector. If the
+ * Return a standard vector of matrices with columns as simplex vectors. If the
  * `Jacobian` parameter is `true`, the log density accumulator is incremented
  * with the log absolute Jacobian determinant of the transform.  All of the
  * transforms are specified with their Jacobians in the *Stan Reference Manual*
@@ -99,10 +97,11 @@ auto simplex_column_constrain(const Mat& y, return_type_t<Mat>& lp) {
  * absolute Jacobian determinant of constraining transform
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
- * @return simplex of dimensionality one greater than `y`
+ * @return Standard vector containing matrices with simplex columns of
+ * dimensionality (K, M).
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto simplex_column_constrain(const T& y, return_type_t<T>& lp) {

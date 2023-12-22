@@ -371,9 +371,22 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param other the value to assign
    * @return this
    */
-  template <typename S, require_assignable_t<value_type, S>* = nullptr,
+  template <typename S,
+            require_assignable_t<vari_type,
+                                 typename var_value<S>::vari_type>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
   var_value(const var_value<S>& other) : vi_(other.vi_) {}
+
+  template <typename S,
+            require_not_assignable_t<
+                vari_type, typename var_value<S>::vari_type>* = nullptr,
+            require_constructible_t<vari_type, S>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr>
+  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+    reverse_pass_callback([this_vi = this->vi_, other_vi = other.vi_]() {
+      other_vi->adj_ += this_vi->adj_;
+    });
+  }
 
   /**
    * Construct a `var_value` with a plain type
@@ -1142,7 +1155,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return this
    */
   inline var_value<T>& operator=(const var_value<T>& other) {
-    return operator=<T>(other);
+    return operator= <T>(other);
   }
 };
 

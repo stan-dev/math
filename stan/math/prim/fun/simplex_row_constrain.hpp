@@ -22,78 +22,78 @@ namespace math {
  * The transform is based on a centered stick-breaking process.
  *
  * @tparam Mat type of the Matrix
- * @param y Free Matrix input of dimensionality K - 1.
- * @return Simplex of dimensionality K.
+ * @param y Free Matrix input of dimensionality (N, K - 1).
+ * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
 inline auto simplex_row_constrain(const Mat& y) {
-    // cut & paste simplex_row_constrain(Eigen::Matrix, T) w/o Jacobian
-    auto&& y_ref = to_ref(y);
-    const Eigen::Index N = y_ref.rows();
-    int Km1 = y_ref.cols();
-    plain_type_t<Mat> x(N, Km1 + 1);
-    Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
-    for (Eigen::Index k = 0; k < Km1; ++k) {
-        auto z_k = inv_logit(y_ref.col(k).array() - log(Km1 - k));
-        x.col(k).array() = stick_len * z_k;
-        stick_len -= x.col(k).array();
-    }
-    x.col(Km1).array() = stick_len;
-    return x;
+  auto&& y_ref = to_ref(y);
+  const Eigen::Index N = y_ref.rows();
+  int Km1 = y_ref.cols();
+  plain_type_t<Mat> x(N, Km1 + 1);
+  using eigen_arr = Eigen::Array<scalar_type_t<Mat>, -1, 1>;
+  eigen_arr stick_len = eigen_arr::Constant(N, 1.0);
+  for (Eigen::Index k = 0; k < Km1; ++k) {
+    auto z_k = inv_logit(y_ref.array().col(k) - log(Km1 - k));
+    x.array().col(k) = stick_len * z_k;
+    stick_len -= x.array().col(k);
+  }
+  x.array().col(Km1) = stick_len;
+  return x;
 }
 
 /**
- * Return the simplex corresponding to the specified free vector
+ * Return a matrix with simplex rows corresponding to the specified free matrix
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Mat type of the vector
- * @param y Free vector input of dimensionality K - 1.
+ * @tparam Mat type of the matrix
+ * @param y Free matrix input of dimensionality (N, K - 1).
  * @param lp Log probability reference to increment.
- * @return Simplex of dimensionality K.
+ * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
 inline auto simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
-    // cut & paste simplex_row_constrain(Eigen::Matrix, T) w/o Jacobian
-    auto&& y_ref = to_ref(y);
-    const Eigen::Index N = y_ref.rows();
-    Eigen::Index Km1 = y_ref.cols();
-    plain_type_t<Mat> x(N, Km1 + 1);
-    Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
-    for (Eigen::Index k = 0; k < Km1; ++k) {
-        auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-        auto adj_y_k = (y_ref.col(k).array() + eq_share).eval();
-        auto z_k = inv_logit(adj_y_k);
-        x.col(k).array() = stick_len * z_k;
-        lp += sum(log(stick_len));
-        lp -= sum(log1p_exp(-adj_y_k));
-        lp -= sum(log1p_exp(adj_y_k));
-        stick_len -= x.col(k).array();  // equivalently *= (1 - z_k);
-    }
-    x.col(Km1).array() = stick_len;
-    return x;
+  auto&& y_ref = to_ref(y);
+  const Eigen::Index N = y_ref.rows();
+  Eigen::Index Km1 = y_ref.cols();
+  plain_type_t<Mat> x(N, Km1 + 1);
+  Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len
+      = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
+  for (Eigen::Index k = 0; k < Km1; ++k) {
+    auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
+    auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
+    auto z_k = inv_logit(adj_y_k);
+    x.array().col(k) = stick_len * z_k;
+    lp += sum(log(stick_len));
+    lp -= sum(log1p_exp(-adj_y_k));
+    lp -= sum(log1p_exp(adj_y_k));
+    stick_len -= x.array().col(k);  // equivalently *= (1 - z_k);
+  }
+  x.col(Km1).array() = stick_len;
+  return x;
 }
 
 /**
- * Return the simplex corresponding to the specified free vector. If the
- * `Jacobian` parameter is `true`, the log density accumulator is incremented
- * with the log absolute Jacobian determinant of the transform.  All of the
- * transforms are specified with their Jacobians in the *Stan Reference Manual*
- * chapter Constraint Transforms.
+ * Return a matrix with simplex rows corresponding to the specified free matrix.
+ * If the `Jacobian` parameter is `true`, the log density accumulator is
+ * incremented with the log absolute Jacobian determinant of the transform.  All
+ * of the transforms are specified with their Jacobians in the *Stan Reference
+ * Manual* chapter Constraint Transforms.
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam Mat A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
- * @param[in] y free vector
+ *  and dynamic columns
+ * @param[in] y free matrix
  * @param[in, out] lp log density accumulator
- * @return simplex of dimensionality one greater than `y`
+ * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
 inline auto simplex_row_constrain(const Mat& y, return_type_t<Mat>& lp) {
@@ -115,10 +115,10 @@ inline auto simplex_row_constrain(const Mat& y, return_type_t<Mat>& lp) {
  * absolute Jacobian determinant of constraining transform
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @param[in] y free vector
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @param[in] y free vector with matrices of size (N, K - 1)
  * @param[in, out] lp log density accumulator
- * @return simplex of dimensionality one greater than `y`
+ * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto simplex_row_constrain(const T& y, return_type_t<T>& lp) {
