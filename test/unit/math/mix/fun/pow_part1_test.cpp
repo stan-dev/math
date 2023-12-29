@@ -39,6 +39,7 @@ TEST(mathMixScalFun, pow) {
     return pow(x1, x2);
   };
 
+  stan::test::expect_ad(f, 0.0, 0.0);
   stan::test::expect_ad(f, -0.4, 0.5);
   stan::test::expect_ad(f, 0.5, 0.5);
   stan::test::expect_ad(f, 0.5, 1.0);

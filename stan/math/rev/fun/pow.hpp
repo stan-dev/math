@@ -87,8 +87,8 @@ inline var pow(const Scal1& base, const Scal2& exponent) {
   return make_callback_var(
       std::pow(value_of(base), value_of(exponent)),
       [base, exponent](auto&& vi) mutable {
-        if (value_of(base) == 0.0) {
-          return;  // partials zero, avoids 0 & log(0)
+        if (value_of(base) == 0.0 && value_of(exponent) != 0.0) { 
+          return; // partials zero, avoids 0 & log(0)
         }
         const double vi_mul = vi.adj() * vi.val();
 
