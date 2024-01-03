@@ -66,12 +66,19 @@ using require_any_eigen_matrix_dynamic_t
 /*! @} */
 
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
+/*! \addtogroup eigen_matrix_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_matrix_dynamic */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_matrix_dynamic_vt
     = require_t<container_type_check_base<is_eigen_matrix_dynamic, value_type_t,
                                           TypeCheck, Check...>>;
+/*! @} */
 
 }  // namespace stan
 

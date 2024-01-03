@@ -70,10 +70,20 @@ using require_any_not_vector_like_t
     = require_any_not_t<is_vector_like<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
+
+/*! \ingroup require_std */
+/*! \defgroup vector_like_types vector_like  */
+/*! \addtogroup vector_like_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_vector_like */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_like_vt
     = require_t<container_type_check_base<is_vector_like, value_type_t,
                                           TypeCheck, Check...>>;
+/*! @} */
+
 }  // namespace stan
 #endif

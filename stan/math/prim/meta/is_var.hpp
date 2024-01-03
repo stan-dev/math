@@ -43,19 +43,35 @@ template <typename... Types>
 using require_any_not_var_t = require_any_not_t<is_var<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(var, is_var, require_stan_scalar_real);
+
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup var_types var  */
+/*! \addtogroup var_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_var */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_var_vt = require_t<
     container_type_check_base<is_var, value_type_t, TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_var */
+/*! and any of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_var_vt = require_any_t<
     container_type_check_base<is_var, value_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require all of the types satisfy is_var */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_var_vt = require_all_t<
     container_type_check_base<is_var, value_type_t, TypeCheck, Check>...>;
+/*! @} */
 
+  
 /*! \ingroup require_stan_scalar_real */
 /*! \addtogroup var_types */
 /*! @{ */

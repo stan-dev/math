@@ -107,12 +107,20 @@ using require_all_eigen_col_vector_t
     = require_all_t<is_eigen_col_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_col_vector_types eigen_col_vector  */
+/*! \addtogroup eigen_col_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_col_vector */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_col_vector_vt
     = require_t<container_type_check_base<is_eigen_col_vector, value_type_t,
                                           TypeCheck, Check...>>;
+/*! @} */
+
 
 /** \ingroup type_trait
  * If the input type T has a static comple time constant type
@@ -142,7 +150,6 @@ using require_all_col_vector_t
     = require_all_t<is_col_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
  * has a static member with a value of true. Else this has a static
@@ -162,8 +169,6 @@ using require_eigen_row_vector_t
     = require_t<is_eigen_row_vector<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
-// require_eigens_types);
 /** \ingroup type_trait
  * If the input type T has a static comple time constant type
  * `RowsAtCompileTime` equal to 1 this
@@ -183,7 +188,6 @@ template <typename T>
 using require_row_vector_t = require_t<is_row_vector<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
  * this has a static member with a value of true. Else this has a static
@@ -228,67 +232,108 @@ using require_any_not_eigen_vector_t
     = require_any_not_t<is_eigen_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_vector_types eigen_vector  */
+/*! \addtogroup eigen_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_vector */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vector_vt
     = require_t<container_type_check_base<is_eigen_vector, value_type_t,
                                           TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_eigen_vector or */
+/*! value type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_vector_vt
     = require_not_t<container_type_check_base<is_eigen_vector, value_type_t,
                                               TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_eigen_vector */
+/*! and any of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_eigen_vector_vt
     = require_any_t<container_type_check_base<is_eigen_vector, value_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_eigen_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_eigen_vector_vt
     = require_any_not_t<container_type_check_base<is_eigen_vector, value_type_t,
                                                   TypeCheck, Check>...>;
 
+/*! \brief Require all of the types satisfy is_eigen_vector */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_eigen_vector_vt
     = require_all_t<container_type_check_base<is_eigen_vector, value_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_eigen_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_vt
     = require_all_not_t<container_type_check_base<is_eigen_vector, value_type_t,
                                                   TypeCheck, Check>...>;
 
+/*! \brief Require type satisfies is_eigen_vector */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vector_st
     = require_t<container_type_check_base<is_eigen_vector, scalar_type_t,
                                           TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_eigen_vector */
+/*! or scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_vector_st
     = require_not_t<container_type_check_base<is_eigen_vector, scalar_type_t,
                                               TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_eigen_vector */
+/*! and any scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_eigen_vector_st
     = require_any_t<container_type_check_base<is_eigen_vector, scalar_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_eigen_vector */
+/*! and any scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_eigen_vector_st
     = require_any_not_t<container_type_check_base<
         is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require all of the types does not satisfy is_eigen_vector */
+/*! and all scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_eigen_vector_st
     = require_all_t<container_type_check_base<is_eigen_vector, scalar_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_eigen_vector */
+/*! and none of the scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_st
     = require_all_not_t<container_type_check_base<
         is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
+/*! @} */
+
 
 /**
  * Require `Row` is a row vector and `Col` is a column vector.
@@ -366,54 +411,96 @@ using require_any_not_vector_t
     = require_any_not_t<is_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
+/*! \ingroup require_std */
+/*! \defgroup vector_types vector  */
+/*! \addtogroup vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_vector */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_vt = require_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_vector or */
+/*! value type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_vector_vt = require_not_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_vector */
+/*! and any of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_vector_vt = require_any_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_vector_vt = require_any_not_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require all of the types satisfy is_vector */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_vector_vt = require_all_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_vt = require_all_not_t<
     container_type_check_base<is_vector, value_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require type satisfies is_vector */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_st = require_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_vector */
+/*! or scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_vector_st = require_not_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_vector */
+/*! and any scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_vector_st = require_any_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_vector */
+/*! and any scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_vector_st = require_any_not_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require all of the types does not satisfy is_vector */
+/*! and all scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_vector_st = require_all_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_vector */
+/*! and none of the scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_st = require_all_not_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
+/*! @} */
+
 
 namespace internal {
 
@@ -496,66 +583,108 @@ using require_any_not_std_vector_t
     = require_any_not_t<is_std_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
+
+/*! \ingroup require_std */
+/*! \defgroup std_vector_types std_vector  */
+/*! \addtogroup std_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_std_vector */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_std_vector_vt
     = require_t<container_type_check_base<is_std_vector, value_type_t,
                                           TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_std_vector or */
+/*! value type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_std_vector_vt
     = require_not_t<container_type_check_base<is_std_vector, value_type_t,
                                               TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_std_vector */
+/*! and any of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_std_vector_vt
     = require_any_t<container_type_check_base<is_std_vector, value_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_std_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_std_vector_vt
     = require_any_not_t<container_type_check_base<is_std_vector, value_type_t,
                                                   TypeCheck, Check>...>;
 
+/*! \brief Require all of the types satisfy is_std_vector */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_std_vector_vt
     = require_all_t<container_type_check_base<is_std_vector, value_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_std_vector */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_std_vector_vt
     = require_all_not_t<container_type_check_base<is_std_vector, value_type_t,
                                                   TypeCheck, Check>...>;
 
+/*! \brief Require type satisfies is_std_vector */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_std_vector_st
     = require_t<container_type_check_base<is_std_vector, scalar_type_t,
                                           TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_std_vector */
+/*! or scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_std_vector_st
     = require_not_t<container_type_check_base<is_std_vector, scalar_type_t,
                                               TypeCheck, Check...>>;
 
+/*! \brief Require any of the types satisfy is_std_vector */
+/*! and any scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_std_vector_st
     = require_any_t<container_type_check_base<is_std_vector, scalar_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require at least one of the types does not satisfy is_std_vector */
+/*! and any scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_std_vector_st
     = require_any_not_t<container_type_check_base<is_std_vector, scalar_type_t,
                                                   TypeCheck, Check>...>;
 
+/*! \brief Require all of the types does not satisfy is_std_vector */
+/*! and all scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_std_vector_st
     = require_all_t<container_type_check_base<is_std_vector, scalar_type_t,
                                               TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_std_vector */
+/*! and none of the scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_std_vector_st
     = require_all_not_t<container_type_check_base<is_std_vector, scalar_type_t,
                                                   TypeCheck, Check>...>;
+/*! @} */
 
 }  // namespace stan
 #endif

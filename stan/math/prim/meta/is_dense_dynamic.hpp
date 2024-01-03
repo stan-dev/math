@@ -53,8 +53,6 @@ using require_all_dense_dynamic_t
     = require_all_t<is_dense_dynamic<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(dense_dynamic, is_dense_dynamic,
-// require_eigens_types);
 }  // namespace stan
 
 #endif

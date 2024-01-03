@@ -44,18 +44,33 @@ using require_all_not_matrix_t
     = require_all_not_t<is_matrix<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(matrix, is_matrix, require_eigens_types);
+
+/*! \ingroup require_eigens_types */
+/*! \defgroup matrix_types matrix  */
+/*! \addtogroup matrix_types */
+/*! @{ */
+
+/*! \brief Require any of the types satisfy is_matrix */
+/*! and any scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_matrix_st = require_any_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require all of the types does not satisfy is_matrix */
+/*! and all scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_matrix_st = require_all_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;
 
+/*! \brief Require none of the types satisfy is_matrix */
+/*! and none of the scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_matrix_st = require_all_not_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;
+/*! @} */
 
 }  // namespace stan
 

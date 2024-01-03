@@ -33,8 +33,6 @@ using require_eigen_sparse_base_t
     = require_t<is_eigen_sparse_base<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_sparse_base, is_eigen_sparse_base,
-// require_eigens_types);
 }  // namespace stan
 
 #endif

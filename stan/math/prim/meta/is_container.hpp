@@ -51,17 +51,28 @@ using require_all_not_container_t
     = require_all_not_t<is_container<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(container,
-// is_container, general_types);
+
+/*! \ingroup general_types */
+/*! \defgroup container_types container  */
+/*! \addtogroup container_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_container */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_container_st
     = require_t<container_type_check_base<is_container, scalar_type_t,
                                           TypeCheck, Check...>>;
 
+/*! \brief Require type does not satisfy is_container */
+/*! or scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_container_st
     = require_not_t<container_type_check_base<is_container, scalar_type_t,
                                               TypeCheck, Check...>>;
+/*! @} */
 
 }  // namespace stan
 

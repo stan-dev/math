@@ -32,8 +32,6 @@ using require_eigen_dense_base_t
     = require_t<is_eigen_dense_base<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_CONTAINER(eigen_dense_base, is_eigen_dense_base,
-// require_eigens_types);
 }  // namespace stan
 
 #endif
