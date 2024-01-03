@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline auto simplex_row_constrain(const Mat& y) {
+inline plain_type_t<Mat> simplex_row_constrain(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   int Km1 = y_ref.cols();
@@ -58,7 +58,7 @@ inline auto simplex_row_constrain(const Mat& y) {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline auto simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   Eigen::Index Km1 = y_ref.cols();
@@ -66,13 +66,11 @@ inline auto simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
   Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len
       = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
-    auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
+    const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
     auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
     auto z_k = inv_logit(adj_y_k);
     x.array().col(k) = stick_len * z_k;
-    lp += sum(log(stick_len));
-    lp -= sum(log1p_exp(-adj_y_k));
-    lp -= sum(log1p_exp(adj_y_k));
+    lp += -sum(log1p_exp(adj_y_k)) - sum(log1p_exp(-adj_y_k)) + sum(log(stick_len));
     stick_len -= x.array().col(k);  // equivalently *= (1 - z_k);
   }
   x.col(Km1).array() = stick_len;
@@ -96,7 +94,7 @@ inline auto simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline auto simplex_row_constrain(const Mat& y, return_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, return_type_t<Mat>& lp) {
   if (Jacobian) {
     return simplex_row_constrain(y, lp);
   } else {

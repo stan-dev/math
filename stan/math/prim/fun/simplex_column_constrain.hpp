@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline auto simplex_column_constrain(const Mat& y) {
+inline plain_type_t<Mat> simplex_column_constrain(const Mat& y) {
   // cut & paste simplex_column_constrain(Eigen::Matrix, T) w/o Jacobian
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
@@ -53,7 +53,7 @@ inline auto simplex_column_constrain(const Mat& y) {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline auto simplex_column_constrain(const Mat& y, value_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_column_constrain(const Mat& y, value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
   plain_type_t<Mat> ret(y_ref.rows() + 1, M);
@@ -78,7 +78,7 @@ inline auto simplex_column_constrain(const Mat& y, value_type_t<Mat>& lp) {
  * @return Matrix with simplex columns of dimensionality (K, M).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-auto simplex_column_constrain(const Mat& y, return_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_column_constrain(const Mat& y, return_type_t<Mat>& lp) {
   if (Jacobian) {
     return simplex_column_constrain(y, lp);
   } else {

@@ -377,6 +377,17 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_all_plain_type_t<T, S>* = nullptr>
   var_value(const var_value<S>& other) : vi_(other.vi_) {}
 
+  /**
+   * Construct from a `var_value` with different inner `vari_type`
+   * @tparam S An eigen type that is not the same as `T`, but can be assigned to
+   * `vari_value<T>`.
+   * @param other the value to assign
+   * @note This constructor is for types such as
+   * `vari_value<Matrix<double, -1, 1>>` and
+   * `vari_value<Matrix<double, 1, -1>>`. As pointers those are not
+   * assignable to one another, but their inner matrix types are. So the `var`
+   * has to make a new `vari` and assign the inner matrices to that new `vari`.
+   */
   template <typename S,
             require_not_assignable_t<
                 vari_type, typename var_value<S>::vari_type>* = nullptr,
