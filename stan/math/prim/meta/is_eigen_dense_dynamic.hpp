@@ -39,7 +39,6 @@ using require_all_eigen_dense_dynamic_t
     = require_all_t<is_eigen_dense_dynamic<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_dense_dynamic_types eigen_dense_dynamic  */
 /*! \addtogroup eigen_dense_dynamic_types */

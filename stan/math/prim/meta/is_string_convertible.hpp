@@ -45,7 +45,8 @@ template <typename... Types>
 using require_all_not_string_convertible_t
     = require_all_not_t<is_string_convertible<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy is_string_convertible */
+/*! \brief Require at least one of the types do not satisfy
+ * is_string_convertible */
 template <typename... Types>
 using require_any_not_string_convertible_t
     = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;

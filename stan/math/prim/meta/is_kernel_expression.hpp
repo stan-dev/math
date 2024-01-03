@@ -133,7 +133,8 @@ using require_not_rev_kernel_expression_t
 /*! @} */
 
 /*! \ingroup opencl_kernel_generator */
-/*! \defgroup prim_or_rev_kernel_expression_types prim_or_rev_kernel_expression  */
+/*! \defgroup prim_or_rev_kernel_expression_types prim_or_rev_kernel_expression
+ */
 /*! \addtogroup prim_or_rev_kernel_expression_types */
 /*! @{ */
 
@@ -144,7 +145,8 @@ using require_all_prim_or_rev_kernel_expression_t
 /*! @} */
 
 /*! \ingroup opencl_kernel_generator */
-/*! \defgroup nonscalar_prim_or_rev_kernel_expression_types nonscalar_prim_or_rev_kernel_expression  */
+/*! \defgroup nonscalar_prim_or_rev_kernel_expression_types
+ * nonscalar_prim_or_rev_kernel_expression  */
 /*! \addtogroup nonscalar_prim_or_rev_kernel_expression_types */
 /*! @{ */
 
@@ -153,22 +155,26 @@ template <typename T>
 using require_nonscalar_prim_or_rev_kernel_expression_t
     = require_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require type does not satisfy
+ * is_nonscalar_prim_or_rev_kernel_expression */
 template <typename T>
 using require_not_nonscalar_prim_or_rev_kernel_expression_t = require_not_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require all of the types satisfy
+ * is_nonscalar_prim_or_rev_kernel_expression */
 template <typename... Types>
 using require_all_nonscalar_prim_or_rev_kernel_expression_t = require_all_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require any of the types satisfy
+ * is_nonscalar_prim_or_rev_kernel_expression */
 template <typename... Types>
 using require_any_nonscalar_prim_or_rev_kernel_expression_t = require_any_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require none of the types satisfy
+ * is_nonscalar_prim_or_rev_kernel_expression */
 template <typename... Types>
 using require_all_not_nonscalar_prim_or_rev_kernel_expression_t
     = require_all_not_t<

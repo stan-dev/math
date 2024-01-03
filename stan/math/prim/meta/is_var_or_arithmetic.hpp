@@ -59,7 +59,8 @@ template <typename... Types>
 using require_all_not_var_or_arithmetic_t
     = require_all_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy is_var_or_arithmetic */
+/*! \brief Require at least one of the types do not satisfy is_var_or_arithmetic
+ */
 template <typename... Types>
 using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;

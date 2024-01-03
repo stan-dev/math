@@ -59,7 +59,6 @@ using require_any_not_matrix_cl_t
     = require_any_not_t<is_matrix_cl<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup matrix_cl_group */
 /*! \defgroup matrix_cl_types matrix_cl  */
 /*! \addtogroup matrix_cl_types */
@@ -115,7 +114,6 @@ using require_matrix_cl_st
     = require_t<container_type_check_base<is_matrix_cl, scalar_type_t,
                                           TypeCheck, Check...>>;
 /*! @} */
-
 
 namespace internal {
 

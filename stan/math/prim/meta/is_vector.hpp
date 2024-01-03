@@ -121,7 +121,6 @@ using require_eigen_col_vector_vt
                                           TypeCheck, Check...>>;
 /*! @} */
 
-
 /** \ingroup type_trait
  * If the input type T has a static comple time constant type
  * `ColsAtCompileTime` equal to 1 this
@@ -334,7 +333,6 @@ using require_all_not_eigen_vector_st
         is_eigen_vector, scalar_type_t, TypeCheck, Check>...>;
 /*! @} */
 
-
 /**
  * Require `Row` is a row vector and `Col` is a column vector.
  * @ingroup require_eigen_types
@@ -501,7 +499,6 @@ using require_all_not_vector_st = require_all_not_t<
     container_type_check_base<is_vector, scalar_type_t, TypeCheck, Check>...>;
 /*! @} */
 
-
 namespace internal {
 
 /** \ingroup type_trait
@@ -582,7 +579,6 @@ template <typename... Types>
 using require_any_not_std_vector_t
     = require_any_not_t<is_std_vector<std::decay_t<Types>>...>;
 /*! @} */
-
 
 /*! \ingroup require_std */
 /*! \defgroup std_vector_types std_vector  */

@@ -42,7 +42,6 @@ using require_any_not_same_t
     = require_any_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_std */
 /*! \addtogroup same_types */
 /*! @{ */
@@ -58,13 +57,15 @@ using require_not_st_same
     = require_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
                                  scalar_type_t<std::decay_t<S>>>>;
 
-/*! \brief All scalar types of `T` and all of the `Types` satisfy std::is_same */
+/*! \brief All scalar types of `T` and all of the `Types` satisfy std::is_same
+ */
 template <typename T, typename... Types>
 using require_all_st_same
     = require_all_t<std::is_same<scalar_type_t<std::decay_t<T>>,
                                  scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the scalar types `Types` and `T` do not satisfy std::is_same */
+/*! \brief Any of the scalar types `Types` and `T` do not satisfy std::is_same
+ */
 template <typename T, typename... Types>
 using require_any_not_st_same
     = require_any_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
@@ -108,7 +109,6 @@ using require_any_not_convertible_t = require_any_not_t<
     std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_std */
 /*! \defgroup assignable_types assignable  */
 /*! \addtogroup assignable_types */
@@ -120,41 +120,46 @@ using require_assignable_t
     = require_t<std::is_assignable<std::decay_t<T>, std::decay_t<S>>>;
 /*! @} */
 
-
 /*! \ingroup require_std */
 /*! \addtogroup assignable_types */
 /*! @{ */
 
-/*! \brief Require that value types of `T` and `S` satisfies std::is_assignable */
+/*! \brief Require that value types of `T` and `S` satisfies std::is_assignable
+ */
 template <typename T, typename S>
 using require_st_assignable
     = require_t<std::is_assignable<scalar_type_t<std::decay_t<T>>,
                                    scalar_type_t<std::decay_t<S>>>>;
 
-/*! \brief Require scalar types of `T` and `S` does not satisfy std::is_assignable */
+/*! \brief Require scalar types of `T` and `S` does not satisfy
+ * std::is_assignable */
 template <typename T, typename S>
 using require_not_st_assignable
     = require_not_t<std::is_assignable<scalar_type_t<std::decay_t<T>>,
                                        scalar_type_t<std::decay_t<S>>>>;
 
-/*! \brief All scalar types of `T` and all of the `Types` satisfy std::is_assignable */
+/*! \brief All scalar types of `T` and all of the `Types` satisfy
+ * std::is_assignable */
 template <typename T, typename... Types>
 using require_all_st_assignable
     = require_all_t<std::is_assignable<scalar_type_t<std::decay_t<T>>,
                                        scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the scalar types of `Types` and `T` satisfy std::is_assignable */
+/*! \brief Any of the scalar types of `Types` and `T` satisfy std::is_assignable
+ */
 template <typename T, typename... Types>
 using require_any_st_assignable
     = require_any_t<std::is_assignable<scalar_type_t<std::decay_t<T>>,
                                        scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief None of the scalar types of `Types` and `T` satisfy std::is_assignable */
+/*! \brief None of the scalar types of `Types` and `T` satisfy
+ * std::is_assignable */
 template <typename T, typename... Types>
 using require_all_not_st_assignable = require_all_not_t<std::is_assignable<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the scalar types `Types` and `T` do not satisfy std::is_assignable */
+/*! \brief Any of the scalar types `Types` and `T` do not satisfy
+ * std::is_assignable */
 template <typename T, typename... Types>
 using require_any_not_st_assignable = require_any_not_t<std::is_assignable<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
@@ -171,24 +176,28 @@ using require_not_vt_assignable
     = require_not_t<std::is_assignable<value_type_t<std::decay_t<T>>,
                                        value_type_t<std::decay_t<S>>>>;
 
-/*! \brief Value types of `T` and all of the `Types` satisfy std::is_assignable */
+/*! \brief Value types of `T` and all of the `Types` satisfy std::is_assignable
+ */
 template <typename T, typename... Types>
 using require_all_vt_assignable
     = require_all_t<std::is_assignable<value_type_t<std::decay_t<T>>,
                                        value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the value types of `Types` and `T` satisfy std::is_assignable */
+/*! \brief Any of the value types of `Types` and `T` satisfy std::is_assignable
+ */
 template <typename T, typename... Types>
 using require_any_vt_assignable
     = require_any_t<std::is_assignable<value_type_t<std::decay_t<T>>,
                                        value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief None of the value types of `Types` and `T` satisfy std::is_assignable */
+/*! \brief None of the value types of `Types` and `T` satisfy std::is_assignable
+ */
 template <typename T, typename... Types>
 using require_all_not_vt_assignable = require_all_not_t<std::is_assignable<
     value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the value types `Types` and `T` do not satisfy std::is_assignable */
+/*! \brief Any of the value types `Types` and `T` do not satisfy
+ * std::is_assignable */
 template <typename T, typename... Types>
 using require_any_not_vt_assignable = require_any_not_t<std::is_assignable<
     value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
@@ -209,35 +218,41 @@ using require_constructible_t
 /*! \addtogroup constructible_types */
 /*! @{ */
 
-/*! \brief Require that value types of `T` and `S` satisfies std::is_constructible */
+/*! \brief Require that value types of `T` and `S` satisfies
+ * std::is_constructible */
 template <typename T, typename S>
 using require_st_constructible
     = require_t<std::is_constructible<scalar_type_t<std::decay_t<T>>,
                                       scalar_type_t<std::decay_t<S>>>>;
 
-/*! \brief Require scalar types of `T` and `S` does not satisfy std::is_constructible */
+/*! \brief Require scalar types of `T` and `S` does not satisfy
+ * std::is_constructible */
 template <typename T, typename S>
 using require_not_st_constructible
     = require_not_t<std::is_constructible<scalar_type_t<std::decay_t<T>>,
                                           scalar_type_t<std::decay_t<S>>>>;
 
-/*! \brief All scalar types of `T` and all of the `Types` satisfy std::is_constructible */
+/*! \brief All scalar types of `T` and all of the `Types` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_all_st_constructible = require_all_t<std::is_constructible<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the scalar types of `Types` and `T` satisfy std::is_constructible */
+/*! \brief Any of the scalar types of `Types` and `T` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_any_st_constructible = require_any_t<std::is_constructible<
     scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief None of the scalar types of `Types` and `T` satisfy std::is_constructible */
+/*! \brief None of the scalar types of `Types` and `T` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_all_not_st_constructible
     = require_all_not_t<std::is_constructible<
         scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the scalar types `Types` and `T` do not satisfy std::is_constructible */
+/*! \brief Any of the scalar types `Types` and `T` do not satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_any_not_st_constructible
     = require_any_not_t<std::is_constructible<
@@ -255,29 +270,32 @@ using require_not_vt_constructible
     = require_not_t<std::is_constructible<value_type_t<std::decay_t<T>>,
                                           value_type_t<std::decay_t<S>>>>;
 
-/*! \brief Value types of `T` and all of the `Types` satisfy std::is_constructible */
+/*! \brief Value types of `T` and all of the `Types` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_all_vt_constructible = require_all_t<std::is_constructible<
     value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the value types of `Types` and `T` satisfy std::is_constructible */
+/*! \brief Any of the value types of `Types` and `T` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_any_vt_constructible = require_any_t<std::is_constructible<
     value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief None of the value types of `Types` and `T` satisfy std::is_constructible */
+/*! \brief None of the value types of `Types` and `T` satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_all_not_vt_constructible
     = require_all_not_t<std::is_constructible<
         value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Any of the value types `Types` and `T` do not satisfy std::is_constructible */
+/*! \brief Any of the value types `Types` and `T` do not satisfy
+ * std::is_constructible */
 template <typename T, typename... Types>
 using require_any_not_vt_constructible
     = require_any_not_t<std::is_constructible<
         value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 /*! @} */
-
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup arithmetic_types arithmetic  */
@@ -308,12 +326,12 @@ template <typename... Types>
 using require_all_not_arithmetic_t
     = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy std::is_arithmetic */
+/*! \brief Require at least one of the types do not satisfy std::is_arithmetic
+ */
 template <typename... Types>
 using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 /*! @} */
-
 
 /*! \ingroup require_stan_scalar_real */
 /*! \addtogroup arithmetic_types */
@@ -324,7 +342,8 @@ template <typename... Types>
 using require_all_vt_arithmetic
     = require_all_t<std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Require at least one of the value types do not satisfy std::is_arithmetic */
+/*! \brief Require at least one of the value types do not satisfy
+ * std::is_arithmetic */
 template <typename... Types>
 using require_any_not_vt_arithmetic = require_any_not_t<
     std::is_arithmetic<value_type_t<std::decay_t<Types>>>...>;

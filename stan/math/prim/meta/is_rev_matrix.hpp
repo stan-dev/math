@@ -14,7 +14,6 @@ namespace stan {
 template <typename T, typename = void>
 struct is_rev_matrix : std::false_type {};
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup rev_matrix_types rev_matrix  */
 /*! \addtogroup rev_matrix_types */

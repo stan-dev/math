@@ -22,7 +22,6 @@ struct is_eigen_matrix_base
     : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {
 };
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_matrix_base_types eigen_matrix_base  */
 /*! \addtogroup eigen_matrix_base_types */

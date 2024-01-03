@@ -44,7 +44,6 @@ using require_all_not_matrix_t
     = require_all_not_t<is_matrix<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup matrix_types matrix  */
 /*! \addtogroup matrix_types */

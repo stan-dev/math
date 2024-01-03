@@ -62,7 +62,6 @@ template <class... Checks>
 using require_any_not_t
     = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
-
 /**
  * Used as the base for checking whether a type is a container with
  * an underlying scalar type

@@ -44,7 +44,6 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_types eigen  */
 /*! \addtogroup eigen_types */
@@ -76,7 +75,6 @@ template <typename... Types>
 using require_any_not_eigen_t
     = require_any_not_t<is_eigen<std::decay_t<Types>>...>;
 /*! @} */
-
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_types eigen  */
@@ -167,7 +165,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_st = require_all_not_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
 /*! @} */
-
 
 /**
  * Check if a type is derived from `Eigen::ArrayBase`

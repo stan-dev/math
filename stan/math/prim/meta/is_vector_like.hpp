@@ -70,7 +70,6 @@ using require_any_not_vector_like_t
     = require_any_not_t<is_vector_like<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_std */
 /*! \defgroup vector_like_types vector_like  */
 /*! \addtogroup vector_like_types */

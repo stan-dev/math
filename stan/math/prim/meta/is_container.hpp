@@ -51,7 +51,6 @@ using require_all_not_container_t
     = require_all_not_t<is_container<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup general_types */
 /*! \defgroup container_types container  */
 /*! \addtogroup container_types */

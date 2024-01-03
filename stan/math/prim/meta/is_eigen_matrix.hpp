@@ -65,7 +65,6 @@ using require_any_eigen_matrix_dynamic_t
     = require_any_t<is_eigen_matrix_dynamic<std::decay_t<Types>>...>;
 /*! @} */
 
-
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
 /*! \addtogroup eigen_matrix_dynamic_types */

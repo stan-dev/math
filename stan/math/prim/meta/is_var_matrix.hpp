@@ -75,7 +75,6 @@ using require_not_var_col_vector_t
     = require_not_t<is_var_col_vector<std::decay_t<T>>>;
 /*! @} */
 
-
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
