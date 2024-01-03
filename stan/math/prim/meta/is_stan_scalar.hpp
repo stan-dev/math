@@ -64,23 +64,30 @@ using require_any_not_stan_scalar_t
     = require_any_not_t<is_stan_scalar<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup stan_scalar_types */
+/*! @{ */
+
+/*! \brief Require value type does not satisfy is_stan_scalar */
 template <typename T>
 using require_not_vt_stan_scalar
     = require_not_t<is_stan_scalar<value_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type satisfies is_stan_scalar */
 template <typename T>
 using require_st_stan_scalar
     = require_t<is_stan_scalar<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type does not satisfy is_stan_scalar */
 template <typename T>
 using require_not_st_stan_scalar
     = require_not_t<is_stan_scalar<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require all of the scalar types satisfy is_stan_scalar */
 template <typename... Types>
 using require_all_st_stan_scalar
     = require_all_t<is_stan_scalar<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 

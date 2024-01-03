@@ -82,19 +82,24 @@ using require_all_not_complex_t
     = require_all_not_t<is_complex<std::decay_t<Types>>...>;
 /*! @} */
 
+/*! \ingroup require_stan_scalar_complex */
+/*! \addtogroup complex_types */
+/*! @{ */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex,
-// require_stan_scalar_complex);
+/*! \brief Require value type satisfies is_complex */
 template <typename T>
 using require_vt_complex = require_t<is_complex<value_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require value type does not satisfy is_complex */
 template <typename T>
 using require_not_vt_complex
     = require_not_t<is_complex<value_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type does not satisfy is_complex */
 template <typename T>
 using require_not_st_complex
     = require_not_t<is_complex<scalar_type_t<std::decay_t<T>>>>;
+/*! @} */
 
 /**
  * If the `value_type` of the type `T` is of type

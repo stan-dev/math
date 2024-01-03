@@ -25,7 +25,5 @@ using require_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
 
 // STAN_ADD_REQUIRE_CONTAINER(arena_matrix, is_arena_matrix,
 // require_eigens_types);
-// STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix,
-// require_eigens_types);
 }  // namespace stan
 #endif

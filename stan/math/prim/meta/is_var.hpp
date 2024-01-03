@@ -56,36 +56,48 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_var_vt = require_all_t<
     container_type_check_base<is_var, value_type_t, TypeCheck, Check>...>;
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var, is_var, require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup var_types */
+/*! @{ */
+
+/*! \brief Require value type does not satisfy is_var */
 template <typename T>
 using require_not_vt_var = require_not_t<is_var<value_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require any of the value types satisfy is_var */
 template <typename... Types>
 using require_any_vt_var
     = require_any_t<is_var<value_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require none of the value types satisfy is_var */
 template <typename... Types>
 using require_all_not_vt_var
     = require_all_not_t<is_var<value_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require scalar type satisfies is_var */
 template <typename T>
 using require_st_var = require_t<is_var<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type does not satisfy is_var */
 template <typename T>
 using require_not_st_var
     = require_not_t<is_var<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require all of the scalar types satisfy is_var */
 template <typename... Types>
 using require_all_st_var
     = require_all_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require any of the scalar types satisfy is_var */
 template <typename... Types>
 using require_any_st_var
     = require_any_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require none of the scalar types satisfy is_var */
 template <typename... Types>
 using require_all_not_st_var
     = require_all_not_t<is_var<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 template <typename T>
 struct value_type<T, std::enable_if_t<is_var<T>::value>> {

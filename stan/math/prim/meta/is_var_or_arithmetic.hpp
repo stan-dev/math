@@ -65,11 +65,15 @@ using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_or_arithmetic, is_var_or_arithmetic,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup var_or_arithmetic_types */
+/*! @{ */
+
+/*! \brief Require all of the scalar types satisfy is_var_or_arithmetic */
 template <typename... Types>
 using require_all_st_var_or_arithmetic = require_all_t<
     is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 #endif

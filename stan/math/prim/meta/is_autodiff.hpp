@@ -53,27 +53,35 @@ using require_any_not_autodiff_t
     = require_any_not_t<is_autodiff<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(autodiff, is_autodiff,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup autodiff_types */
+/*! @{ */
+
+/*! \brief Require value type does not satisfy is_autodiff */
 template <typename T>
 using require_not_vt_autodiff
     = require_not_t<is_autodiff<value_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require none of the value types satisfy is_autodiff */
 template <typename... Types>
 using require_all_not_vt_autodiff
     = require_all_not_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require scalar type satisfies is_autodiff */
 template <typename T>
 using require_st_autodiff
     = require_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type does not satisfy is_autodiff */
 template <typename T>
 using require_not_st_autodiff
     = require_not_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require any of the scalar types satisfy is_autodiff */
 template <typename... Types>
 using require_any_st_autodiff
     = require_any_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 

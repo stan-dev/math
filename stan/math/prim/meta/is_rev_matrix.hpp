@@ -45,8 +45,6 @@ using require_all_not_rev_matrix_t
 /*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(rev_matrix, is_rev_matrix, require_eigens_types);
-// STAN_ADD_REQUIRE_UNARY_INNER(rev_matrix, is_rev_matrix,
-// require_eigens_types);
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
  * if the type is either derived from `Eigen::EigenBase` with a `Scalar`
@@ -69,8 +67,6 @@ using require_rev_col_vector_t = require_t<is_rev_col_vector<std::decay_t<T>>>;
 
 // STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector,
 // require_eigens_types);
-// STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector,
-// require_eigens_types);
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
  * if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
@@ -82,8 +78,6 @@ template <typename T, typename = void>
 struct is_rev_row_vector : std::false_type {};
 
 // STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector,
-// require_eigens_types);
-// STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector,
 // require_eigens_types);
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
@@ -106,7 +100,5 @@ using require_rev_vector_t = require_t<is_rev_vector<std::decay_t<T>>>;
 /*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(rev_vector, is_rev_vector, require_eigens_types);
-// STAN_ADD_REQUIRE_UNARY_INNER(rev_vector, is_rev_vector,
-// require_eigens_types);
 }  // namespace stan
 #endif

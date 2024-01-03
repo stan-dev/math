@@ -48,8 +48,6 @@ using require_all_not_var_matrix_t
     = require_all_not_t<is_var_matrix<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_matrix, is_var_matrix,
-// require_eigens_types);
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
@@ -78,8 +76,6 @@ using require_not_var_col_vector_t
 /*! @} */
 
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_col_vector, is_var_col_vector,
-// require_eigens_types);
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
@@ -102,8 +98,6 @@ template <typename T>
 using require_var_row_vector_t = require_t<is_var_row_vector<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_row_vector, is_var_row_vector,
-// require_eigens_types);
 /**
  * Check if a type is a `var_value` whose `value_type` is derived from
  * `Eigen::EigenBase`. And the type must have a compile time constant number
@@ -136,8 +130,6 @@ using require_any_var_vector_t
     = require_any_t<is_var_vector<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_vector, is_var_vector,
-// require_eigens_types);
 /**
  * Check if any types in a parameter pack are a `var_value` whose `value_type`
  *  is derived from `Eigen::EigenBase`

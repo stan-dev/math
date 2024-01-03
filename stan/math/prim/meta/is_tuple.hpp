@@ -42,7 +42,6 @@ using require_all_not_tuple_t
     = require_all_not_t<is_tuple<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(tuple, is_tuple, require_std);
 }  // namespace math
 }  // namespace stan
 

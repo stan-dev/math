@@ -37,7 +37,5 @@ using require_any_not_plain_type_t
     = require_any_not_t<is_plain_type<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(plain_type, is_plain_type,
-// require_eigens_types);
 }  // namespace stan
 #endif

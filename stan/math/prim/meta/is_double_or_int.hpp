@@ -53,7 +53,5 @@ using require_any_not_double_or_int_t
     = require_any_not_t<is_double_or_int<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(double_or_int, is_double_or_int,
-// require_stan_scalar_real);
 }  // namespace stan
 #endif

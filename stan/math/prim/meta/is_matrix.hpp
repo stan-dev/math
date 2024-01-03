@@ -44,7 +44,6 @@ using require_all_not_matrix_t
     = require_all_not_t<is_matrix<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
 // STAN_ADD_REQUIRE_CONTAINER(matrix, is_matrix, require_eigens_types);
 template <template <class...> class TypeCheck, class... Check>
 using require_any_matrix_st = require_any_t<

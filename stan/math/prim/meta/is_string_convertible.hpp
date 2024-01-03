@@ -51,8 +51,6 @@ using require_any_not_string_convertible_t
     = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(string_convertible, is_string_convertible,
-// require_std);
 }  // namespace stan
 
 #endif

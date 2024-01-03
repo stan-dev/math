@@ -29,8 +29,6 @@ using require_var_dense_dynamic_t
     = require_t<is_var_dense_dynamic<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(var_dense_dynamic, is_var_dense_dynamic,
-// require_eigens_types);
 }  // namespace stan
 
 #endif

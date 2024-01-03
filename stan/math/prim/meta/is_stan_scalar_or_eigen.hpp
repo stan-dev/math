@@ -32,7 +32,5 @@ using require_stan_scalar_or_eigen_t
     = require_t<is_stan_scalar_or_eigen<std::decay_t<T>>>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
-// require_stan_scalar_real);
 }  // namespace stan
 #endif

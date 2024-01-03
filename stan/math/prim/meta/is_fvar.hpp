@@ -46,29 +46,39 @@ using require_any_not_fvar_t
     = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 /*! @} */
 
-// STAN_ADD_REQUIRE_UNARY_INNER(fvar, is_fvar, require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup fvar_types */
+/*! @{ */
+
+/*! \brief Require any of the value types satisfy is_fvar */
 template <typename... Types>
 using require_any_vt_fvar
     = require_any_t<is_fvar<value_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require none of the value types satisfy is_fvar */
 template <typename... Types>
 using require_all_not_vt_fvar
     = require_all_not_t<is_fvar<value_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require scalar type satisfies is_fvar */
 template <typename T>
 using require_st_fvar = require_t<is_fvar<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require scalar type does not satisfy is_fvar */
 template <typename T>
 using require_not_st_fvar
     = require_not_t<is_fvar<scalar_type_t<std::decay_t<T>>>>;
 
+/*! \brief Require any of the scalar types satisfy is_fvar */
 template <typename... Types>
 using require_any_st_fvar
     = require_any_t<is_fvar<scalar_type_t<std::decay_t<Types>>>...>;
 
+/*! \brief Require none of the scalar types satisfy is_fvar */
 template <typename... Types>
 using require_all_not_st_fvar
     = require_all_not_t<is_fvar<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 #endif
