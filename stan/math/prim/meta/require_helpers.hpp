@@ -64,49 +64,6 @@ using require_any_not_t
 
 
 /** \ingroup macro_helpers
- * Adds binary require aliases.
- * @param check_type The name of the type to check, used to define
- * `require_<check_type>_t`.
- * @param checker A struct that returns holds a boolean `value`
- * @param doxygen_group The doxygen group to add this requires to.
- */
-#define STAN_ADD_REQUIRE_BINARY(check_type, checker, doxygen_group)          \
-  /*! \ingroup doxygen_group */                                              \
-  /*! \defgroup check_type##_types check_type  */                            \
-  /*! \addtogroup check_type##_types */                                      \
-  /*! @{ */                                                                  \
-  /*! \brief Require types `T` and `S` satisfies checker */                  \
-  template <typename T, typename S>                                          \
-  using require_##check_type##_t                                             \
-      = require_t<checker<std::decay_t<T>, std::decay_t<S>>>;                \
-                                                                             \
-  /*! \brief Require types `T` and `S` does not satisfy checker */           \
-  template <typename T, typename S>                                          \
-  using require_not_##check_type##_t                                         \
-      = require_not_t<checker<std::decay_t<T>, std::decay_t<S>>>;            \
-                                                                             \
-  /*! \brief Require `T` and all of the `Types` satisfy checker */           \
-  template <typename T, typename... Types>                                   \
-  using require_all_##check_type##_t                                         \
-      = require_all_t<checker<std::decay_t<T>, std::decay_t<Types>>...>;     \
-                                                                             \
-  /*! \brief Require any of the `Types` and `T` satisfy checker */           \
-  template <typename T, typename... Types>                                   \
-  using require_any_##check_type##_t                                         \
-      = require_any_t<checker<std::decay_t<T>, std::decay_t<Types>>...>;     \
-                                                                             \
-  /*! \brief Require none of the `Types` and `T` satisfy checker */          \
-  template <typename T, typename... Types>                                   \
-  using require_all_not_##check_type##_t                                     \
-      = require_all_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \
-                                                                             \
-  /*! \brief Any one of the `Types` and `T` do not satisfy */                \
-  template <typename T, typename... Types>                                   \
-  using require_any_not_##check_type##_t                                     \
-      = require_any_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \
-/*! @} */
-
-/** \ingroup macro_helpers
  * Adds binary require aliases that check the `scalar_type`.
  * @param check_type The name of the type to check, used to define
  * `require_<check_type>_t`.

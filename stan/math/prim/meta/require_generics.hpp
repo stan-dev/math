@@ -6,34 +6,42 @@
 
 namespace stan {
 
-// STAN_ADD_REQUIRE_BINARY(same, std::is_same, require_std);
+/*! \ingroup require_std */
+/*! \defgroup same_types same  */
+/*! \addtogroup same_types */
+/*! @{ */
+
+/*! \brief Require types `T` and `S` satisfies std::is_same */
 template <typename T, typename S>
 using require_same_t
     = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
+/*! \brief Require types `T` and `S` does not satisfy std::is_same */
 template <typename T, typename S>
 using require_not_same_t
     = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
+/*! \brief Require `T` and all of the `Types` satisfy std::is_same */
 template <typename T, typename... Types>
 using require_all_same_t
     = require_all_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
+/*! \brief Require any of the `Types` and `T` satisfy std::is_same */
 template <typename T, typename... Types>
 using require_any_same_t
     = require_any_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
+/*! \brief Require none of the `Types` and `T` satisfy std::is_same */
 template <typename T, typename... Types>
 using require_all_not_same_t
     = require_all_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
+/*! \brief Any one of the `Types` and `T` do not satisfy std::is_same */
 template <typename T, typename... Types>
 using require_any_not_same_t
     = require_any_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
+/*! @} */
 
-template <typename T, typename... Types>
-using require_any_not_convertible_t = require_any_not_t<
-    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
 // STAN_ADD_REQUIRE_BINARY_INNER(same, std::is_same, require_std);
 template <typename T, typename S>
@@ -64,23 +72,42 @@ using require_all_vt_same
     = require_all_t<std::is_same<value_type_t<std::decay_t<T>>,
                                  value_type_t<std::decay_t<Types>>>...>;
 
-// STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible, require_std);
+/*! \ingroup require_std */
+/*! \defgroup convertible_types convertible  */
+/*! \addtogroup convertible_types */
+/*! @{ */
+
+/*! \brief Require types `T` and `S` satisfies std::is_convertible */
 template <typename T, typename S>
 using require_convertible_t
     = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
+/*! \brief Require types `T` and `S` does not satisfy std::is_convertible */
 template <typename T, typename S>
 using require_not_convertible_t
     = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
 
+/*! \brief Require `T` and all of the `Types` satisfy std::is_convertible */
 template <typename T, typename... Types>
 using require_all_convertible_t = require_all_t<
     std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
-// STAN_ADD_REQUIRE_BINARY(assignable, std::is_assignable, require_std);
+/*! \brief Any one of the `Types` and `T` do not satisfy */
+template <typename T, typename... Types>
+using require_any_not_convertible_t = require_any_not_t<
+    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+/*! @} */
+
+/*! \ingroup require_std */
+/*! \defgroup assignable_types assignable  */
+/*! \addtogroup assignable_types */
+/*! @{ */
+
+/*! \brief Require types `T` and `S` satisfies std::is_assignable */
 template <typename T, typename S>
 using require_assignable_t
     = require_t<std::is_assignable<std::decay_t<T>, std::decay_t<S>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_BINARY_INNER(assignable, std::is_assignable, require_std);
 template <typename T, typename S>
@@ -139,10 +166,16 @@ template <typename T, typename... Types>
 using require_any_not_vt_assignable = require_any_not_t<std::is_assignable<
     value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-// STAN_ADD_REQUIRE_BINARY(constructible, std::is_constructible, require_std);
+/*! \ingroup require_std */
+/*! \defgroup constructible_types constructible  */
+/*! \addtogroup constructible_types */
+/*! @{ */
+
+/*! \brief Require types `T` and `S` satisfies std::is_constructible */
 template <typename T, typename S>
 using require_constructible_t
     = require_t<std::is_constructible<std::decay_t<T>, std::decay_t<S>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_BINARY_INNER(constructible, std::is_constructible,
 // require_std);
