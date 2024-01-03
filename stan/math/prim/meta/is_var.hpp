@@ -13,24 +13,35 @@ namespace stan {
 template <typename T, typename = void>
 struct is_var : std::false_type {};
 
-// STAN_ADD_REQUIRE_UNARY(var, is_var, require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup var_types var  */
+/*! \addtogroup var_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_var */
 template <typename T>
 using require_var_t = require_t<is_var<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_var */
 template <typename T>
 using require_not_var_t = require_not_t<is_var<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_var */
 template <typename... Types>
 using require_all_var_t = require_all_t<is_var<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_var */
 template <typename... Types>
 using require_any_var_t = require_any_t<is_var<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_var */
 template <typename... Types>
 using require_all_not_var_t = require_all_not_t<is_var<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_var */
 template <typename... Types>
 using require_any_not_var_t = require_any_not_t<is_var<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(var, is_var, require_stan_scalar_real);
 template <template <class...> class TypeCheck, class... Check>

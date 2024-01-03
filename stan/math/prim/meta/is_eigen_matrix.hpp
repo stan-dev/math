@@ -44,19 +44,27 @@ struct is_eigen_matrix_dynamic
           std::decay_t<T>,
           is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
-// STAN_ADD_REQUIRE_UNARY(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
+/*! \addtogroup eigen_matrix_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_matrix_dynamic */
 template <typename T>
 using require_eigen_matrix_dynamic_t
     = require_t<is_eigen_matrix_dynamic<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_eigen_matrix_dynamic */
 template <typename... Types>
 using require_all_eigen_matrix_dynamic_t
     = require_all_t<is_eigen_matrix_dynamic<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_eigen_matrix_dynamic */
 template <typename... Types>
 using require_any_eigen_matrix_dynamic_t
     = require_any_t<is_eigen_matrix_dynamic<std::decay_t<Types>>...>;
+/*! @} */
+
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
 // require_eigens_types);

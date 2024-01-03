@@ -86,19 +86,26 @@ struct is_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
-// STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_col_vector_types eigen_col_vector  */
+/*! \addtogroup eigen_col_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_col_vector */
 template <typename T>
 using require_eigen_col_vector_t
     = require_t<is_eigen_col_vector<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_eigen_col_vector */
 template <typename T>
 using require_not_eigen_col_vector_t
     = require_not_t<is_eigen_col_vector<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_eigen_col_vector */
 template <typename... Types>
 using require_all_eigen_col_vector_t
     = require_all_t<is_eigen_col_vector<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
 // require_eigens_types);
@@ -116,16 +123,24 @@ using require_eigen_col_vector_vt
 template <typename T>
 struct is_col_vector : internal::is_col_vector_impl<T> {};
 
-// STAN_ADD_REQUIRE_UNARY(col_vector, is_col_vector, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup col_vector_types col_vector  */
+/*! \addtogroup col_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_col_vector */
 template <typename T>
 using require_col_vector_t = require_t<is_col_vector<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_col_vector */
 template <typename T>
 using require_not_col_vector_t = require_not_t<is_col_vector<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_col_vector */
 template <typename... Types>
 using require_all_col_vector_t
     = require_all_t<is_col_vector<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(col_vector, is_col_vector, require_eigens_types);
 /** \ingroup type_trait
@@ -136,11 +151,16 @@ using require_all_col_vector_t
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
-// STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_row_vector_types eigen_row_vector  */
+/*! \addtogroup eigen_row_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_row_vector */
 template <typename T>
 using require_eigen_row_vector_t
     = require_t<is_eigen_row_vector<std::decay_t<T>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
 // require_eigens_types);
@@ -153,9 +173,15 @@ using require_eigen_row_vector_t
 template <typename T>
 struct is_row_vector : internal::is_row_vector_impl<T> {};
 
-// STAN_ADD_REQUIRE_UNARY(row_vector, is_row_vector, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup row_vector_types row_vector  */
+/*! \addtogroup row_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_row_vector */
 template <typename T>
 using require_row_vector_t = require_t<is_row_vector<std::decay_t<T>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(row_vector, is_row_vector, require_eigens_types);
 /** \ingroup type_trait
@@ -167,29 +193,40 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
-// STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_vector_types eigen_vector  */
+/*! \addtogroup eigen_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_vector */
 template <typename T>
 using require_eigen_vector_t = require_t<is_eigen_vector<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_eigen_vector */
 template <typename T>
 using require_not_eigen_vector_t
     = require_not_t<is_eigen_vector<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_eigen_vector */
 template <typename... Types>
 using require_all_eigen_vector_t
     = require_all_t<is_eigen_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_eigen_vector */
 template <typename... Types>
 using require_any_eigen_vector_t
     = require_any_t<is_eigen_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_eigen_vector */
 template <typename... Types>
 using require_all_not_eigen_vector_t
     = require_all_not_t<is_eigen_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_eigen_vector */
 template <typename... Types>
 using require_any_not_eigen_vector_t
     = require_any_not_t<is_eigen_vector<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector,
 // require_eigens_types);
@@ -297,26 +334,37 @@ struct is_vector
                     || (is_var<T>::value
                         && is_eigen_vector<value_type_t<T>>::value)> {};
 
-// STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
+/*! \ingroup require_std */
+/*! \defgroup vector_types vector  */
+/*! \addtogroup vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_vector */
 template <typename T>
 using require_vector_t = require_t<is_vector<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_vector */
 template <typename T>
 using require_not_vector_t = require_not_t<is_vector<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_vector */
 template <typename... Types>
 using require_all_vector_t = require_all_t<is_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_vector */
 template <typename... Types>
 using require_any_vector_t = require_any_t<is_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_vector */
 template <typename... Types>
 using require_all_not_vector_t
     = require_all_not_t<is_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_vector */
 template <typename... Types>
 using require_any_not_vector_t
     = require_any_not_t<is_vector<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
 template <template <class...> class TypeCheck, class... Check>
@@ -414,28 +462,39 @@ struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::value_type;
 };
 
-// STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector, require_std);
+/*! \ingroup require_std */
+/*! \defgroup std_vector_types std_vector  */
+/*! \addtogroup std_vector_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_std_vector */
 template <typename T>
 using require_std_vector_t = require_t<is_std_vector<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_std_vector */
 template <typename T>
 using require_not_std_vector_t = require_not_t<is_std_vector<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_std_vector */
 template <typename... Types>
 using require_all_std_vector_t
     = require_all_t<is_std_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_std_vector */
 template <typename... Types>
 using require_any_std_vector_t
     = require_any_t<is_std_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_std_vector */
 template <typename... Types>
 using require_all_not_std_vector_t
     = require_all_not_t<is_std_vector<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_std_vector */
 template <typename... Types>
 using require_any_not_std_vector_t
     = require_any_not_t<is_std_vector<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
 template <template <class...> class TypeCheck, class... Check>

@@ -22,24 +22,34 @@ template <typename Container>
 using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
 
-// STAN_ADD_REQUIRE_UNARY(container, is_container, general_types);
+/*! \ingroup general_types */
+/*! \defgroup container_types container  */
+/*! \addtogroup container_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_container */
 template <typename T>
 using require_container_t = require_t<is_container<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_container */
 template <typename T>
 using require_not_container_t = require_not_t<is_container<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_container */
 template <typename... Types>
 using require_all_container_t
     = require_all_t<is_container<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_container */
 template <typename... Types>
 using require_any_container_t
     = require_any_t<is_container<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_container */
 template <typename... Types>
 using require_all_not_container_t
     = require_all_not_t<is_container<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(container,
 // is_container, general_types);

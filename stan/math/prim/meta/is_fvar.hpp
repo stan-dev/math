@@ -14,26 +14,37 @@ namespace stan {
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
-// STAN_ADD_REQUIRE_UNARY(fvar, is_fvar, require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup fvar_types fvar  */
+/*! \addtogroup fvar_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_fvar */
 template <typename T>
 using require_fvar_t = require_t<is_fvar<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_fvar */
 template <typename T>
 using require_not_fvar_t = require_not_t<is_fvar<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_fvar */
 template <typename... Types>
 using require_all_fvar_t = require_all_t<is_fvar<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_fvar */
 template <typename... Types>
 using require_any_fvar_t = require_any_t<is_fvar<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_fvar */
 template <typename... Types>
 using require_all_not_fvar_t
     = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_fvar */
 template <typename... Types>
 using require_any_not_fvar_t
     = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_UNARY_INNER(fvar, is_fvar, require_stan_scalar_real);
 template <typename... Types>

@@ -21,11 +21,16 @@ template <typename T>
 struct is_eigen_dense_base
     : bool_constant<is_base_pointer_convertible<Eigen::DenseBase, T>::value> {};
 
-// STAN_ADD_REQUIRE_UNARY(eigen_dense_base, is_eigen_dense_base,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_dense_base_types eigen_dense_base  */
+/*! \addtogroup eigen_dense_base_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_dense_base */
 template <typename T>
 using require_eigen_dense_base_t
     = require_t<is_eigen_dense_base<std::decay_t<T>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_dense_base, is_eigen_dense_base,
 // require_eigens_types);

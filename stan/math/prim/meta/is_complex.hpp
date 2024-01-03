@@ -55,22 +55,33 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
   using type = std::complex<typename std::decay_t<T>::value_type>;
 };
 
-// STAN_ADD_REQUIRE_UNARY(complex, is_complex, require_stan_scalar_complex);
+/*! \ingroup require_stan_scalar_complex */
+/*! \defgroup complex_types complex  */
+/*! \addtogroup complex_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_complex */
 template <typename T>
 using require_complex_t = require_t<is_complex<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_complex */
 template <typename T>
 using require_not_complex_t = require_not_t<is_complex<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_complex */
 template <typename... Types>
 using require_all_complex_t = require_all_t<is_complex<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_complex */
 template <typename... Types>
 using require_any_complex_t = require_any_t<is_complex<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_complex */
 template <typename... Types>
 using require_all_not_complex_t
     = require_all_not_t<is_complex<std::decay_t<Types>>...>;
+/*! @} */
+
 
 // STAN_ADD_REQUIRE_UNARY_INNER(complex, is_complex,
 // require_stan_scalar_complex);

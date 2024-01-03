@@ -18,30 +18,40 @@ struct is_double_or_int
           math::disjunction<std::is_same<double, std::decay_t<T>>,
                             std::is_same<int, std::decay_t<T>>>::value> {};
 
-// STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup double_or_int_types double_or_int  */
+/*! \addtogroup double_or_int_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_double_or_int */
 template <typename T>
 using require_double_or_int_t = require_t<is_double_or_int<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy is_double_or_int */
 template <typename T>
 using require_not_double_or_int_t
     = require_not_t<is_double_or_int<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_double_or_int */
 template <typename... Types>
 using require_all_double_or_int_t
     = require_all_t<is_double_or_int<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy is_double_or_int */
 template <typename... Types>
 using require_any_double_or_int_t
     = require_any_t<is_double_or_int<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy is_double_or_int */
 template <typename... Types>
 using require_all_not_double_or_int_t
     = require_all_not_t<is_double_or_int<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy is_double_or_int */
 template <typename... Types>
 using require_any_not_double_or_int_t
     = require_any_not_t<is_double_or_int<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_UNARY_INNER(double_or_int, is_double_or_int,
 // require_stan_scalar_real);

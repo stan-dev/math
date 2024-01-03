@@ -38,14 +38,20 @@ struct is_dense_dynamic_impl<T, require_t<is_var<T>>>
 template <typename T>
 using is_dense_dynamic = internal::is_dense_dynamic_impl<std::decay_t<T>>;
 
-// STAN_ADD_REQUIRE_UNARY(dense_dynamic, is_dense_dynamic,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup dense_dynamic_types dense_dynamic  */
+/*! \addtogroup dense_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_dense_dynamic */
 template <typename T>
 using require_dense_dynamic_t = require_t<is_dense_dynamic<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_dense_dynamic */
 template <typename... Types>
 using require_all_dense_dynamic_t
     = require_all_t<is_dense_dynamic<std::decay_t<Types>>...>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_CONTAINER(dense_dynamic, is_dense_dynamic,
 // require_eigens_types);

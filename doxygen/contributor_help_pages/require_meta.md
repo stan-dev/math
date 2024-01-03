@@ -166,18 +166,3 @@ struct is_double_only
     : bool_constant<std::is_same<double, std::decay_t<T>>::value> {};
 
 ```
-
-We can add the associated `requires` template parameters for the standard requires of `require_double_only_t` using the @ref STAN_ADD_REQUIRE_UNARY macro.
-We supply the name to use in the require (`double_only`), The type trait name (`is_double_only`) and which group this type trait is in `require_stan_scalar_real`.
-
-```cpp
-STAN_ADD_REQUIRE_UNARY(double_only, is_double_only,
-                       require_stan_scalar_real);
-```
-
-Similary, we can use the @ref STAN_ADD_REQUIRE_UNARY_INNER macro to get the `requires` template parameters such as `require_vt_double_only`.
-
-```cpp
-STAN_ADD_REQUIRE_UNARY_INNER(double_only, is_double_only,
-                             require_stan_scalar_real);
-```

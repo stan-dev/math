@@ -22,15 +22,23 @@ template <typename T>
 using is_eigen_dense_dynamic = stan::internal::is_eigen_matrix_dynamic_impl<
     std::decay_t<T>, stan::is_eigen_dense_base<std::decay_t<T>>::value>;
 
-// STAN_ADD_REQUIRE_UNARY(eigen_dense_dynamic, is_eigen_dense_dynamic,
-// require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_dense_dynamic_types eigen_dense_dynamic  */
+/*! \addtogroup eigen_dense_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_eigen_dense_dynamic */
+
 template <typename T>
 using require_eigen_dense_dynamic_t
     = require_t<is_eigen_dense_dynamic<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy is_eigen_dense_dynamic */
 template <typename... Types>
 using require_all_eigen_dense_dynamic_t
     = require_all_t<is_eigen_dense_dynamic<std::decay_t<Types>>...>;
+/*! @} */
+
 
 // STAN_ADD_REQUIRE_CONTAINER(eigen_dense_dynamic, is_eigen_dense_dynamic,
 // require_eigens_types);

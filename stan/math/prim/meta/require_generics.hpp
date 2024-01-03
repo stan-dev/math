@@ -202,30 +202,41 @@ using require_any_not_vt_constructible
     = require_any_not_t<std::is_constructible<
         value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
 
-// STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup arithmetic_types arithmetic  */
+/*! \addtogroup arithmetic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies std::is_arithmetic */
 template <typename T>
 using require_arithmetic_t = require_t<std::is_arithmetic<std::decay_t<T>>>;
 
+/*! \brief Require type does not satisfy std::is_arithmetic */
 template <typename T>
 using require_not_arithmetic_t
     = require_not_t<std::is_arithmetic<std::decay_t<T>>>;
 
+/*! \brief Require all of the types satisfy std::is_arithmetic */
 template <typename... Types>
 using require_all_arithmetic_t
     = require_all_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
+/*! \brief Require any of the types satisfy std::is_arithmetic */
 template <typename... Types>
 using require_any_arithmetic_t
     = require_any_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
+/*! \brief Require none of the types satisfy std::is_arithmetic */
 template <typename... Types>
 using require_all_not_arithmetic_t
     = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
+/*! \brief Require at least one of the types do not satisfy std::is_arithmetic */
 template <typename... Types>
 using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
+/*! @} */
+
 
 // STAN_ADD_REQUIRE_UNARY_INNER(arithmetic, std::is_arithmetic,
 // require_stan_scalar_real);
@@ -257,17 +268,30 @@ template <typename... Types>
 using require_any_not_st_arithmetic = require_any_not_t<
     std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;
 
-// STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
-// require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup floating_point_types floating_point  */
+/*! \addtogroup floating_point_types */
+/*! @{ */
+
+/*! \brief Require type satisfies std::is_floating_point */
 template <typename T>
 using require_floating_point_t
     = require_t<std::is_floating_point<std::decay_t<T>>>;
+/*! @} */
+
 
 // STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
 // require_stan_scalar_real);
-// STAN_ADD_REQUIRE_UNARY(integral, std::is_integral, require_stan_scalar_real);
+
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup integral_types integral  */
+/*! \addtogroup integral_types */
+/*! @{ */
+
+/*! \brief Require type satisfies std::is_integral */
 template <typename T>
 using require_integral_t = require_t<std::is_integral<std::decay_t<T>>>;
+/*! @} */
 
 // STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral,
 // require_stan_scalar_real);

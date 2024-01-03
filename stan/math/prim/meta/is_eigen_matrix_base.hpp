@@ -22,8 +22,6 @@ struct is_eigen_matrix_base
     : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {
 };
 
-// STAN_ADD_REQUIRE_UNARY(eigen_matrix_base, is_eigen_matrix_base,
-// require_eigens_types);
 // STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_base, is_eigen_matrix_base,
 // require_eigens_types);
 template <template <class...> class TypeCheck, class... Check>
