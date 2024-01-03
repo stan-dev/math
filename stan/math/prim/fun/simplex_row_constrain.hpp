@@ -58,7 +58,8 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y) {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, value_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
+                                               value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   Eigen::Index Km1 = y_ref.cols();
@@ -70,7 +71,8 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, value_type_t<Mat>& 
     auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
     auto z_k = inv_logit(adj_y_k);
     x.array().col(k) = stick_len * z_k;
-    lp += -sum(log1p_exp(adj_y_k)) - sum(log1p_exp(-adj_y_k)) + sum(log(stick_len));
+    lp += -sum(log1p_exp(adj_y_k)) - sum(log1p_exp(-adj_y_k))
+          + sum(log(stick_len));
     stick_len -= x.array().col(k);  // equivalently *= (1 - z_k);
   }
   x.col(Km1).array() = stick_len;
@@ -94,7 +96,8 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, value_type_t<Mat>& 
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_row_constrain(const Mat& y, return_type_t<Mat>& lp) {
+inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
+                                               return_type_t<Mat>& lp) {
   if (Jacobian) {
     return simplex_row_constrain(y, lp);
   } else {
