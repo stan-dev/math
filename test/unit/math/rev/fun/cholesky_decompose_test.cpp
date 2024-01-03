@@ -77,7 +77,7 @@ struct chol_functor_2 {
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
-    using stan::math::multi_normal_cholesky_log;
+    using stan::math::multi_normal_cholesky_lpdf;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
     Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
@@ -85,7 +85,7 @@ struct chol_functor_2 {
     Eigen::Matrix<double, -1, 1> mu(K);
     vec.setZero();
     mu.setOnes();
-    lp += multi_normal_cholesky_log(vec, mu, L);
+    lp += multi_normal_cholesky_lpdf(vec, mu, L);
     return lp;
   }
 };

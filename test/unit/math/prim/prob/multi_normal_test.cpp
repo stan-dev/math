@@ -17,7 +17,7 @@ TEST(ProbDistributionsMultiNormal, NotVectorized) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 }
 
@@ -55,33 +55,33 @@ TEST(ProbDistributionsMultiNormal, Vectorized) {
 
   // y and mu vectorized
   EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
-                  stan::math::multi_normal_log(vec_y, vec_mu, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y, vec_mu, Sigma));
   EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
-                  stan::math::multi_normal_log(vec_y_t, vec_mu, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y_t, vec_mu, Sigma));
   EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
-                  stan::math::multi_normal_log(vec_y, vec_mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y, vec_mu_t, Sigma));
   EXPECT_FLOAT_EQ(-11.928077 - 6.5378327,
-                  stan::math::multi_normal_log(vec_y_t, vec_mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y_t, vec_mu_t, Sigma));
 
   // y vectorized
   EXPECT_FLOAT_EQ(-10.44027 - 6.537833,
-                  stan::math::multi_normal_log(vec_y, mu, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y, mu, Sigma));
   EXPECT_FLOAT_EQ(-10.44027 - 6.537833,
-                  stan::math::multi_normal_log(vec_y_t, mu, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y_t, mu, Sigma));
   EXPECT_FLOAT_EQ(-10.44027 - 6.537833,
-                  stan::math::multi_normal_log(vec_y, mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y, mu_t, Sigma));
   EXPECT_FLOAT_EQ(-10.44027 - 6.537833,
-                  stan::math::multi_normal_log(vec_y_t, mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(vec_y_t, mu_t, Sigma));
 
   // mu vectorized
   EXPECT_FLOAT_EQ(-6.26954 - 6.537833,
-                  stan::math::multi_normal_log(y, vec_mu, Sigma));
+                  stan::math::multi_normal_lpdf(y, vec_mu, Sigma));
   EXPECT_FLOAT_EQ(-6.26954 - 6.537833,
-                  stan::math::multi_normal_log(y_t, vec_mu, Sigma));
+                  stan::math::multi_normal_lpdf(y_t, vec_mu, Sigma));
   EXPECT_FLOAT_EQ(-6.26954 - 6.537833,
-                  stan::math::multi_normal_log(y, vec_mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(y, vec_mu_t, Sigma));
   EXPECT_FLOAT_EQ(-6.26954 - 6.537833,
-                  stan::math::multi_normal_log(y_t, vec_mu_t, Sigma));
+                  stan::math::multi_normal_lpdf(y_t, vec_mu_t, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(vec_mu, Sigma, rng));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(vec_mu_t, Sigma, rng));
 }
@@ -96,12 +96,12 @@ TEST(ProbDistributionsMultiNormal, Sigma) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 9.0, -3.0, -3.0, 4.0;
-  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, Mu) {
@@ -115,17 +115,17 @@ TEST(ProbDistributionsMultiNormal, Mu) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 
   mu(0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
   mu(0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
   mu(0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
@@ -139,7 +139,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 }
 
@@ -154,18 +154,18 @@ TEST(ProbDistributionsMultiNormal, SigmaMultiRow) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 9.0, -3.0, -3.0, 4.0;
-  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 
   // wrong dimensions
   Matrix<double, Dynamic, 1> z(3, 1);
   z << 2.0, -2.0, 1.0;
-  EXPECT_THROW(stan::math::multi_normal_log(z, mu, Sigma),
+  EXPECT_THROW(stan::math::multi_normal_lpdf(z, mu, Sigma),
                std::invalid_argument);
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MuMultiRow) {
@@ -179,17 +179,17 @@ TEST(ProbDistributionsMultiNormal, MuMultiRow) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma));
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 
   mu(0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
   mu(0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
   mu(0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma), std::domain_error);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, SizeMismatch) {
@@ -203,7 +203,7 @@ TEST(ProbDistributionsMultiNormal, SizeMismatch) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0;
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma),
+  EXPECT_THROW(stan::math::multi_normal_lpdf(y, mu, Sigma),
                std::invalid_argument);
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng),
                std::invalid_argument);
