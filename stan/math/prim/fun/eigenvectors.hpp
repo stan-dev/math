@@ -20,10 +20,12 @@ template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_vt_complex<EigMat>* = nullptr>
 inline Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, -1>
 eigenvectors(const EigMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, -1>(0, 0);
+  }
+  check_square("eigenvectors", "m", m);
   using PlainMat = plain_type_t<EigMat>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigenvectors", "m", m_eval);
-  check_square("eigenvectors", "m", m_eval);
 
   Eigen::EigenSolver<PlainMat> solver(m_eval);
   return solver.eigenvectors();
@@ -39,14 +41,16 @@ eigenvectors(const EigMat& m) {
  * `m`
  */
 template <typename EigCplxMat,
-          require_eigen_matrix_dynamic_t<EigCplxMat>* = nullptr,
-          require_vt_complex<EigCplxMat>* = nullptr>
+          require_eigen_matrix_dynamic_vt<is_complex, EigCplxMat>* = nullptr>
 inline Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, -1>
 eigenvectors(const EigCplxMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, -1>(0,
+                                                                             0);
+  }
+  check_square("eigenvectors", "m", m);
   using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
   const PlainMat& m_eval = m;
-  check_nonzero_size("eigenvectors", "m", m_eval);
-  check_square("eigenvectors", "m", m_eval);
 
   Eigen::ComplexEigenSolver<PlainMat> solver(m_eval);
   return solver.eigenvectors();

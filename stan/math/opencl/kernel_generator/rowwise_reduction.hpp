@@ -31,8 +31,8 @@ struct matvec_mul_opt {
   static matrix_cl_view view(const Arg&) { return matrix_cl_view::Entire; }
 
   static kernel_parts get_kernel_parts(
-      const Arg& a, std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      const Arg& a, std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     return {};
@@ -71,8 +71,8 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
    * @return part of kernel with code for this and nested expressions
    */
   static kernel_parts get_kernel_parts(
-      const Arg& mul, std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      const Arg& mul, std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     kernel_parts res{};
@@ -154,8 +154,8 @@ class rowwise_reduction
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -163,7 +163,7 @@ class rowwise_reduction
       this->var_name_ = name_gen.generate();
       generated[this] = "";
 
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
             this->template get_arg<0>(), generated2, generated_all, name_gen,
@@ -245,12 +245,13 @@ class rowwise_reduction
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       this->template get_arg<0>().set_args(generated2, generated_all, kernel,
                                            arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().view());

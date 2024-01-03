@@ -61,10 +61,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                                                          const T_loc& mu,
                                                          const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_nu_ref = ref_type_if_t<!is_constant<T_dof>::value, T_dof>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_nu_ref = ref_type_if_not_constant_t<T_dof>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   static const char* function = "student_t_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu,

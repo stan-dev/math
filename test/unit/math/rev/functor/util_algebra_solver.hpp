@@ -529,7 +529,6 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
   using stan::math::solve_powell_tol;
   using stan::math::var;
 
-  int n_x = 2;
   Eigen::VectorXd x(2);
   x << 1, 1;  // initial guess
 

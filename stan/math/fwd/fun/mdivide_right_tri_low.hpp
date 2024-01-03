@@ -98,7 +98,6 @@ inline Eigen::Matrix<value_type_t<EigMat2>, EigMat1::RowsAtCompileTime,
 mdivide_right_tri_low(const EigMat1& A, const EigMat2& b) {
   using T = typename value_type_t<EigMat2>::Scalar;
   constexpr int R1 = EigMat1::RowsAtCompileTime;
-  constexpr int C1 = EigMat1::ColsAtCompileTime;
   constexpr int R2 = EigMat2::RowsAtCompileTime;
   constexpr int C2 = EigMat2::ColsAtCompileTime;
   check_square("mdivide_right_tri_low", "b", b);

@@ -109,17 +109,17 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
  * @return A vector of OpenCL events.
  */
 template <typename T, require_not_matrix_cl_t<T>* = nullptr>
-inline std::vector<cl::Event> select_events(const T& m) {
-  return {};
+inline tbb::concurrent_vector<cl::Event> select_events(const T& m) {
+  return tbb::concurrent_vector<cl::Event>{};
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_same_t<T, in_buffer>* = nullptr>
-inline const std::vector<cl::Event>& select_events(const K& m) {
+inline const tbb::concurrent_vector<cl::Event>& select_events(const K& m) {
   return m.write_events();
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
-inline std::vector<cl::Event> select_events(K& m) {
+inline tbb::concurrent_vector<cl::Event> select_events(K& m) {
   static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
   return m.read_write_events();
 }
@@ -133,9 +133,9 @@ inline std::vector<cl::Event> select_events(K& m) {
  * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
  */
-inline auto compile_kernel(const char* name,
-                           const std::vector<std::string>& sources,
-                           const std::map<std::string, int>& options) {
+inline auto compile_kernel(
+    const char* name, const std::vector<std::string>& sources,
+    const std::unordered_map<std::string, int>& options) {
   auto base_opts = opencl_context.base_opts();
   for (auto& it : options) {
     if (base_opts[it.first] > it.second) {
@@ -175,7 +175,7 @@ struct kernel_cl {
  private:
   const char* name_;
   std::vector<std::string> sources_;
-  std::map<std::string, int> opts_;
+  std::unordered_map<std::string, int> opts_;
   mutable cl::Kernel kernel_;
 
  public:
@@ -187,7 +187,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, std::vector<std::string> sources,
-            std::map<std::string, int> options = {})
+            std::unordered_map<std::string, int> options = {})
       : name_(name), sources_(std::move(sources)), opts_(std::move(options)) {}
 
   /** \ingroup kernel_executor_opencl
@@ -205,7 +205,8 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{},
+                                     internal::select_events<Args>(args)...),
                           global_thread_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);
@@ -232,7 +233,8 @@ struct kernel_cl {
       opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
-                          vec_concat(internal::select_events<Args>(args)...),
+                          vec_concat(std::vector<cl::Event>{},
+                                     internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
     cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
         kernel_);

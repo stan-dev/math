@@ -65,7 +65,6 @@ TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
   int sign_z = sign(z);
   auto log_z = log(abs(z));
 
-  double log_precision = log(precision);
   int log_t_new_sign = 1.0;
   int log_t_old_sign = 1.0;
 
@@ -190,7 +189,6 @@ TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
     if (calc_z) {
       auto hyper1 = hypergeometric_2F1(a1_euler, a2_euler, b1, z_euler);
       auto hyper2 = hypergeometric_2F1(1 + a2, 1 - a1 + b1, 1 + b1, z_euler);
-      auto pre_mult = a2 * pow(1 - z, -1 - a2);
       std::get<3>(grad_tuple_rtn)
           = a2 * pow(1 - z, -1 - a2) * hyper1
             + (a2 * (b1 - a1) * pow(1 - z, -a2)

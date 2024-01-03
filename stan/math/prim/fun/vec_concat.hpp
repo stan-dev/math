@@ -37,7 +37,9 @@ inline void append_vectors(VecInOut& x) {}
 template <typename VecInOut, typename VecIn, typename... VecArgs>
 inline void append_vectors(VecInOut& x, const VecIn& y,
                            const VecArgs&... args) {
-  x.insert(x.end(), y.begin(), y.end());
+  for (auto& yy : y) {
+    x.push_back(yy);
+  }
   append_vectors(x, args...);
 }
 }  // namespace internal
@@ -53,7 +55,7 @@ inline void append_vectors(VecInOut& x, const VecIn& y,
  */
 template <typename Vec, typename... Args>
 inline auto vec_concat(const Vec& v1, const Args&... args) {
-  std::vector<value_type_t<Vec>> vec;
+  Vec vec;
   vec.reserve(internal::sum_vector_sizes(v1, args...));
   internal::append_vectors(vec, v1, args...);
   return vec;

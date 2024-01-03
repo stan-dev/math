@@ -282,7 +282,6 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   }
 
   T_s sigma_sq = square(sigma);
-  T_l temp;
 
   std::vector<Eigen::Matrix<return_type_t<T_x1, T_l>, -1, 1>> x1_new
       = divide_columns(x1, length_scale);

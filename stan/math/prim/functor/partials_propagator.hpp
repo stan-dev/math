@@ -16,7 +16,7 @@ namespace math {
 namespace internal {
 
 template <typename ReturnType, typename Enable, typename... Ops>
-struct partials_propagator;
+class partials_propagator;
 
 /** \ingroup type_trait
  * \callergraph

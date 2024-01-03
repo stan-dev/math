@@ -28,9 +28,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_y_min_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   using std::isinf;
   static const char* function = "pareto_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
@@ -69,7 +69,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   const auto& exp_prod
       = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
           exp(alpha_val * log_quot));
-  T_partials_return P = sum(log(1 - exp_prod));
+  // TODO(Andrew) Further simplify derivatives and log1m_exp below
+  T_partials_return P = sum(log1m(exp_prod));
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& common_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value

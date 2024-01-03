@@ -91,14 +91,15 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
   using stan::math::inv_wishart_cholesky_rng;
   using stan::math::multiply_lower_tri_self_transpose;
 
-  boost::random::mt19937 rng(1234U);
+  boost::random::mt19937 rng(92343U);
   int N = 1e5;
   double tol = 0.1;
   for (int k = 1; k < 5; k++) {
-    MatrixXd sigma = MatrixXd::Identity(k, k);
+    MatrixXd L = MatrixXd::Identity(k, k);
     MatrixXd Z = MatrixXd::Zero(k, k);
     for (int i = 0; i < N; i++) {
-      Z += stan::math::crossprod(inv_wishart_cholesky_rng(k + 2, sigma, rng));
+      Z += multiply_lower_tri_self_transpose(
+          inv_wishart_cholesky_rng(k + 2, L, rng));
     }
     Z /= N;
     for (int j = 0; j < k; j++) {
@@ -107,6 +108,38 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
           EXPECT_NEAR(Z(i, j), 1.0, tol);
         else
           EXPECT_NEAR(Z(i, j), 0.0, tol);
+      }
+    }
+  }
+}
+
+TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
+  // Compare the marginal mean
+
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::inv_wishart_cholesky_rng;
+  using stan::math::inv_wishart_rng;
+  using stan::math::multiply_lower_tri_self_transpose;
+  using stan::math::qr_thin_Q;
+
+  boost::random::mt19937 rng(92343U);
+  int N = 1e5;
+  double tol = 0.05;
+  for (int k = 1; k < 5; k++) {
+    MatrixXd L = qr_thin_Q(MatrixXd::Random(k, k)).transpose();
+    L.diagonal() = stan::math::abs(L.diagonal());
+    MatrixXd sigma = multiply_lower_tri_self_transpose(L);
+    MatrixXd Z_mean = sigma / (k + 3);
+    MatrixXd Z_est = MatrixXd::Zero(k, k);
+    for (int i = 0; i < N; i++) {
+      Z_est += multiply_lower_tri_self_transpose(
+          inv_wishart_cholesky_rng(k + 4, L, rng));
+    }
+    Z_est /= N;
+    for (int j = 0; j < k; j++) {
+      for (int i = 0; i < j; i++) {
+        EXPECT_NEAR(Z_est(i, j), Z_mean(i, j), tol);
       }
     }
   }

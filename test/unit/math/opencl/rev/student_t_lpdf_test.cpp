@@ -91,7 +91,6 @@ auto student_t_lpdf_functor_propto
 
 TEST(ProbDistributionsStudentT, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.3, -0.8, 1.0;

@@ -79,11 +79,6 @@ TEST(mathMixMatFun, gen_inv_test_6) {
 }
 
 TEST(mathMixMatFun, gen_inv_test_8) {
-  using stan::test::expect_ad;
-  using stan::test::expect_ad_matvar;
-
-  auto f = [](const auto& G) { return stan::math::generalized_inverse(G); };
-
   Eigen::MatrixXd z(2, 2);
   z << 1, 2, 5, std::numeric_limits<double>::quiet_NaN();
   EXPECT_NO_THROW(stan::math::generalized_inverse(z));

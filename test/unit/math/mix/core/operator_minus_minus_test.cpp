@@ -5,6 +5,8 @@ TEST(mathMixCore, operatorMinusMinusPre1) {
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = --y;
+    // Suppress unused variable warning
+    z = z + 0;
     return y;
   };
   stan::test::expect_common_unary(f);
@@ -24,6 +26,8 @@ TEST(mathMixCore, operatorMinusMinusPost1) {
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = y--;
+    // Suppress unused variable warning
+    z = z + 0;
     return y;
   };
   stan::test::expect_common_unary(f);
