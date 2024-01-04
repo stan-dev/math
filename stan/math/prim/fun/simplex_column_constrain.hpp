@@ -22,8 +22,8 @@ namespace math {
  * The transform is based on a centered stick-breaking process.
  *
  * @tparam Mat type of the Matrix
- * @param y Free Matrix input of dimensionality (K - 1, M).
- * @return Matrix with simplex columns of dimensionality (K, M).
+ * @param y Free Matrix input of dimensionality (K - 1, M)
+ * @return Matrix with simplex columns of dimensionality (K, M)
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
@@ -47,9 +47,9 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y) {
  * stick-breaking process.
  *
  * @tparam Mat type of the Matrix
- * @param y Free Matrix input of dimensionality (K - 1, M).
+ * @param y Free Matrix input of dimensionality (K - 1, M)
  * @param lp Log probability reference to increment.
- * @return Matrix with simplex columns of dimensionality (K, M).
+ * @return Matrix with simplex columns of dimensionality (K, M)
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
