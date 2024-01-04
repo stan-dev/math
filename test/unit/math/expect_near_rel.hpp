@@ -28,17 +28,19 @@ namespace internal {
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
 void expect_near_rel_finite(const std::string& msg, const T1& x1, const T2& x2,
                             const relative_tolerance tol = relative_tolerance(),
-                     const char* x1_name = "x1", const char* x2_name = "x2") {
+                            const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   double tol_val = tol.inexact(x1, x2);
   EXPECT_NEAR(x1, x2, tol_val)
-      << "expect_near_rel_finite in: " << msg << " for " << x1_name << " vs " << x2_name << std::endl;
+      << "expect_near_rel_finite in: " << msg << " for " << x1_name << " vs "
+      << x2_name << std::endl;
 }
 
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>...>
 void expect_near_rel_finite(const std::string& msg, const EigMat1& x1,
-                            const EigMat2& x2,
-                     const char* x1_name = "x1", const char* x2_name = "x2") {
+                            const EigMat2& x2, const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   EXPECT_EQ(x1.rows(), x2.rows());
   EXPECT_EQ(x1.cols(), x2.cols());
   auto x1_eval = x1.eval();
@@ -51,7 +53,8 @@ void expect_near_rel_finite(const std::string& msg, const EigMat1& x1,
 template <typename T1, typename T2>
 void expect_near_rel_finite(const std::string& msg, const std::vector<T1>& x1,
                             const std::vector<T2>& x2,
-                     const char* x1_name = "x1", const char* x2_name = "x2") {
+                            const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   EXPECT_EQ(x1.size(), x2.size());
   for (size_t i = 0; i < x1.size(); ++i) {
     expect_near_rel_finite(x1[i], x2[i], x1_name, x2_name);
@@ -85,7 +88,8 @@ void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
   } else if (stan::math::is_inf(x1) || stan::math::is_inf(x2)) {
     EXPECT_EQ(x1, x2) << "expect_near_rel(" << x1 << ", " << x2 << ")"
                       << std::endl
-                      << msg << " for " << x1_name << " vs " << x2_name << std::endl;
+                      << msg << " for " << x1_name << " vs " << x2_name
+                      << std::endl;
   } else {
     internal::expect_near_rel_finite(msg, x1, x2, tol, x1_name, x2_name);
   }
@@ -111,16 +115,15 @@ template <typename EigMat1, typename EigMat2,
 void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
                      relative_tolerance tol = relative_tolerance(),
                      const char* x1_name = "x1", const char* x2_name = "x2") {
-  EXPECT_EQ(x1.rows(), x2.rows()) << "expect_near_rel (Eigen::Matrix)"
-                                  << " rows must be same size."
-                                  << x1_name << ".rows() = " << x1.rows()
-                                  << "; " << x2_name << ".rows() = " << x2.rows() << std::endl
-                                  << msg << std::endl;
+  EXPECT_EQ(x1.rows(), x2.rows())
+      << "expect_near_rel (Eigen::Matrix)"
+      << " rows must be same size." << x1_name << ".rows() = " << x1.rows()
+      << "; " << x2_name << ".rows() = " << x2.rows() << std::endl
+      << msg << std::endl;
 
   EXPECT_EQ(x1.cols(), x2.cols())
       << "expect_near_rel:"
-      << "cols must be same size."
-      << x1_name << ".cols() = " << x1.cols()
+      << "cols must be same size." << x1_name << ".cols() = " << x1.cols()
       << "; " << x2_name << ".cols() = " << x2.cols() << std::endl
       << msg << std::endl;
   auto x1_eval = x1.eval();
@@ -133,10 +136,11 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
         msg2 += std::to_string(sentinal_val) + ") = x2("
                 + std::to_string(sentinal_val) + "): " + msg;
       } else {
-        msg2 += std::to_string(i) + ", " + std::to_string(j) + ") = x2(" +
-                 std::to_string(i) + ", " + std::to_string(j) + "): " + msg;
+        msg2 += std::to_string(i) + ", " + std::to_string(j) + ") = x2("
+                + std::to_string(i) + ", " + std::to_string(j) + "): " + msg;
       }
-      expect_near_rel(msg2, x1_eval(sentinal_val), x2_eval(sentinal_val), tol, x1_name, x2_name);
+      expect_near_rel(msg2, x1_eval(sentinal_val), x2_eval(sentinal_val), tol,
+                      x1_name, x2_name);
       sentinal_val++;
     }
   }
@@ -166,13 +170,13 @@ void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
                      const std::vector<T2>& x2,
                      relative_tolerance tol = relative_tolerance(),
                      const char* x1_name = "x1", const char* x2_name = "x2") {
-  EXPECT_EQ(x1.size(), x2.size()) << "expect_near_rel (std::vector):"
-                                  << " vectors must be same size. "
-                                  << x1_name << ".size() = " << x1.size()
-                                  << "; " << x2_name << ".size() = " << x2.size() << std::endl
-                                  << msg << std::endl;
-  std::string msg2 = std::string("expect_near_rel; require items ") +
-   "x1[i] = " + "x2[i]: " + msg + " for " + x1_name + " vs " + x2_name;
+  EXPECT_EQ(x1.size(), x2.size())
+      << "expect_near_rel (std::vector):"
+      << " vectors must be same size. " << x1_name << ".size() = " << x1.size()
+      << "; " << x2_name << ".size() = " << x2.size() << std::endl
+      << msg << std::endl;
+  std::string msg2 = std::string("expect_near_rel; require items ") + "x1[i] = "
+                     + "x2[i]: " + msg + " for " + x1_name + " vs " + x2_name;
   for (size_t i = 0; i < x1.size(); ++i)
     expect_near_rel(msg2, x1[i], x2[i], tol, x1_name, x2_name);
 }
