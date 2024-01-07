@@ -122,7 +122,6 @@
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/static_select.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
