@@ -177,10 +177,7 @@ def doCommand(command, exit_on_failure=True):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    if isWin():
-        doCommand("mingw32-make -j%d generate-tests -s" % (j or 1))
-    else:
-        doCommand("make -j%d generate-tests -s" % (j or 1))
+    doCommand("make -j%d generate-tests -s" % (j or 1))
 
 
 def divide_chunks(l, n):
@@ -238,10 +235,7 @@ def cleanupJumboTests(paths):
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    if isWin():
-        doCommand("mingw32-make -j%d %s" % (j or 1, name))
-    else:
-        doCommand("make -j%d %s" % (j or 1, name))
+    doCommand("make -j%d %s" % (j or 1, name))
 
 
 def commandExists(command):
@@ -375,7 +369,7 @@ def handleExpressionTests(tests, only_functions, n_test_files):
 def checkToolchainPathWindows():
     if isWin():
         p1 = subprocess.Popen(
-            "where.exe mingw32-make",
+            "where.exe make",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
