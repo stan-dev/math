@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 if os.name == "nt":  # Windows
-    make = "mingw32-make"
+    make = "make"
     exe_extension = ".exe"
 else:
     make = "make"
