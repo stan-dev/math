@@ -35,21 +35,12 @@ jobs:
     - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Install mingw32-make and check toolchain path
-      if: runner.os == 'Windows'
-      run: |
-        pacman -Syu mingw-w64-x86_64-make --noconfirm
-        g++ --version
-        Get-Command g++ | Select-Object -ExpandProperty Definition
-        mingw32-make --version
-        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-      shell: powershell
 
     - name: Build Math libs
       shell: powershell
       run: |
         Add-Content make\local "O=1`n"
-        mingw32-make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -85,21 +76,12 @@ jobs:
     - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Install mingw32-make and check toolchain path
-      if: runner.os == 'Windows'
-      run: |
-        pacman -Syu mingw-w64-x86_64-make --noconfirm
-        g++ --version
-        Get-Command g++ | Select-Object -ExpandProperty Definition
-        mingw32-make --version
-        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-      shell: powershell
 
     - name: Build Math libs
       shell: powershell
       run: |
         Add-Content make\local "O=1`n"
-        mingw32-make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -139,21 +121,12 @@ jobs:
     - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Install mingw32-make and check toolchain path
-      if: runner.os == 'Windows'
-      run: |
-        pacman -Syu mingw-w64-x86_64-make --noconfirm
-        g++ --version
-        Get-Command g++ | Select-Object -ExpandProperty Definition
-        mingw32-make --version
-        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-      shell: powershell
 
     - name: Build Math libs
       shell: powershell
       run: |
         Add-Content make\local "O=1`n"
-        mingw32-make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -171,7 +144,7 @@ jobs:
       with:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
-        
+
   mix-fun-2:
     name: mix/fun tests 2
     runs-on: windows-latest
@@ -188,21 +161,12 @@ jobs:
     - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Install mingw32-make and check toolchain path
-      if: runner.os == 'Windows'
-      run: |
-        pacman -Syu mingw-w64-x86_64-make --noconfirm
-        g++ --version
-        Get-Command g++ | Select-Object -ExpandProperty Definition
-        mingw32-make --version
-        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-      shell: powershell
 
     - name: Build Math libs
       shell: powershell
       run: |
         Add-Content make\local "O=1`n"
-        mingw32-make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
