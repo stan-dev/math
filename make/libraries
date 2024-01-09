@@ -139,10 +139,8 @@ ifeq (Windows_NT, $(OS))
   ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
-	ifneq (,$(shell sh --version 2>/dev/null))
-		WINDOWS_HAS_SH ?= true
-	endif
-	ifeq ($(WINDOWS_HAS_SH), true) # Stop TBB makefile changing SHELL on RTools
+	USING_RTOOLS ?= true
+	ifeq ($(USING_RTOOLS), true) # Stop TBB makefile changing SHELL on RTools
 		MAKEOVERRIDES += SHELL=sh.exe
 	endif
 endif
