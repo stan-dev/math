@@ -21,21 +21,20 @@ namespace internal {
  * @param log_error The log error tolerance
  * @return Gradient w.r.t. sw
  */
-template <typename Scalar, typename T_y, typename T_a, typename T_v,
-          typename T_w, typename T_sv, typename T_sw,
-          typename ReturnT = return_type_t<Scalar>>
-inline ReturnT wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
+template <typename T_y, typename T_a, typename T_v,
+          typename T_w, typename T_sv, typename T_sw, typename T_err>
+inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
                                const T_w& w, const T_sv& sv, const T_sw& sw,
-                               Scalar log_error) {
-  Scalar low = w - sw / 2.0;
+                               T_err log_error) {
+  auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
-  Scalar high = w + sw / 2.0;
+  auto high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
 
-  const Scalar lower_value
-      = wiener5_density<true, Scalar>(y, a, v, low, sv, log_error);
-  const Scalar upper_value
-      = wiener5_density<true, Scalar>(y, a, v, high, sv, log_error);
+  const auto lower_value
+      = wiener5_density<true>(y, a, v, low, sv, log_error);
+  const auto upper_value
+      = wiener5_density<true>(y, a, v, high, sv, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
@@ -141,7 +140,7 @@ ReturnT wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
   const auto functor = [&](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
-  return estimate_with_err_check<Scalar, 0, GradW7, 8, true>(
+  return estimate_with_err_check<0, GradW7, 8, true>(
       functor, hcubature_err, args...);
 }
 }  // namespace internal
@@ -293,16 +292,15 @@ ReturnT wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  */
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
-          typename T_st0,
-          typename ReturnT
-          = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>>
-inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
+          typename T_st0>
+inline auto wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 const T_w& w, const T_v& v, const T_sv& sv,
                                 const T_sw& sw, const T_st0& st0,
                                 const double& precision_derivatives = 1e-4) {
+  using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
-    return 0;
+    return ret_t(0);
   }
 
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
@@ -360,11 +358,11 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                st0_val);
 
   if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0)) {
-    return 0;
+    return ret_t(0);
   }
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
   if (!N) {
-    return 0;
+    return ret_t(0);
   }
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_a_ref> a_vec(a_ref);
@@ -408,9 +406,9 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
   const T_partials_return log_error_density
       = log(1e-6);  // precision for density
-  const T_partials_return error_bound = precision_derivatives;  // precision for
+  const auto error_bound = precision_derivatives;  // precision for
   // derivatives (controllable by user)
-  const T_partials_return log_error_derivative = log(error_bound);
+  const auto log_error_derivative = log(error_bound);
   const T_partials_return absolute_error_hcubature = 0.0;
   const T_partials_return relative_error_hcubature
       = .9 * error_bound;  // eps_rel(Integration)
@@ -419,14 +417,12 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_partials_return log_density = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
                                                v_ref, sv_ref, sw_ref, st0_ref);
-  ReturnT result = 0;
+  ret_t result = 0;
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
     if (sw_vec[i] == 0 && st0_vec[i] == 0) {
-      result
-          = result
-            + wiener5_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
+      result += wiener5_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
                                    v_vec[i], sv_vec[i], precision_derivatives);
       continue;
     }
@@ -458,7 +454,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     T_partials_return density
         = internal::wiener7_integrate<T_partials_return, false, false>(
             [&](auto&&... args) {
-              return internal::wiener5_density<true, T_partials_return>(
+              return internal::wiener5_density<true>(
                   args...);
             },
             hcubature_err, params, dim, xmin, xmax,
@@ -490,10 +486,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate<T_partials_return, false, false>(
                 [&](auto&&... args) {
-                  return internal::wiener5_grad_a<
-                      true, T_partials_return, T_partials_return,
-                      T_partials_return, T_partials_return, T_partials_return,
-                      T_partials_return>(args...);
+                  return internal::wiener5_grad_a<true>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -541,10 +534,9 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0;
       } else {
         if (st0_value == 0) {
-          derivative = internal::estimate_with_err_check<T_partials_return, 6,
-                                                         false, 0, true>(
+          derivative = internal::estimate_with_err_check<6, false, 0, true>(
               [&](auto&&... args) {
-                return internal::wiener7_grad_sw<T_partials_return>(args...);
+                return internal::wiener7_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, sw_value, log_error_absolute - LOG_TWO);
@@ -552,7 +544,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
           derivative
               = internal::wiener7_integrate<T_partials_return, true, false>(
                   [&](auto&&... args) {
-                    return internal::wiener7_grad_sw<T_partials_return>(
+                    return internal::wiener7_grad_sw(
                         args...);
                   },
                   hcubature_err, params, 1, xmin, xmax,
@@ -571,10 +563,9 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0) {
-          f = internal::estimate_with_err_check<T_partials_return, 5, false, 0,
-                                                true>(
+          f = internal::estimate_with_err_check<5, false, 0, true>(
               [&](auto&&... args) {
-                return internal::wiener5_density<true, T_partials_return>(
+                return internal::wiener5_density<true>(
                     args...);
               },
               log_error_derivative + log(st0_value), y_value - t0_st0, a_value,
@@ -586,7 +577,7 @@ inline ReturnT wiener_full_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 sv_value, sw_value, 0, new_error);
           f = internal::wiener7_integrate<T_partials_return, false, false>(
               [&](auto&&... args) {
-                return internal::wiener5_density<true, T_partials_return>(
+                return internal::wiener5_density<true>(
                     args...);
               },
               hcubature_err, params_st, 1, xmin, xmax,
