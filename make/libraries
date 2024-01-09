@@ -139,7 +139,12 @@ ifeq (Windows_NT, $(OS))
   ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
-	USING_RTOOLS := true
+	ifneq (,$(shell sh --version 2>/dev/null))
+		WINDOWS_HAS_SH ?= true
+	endif
+	ifeq ($(WINDOWS_HAS_SH), true) # Stop TBB makefile changing SHELL on RTools
+		MAKEOVERRIDES += SHELL=sh.exe
+	endif
 endif
 
 # If brackets or spaces are found in MAKE on Windows
@@ -163,11 +168,11 @@ endif
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/version_$(notdir $(TBB))
-	USING_RTOOLS=$(USING_RTOOLS) tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
-	USING_RTOOLS=$(USING_RTOOLS) tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
 $(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def

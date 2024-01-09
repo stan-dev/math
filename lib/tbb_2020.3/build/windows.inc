@@ -12,11 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq (true,$(USING_RTOOLS))
-  export SHELL = sh.exe
-else
-  export SHELL = cmd
-endif
+export SHELL = cmd
 
 ifdef tbb_build_dir
   test_dir:=$(tbb_build_dir)
