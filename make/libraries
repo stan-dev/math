@@ -139,7 +139,8 @@ ifeq (Windows_NT, $(OS))
   ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
-	ifeq (true,$(shell sh --version 2>/dev/null))
+	SH_CHECK := $(shell command -v sh 2>/dev/null)
+	ifdef SH_CHECK
 		WINDOWS_HAS_SH ?= true
 	endif
 	ifeq ($(WINDOWS_HAS_SH), true) # Stop TBB makefile changing SHELL on RTools
