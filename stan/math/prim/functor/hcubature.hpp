@@ -179,15 +179,14 @@ inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> signcombos(
  * @return numeric integral of the integrand and error
  */
 template <typename F, typename T_a, typename T_b, typename ParsPairT>
-auto gauss_kronrod(const F& integrand, const T_a a,
-                                        const T_b b,
-                                        const ParsPairT& pars_pair) {
+inline auto gauss_kronrod(const F& integrand, const T_a a, const T_b b,
+                          const ParsPairT& pars_pair) {
   using delta_t = return_type_t<T_a, T_b>;
   const delta_t c = 0.5 * (a + b);
   const delta_t delta = 0.5 * (b - a);
   auto f0 = math::apply([](auto&& integrand, auto&& c,
-                             auto&&... args) { return integrand(c, args...); },
-                          pars_pair, integrand, c);
+                           auto&&... args) { return integrand(c, args...); },
+                        pars_pair, integrand, c);
 
   auto I = f0 * wd7[7];
   auto Idash = f0 * gwd7[3];
@@ -196,13 +195,11 @@ auto gauss_kronrod(const F& integrand, const T_a a,
     deltax[i] = delta * xd7[i];
   }
   for (auto i = 0; i != 7; i++) {
-    auto fx
-        = math::apply([](auto&& integrand, auto&& c, auto&& delta,
-                         auto&&... args) {
-                          return integrand(c + delta, args...) +
-                           integrand(c - delta, args...);
-                        },
-                      pars_pair, integrand, c, deltax[i]);
+    auto fx = math::apply(
+        [](auto&& integrand, auto&& c, auto&& delta, auto&&... args) {
+          return integrand(c + delta, args...) + integrand(c - delta, args...);
+        },
+        pars_pair, integrand, c, deltax[i]);
     I += fx * wd7[i];
     if (i % 2 == 1) {
       Idash += fx * gwd7[i / 2];
@@ -268,13 +265,13 @@ make_GenzMalik(const int dim) {
  * @return numeric integral of the integrand, error, and suggested coordinate to
  * subdivide next
  */
-template <typename F, typename GenzMalik, typename T_a, typename T_b, typename ParsTupleT>
-auto integrate_GenzMalik(
-    const F& integrand,
-    const GenzMalik& genz_malik, const int dim,
-    const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
-    const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
-    const ParsTupleT& pars_tuple) {
+template <typename F, typename GenzMalik, typename T_a, typename T_b,
+          typename ParsTupleT>
+inline auto integrate_GenzMalik(const F& integrand, const GenzMalik& genz_malik,
+                                const int dim,
+                                const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
+                                const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
+                                const ParsTupleT& pars_tuple) {
   auto&& points = std::get<0>(genz_malik);
   auto&& weights = std::get<1>(genz_malik);
   auto&& weights_low_deg = std::get<2>(genz_malik);
@@ -421,28 +418,31 @@ struct Box {
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename Scalar, typename F, typename T_a, typename T_b, typename ParsTuple>
-Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
-                 const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
-                 const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
-                 const int max_eval, const Scalar reqAbsError,
-                 const Scalar reqRelError) {
+template <typename Scalar, typename F, typename T_a, typename T_b,
+          typename ParsTuple>
+inline Scalar hcubature(const F& integrand, const ParsTuple& pars,
+                        const int dim,
+                        const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
+                        const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
+                        const int max_eval, const Scalar reqAbsError,
+                        const Scalar reqRelError) {
   using eig_vec_a = Eigen::Matrix<T_a, Eigen::Dynamic, 1>;
   using eig_vec_b = Eigen::Matrix<T_b, Eigen::Dynamic, 1>;
   const int maxEval = max_eval <= 0 ? 1000000 : max_eval;
   Scalar result;
   Scalar err;
   auto kdivide = 0;
-  std::tuple<std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4>,
-    Eigen::Matrix<double, 5, 1>,
-    Eigen::Matrix<double, 4, 1>> genz_malik;
+  std::tuple<
+      std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4>,
+      Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 4, 1>>
+      genz_malik;
   if (dim == 1) {
     std::tie(result, err)
         = internal::gauss_kronrod(integrand, a[0], b[0], pars);
   } else {
     genz_malik = internal::make_GenzMalik(dim);
-    std::tie(result, err, kdivide) = internal::integrate_GenzMalik(
-        integrand, genz_malik, dim, a, b, pars);
+    std::tie(result, err, kdivide)
+        = internal::integrate_GenzMalik(integrand, genz_malik, dim, a, b, pars);
   }
   auto numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
@@ -489,12 +489,10 @@ Scalar hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       std::tie(result_2, err_2)
           = internal::gauss_kronrod(integrand, box.a_[0], mb[0], pars);
     } else {
-      std::tie(result_1, err_1, kdivide_1)
-          = internal::integrate_GenzMalik(integrand, genz_malik,
-                                                  dim, ma, box.b_, pars);
-      std::tie(result_2, err_2, kdivide_2)
-          = internal::integrate_GenzMalik(integrand, genz_malik,
-                                                  dim, box.a_, mb, pars);
+      std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
+          integrand, genz_malik, dim, ma, box.b_, pars);
+      std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
+          integrand, genz_malik, dim, box.a_, mb, pars);
     }
     box_t box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
     box_t box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
