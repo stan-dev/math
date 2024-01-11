@@ -1,0 +1,21 @@
+# Copyright 2017, 2018, 2023 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt)
+
+import asciidoctor ;
+
+html compat.html : compat.adoc ;
+
+install html_ : compat.html : <location>html ;
+
+pdf compat.pdf : compat.adoc ;
+explicit compat.pdf ;
+
+install pdf_ : compat.pdf : <location>pdf ;
+explicit pdf_ ;
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : html_ ;
+explicit boostrelease ;

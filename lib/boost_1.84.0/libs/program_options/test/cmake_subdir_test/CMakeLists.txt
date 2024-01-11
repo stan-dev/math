@@ -1,0 +1,18 @@
+# Copyright 2018, 2019 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+
+cmake_minimum_required(VERSION 3.5...3.16)
+
+project(cmake_subdir_test LANGUAGES CXX)
+
+set(BOOST_INCLUDE_LIBRARIES program_options)
+add_subdirectory(../../../.. boostorg/boost)
+
+add_executable(quick ../quick.cpp)
+target_link_libraries(quick Boost::program_options Boost::core)
+
+enable_testing()
+add_test(NAME quick COMMAND quick --path=initial)
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>)

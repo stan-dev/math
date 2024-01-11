@@ -1,0 +1,110 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Formatting</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../urls.html" title="URLs">
+<link rel="prev" href="percent_encoding.html" title="Percent Encoding">
+<link rel="next" href="../grammar.html" title="Customization">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="percent_encoding.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../grammar.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.urls.formatting"></a><a class="link" href="formatting.html" title="Formatting">Formatting</a>
+</h3></div></div></div>
+<p>
+        Algorithms to format URLs construct a mutable URL by parsing and applying
+        arguments to a URL template. The following example uses the <a class="link" href="../ref/boost__urls__format.html" title="format"><code class="computeroutput"><span class="identifier">format</span></code></a> function to construct an
+        absolute URL:
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"{}://{}:{}/rfc/{}"</span><span class="special">,</span> <span class="string">"https"</span><span class="special">,</span> <span class="string">"www.ietf.org"</span><span class="special">,</span> <span class="number">80</span><span class="special">,</span> <span class="string">"rfc2396.txt"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.ietf.org:80/rfc/rfc2396.txt"</span><span class="special">);</span>
+</pre>
+<p>
+        The rules for a format URL string are the same as for a <a href="https://en.cppreference.com/w/cpp/utility/format/basic_format_string" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format_string</span></code></a>,
+        where replacement fields are delimited by curly braces. The URL type is inferred
+        from the format string.
+      </p>
+<p>
+        The URL components to which replacement fields belong are identified before
+        replacement is applied and any invalid characters for that formatted argument
+        are percent-escaped:
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"https://{}/{}"</span><span class="special">,</span> <span class="string">"www.boost.org"</span><span class="special">,</span> <span class="string">"Hello world!"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.boost.org/Hello%20world!"</span><span class="special">);</span>
+</pre>
+<p>
+        Delimiters in the URL template, such as <code class="computeroutput"><span class="string">":"</span></code>,
+        <code class="computeroutput"><span class="string">"//"</span></code>, <code class="computeroutput"><span class="string">"?"</span></code>, and <code class="computeroutput"><span class="string">"#"</span></code>,
+        unambiguously associate each replacement field to a URL component. All other
+        characters are normalized to ensure the URL is valid:
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"{}:{}"</span><span class="special">,</span> <span class="string">"mailto"</span><span class="special">,</span> <span class="string">"someone@example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"mailto:someone@example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">()</span> <span class="special">==</span> <span class="string">"mailto"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"someone@example.com"</span><span class="special">);</span>
+</pre>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"{}{}"</span><span class="special">,</span> <span class="string">"mailto:"</span><span class="special">,</span> <span class="string">"someone@example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"mailto%3Asomeone@example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(!</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">has_scheme</span><span class="special">());</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"mailto:someone@example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"mailto%3Asomeone@example.com"</span><span class="special">);</span>
+</pre>
+<p>
+        The function <a class="link" href="../ref/boost__urls__format_to.html" title="format_to"><code class="computeroutput"><span class="identifier">format_to</span></code></a> can be used to format
+        URLs into any modifiable URL container.
+      </p>
+<pre class="programlisting"><span class="identifier">static_url</span><span class="special">&lt;</span><span class="number">50</span><span class="special">&gt;</span> <span class="identifier">u</span><span class="special">;</span>
+<span class="identifier">format_to</span><span class="special">(</span><span class="identifier">u</span><span class="special">,</span> <span class="string">"{}://{}:{}/rfc/{}"</span><span class="special">,</span> <span class="string">"https"</span><span class="special">,</span> <span class="string">"www.ietf.org"</span><span class="special">,</span> <span class="number">80</span><span class="special">,</span> <span class="string">"rfc2396.txt"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.ietf.org:80/rfc/rfc2396.txt"</span><span class="special">);</span>
+</pre>
+<p>
+        As with <a href="https://en.cppreference.com/w/cpp/utility/format/format" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format</span></code></a>,
+        positional and named arguments are supported.
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"{0}://{2}:{1}/{3}{4}{3}"</span><span class="special">,</span> <span class="string">"https"</span><span class="special">,</span> <span class="number">80</span><span class="special">,</span> <span class="string">"www.ietf.org"</span><span class="special">,</span> <span class="string">"abra"</span><span class="special">,</span> <span class="string">"cad"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://www.ietf.org:80/abracadabra"</span><span class="special">);</span>
+</pre>
+<p>
+        The <a class="link" href="../ref/boost__urls__arg.html" title="arg"><code class="computeroutput"><span class="identifier">arg</span></code></a>
+        function can be used to associate names with arguments:
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="string">"https://example.com/~{username}"</span><span class="special">,</span> <span class="identifier">arg</span><span class="special">(</span><span class="string">"username"</span><span class="special">,</span> <span class="string">"mark"</span><span class="special">));</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://example.com/~mark"</span><span class="special">);</span>
+</pre>
+<p>
+        A second overload based on <a href="https://en.cppreference.com/w/cpp/utility/initializer_list" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span></code></a>
+        is provided for both <a class="link" href="../ref/boost__urls__format.html" title="format"><code class="computeroutput"><span class="identifier">format</span></code></a> and <a class="link" href="../ref/boost__urls__format_to.html" title="format_to"><code class="computeroutput"><span class="identifier">format_to</span></code></a>. These overloads can help
+        with lists of named arguments:
+      </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">fmt</span> <span class="special">=</span> <span class="string">"{scheme}://{host}:{port}/{dir}/{file}"</span><span class="special">;</span>
+<span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">format</span><span class="special">(</span><span class="identifier">fmt</span><span class="special">,</span> <span class="special">{{</span><span class="string">"scheme"</span><span class="special">,</span> <span class="string">"https"</span><span class="special">},</span> <span class="special">{</span><span class="string">"port"</span><span class="special">,</span> <span class="number">80</span><span class="special">},</span> <span class="special">{</span><span class="string">"host"</span><span class="special">,</span> <span class="string">"example.com"</span><span class="special">},</span> <span class="special">{</span><span class="string">"dir"</span><span class="special">,</span> <span class="string">"path/to"</span><span class="special">},</span> <span class="special">{</span><span class="string">"file"</span><span class="special">,</span> <span class="string">"file.txt"</span><span class="special">}});</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https://example.com:80/path/to/file.txt"</span><span class="special">);</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="percent_encoding.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../urls.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../grammar.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

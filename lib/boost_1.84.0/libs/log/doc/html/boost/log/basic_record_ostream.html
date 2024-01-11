@@ -1,0 +1,294 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_record_ostream</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../logging_sources.html#header.boost.log.sources.record_ostream_hpp" title="Header &lt;boost/log/sources/record_ostream.hpp&gt;">
+<link rel="prev" href="sources/wlogger_mt.html" title="Class wlogger_mt">
+<link rel="next" href="operator_idm31404.html" title="Function template operator&lt;&lt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="sources/wlogger_mt.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../logging_sources.html#header.boost.log.sources.record_ostream_hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_idm31404.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="boost.log.basic_record_ostream"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_record_ostream</span></h2>
+<p>boost::log::basic_record_ostream — Logging record adapter with a streaming capability. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../logging_sources.html#header.boost.log.sources.record_ostream_hpp" title="Header &lt;boost/log/sources/record_ostream.hpp&gt;">boost/log/sources/record_ostream.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">basic_formatting_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">CharT</span>                           <a name="boost.log.basic_record_ostream.char_type"></a><span class="identifier">char_type</span><span class="special">;</span>    <span class="comment">// Character type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span>  <a name="boost.log.basic_record_ostream.string_type"></a><span class="identifier">string_type</span><span class="special">;</span>  <span class="comment">// String type to be used as a message text holder. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <a name="boost.log.basic_record_ostream.stream_type"></a><span class="identifier">stream_type</span><span class="special">;</span>  <span class="comment">// Stream type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">traits_type</span>          <a name="boost.log.basic_record_ostream.traits_type"></a><span class="identifier">traits_type</span><span class="special">;</span>  <span class="comment">// Character traits. </span>
+
+  <span class="comment">// <a class="link" href="basic_record_ostream.html#boost.log.basic_record_ostreamconstruct-copy-destruct">construct/copy/destruct</a></span>
+  <a class="link" href="basic_record_ostream.html#idm31358-bb"><span class="identifier">basic_record_ostream</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="basic_record_ostream.html#idm31365-bb"><span class="identifier">basic_record_ostream</span></a><span class="special">(</span><span class="identifier">record</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html#idm31386-bb"><span class="identifier">basic_record_ostream</span></a><span class="special">(</span><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31390-bb"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html#idm31379-bb"><span class="special">~</span><span class="identifier">basic_record_ostream</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="basic_record_ostream.html#idm31183-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="basic_record_ostream.html#idm31184-bb"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="basic_record_ostream.html#idm31193-bb"><span class="keyword">operator</span><span class="special">!</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">record</span> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31202-bb"><span class="identifier">get_record</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31209-bb"><span class="identifier">get_record</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_record_ostream.html#idm31216-bb"><span class="identifier">attach_record</span></a><span class="special">(</span><span class="identifier">record</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="basic_record_ostream.html#idm31225-bb"><span class="identifier">detach_from_record</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31228-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">ios_base_manip</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31233-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">basic_ios_manip</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31238-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">stream_manip</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31243-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">char</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31248-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31253-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">wchar_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31258-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31263-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">char16_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31268-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char16_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31273-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">char32_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31278-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char32_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31283-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">bool</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31288-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">signed</span> <span class="keyword">char</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31293-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">char</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31298-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">short</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31303-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">short</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31308-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31313-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31318-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">long</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31323-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">long</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31328-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">long</span> <span class="keyword">long</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31333-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31338-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">float</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31343-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a class="link" href="basic_record_ostream.html#idm31348-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="keyword">long</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> 
+  <a class="link" href="basic_record_ostream.html#idm31353-bb"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_streambuf</span><span class="special">&lt;</span> <span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">traits_type</span> <span class="special">&gt;</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="basic_record_ostream.html#idm31382-bb">private member functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="basic_record_ostream.html#idm31383-bb"><span class="identifier">init_stream</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idm59688"></a><h2>Description</h2>
+<p>This class allows to compose the logging record message by streaming operations. It aggregates the log record and provides the standard output stream interface. </p>
+<div class="refsect2">
+<a name="idm59691"></a><h3>
+<a name="boost.log.basic_record_ostreamconstruct-copy-destruct"></a><code class="computeroutput">basic_record_ostream</code> 
+        public
+       construct/copy/destruct</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="idm31358-bb"></a><span class="identifier">basic_record_ostream</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Default constructor. Creates an empty record that is equivalent to the invalid record handle. The stream capability is not available after construction.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">!*this == true</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm31365-bb"></a><span class="identifier">basic_record_ostream</span><span class="special">(</span><span class="identifier">record</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor from a record object. Attaches to the provided record.</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">rec</code></span></p></td>
+<td><p>The record handle being attached to </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!!rec == true</code> </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">&amp;this-&gt;get_record() == &amp;rec</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="idm31386-bb"></a><span class="identifier">basic_record_ostream</span><span class="special">(</span><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31390-bb"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm31379-bb"></a><span class="special">~</span><span class="identifier">basic_record_ostream</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor. Destroys the record, releases any sinks and attribute values that were involved in processing this record. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm59785"></a><h3>
+<a name="idm31183-bb"></a><code class="computeroutput">basic_record_ostream</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm31184-bb"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Conversion to an unspecified boolean type</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">true</code>, if stream is valid and ready for formatting, <code class="computeroutput">false</code>, if the stream is not valid. The latter also applies to the case when the stream is not attached to a log record. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="idm31193-bb"></a><span class="keyword">operator</span><span class="special">!</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Inverted conversion to an unspecified boolean type</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">false</code>, if stream is valid and ready for formatting, <code class="computeroutput">true</code>, if the stream is not valid. The latter also applies to the case when the stream is not attached to a log record. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">record</span> <span class="special">&amp;</span> <a name="idm31202-bb"></a><span class="identifier">get_record</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Flushes internal buffers to complete all pending formatting operations and returns the aggregated log record</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The aggregated record object </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="idm31209-bb"></a><span class="identifier">get_record</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Flushes internal buffers to complete all pending formatting operations and returns the aggregated log record</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The aggregated record object </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm31216-bb"></a><span class="identifier">attach_record</span><span class="special">(</span><span class="identifier">record</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>
+<p>If the stream is attached to a log record, flushes internal buffers to complete all pending formatting operations. Then reattaches the stream to another log record.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">rec</code></span></p></td>
+<td><p>New log record to attach to </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm31225-bb"></a><span class="identifier">detach_from_record</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>The function resets the stream into a detached (default initialized) state. </li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31228-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">ios_base_manip</span> manip<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31233-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">basic_ios_manip</span> manip<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31238-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">stream_manip</span> manip<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31243-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">char</span> c<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31248-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> p<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31253-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">wchar_t</span> c<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31258-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> p<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31263-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">char16_t</span> c<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31268-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char16_t</span> <span class="special">*</span> p<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31273-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">char32_t</span> c<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31278-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char32_t</span> <span class="special">*</span> p<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31283-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">bool</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31288-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">signed</span> <span class="keyword">char</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31293-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">char</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31298-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">short</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31303-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">short</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31308-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">int</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31313-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">int</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31318-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">long</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31323-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">long</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31328-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">long</span> <span class="keyword">long</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31333-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31338-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">float</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31343-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">double</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> <a name="idm31348-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="keyword">long</span> <span class="keyword">double</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="basic_record_ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a> <span class="special">&amp;</span> 
+<a name="idm31353-bb"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_streambuf</span><span class="special">&lt;</span> <span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">traits_type</span> <span class="special">&gt;</span> <span class="special">*</span> buf<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm60247"></a><h3>
+<a name="idm31382-bb"></a><code class="computeroutput">basic_record_ostream</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="idm31383-bb"></a><span class="identifier">init_stream</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>The function initializes the stream and the stream buffer. </li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2022 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="sources/wlogger_mt.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../logging_sources.html#header.boost.log.sources.record_ostream_hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_idm31404.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

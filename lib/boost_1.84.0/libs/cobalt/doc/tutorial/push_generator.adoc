@@ -1,0 +1,61 @@
+== Generator with push value
+
+Coroutines with push values are not as common,
+but can simplify certain issues significantly.
+
+Since we've already got a json_reader in the previous example,
+here's how we can write a json_writer that gets values pushed in.
+
+The advantage of using a generator is the internal state management.
+
+[source,cpp]
+----
+cobalt::generator<system::error_code, json::object>
+    json_writer(websocket_type & ws)
+try
+{
+    char buffer[4096];
+    json::serializer ser;
+
+    while (ws.is_open()) // <1>
+    {
+        auto val = co_yield system::error_code{}; // <2>
+
+        while (!ser.done())
+        {
+            auto sv = ser.read(buffer);
+            co_await ws.cobalt_write({sv.data(), sv.size()}); // <3>
+        }
+
+    }
+    co_return {};
+}
+catch (system::system_error& e)
+{
+    co_return e.code();
+}
+catch (std::exception & e)
+{
+    std::cerr << "Error reading: " << e.what() << std::endl;
+    throw;
+}
+----
+<1> Keep running as long as the socket is open
+<2> `co_yield` the current error and retrieve a new value.
+<3> Write a frame to the websocket
+
+Now we can use the generator like this:
+
+[source,cpp]
+----
+auto g = json_writer(my_ws);
+
+extern std::vector<json::value> to_write;
+
+for (auto && tw : std::move(to_write))
+{
+    if (auto ec = co_await g(std::move(tw)))
+        return ec; // yield error
+}
+----
+

@@ -1,0 +1,296 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:examples Examples]
+
+Welcome to __Self__ examples. If you are intending to
+run the examples, please go through the [link mysql.examples.setup
+setup] first.
+
+Here is a list of available examples:
+
+# [link mysql.examples.async_callbacks Async functions using callbacks]
+# [link mysql.examples.async_futures Async functions using futures]
+# [link mysql.examples.async_coroutines Async functions using stackful coroutines]
+# [link mysql.examples.async_coroutinescpp20 Async functions using C++20 coroutines]
+# [link mysql.examples.timeouts Setting timeouts]
+# [link mysql.examples.prepared_statements_cpp11 Using prepared statements with the dynamic interface (C++11)]
+# [link mysql.examples.prepared_statements_cpp14 Using prepared statements with the static interface (C++14)]
+# [link mysql.examples.stored_procedures_cpp11 Using stored procedures with the dynamic interface (C++11)]
+# [link mysql.examples.stored_procedures_cpp14 Using stored procedures with the static interface (C++14)]
+# [link mysql.examples.metadata Metadata]
+# [link mysql.examples.unix_socket UNIX sockets]
+# [link mysql.examples.ssl Setting SSL options]
+# [link mysql.examples.source_script Using multi-queries to source a .sql file]
+
+[heading Setup]
+
+To run the examples, you need a MySQL server you can connect to.
+Examples make use of a database named `boost_mysql_examples`.
+The server hostname and credentials (username and password) are passed 
+to the examples via the command line.
+
+If you're using docker, you can use the `ghcr.io/anarthal-containers/mysql8` container
+to simplify the process:
+
+[!teletype]
+```
+    # If you're on a system supporting UNIX sockets. Note that /var/run/mysqld
+    # should be empty for this to work; you can specify a different directory, if it's not
+    > docker run -p 3306:3306 -v /var/run/mysqld:/var/run/mysqld -d ghcr.io/anarthal-containers/mysql8
+
+    # If you're on a system that does not support UNIX sockets
+    > docker run -p 3306:3306 -d ghcr.io/anarthal-containers/mysql8
+
+    # All the required data can be loaded by running example/db_setup.sql.
+    # If you're using the above container, the root user has a blank password
+    > mysql -u root < example/db_setup.sql
+```
+
+Please note that this container is just for demonstrative purposes,
+and is not suitable for production.
+
+The root MySQL user for these containers is `root` and it has an empty password.
+
+
+[section:async_callbacks Async functions using callbacks]
+
+This example demonstrates how use the asynchronous functions using callbacks.
+
+__assume_setup__
+
+[import ../../example/async_callbacks.cpp]
+[example_async_callbacks]
+
+[endsect]
+
+
+
+
+[section:async_futures Async functions using futures]
+
+This example demonstrates how use the asynchronous functions using futures.
+
+__assume_setup__
+
+[import ../../example/async_futures.cpp]
+[example_async_futures]
+
+[endsect]
+
+
+
+
+[section:async_coroutines Async functions using stackful coroutines]
+
+This example demonstrates how use the asynchronous functions using stackful coroutines
+(using [asioreflink yield_context yield_context] and
+[asioreflink spawn spawn]).
+
+__assume_setup__
+
+[import ../../example/async_coroutines.cpp]
+[example_async_coroutines]
+
+[endsect]
+
+
+
+
+[section:async_coroutinescpp20 Async functions using C++20 coroutines]
+
+This example demonstrates how use the asynchronous functions using C++20 coroutines
+(using [asioreflink use_awaitable use_awaitable] and [asioreflink
+co_spawn co_spawn]).
+
+__assume_setup__
+
+[import ../../example/async_coroutinescpp20.cpp]
+[example_async_coroutinescpp20]
+
+[endsect]
+
+
+
+
+[section:timeouts Timeouts]
+
+This example demonstrates how to use Boost.Asio's
+cancellation features to add timeouts to your async operations,
+including the ones provided by __Self__. 
+For that purpose, it employs C++20 coroutines.
+If you are not familiar with them, look at
+[link mysql.examples.async_coroutinescpp20 this example]
+first.
+
+__assume_setup__
+
+[import ../../example/timeouts.cpp]
+[example_timeouts]
+
+[endsect]
+
+
+
+
+[section:prepared_statements_cpp11 Using prepared statements with the dynamic interface (C++11)]
+
+This example demonstrates how to use prepared statements with the dynamic interface to
+implement a minimal order management system for an online store.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+This examples requires you to run [link_to_file example/order_management/db_setup.sql].
+You can find table definitions there.
+
+[import ../../example/order_management/prepared_statements_cpp11.cpp]
+
+[example_prepared_statements_cpp11]
+
+[endsect]
+
+
+
+
+[section:prepared_statements_cpp14 Using prepared statements with the static interface (C++14)]
+
+This example demonstrates how to use prepared statements with the static interface to
+implement a minimal order management system for an online store.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+This examples requires you to run [link_to_file example/order_management/db_setup.sql].
+You can find table definitions there.
+
+[import ../../example/order_management/prepared_statements_cpp14.cpp]
+
+[example_prepared_statements_cpp14]
+
+[endsect]
+
+
+
+
+[section:stored_procedures_cpp11 Using stored procedures with the dynamic interface (C++11)]
+
+This example demonstrates how to use stored procedures with the dynamic interface to
+implement a minimal order management system for an online store.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+This examples requires you to run [link_to_file example/order_management/db_setup.sql].
+You can find table and procedure definitions there.
+
+[import ../../example/order_management/stored_procedures_cpp11.cpp]
+
+[example_stored_procedures_cpp11]
+
+[endsect]
+
+
+
+
+[section:stored_procedures_cpp14 Using stored procedures with the static interface (C++14)]
+
+This example demonstrates how to use stored procedures with the static interface to
+implement a minimal order management system for an online store.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+This examples requires you to run [link_to_file example/order_management/db_setup.sql].
+You can find table and procedure definitions there.
+
+[import ../../example/order_management/stored_procedures_cpp14.cpp]
+
+[example_stored_procedures_cpp14]
+
+[endsect]
+
+
+
+
+[section:metadata Metadata]
+
+This example demonstrates how to use the available metadata in a [reflink results] object.
+It employs synchronous functions with exceptions as error handling. __see_error_handling__
+
+__assume_setup__
+
+[import ../../example/metadata.cpp]
+[example_metadata]
+
+[endsect]
+
+
+
+
+[section:unix_socket UNIX sockets]
+
+This example demonstrates how to establish a connection
+to a MySQL server using a UNIX domain socket. The path
+to the UNIX socket can be passed in as third parameter
+in the command line, and defaults to `/var/run/mysqld/mysqld.sock`,
+the default on most systems.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+__assume_setup__
+
+[import ../../example/unix_socket.cpp]
+[example_unix_socket]
+
+[endsect]
+
+
+
+
+[section:ssl Setting SSL options]
+
+This example demonstrates how to configure SSL options
+like server certificate verification and hostname validation.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+__assume_setup__ Additionally, you should run your MySQL server
+with some test certificates we created for you, just for this example.
+You can find them in this project's GitHub repository, under `tools/ssl`.
+If you're using the docker container, the setup has already been done
+for you.
+
+[import ../../example/ssl.cpp]
+[example_ssl]
+
+[endsect]
+
+
+
+
+[section:source_script Using multi-queries to source a .sql file]
+
+This example demonstrates how to source a .sql script using the
+[link mysql.multi_resultset.multi_queries multi-queries feature].
+
+Note that commands like `DELIMITER` won't work, since these are handled
+by the `mysql` command line tool, rather than the server.
+
+The example employs synchronous functions with
+exceptions as error handling. __see_error_handling__
+
+__assume_setup__
+
+[import ../../example/source_script.cpp]
+[example_source_script]
+
+[endsect]
+
+[endsect] [/ examples]

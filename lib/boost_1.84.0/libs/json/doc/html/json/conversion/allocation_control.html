@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Allocation control</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../conversion.html" title="Value Conversion">
+<link rel="prev" href="non_throwing_conversions.html" title="Non-throwing conversions">
+<link rel="next" href="contextual_conversions.html" title="Contextual conversions">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="non_throwing_conversions.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../conversion.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="contextual_conversions.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="json.conversion.allocation_control"></a><a class="link" href="allocation_control.html" title="Allocation control">Allocation control</a>
+</h3></div></div></div>
+<p>
+        As <a class="link" href="../ref/boost__json__value_from.html" title="value_from"><code class="computeroutput"><span class="identifier">value_from</span></code></a>
+        creates a <a class="link" href="../ref/boost__json__value.html" title="value"><code class="computeroutput"><span class="identifier">value</span></code></a>
+        object, users may want to control the way memory is allocated for it. For
+        this reason the function has an optional <a class="link" href="../ref/boost__json__storage_ptr.html" title="storage_ptr"><code class="computeroutput"><span class="identifier">storage_ptr</span></code></a> parameter, that is used
+        to set the <a class="link" href="../ref/boost__json__memory_resource.html" title="memory_resource"><code class="computeroutput"><span class="identifier">memory_resource</span></code></a> for the result.
+      </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          <a class="link" href="../ref/boost__json__value_to.html" title="value_to"><code class="computeroutput"><span class="identifier">value_to</span></code></a>
+          does not have a similar parameter, as <a class="link" href="../ref/boost__json__value.html" title="value"><code class="computeroutput"><span class="identifier">value</span></code></a> is not created.
+        </p></td></tr>
+</table></div>
+<p>
+        As the conversion result is set via an output parameter of type <code class="computeroutput"><span class="identifier">value</span><span class="special">&amp;</span></code>,
+        the intended <a class="link" href="../ref/boost__json__storage_ptr.html" title="storage_ptr"><code class="computeroutput"><span class="identifier">storage_ptr</span></code></a> is correctly propagated.
+        But users still should take care to not create temporaries using the default
+        <a class="link" href="../ref/boost__json__memory_resource.html" title="memory_resource"><code class="computeroutput"><span class="identifier">memory_resource</span></code></a>
+        by accident.
+      </p>
+<p>
+        For example, consider this alternative implementation of <code class="computeroutput"><span class="identifier">tag_invoke</span></code>
+        for <code class="computeroutput"><span class="identifier">ip_address</span></code> from the section
+        <a class="link" href="custom_conversions.html" title="Custom conversions">Custom conversions</a>.
+      </p>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">tag_invoke</span><span class="special">(</span> <span class="keyword">const</span> <span class="identifier">value_from_tag</span><span class="special">&amp;,</span> <span class="identifier">value</span><span class="special">&amp;</span> <span class="identifier">jv</span><span class="special">,</span> <span class="identifier">ip_address</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">addr</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">jv</span> <span class="special">=</span> <span class="identifier">array</span><span class="special">{</span> <span class="identifier">b</span><span class="special">[</span><span class="number">0</span><span class="special">],</span> <span class="identifier">b</span><span class="special">[</span><span class="number">1</span><span class="special">],</span> <span class="identifier">b</span><span class="special">[</span><span class="number">2</span><span class="special">],</span> <span class="identifier">b</span><span class="special">[</span><span class="number">3</span><span class="special">]</span> <span class="special">};</span>
+<span class="special">}</span>
+</pre>
+<p>
+        This implementation explicitly creates an <a class="link" href="../ref/boost__json__array.html" title="array"><code class="computeroutput"><span class="identifier">array</span></code></a> rather than relying on assignment
+        from an initializer list. But the array uses default <a class="link" href="../ref/boost__json__memory_resource.html" title="memory_resource"><code class="computeroutput"><span class="identifier">memory_resource</span></code></a>, not the one used
+        by <code class="computeroutput"><span class="identifier">jv</span></code>.
+      </p>
+<p>
+        To avoid creating such temporaries with an incorrect <a class="link" href="../ref/boost__json__memory_resource.html" title="memory_resource"><code class="computeroutput"><span class="identifier">memory_resource</span></code></a>, using <code class="computeroutput"><span class="identifier">value</span></code>'s member functions <code class="computeroutput"><span class="identifier">emplace_array</span></code>, <code class="computeroutput"><span class="identifier">emplace_object</span></code>,
+        and <code class="computeroutput"><span class="identifier">emplace_string</span></code> can be
+        helpful.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="non_throwing_conversions.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../conversion.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="contextual_conversions.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

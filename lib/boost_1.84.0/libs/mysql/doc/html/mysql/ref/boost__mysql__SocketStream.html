@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SocketStream concept</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__ResultsType.html" title="ResultsType concept">
+<link rel="next" href="boost__mysql__StaticRow.html" title="StaticRow concept">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__ResultsType.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__StaticRow.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__SocketStream"></a><a class="link" href="boost__mysql__SocketStream.html" title="SocketStream concept">SocketStream concept</a>
+</h4></div></div></div>
+<p>
+        <code class="computeroutput"><span class="identifier">SocketStream</span></code> should meet
+        the <a class="link" href="boost__mysql__Stream.html" title="Stream concept"><code class="literal">Stream</code></a>
+        requirements. Additionally, it should have a <code class="computeroutput"><span class="identifier">lowest_layer_type</span></code>
+        member type, and a <code class="computeroutput"><span class="identifier">lowest_layer</span></code>
+        member function, returning a <code class="computeroutput"><span class="identifier">lowest_layer_type</span><span class="special">&amp;</span></code>, following Asio's layered stream model.
+        Additionally, <code class="computeroutput"><span class="identifier">lowest_layer_type</span></code>
+        should inherit from an instantiation of <a href="../../../../../../doc/html/boost_asio/reference/basic_stream_socket.html" target="_top"><code class="literal">boost::asio::basic_stream_socket</code></a>.
+      </p>
+<p>
+        The types <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">basic_stream_socket</span><span class="special">&lt;</span><span class="identifier">Protocol</span><span class="special">,</span> <span class="identifier">Executor</span><span class="special">&gt;</span></code>
+        and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">stream</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">basic_stream_socket</span><span class="special">&lt;</span><span class="identifier">Protocol</span><span class="special">,</span> <span class="identifier">Executor</span><span class="special">&gt;&gt;</span></code> meet these requirements.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__ResultsType.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__StaticRow.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

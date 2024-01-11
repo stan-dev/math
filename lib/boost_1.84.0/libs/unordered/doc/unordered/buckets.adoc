@@ -1,0 +1,150 @@
+[#buckets]
+:idprefix: buckets_
+:imagesdir: ../diagrams
+
+= Basics of Hash Tables
+
+The containers are made up of a number of _buckets_, each of which can contain
+any number of elements. For example, the following diagram shows a <<unordered_set,`boost::unordered_set`>> with 7 buckets containing 5 elements, `A`,
+`B`, `C`, `D` and `E` (this is just for illustration, containers will typically
+have more buckets).
+
+image::buckets.png[]
+
+In order to decide which bucket to place an element in, the container applies
+the hash function, `Hash`, to the element's key (for sets the key is the whole element, but is referred to as the key
+so that the same terminology can be used for sets and maps). This returns a
+value of type `std::size_t`. `std::size_t` has a much greater range of values
+then the number of buckets, so the container applies another transformation to
+that value to choose a bucket to place the element in.
+
+Retrieving the elements for a given key is simple. The same process is applied
+to the key to find the correct bucket. Then the key is compared with the
+elements in the bucket to find any elements that match (using the equality
+predicate `Pred`). If the hash function has worked well the elements will be
+evenly distributed amongst the buckets so only a small number of elements will
+need to be examined.
+
+There is <<hash_equality, more information on hash functions and
+equality predicates in the next section>>.
+
+You can see in the diagram that `A` & `D` have been placed in the same bucket.
+When looking for elements in this bucket up to 2 comparisons are made, making
+the search slower. This is known as a *collision*. To keep things fast we try to
+keep collisions to a minimum.
+
+If instead of `boost::unordered_set` we had used <<unordered_flat_set,`boost::unordered_flat_set`>>, the
+diagram would look as follows:
+
+image::buckets-oa.png[]
+
+In open-addressing containers, buckets can hold at most one element; if a collision happens
+(like is the case of `D` in the example), the element uses some other available bucket in
+the vicinity of the original position. Given this simpler scenario, Boost.Unordered
+open-addressing containers offer a very limited API for accessing buckets.
+
+[caption=, title='Table {counter:table-counter}. Methods for Accessing Buckets']
+[cols="1,.^1", frame=all, grid=rows]
+|===
+2+^h| *All containers*
+h|*Method* h|*Description*
+
+|`size_type bucket_count() const` 
+|The number of buckets.
+
+2+^h| *Closed-addressing containers only*
+h|*Method* h|*Description*
+
+|`size_type max_bucket_count() const` 
+|An upper bound on the number of buckets.
+|`size_type bucket_size(size_type n) const` 
+|The number of elements in bucket `n`.
+
+|`size_type bucket(key_type const& k) const`
+|Returns the index of the bucket which would contain `k`.
+
+|`local_iterator begin(size_type n)`
+1.6+|Return begin and end iterators for bucket `n`.
+
+|`local_iterator end(size_type n)`
+
+|`const_local_iterator begin(size_type n) const`
+
+|`const_local_iterator end(size_type n) const`
+
+|`const_local_iterator cbegin(size_type n) const`
+
+|`const_local_iterator cend(size_type n) const`
+
+|===
+
+== Controlling the Number of Buckets
+
+As more elements are added to an unordered associative container, the number
+of collisions will increase causing performance to degrade.
+To combat this the containers increase the bucket count as elements are inserted.
+You can also tell the container to change the bucket count (if required) by
+calling `rehash`.
+
+The standard leaves a lot of freedom to the implementer to decide how the
+number of buckets is chosen, but it does make some requirements based on the
+container's _load factor_, the number of elements divided by the number of buckets.
+Containers also have a _maximum load factor_ which they should try to keep the
+load factor below.
+
+You can't control the bucket count directly but there are two ways to
+influence it:
+
+* Specify the minimum number of buckets when constructing a container or when calling `rehash`.
+* Suggest a maximum load factor by calling `max_load_factor`.
+
+`max_load_factor` doesn't let you set the maximum load factor yourself, it just
+lets you give a _hint_. And even then, the standard doesn't actually
+require the container to pay much attention to this value. The only time the
+load factor is _required_ to be less than the maximum is following a call to
+`rehash`. But most implementations will try to keep the number of elements
+below the max load factor, and set the maximum load factor to be the same as
+or close to the hint - unless your hint is unreasonably small or large.
+
+[caption=, title='Table {counter:table-counter}. Methods for Controlling Bucket Size']
+[cols="1,.^1", frame=all, grid=rows]
+|===
+2+^h| *All containers*
+h|*Method* h|*Description*
+
+|`X(size_type n)` 
+|Construct an empty container with at least `n` buckets (`X` is the container type).
+
+|`X(InputIterator i, InputIterator j, size_type n)` 
+|Construct an empty container with at least `n` buckets and insert elements from the range `[i, j)` (`X` is the container type).
+
+|`float load_factor() const` 
+|The average number of elements per bucket.
+
+|`float max_load_factor() const`
+|Returns the current maximum load factor.
+
+|`float max_load_factor(float z)`
+|Changes the container's maximum load factor, using `z` as a hint. +
+**Open-addressing containers:** this function does nothing: users are not allowed to change the maximum load factor.
+
+|`void rehash(size_type n)`
+|Changes the number of buckets so that there at least `n` buckets, and so that the load factor is less than the maximum load factor.
+
+2+^h| *Open-addressing and concurrent containers only*
+h|*Method* h|*Description*
+
+|`size_type max_load() const`
+|Returns the maximum number of allowed elements in the container before rehash.
+
+|===
+
+A note on `max_load` for open-addressing and concurrent containers: the maximum load will be 
+(`max_load_factor() * bucket_count()`) right after `rehash` or on container creation, but may
+slightly decrease when erasing elements in high-load situations. For instance, if we
+have a <<unordered_flat_map,`boost::unordered_flat_map`>> with `size()` almost
+at `max_load()` level and then erase 1,000 elements, `max_load()` may decrease by around a
+few dozen elements. This is done internally by Boost.Unordered in order
+to keep its performance stable, and must be taken into account when planning for rehash-free insertions.
+
+

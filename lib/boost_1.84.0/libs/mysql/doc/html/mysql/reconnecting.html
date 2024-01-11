@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Reconnecting a MySQL connection</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="connparams.html" title="Handshake parameters">
+<link rel="next" href="charsets.html" title="Character sets">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connparams.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="charsets.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.reconnecting"></a><a class="link" href="reconnecting.html" title="Reconnecting a MySQL connection">Reconnecting a MySQL connection</a>
+</h2></div></div></div>
+<p>
+      After you close a connection or an error has occurred, and if its underlying
+      <a class="link" href="ref/boost__mysql__Stream.html" title="Stream concept"><code class="literal">Stream</code></a>
+      supports it, you can re-open an existing connection. This is the case for
+      <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+      and <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Unfortunately, <a href="../../../../../doc/html/boost_asio/reference/ssl__stream.html" target="_top"><code class="literal">boost::asio::ssl::stream</code></a>
+        does not support reconnection. If you are using <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>
+        and you close the connection or encounter an error, you will have to destroy
+        and re-create the connection object.
+      </p></td></tr>
+</table></div>
+<p>
+      If you are using <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+      or <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>,
+      or any other stream supporting reconnection:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          After calling <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>,
+          you can re-open the connection later by calling <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          normally, even if the close operation failed.
+        </li>
+<li class="listitem">
+          If your <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          operation failed, you can try opening it again by simply calling <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          again.
+        </li>
+<li class="listitem">
+          If you connected your connection successfully but encountered a network
+          problem in any subsequent operation, and you would like to re-establish
+          connection, you should first call <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>
+          first, and then try opening the connection again by calling <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>.
+        </li>
+</ul></div>
+<p>
+      If your <code class="computeroutput"><span class="identifier">Stream</span></code> type doesn't
+      fulfill the <a class="link" href="ref/boost__mysql__SocketStream.html" title="SocketStream concept"><code class="literal"><span class="emphasis"><em>SocketStream</em></span></code></a>
+      type requirements, then you can't use <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>,
+      and you are thus responsible for establishing the physical connection and closing
+      the underlying stream, if necessary. Some guidelines:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          After calling <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>,
+          you should close the underlying stream, if required. You should then re-establish
+          the physical connection on the stream, and call <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+          afterwards.
+        </li>
+<li class="listitem">
+          If your <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+          operation failed, you are responsible for closing the underlying stream
+          if required. You should then establish the physical connection again, and
+          then call <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>.
+        </li>
+<li class="listitem">
+          If you connected your connection successfully but encountered a network
+          problem in any subsequent operation, and you would like to re-establish
+          connection, you should call <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+          first, then close and re-open the physical connection, and finally call
+          <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>.
+        </li>
+</ul></div>
+<p>
+      Note that <a href="https://anarthal.github.io/boost/index.html" target="_top">Boost.MySQL</a>
+      does not perform any built-in retry strategy, as different use cases have different
+      requirements. You can implement it as you best like with these tools. If you
+      implemented your own and you would like to contribute it, please create a PR
+      in the GitHub repository.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connparams.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="charsets.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

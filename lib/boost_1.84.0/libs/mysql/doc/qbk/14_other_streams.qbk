@@ -1,0 +1,84 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:other_streams UNIX sockets and other stream types]
+
+The [reflink connection] class is templatized on the stream type.
+Any object fulfilling the __Stream__ concept may be used
+as template argument.
+
+[heading Convenience type aliases]
+
+This library provides helper type aliases for the most common cases:
+
+[table
+    [
+        [Transport]
+        [Stream type]
+        [Type alias]
+    ]
+    [
+        [SSL over TCP]
+        [`boost::asio::ssl::stream<boost::asio::ip::tcp::socket>`]
+        [
+            [reflink tcp_ssl_connection]
+        ]
+    ]
+    [
+        [Plaintext TCP]
+        [`boost::asio::ip::tcp::socket`]
+        [
+            [reflink tcp_connection]
+        ]
+    ]
+    [
+        [UNIX sockets]
+        [`boost::asio::local::stream_protocol::socket`]
+        [
+            [reflink unix_connection]
+
+            Only available if `BOOST_ASIO_HAS_LOCAL_SOCKETS` is defined.
+        ]
+    ]
+]
+
+
+[link mysql.examples.unix_socket This example] employs a UNIX
+domain socket to establish a connection to a MySQL server.
+
+[heading:non_sockets Streams that are not sockets]
+
+When the `Stream` template argument for your `connection` fulfills
+the __SocketStream__ type requirements, you can use the member functions
+[refmem connection connect] and [refmem connection close] to establish and finish
+connections with the MySQL server. If you are using any of the convenience type
+aliases (TCP or UNIX, either over TLS or not), then this is your case.
+
+If your stream type is not based on a socket, you can't use those convenience member
+functions. This would be the case if you are using Windows named pipes
+(i.e. [asioreflink windows__stream_handle windows::stream_handle]).
+Instead, to establish a connection, you should follow these two steps,
+roughly equivalent to what [refmem connection connect] does for sockets:
+
+* Connect the underlying stream. You can access it using
+  [refmem connection stream]. Use whatever connection establishment
+  mechanism the stream implements. If you are using TLS, you should *not*
+  perform the TLS handshake yourself, as the library will do it as part of the
+  MySQL handshake.
+* Perform the MySQL handshake by calling [refmem connection handshake]
+  or [refmem connection async_handshake]. If the handshake operation
+  fails, close the stream.
+  
+To clean up a connection, follow these two steps,
+roughly equivalent to [refmem connection close]:
+
+* Inform the MySQL server that you are quitting the connection
+  by calling [refmem connection quit] or [refmem connection async_quit].
+  This will also shutdown TLS, if it's being used. 
+* Close the underlying stream.
+
+[endsect]

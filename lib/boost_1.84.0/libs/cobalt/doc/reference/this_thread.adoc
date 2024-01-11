@@ -1,0 +1,30 @@
+[#this_thread]
+== cobalt/this_thread.hpp
+
+Since everything is single threaded this library provides an executor
+& default memory-resource for every thread.
+
+[source,cpp]
+----
+namespace boost::cobalt::this_thread
+{
+
+pmr::memory_resource* get_default_resource() noexcept; // <1>
+pmr::memory_resource* set_default_resource(pmr::memory_resource* r) noexcept; // <2>
+pmr::polymorphic_allocator<void> get_allocator(); // <3>
+
+typename asio::io_context::executor_type & get_executor(); // <4>
+void set_executor(asio::io_context::executor_type exec) noexcept; // <5>
+
+}
+----
+<1> Get the default resource - will be pmr::get_default_resource unless set
+<2> Set the default resource - returns the previously set one
+<3> Get an allocator wrapping (1)
+<4> Get the executor of the thread - throws if not set
+<5> Set the executor of the current thread.
+
+The coroutines will use these as defaults, but keep a copy just in case.
+
+NOTE: The only exception is the initialization of an cobalt-operation,
+which will use the this_thread::executor to rethrow from.

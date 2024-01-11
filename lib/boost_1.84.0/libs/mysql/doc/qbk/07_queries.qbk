@@ -1,0 +1,60 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:queries Text queries]
+
+To run a text query, use any of the following functions, passing a string-like
+object (convertible to [reflink string_view]) containing valid SQL as the first parameter:
+
+* [refmem connection execute] or [refmem connection async_execute]: these functions run the query and
+  read the generated results into memory.
+* [refmem connection start_execution] and [refmem connection async_start_execution]: these functions
+  initiate a text query as a multi-function operation.
+
+Almost any query that may be issued in the `mysql` command line
+can be executed using this method. This includes `SELECT`s,
+`UPDATE`s, `INSERT`s, `DELETE`s, `CREATE TABLE`s...
+In particular, you may start transactions issuing a `START TRANSACTION`,
+commit them using `COMMIT` and rolling them back using `ROLLBACK`.
+
+[heading Limitations]
+
+At the moment, there is no equivalent to
+[@https://dev.mysql.com/doc/c-api/8.0/en/mysql-real-escape-string.html `mysql_real_escape_string`]
+to sanitize user provided input. This limits text queries to queries without parameters.
+Doing composition by hand can lead to SQL injection vulnerabilities.
+Please use [link mysql.prepared_statements prepared statements]
+instead, which perform composition server-side in a safe way. 
+
+[warning
+    [*SQL injection warning]: if you compose queries by concatenating strings without sanitization,
+    your code is vulnerable to SQL injection attacks. Use prepared statements when possible!
+]
+
+[heading Running multiple queries at once]
+
+You can run several semicolon-separated queries in a single `execute()` call by enabling
+the [refmem handshake_params multi_queries] option. You can find an example
+[link mysql.multi_resultset.multi_queries here].
+
+[warning
+    [*SQL injection warning]: do not use this feature if any of your queries contains
+    untrusted input. You can create SQL injection vulnerabilities if you do.
+]
+
+[heading Use cases]
+
+You should generally prefer prepared statements over text queries. Text queries can be useful for simple,
+non-parametrized queries:
+
+* `"START TRANSACTION"`, `"COMMIT"` and `"ROLLBACK"` queries, for transactions.
+* `"SET NAMES utf8mb4"` and similar, to set variables for encoding, time zones and similar configuration options.
+* `"CREATE TABLE ..."` and similar DDL statements.
+
+Avoid text queries involving user input.
+
+[endsect]

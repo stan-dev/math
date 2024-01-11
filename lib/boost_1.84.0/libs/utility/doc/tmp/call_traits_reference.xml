@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="call_traits.reference"><title>Reference</title><header name="boost/call_traits.hpp">
+</header>
+<header name="boost/detail/call_traits.hpp">
+<namespace name="boost">
+<struct name="call_traits"><template>
+      <template-type-parameter name="T"/>
+    </template><typedef name="value_type"><type>T</type></typedef>
+<typedef name="reference"><type>T &amp;</type></typedef>
+<typedef name="const_reference"><type>const T &amp;</type></typedef>
+<typedef name="param_type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><struct-specialization name="call_traits"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="N"><type>std::size_t</type></template-nontype-parameter>
+    </template><specialization><template-arg>const T[N]</template-arg></specialization><typedef name="value_type"><type>const T *</type></typedef>
+<typedef name="reference"><type>array_type &amp;</type></typedef>
+<typedef name="const_reference"><type>const array_type &amp;</type></typedef>
+<typedef name="param_type"><type>const T *const</type></typedef>
+</struct-specialization><struct-specialization name="call_traits"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T &amp;</template-arg></specialization><typedef name="value_type"><type>T &amp;</type></typedef>
+<typedef name="reference"><type>T &amp;</type></typedef>
+<typedef name="const_reference"><type>const T &amp;</type></typedef>
+<typedef name="param_type"><type>T &amp;</type></typedef>
+</struct-specialization><struct-specialization name="call_traits"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="N"><type>std::size_t</type></template-nontype-parameter>
+    </template><specialization><template-arg>T[N]</template-arg></specialization><typedef name="value_type"><type>const T *</type></typedef>
+<typedef name="reference"><type>array_type &amp;</type></typedef>
+<typedef name="const_reference"><type>const array_type &amp;</type></typedef>
+<typedef name="param_type"><type>const T *const</type></typedef>
+</struct-specialization></namespace>
+</header>
+</library-reference>

@@ -1,0 +1,29 @@
+#  Boost.Compat Test Jamfile
+#  Copyright 2015-2023 Peter Dimov
+#  Distributed under the Boost Software License, Version 1.0.
+#  https://www.boost.org/LICENSE_1_0.txt
+
+import testing ;
+import ../../config/checks/config : requires ;
+
+project
+  : default-build
+
+    <warnings>extra
+
+  : requirements
+
+    [ requires cxx11_variadic_templates cxx11_template_aliases cxx11_decltype cxx11_constexpr ]
+
+    <threading>multi
+
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc:<warnings-as-errors>on
+    <toolset>clang:<warnings-as-errors>on
+  ;
+
+run quick.cpp ;
+
+run latch_test.cpp ;
+run shared_lock_test.cpp ;
+run shared_lock_test.cpp : : : <exception-handling>off : shared_lock_test_nx ;

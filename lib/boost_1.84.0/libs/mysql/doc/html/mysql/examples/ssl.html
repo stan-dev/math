@@ -1,0 +1,198 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Setting SSL options</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="unix_socket.html" title="UNIX sockets">
+<link rel="next" href="source_script.html" title="Using multi-queries to source a .sql file">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="unix_socket.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="source_script.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.examples.ssl"></a><a class="link" href="ssl.html" title="Setting SSL options">Setting SSL options</a>
+</h3></div></div></div>
+<p>
+        This example demonstrates how to configure SSL options like server certificate
+        verification and hostname validation.
+      </p>
+<p>
+        The example employs synchronous functions with exceptions as error handling.
+        See <a class="link" href="../error_handling.html" title="Error handling and available overloads">this section</a> for more info
+        on error handling.
+      </p>
+<p>
+        This example assumes you have gone through the <a class="link" href="../examples.html#mysql.examples.setup">setup</a>.
+        Additionally, you should run your MySQL server with some test certificates
+        we created for you, just for this example. You can find them in this project's
+        GitHub repository, under <code class="computeroutput"><span class="identifier">tools</span><span class="special">/</span><span class="identifier">ssl</span></code>. If
+        you're using the docker container, the setup has already been done for you.
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">error_with_diagnostics</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">handshake_params</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">results</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">tcp_ssl</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">buffer</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">io_context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ip</span><span class="special">/</span><span class="identifier">tcp</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ssl</span><span class="special">/</span><span class="identifier">context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ssl</span><span class="special">/</span><span class="identifier">host_name_verification</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#define</span> <span class="identifier">ASSERT</span><span class="special">(</span><span class="identifier">expr</span><span class="special">)</span>                                          <span class="special">\</span>
+    <span class="keyword">if</span> <span class="special">(!(</span><span class="identifier">expr</span><span class="special">))</span>                                              <span class="special">\</span>
+    <span class="special">{</span>                                                         <span class="special">\</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Assertion failed: "</span> <span class="special">#</span><span class="identifier">expr</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span> <span class="special">\</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>                                              <span class="special">\</span>
+    <span class="special">}</span>
+
+<span class="comment">// The CA file that signed the server's certificate</span>
+<span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="identifier">CA_PEM</span><span class="special">[]</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(-----BEGIN CERTIFICATE-----
+MIIDZzCCAk+gAwIBAgIUWznm2UoxXw3j7HCcp9PpiayTvFQwDQYJKoZIhvcNAQEL
+BQAwQjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxDjAMBgNVBAoM
+BW15c3FsMQ4wDAYDVQQDDAVteXNxbDAgFw0yMDA0MDQxNDMwMjNaGA8zMDE5MDgw
+NjE0MzAyM1owQjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxDjAM
+BgNVBAoMBW15c3FsMQ4wDAYDVQQDDAVteXNxbDCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAN0WYdvsDb+a0TxOGPejcwZT0zvTrf921mmDUlrLN1Z0hJ/S
+ydgQCSD7Q+6za4lTFZCXcvs52xvvS2gfC0yXyYLCT/jA4RQRxuF+/+w1gDWEbGk0
+KzEpsBuKrEIvEaVdoS78SxInnW/aegshdrRRocp4JQ6KHsZgkLTxSwPfYSUmMUo0
+cRO0Q/ak3VK8NP13A6ZFvZjrBxjS3cSw9HqilgADcyj1D4EokvfI1C9LrgwgLlZC
+XVkjjBqqoMXGGlnXOEK+pm8bU68HM/QvMBkb1Amo8pioNaaYgqJUCP0Ch0iu1nUU
+HtsWt6emXv0jANgIW0oga7xcT4MDGN/M+IRWLTECAwEAAaNTMFEwHQYDVR0OBBYE
+FNxhaGwf5ePPhzK7yOAKD3VF6wm2MB8GA1UdIwQYMBaAFNxhaGwf5ePPhzK7yOAK
+D3VF6wm2MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAAoeJCAX
+IDCFoAaZoQ1niI6Ac/cds8G8It0UCcFGSg+HrZ0YujJxWIruRCUG60Q2OAbEvn0+
+uRpTm+4tV1Wt92WFeuRyqkomozx0g4CyfsxGX/x8mLhKPFK/7K9iTXM4/t+xQC4f
+J+iRmPVsMKQ8YsHYiWVhlOMH9XJQiqERCB2kOKJCH6xkaF2k0GbM2sGgbS7Z6lrd
+fsFTOIVx0VxLVsZnWX3byE9ghnDR5jn18u30Cpb/R/ShxNUGIHqRa4DkM5la6uZX
+W1fpSW11JBSUv4WnOO0C2rlIu7UJWOROqZZ0OsybPRGGwagcyff2qVRuI2XFvAMk
+OzBrmpfHEhF6NDU=
+-----END CERTIFICATE-----
+)%"</span><span class="special">;</span>
+
+<span class="keyword">void</span> <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">employee</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee '"</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span>   <span class="comment">// first_name (string)</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">"' earns "</span>            <span class="comment">// last_name  (string)</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">2</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">" dollars yearly\n"</span><span class="special">;</span>  <span class="comment">// salary     (double)</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span> <span class="identifier">main_impl</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">4</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">" &lt;username&gt; &lt;password&gt; &lt;server-hostname&gt;\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// I/O context</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+    <span class="comment">// Resolver for hostname resolution</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">resolver</span> <span class="identifier">resolver</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">.</span><span class="identifier">get_executor</span><span class="special">());</span>
+
+    <span class="comment">// Connection params</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+        <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">],</span>                <span class="comment">// username</span>
+        <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">],</span>                <span class="comment">// password</span>
+        <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database to use; leave empty or omit the parameter for no</span>
+                                <span class="comment">// database</span>
+    <span class="special">);</span>
+
+    <span class="comment">// This context will be used by the underlying SSL stream object. We can</span>
+    <span class="comment">// set up here any SSL-related options, like peer verification or CA</span>
+    <span class="comment">// certificates. We will do these in the next lines.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span> <span class="identifier">ssl_ctx</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">::</span><span class="identifier">tls_client</span><span class="special">);</span>
+
+    <span class="comment">// Check whether the server's certificate is valid and signed by a trusted CA.</span>
+    <span class="comment">// If it's not, our handshake or connect operation will fail.</span>
+    <span class="identifier">ssl_ctx</span><span class="special">.</span><span class="identifier">set_verify_mode</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">verify_peer</span><span class="special">);</span>
+
+    <span class="comment">// Load a trusted CA, which was used to sign the server's certificate.</span>
+    <span class="comment">// This will allow the signature verification to succeed in our example.</span>
+    <span class="comment">// You will have to run your MySQL server with the test certificates</span>
+    <span class="comment">// located under $BOOST_MYSQL_ROOT/tools/ssl/</span>
+    <span class="identifier">ssl_ctx</span><span class="special">.</span><span class="identifier">add_certificate_authority</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">CA_PEM</span><span class="special">));</span>
+
+    <span class="comment">// We expect the server certificate's common name to be "mysql".</span>
+    <span class="comment">// If it's not, the certificate will be rejected and handshake or connect will fail.</span>
+    <span class="identifier">ssl_ctx</span><span class="special">.</span><span class="identifier">set_verify_callback</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">host_name_verification</span><span class="special">(</span><span class="string">"mysql"</span><span class="special">));</span>
+
+    <span class="comment">// Pass in our SSL context to the connection. Note that we</span>
+    <span class="comment">// can create many connections out of a single context. We need to keep the</span>
+    <span class="comment">// context alive until we finish using the connection.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">ssl_ctx</span><span class="special">);</span>
+
+    <span class="comment">// Hostname resolution</span>
+    <span class="keyword">auto</span> <span class="identifier">endpoints</span> <span class="special">=</span> <span class="identifier">resolver</span><span class="special">.</span><span class="identifier">resolve</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">],</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">default_port_string</span><span class="special">);</span>
+
+    <span class="comment">// Connect to the server. This operation will perform the SSL handshake as part of</span>
+    <span class="comment">// it, and thus will fail if the certificate is found to be invalid.</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(*</span><span class="identifier">endpoints</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">);</span>
+
+    <span class="comment">// We can now use the connection as we would normally do.</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">sql</span> <span class="special">=</span> <span class="string">"SELECT first_name, last_name, salary FROM employee"</span><span class="special">;</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">sql</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">employee</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">employee</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Cleanup</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">try</span>
+    <span class="special">{</span>
+        <span class="identifier">main_impl</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_with_diagnostics</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Some errors include additional diagnostics, like server-provided error messages.</span>
+        <span class="comment">// Security note: diagnostics::server_message may contain user-supplied values (e.g. the</span>
+        <span class="comment">// field value that caused the error) and is encoded using to the connection's encoding</span>
+        <span class="comment">// (UTF-8 by default). Treat is as untrusted input.</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">", error code: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">code</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"Server diagnostics: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">get_diagnostics</span><span class="special">().</span><span class="identifier">server_message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="unix_socket.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="source_script.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

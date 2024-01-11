@@ -1,0 +1,61 @@
+[#gather]
+== cobalt/gather.hpp
+
+The `gather` function can be used to `co_await` multiple <<awaitable, awaitables>>
+at once with cancellations being passed through.
+
+The function will gather all completion and return them as `system::result`,
+i.e. capture conceptions as values. One awaitable throwing an exception will not cancel the others.
+
+It can be called as a variadic function with multiple <<awaitable>> or as on a range of <<awaitable, awaitables>>.
+
+[source,cpp]
+----
+cobalt::promise<void> task1();
+cobalt::promise<void> task2();
+
+cobalt::promise<void> do_gather()
+{
+  co_await cobalt::gather(task1(), task2()); // <1>
+  std::vector<cobalt::promise<void>> aws {task1(), task2()};
+  co_await cobalt::gather(aws); // <2>
+}
+----
+<1> Wait for a variadic set of <<awaitable, awaitables>>
+<2> Wait for a vector of <<awaitable, awaitables>>
+
+The `gather` will invoke the functions of the `awaitable` as if used in a `co_await` expression.
+
+.Signatures of gather
+[source, cpp]
+----
+extern promise<void> pv1, pv2;
+std::tuple<system::result<int>, system::result<int>> r1 = co_await gather(pv1, pv2);
+
+std::vector<promise<void>> pvv;
+pmr::vector<system::result<void>> r2 =  co_await gather(pvv);
+
+extern promise<int> pi1, pi2;
+std::tuple<system::result<monostate>,
+           system::result<monostate>,
+           system::result<int>,
+           system::result<int>> r3 = co_await gather(pv1, pv2, pi1, pi2);
+
+std::vector<promise<int>> piv;
+pmr::vector<system::result<int>> r4 = co_await gather(piv);
+----
+
+
+[#gather-outline]
+=== Outline
+
+[source,cpp,subs=+quotes]
+----
+// Variadic gather
+template<asio::cancellation_type Ct = asio::cancellation_type::all, awaitable... Promise>
+__awaitable__ gather(Promise && ... p);
+
+// Ranged gather
+template<asio::cancellation_type Ct = asio::cancellation_type::all, range<awaitable>>
+__awaitable__ gather(PromiseRange && p);
+----

@@ -1,0 +1,76 @@
+= Overview
+
+Here's a list of relevant features in cobalt:
+
+.Coroutine types
+[cols="1,5"]
+|===
+|<<promise,promise>>
+|An eager coroutine returning a single result- consider it the default
+
+|<<generator,generator>>
+|An eager coroutine that can yield multiple values.
+
+|<<task,task>>
+|A lazy version of <<promise,promise>> that can be spawned onto other executors.
+
+|<<detached,detached>>
+|A coroutine similar to promise, without a handle
+
+|===
+
+
+.Synchronization Functions
+[cols="1,5"]
+|===
+|<<race,race>>
+|A function that waits for one coroutine out of a set that is ready in a pseudo-random way, to avoid starvation.
+
+|<<join,join>>
+|A function that waits for a set of coroutines and returns all of them as value or throws an exception if any awaitable does so.
+
+
+|<<gather,gather>>
+|A function that waits for a set of coroutines and returns all of them as `result`, capturing all exceptions individually.
+
+|<<left_race,left_race>>
+|A deterministic `race` that evaluates left-to-right.
+|===
+
+.Utilities
+[cols="1,5"]
+|===
+|<<channel,channel>>
+|A thread-local utility to send values between coroutines.
+
+
+|<<with,with>>
+|An async RAII helper, that allows async teardown when exceptions occur
+
+|===
+
+.Reading guide
+[cols="1,3,3"]
+|===
+|<<coroutine_primer>>
+|A short introduction to C++ coroutines
+|Read if you've never used coroutines before
+
+|<<tour>>
+|An abbreviated high level view of the features and concepts
+|Read if you're familiar with asio & coroutines and want a rough idea what this library offers.
+
+|<<tutorial>>
+|Low level view of usages
+|Read if you want to get coding quickly
+
+|<<reference>>
+|API reference
+|Look up details while coding
+
+|<<technical_background>>
+|Some implementation details
+|Read if you're not confused enough
+
+|===
+

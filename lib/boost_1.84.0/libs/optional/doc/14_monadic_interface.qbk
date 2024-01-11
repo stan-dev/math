@@ -1,0 +1,45 @@
+[section Monadic interface]
+
+The monadic interface of `optional` allows the application of functions
+to optional values without resorting to the usage of explicit `if`-statements.
+
+Function `map` takes a function mapping type `T` onto type `U` and maps an `optional<T>`
+onto an `optional<U>` using the provided function.
+
+    int length(const string& s){ return s.size(); };
+
+    optional<string> null{}, thin{""}, word{"word"};
+    assert (null.map(length) == none);
+    assert (thin.map(length) == 0);
+    assert (word.map(length) == 4);
+
+Function `flat_map` is similar, but it requires the function to return an
+`optional<V>` for some type `V`. This `optional<V>` becomes the return type of
+`flat_map`.
+
+    optional<char> first_char(const string& s) {
+      if (s.empty()) return none;
+      else           return s[0];
+    };
+
+    optional<string> null{}, thin{""}, word{"word"};
+    assert (null.flat_map(first_char) == none);
+    assert (thin.flat_map(first_char) == none);
+    assert (word.flat_map(first_char) == 'w');
+
+These functions can be combined in one expression reflecting a chain of computations:
+
+    auto get_contents(path p) -> optional<string>;
+    auto trim(string) -> string;
+    auto length(string) -> int;
+
+    auto trimmed_size_of(optional<path> p) -> int
+    {
+      return p.flat_map(get_contents)
+              .map(trim)
+              .map(length)
+              .value_or(0);
+    }
+ 
+
+[endsect]

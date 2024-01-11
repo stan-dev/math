@@ -1,0 +1,71 @@
+# Boost Ratio Library test Jamfile
+
+# Copyright Beman Dawes 2003, 2006, 2008
+
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt
+
+# See library home page at http://www.boost.org/libs/ratio
+
+import testing ;
+
+project
+    : requirements
+        <warnings>pedantic
+    ;
+
+# test-suite "ratio_ratio"
+
+compile typedefs_pass.cpp ;
+compile ratio_ratio/ratio_pass.cpp ;
+compile-fail ratio_ratio/ratio1_fail.cpp ;
+compile-fail ratio_ratio/ratio2_fail.cpp ;
+compile-fail ratio_ratio/ratio3_fail.cpp ;
+compile-fail ratio_ratio/ratio4_fail.cpp ;
+
+# test-suite "ratio_io"
+
+compile-fail ratio_io/ratio_io_fail.cpp ;
+run ratio_io/ratio_io_pass.cpp ;
+
+# test-suite "ratio_arithmetic"
+
+compile ratio_arithmetic/ratio_add_pass.cpp ;
+compile ratio_arithmetic/ratio_subtract_pass.cpp ;
+compile ratio_arithmetic/ratio_multiply_pass.cpp ;
+compile ratio_arithmetic/ratio_divide_pass.cpp ;
+compile ratio_arithmetic/ratio_gcd_pass.cpp ;
+compile-fail ratio_arithmetic/ratio_add_fail.cpp ;
+compile-fail ratio_arithmetic/ratio_add_2_fail.cpp ;
+#compile-fail ratio_arithmetic/ratio_add_3_fail.cpp ;
+compile-fail ratio_arithmetic/ratio_subtract_fail.cpp ;
+compile-fail ratio_arithmetic/ratio_multiply_fail.cpp ;
+compile-fail ratio_arithmetic/ratio_divide_fail.cpp ;
+
+# test-suite "ratio_comparison"
+
+compile ratio_comparison/ratio_equal_pass.cpp ;
+compile ratio_comparison/ratio_not_equal_pass.cpp ;
+compile ratio_comparison/ratio_less_pass.cpp ;
+compile ratio_comparison/ratio_less_equal_pass.cpp ;
+compile ratio_comparison/ratio_greater_pass.cpp ;
+compile ratio_comparison/ratio_greater_equal_pass.cpp ;
+
+# test-suite "ratio_detail"
+
+run ratio_detail/is_evenly_divisible_by.cpp ;
+run ratio_detail/gcd_lcm.cpp ;
+run ratio_detail/is_ratio.cpp ;
+
+# test-suite "examples"
+
+run ../example/si_physics.cpp ;
+run ../example/display_ex.cpp ;
+
+# test-suite "tickets"
+
+# run test_6498_pass.cpp ;
+
+# `quick` target (for CI)
+
+run quick.cpp ;

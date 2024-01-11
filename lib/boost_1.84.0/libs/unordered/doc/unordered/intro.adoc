@@ -1,0 +1,98 @@
+[#intro]
+= Introduction
+
+:idprefix: intro_
+:cpp: C++
+
+link:https://en.wikipedia.org/wiki/Hash_table[Hash tables^] are extremely popular
+computer data structures and can be found under one form or another in virtually any programming
+language. Whereas other associative structures such as rb-trees (used in {cpp} by `std::set` and `std::map`)
+have logarithmic-time complexity for insertion and lookup, hash tables, if configured properly,
+perform these operations in constant time on average, and are generally much faster.
+
+{cpp} introduced __unordered associative containers__ `std::unordered_set`, `std::unordered_map`,
+`std::unordered_multiset` and `std::unordered_multimap` in {cpp}11, but research on hash tables
+hasn't stopped since: advances in CPU architectures such as
+more powerful caches, link:https://en.wikipedia.org/wiki/Single_instruction,_multiple_data[SIMD] operations
+and increasingly available link:https://en.wikipedia.org/wiki/Multi-core_processor[multicore processors]
+open up possibilities for improved hash-based data structures and new use cases that
+are simply beyond reach of unordered associative containers as specified in 2011.
+
+Boost.Unordered offers a catalog of hash containers with different standards compliance levels,
+performances and intented usage scenarios:
+
+[caption=, title='Table {counter:table-counter}. Boost.Unordered containers']
+[cols="1,1,.^1", frame=all, grid=all]
+|===
+^h|
+^h|*Node-based*
+^h|*Flat*
+
+^.^h|*Closed addressing*
+^m|
+boost::unordered_set +
+boost::unordered_map +
+boost::unordered_multiset +
+boost::unordered_multimap
+^|
+
+^.^h|*Open addressing*
+^m| boost::unordered_node_set + 
+boost::unordered_node_map
+^m| boost::unordered_flat_set +
+boost::unordered_flat_map
+
+^.^h|*Concurrent*
+^|
+^| `boost::concurrent_flat_set` +
+`boost::concurrent_flat_map`
+
+|===
+
+* **Closed-addressing containers** are fully compliant with the C++ specification
+for unordered associative containers and feature one of the fastest implementations
+in the market within the technical constraints imposed by the required standard interface.
+* **Open-addressing containers** rely on much faster data structures and algorithms
+(more than 2 times faster in typical scenarios) while slightly diverging from the standard
+interface to accommodate the implementation.
+There are two variants: **flat** (the fastest) and **node-based**, which 
+provide pointer stability under rehashing at the expense of being slower.
+* Finally, **concurrent containers** are designed and implemented to be used in high-performance
+multithreaded scenarios. Their interface is radically different from that of regular C++ containers.
+
+All sets and maps in Boost.Unordered are instantiatied similarly as
+`std::unordered_set` and `std::unordered_map`, respectively:
+
+[source,c++]
+----  
+namespace boost {
+    template <
+        class Key,
+        class Hash = boost::hash<Key>,
+        class Pred = std::equal_to<Key>,
+        class Alloc = std::allocator<Key> >
+    class unordered_set; 
+    // same for unordered_multiset, unordered_flat_set, unordered_node_set
+    // and concurrent_flat_set
+
+    template <
+        class Key, class Mapped,
+        class Hash = boost::hash<Key>,
+        class Pred = std::equal_to<Key>,
+        class Alloc = std::allocator<std::pair<Key const, Mapped> > >
+    class unordered_map;
+    // same for unordered_multimap, unordered_flat_map, unordered_node_map
+    // and concurrent_flat_map
+}
+----
+
+Storing an object in an unordered associative container requires both a
+key equality function and a hash function. The default function objects in
+the standard containers support a few basic types including integer types,
+floating point types, pointer types, and the standard strings. Since
+Boost.Unordered uses link:../../../container_hash/index.html[boost::hash^] it also supports some other types,
+including standard containers. To use any types not supported by these methods
+you have to extend Boost.Hash to support the type or use
+your own custom equality predicates and hash functions. See the
+<<hash_equality,Equality Predicates and Hash Functions>> section
+for more details.

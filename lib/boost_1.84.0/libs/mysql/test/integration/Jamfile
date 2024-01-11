@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+import sequence ;
+
+# Integration test filtering
+local test_exclusions = "" ;
+if [ os.environ BOOST_MYSQL_NO_UNIX_SOCKET_TESTS ] != "" {
+    test_exclusions += "!@unix" ;
+}
+local test_db = [ os.environ BOOST_MYSQL_TEST_DB ] ;
+if $(test_db) = "" {
+    test_db = "mysql8" ;
+}
+test_exclusions += "!@skip_$(test_db)" ;
+
+local test_filter = [ sequence.join $(test_exclusions) : ":" ] ;
+
+local test_command = "-t $(test_filter)" ;
+
+# Boost.Context causes failures with warnings-as-errors
+# under libc++, because it builds objects that raise a -stdlib=libc++ unused warning
+local context_lib = /boost/context//boost_context/<warnings-as-errors>off ;
+
+cpp-pch pch
+    :
+        pch.hpp
+        $(context_lib)
+        /boost/mysql/test//boost_mysql_test
+    ;
+
+
+run 
+        pch
+        $(context_lib)
+        /boost/mysql/test//common_test_sources
+        /boost/mysql/test//boost_mysql_test
+ 
+        # Utilities
+        src/get_endpoint.cpp
+        src/metadata_validator.cpp
+        src/er_network_variant.cpp
+        src/sync_errc.cpp
+        src/sync_exc.cpp
+        src/async_callback.cpp
+        src/async_coroutines.cpp
+        src/async_coroutinescpp20.cpp
+
+        # Actual tests
+        test/spotchecks.cpp
+        test/crud.cpp
+        test/handshake.cpp
+        test/prepared_statements.cpp
+        test/stored_procedures.cpp
+        test/multi_queries.cpp
+        test/static_interface.cpp
+        test/reconnect.cpp
+        test/db_specific.cpp
+        test/database_types.cpp
+
+    : requirements
+        <testing.arg>$(test_command)
+        <toolset>msvc:<cxxflags>-FI"pch.hpp" # https://github.com/boostorg/boost/issues/711
+        <include>include
+    : target-name boost_mysql_integrationtests
+    ;
+

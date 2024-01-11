@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+
+path-constant this_dir : . ;
+
+# The hostname to use for examples
+local hostname = [ os.environ BOOST_MYSQL_SERVER_HOST ] ;
+if $(hostname) = ""
+{
+    hostname = "localhost" ;
+}
+
+# "Regular" examples
+local regular_examples =
+    snippets
+    tutorial
+    async_callbacks
+    async_coroutinescpp20
+    async_futures
+    metadata
+    ssl
+    timeouts
+;
+
+for local example in $(regular_examples)
+{
+    run
+            "$(example).cpp"
+            /boost/mysql/test//boost_mysql_compiled
+        :
+            <testing.arg>"example_user example_password $(hostname)"
+        ;
+}
+
+# Order management examples. These must be run several times through a Python script
+local order_examples =
+    prepared_statements_cpp11
+    prepared_statements_cpp14
+    stored_procedures_cpp11
+    stored_procedures_cpp14
+;
+
+for local example in $(order_examples)
+{
+    run
+            "order_management/$(example).cpp"
+            /boost/mysql/test//boost_mysql_compiled
+        : requirements
+            <testing.launcher>"python $(this_dir)/private/run_stored_procedures.py"
+            <testing.arg>$(hostname)
+        : target-name "boost_mysql_example_$(example)"
+    ;
+}
+
+# Coroutines, which requires Boost.Context
+run
+        async_coroutines.cpp
+        /boost/mysql/test//boost_mysql_compiled
+        /boost/context//boost_context
+    :
+        <testing.arg>"example_user example_password $(hostname)"
+    ;
+
+# UNIX. Honor BOOST_MYSQL_NO_UNIX_SOCKET_TESTS for homogeneity with cmake
+if [ os.environ BOOST_MYSQL_NO_UNIX_SOCKET_TESTS ] = "" {
+    run
+        unix_socket.cpp
+        /boost/mysql/test//boost_mysql_compiled
+    :
+        <testing.arg>"example_user example_password"
+    ;
+}
+
+# Source script
+run
+        source_script.cpp
+        /boost/mysql/test//boost_mysql_compiled
+    : requirements
+        <testing.arg>"example_user example_password $(hostname) $(this_dir)/private/test_script.sql"
+    ;

@@ -1,0 +1,7 @@
+= Acknowledgements
+
+This library would not have been possible without the CppAlliance and its founder Vinnie Falco.
+Vinnie trusted me enough to let me work on this project, while himself having very different views on how such a library should be designed.
+
+Thanks also go to Ruben Perez & Richard Hodges for listening to my design problems and giving me advice & use-cases. Furthermore, this library would not have been possible without the great boost.asio by Chris Kohlhoff.
+

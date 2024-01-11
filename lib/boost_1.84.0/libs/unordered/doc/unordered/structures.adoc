@@ -1,0 +1,179 @@
+﻿[#structures]
+= Data Structures
+
+:idprefix: structures_
+
+== Closed-addressing Containers
+
+++++
+<style>
+  .imageblock > .title {
+    text-align: inherit;
+  }
+</style>
+++++
+
+Boost.Unordered sports one of the fastest implementations of closed addressing, also commonly known as https://en.wikipedia.org/wiki/Hash_table#Separate_chaining[separate chaining]. An example figure representing the data structure is below:
+
+[#img-bucket-groups,.text-center]
+.A simple bucket group approach
+image::bucket-groups.png[align=center]
+
+An array of "buckets" is allocated and each bucket in turn points to its own individual linked list. This makes meeting the standard requirements of bucket iteration straight-forward. Unfortunately, iteration of the entire container is often times slow using this layout as each bucket must be examined for occupancy, yielding a time complexity of `O(bucket_count() + size())` when the standard requires complexity to be `O(size())`.
+
+Canonical standard implementations will wind up looking like the diagram below:
+
+[.text-center]
+.The canonical standard approach
+image::singly-linked.png[align=center,link=../diagrams/singly-linked.png,window=_blank]
+
+It's worth noting that this approach is only used by pass:[libc++] and pass:[libstdc++]; the MSVC Dinkumware implementation uses a different one. A more detailed analysis of the standard containers can be found http://bannalia.blogspot.com/2013/10/implementation-of-c-unordered.html[here].
+
+This unusually laid out data structure is chosen to make iteration of the entire container efficient by inter-connecting all of the nodes into a singly-linked list. One might also notice that buckets point to the node _before_ the start of the bucket's elements. This is done so that removing elements from the list can be done efficiently without introducing the need for a doubly-linked list. Unfortunately, this data structure introduces a guaranteed extra indirection. For example, to access the first element of a bucket, something like this must be done:
+
+```c++
+auto const idx = get_bucket_idx(hash_function(key));
+node* p = buckets[idx]; // first load
+node* n = p->next; // second load
+if (n && is_in_bucket(n, idx)) {
+  value_type const& v = *n; // third load
+  // ...
+}
+```
+
+With a simple bucket group layout, this is all that must be done:
+```c++
+auto const idx = get_bucket_idx(hash_function(key));
+node* n = buckets[idx]; // first load
+if (n) {
+  value_type const& v = *n; // second load
+  // ...
+}
+```
+
+In practice, the extra indirection can have a dramatic performance impact to common operations such as `insert`, `find` and `erase`. But to keep iteration of the container fast, Boost.Unordered introduces a novel data structure, a "bucket group". A bucket group is a fixed-width view of a subsection of the buckets array. It contains a bitmask (a `std::size_t`) which it uses to track occupancy of buckets and contains two pointers so that it can form a doubly-linked list with non-empty groups. An example diagram is below:
+
+[#img-fca-layout]
+.The new layout used by Boost
+image::fca.png[align=center]
+
+Thus container-wide iteration is turned into traversing the non-empty bucket groups (an operation with constant time complexity) which reduces the time complexity back to `O(size())`. In total, a bucket group is only 4 words in size and it views `sizeof(std::size_t) * CHAR_BIT` buckets meaning that for all common implementations, there's only 4 bits of space overhead per bucket introduced by the bucket groups.
+
+A more detailed description of Boost.Unordered's closed-addressing implementation is
+given in an
+https://bannalia.blogspot.com/2022/06/advancing-state-of-art-for.html[external article].
+For more information on implementation rationale, read the
+xref:#rationale_closed_addressing_containers[corresponding section].
+
+== Open-addressing Containers
+
+The diagram shows the basic internal layout of `boost::unordered_flat_set`/`unordered_node_set` and
+`boost:unordered_flat_map`/`unordered_node_map`.
+
+
+[#img-foa-layout]
+.Open-addressing layout used by Boost.Unordered.
+image::foa.png[align=center]
+
+As with all open-addressing containers, elements (or pointers to the element nodes in the case of
+`boost::unordered_node_set` and `boost::unordered_node_map`) are stored directly in the bucket array.
+This array is logically divided into 2^_n_^ _groups_ of 15 elements each.
+In addition to the bucket array, there is an associated _metadata array_ with 2^_n_^
+16-byte words.
+
+[#img-foa-metadata]
+.Breakdown of a metadata word.
+image::foa-metadata.png[align=center]
+
+A metadata word is divided into 15 _h_~_i_~ bytes (one for each associated
+bucket), and an _overflow byte_ (_ofw_ in the diagram). The value of _h_~_i_~ is:
+
+  - 0 if the corresponding bucket is empty.
+  - 1 to encode a special empty bucket called a _sentinel_, which is used internally to
+  stop iteration when the container has been fully traversed.
+  - If the bucket is occupied, a _reduced hash value_ obtained from the hash value of
+  the element.
+
+When looking for an element with hash value _h_, SIMD technologies such as
+https://en.wikipedia.org/wiki/SSE2[SSE2] and
+https://en.wikipedia.org/wiki/ARM_architecture_family#Advanced_SIMD_(Neon)[Neon] allow us
+to very quickly inspect the full metadata word and look for the reduced value of _h_ among all the
+15 buckets with just a handful of CPU instructions: non-matching buckets can be
+readily discarded, and those whose reduced hash value matches need be inspected via full
+comparison with the corresponding element. If the looked-for element is not present,
+the overflow byte is inspected:
+
+- If the bit in the position _h_ mod 8 is zero, lookup terminates (and the
+element is not present).
+- If the bit is set to 1 (the group has been _overflowed_), further groups are
+checked using https://en.wikipedia.org/wiki/Quadratic_probing[_quadratic probing_], and
+the process is repeated.
+
+Insertion is algorithmically similar: empty buckets are located using SIMD,
+and when going past a full group its corresponding overflow bit is set to 1.
+
+In architectures without SIMD support, the logical layout stays the same, but the metadata
+word is codified using a technique we call _bit interleaving_: this layout allows us
+to emulate SIMD with reasonably good performance using only standard arithmetic and
+logical operations.
+
+[#img-foa-metadata-interleaving]
+.Bit-interleaved metadata word.
+image::foa-metadata-interleaving.png[align=center]
+
+A more detailed description of Boost.Unordered's open-addressing implementation is
+given in an
+https://bannalia.blogspot.com/2022/11/inside-boostunorderedflatmap.html[external article].
+For more information on implementation rationale, read the
+xref:#rationale_open_addresing_containers[corresponding section].
+
+== Concurrent Containers
+
+`boost::concurrent_flat_set` and `boost::concurrent_flat_map` use the basic
+xref:#structures_open_addressing_containers[open-addressing layout] described above
+augmented with synchronization mechanisms.
+
+
+[#img-cfoa-layout]
+.Concurrent open-addressing layout used by Boost.Unordered.
+image::cfoa.png[align=center]
+
+Two levels of synchronization are used:
+
+* Container level: A read-write mutex is used to control access from any operation
+to the container. Typically, such access is in read mode (that is, concurrent) even
+for modifying operations, so for most practical purposes there is no thread
+contention at this level. Access is only in write mode (blocking) when rehashing or
+performing container-wide operations such as swapping or assignment.
+* Group level: Each 15-slot group is equipped with an 8-byte word containing:
+  ** A read-write spinlock for synchronized access to any element in the group.
+  ** An atomic _insertion counter_ used for optimistic insertion as described
+  below.
+
+By using atomic operations to access the group metadata, lookup is (group-level)
+lock-free up to the point where an actual comparison needs to be done with an element
+that has been previously SIMD-matched: only then is the group's spinlock used.
+
+Insertion uses the following _optimistic algorithm_:
+
+* The value of the insertion counter for the initial group in the probe
+sequence is locally recorded (let's call this value `c0`).
+* Lookup is as described above. If lookup finds no equivalent element,
+search for an available slot for insertion successively locks/unlocks
+each group in the probing sequence.
+* When an available slot is located, it is preemptively occupied (its
+reduced hash value is set) and the insertion counter is atomically
+incremented: if no other thread has incremented the counter during the
+whole operation (which is checked by comparing with `c0`), then we're
+good to go and complete the insertion, otherwise we roll back and start
+over.
+
+This algorithm has very low contention both at the lookup and actual
+insertion phases in exchange for the possibility that computations have
+to be started over if some other thread interferes in the process by
+performing a succesful insertion beginning at the same group. In
+practice, the start-over frequency is extremely small, measured in the range
+of parts per million for some of our benchmarks.
+
+For more information on implementation rationale, read the
+xref:#rationale_concurrent_containers[corresponding section].

@@ -1,0 +1,355 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Router</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="file_router.html" title="File Router">
+<link rel="next" href="sanitizing_urls.html" title="Sanitizing URLs">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="file_router.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sanitizing_urls.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.examples.router"></a><a class="link" href="router.html" title="Router">Router</a>
+</h3></div></div></div>
+<p>
+        This example defines a router for URL paths. If the specified route matches
+        one of the existing routes, the example executes the underlying callback
+        function.
+      </p>
+<pre class="programlisting"><span class="comment">/*
+    This example defines a router for URL paths.
+    Each path is associated with a callback
+    function.
+*/</span>
+
+<span class="preprocessor">#ifndef</span> <span class="identifier">BOOST_URL_SOURCE</span>
+<span class="preprocessor">#define</span> <span class="identifier">BOOST_URL_SOURCE</span>
+<span class="preprocessor">#endif</span>
+
+<span class="preprocessor">#include</span> <span class="string">"router.hpp"</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">beast</span><span class="special">/</span><span class="identifier">core</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">beast</span><span class="special">/</span><span class="identifier">http</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">beast</span><span class="special">/</span><span class="identifier">version</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ip</span><span class="special">/</span><span class="identifier">tcp</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">config</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">functional</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">urls</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">core</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">asio</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">beast</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">beast</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">http</span> <span class="special">=</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">http</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">string_view</span> <span class="special">=</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">request_t</span> <span class="special">=</span> <span class="identifier">http</span><span class="special">::</span><span class="identifier">request</span><span class="special">&lt;</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">string_body</span><span class="special">&gt;;</span>
+<span class="keyword">struct</span> <span class="identifier">connection</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">handler</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">function</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">(</span><span class="identifier">connection</span><span class="special">&amp;,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span><span class="special">)&gt;;</span>
+
+<span class="keyword">int</span>
+<span class="identifier">serve</span><span class="special">(</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">router</span><span class="special">&lt;</span><span class="identifier">handler</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">r</span><span class="special">,</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">address</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">a</span><span class="special">,</span>
+    <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="identifier">port</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">doc_root</span><span class="special">);</span>
+
+<span class="keyword">struct</span> <span class="identifier">connection</span>
+<span class="special">{</span>
+    <span class="identifier">connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span><span class="special">&amp;</span> <span class="identifier">ioc</span><span class="special">)</span>
+        <span class="special">:</span> <span class="identifier">socket</span><span class="special">(</span><span class="identifier">ioc</span><span class="special">)</span> <span class="special">{}</span>
+
+    <span class="keyword">void</span>
+    <span class="identifier">string_reply</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">msg</span><span class="special">);</span>
+
+    <span class="keyword">void</span>
+    <span class="identifier">file_reply</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">);</span>
+
+    <span class="keyword">void</span>
+    <span class="identifier">error_reply</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">msg</span><span class="special">);</span>
+
+    <span class="identifier">beast</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="identifier">socket</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">doc_root</span><span class="special">;</span>
+    <span class="identifier">request_t</span> <span class="identifier">req</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">int</span>
+<span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">**</span><span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">/*
+     * Parse cmd-line params
+     */</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">4</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">];</span>
+        <span class="keyword">auto</span> <span class="identifier">file_pos</span> <span class="special">=</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">find_last_of</span><span class="special">(</span><span class="string">"/\\"</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">file_pos</span> <span class="special">!=</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+            <span class="identifier">exec</span> <span class="special">=</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">file_pos</span> <span class="special">+</span> <span class="number">1</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span>
+            <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span>
+            <span class="special">&lt;&lt;</span> <span class="string">" &lt;address&gt; &lt;port&gt; &lt;doc_root&gt;\n"</span>
+               <span class="string">"Example: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span> <span class="special">&lt;&lt;</span> <span class="string">" 0.0.0.0 8080 .\n"</span>
+                       <span class="string">"Default values:\n"</span>
+                       <span class="string">"- address: 0.0.0.0\n"</span>
+                       <span class="string">"- port: 8080\n"</span>
+                       <span class="string">"- doc_root: ./\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">address</span> <span class="special">=</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">make_address</span><span class="special">(</span><span class="identifier">argc</span> <span class="special">&gt;</span> <span class="number">1</span> <span class="special">?</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]</span> <span class="special">:</span> <span class="string">"0.0.0.0"</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">port</span> <span class="special">=</span> <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="keyword">unsigned</span> <span class="keyword">short</span><span class="special">&gt;(</span><span class="identifier">argc</span> <span class="special">&gt;</span> <span class="number">2</span> <span class="special">?</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">atoi</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">])</span> <span class="special">:</span> <span class="number">8080</span><span class="special">);</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">doc_root</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">argc</span> <span class="special">&gt;</span> <span class="number">3</span> <span class="special">?</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">]</span> <span class="special">:</span> <span class="string">"."</span><span class="special">);</span>
+
+    <span class="comment">/*
+     * Create router
+     */</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">router</span><span class="special">&lt;</span><span class="identifier">handler</span><span class="special">&gt;</span> <span class="identifier">r</span><span class="special">;</span>
+
+    <span class="identifier">r</span><span class="special">.</span><span class="identifier">insert</span><span class="special">(</span><span class="string">"/"</span><span class="special">,</span> <span class="special">[&amp;](</span><span class="identifier">connection</span><span class="special">&amp;</span> <span class="identifier">c</span><span class="special">,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span> <span class="keyword">const</span><span class="special">&amp;)</span> <span class="special">{</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">string_reply</span><span class="special">(</span><span class="string">"Hello!"</span><span class="special">);</span>
+    <span class="special">});</span>
+
+    <span class="identifier">r</span><span class="special">.</span><span class="identifier">insert</span><span class="special">(</span><span class="string">"/user/{name}"</span><span class="special">,</span> <span class="special">[&amp;](</span><span class="identifier">connection</span><span class="special">&amp;</span> <span class="identifier">c</span><span class="special">,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">m</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">msg</span> <span class="special">=</span> <span class="string">"Hello, "</span><span class="special">;</span>
+        <span class="identifier">urls</span><span class="special">::</span><span class="identifier">pct_string_view</span><span class="special">(</span><span class="identifier">m</span><span class="special">[</span><span class="number">0</span><span class="special">]).</span><span class="identifier">decode</span><span class="special">({},</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">string_token</span><span class="special">::</span><span class="identifier">append_to</span><span class="special">(</span><span class="identifier">msg</span><span class="special">));</span>
+        <span class="identifier">msg</span> <span class="special">+=</span> <span class="string">"!"</span><span class="special">;</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">string_reply</span><span class="special">(</span><span class="identifier">msg</span><span class="special">);</span>
+    <span class="special">});</span>
+
+    <span class="identifier">r</span><span class="special">.</span><span class="identifier">insert</span><span class="special">(</span><span class="string">"/user"</span><span class="special">,</span> <span class="special">[&amp;](</span><span class="identifier">connection</span><span class="special">&amp;</span> <span class="identifier">c</span><span class="special">,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span> <span class="keyword">const</span><span class="special">&amp;)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">msg</span> <span class="special">=</span> <span class="string">"Users: "</span><span class="special">;</span>
+        <span class="keyword">auto</span> <span class="identifier">names</span> <span class="special">=</span> <span class="special">{</span><span class="string">"johndoe"</span><span class="special">,</span> <span class="string">"maria"</span><span class="special">,</span> <span class="string">"alice"</span><span class="special">};</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">name</span><span class="special">:</span> <span class="identifier">names</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">msg</span> <span class="special">+=</span> <span class="string">"&lt;a href=\"/user/"</span><span class="special">;</span>
+            <span class="identifier">msg</span> <span class="special">+=</span> <span class="identifier">name</span><span class="special">;</span>
+            <span class="identifier">msg</span> <span class="special">+=</span> <span class="string">"\"&gt;"</span><span class="special">;</span>
+            <span class="identifier">msg</span> <span class="special">+=</span> <span class="identifier">name</span><span class="special">;</span>
+            <span class="identifier">msg</span> <span class="special">+=</span> <span class="string">"&lt;/a&gt; "</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">string_reply</span><span class="special">(</span><span class="identifier">msg</span><span class="special">);</span>
+    <span class="special">});</span>
+
+    <span class="identifier">r</span><span class="special">.</span><span class="identifier">insert</span><span class="special">(</span><span class="string">"/public/{path+}"</span><span class="special">,</span> <span class="special">[&amp;](</span><span class="identifier">connection</span><span class="special">&amp;</span> <span class="identifier">c</span><span class="special">,</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span> <span class="identifier">m</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">file_reply</span><span class="special">(</span><span class="identifier">m</span><span class="special">[</span><span class="string">"path"</span><span class="special">]);</span>
+    <span class="special">});</span>
+
+    <span class="keyword">return</span> <span class="identifier">serve</span><span class="special">(</span><span class="identifier">r</span><span class="special">,</span> <span class="identifier">address</span><span class="special">,</span> <span class="identifier">port</span><span class="special">,</span> <span class="identifier">doc_root</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="preprocessor">#define</span> <span class="identifier">ROUTER_CHECK</span><span class="special">(</span><span class="identifier">cond</span><span class="special">)</span>       <span class="keyword">if</span><span class="special">(!(</span><span class="identifier">cond</span><span class="special">))</span> <span class="special">{</span> <span class="keyword">break</span><span class="special">;</span> <span class="special">}</span>
+<span class="preprocessor">#define</span> <span class="identifier">ROUTER_CHECK_EC</span><span class="special">(</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">cat</span><span class="special">)</span> <span class="keyword">if</span><span class="special">(</span><span class="identifier">ec</span><span class="special">.</span><span class="identifier">failed</span><span class="special">())</span> <span class="special">{</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="special">#</span><span class="identifier">cat</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">ec</span><span class="special">.</span><span class="identifier">message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span> <span class="keyword">break</span><span class="special">;</span> <span class="special">}</span>
+
+<span class="keyword">int</span>
+<span class="identifier">serve</span><span class="special">(</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">router</span><span class="special">&lt;</span><span class="identifier">handler</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">r</span><span class="special">,</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">address</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">address</span><span class="special">,</span>
+    <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="identifier">port</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">doc_root</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">/*
+     * Serve the routes with a simple synchronous
+     * server. This is an implementation detail
+     * in the context of this example.
+     */</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Listening on http://"</span> <span class="special">&lt;&lt;</span> <span class="identifier">address</span> <span class="special">&lt;&lt;</span> <span class="string">":"</span> <span class="special">&lt;&lt;</span> <span class="identifier">port</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ioc</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">acceptor</span> <span class="identifier">acceptor</span><span class="special">(</span><span class="identifier">ioc</span><span class="special">,</span> <span class="special">{</span><span class="identifier">address</span><span class="special">,</span> <span class="identifier">port</span><span class="special">});</span>
+    <span class="identifier">urls</span><span class="special">::</span><span class="identifier">matches</span> <span class="identifier">m</span><span class="special">;</span>
+    <span class="keyword">for</span><span class="special">(;;)</span>
+    <span class="special">{</span>
+        <span class="identifier">connection</span> <span class="identifier">c</span><span class="special">(</span><span class="identifier">ioc</span><span class="special">);</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">doc_root</span> <span class="special">=</span> <span class="identifier">doc_root</span><span class="special">;</span>
+        <span class="identifier">acceptor</span><span class="special">.</span><span class="identifier">accept</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">socket</span><span class="special">);</span>
+        <span class="identifier">beast</span><span class="special">::</span><span class="identifier">flat_buffer</span> <span class="identifier">buffer</span><span class="special">;</span>
+        <span class="keyword">for</span><span class="special">(;;)</span>
+        <span class="special">{</span>
+            <span class="comment">// Read a request</span>
+            <span class="identifier">http</span><span class="special">::</span><span class="identifier">read</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">socket</span><span class="special">,</span> <span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">,</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">ec</span><span class="special">);</span>
+            <span class="identifier">ROUTER_CHECK</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">ec</span> <span class="special">!=</span> <span class="identifier">http</span><span class="special">::</span><span class="identifier">error</span><span class="special">::</span><span class="identifier">end_of_stream</span><span class="special">)</span>
+            <span class="identifier">ROUTER_CHECK_EC</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">read</span><span class="special">)</span>
+            <span class="comment">// Handle request</span>
+            <span class="keyword">auto</span> <span class="identifier">rpath</span> <span class="special">=</span> <span class="identifier">urls</span><span class="special">::</span><span class="identifier">parse_path</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">target</span><span class="special">());</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">method</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">http</span><span class="special">::</span><span class="identifier">verb</span><span class="special">::</span><span class="identifier">get</span> <span class="special">&amp;&amp;</span>
+                <span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">method</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">http</span><span class="special">::</span><span class="identifier">verb</span><span class="special">::</span><span class="identifier">head</span><span class="special">)</span>
+                <span class="identifier">c</span><span class="special">.</span><span class="identifier">error_reply</span><span class="special">(</span>
+                    <span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">bad_request</span><span class="special">,</span>
+                    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="string">"Unknown HTTP-method: "</span><span class="special">)</span> <span class="special">+</span>
+                        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">method_string</span><span class="special">()));</span>
+            <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">rpath</span><span class="special">)</span>
+                <span class="identifier">c</span><span class="special">.</span><span class="identifier">error_reply</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">bad_request</span><span class="special">,</span> <span class="string">"Illegal request-target"</span><span class="special">);</span>
+            <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">h</span> <span class="special">=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">find</span><span class="special">(*</span><span class="identifier">rpath</span><span class="special">,</span> <span class="identifier">m</span><span class="special">))</span>
+                <span class="special">(*</span><span class="identifier">h</span><span class="special">)(</span><span class="identifier">c</span><span class="special">,</span> <span class="identifier">m</span><span class="special">);</span>
+            <span class="keyword">else</span>
+                <span class="identifier">c</span><span class="special">.</span><span class="identifier">error_reply</span><span class="special">(</span>
+                    <span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">not_found</span><span class="special">,</span>
+                    <span class="string">"The resource '"</span> <span class="special">+</span>
+                        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">rpath</span><span class="special">-&gt;</span><span class="identifier">buffer</span><span class="special">())</span> <span class="special">+</span>
+                        <span class="string">"' was not found."</span><span class="special">);</span>
+            <span class="identifier">ROUTER_CHECK_EC</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">write</span><span class="special">)</span>
+            <span class="identifier">ROUTER_CHECK</span><span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">())</span>
+        <span class="special">}</span>
+        <span class="identifier">c</span><span class="special">.</span><span class="identifier">socket</span><span class="special">.</span><span class="identifier">shutdown</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">::</span><span class="identifier">shutdown_send</span><span class="special">,</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">ec</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">return</span> <span class="identifier">EXIT_SUCCESS</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="preprocessor">#undef</span> <span class="identifier">ROUTER_CHECK_EC</span>
+<span class="preprocessor">#undef</span> <span class="identifier">ROUTER_CHECK</span>
+
+<span class="keyword">void</span>
+<span class="identifier">connection</span><span class="special">::</span>
+<span class="identifier">error_reply</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span> <span class="identifier">s</span><span class="special">,</span> <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">msg</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// invalid route</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">response</span><span class="special">&lt;</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">string_body</span><span class="special">&gt;</span> <span class="identifier">res</span><span class="special">{</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">req</span><span class="special">.</span><span class="identifier">version</span><span class="special">()};</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">server</span><span class="special">,</span> <span class="identifier">BOOST_BEAST_VERSION_STRING</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">content_type</span><span class="special">,</span> <span class="string">"text/html"</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">(</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">());</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">body</span><span class="special">()</span> <span class="special">=</span> <span class="identifier">msg</span><span class="special">;</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">prepare_payload</span><span class="special">();</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">write</span><span class="special">(</span><span class="identifier">socket</span><span class="special">,</span> <span class="identifier">res</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="special">}</span>
+
+
+<span class="keyword">void</span>
+<span class="identifier">connection</span><span class="special">::</span>
+<span class="identifier">string_reply</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">msg</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">response</span><span class="special">&lt;</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">string_body</span><span class="special">&gt;</span> <span class="identifier">res</span><span class="special">{</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">ok</span><span class="special">,</span> <span class="identifier">req</span><span class="special">.</span><span class="identifier">version</span><span class="special">()};</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">server</span><span class="special">,</span> <span class="identifier">BOOST_BEAST_VERSION_STRING</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">content_type</span><span class="special">,</span> <span class="string">"text/html"</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">(</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">());</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">body</span><span class="special">()</span> <span class="special">=</span> <span class="identifier">msg</span><span class="special">;</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">prepare_payload</span><span class="special">();</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">write</span><span class="special">(</span><span class="identifier">socket</span><span class="special">,</span> <span class="identifier">res</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span>
+<span class="identifier">mime_type</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span>
+<span class="identifier">path_cat</span><span class="special">(</span>
+    <span class="identifier">beast</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">base</span><span class="special">,</span>
+    <span class="identifier">beast</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">);</span>
+
+<span class="keyword">void</span>
+<span class="identifier">connection</span><span class="special">::</span>
+<span class="identifier">file_reply</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">file_body</span><span class="special">::</span><span class="identifier">value_type</span> <span class="identifier">body</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">jpath</span> <span class="special">=</span> <span class="identifier">path_cat</span><span class="special">(</span><span class="identifier">doc_root</span><span class="special">,</span> <span class="identifier">path</span><span class="special">);</span>
+    <span class="identifier">body</span><span class="special">.</span><span class="identifier">open</span><span class="special">(</span><span class="identifier">jpath</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">(),</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">file_mode</span><span class="special">::</span><span class="identifier">scan</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">ec</span> <span class="special">==</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">errc</span><span class="special">::</span><span class="identifier">no_such_file_or_directory</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">error_reply</span><span class="special">(</span>
+            <span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">not_found</span><span class="special">,</span>
+            <span class="string">"The resource '"</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">path</span><span class="special">)</span> <span class="special">+</span>
+                <span class="string">"' was not found in "</span> <span class="special">+</span> <span class="identifier">jpath</span><span class="special">);</span>
+        <span class="keyword">return</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">size</span> <span class="special">=</span> <span class="identifier">body</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">response</span><span class="special">&lt;</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">file_body</span><span class="special">&gt;</span> <span class="identifier">res</span><span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">piecewise_construct</span><span class="special">,</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">make_tuple</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">body</span><span class="special">)),</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">make_tuple</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">status</span><span class="special">::</span><span class="identifier">ok</span><span class="special">,</span> <span class="identifier">req</span><span class="special">.</span><span class="identifier">version</span><span class="special">())};</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">server</span><span class="special">,</span> <span class="identifier">BOOST_BEAST_VERSION_STRING</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">set</span><span class="special">(</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">field</span><span class="special">::</span><span class="identifier">content_type</span><span class="special">,</span> <span class="identifier">mime_type</span><span class="special">(</span><span class="identifier">path</span><span class="special">));</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">content_length</span><span class="special">(</span><span class="identifier">size</span><span class="special">);</span>
+    <span class="identifier">res</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">(</span><span class="identifier">req</span><span class="special">.</span><span class="identifier">keep_alive</span><span class="special">());</span>
+    <span class="identifier">http</span><span class="special">::</span><span class="identifier">write</span><span class="special">(</span><span class="identifier">socket</span><span class="special">,</span> <span class="identifier">res</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="special">}</span>
+
+<span class="comment">// Append an HTTP rel-path to a local filesystem path.</span>
+<span class="comment">// The returned path is normalized for the platform.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span>
+<span class="identifier">path_cat</span><span class="special">(</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">base</span><span class="special">,</span>
+    <span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">base</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">path</span><span class="special">);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">result</span><span class="special">(</span><span class="identifier">base</span><span class="special">);</span>
+<span class="preprocessor">#ifdef</span> <span class="identifier">BOOST_MSVC</span>
+    <span class="keyword">char</span> <span class="keyword">constexpr</span> <span class="identifier">path_separator</span> <span class="special">=</span> <span class="char">'\\'</span><span class="special">;</span>
+<span class="preprocessor">#else</span>
+    <span class="keyword">char</span> <span class="keyword">constexpr</span> <span class="identifier">path_separator</span> <span class="special">=</span> <span class="char">'/'</span><span class="special">;</span>
+<span class="preprocessor">#endif</span>
+    <span class="keyword">if</span><span class="special">(</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">back</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">path_separator</span> <span class="special">&amp;&amp;</span>
+        <span class="identifier">path</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="identifier">path_separator</span><span class="special">))</span>
+        <span class="identifier">result</span><span class="special">.</span><span class="identifier">resize</span><span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">-</span> <span class="number">1</span><span class="special">);</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">back</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">path_separator</span> <span class="special">&amp;&amp;</span>
+             <span class="special">!</span><span class="identifier">path</span><span class="special">.</span><span class="identifier">starts_with</span><span class="special">(</span><span class="identifier">path_separator</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="identifier">result</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">path_separator</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="identifier">result</span><span class="special">.</span><span class="identifier">append</span><span class="special">(</span><span class="identifier">path</span><span class="special">.</span><span class="identifier">data</span><span class="special">(),</span> <span class="identifier">path</span><span class="special">.</span><span class="identifier">size</span><span class="special">());</span>
+<span class="preprocessor">#ifdef</span> <span class="identifier">BOOST_MSVC</span>
+    <span class="keyword">for</span><span class="special">(</span><span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">c</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">)</span>
+        <span class="keyword">if</span><span class="special">(</span><span class="identifier">c</span> <span class="special">==</span> <span class="char">'/'</span><span class="special">)</span>
+            <span class="identifier">c</span> <span class="special">=</span> <span class="identifier">path_separator</span><span class="special">;</span>
+<span class="preprocessor">#endif</span>
+    <span class="keyword">return</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span>
+<span class="identifier">mime_type</span><span class="special">(</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">path</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">using</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">iequals</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">ext</span> <span class="special">=</span> <span class="special">[&amp;</span><span class="identifier">path</span><span class="special">]</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">pos</span> <span class="special">=</span> <span class="identifier">path</span><span class="special">.</span><span class="identifier">rfind</span><span class="special">(</span><span class="string">"."</span><span class="special">);</span>
+        <span class="keyword">if</span><span class="special">(</span><span class="identifier">pos</span> <span class="special">==</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">::</span><span class="identifier">npos</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="identifier">beast</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">{};</span>
+        <span class="keyword">return</span> <span class="identifier">path</span><span class="special">.</span><span class="identifier">substr</span><span class="special">(</span><span class="identifier">pos</span><span class="special">);</span>
+    <span class="special">}();</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".htm"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"text/html"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".html"</span><span class="special">))</span> <span class="keyword">return</span> <span class="string">"text/html"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".php"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"text/html"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".css"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"text/css"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".txt"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"text/plain"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".js"</span><span class="special">))</span>   <span class="keyword">return</span> <span class="string">"application/javascript"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".json"</span><span class="special">))</span> <span class="keyword">return</span> <span class="string">"application/json"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".xml"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"application/xml"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".swf"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"application/x-shockwave-flash"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".flv"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"video/x-flv"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".png"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/png"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".jpe"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/jpeg"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".jpeg"</span><span class="special">))</span> <span class="keyword">return</span> <span class="string">"image/jpeg"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".jpg"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/jpeg"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".gif"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/gif"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".bmp"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/bmp"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".ico"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/vnd.microsoft.icon"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".tiff"</span><span class="special">))</span> <span class="keyword">return</span> <span class="string">"image/tiff"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".tif"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/tiff"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".svg"</span><span class="special">))</span>  <span class="keyword">return</span> <span class="string">"image/svg+xml"</span><span class="special">;</span>
+    <span class="keyword">if</span><span class="special">(</span><span class="identifier">iequals</span><span class="special">(</span><span class="identifier">ext</span><span class="special">,</span> <span class="string">".svgz"</span><span class="special">))</span> <span class="keyword">return</span> <span class="string">"image/svg+xml"</span><span class="special">;</span>
+    <span class="keyword">return</span> <span class="string">"application/text"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="file_router.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sanitizing_urls.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

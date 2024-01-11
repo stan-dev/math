@@ -1,0 +1,583 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Using prepared statements with the static interface (C++14)</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="prepared_statements_cpp11.html" title="Using prepared statements with the dynamic interface (C++11)">
+<link rel="next" href="stored_procedures_cpp11.html" title="Using stored procedures with the dynamic interface (C++11)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="prepared_statements_cpp11.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="stored_procedures_cpp11.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.examples.prepared_statements_cpp14"></a><a class="link" href="prepared_statements_cpp14.html" title="Using prepared statements with the static interface (C++14)">Using prepared
+      statements with the static interface (C++14)</a>
+</h3></div></div></div>
+<p>
+        This example demonstrates how to use prepared statements with the static
+        interface to implement a minimal order management system for an online store.
+      </p>
+<p>
+        The example employs synchronous functions with exceptions as error handling.
+        See <a class="link" href="../error_handling.html" title="Error handling and available overloads">this section</a> for more info
+        on error handling.
+      </p>
+<p>
+        This examples requires you to run <code class="literal"><a href="https://github.com/boostorg/mysql/blob/master/example/order_management/db_setup.sql" target="_top">example/order_management/db_setup.sql</a></code>.
+        You can find table definitions there.
+      </p>
+<pre class="programlisting"><span class="comment">/**
+ * This example implements a very simple command-line order manager
+ * for an online store, using prepared statements. You can find the table
+ * definitions in example/order_management/db_setup.sql. Be sure to run this file before the example.
+ * This example assumes you are connecting to a localhost MySQL server.
+ *
+ * The order system is intentionally very simple, and has the following tables:
+ *  - products: the list of items our store sells, with price and description.
+ *  - orders: the main object. Orders have a status field that can be draft, pending_payment or complete.
+ *  - order_items: an order may have 0 to n line items. Each item refers to a single product.
+ *
+ * Orders are created empty, in a draft state. Line items can be added or removed.
+ * Orders are then checked out, which transitions them to pending_payment.
+ * After that, payment would happen through an external system. Once completed, an
+ * order is confirmed, transitioning it to the complete status.
+ * In the real world, flow would be much more complex, but this is enough for an example.
+ *
+ * We'll be using the static interface to retrieve results from MySQL.
+ * This makes use of the static_results&lt;RowType&gt; class template.
+ * To use it, we need to define a set of structs/tuples describing the shape
+ * of our rows. Boost.MySQL will parse the received rows into these types.
+ * The static interface requires C++14 to work.
+ *
+ * Row types may be plain structs or std::tuple's. If we use plain structs, we need
+ * to use BOOST_DESCRIBE_STRUCT on them. This adds the structs the required reflection
+ * data, so Boost.MySQL knows how to parse rows into them.
+ */</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">error_with_diagnostics</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">static_results</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">tcp_ssl</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">io_context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ssl</span><span class="special">/</span><span class="identifier">context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">describe</span><span class="special">/</span><span class="keyword">class</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">optional</span><span class="special">/</span><span class="identifier">optional</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">stdexcept</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">tuple</span><span class="special">&gt;</span>
+
+<span class="comment">// This header contains boilerplate code to parse the command line</span>
+<span class="comment">// arguments into structs. Parsing the command line yields a cmdline_args,</span>
+<span class="comment">// an alias for a boost::variant2::variant holding the command line</span>
+<span class="comment">// arguments for any of the subcommands. We will use it via visit().</span>
+<span class="preprocessor">#include</span> <span class="string">"parse_cmdline.hpp"</span>
+
+<span class="comment">// Including any of the static interface headers brings this macro into</span>
+<span class="comment">// scope if the static interface is supported.</span>
+<span class="preprocessor">#ifdef</span> <span class="identifier">BOOST_MYSQL_CXX14</span>
+
+<span class="keyword">namespace</span> <span class="identifier">mysql</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">;</span>
+
+<span class="keyword">namespace</span> <span class="special">{</span>
+
+<span class="comment">// An order retrieved by our system.</span>
+<span class="keyword">struct</span> <span class="identifier">order</span>
+<span class="special">{</span>
+    <span class="comment">// The unique database ID of the object.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">id</span><span class="special">;</span>
+
+    <span class="comment">// The order status (draft, pending_payment, complete).</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">status</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">order</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">status</span><span class="special">))</span>
+
+<span class="comment">// A product, as listed in the store product catalog.</span>
+<span class="keyword">struct</span> <span class="identifier">product</span>
+<span class="special">{</span>
+    <span class="comment">// The unique database ID of the object.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="comment">// A short name for the product. Can be used as a title.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">short_name</span><span class="special">;</span>
+
+    <span class="comment">// The product's description. This field can be NULL in the DB,</span>
+    <span class="comment">// so we use boost::optional&lt;T&gt; for it. If you're using C++17 or higher,</span>
+    <span class="comment">// you can use std::optional instead.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">descr</span><span class="special">;</span>
+
+    <span class="comment">// The product's unit price, in cents of USD.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">price</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">product</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">short_name</span><span class="special">,</span> <span class="identifier">descr</span><span class="special">,</span> <span class="identifier">price</span><span class="special">))</span>
+
+<span class="comment">// An order with its line items. This record type is returned by JOINs</span>
+<span class="comment">// from the orders and order_items tables. We use this type to retrieve both</span>
+<span class="comment">// an order and its line items in a single operation.</span>
+<span class="comment">// If the order contains no line items, the item_xxx fields are NULL.</span>
+<span class="keyword">struct</span> <span class="identifier">order_with_items</span>
+<span class="special">{</span>
+    <span class="comment">// The ID of the order</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">order_id</span><span class="special">;</span>
+
+    <span class="comment">// The status of the order</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">order_status</span><span class="special">;</span>
+
+    <span class="comment">// The ID of the line item, or NULL if the order doesn't have any</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;</span> <span class="identifier">item_id</span><span class="special">;</span>
+
+    <span class="comment">// The number of units of this product that the user wants to buy,</span>
+    <span class="comment">// or NULL if the order doesn't have line items</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;</span> <span class="identifier">item_quantity</span><span class="special">;</span>
+
+    <span class="comment">// The product's unit price, in cents of USD, or NULL if the order</span>
+    <span class="comment">// doesn't have line items</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;</span> <span class="identifier">item_unit_price</span><span class="special">;</span>
+
+    <span class="keyword">bool</span> <span class="identifier">has_item</span><span class="special">()</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="keyword">return</span> <span class="identifier">item_id</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">item_quantity</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">item_unit_price</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">();</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span>
+    <span class="identifier">order_with_items</span><span class="special">,</span>
+    <span class="special">(),</span>
+    <span class="special">(</span><span class="identifier">order_id</span><span class="special">,</span> <span class="identifier">order_status</span><span class="special">,</span> <span class="identifier">item_id</span><span class="special">,</span> <span class="identifier">item_quantity</span><span class="special">,</span> <span class="identifier">item_unit_price</span><span class="special">)</span>
+<span class="special">);</span>
+
+<span class="comment">// An empty row type. This can be used to describe empty resultsets,</span>
+<span class="comment">// like the ones returned by INSERT or CALL.</span>
+<span class="keyword">using</span> <span class="identifier">empty</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;&gt;;</span>
+
+<span class="comment">// This visitor executes a sub-command and prints the results to stdout.</span>
+<span class="keyword">struct</span> <span class="identifier">visitor</span>
+<span class="special">{</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span><span class="special">&amp;</span> <span class="identifier">conn</span><span class="special">;</span>
+
+    <span class="keyword">static</span> <span class="keyword">void</span> <span class="identifier">print_order</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">order</span><span class="special">&amp;</span> <span class="identifier">ord</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Order: id="</span> <span class="special">&lt;&lt;</span> <span class="identifier">ord</span><span class="special">.</span><span class="identifier">id</span> <span class="special">&lt;&lt;</span> <span class="string">", status="</span> <span class="special">&lt;&lt;</span> <span class="identifier">ord</span><span class="special">.</span><span class="identifier">status</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Retrieves an order with its items. If the order exists, at least one record is returned.</span>
+    <span class="comment">// If the order has line items, a record per item is returned. If the order has no items,</span>
+    <span class="comment">// a single record is returned, and it will have its item_xxx fields set to NULL.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">order_id</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="identifier">R</span><span class="string">"%(
+            SELECT
+                ord.id AS order_id,
+                ord.status AS order_status,
+                item.id AS item_id,
+                item.quantity AS item_quantity,
+                prod.price AS item_unit_price
+            FROM orders ord
+            LEFT JOIN order_items item ON ord.id = item.order_id
+            LEFT JOIN products prod ON item.product_id = prod.id
+            WHERE ord.id = ?
+        )%"</span><span class="special">);</span>
+
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+        <span class="keyword">return</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Prints an order with its line items to stdout</span>
+    <span class="keyword">static</span> <span class="keyword">void</span> <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">ord_items</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">assert</span><span class="special">(!</span><span class="identifier">ord_items</span><span class="special">.</span><span class="identifier">empty</span><span class="special">());</span>
+
+        <span class="comment">// Print the order</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Order: id="</span> <span class="special">&lt;&lt;</span> <span class="identifier">ord_items</span><span class="special">[</span><span class="number">0</span><span class="special">].</span><span class="identifier">order_id</span> <span class="special">&lt;&lt;</span> <span class="string">", status="</span> <span class="special">&lt;&lt;</span> <span class="identifier">ord_items</span><span class="special">[</span><span class="number">0</span><span class="special">].</span><span class="identifier">order_status</span>
+                  <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+
+        <span class="comment">// Print the items</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">ord_items</span><span class="special">[</span><span class="number">0</span><span class="special">].</span><span class="identifier">has_item</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"No line items\n"</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span>
+        <span class="special">{</span>
+            <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">item</span> <span class="special">:</span> <span class="identifier">ord_items</span><span class="special">)</span>
+            <span class="special">{</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"  Line item: id="</span> <span class="special">&lt;&lt;</span> <span class="special">*</span><span class="identifier">item</span><span class="special">.</span><span class="identifier">item_id</span> <span class="special">&lt;&lt;</span> <span class="string">", quantity="</span> <span class="special">&lt;&lt;</span> <span class="special">*</span><span class="identifier">item</span><span class="special">.</span><span class="identifier">item_quantity</span>
+                          <span class="special">&lt;&lt;</span> <span class="string">", unit_price="</span> <span class="special">&lt;&lt;</span> <span class="special">*</span><span class="identifier">item</span><span class="special">.</span><span class="identifier">item_unit_price</span> <span class="special">/</span> <span class="number">100.0</span> <span class="special">&lt;&lt;</span> <span class="string">"$\n"</span><span class="special">;</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+
+    <span class="comment">// get-products &lt;search-term&gt;: full text search of the products table.</span>
+    <span class="comment">// use this command to search the store for available products</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">get_products_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// Our SQL contains a user-supplied paremeter (the search term),</span>
+        <span class="comment">// so we will be using a prepared statement</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="identifier">R</span><span class="string">"%(
+            SELECT id, short_name, descr, price
+            FROM products
+            WHERE MATCH(short_name, descr) AGAINST(?)
+            LIMIT 5
+        )%"</span><span class="special">);</span>
+
+        <span class="comment">// The product struct describes the shape of the rows that</span>
+        <span class="comment">// we expect the server to send.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">product</span><span class="special">&gt;</span> <span class="identifier">products</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">search</span><span class="special">),</span> <span class="identifier">products</span><span class="special">);</span>
+
+        <span class="comment">// Print the results to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Your search returned the following products:\n"</span><span class="special">;</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">product</span><span class="special">&amp;</span> <span class="identifier">prod</span> <span class="special">:</span> <span class="identifier">products</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"* ID: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">prod</span><span class="special">.</span><span class="identifier">id</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                      <span class="special">&lt;&lt;</span> <span class="string">"  Short name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">prod</span><span class="special">.</span><span class="identifier">short_name</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                      <span class="special">&lt;&lt;</span> <span class="string">"  Description: "</span> <span class="special">&lt;&lt;</span> <span class="special">(</span><span class="identifier">prod</span><span class="special">.</span><span class="identifier">descr</span> <span class="special">?</span> <span class="special">*</span><span class="identifier">prod</span><span class="special">.</span><span class="identifier">descr</span> <span class="special">:</span> <span class="string">""</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                      <span class="special">&lt;&lt;</span> <span class="string">"  Price: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">prod</span><span class="special">.</span><span class="identifier">price</span> <span class="special">/</span> <span class="number">100.0</span> <span class="special">&lt;&lt;</span> <span class="string">"$"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// create-order: creates a new order. Orders are always created empty. This command</span>
+    <span class="comment">// requires no arguments</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">create_order_args</span><span class="special">&amp;)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// Since this is an INSERT, we don't expect any row to be returned.</span>
+        <span class="comment">// empty is an alias for std::tuple&lt;&gt;, which tells static_results to expect</span>
+        <span class="comment">// an empty resultset.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"INSERT INTO orders VALUES ()"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+        <span class="comment">// We can use static_results::last_insert_id() to retrieve the ID of the newly</span>
+        <span class="comment">// created object. last_insert_id() returns always a uint64_t. Our schema uses</span>
+        <span class="comment">// plain INTs for the id field, so this cast is safe.</span>
+        <span class="identifier">order</span> <span class="identifier">ord</span><span class="special">{</span><span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">last_insert_id</span><span class="special">()),</span> <span class="string">"draft"</span><span class="special">};</span>
+        <span class="identifier">print_order</span><span class="special">(</span><span class="identifier">ord</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// get-order &lt;order-id&gt;: retrieves order details</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">get_order_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// Retrieve the order with its items</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">);</span>
+
+        <span class="comment">// If we didn't find any order, issue an error</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Can't find order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">));</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Print the order to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Retrieved order\n"</span><span class="special">;</span>
+        <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">());</span>
+    <span class="special">}</span>
+
+    <span class="comment">// get-orders: lists all orders. Orders are listed without their line items.</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">get_orders_args</span><span class="special">&amp;)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// Since this query doesn't have parameters, we don't need a prepared statement,</span>
+        <span class="comment">// and we can use a text query instead.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, `status` FROM orders"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+        <span class="comment">// Print the results to stdout</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"No orders found"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span>
+        <span class="special">{</span>
+            <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">order</span><span class="special">&amp;</span> <span class="identifier">ord</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+            <span class="special">{</span>
+                <span class="identifier">print_order</span><span class="special">(</span><span class="identifier">ord</span><span class="special">);</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+
+    <span class="comment">// add-line-item &lt;order-id&gt; &lt;product-id&gt; &lt;quantity&gt;: adds a line item to a given order</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">add_line_item_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// We will need to run several statements atomically, so we start a transaction.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">empty_results</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"START TRANSACTION"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// To add a line item, we require the order to be in a draft status. Get the order to check this fact.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"SELECT id, `status` FROM orders WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order</span><span class="special">&gt;</span> <span class="identifier">orders</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">orders</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="comment">// There is no such order</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" not found"</span><span class="special">);</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">].</span><span class="identifier">status</span> <span class="special">!=</span> <span class="string">"draft"</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="comment">// The order is no longer editable</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" is not editable"</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Insert the new line item. If the given product does not exist, the INSERT will fail</span>
+        <span class="comment">// because of product_id's FOREIGN KEY constraint.</span>
+        <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span>
+            <span class="string">"INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)"</span>
+        <span class="special">);</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">,</span> <span class="identifier">args</span><span class="special">.</span><span class="identifier">product_id</span><span class="special">,</span> <span class="identifier">args</span><span class="special">.</span><span class="identifier">quantity</span><span class="special">),</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// We can use static_results::last_insert_id to get the ID of the new line item.</span>
+        <span class="keyword">auto</span> <span class="identifier">new_line_item_id</span> <span class="special">=</span> <span class="identifier">empty_results</span><span class="special">.</span><span class="identifier">last_insert_id</span><span class="special">();</span>
+
+        <span class="comment">// Retrieve the full order details</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">order_results</span> <span class="special">=</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">);</span>
+
+        <span class="comment">// We're done - commit the transaction</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"COMMIT"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Print the results to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Created line item: id="</span> <span class="special">&lt;&lt;</span> <span class="identifier">new_line_item_id</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+        <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">order_results</span><span class="special">.</span><span class="identifier">rows</span><span class="special">());</span>
+    <span class="special">}</span>
+
+    <span class="comment">// remove-line-item &lt;line-item-id&gt;: removes an item from an order</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">remove_line_item_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// We will need to run several statements atomically, so we start a transaction.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">empty_results</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"START TRANSACTION"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// To remove a line item, we require the order to be in a draft status. Get the order to check this</span>
+        <span class="comment">// fact.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order</span><span class="special">&gt;</span> <span class="identifier">orders</span><span class="special">;</span>
+        <span class="keyword">auto</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="identifier">R</span><span class="string">"%(
+            SELECT orders.id, orders.`status`
+            FROM orders
+            JOIN order_items items ON (orders.id = items.order_id)
+            WHERE items.id = ?
+        )%"</span><span class="special">);</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">line_item_id</span><span class="special">),</span> <span class="identifier">orders</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="comment">// The query hasn't matched any row - the supplied line item ID is not valid</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span>
+                <span class="string">"The order item with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">line_item_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" does not exist"</span>
+            <span class="special">);</span>
+        <span class="special">}</span>
+        <span class="keyword">const</span> <span class="identifier">order</span><span class="special">&amp;</span> <span class="identifier">ord</span> <span class="special">=</span> <span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">];</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ord</span><span class="special">.</span><span class="identifier">status</span> <span class="special">!=</span> <span class="string">"draft"</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="comment">// The order is no longer editable</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"The order is not in an editable state"</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Remove the line item</span>
+        <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"DELETE FROM order_items WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">line_item_id</span><span class="special">),</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Retrieve the full order details</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">order_results</span> <span class="special">=</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">ord</span><span class="special">.</span><span class="identifier">id</span><span class="special">);</span>
+
+        <span class="comment">// We're done - commit the transaction</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"COMMIT"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Print results to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Removed line item from order\n"</span><span class="special">;</span>
+        <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">order_results</span><span class="special">.</span><span class="identifier">rows</span><span class="special">());</span>
+    <span class="special">}</span>
+
+    <span class="comment">// checkout-order &lt;order-id&gt;: marks an order as ready for checkout</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">checkout_order_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// We will need to run several statements atomically, so we start a transaction.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">empty_results</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"START TRANSACTION"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// To checkout an order, we require it to be in a draft status. Check this fact.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"SELECT id, `status` FROM orders WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order</span><span class="special">&gt;</span> <span class="identifier">orders</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">orders</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="comment">// No order matched</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" not found"</span><span class="special">);</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">].</span><span class="identifier">status</span> <span class="special">!=</span> <span class="string">"draft"</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="comment">// The order is no longer editable</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span>
+                <span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" cannot be checked out"</span>
+            <span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Update the order status</span>
+        <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"UPDATE orders SET `status` = 'pending_payment' WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Calculate the total amount to pay. SUM() returns a DECIMAL, which has a bigger</span>
+        <span class="comment">// range than integers. DECIMAL is represented in C++ as a string. We use CAST to obtain</span>
+        <span class="comment">// an uint64_t. If the CAST overflows, the max value for uint64_t will be returned.</span>
+        <span class="comment">// We will be limiting our orders to USD 1bn, so overflow will be detected.</span>
+        <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="identifier">R</span><span class="string">"%(
+            SELECT CAST(
+                IFNULL(SUM(prod.price * item.quantity), 0)
+                AS UNSIGNED
+            )
+            FROM order_items item
+            JOIN products prod ON item.product_id = prod.id
+            WHERE item.order_id = ?;
+        )%"</span><span class="special">);</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span><span class="special">&gt;&gt;</span> <span class="identifier">amount_results</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">amount_results</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span> <span class="identifier">total_amount</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">get</span><span class="special">&lt;</span><span class="number">0</span><span class="special">&gt;(</span><span class="identifier">amount_results</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">]);</span>
+
+        <span class="comment">// Verify that the total amount meets our criteria</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">total_amount</span> <span class="special">==</span> <span class="number">0</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"The order doesn't have any line item"</span><span class="special">);</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">total_amount</span> <span class="special">&gt;</span> <span class="number">1000</span> <span class="special">*</span> <span class="number">1000</span> <span class="special">*</span> <span class="number">100</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Order amount of "</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">total_amount</span><span class="special">)</span> <span class="special">+</span> <span class="string">" exceeds limit"</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Retrieve the full order details</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">order_results</span> <span class="special">=</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">);</span>
+
+        <span class="comment">// We're done - commit the transaction</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"COMMIT"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Print the results to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Checked out order. The total amount to pay is: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">total_amount</span> <span class="special">/</span> <span class="number">100.0</span> <span class="special">&lt;&lt;</span> <span class="string">"$\n"</span><span class="special">;</span>
+        <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">order_results</span><span class="special">.</span><span class="identifier">rows</span><span class="special">());</span>
+    <span class="special">}</span>
+
+    <span class="comment">// complete-order &lt;order-id&gt;: marks an order as completed</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="keyword">const</span> <span class="identifier">complete_order_args</span><span class="special">&amp;</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="comment">// We will need to run several statements atomically, so we start a transaction.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">empty_results</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"START TRANSACTION"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// To complete an order, we require it to be in a pending_payment status. Check this fact.</span>
+        <span class="keyword">auto</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"SELECT id, `status` FROM orders WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order</span><span class="special">&gt;</span> <span class="identifier">orders</span><span class="special">;</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">orders</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="comment">// Order not found</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" not found"</span><span class="special">);</span>
+        <span class="special">}</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">orders</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">].</span><span class="identifier">status</span> <span class="special">!=</span> <span class="string">"pending_payment"</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span><span class="special">(</span>
+                <span class="string">"Order with id="</span> <span class="special">+</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">)</span> <span class="special">+</span> <span class="string">" is not in pending_payment status"</span>
+            <span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="comment">// Update status</span>
+        <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"UPDATE orders SET `status` = 'complete' WHERE id = ?"</span><span class="special">);</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">),</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Retrieve the full order details</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">order_with_items</span><span class="special">&gt;</span> <span class="identifier">order_results</span> <span class="special">=</span> <span class="identifier">get_order_with_items</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">order_id</span><span class="special">);</span>
+
+        <span class="comment">// We're done - commit the transaction</span>
+        <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"COMMIT"</span><span class="special">,</span> <span class="identifier">empty_results</span><span class="special">);</span>
+
+        <span class="comment">// Print the results to stdout</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Completed order\n"</span><span class="special">;</span>
+        <span class="identifier">print_order_with_items</span><span class="special">(</span><span class="identifier">order_results</span><span class="special">.</span><span class="identifier">rows</span><span class="special">());</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+
+<span class="keyword">void</span> <span class="identifier">main_impl</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Parse command line arguments</span>
+    <span class="keyword">auto</span> <span class="identifier">args</span> <span class="special">=</span> <span class="identifier">parse_cmdline_args</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+
+    <span class="comment">// I/O context and connection. We use SSL because MySQL 8+ default settings require it.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span> <span class="identifier">ssl_ctx</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">::</span><span class="identifier">tls_client</span><span class="special">);</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">ssl_ctx</span><span class="special">);</span>
+
+    <span class="comment">// Resolver for hostname resolution</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">resolver</span> <span class="identifier">resolver</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">.</span><span class="identifier">get_executor</span><span class="special">());</span>
+
+    <span class="comment">// Connection params</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+        <span class="identifier">args</span><span class="special">.</span><span class="identifier">username</span><span class="special">,</span>                  <span class="comment">// username</span>
+        <span class="identifier">args</span><span class="special">.</span><span class="identifier">password</span><span class="special">,</span>                  <span class="comment">// password</span>
+        <span class="string">"boost_mysql_order_management"</span>  <span class="comment">// database to use</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Hostname resolution</span>
+    <span class="keyword">auto</span> <span class="identifier">endpoints</span> <span class="special">=</span> <span class="identifier">resolver</span><span class="special">.</span><span class="identifier">resolve</span><span class="special">(</span><span class="identifier">args</span><span class="special">.</span><span class="identifier">host</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">default_port_string</span><span class="special">);</span>
+
+    <span class="comment">// TCP and MySQL level connect</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(*</span><span class="identifier">endpoints</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">);</span>
+
+    <span class="comment">// Execute the command</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">variant2</span><span class="special">::</span><span class="identifier">visit</span><span class="special">(</span><span class="identifier">visitor</span><span class="special">{</span><span class="identifier">conn</span><span class="special">},</span> <span class="identifier">args</span><span class="special">.</span><span class="identifier">cmd</span><span class="special">);</span>
+
+    <span class="comment">// Close the connection</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="special">}</span>  <span class="comment">// namespace</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">try</span>
+    <span class="special">{</span>
+        <span class="identifier">main_impl</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_with_diagnostics</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Some errors include additional diagnostics, like server-provided error messages.</span>
+        <span class="comment">// Security note: diagnostics::server_message may contain user-supplied values (e.g. the</span>
+        <span class="comment">// field value that caused the error) and is encoded using to the connection's encoding</span>
+        <span class="comment">// (UTF-8 by default). Treat is as untrusted input.</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">", error code: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">code</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"Server diagnostics: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">get_diagnostics</span><span class="special">().</span><span class="identifier">server_message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="preprocessor">#else</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">()</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Sorry, your compiler doesn't have the required capabilities to run this example"</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="preprocessor">#endif</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="prepared_statements_cpp11.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="stored_procedures_cpp11.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

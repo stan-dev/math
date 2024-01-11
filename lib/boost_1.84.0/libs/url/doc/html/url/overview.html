@@ -1,0 +1,841 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Overview</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="prev" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="next" href="urls.html" title="URLs">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../index.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="urls.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="url.overview"></a><a class="link" href="overview.html" title="Overview">Overview</a>
+</h2></div></div></div>
+<p>
+      Boost.URL is a portable C++ library which provides containers and algorithms
+      which model a "URL," more formally described using the <a href="https://datatracker.ietf.org/doc/html/rfc3986" target="_top">Uniform
+      Resource Identifier (URI)</a> specification (henceforth referred to as
+      <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>). A URL is
+      a compact sequence of characters that identifies an abstract or physical resource.
+      For example, this is a valid URL:
+    </p>
+<pre class="programlisting">https://www.example.com/path/to/file.txt?userid=1001&amp;pages=3&amp;results=full#page1
+</pre>
+<p>
+      This library understands the grammars related to URLs and provides functionality
+      to validate, parse, examine, and modify urls, and apply normalization or resolution
+      algorithms.
+    </p>
+<h4>
+<a name="url.overview.h0"></a>
+      <span class="phrase"><a name="url.overview.features"></a></span><a class="link" href="overview.html#url.overview.features">Features</a>
+    </h4>
+<p>
+      While the library is general purpose, special care has been taken to ensure
+      that the implementation and data representation are friendly to network programs
+      which need to handle URLs efficiently and securely, including the case where
+      the inputs come from untrusted sources. Interfaces are provided for using error
+      codes instead of exceptions as needed, and most algorithms have the means to
+      opt-out of dynamic memory allocation. Another feature of the library is that
+      all modifications leave the URL in a valid state. Code which uses this library
+      is easy to read, flexible, and performant.
+    </p>
+<p>
+      Boost.URL offers these features:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          C++11 as only requirement
+        </li>
+<li class="listitem">
+          Fast compilation, few templates
+        </li>
+<li class="listitem">
+          Strict compliance with <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>
+        </li>
+<li class="listitem">
+          Containers that maintain valid URLs
+        </li>
+<li class="listitem">
+          Parsing algorithms that work without exceptions
+        </li>
+<li class="listitem">
+          Control over storage and allocation for URLs
+        </li>
+<li class="listitem">
+          Support for <code class="computeroutput">-fno-exceptions</code>, detected automatically
+        </li>
+<li class="listitem">
+          Features that work well on embedded devices
+        </li>
+</ul></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Currently the library does not handle <a href="https://www.rfc-editor.org/rfc/rfc3987.html" target="_top">Internationalized
+        Resource Identifiers</a> (IRIs). These are different from URLs, come
+        from Unicode strings instead of low-ASCII strings, and are covered by a separate
+        specification.
+      </p></td></tr>
+</table></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.overview.requirements"></a><a class="link" href="overview.html#url.overview.requirements" title="Requirements">Requirements</a>
+</h3></div></div></div>
+<p>
+        The library requires a compiler supporting at least C++11.
+      </p>
+<p>
+        Aliases for standard types, such as <a class="link" href="ref/boost__urls__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a> or <a class="link" href="ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>, use their Boost equivalents.
+      </p>
+<p>
+        Boost.URL works great on embedded devices. It can be used in a way that avoids
+        all dynamic memory allocations. Furthermore it offers alternative interfaces
+        that work without exceptions if desired.
+      </p>
+</div>
+<h4>
+<a name="url.overview.h1"></a>
+      <span class="phrase"><a name="url.overview.tested_compilers"></a></span><a class="link" href="overview.html#url.overview.tested_compilers">Tested
+      Compilers</a>
+    </h4>
+<p>
+      Boost.URL has been tested with the following compilers:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        </li>
+<li class="listitem">
+          gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11
+        </li>
+<li class="listitem">
+          msvc: 14.1, 14.2, 14.3
+        </li>
+</ul></div>
+<p>
+      and these architectures: x86, x64, ARM64, S390x.
+    </p>
+<p>
+      We do not test and support gcc 8.0.1.
+    </p>
+<h4>
+<a name="url.overview.h2"></a>
+      <span class="phrase"><a name="url.overview.quality_assurance"></a></span><a class="link" href="overview.html#url.overview.quality_assurance">Quality
+      Assurance</a>
+    </h4>
+<p>
+      The development infrastructure for the library includes these per-commit analyses:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Coverage reports
+        </li>
+<li class="listitem">
+          Compilation and tests on Drone.io and GitHub Actions
+        </li>
+<li class="listitem">
+          Regular code audits for security
+        </li>
+</ul></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.overview.nomenclature"></a><a class="link" href="overview.html#url.overview.nomenclature" title="Nomenclature">Nomenclature</a>
+</h3></div></div></div>
+<p>
+        Various names have been used historically to refer to different flavors of
+        resource identifiers, including <span class="emphasis"><em>URI</em></span>, <span class="emphasis"><em>URL</em></span>,
+        <span class="emphasis"><em>URN</em></span>, and even <span class="emphasis"><em>IRI</em></span>. Over time, the
+        distinction between URIs and URLs has disappeared when discussed in technical
+        documents and informal works. In this library we use the term <span class="bold"><strong>URL</strong></span>
+        to refer to all strings which are valid according to the top-level grammar
+        rules found in <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>.
+      </p>
+</div>
+<h4>
+<a name="url.overview.h3"></a>
+      <span class="phrase"><a name="url.overview.abnf"></a></span><a class="link" href="overview.html#url.overview.abnf">ABNF</a>
+    </h4>
+<p>
+      This documentation uses the Augmented <a href="https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form" target="_top">Backus-Naur
+      Form</a> (ABNF) notation of <a href="https://datatracker.ietf.org/doc/html/rfc5234" target="_top">rfc5234</a>
+      to specify particular grammars used by algorithms and containers. While a complete
+      understanding of the notation is not a requirement for using the library, it
+      may help for an understanding of how valid components of URLs are defined.
+      In particular, this is of interest to users who wish to compose parsing algorithms
+      using the combinators provided by the library.
+    </p>
+<h4>
+<a name="url.overview.h4"></a>
+      <span class="phrase"><a name="url.overview.acknowledgments"></a></span><a class="link" href="overview.html#url.overview.acknowledgments">Acknowledgments</a>
+    </h4>
+<p>
+      This library wouldn't be where it is today without the help of <a href="https://github.com/pdimov" target="_top">Peter
+      Dimov</a> for design advice and general assistance.
+    </p>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="url.overview.quick_look"></a><a class="link" href="overview.html#url.overview.quick_look" title="Quick Look">Quick Look</a>
+</h3></div></div></div>
+<p>
+        This section is intended to give the reader a brief overview of the features
+        and interface style of the library.
+      </p>
+<h4>
+<a name="url.overview.quick_look.h0"></a>
+        <span class="phrase"><a name="url.overview.quick_look.integration"></a></span><a class="link" href="overview.html#url.overview.quick_look.integration">Integration</a>
+      </h4>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+          Sample code and identifiers used throughout are written as if the following
+          declarations are in effect:
+        </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">urls</span><span class="special">;</span>
+</pre>
+</td></tr>
+</table></div>
+<p>
+        We begin by including the library header file which brings all the symbols
+        into scope.
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">url</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+</pre>
+<p>
+        Alternatively, individual headers may be included to obtain the declarations
+        for specific types.
+      </p>
+<p>
+        Boost.URL is a compiled library. You need to link your program with the Boost.URL
+        built library. You must install binaries in a location that can be found
+        by your linker.
+      </p>
+<p>
+        If you followed the <a href="http://www.boost.org/doc/libs/release/more/getting_started/index.html" target="_top">Boost
+        Getting Started</a> instructions, that's already been done for you.
+      </p>
+<h4>
+<a name="url.overview.quick_look.h1"></a>
+        <span class="phrase"><a name="url.overview.quick_look.parsing"></a></span><a class="link" href="overview.html#url.overview.quick_look.parsing">Parsing</a>
+      </h4>
+<p>
+        Say you have the following URL that you want to parse:
+      </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">s</span> <span class="special">=</span> <span class="string">"https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor"</span><span class="special">;</span>
+</pre>
+<p>
+        In this example, <a class="link" href="ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a> is an alias to <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">string_view</span></code>, a <code class="computeroutput"><span class="identifier">string_view</span></code>
+        implementation that is implicitly convertible to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code>.
+        The library namespace includes the aliases <a class="link" href="ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>, <a class="link" href="ref/boost__urls__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span></code></a>, and <a class="link" href="ref/boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a>.
+      </p>
+<p>
+        You can parse the string by calling this function:
+      </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">url_view</span><span class="special">&gt;</span> <span class="identifier">r</span> <span class="special">=</span> <span class="identifier">parse_uri</span><span class="special">(</span> <span class="identifier">s</span> <span class="special">);</span>
+</pre>
+<p>
+        The function <a class="link" href="ref/boost__urls__parse_uri.html" title="parse_uri"><code class="computeroutput"><span class="identifier">parse_uri</span></code></a> returns an object of type
+        <code class="computeroutput"><a class="link" href="ref/boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a><span class="special">&lt;</span><a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a><span class="special">&gt;</span></code>
+        which is a container resembling a variant that holds either an error or an
+        object. A number of functions are available to parse different types of URL.
+      </p>
+<p>
+        We can immediately call <code class="computeroutput"><span class="identifier">result</span><span class="special">::</span><span class="identifier">value</span></code>
+        to obtain a <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>.
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">value</span><span class="special">();</span>
+</pre>
+<p>
+        Or simply
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">r</span><span class="special">;</span>
+</pre>
+<p>
+        When there are no errors, <a href="../../../../../libs/system/doc/html/system.html#ref_checked_value_access_2" target="_top"><code class="computeroutput"><span class="identifier">result</span><span class="special">::</span><span class="identifier">value</span></code></a> returns an instance of <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>,
+        which holds the parsed result. <a href="../../../../../libs/system/doc/html/system.html#ref_checked_value_access_2" target="_top"><code class="computeroutput"><span class="identifier">result</span><span class="special">::</span><span class="identifier">value</span></code></a> throws an exception on a
+        parsing error.
+      </p>
+<p>
+        Alternatively, the functions <a href="../../../../../libs/system/doc/html/system.html#ref_queries" target="_top"><code class="computeroutput"><span class="identifier">result</span><span class="special">::</span><span class="identifier">has_value</span></code></a> and <a href="../../../../../libs/system/doc/html/system.html#ref_queries" target="_top"><code class="computeroutput"><span class="identifier">result</span><span class="special">::</span><span class="identifier">has_error</span></code></a> could also be used to
+        check if the string has been parsed without errors.
+      </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+          It is worth noting that <a class="link" href="ref/boost__urls__parse_uri.html" title="parse_uri"><code class="computeroutput"><span class="identifier">parse_uri</span></code></a> does not allocate any
+          memory dynamically. Like a <a class="link" href="ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>, a <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a> does not retain ownership
+          of the underlying string buffer.
+        </p>
+<p>
+          As long as the contents of the original string are unmodified, constructed
+          URL views always contain a valid URL in its correctly serialized form.
+        </p>
+<p>
+          If the input does not match the URL grammar, an error code is reported
+          through <a class="link" href="ref/boost__urls__result.html" title="result"><code class="computeroutput"><span class="identifier">result</span></code></a>
+          rather than exceptions. Exceptions only thrown on excessive input length.
+        </p>
+</td></tr>
+</table></div>
+<h4>
+<a name="url.overview.quick_look.h2"></a>
+        <span class="phrase"><a name="url.overview.quick_look.accessing"></a></span><a class="link" href="overview.html#url.overview.quick_look.accessing">Accessing</a>
+      </h4>
+<p>
+        Accessing the parts of the URL is easy:
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor"</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">()</span> <span class="special">==</span> <span class="string">"https"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">authority</span><span class="special">().</span><span class="identifier">buffer</span><span class="special">()</span> <span class="special">==</span> <span class="string">"user:pass@example.com:443"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">userinfo</span><span class="special">()</span> <span class="special">==</span> <span class="string">"user:pass"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">user</span><span class="special">()</span> <span class="special">==</span> <span class="string">"user"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">password</span><span class="special">()</span> <span class="special">==</span> <span class="string">"pass"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">host</span><span class="special">()</span> <span class="special">==</span> <span class="string">"example.com"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">()</span> <span class="special">==</span> <span class="string">"443"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"/path/to/my-file.txt"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">query</span><span class="special">()</span> <span class="special">==</span> <span class="string">"id=42&amp;name=John Doe Jingleheimer-Schmidt"</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">fragment</span><span class="special">()</span> <span class="special">==</span> <span class="string">"page anchor"</span><span class="special">);</span>
+</pre>
+<p>
+        URL paths can be further divided into path segments with the function <a class="link" href="ref/boost__urls__url_view/segments.html" title="url_view::segments"><code class="computeroutput"><span class="identifier">url_view</span><span class="special">::</span><span class="identifier">segments</span></code></a>.
+        Although URL query strings are often used to represent key/value pairs, this
+        interpretation is not defined by <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>.
+        Users can treat the query as a single entity. <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a> provides the function
+        <a class="link" href="ref/boost__urls__url_view/params.html" title="url_view::params"><code class="computeroutput"><span class="identifier">url_view</span><span class="special">::</span><span class="identifier">params</span></code></a>
+        to extract this view of key/value pairs.
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">seg</span><span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">segments</span><span class="special">())</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">seg</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">param</span><span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">params</span><span class="special">())</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">param</span><span class="special">.</span><span class="identifier">key</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">param</span><span class="special">.</span><span class="identifier">value</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">path
+to
+my-file.txt
+
+id: 42
+name: John Doe Jingleheimer-Schmidt
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        These functions return views referring to substrings and sub-ranges of the
+        underlying URL. By simply referencing the relevant portion of the URL string
+        internally, its components can represent percent-decoded strings and be converted
+        to other types without any previous memory allocation.
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">h</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">host</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">h</span> <span class="special">==</span> <span class="string">"example.com"</span><span class="special">);</span>
+</pre>
+<p>
+        A special <code class="computeroutput">string_token</code> type can also be used to specify how
+        a portion of the URL should be encoded and returned.
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">h</span> <span class="special">=</span> <span class="string">"host: "</span><span class="special">;</span>
+<span class="identifier">u</span><span class="special">.</span><span class="identifier">host</span><span class="special">(</span><span class="identifier">string_token</span><span class="special">::</span><span class="identifier">append_to</span><span class="special">(</span><span class="identifier">h</span><span class="special">));</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">h</span> <span class="special">==</span> <span class="string">"host: example.com"</span><span class="special">);</span>
+</pre>
+<p>
+        These functions might also return empty strings
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u1</span> <span class="special">=</span> <span class="identifier">parse_uri</span><span class="special">(</span> <span class="string">"http://www.example.com"</span> <span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u1</span><span class="special">.</span><span class="identifier">fragment</span><span class="special">().</span><span class="identifier">empty</span><span class="special">());</span>
+<span class="identifier">assert</span><span class="special">(!</span><span class="identifier">u1</span><span class="special">.</span><span class="identifier">has_fragment</span><span class="special">());</span>
+</pre>
+<p>
+        for both empty and absent components
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u2</span> <span class="special">=</span> <span class="identifier">parse_uri</span><span class="special">(</span> <span class="string">"http://www.example.com/#"</span> <span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u2</span><span class="special">.</span><span class="identifier">fragment</span><span class="special">().</span><span class="identifier">empty</span><span class="special">());</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">u2</span><span class="special">.</span><span class="identifier">has_fragment</span><span class="special">());</span>
+</pre>
+<p>
+        Many components do not have corresponding functions such as <a class="link" href="ref/boost__urls__url_view/has_authority.html" title="url_view::has_authority"><code class="computeroutput">has_authority</code></a>
+        to check for their existence. This happens because some URL components are
+        mandatory.
+      </p>
+<p>
+        When applicable, the encoded components can also be directly accessed through
+        a <a class="link" href="ref/boost__urls__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+        without any need to allocate memory:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span>
+    <span class="string">"url       : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span>                     <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"scheme    : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">scheme</span><span class="special">()</span>            <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"authority : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_authority</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"userinfo  : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_userinfo</span><span class="special">()</span>  <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"user      : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_user</span><span class="special">()</span>      <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"password  : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_password</span><span class="special">()</span>  <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"host      : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_host</span><span class="special">()</span>      <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"port      : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">port</span><span class="special">()</span>              <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"path      : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_path</span><span class="special">()</span>      <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"query     : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_query</span><span class="special">()</span>     <span class="special">&lt;&lt;</span> <span class="string">"\n"</span>
+    <span class="string">"fragment  : "</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_fragment</span><span class="special">()</span>  <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+scheme    : https
+authority : user:pass@example.com:443
+userinfo  : user:pass
+user      : user
+password  : pass
+host      : example.com
+port      : 443
+path      : /path/to/my%2dfile.txt
+query     : id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt
+fragment  : page%20anchor
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="url.overview.quick_look.h3"></a>
+        <span class="phrase"><a name="url.overview.quick_look.percent_encoding"></a></span><a class="link" href="overview.html#url.overview.quick_look.percent_encoding">Percent-Encoding</a>
+      </h5>
+<p>
+        An instance of <a class="link" href="ref/boost__urls__decode_view.html" title="decode_view"><code class="computeroutput"><span class="identifier">decode_view</span></code></a> provides a number of
+        functions to persist a decoded string:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">decode_view</span> <span class="identifier">dv</span><span class="special">(</span><span class="string">"id=42&amp;name=John%20Doe%20Jingleheimer%2DSchmidt"</span><span class="special">);</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">dv</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">id=42&amp;name=John Doe Jingleheimer-Schmidt
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        <a class="link" href="ref/boost__urls__decode_view.html" title="decode_view"><code class="computeroutput"><span class="identifier">decode_view</span></code></a>
+        and its decoding functions are designed to perform no memory allocations
+        unless the algorithm where its being used needs the result to be in another
+        container. The design also permits recycling objects to reuse their memory,
+        and at least minimize the number of allocations by deferring them until the
+        result is in fact needed by the application.
+      </p>
+<p>
+        In the example above, the memory owned by <code class="computeroutput">str</code> can be reused
+        to store other results. This is also useful when manipulating URLs:
+      </p>
+<pre class="programlisting"><span class="identifier">u1</span><span class="special">.</span><span class="identifier">set_host</span><span class="special">(</span><span class="identifier">u2</span><span class="special">.</span><span class="identifier">host</span><span class="special">());</span>
+</pre>
+<p>
+        If <code class="computeroutput"><span class="identifier">u2</span><span class="special">.</span><span class="identifier">host</span><span class="special">()</span></code>
+        returned a value type, then two memory allocations would be necessary for
+        this operation. Another common use case is converting URL path segments into
+        filesystem paths:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">p</span><span class="special">;</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">seg</span><span class="special">:</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">segments</span><span class="special">())</span>
+    <span class="identifier">p</span><span class="special">.</span><span class="identifier">append</span><span class="special">(</span><span class="identifier">seg</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">seg</span><span class="special">.</span><span class="identifier">end</span><span class="special">());</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"path: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">path: "path/to/my-file.txt"
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        In this example, only the internal allocations of <code class="computeroutput">filesystem::path</code>
+        need to happen. In many common use cases, no allocations are necessary at
+        all, such as finding the appropriate route for a URL in a web server:
+      </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">match</span> <span class="special">=</span> <span class="special">[](</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">route</span><span class="special">,</span>
+    <span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">auto</span> <span class="identifier">segs</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">segments</span><span class="special">();</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">route</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">segs</span><span class="special">.</span><span class="identifier">size</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+    <span class="keyword">return</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">equal</span><span class="special">(</span>
+        <span class="identifier">route</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+        <span class="identifier">route</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+        <span class="identifier">segs</span><span class="special">.</span><span class="identifier">begin</span><span class="special">());</span>
+<span class="special">};</span>
+</pre>
+<p>
+        This allows us to easily match files in the document root directory of a
+        web server:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">route</span> <span class="special">=</span>
+    <span class="special">{</span><span class="string">"community"</span><span class="special">,</span> <span class="string">"reviews.html"</span><span class="special">};</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">match</span><span class="special">(</span><span class="identifier">route</span><span class="special">,</span> <span class="identifier">u</span><span class="special">))</span>
+<span class="special">{</span>
+    <span class="identifier">handle_route</span><span class="special">(</span><span class="identifier">route</span><span class="special">,</span> <span class="identifier">u</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<a name="compound-elements"></a><h4>
+<a name="url.overview.quick_look.h4"></a>
+        <span class="phrase"><a name="url.overview.quick_look.compound_elements"></a></span><a class="link" href="overview.html#url.overview.quick_look.compound_elements">Compound
+        elements</a>
+      </h4>
+<p>
+        The path and query parts of the URL are treated specially by the library.
+        While they can be accessed as individual encoded strings, they can also be
+        accessed through special view types.
+      </p>
+<p>
+        This code calls <a class="link" href="ref/boost__urls__url_view/encoded_segments.html" title="url_view::encoded_segments"><code class="computeroutput"><span class="identifier">encoded_segments</span></code></a> to obtain the path
+        segments as a container that returns encoded strings:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">segments_encoded_view</span> <span class="identifier">segs</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">();</span>
+<span class="keyword">for</span><span class="special">(</span> <span class="keyword">auto</span> <span class="identifier">v</span> <span class="special">:</span> <span class="identifier">segs</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">v</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">path</span>
+<span class="identifier">to</span>
+<span class="identifier">my</span><span class="special">-</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">txt</span>
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        As with other <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a> functions which return
+        encoded strings, the encoded segments container does not allocate memory.
+        Instead it returns views to the corresponding portions of the underlying
+        encoded buffer referenced by the URL.
+      </p>
+<p>
+        As with other library functions, <a class="link" href="ref/boost__urls__decode_view.html" title="decode_view"><code class="computeroutput"><span class="identifier">decode_view</span></code></a> permits accessing elements
+        of composed elements while avoiding memory allocations entirely:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">segments_encoded_view</span> <span class="identifier">segs</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_segments</span><span class="special">();</span>
+
+<span class="keyword">for</span><span class="special">(</span> <span class="identifier">pct_string_view</span> <span class="identifier">v</span> <span class="special">:</span> <span class="identifier">segs</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">decode_view</span> <span class="identifier">dv</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">v</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">dv</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">path
+to
+my-file.txt
+</pre>
+              </td>
+</tr>
+<tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">params_encoded_view</span> <span class="identifier">params_ref</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">encoded_params</span><span class="special">();</span>
+
+<span class="keyword">for</span><span class="special">(</span> <span class="keyword">auto</span> <span class="identifier">v</span> <span class="special">:</span> <span class="identifier">params_ref</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">decode_view</span> <span class="identifier">dk</span><span class="special">(</span><span class="identifier">v</span><span class="special">.</span><span class="identifier">key</span><span class="special">);</span>
+    <span class="identifier">decode_view</span> <span class="identifier">dv</span><span class="special">(</span><span class="identifier">v</span><span class="special">.</span><span class="identifier">value</span><span class="special">);</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span>
+        <span class="string">"key = "</span> <span class="special">&lt;&lt;</span> <span class="identifier">dk</span> <span class="special">&lt;&lt;</span>
+        <span class="string">", value = "</span> <span class="special">&lt;&lt;</span> <span class="identifier">dv</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">key = id, value = 42
+key = name, value = John Doe
+</pre>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h4>
+<a name="url.overview.quick_look.h5"></a>
+        <span class="phrase"><a name="url.overview.quick_look.modifying"></a></span><a class="link" href="overview.html#url.overview.quick_look.modifying">Modifying</a>
+      </h4>
+<p>
+        The library provides the containers <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> and <a class="link" href="ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a> which supporting modification
+        of the URL contents. A <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> or <a class="link" href="ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a> must be constructed from
+        an existing <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>.
+      </p>
+<p>
+        Unlike the <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>,
+        which does not gain ownership of the underlying character buffer, the <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>
+        container uses the default allocator to control a resizable character buffer
+        which it owns.
+      </p>
+<pre class="programlisting"><span class="identifier">url</span> <span class="identifier">u</span> <span class="special">=</span> <span class="identifier">parse_uri</span><span class="special">(</span> <span class="identifier">s</span> <span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+</pre>
+<p>
+        On the other hand, a <a class="link" href="ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a> has fixed-capacity storage
+        and does not require dynamic memory allocations.
+      </p>
+<pre class="programlisting"><span class="identifier">static_url</span><span class="special">&lt;</span><span class="number">1024</span><span class="special">&gt;</span> <span class="identifier">su</span> <span class="special">=</span> <span class="identifier">parse_uri</span><span class="special">(</span> <span class="identifier">s</span> <span class="special">).</span><span class="identifier">value</span><span class="special">();</span>
+</pre>
+<p>
+        Objects of type <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>
+        are <a href="https://en.cppreference.com/w/cpp/concepts/regular" target="_top">std::regular</a>.
+        Similarly to built-in types, such as <code class="computeroutput"><span class="keyword">int</span></code>,
+        a <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>
+        is copyable, movable, assignable, default constructible, and equality comparable.
+        They support all the inspection functions of <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>, and also provide functions
+        to modify all components of the URL.
+      </p>
+<p>
+        Changing the scheme is easy:
+      </p>
+<pre class="programlisting"><span class="identifier">u</span><span class="special">.</span><span class="identifier">set_scheme</span><span class="special">(</span> <span class="string">"https"</span> <span class="special">);</span>
+</pre>
+<p>
+        Or we can use a predefined constant:
+      </p>
+<pre class="programlisting"><span class="identifier">u</span><span class="special">.</span><span class="identifier">set_scheme_id</span><span class="special">(</span> <span class="identifier">scheme</span><span class="special">::</span><span class="identifier">https</span> <span class="special">);</span> <span class="comment">// equivalent to u.set_scheme( "https" );</span>
+</pre>
+<p>
+        The scheme must be valid, however, or an exception is thrown. All modifying
+        functions perform validation on their input.
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Attempting to set the URL scheme or port to an invalid string results
+            in an exception.
+          </li>
+<li class="listitem">
+            Attempting to set other URL components to invalid strings will get the
+            original input properly percent-encoded for that component.
+          </li>
+</ul></div>
+<p>
+        It is not possible for a <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> to hold syntactically illegal
+        text.
+      </p>
+<p>
+        Modification functions return a reference to the object, so chaining is possible:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">u</span><span class="special">.</span><span class="identifier">set_host_ipv4</span><span class="special">(</span> <span class="identifier">ipv4_address</span><span class="special">(</span> <span class="string">"192.168.0.1"</span> <span class="special">)</span> <span class="special">)</span>
+    <span class="special">.</span><span class="identifier">set_port_number</span><span class="special">(</span> <span class="number">8080</span> <span class="special">)</span>
+    <span class="special">.</span><span class="identifier">remove_userinfo</span><span class="special">();</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe#page%20anchor
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        All non-const operations offer the strong exception safety guarantee.
+      </p>
+<p>
+        The path segment and query parameter containers returned by a <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a> offer modifiable range functionality,
+        using member functions of the container:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+<th>
+                <p>
+                  Output
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="identifier">params_ref</span> <span class="identifier">p</span> <span class="special">=</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">params</span><span class="special">();</span>
+<span class="identifier">p</span><span class="special">.</span><span class="identifier">replace</span><span class="special">(</span><span class="identifier">p</span><span class="special">.</span><span class="identifier">find</span><span class="special">(</span><span class="string">"name"</span><span class="special">),</span> <span class="special">{</span><span class="string">"name"</span><span class="special">,</span> <span class="string">"John Doe"</span><span class="special">});</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">u</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+              </td>
+<td>
+<pre class="table-programlisting">https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&amp;name=Vinnie%20Falco#page%20anchor
+</pre>
+              </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../index.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="urls.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

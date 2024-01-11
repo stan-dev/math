@@ -1,0 +1,64 @@
+[#join]
+== cobalt/join.hpp
+
+The `join` function can be used to `co_await` multiple <<awaitable, awaitable>> at once with properly connected cancellations.
+
+The function will gather all completion and return them as values, unless an exception is thrown.
+If an exception is thrown, all outstanding ops are cancelled (or interrupted if possible)
+and the first exception gets rethrown.
+
+NOTE: `void` will be returned as `variant2::monostate` in the tuple, unless all awaitables yield void.
+
+It can be called as a variadic function with multiple <<awaitable>> or as on a range of <<awaitable, awaitables>>.
+
+[source,cpp]
+----
+cobalt::promise<void> task1();
+cobalt::promise<void> task2();
+
+cobalt::promise<void> do_join()
+{
+  co_await cobalt::join(task1(), task2()); // <1>
+  std::vector<cobalt::promise<void>> aws {task1(), task2()};
+  co_await cobalt::join(aws); // <2>
+}
+----
+<1> Wait for a variadic set of <<awaitable, awaitables>>
+<2> Wait for a vector of <<awaitable, awaitables>>
+
+The `join` will invoke the functions of the `awaitable` as if used in a `co_await` expression.
+
+
+.Signatures of join
+[source, cpp]
+----
+extern promise<void> pv1, pv2;
+/* void */ co_await join(pv1, pv2);
+
+std::vector<promise<void>> pvv;
+/* void */ co_await join(pvv);
+
+extern promise<int> pi1, pi2;
+std::tuple<monostate, monostate, int, int> r1 = co_await join(pv1, pv2, pi1, pi2);
+
+std::vector<promise<int>> piv;
+pmr::vector<int> r2 = co_await join(piv);
+----
+
+
+[#join-outline]
+=== Outline
+
+[source,cpp,subs=+quotes]
+----
+// Variadic join
+template<asio::cancellation_type Ct = asio::cancellation_type::all, awaitable... Promise>
+__awaitable__ join(Promise && ... p);
+
+// Ranged join
+template<asio::cancellation_type Ct = asio::cancellation_type::all, range<awaitable>>
+__awaitable__ join(PromiseRange && p);
+----
+
+NOTE: Selecting an on empty range will cause an exception.
+
