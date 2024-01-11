@@ -1,0 +1,109 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial Tutorial]
+
+[import ../../example/tutorial.cpp]
+
+Welcome to Boost.MySQL's tutorial. We will go through the simplest
+possible piece of code using Boost.MySQL: a program that connects
+to the MySQL server and issues the query `SELECT "Hello World!"`.
+
+To run this tutorial, you need a running MySQL server listening
+in localhost on port 3306 (the default one). You should have
+the credentials of a valid MySQL user (username and password).
+No further setup is needed.
+
+This tutorial assumes you have a basic familiarity with __Asio__
+(e.g. you know what a [asioreflink io_context io_context] is).
+
+You can find the full source code for this tutorial [link mysql.tutorial.listing here].
+
+[heading Connection object]
+
+The first step is to create a connection object, which 
+represents a single connection over TCP to the MySQL server.
+We will connect to the server using TCP over TLS, using port 3306, so
+we will use [reflink tcp_ssl_connection].
+If you're using the latest MySQL version with its default configuration,
+you will need to use TLS to successfully establish a connection.
+
+A [reflink tcp_ssl_connection] is an I/O object. It can be constructed from a
+[asioreflink io_context/executor_type io_context::executor_type] and a
+[asioreflink ssl__context ssl::context]:
+
+[tutorial_connection]
+
+[heading Connecting to the server]
+
+The next step is to connect to the server. We will use the function
+[reflink2 connection.connect tcp_ssl_connection::connect],
+which accepts two parameters:
+
+* The first one specifies the network address of the MySQL server.
+  As we are using TCP, this is a [asioreflink ip__tcp/endpoint ip::tcp::endpoint],
+  which holds an IP address and a port. We will use a `boost::asio::ip::tcp::resolver`
+  to resolve the hostname into an IP address and thus obtain a `boost::asio::ip::tcp::endpoint`.
+* The second one is an instance of [reflink handshake_params], which holds per-connection settings,
+  including the username and password to use.
+
+[tutorial_connect]
+
+[note
+    Read-only strings, like the ones used in [reflink handshake_params]'s
+    constructor, are represented as [reflink string_view]'s, which are similar
+    to `std::string_view`'s but do not require C++17 to work.
+]
+
+[heading Issuing the SQL query]
+
+The next step is to issue the query to the server. We will use
+[reflink2 connection.execute tcp_ssl_connection::execute],
+which accepts a string containing a single SQL query and instructs
+the server to run it. It returns a [reflink results] 
+object, containing the rows returned by the query:
+
+[tutorial_query]
+
+[heading Obtaining the results]
+
+[reflink results] is a class that holds the result of a query in memory.
+To obtain the value we selected, we can write:
+
+[tutorial_results]
+
+Let's break this into steps:
+
+* [refmem results rows] returns all the rows that this object contains.
+  It returns a [reflink rows_view], which is a matrix-like structure.
+* `result.rows().at(0)` returns the first row, represented as a [reflink row_view].
+* `result.rows().at(0).at(0)` returns the first field in the first row. This is a
+  [reflink field_view], a variant-like class that can hold any type allowed in MySQL.
+* The obtained `field_view` is streamed to `std::cout`.
+
+[heading Closing the connection]
+
+Once we are done with the connection, we close it by calling
+[reflink2 connection.close tcp_ssl_connection::close]. Note that
+this will send a final quit packet to the MySQL server to notify
+we are closing the connection, and thus may fail.
+
+[tutorial_close]
+
+[heading Final notes]
+
+This concludes our tutorial! You can now learn more about the
+core functionality of this library in the [link mysql.overview overview section].
+You can also look at more complex [link mysql.examples examples].
+
+[heading:listing Full listing]
+
+Here is the full source code for the above steps:
+
+[tutorial_listing]
+
+[endsect]

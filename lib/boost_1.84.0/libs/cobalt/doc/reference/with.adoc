@@ -1,0 +1,48 @@
+[#with]
+== cobalt/with.hpp
+
+The `with` facility provides a way to perform asynchronous tear-down of coroutines.
+That is it like an asynchronous destructor call.
+
+[source,cpp]
+----
+struct my_resource
+{
+  cobalt::promise<void> await_exit(std::exception_ptr e);
+};
+
+cobalt::promise<void> work(my_resource & res);
+
+cobalt::promise<void> outer()
+{
+  co_await cobalt::with(my_resource(), &work);
+}
+----
+
+The teardown can either be done by providing an `await_exit` member function or a `tag_invoke` function
+that returns an <<awaitable, awaitable>> or by providing the teardown as the third argument to `with`.
+
+[source,cpp]
+----
+using ws_stream = beast::websocket::stream<asio::ip::tcp::socket>>;
+cobalt::promise<ws_stream> connect(urls::url); // <1>
+cobalt::promise<void>   disconnect(ws_stream &ws); // <2>
+
+auto teardown(const boost::cobalt::with_exit_tag & wet , ws_stream & ws, std::exception_ptr e)
+{
+  return disconnect(ws);
+}
+
+cobalt::promise<void> run_session(ws_stream & ws);
+
+cobalt::main co_main(int argc, char * argv[])
+{
+  co_await cobalt::with(co_await connect(argv[1]), &run_session, &teardown);
+  co_return 0;
+}
+----
+<1> Implement websocket connect & websocket initiation
+<2> Implement an orderly shutdown.
+
+NOTE: The `std::exception_ptr` is null if the scope is exited without exception.
+NOTE: It's legal for the `exit` functions to take the `exception_ptr` by reference and modify it.

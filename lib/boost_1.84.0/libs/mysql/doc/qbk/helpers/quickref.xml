@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../../../tools/boostbook/dtd/boostbook.dtd">
+
+<!--
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+-->
+
+<informaltable frame="all">
+  <tgroup cols="4">
+    <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/>
+    <tbody><row>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Classes</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__bad_field_access">bad_field_access</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__bound_statement_tuple">bound_statement_tuple</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__bound_statement_iterator_range">bound_statement_iterator_range</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__buffer_params">buffer_params</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__connection">connection</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__date">date</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__datetime">datetime</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__diagnostics">diagnostics</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__error_with_diagnostics">error_with_diagnostics</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__execution_state">execution_state</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__field">field</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__field_view">field_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__handshake_params">handshake_params</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__metadata">metadata</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__results">results</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__resultset_view">resultset_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__resultset">resultset</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__row">row</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__row_view">row_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__rows">rows</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__rows_view">rows_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__statement">statement</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__static_execution_state">static_execution_state</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__static_results">static_results</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Type aliases</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__blob">blob</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__blob_view">blob_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__days">days</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__error_code">error_code</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__metadata_collection_view">metadata_collection_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__string_view">string_view</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__tcp_connection">tcp_connection</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__tcp_ssl_connection">tcp_ssl_connection</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__time">time</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__unix_connection">unix_connection</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__unix_ssl_connection">unix_ssl_connection</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Concepts</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__ExecutionRequest">ExecutionRequest</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__ExecutionStateType">ExecutionStateType</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__FieldViewFwdIterator">FieldViewFwdIterator</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__ResultsType">ResultsType</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__SocketStream">SocketStream</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__StaticRow">StaticRow</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__Stream">Stream</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__WritableFieldTuple">WritableFieldTuple</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Enumerations</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__client_errc">client_errc</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__column_type">column_type</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__common_server_errc">common_server_errc</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__field_kind">field_kind</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__metadata_mode">metadata_mode</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__ssl_mode">ssl_mode</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Constants</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__default_port">default_port</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__default_port_string">default_port_string</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__max_date">max_date</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__min_date">min_date</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__max_datetime">max_datetime</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__min_datetime">min_datetime</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__max_time">max_time</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__min_time">min_time</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.ref.boost__mysql__get_client_category">get_client_category</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__get_common_server_category">get_common_server_category</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__get_mysql_server_category">get_mysql_server_category</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__get_mariadb_server_category">get_mariadb_server_category</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__make_error_code">make_error_code</link></member>
+          <member><link linkend="mysql.ref.boost__mysql__throw_on_error">throw_on_error</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Reference tables</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="mysql.dynamic_interface.dynamic_field_mappings">Dynamic interface type mappings</link></member>
+          <member><link linkend="mysql.static_interface.readable_field_reference">ReadableField types</link></member>
+          <member><link linkend="mysql.prepared_statements.writable_field_reference">WritableField types</link></member>
+          <member><link linkend="mysql.charsets.string_encoding">String encoding</link></member>
+        </simplelist>
+      </entry>
+    </row></tbody>
+  </tgroup>
+</informaltable>

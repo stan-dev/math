@@ -1,0 +1,608 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>URLs</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.URL">
+<link rel="prev" href="overview.html" title="Overview">
+<link rel="next" href="urls/parsing.html" title="Parsing">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overview.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="urls/parsing.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="url.urls"></a><a class="link" href="urls.html" title="URLs">URLs</a>
+</h2></div></div></div>
+<p>
+      A URL, short for "Uniform Resource Locator," is a compact string
+      of characters identifying an abstract or physical resource. It has these five
+      parts, with may be optional or disallowed depending on the context:
+    </p>
+<p>
+      <span class="inlinemediaobject"><object type="image/svg+xml" data="images/PartsDiagram.svg"></object></span>
+    </p>
+<p>
+      Each part's syntax is defined by a set of production rules in <a href="https://tools.ietf.org/html/rfc3986" target="_top">rfc3986</a>.
+      All valid URLs conform to this grammar, also called the "generic syntax."
+      Here is an example URL which describes a file and its location on a network
+      host:
+    </p>
+<pre class="programlisting">https://www.example.com/path/to/file.txt?userid=1001&amp;pages=3&amp;results=full#page1
+</pre>
+<p>
+      The parts and their corresponding text is as follows:
+    </p>
+<div class="table">
+<a name="url.urls.example_parts"></a><p class="title"><b>Table 1.1. Example Parts</b></p>
+<div class="table-contents"><table class="table" summary="Example Parts">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Part
+              </p>
+            </th>
+<th>
+              <p>
+                Text
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <a class="link" href="urls/containers.html#url.urls.containers.scheme"><span class="emphasis"><em>scheme</em></span></a>
+              </p>
+            </td>
+<td>
+              <p>
+                "https"
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="urls/containers.html#url.urls.containers.authority"><span class="emphasis"><em>authority</em></span></a>
+              </p>
+            </td>
+<td>
+              <p>
+                "www.example.com"
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="urls/containers.html#url.urls.containers.path"><span class="emphasis"><em>path</em></span></a>
+              </p>
+            </td>
+<td>
+              <p>
+                "/path/to/file.txt"
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="urls/containers.html#url.urls.containers.query"><span class="emphasis"><em>query</em></span></a>
+              </p>
+            </td>
+<td>
+              <p>
+                "userid=1001&amp;pages=3&amp;results=full"
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="urls/containers.html#url.urls.containers.fragment"><span class="emphasis"><em>fragment</em></span></a>
+              </p>
+            </td>
+<td>
+              <p>
+                "page1"
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      The production rule for the example above is called a <span class="emphasis"><em>URI</em></span>,
+      which can contain all five parts. The specification using <a href="https://datatracker.ietf.org/doc/html/rfc2234" target="_top"><span class="emphasis"><em>ABNF
+      notation</em></span></a> is:
+    </p>
+<pre class="programlisting">URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+hier-part     = "//" authority path-abempty
+              / path-absolute
+              / path-rootless
+              / path-empty
+</pre>
+<p>
+      In this notation, the square brackets ("[" and "]") denote
+      optional elements, quoted text represents character literals, and slashes are
+      used to indicate a choice between one of several elements. For the complete
+      specification of ABNF notation please consult <a href="https://datatracker.ietf.org/doc/html/rfc2234" target="_top">rfc2234</a>,
+      "Augmented BNF for Syntax Specifications." When using this library
+      to process or create URLs, it is necessary to choose which of these top-level
+      production rules are applicable for a given use-case: <span class="emphasis"><em>absolute-URI</em></span>,
+      <span class="emphasis"><em>origin-form</em></span>, <span class="emphasis"><em>relative-ref</em></span>, <span class="emphasis"><em>URI</em></span>,
+      or <span class="emphasis"><em>URI-reference</em></span>. These are discussed in greater depth
+      later.
+    </p>
+<h4>
+<a name="url.urls.h0"></a>
+      <span class="phrase"><a name="url.urls.scheme"></a></span><a class="link" href="urls.html#url.urls.scheme">Scheme</a>
+    </h4>
+<p>
+      The most important part is the <span class="emphasis"><em>scheme</em></span>, whose production
+      rule is:
+    </p>
+<pre class="programlisting">scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+</pre>
+<p>
+      The scheme, which some informal texts incorrectly refer to as "protocol",
+      defines how the rest of the URL is interpreted. Public schemes are registered
+      and managed by the <a href="https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority" target="_top">Internet
+      Assigned Numbers Authority</a> (IANA). Here are some registered schemes
+      and their corresponding specifications:
+    </p>
+<div class="table">
+<a name="url.urls.public_schemes"></a><p class="title"><b>Table 1.2. Public Schemes</b></p>
+<div class="table-contents"><table class="table" summary="Public Schemes">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Scheme
+              </p>
+            </th>
+<th>
+              <p>
+                Specification
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>http</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1" target="_top">http
+                URI Scheme (rfc7230)</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>magnet</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme" target="_top">Magnet
+                URI scheme</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>mailto</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/rfc6068" target="_top">The 'mailto'
+                URI Scheme (rfc6068)</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>payto</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/rfc8905" target="_top">The 'payto'
+                URI Scheme for Payments (rfc8905)</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>telnet</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/rfc4248" target="_top">The telnet
+                URI Scheme (rfc4248)</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>urn</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/rfc2141" target="_top">URN Syntax</a>
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      Private schemes are possible, defined by organizations to enumerate internal
+      resources such as documents or physical devices, or to facilitate the operation
+      of their software. These are not subject to the same rigor as the registered
+      ones; they can be developed and modified by the organization to meet specific
+      needs with less concern for interoperability or backward compatibility. Note
+      that private does not imply secret; some private schemes such as Amazon's "s3"
+      have publicly available specifications and are quite popular. Here are some
+      examples:
+    </p>
+<div class="table">
+<a name="url.urls.private_schemes"></a><p class="title"><b>Table 1.3. Private Schemes</b></p>
+<div class="table-contents"><table class="table" summary="Private Schemes">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Scheme
+              </p>
+            </th>
+<th>
+              <p>
+                Specification
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>app</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://www.w3.org/TR/app-uri/" target="_top">app: URL Scheme</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>odbc</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme" target="_top">ODBC
+                URI Scheme</a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>slack</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://api.slack.com/reference/deep-linking" target="_top">Reference:
+                Deep linking into Slack</a>
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      In some cases the scheme is implied by the surrounding context and therefore
+      omitted. Here is a complete HTTP/1.1 GET request for the target URL "/index.htm":
+    </p>
+<pre class="programlisting">GET /index.htm HTTP/1.1
+Host: www.example.com
+Accept: text/html
+User-Agent: Beast
+</pre>
+<p>
+      The scheme of "http" is implied here because the context is already
+      an HTTP request. The production rule for the URL in the request above is called
+      <span class="emphasis"><em>origin-form</em></span>, defined in the <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1" target="_top">HTTP
+      specification</a> thusly:
+    </p>
+<pre class="programlisting">origin-form    = absolute-path [ "?" query ]
+
+absolute-path  = 1*( "/" segment )
+</pre>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        All URLs have a scheme, whether it is explicit or implicit. The scheme determines
+        what the rest of the URL means.
+      </p></td></tr>
+</table></div>
+<p>
+      Here are some more examples of URLs using various schemes (and one example
+      of something that is not a URL):
+    </p>
+<div class="table">
+<a name="url.urls.scheme_examples"></a><p class="title"><b>Table 1.4. Scheme Examples</b></p>
+<div class="table-contents"><table class="table" summary="Scheme Examples">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                URL
+              </p>
+            </th>
+<th>
+              <p>
+                Notes
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">https://www.boost.org/index.html</code>
+              </p>
+            </td>
+<td>
+              <p>
+                Hierarchical URL with <code class="computeroutput">https</code> protocol. Resource in the
+                HTTP protocol.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">ftp://host.dom/etc/motd</code>
+              </p>
+            </td>
+<td>
+              <p>
+                Hierarchical URL with <code class="computeroutput">ftp</code> scheme. Resource in the FTP
+                protocol.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">urn:isbn:045145052</code>
+              </p>
+            </td>
+<td>
+              <p>
+                Opaque URL with <code class="computeroutput">urn</code> scheme. Identifies <code class="computeroutput">isbn</code>
+                resource.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">mailto:person@example.com</code>
+              </p>
+            </td>
+<td>
+              <p>
+                Opaque URL with <code class="computeroutput">mailto</code> scheme. Identifies e-mail address.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">index.html</code>
+              </p>
+            </td>
+<td>
+              <p>
+                URL reference. Missing scheme and authority.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput">www.boost.org</code>
+              </p>
+            </td>
+<td>
+              <p>
+                A Protocol-Relative Link (PRL). <span class="bold"><strong>Not a URL</strong></span>.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h4>
+<a name="url.urls.h1"></a>
+      <span class="phrase"><a name="url.urls.authority"></a></span><a class="link" href="urls.html#url.urls.authority">Authority</a>
+    </h4>
+<p>
+      The authority determines how a resource can be accessed. It contains two parts:
+      the <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1" target="_top"><span class="emphasis"><em>userinfo</em></span></a>
+      that holds identity credentials, and the <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2" target="_top"><span class="emphasis"><em>host</em></span></a>
+      and <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3" target="_top"><span class="emphasis"><em>port</em></span></a>
+      which identify a communication endpoint having dominion over the resource described
+      in the remainder of the URL. This is the ABNF specification for the authority
+      part:
+    </p>
+<pre class="programlisting">authority   = [ user [ ":" password ] "@" ] host [ ":" port ]
+</pre>
+<p>
+      The combination of user and optional password is called the <span class="emphasis"><em>userinfo</em></span>.
+    </p>
+<p>
+      The authority determines how a resource can be accessed. It contains two parts:
+      the <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1" target="_top"><span class="emphasis"><em>userinfo</em></span></a>
+      that holds identity credentials, and the <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2" target="_top"><span class="emphasis"><em>host</em></span></a>
+      and <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3" target="_top"><span class="emphasis"><em>port</em></span></a>
+      which identify a communication endpoint having dominion over the resource described
+      in the remainder of the URL.
+    </p>
+<p>
+      <span class="inlinemediaobject"><object type="image/svg+xml" data="images/AuthorityDiagram.svg"></object></span>
+    </p>
+<p>
+      Some observations:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          The use of the password field is deprecated.
+        </li>
+<li class="listitem">
+          The authority always has a defined host field, even if empty.
+        </li>
+<li class="listitem">
+          The host can be a name, or an IPv4, an IPv6, or an IPvFuture address.
+        </li>
+<li class="listitem">
+          All but the port field use percent-encoding to escape delimiters.
+        </li>
+</ul></div>
+<p>
+      The host subcomponent represents where resources are located.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+        Note that if an authority is present, the host is always defined even if
+        it is the empty string (corresponding to a zero-length <span class="emphasis"><em>reg-name</em></span>
+        in the BNF).
+      </p>
+<pre class="programlisting"><span class="identifier">url_view</span> <span class="identifier">u</span><span class="special">(</span> <span class="string">"https:///path/to_resource"</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">has_authority</span><span class="special">()</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">authority</span><span class="special">().</span><span class="identifier">buffer</span><span class="special">().</span><span class="identifier">empty</span><span class="special">()</span> <span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span> <span class="identifier">u</span><span class="special">.</span><span class="identifier">path</span><span class="special">()</span> <span class="special">==</span> <span class="string">"/path/to_resource"</span> <span class="special">);</span>
+</pre>
+</td></tr>
+</table></div>
+<p>
+      The authority component also influences how we should interpret the URL path.
+      If the authority is present, the path component must either be empty or begin
+      with a slash.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+        Although the specification allows the format <code class="computeroutput">username:password</code>,
+        the password component should be used with care.
+      </p>
+<p>
+        It is not recommended to transfer password data through URLs unless this
+        is an empty string indicating no password.
+      </p>
+</td></tr>
+</table></div>
+<h4>
+<a name="url.urls.h2"></a>
+      <span class="phrase"><a name="url.urls.containers0"></a></span><a class="link" href="urls.html#url.urls.containers0">Containers</a>
+    </h4>
+<p>
+      This library provides the following containers, which are capable of storing
+      any possible URL:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__urls__url.html" title="url"><code class="computeroutput"><span class="identifier">url</span></code></a>:
+          A modifiable container for a URL.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__urls__url_view.html" title="url_view"><code class="computeroutput"><span class="identifier">url_view</span></code></a>:
+          A non-owning reference to a valid URL.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__urls__static_url.html" title="static_url"><code class="computeroutput"><span class="identifier">static_url</span></code></a>:
+          A URL with fixed-capacity storage.
+        </li>
+</ul></div>
+<p>
+      These containers maintain a useful invariant: they always contain a valid URL.
+      In addition, the library provides the <a class="link" href="ref/boost__urls__authority_view.html" title="authority_view"><code class="computeroutput"><span class="identifier">authority_view</span></code></a> container which holds
+      a non-modifiable reference to a valid <span class="emphasis"><em>authority</em></span>. An authority
+      by itself, is not a valid URL.
+    </p>
+<p>
+      In the sections that follow we describe the mechanisms use to parse strings
+      using various specific grammars, followed by the interface for inspecting and
+      modified each of the main parts of the URL. Finally we discuss important algorithms
+      availble to use with URLs.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overview.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="urls/parsing.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

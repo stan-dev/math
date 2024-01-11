@@ -1,0 +1,48 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:reconnecting Reconnecting a MySQL connection]
+
+After you close a connection or an error has occurred, and if its underlying [reflink Stream]
+supports it, you can re-open an existing connection. This is the case for
+[reflink tcp_connection] and [reflink unix_connection].
+
+[warning
+  Unfortunately, [asioreflink ssl__stream ssl::stream] does not support reconnection.
+  If you are using [reflink tcp_ssl_connection] and you close
+  the connection or encounter an error, you will have to destroy and re-create the connection object.
+]
+
+If you are using [reflink tcp_connection] or [reflink unix_connection], or any other stream supporting
+reconnection:
+
+* After calling [refmem connection close], you can re-open the connection later by calling
+  [refmem connection connect] normally, even if the close operation failed.
+* If your [refmem connection connect] operation failed, you can try opening it again
+  by simply calling [refmem connection connect] again.
+* If you connected your connection successfully but encountered a network problem in any subsequent operation,
+  and you would like to re-establish connection, you should first call [refmem connection close] first, and
+  then try opening the connection again by calling [refmem connection connect].
+
+If your `Stream` type doesn't fulfill the __SocketStream__ type requirements,
+then you can't use [refmem connection connect] or [refmem connection close], and you are thus
+responsible for establishing the physical connection
+and closing the underlying stream, if necessary. Some guidelines:
+
+* After calling [refmem connection quit], you should close the underlying stream, if required. 
+  You should then re-establish the physical connection on the stream, and call [refmem connection handshake] afterwards.
+* If your [refmem connection handshake] operation failed, you are responsible for closing the underlying stream if required.
+  You should then establish the physical connection again, and then call [refmem connection handshake].
+* If you connected your connection successfully but encountered a network problem in any subsequent operation,
+  and you would like to re-establish connection, you should call [refmem connection quit] first, then close and re-open
+  the physical connection, and finally call [refmem connection handshake].
+
+Note that __Self__ does not perform any built-in retry strategy, as different use cases have different requirements.
+You can implement it as you best like with these tools. If you implemented your own and you would like to contribute it,
+please create a PR in the GitHub repository.
+
+[endsect]

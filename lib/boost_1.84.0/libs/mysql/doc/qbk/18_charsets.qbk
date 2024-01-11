@@ -1,0 +1,128 @@
+[/
+    Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+
+[section:charsets Character sets]
+[nochunk]
+
+[heading Character set refresher]
+
+MySQL defines a character set as "a set of symbols and their respective encodings". `ascii`,
+`latin1`, `utf8` and `utf16` are character sets supported by MySQL.
+
+A collation is a set of rules for comparing characters in a character set. For example, a case-insensitive
+collation will make strings that only differ in case compare equal. All collations are associated to a single
+character set. For example, `utf8_spanish_ci` is a case-insensitive collation associated to the `utf8` character
+set. Every character set has a default collation, which will be used if a character set without a collation is specified.
+For example, `latin1_swedish_ci` is the default collation for the `latin1` character set.
+
+You can find more information about these concepts in [mysqllink charset.html the official MySQL docs on character sets].
+
+[heading The connection character set and collation]
+
+Every connection has an associated character set and collation. The connection's character set determines
+the encoding for character strings sent to and retrieved from the server. This includes SQL query strings,
+string fields and column names in metadata. The connection's collation is used for string literal comparison.
+
+Every session you establish can have its own different
+character set and collation. You can specify this in two ways:
+
+* When calling [refmem connection connect] or [refmem connection handshake], using
+  [refmem handshake_params connection_collation]. You specify a numeric ID that identifies
+  the collation to use, and your connection will use the character set associated to this collation.
+  You can find collation IDs in the [include_file boost/mysql/mysql_collations.hpp] and 
+  [include_file boost/mysql/mariadb_collations.hpp] headers.
+
+  The problem with this approach is that if you specify a collation ID that is unknown to the server
+  (e.g. `utf8mb4_0900_ai_ci` for an old MySQL 5.7 server), the handshake operation
+  will succeed but the connection [*will sillently fall back to the server's default character set],
+  (usually `latin1`, which is not Unicode).
+* At any time, issuing a __SET_NAMES__ SQL statement. For example, `"SET NAMES utf8mb4"` will set the current
+  connection's character set to `utf8mb4` and the connection's collation to utf8mb4's default collation.
+  If the character set is unknown, the `SET NAMES` statement will fail.
+  You can use [refmem connection execute] to issue the statement:
+
+[charsets_set_names]
+
+[heading character_set_results and character_set_client]
+
+Both of the above methods are shortcuts to set several session-level variables.
+The ones that impact this library's behavior are:
+
+* [mysqllink server-system-variables.html#sysvar_character_set_client character_set_client]
+  determines the encoding that SQL statements sent to the server should have. This includes
+  the SQL strings passed to [refmem connection execute] and [refmem connection prepare_statement], and
+  string parameters passed to [refmem statement bind].
+
+  Not all character sets are permissible in `character_set_client`. The server will accept setting
+  this variable to any UTF-8 character set, but won't accept UTF-16.
+* [mysqllink server-system-variables.html#sysvar_character_set_results character_set_results]
+  determines the encoding that the server will use to send any kind of result, including
+  string fields retrieved by [refmem connection execute], metadata
+  like [refmem metadata column_name] and error messages.
+
+  Note that, when you define a string column with a character set (e.g.
+  `"CREATE TABLE t1 (col1 VARCHAR(5) CHARACTER SET latin1)"`), the column's character set
+  will be used for storage and comparisons, but not for client communication. If you set `character_set_results`
+  to `utf16`, any field obtained by `SELECT`ing `col1` will be UTF16-encoded, and not latin1-encoded.
+  Note also that [refmem metadata column_collation] reflects the charset and collation the server
+  has converted the column to before sending it to the client. In the above example, `metadata::column_collation`
+  will be the default collation for UTF16, rather than `latin1_swedish_ci`.
+
+
+The table below summarizes the encoding used by each piece of functionality in this library:
+
+[table:string_encoding
+    [
+        [Functionality]
+        [Encoding given by...]
+    ]
+    [
+        [SQL query strings passed to [refmem connection execute] and [refmem connection prepare_statement]]
+        [`character_set_client`]
+    ]
+    [
+        [String values passed as parameters to [refmem statement bind]]
+        [`character_set_client`]
+    ]
+    [
+        [
+            String fields retrieved by [refmem connection execute] or [refmem connection read_some_rows]:[br][br]
+            [refmem field_view as_string][br]
+            [refmem field_view get_string]
+        ]
+        [`character_set_results`]
+    ]
+    [
+        [
+            Metadata strings:[br][br]
+            [refmem metadata database][br]
+            [refmem metadata table][br]
+            [refmem metadata original_table][br]
+            [refmem metadata column_name][br]
+            [refmem metadata original_column_name]
+        ]
+        [`character_set_results`]
+    ]
+    [
+        [Server-generated error messages: [refmem diagnostics server_message]]
+        [`character_set_results`]
+    ]
+    [
+        [
+            Informational messages:[br][br]
+            [refmem results info][br]
+            [refmem execution_state info]
+        ]
+        [
+            ASCII. These can only contain ASCII characters and are always ASCII encoded. More info in
+            [@https://dev.mysql.com/doc/c-api/8.0/en/mysql-info.html this section].
+        ]
+    ]
+]
+
+[endsect]

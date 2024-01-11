@@ -1,0 +1,348 @@
+[/
+    Copyright (c) 2021  Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section Quick Look]
+
+This section is intended to give the reader a brief overview of the features
+and interface style of the library.
+
+[h3 Integration]
+
+[note
+    Sample code and identifiers used throughout are written as if
+    the following declarations are in effect:
+
+    [snippet_headers_3]
+]
+
+We begin by including the library header file which brings all the symbols into
+scope.
+
+[c++]
+[snippet_headers_1]
+
+Alternatively, individual headers may be included to obtain the declarations
+ for specific types.
+
+Boost.URL is a compiled library. You need to link your program with the Boost.URL built library.
+You must install binaries in a location that can be found by your linker.
+
+If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
+instructions, that's already been done for you.
+
+[h3 Parsing]
+
+Say you have the following URL that you want to parse:
+
+[c++]
+[code_urls_parsing_1]
+
+In this example, __string_view__ is an alias to `boost::core::string_view`, a
+`string_view` implementation that is implicitly convertible to `std::string_view`.
+The library namespace includes the aliases __string_view__, __error_code__, and
+__result__.
+
+You can parse the string by calling this function:
+
+[code_urls_parsing_2]
+
+The function __parse_uri__ returns an object of type `__result__<__url_view__>`
+which is a container resembling a variant that holds either an error or an object.
+A number of functions are available to parse different types of URL.
+
+We can immediately call `result::value` to obtain a __url_view__.
+
+[snippet_parsing_3]
+
+Or simply
+
+[snippet_parsing_4]
+
+When there are no errors, [@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
+returns an instance of __url_view__, which holds the parsed result.
+[@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
+throws an exception on a parsing error.
+
+Alternatively, the functions
+[@boost:/libs/system/doc/html/system.html#ref_queries `result::has_value`] and
+[@boost:/libs/system/doc/html/system.html#ref_queries `result::has_error`] could
+also be used to check if the string has been parsed without errors.
+
+[note
+    It is worth noting that __parse_uri__ does not allocate any memory dynamically.
+    Like a __string_view__, a __url_view__ does not retain ownership of the underlying
+    string buffer.
+
+    As long as the contents of the original string are unmodified, constructed
+    URL views always contain a valid URL in its correctly serialized form.
+
+    If the input does not match the URL grammar, an error code
+    is reported through __result__ rather than exceptions.
+    Exceptions only thrown on excessive input length.
+]
+
+[h3 Accessing]
+
+Accessing the parts of the URL is easy:
+
+[snippet_accessing_1]
+
+URL paths can be further divided into path segments with
+the function [link url.ref.boost__urls__url_view.segments `url_view::segments`].
+Although URL query strings are often used to represent key/value pairs, this
+interpretation is not defined by __rfc3986__.
+Users can treat the query as a single entity.
+__url_view__ provides the function
+[link url.ref.boost__urls__url_view.params `url_view::params`] to extract this view
+of key/value pairs.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_accessing_1b]
+][
+[teletype]
+```
+    path
+    to
+    my-file.txt
+
+    id: 42
+    name: John Doe Jingleheimer-Schmidt
+```
+]]]
+
+These functions return views referring to substrings and sub-ranges
+of the underlying URL.
+By simply referencing the relevant portion of the URL string internally,
+its components can represent percent-decoded strings and be converted
+to other types without any previous memory allocation.
+
+[snippet_token_1]
+
+A special `string_token` type can also be used to specify how a portion of the URL should be encoded and returned.
+
+[snippet_token_2]
+
+These functions might also return empty strings
+
+[snippet_accessing_2a]
+
+for both empty and absent components
+
+[snippet_accessing_2b]
+
+Many components do not have corresponding functions such as
+[link url.ref.boost__urls__url_view.has_authority `has_authority`]
+to check for their existence. This happens because some URL
+components are mandatory.
+
+When applicable, the encoded components can also be directly
+accessed through a __string_view__ without any
+need to allocate memory:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_accessing_4]
+][
+[teletype]
+```
+    url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+    scheme    : https
+    authority : user:pass@example.com:443
+    userinfo  : user:pass
+    user      : user
+    password  : pass
+    host      : example.com
+    port      : 443
+    path      : /path/to/my%2dfile.txt
+    query     : id=42&name=John%20Doe+Jingleheimer%2DSchmidt
+    fragment  : page%20anchor
+```
+]]]
+
+[heading Percent-Encoding]
+
+An instance of __decode_view__ provides a number of functions
+to persist a decoded string:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_decoding_1]
+][
+[teletype]
+```
+    id=42&name=John Doe Jingleheimer-Schmidt
+```
+]]]
+
+__decode_view__ and its decoding functions are designed to
+perform no memory allocations unless the algorithm where its being
+used needs the result to be in another container. The design also
+permits recycling objects to reuse their memory, and at least
+minimize the number of allocations by deferring them until the
+result is in fact needed by the application.
+
+In the example above, the memory owned by `str` can be reused to
+store other results. This is also useful when manipulating URLs:
+
+[c++]
+```
+u1.set_host(u2.host());
+```
+
+If `u2.host()` returned a value type, then two memory allocations
+would be necessary for this operation. Another common use case
+is converting URL path segments into filesystem paths:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_decoding_3]
+][
+[teletype]
+```
+    path: "path/to/my-file.txt"
+```
+]]]
+
+In this example, only the internal allocations of
+`filesystem::path` need to happen. In many common
+use cases, no allocations are necessary at all,
+such as finding the appropriate route for a URL
+in a web server:
+
+[c++]
+[snippet_decoding_4a]
+
+This allows us to easily match files in the document
+root directory of a web server:
+
+[c++]
+[snippet_decoding_4b]
+
+[#compound-elements]
+[h3 Compound elements]
+
+The path and query parts of the URL are treated specially by the library.
+While they can be accessed as individual encoded strings, they can also be
+accessed through special view types.
+
+This code calls
+[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]
+to obtain the path segments as a container that returns encoded strings:
+[table [[Code][Output]] [[
+[c++]
+[snippet_compound_elements_1]
+][
+```
+    path
+    to
+    my-file.txt
+```
+]]]
+
+As with other __url_view__ functions which return encoded strings, the encoded
+segments container does not allocate memory. Instead it returns views to the
+corresponding portions of the underlying encoded buffer referenced by the URL.
+
+As with other library functions, __decode_view__ permits accessing
+elements of composed elements while avoiding memory allocations entirely:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_encoded_compound_elements_1]
+][
+[teletype]
+```
+    path
+    to
+    my-file.txt
+```
+]][[
+  [c++]
+  [snippet_encoded_compound_elements_2]
+  ][
+  [teletype]
+```
+    key = id, value = 42
+    key = name, value = John Doe
+```
+]]]
+
+[/-----------------------------------------------------------------------------]
+
+[h3 Modifying]
+
+The library provides the containers __url__ and __static_url__ which supporting
+modification of the URL contents. A __url__ or __static_url__ must be constructed
+from an existing __url_view__.
+
+Unlike the __url_view__, which does not gain ownership of the underlying
+character buffer, the __url__ container uses the default allocator to
+ control a resizable character buffer which it owns.
+
+[c++]
+[snippet_quicklook_modifying_1]
+
+On the other hand, a __static_url__ has fixed-capacity storage and does
+not require dynamic memory allocations.
+
+[c++]
+[snippet_quicklook_modifying_1b]
+
+Objects of type __url__ are [@https://en.cppreference.com/w/cpp/concepts/regular std::regular].
+Similarly to built-in types, such as `int`, a __url__ is copyable, movable, assignable, default
+constructible, and equality comparable. They support all the inspection functions of
+__url_view__, and also provide functions to modify all components of the URL.
+
+Changing the scheme is easy:
+
+[snippet_quicklook_modifying_2]
+
+Or we can use a predefined constant:
+
+[snippet_quicklook_modifying_3]
+
+The scheme must be valid, however, or an exception is thrown.
+All modifying functions perform validation on their input.
+
+* Attempting to set the URL scheme or port to an invalid string results in an exception.
+* Attempting to set other URL components to invalid strings will get the original input properly percent-encoded for that component.
+
+It is not possible for a __url__ to hold syntactically illegal text.
+
+Modification functions return a reference to the object, so chaining
+is possible:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_quicklook_modifying_4]
+][
+[teletype]
+```
+    https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor
+```
+]]]
+
+All non-const operations offer the strong exception safety guarantee.
+
+The path segment and query parameter containers returned by a __url__ offer
+modifiable range functionality, using member functions of the container:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_quicklook_modifying_5]
+][
+[teletype]
+```
+    https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=Vinnie%20Falco#page%20anchor
+```
+]]]
+
+[endsect]

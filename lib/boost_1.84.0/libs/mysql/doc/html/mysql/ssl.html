@@ -1,0 +1,163 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SSL/TLS</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="async.html" title="Going async">
+<link rel="next" href="other_streams.html" title="UNIX sockets and other stream types">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="other_streams.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.ssl"></a><a class="link" href="ssl.html" title="SSL/TLS">SSL/TLS</a>
+</h2></div></div></div>
+<p>
+      This library fully supports connecting to MySQL over SSL/TLS. In fact, all
+      examples make use of TLS connections, as TLS is required for the <a href="https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html" target="_top"><code class="computeroutput"><span class="identifier">caching_sha2_password</span></code></a> authentication
+      plugin, which is the default in MySQL 8.0.
+    </p>
+<h4>
+<a name="mysql.ssl.h0"></a>
+      <span class="phrase"><a name="mysql.ssl.ssl_enabled_streams"></a></span><a class="link" href="ssl.html#mysql.ssl.ssl_enabled_streams">SSL-enabled
+      streams</a>
+    </h4>
+<p>
+      To use SSL/TLS, you must use a <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      with a <a class="link" href="ref/boost__mysql__Stream.html" title="Stream concept"><code class="literal">Stream</code></a>
+      that supports SSL. A SSL-enabled stream must inherit from <a href="../../../../../doc/html/boost_asio/reference/ssl__stream_base.html" target="_top"><code class="literal">boost::asio::ssl::stream_base</code></a>.
+      This includes both <a href="../../../../../doc/html/boost_asio/reference/ssl__stream.html" target="_top"><code class="literal">boost::asio::ssl::stream</code></a>
+      and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">beast</span><span class="special">::</span><span class="identifier">ssl_stream</span></code>.
+    </p>
+<p>
+      To make life easier, this library provides the type alias <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>.
+    </p>
+<p>
+      Note that there is no need to use TLS when using UNIX sockets. As the traffic
+      doesn't leave the machine, MySQL considers them secure, and will allow using
+      authentication plugins like <code class="computeroutput"><span class="identifier">caching_sha2_password</span></code>
+      even if TLS is not used.
+    </p>
+<h4>
+<a name="mysql.ssl.h1"></a>
+      <span class="phrase"><a name="mysql.ssl.when_is_the_ssl_handshake_perfor"></a></span><a class="link" href="ssl.html#mysql.ssl.when_is_the_ssl_handshake_perfor">When
+      is the SSL handshake performed?</a>
+    </h4>
+<p>
+      The SSL handshake is performed while establishing the connection to the MySQL
+      server, as part of the <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/async_handshake.html" title="connection::async_handshake"><code class="literal">connection::async_handshake</code></a>.
+      The functions <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/async_connect.html" title="connection::async_connect"><code class="literal">connection::async_connect</code></a>
+      are implemented in terms of the former, and thus also perform the TLS handshake.
+    </p>
+<p>
+      This approach contrasts with libraries like <a href="../../../../../libs/beast/index.html" target="_top">Boost.Beast</a>,
+      where it's the user resposibility to invoke the SSL handshake on the underlying
+      stream before performing any operation.
+    </p>
+<p>
+      We take this approach because the SSL handshake is part of the MySQL protocol's
+      handshake: the client and server exchange several unencrypted messages, then
+      perform the SSL handshake, and continue exchanging encrypted messages, until
+      the connection either succeeds or fails. This scheme allows the SSL negotiation
+      feature (see below for more info).
+    </p>
+<p>
+      You can set any SSL/TLS parameters on the <a href="../../../../../doc/html/boost_asio/reference/ssl__context.html" target="_top"><code class="literal">boost::asio::ssl::context</code></a>
+      required to create a <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      using a SSL-enabled stream type. This context will be passed to the stream's
+      constructor. You can configure any setting allowed by <a href="../../../../../doc/html/boost_asio/reference/ssl__context.html" target="_top"><code class="literal">boost::asio::ssl::context</code></a>,
+      including SSL certificate validation. Check <a class="link" href="examples/ssl.html" title="Setting SSL options">this
+      example</a> for an example on this topic.
+    </p>
+<p>
+      If SSL certificate validation is enabled and fails, the <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/async_handshake.html" title="connection::async_handshake"><code class="literal">connection::async_handshake</code></a>
+      operation will fail with the relevant error code.
+    </p>
+<p>
+      SSL shutdown is performed by the library, too, by <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/async_quit.html" title="connection::async_quit"><code class="literal">connection::async_quit</code></a>.
+      MySQL doesn't always close SSL connections gracefully, so these functions ignore
+      any errors generated by the TLS shutdown. The functions <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/async_close.html" title="connection::async_close"><code class="literal">connection::async_close</code></a>
+      are implemented in terms of <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/async_quit.html" title="connection::async_quit"><code class="literal">connection::async_quit</code></a>,
+      and thus also perform the TLS shutdown.
+    </p>
+<h4>
+<a name="mysql.ssl.h2"></a>
+      <span class="phrase"><a name="mysql.ssl.negotiation"></a></span><a class="link" href="ssl.html#mysql.ssl.negotiation">SSL
+      negotiation</a>
+    </h4>
+<p>
+      During the handshake, client and server will negotiate whether to use TLS or
+      not. For SSL capable streams, we support using TLS conditionally. This is controlled
+      using the <a class="link" href="ref/boost__mysql__ssl_mode.html" title="ssl_mode"><code class="literal">ssl_mode</code></a>
+      parameter in <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>,
+      which configure the MySQL handshake process.
+    </p>
+<p>
+      There are three possible values for this <a class="link" href="ref/boost__mysql__ssl_mode.html" title="ssl_mode"><code class="literal">ssl_mode</code></a>:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          If set to <code class="computeroutput"><span class="identifier">require</span></code>, the
+          connection will use TLS. If the server does not support it, the connection
+          will be refused. This is the default for SSL-enabled streams.
+        </li>
+<li class="listitem">
+          If set to <code class="computeroutput"><span class="identifier">enable</span></code>, the connection
+          will use TLS if available, falling back to an unencrypted connection if
+          the server does not support it.
+        </li>
+<li class="listitem">
+          If set to <code class="computeroutput"><span class="identifier">disable</span></code>, the
+          connection will never use TLS.
+        </li>
+</ul></div>
+<p>
+      If you're aiming for security, then use <code class="computeroutput"><span class="identifier">require</span></code>
+      (the default).
+    </p>
+<p>
+      If you are using <code class="computeroutput"><span class="identifier">enable</span></code>, you
+      can employ <a class="link" href="ref/boost__mysql__connection/uses_ssl.html" title="connection::uses_ssl"><code class="literal">connection::uses_ssl</code></a>
+      to query whether the connection uses SSL or not.
+    </p>
+<p>
+      This parameter is ignored for non-SSL connections. In this case, TLS will never
+      be used.
+    </p>
+<p>
+      See <a class="link" href="connparams.html" title="Handshake parameters">this section</a> for more information
+      on <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2023 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="other_streams.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

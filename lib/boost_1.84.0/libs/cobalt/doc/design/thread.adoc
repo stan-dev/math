@@ -1,0 +1,32 @@
+== Threading
+
+This library is single-threaded by design, because this simplifies resumption
+and thus more performant handling of synchronizations like <<race, race>>.
+<<race, race>> would need to lock every raceed awaitable to avoid data loss
+which would need to be blocking and get worse with every additional element.
+
+IMPORTANT: you can't have any coroutines be resumed on a different thread than created on,
+except for a <<task,task>> (e.g. using <<spawn, spawn>>).
+
+The main technical reason is that the most efficient way of switching coroutines is by returning the handle
+of the new coroutine from `await_suspend` like this:
+
+[source,cpp]
+----
+struct my_awaitable
+{
+    bool await_ready();
+    std::coroutine_handle<T> await_suspend(std::coroutine_handle<U>);
+    void await_resume();
+};
+----
+
+In this case, the awaiting coroutine will be suspended before await_suspend is called,
+and the coroutine returned is resumed. This of course doesn't work if we need to go through an executor.
+
+This doesn't only apply to awaited coroutines, but channels, too.
+The channels in this library use an intrusive list of awaitables
+and may return the handle of reading (and thus suspended) coroutine
+from a write_operation's `await_suspend`.
+
+

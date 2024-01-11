@@ -1,0 +1,193 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>url_base::set_encoded_params</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.URL">
+<link rel="up" href="../boost__urls__url_base.html" title="url_base">
+<link rel="prev" href="set_params.html" title="url_base::set_params">
+<link rel="next" href="remove_query.html" title="url_base::remove_query">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="remove_query.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="url.ref.boost__urls__url_base.set_encoded_params"></a><a class="link" href="set_encoded_params.html" title="url_base::set_encoded_params">url_base::set_encoded_params</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="idm125265"></a>
+        </p>
+<p>
+          Set the query params.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h0"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.synopsis"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">url_base</span><span class="special">&amp;</span>
+<span class="identifier">set_encoded_params</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">param_pct_view</span> <span class="special">&gt;</span> <span class="identifier">ps</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h1"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.description"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.description">Description</a>
+        </h6>
+<p>
+          This sets the query params to the elements in the list, which may contain
+          percent-escapes and can be empty. An empty list of params is distinct from
+          having no query. Escapes in the string are preserved, and reserved characters
+          in the string are percent-escaped in the result.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h2"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.example"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.example">Example</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">assert</span><span class="special">(</span> <span class="identifier">url</span><span class="special">(</span> <span class="string">"http://example.com"</span> <span class="special">).</span><span class="identifier">set_encoded_params</span><span class="special">(</span> <span class="special">{</span> <span class="string">"id"</span> <span class="special">,</span> <span class="string">"42"</span> <span class="special">}</span> <span class="special">).</span><span class="identifier">encoded_query</span><span class="special">()</span> <span class="special">==</span> <span class="string">"id=42"</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h3"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.postconditions"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.postconditions">Postconditions</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">has_query</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h4"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.complexity"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.complexity">Complexity</a>
+        </h6>
+<p>
+          Linear.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h5"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.exception_safety"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Strong guarantee. Calls to allocate may throw. Exceptions thrown on invalid
+          input.
+        </p>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h6"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.parameters"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">ps</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The params to set.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h7"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.exceptions"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.exceptions">Exceptions</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Type
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Thrown On
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">system_error</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    some element in <code class="computeroutput"><span class="identifier">ps</span></code>
+                    contains an invalid percent-encoding.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h8"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.bnf"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.bnf">BNF</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">query</span>           <span class="special">=</span> <span class="special">*(</span> <span class="identifier">pchar</span> <span class="special">/</span> <span class="string">"/"</span> <span class="special">/</span> <span class="string">"?"</span> <span class="special">)</span>
+
+<span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span>     <span class="special">=</span> <span class="identifier">key</span> <span class="special">[</span> <span class="string">"="</span> <span class="identifier">value</span> <span class="special">]</span>
+<span class="identifier">query</span><span class="special">-</span><span class="identifier">params</span>    <span class="special">=</span> <span class="special">[</span> <span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span> <span class="special">]</span> <span class="special">*(</span> <span class="string">"&amp;"</span> <span class="identifier">query</span><span class="special">-</span><span class="identifier">param</span> <span class="special">)</span>
+</pre>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h9"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.specification"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.specification">Specification</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4" target="_top">3.4.
+              Query (rfc3986)</a>
+            </li>
+<li class="listitem">
+              <a href="https://en.wikipedia.org/wiki/Query_string" target="_top">Query string
+              (Wikipedia)</a>
+            </li>
+</ul></div>
+<h6>
+<a name="url.ref.boost__urls__url_base.set_encoded_params.h10"></a>
+          <span class="phrase"><a name="url.ref.boost__urls__url_base.set_encoded_params.see_also"></a></span><a class="link" href="set_encoded_params.html#url.ref.boost__urls__url_base.set_encoded_params.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="set_params.html" title="url_base::set_params"><code class="computeroutput"><span class="identifier">set_params</span></code></a>, <a class="link" href="params.html" title="url_base::params"><code class="computeroutput"><span class="identifier">params</span></code></a>, <a class="link" href="remove_query.html" title="url_base::remove_query"><code class="computeroutput"><span class="identifier">remove_query</span></code></a>, <a class="link" href="set_encoded_query.html" title="url_base::set_encoded_query"><code class="computeroutput"><span class="identifier">set_encoded_query</span></code></a>, <a class="link" href="set_query.html" title="url_base::set_query"><code class="computeroutput"><span class="identifier">set_query</span></code></a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2021, 2022 Vinnie Falco, Alan de Freitas<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="set_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__urls__url_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="remove_query.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

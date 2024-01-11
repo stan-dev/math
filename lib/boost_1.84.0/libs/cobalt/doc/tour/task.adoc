@@ -1,0 +1,24 @@
+== Tasks
+
+<<task, Tasks>> are lazy, which means they won't do anything before awaited or spwaned.
+
+[source,cpp]
+----
+cobalt::task<int> my_task()
+{
+   co_await do_the_thing();
+   co_return 0;
+}
+
+cobalt::main co_main(int argc, char * argv[])
+{
+    // create the task here
+    auto t = my_task();
+    // do something else here first
+    co_await do_the_other_thing();
+    // start and wait for the task to complete
+    auto res = co_wait t;
+    co_return res;
+}
+----
+

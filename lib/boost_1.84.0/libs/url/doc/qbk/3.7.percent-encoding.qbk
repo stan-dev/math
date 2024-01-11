@@ -1,0 +1,115 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section Percent Encoding]
+
+[heading Encoding]
+
+The [link url.ref.boost__urls__encode `encode`] can be used to percent-encode strings
+with the specified __CharSet__.
+
+[snippet_encoding_1]
+
+A few parameters, such as encoding spaces as plus (`+`), can be adjusted
+ with [link url.ref.boost__urls__encoding_opts `encode_opts`]:
+
+[snippet_encoding_2]
+
+The result type of the function can also be specified via a __StringToken__
+so that strings can be reused or appended.
+
+[snippet_encoding_3]
+
+We can also use [link url.ref.boost__urls__encoded_size `encoded_size`] to
+determine the required size before attempting to encode:
+
+[snippet_encoding_4]
+
+In other scenarios, strings can also be directly encoded into buffers:
+
+[snippet_encoding_5]
+
+[heading Validating]
+
+The class __pct_string_view__ represents a reference percent-encoded strings:
+
+[snippet_encoding_6]
+
+__pct_string_view__ is analogous to __string_view__, with the main difference
+that the percent-encoding of the underlying buffer is always validated.
+Attempting to directly construct a __pct_string_view__ from an invalid
+string throws an exception.
+
+To simply validate a string without recurring to exceptions, a __result__
+can be returned with the
+[link url.ref.boost__urls__make_pct_string_view `make_pct_string_view`]:
+
+[snippet_encoding_7]
+
+This means [link url.ref.boost__urls__make_pct_string_view `make_pct_string_view`]
+can also be used to validate strings and keep that information for future use.
+The modifying functions in classes such as __url__ expect instances of
+__pct_string_view__ that have already been validated. This completely
+removes the responsibility of revalidating this information or throwing
+exceptions from these functions:
+
+[snippet_encoding_8]
+
+When exceptions are acceptable, a common pattern is to let a literal string
+or other type convertible to __string_view__ be implicitly converted to
+__pct_string_view__.
+
+[snippet_encoding_9]
+
+If the input is invalid, note that an exception is thrown while the
+__pct_string_view__ is implicitly constructed and not from the modifying
+function.
+
+Reusing the validation guarantee is particularly useful when the
+__pct_string_view__ comes from another source where the data is also
+ensured to be validated:
+
+[snippet_encoding_10]
+
+In the example above,
+[link url.ref.boost__urls__url_base.set_encoded_path `set_encoded_path`]
+does not to revalidate any information from
+[link url.ref.boost__urls__url_base.encoded_path `encoded_path`]
+because these references are passed as __pct_string_view__.
+
+[heading Decode]
+
+The class __pct_string_view__ represents a reference percent-encoded strings.
+__decode_view__ is analogous to __pct_string_view__, with the main difference
+that the underlying buffer always dereferences to decoded characters.
+
+[snippet_encoding_11]
+
+A __decode_view__ can also be created from a __pct_string_view__ with the
+[link url.ref.boost__urls__pct_string_view.operator__star_ `operator*`].
+The also gives us an opportunity to validate external strings:
+
+[snippet_encoding_12]
+
+This is particularly useful when the decoded string need to be accessed
+for comparisons with no necessity to explicitly decoding the
+string into a buffer:
+
+[snippet_encoding_13]
+
+The member function
+[link url.ref.boost__urls__pct_string_view.decode `pct_string_view::decode`]
+can be used to decode the data into a buffer. Like the free-function
+[link url.ref.boost__urls__encode `encode`], decoding options and the string
+token can be customized.
+
+[snippet_encoding_14]
+
+[endsect]
+

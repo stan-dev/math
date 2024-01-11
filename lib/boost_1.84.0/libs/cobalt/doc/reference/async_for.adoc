@@ -1,0 +1,23 @@
+[#async_for]
+== cobalt/async_for.hpp
+
+For types like generators a `BOOST_COBALT_FOR` macro is provided, to emulate an `for co_await` loop.
+
+
+[source,cpp]
+----
+cobalt::generator<int> gen();
+
+cobalt::main co_main(int argc, char * argv[])
+{
+    BOOST_COBALT_FOR(auto i, gen())
+        printf("Generated value %d\n", i);
+
+    co_return 0;
+}
+
+----
+
+The requirement is that the <<awaitable,awaitable>> used in the for loop has an `operator bool` to check if it
+can be awaited again. This is the case for <<generator, generator>> and <<promise,promise>>.
+

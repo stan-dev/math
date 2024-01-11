@@ -1,0 +1,91 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Monadic interface</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Boost.Optional">
+<link rel="up" href="../../optional/tutorial.html" title="Tutorial">
+<link rel="prev" href="relational_operators.html" title="Relational operators">
+<link rel="next" href="io_operators.html" title="IO operators">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="relational_operators.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/tutorial.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="io_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_optional.tutorial.monadic_interface"></a><a class="link" href="monadic_interface.html" title="Monadic interface">Monadic interface</a>
+</h3></div></div></div>
+<p>
+        The monadic interface of <code class="computeroutput"><span class="identifier">optional</span></code>
+        allows the application of functions to optional values without resorting
+        to the usage of explicit <code class="computeroutput"><span class="keyword">if</span></code>-statements.
+      </p>
+<p>
+        Function <code class="computeroutput"><span class="identifier">map</span></code> takes a function
+        mapping type <code class="computeroutput"><span class="identifier">T</span></code> onto type
+        <code class="computeroutput"><span class="identifier">U</span></code> and maps an <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> onto
+        an <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span></code> using
+        the provided function.
+      </p>
+<pre class="programlisting"><span class="keyword">int</span> <span class="identifier">length</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">){</span> <span class="keyword">return</span> <span class="identifier">s</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span> <span class="special">};</span>
+
+<span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">null</span><span class="special">{},</span> <span class="identifier">thin</span><span class="special">{</span><span class="string">""</span><span class="special">},</span> <span class="identifier">word</span><span class="special">{</span><span class="string">"word"</span><span class="special">};</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">null</span><span class="special">.</span><span class="identifier">map</span><span class="special">(</span><span class="identifier">length</span><span class="special">)</span> <span class="special">==</span> <span class="identifier">none</span><span class="special">);</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">thin</span><span class="special">.</span><span class="identifier">map</span><span class="special">(</span><span class="identifier">length</span><span class="special">)</span> <span class="special">==</span> <span class="number">0</span><span class="special">);</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">word</span><span class="special">.</span><span class="identifier">map</span><span class="special">(</span><span class="identifier">length</span><span class="special">)</span> <span class="special">==</span> <span class="number">4</span><span class="special">);</span>
+</pre>
+<p>
+        Function <code class="computeroutput"><span class="identifier">flat_map</span></code> is similar,
+        but it requires the function to return an <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">V</span><span class="special">&gt;</span></code>
+        for some type <code class="computeroutput"><span class="identifier">V</span></code>. This <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">V</span><span class="special">&gt;</span></code> becomes
+        the return type of <code class="computeroutput"><span class="identifier">flat_map</span></code>.
+      </p>
+<pre class="programlisting"><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">first_char</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">)</span> <span class="special">{</span>
+  <span class="keyword">if</span> <span class="special">(</span><span class="identifier">s</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span> <span class="keyword">return</span> <span class="identifier">none</span><span class="special">;</span>
+  <span class="keyword">else</span>           <span class="keyword">return</span> <span class="identifier">s</span><span class="special">[</span><span class="number">0</span><span class="special">];</span>
+<span class="special">};</span>
+
+<span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">null</span><span class="special">{},</span> <span class="identifier">thin</span><span class="special">{</span><span class="string">""</span><span class="special">},</span> <span class="identifier">word</span><span class="special">{</span><span class="string">"word"</span><span class="special">};</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">null</span><span class="special">.</span><span class="identifier">flat_map</span><span class="special">(</span><span class="identifier">first_char</span><span class="special">)</span> <span class="special">==</span> <span class="identifier">none</span><span class="special">);</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">thin</span><span class="special">.</span><span class="identifier">flat_map</span><span class="special">(</span><span class="identifier">first_char</span><span class="special">)</span> <span class="special">==</span> <span class="identifier">none</span><span class="special">);</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">word</span><span class="special">.</span><span class="identifier">flat_map</span><span class="special">(</span><span class="identifier">first_char</span><span class="special">)</span> <span class="special">==</span> <span class="char">'w'</span><span class="special">);</span>
+</pre>
+<p>
+        These functions can be combined in one expression reflecting a chain of computations:
+      </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">get_contents</span><span class="special">(</span><span class="identifier">path</span> <span class="identifier">p</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;;</span>
+<span class="keyword">auto</span> <span class="identifier">trim</span><span class="special">(</span><span class="identifier">string</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="identifier">string</span><span class="special">;</span>
+<span class="keyword">auto</span> <span class="identifier">length</span><span class="special">(</span><span class="identifier">string</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="keyword">int</span><span class="special">;</span>
+
+<span class="keyword">auto</span> <span class="identifier">trimmed_size_of</span><span class="special">(</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">path</span><span class="special">&gt;</span> <span class="identifier">p</span><span class="special">)</span> <span class="special">-&gt;</span> <span class="keyword">int</span>
+<span class="special">{</span>
+  <span class="keyword">return</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">flat_map</span><span class="special">(</span><span class="identifier">get_contents</span><span class="special">)</span>
+          <span class="special">.</span><span class="identifier">map</span><span class="special">(</span><span class="identifier">trim</span><span class="special">)</span>
+          <span class="special">.</span><span class="identifier">map</span><span class="special">(</span><span class="identifier">length</span><span class="special">)</span>
+          <span class="special">.</span><span class="identifier">value_or</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2003-2007 Fernando Luis Cacciola Carballal<br>Copyright © 2014-2023 Andrzej Krzemieński<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="relational_operators.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/tutorial.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="io_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

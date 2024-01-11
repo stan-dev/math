@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package tutorial;
+
+message person {
+  optional string name = 1;
+  optional int32 id = 2;
+  optional string email = 3;
+}

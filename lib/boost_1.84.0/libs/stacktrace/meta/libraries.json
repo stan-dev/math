@@ -1,0 +1,16 @@
+{
+  "key": "stacktrace",
+  "name": "Stacktrace",
+  "authors": [
+    "Antony Polukhin"
+  ],
+  "maintainers": [
+    "Antony Polukhin <antoshkka -at- gmail.com>"
+  ],
+  "description": "Gather, store, copy and print backtraces.",
+  "std": [ "c++23" ],
+  "category": [
+    "System", "Correctness"
+  ],
+  "cxxstd": "11"
+}

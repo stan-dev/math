@@ -1,0 +1,38 @@
+////
+Copyright 2021 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#changes]
+# Revision History
+:idprefix:
+
+## Changes in Boost 1.84.0
+
+* Added an overload of `enum_from_string` that takes a string view, to avoid
+  the need for null termination.
+
+## Changes in Boost 1.81.0
+
+* To allow the inclusion of `enumerators.hpp`, `bases.hpp`, and `members.hpp`
+  when the option `-pedantic` is used, the invocation of `BOOST_DESCRIBE_ENUM`
+  has been moved from `modifiers.hpp` into a separate header,
+  `modifier_description.hpp`. As a consequence, `modifiers.hpp` no longer
+  includes `enum.hpp`. Code that has been relying on this implicit inclusion
+  may fail, and will need to be fixed to include `enum.hpp`.
+
+## Changes in Boost 1.79.0
+
+* Enabled unions in `BOOST_DESCRIBE_STRUCT` and updated examples to check `std::is_union<T>`.
+* Added example of defining a `fmtlib` class formatter.
+* Added example of defining a `fmtlib` enum formatter.
+* Added example of printing pointers to members.
+
+## Changes in Boost 1.78.0
+
+* Added `has_describe_enumerators`, `has_describe_bases`, `has_describe_members`.
+* Added `enum_to_string`, `enum_from_string`.
+* Added relational and stream insertion operators.
+* Added `descriptor_by_name`, `descriptor_by_pointer`.
+* Added `struct_to_tuple` example.
