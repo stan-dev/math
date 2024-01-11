@@ -147,7 +147,7 @@ template <typename T1, typename T2>
 using scalar_lub_t = typename scalar_lub<T1, T2>::type;
 
 namespace internal {
-  template <typename... Ts>
+template <typename... Ts>
 struct return_type_impl {
   using type = double;
 };
@@ -160,11 +160,11 @@ struct return_type_impl<T, Ts...> {
 
 template <typename... T, typename... Ts>
 struct return_type_impl<std::tuple<T...>, Ts...> {
-  using type
-      = scalar_lub_t<typename return_type_impl<T...>::type, typename return_type_impl<Ts...>::type>;
+  using type = scalar_lub_t<typename return_type_impl<T...>::type,
+                            typename return_type_impl<Ts...>::type>;
 };
 
-}
+}  // namespace internal
 
 /**
  * Template metaprogram to calculate the base scalar return type
@@ -205,9 +205,6 @@ struct return_type_impl<std::tuple<T...>, Ts...> {
  */
 template <typename... Ts>
 struct return_type : internal::return_type_impl<std::decay_t<Ts>...> {};
-
-
-
 
 /**
  * Convenience type for the return type of the specified template

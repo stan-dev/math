@@ -16,7 +16,6 @@ class Wiener7MixArgs : public ::testing::Test {
   Eigen::VectorXd sv{{0.2, 0.1}};
   Eigen::VectorXd sw{{0.1, .99}};
   Eigen::VectorXd st0{{0.3, .8}};
-
 };
 
 class Wiener5MixArgs : public ::testing::Test {
@@ -30,7 +29,6 @@ class Wiener5MixArgs : public ::testing::Test {
   Eigen::VectorXd w{{0.5, 0.5, 0.2}};
   Eigen::VectorXd v{{2.0, 2.0, 0.8}};
   Eigen::VectorXd sv{{0.2, 0.2, 0.1}};
-
 };
 
 #endif
