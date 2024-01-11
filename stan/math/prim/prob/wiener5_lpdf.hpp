@@ -602,7 +602,7 @@ inline void assign_err(Scalar1 arg, Scalar2 err) {
  * overload for use when the value is stored within a tuple.
  *
  * @tparam NestedIndex index of element in tuple to be replaced
- * @tparam Scalar type of error to replace 
+ * @tparam Scalar type of error to replace
  * @tparam TArgs type of arguments to be replaced
  *
  * @param args_tuple argument tuple to be replaced
