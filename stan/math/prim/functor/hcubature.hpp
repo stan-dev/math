@@ -380,14 +380,14 @@ struct Box {
 }  // namespace internal
 
 /**
- * Compute the [dim]-dimensional integral of the function \f$f\f$ from \f$a\f$ to
- \f$b\f$ within
+ * Compute the [dim]-dimensional integral of the function \f$f\f$ from \f$a\f$
+ to \f$b\f$ within
  * specified relative and absolute tolerances or maximum number of evaluations.
  * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
  *
  * @tparam Scalar Type of scalars
  * @tparam F Type of f
- * @tparam T_a Type of lower limit of integration 
+ * @tparam T_a Type of lower limit of integration
  * @tparam T_b Type of upper limit of integration
  * @tparam ParsTuple Type of parameter-tuple
  *
@@ -400,8 +400,8 @@ struct Box {
  * @param reqAbsError absolute error
  * @param reqRelError relative error as vector
  *
- * @return The value of the [dim]-dimensional integral of \f$f\f$ from \f$a\f$ to
- \f$b\f$.
+ * @return The value of the [dim]-dimensional integral of \f$f\f$ from \f$a\f$
+ to \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
 template <typename Scalar, typename F, typename T_a, typename T_b,

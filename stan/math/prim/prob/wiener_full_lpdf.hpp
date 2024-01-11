@@ -18,7 +18,7 @@ namespace internal {
  * @tparam T_w type of relative starting point
  * @tparam T_sv type of inter-trial variability in v
  * @tparam T_sw type of inter-trial variability in w
- * @tparam T_err type of log error tolerance 
+ * @tparam T_err type of log error tolerance
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -60,10 +60,10 @@ inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
  * @tparam T_w type of relative starting point
  * @tparam T_sv type of inter-trial variability in v
  * @tparam T_sw type of inter-trial variability in w
- * @tparam T_err type of log error tolerance 
+ * @tparam T_err type of log error tolerance
  *
  * @param functor Gradient/density functor to apply
- * @param y_diff A scalar variable; the reaction time in seconds without 
+ * @param y_diff A scalar variable; the reaction time in seconds without
  * non-decision time
  * @param a The boundary separation
  * @param v The drift rate
@@ -97,10 +97,10 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  * @tparam T_w type of relative starting point
  * @tparam T_sv type of inter-trial variability in v
  * @tparam T_sw type of inter-trial variability in w
- * @tparam T_err type of log error tolerance 
+ * @tparam T_err type of log error tolerance
  *
  * @param functor Gradient/density functor to apply
- * @param y_diff A scalar variable; the reaction time in seconds without 
+ * @param y_diff A scalar variable; the reaction time in seconds without
  * non-decision time
  * @param a The boundary separation
  * @param v The drift rate
@@ -223,7 +223,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * @tparam T_v type of drift rate
  * @tparam T_sv type of inter-trial variability of drift rate
  * @tparam T_sw type of inter-trial variability of relative starting point
- * @tparam T_st0 type of inter-trial variability of non-decision time		
+ * @tparam T_st0 type of inter-trial variability of non-decision time
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation

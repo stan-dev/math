@@ -87,7 +87,7 @@ inline auto wiener5_density_part_one(T_y&& y, T_a&& a, T_v_value&& v_value,
  * @tparam T_y type of scalar variable
  * @tparam T_a type of boundary separation
  * @tparam T_w_value type of relative starting point
- * @tparam T_err type of error 
+ * @tparam T_err type of error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -623,7 +623,7 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
  * @tparam NestedIndex Nested position if the error argument is within a tuple
  * @tparam LogResult Whether result is on log- or on natural-scale
  * @tparam F Type of functor
- * @tparam T_err type of error 
+ * @tparam T_err type of error
  * @tparam ArgsTupleT Type of tuple of arguments for functor
  *
  * @param functor Function to apply
