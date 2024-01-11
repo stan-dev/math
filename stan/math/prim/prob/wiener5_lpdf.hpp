@@ -601,11 +601,11 @@ inline void assign_err(Scalar1 arg, Scalar2 err) {
  * Utility function for replacing a value with a specified error value,
  * overload for use when the value is stored within a tuple.
  *
- * @tparam NestedIndex index of error position in tuple
- * @tparam Scalar1 type of argument to be replaced
- * @tparam Scalar2 type of error to replace
+ * @tparam NestedIndex index of element in tuple to be replaced
+ * @tparam Scalar type of error to replace 
+ * @tparam TArgs type of arguments to be replaced
  *
- * @param arg argument to be replaced
+ * @param args_tuple argument tuple to be replaced
  * @param err argument to replace
  */
 template <size_t NestedIndex, typename Scalar, typename... TArgs>
