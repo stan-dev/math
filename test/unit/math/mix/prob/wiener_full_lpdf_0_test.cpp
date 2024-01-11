@@ -2,7 +2,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/prob/util.hpp>
 
-TEST(mathMixDouble, wiener_lpdf) {
+TEST(mathMixDouble7, wiener_lpdf) {
   double y = 1.0;
   double a = 2.0;
   double t0 = 0.2;
@@ -14,7 +14,7 @@ TEST(mathMixDouble, wiener_lpdf) {
   stan::math::wiener_lpdf(y, a, t0, w, v, sv, sw, st0, 1e-4);
 }
 
-TEST(mathMixVar, wiener_lpdf) {
+TEST(mathMixVar7, wiener_lpdf) {
   using stan::math::var;
   var y = 1.0;
   var a = 2.0;
@@ -27,7 +27,7 @@ TEST(mathMixVar, wiener_lpdf) {
   stan::math::wiener_lpdf(y, a, t0, w, v, sv, sw, st0);
 }
 
-TEST(mathMixFVar, wiener_lpdf) {
+TEST(mathMixFVar7, wiener_lpdf) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> y = 1.0;
