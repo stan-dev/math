@@ -12,6 +12,12 @@ enum GradientCalc { OFF = 0, ON = 1 };
 /**
  * Calculate the 'error_term' term for a wiener5 density or gradient
  *
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
  * @param v_value The drift rate
@@ -38,7 +44,11 @@ inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
  *
  * @tparam GradA Whether the calculation is for gradient w.r.t. 'a'
  * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v_value type of drift rate
+ * @tparam T_w_value type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -74,7 +84,10 @@ inline auto wiener5_density_part_one(T_y&& y, T_a&& a, T_v_value&& v_value,
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_w_value type of relative starting point
+ * @tparam T_err type of error 
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -111,8 +124,11 @@ inline auto wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
  * Calculate the 'n_terms_small_t' term for a wiener5 density or gradient
  *
  * @tparam Density Whether the calculation is for the density
- * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
- * @tparam Scalar type of scalars
+ * @tparam GradW Whether the calculation is for gradient w.r.t. 't'
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_w_value type of relative starting point
+ * @tparam T_err type of error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -155,7 +171,11 @@ inline auto wiener5_n_terms_large_t(T_y&& y, T_a&& a, T_w_value&& w_value,
  *
  * @tparam Density Whether the calculation is for the density
  * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_w type of relative starting point
+ * @tparam T_nsmall type of term number_small_terms
+ * @tparam T_nlarge type of term number_large_terms
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -264,6 +284,12 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
  *
  * @tparam NaturalScale Whether to return the density on natural (true) or
  * log-scale (false)
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_w type of relative starting point
+ * @tparam T_v type of drift rate
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -306,7 +332,12 @@ inline auto wiener5_density(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -363,7 +394,12 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -422,7 +458,12 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -450,7 +491,12 @@ inline auto wiener5_grad_v(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -505,7 +551,12 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
  *
  * @tparam WrtLog Whether to return the derivative w.r.t.
  *                  the natural (true) or log-scale (false) density
- * @tparam Scalar type of scalars
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_err type of log error
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -533,6 +584,13 @@ inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v_value,
 
 /**
  * Utility function for replacing a value with a specified error value
+ *
+ * @tparam NestedIndex index of error position in tuple
+ * @tparam Scalar1 type of argument to be replaced
+ * @tparam Scalar2 type of error to replace
+ *
+ * @param arg argument to be replaced
+ * @param err argument to replace
  */
 template <size_t NestedIndex, typename Scalar1, typename Scalar2>
 inline void assign_err(Scalar1 arg, Scalar2 err) {
@@ -542,6 +600,13 @@ inline void assign_err(Scalar1 arg, Scalar2 err) {
 /**
  * Utility function for replacing a value with a specified error value,
  * overload for use when the value is stored within a tuple.
+ *
+ * @tparam NestedIndex index of error position in tuple
+ * @tparam Scalar1 type of argument to be replaced
+ * @tparam Scalar2 type of error to replace
+ *
+ * @param arg argument to be replaced
+ * @param err argument to replace
  */
 template <size_t NestedIndex, typename Scalar, typename... TArgs>
 inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
@@ -553,16 +618,17 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
  * checking the result against a provided error tolerance, and re-estimating
  * the function with the increased error if it fails.
  *
- * @tparam Scalar type of scalars
  * @tparam ErrIndex Position of the error argument in the provided arguments
+ * @tparam GradW7 Whether the gradient of w is computed
  * @tparam NestedIndex Nested position if the error argument is within a tuple
+ * @tparam LogResult Whether result is on log- or on natural-scale
  * @tparam F Type of functor
+ * @tparam T_err type of error 
  * @tparam ArgsTupleT Type of tuple of arguments for functor
  *
  * @param functor Function to apply
  * @param err Error value to check against
  * @param args_tuple Tuple of arguments to pass to functor
- * @param log_result Whether the function result is already on the log-scale
  */
 template <size_t ErrIndex, GradientCalc GradW7 = GradientCalc::OFF,
           size_t NestedIndex = 0, bool LogResult = true, typename F,
@@ -595,6 +661,7 @@ inline auto estimate_with_err_check(F&& functor, T_err&& err,
  * @tparam T_w type of relative starting point
  * @tparam T_v type of drift rate
  * @tparam T_sv type of inter-trial variability of drift rate
+ * @tparam T_precision type of precision
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation

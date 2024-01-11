@@ -12,6 +12,14 @@ namespace internal {
 /**
  * Calculate the derivative of the wiener7 density w.r.t. 'sw'
  *
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_sw type of inter-trial variability in w
+ * @tparam T_err type of log error tolerance 
+ *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
  * @param v The drift rate
@@ -44,19 +52,24 @@ inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
  *
  * Specialisation for wiener5 functions
  *
- * @tparam Scalar type of scalars
- * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_sw type of inter-trial variability in w
+ * @tparam T_err type of log error tolerance 
  *
  * @param functor Gradient/density functor to apply
- * @param y A scalar variable; the reaction time in seconds
+ * @param y_diff A scalar variable; the reaction time in seconds without 
+ * non-decision time
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
- * @param t0 The non-decision time
  * @param sv The inter-trial variability of the drift rate
  * @param sw The inter-trial variability of the relative starting point
- * @param st0 The inter-trial variability of the non-decision time
  * @param log_error The log error tolerance
  * @return Functor applied to arguments
  */
@@ -76,20 +89,24 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  *
  * Specialisation for wiener7 functions
  *
- * @tparam Scalar type of scalars
- * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_sw type of inter-trial variability in w
+ * @tparam T_err type of log error tolerance 
  *
  * @param functor Gradient/density functor to apply
- * @param y_diff A scalar variable; the reaction time minus the non-decision in
- * seconds
+ * @param y_diff A scalar variable; the reaction time in seconds without 
+ * non-decision time
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
- * @param t0 The non-decision time
  * @param sv The inter-trial variability of the drift rate
  * @param sw The inter-trial variability of the relative starting point
- * @param st0 The inter-trial variability of the non-decision time
  * @param log_error The log error tolerance
  * @return Functor applied to arguments
  */
@@ -107,9 +124,10 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  * to the hcubature() function for calculating wiener7 parameters via
  * integration
  *
- * @tparam Scalar type of scalars
- * @tparam GradSW Whether the wiener7 gradient function is passed
+ * @tparam GradSW Whether the gradient of sw is computed
+ * @tparam GradW7 Whether the gradient of w is computed in the full model
  * @tparam Wiener7FunctorT Type of functor
+ * @tparam T_err Type of error in hcubature
  * @tparam Targs... Types of arguments in parameter pack
  *
  * @param wiener7_functor Gradient/density functor to apply
@@ -205,7 +223,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * @tparam T_v type of drift rate
  * @tparam T_sv type of inter-trial variability of drift rate
  * @tparam T_sw type of inter-trial variability of relative starting point
- * @tparam T_st0 type of inter-trial variability of non-decision time
+ * @tparam T_st0 type of inter-trial variability of non-decision time		
  *
  * @param y A scalar variable; the reaction time in seconds
  * @param a The boundary separation
@@ -287,7 +305,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * first-passage time distribution in Wiener diffusion models.
  * *Journal of Mathematical Psychology, 103*, 102550.
  * https://doi.org/10.1016/j.jmp.2021.102550
- * - Henrich, F., Hartmann, R., Pratz, V., Voss, A., & Klauer, K.C. (in press).
+ * - Henrich, F., Hartmann, R., Pratz, V., Voss, A., & Klauer, K.C. (2023).
  * The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian
  * Analyses. *Behavior Research Methods*.
  * - Navarro, D. J., & Fuss, I. G. (2009). Fast and accurate calculations for

@@ -171,6 +171,8 @@ inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> signcombos(
  * for one dimension.
  *
  * @tparam F type of the integrand
+ * @tparam T_a type of lower limit of integration
+ * @tparam T_b type of upper limit of integration
  * @tparam ParsPairT type of the pair of parameters for the integrand
  * @param integrand function to be integrated
  * @param a lower limit of integration
@@ -253,11 +255,12 @@ make_GenzMalik(const int dim) {
  * for more than one dimensions.
  *
  * @tparam F type of the integrand
+ * @tparam GenzMalik type of -----
+ * @tparam T_a type of lower limit of integration
+ * @tparam T_b type of upper limit of integration
  * @tparam ParsTupleT type of the tuple of parameters for the integrand
  * @param[out] integrand function to be integrated
- * @param[in] points points for the last 4 GenzMalik weights
- * @param[in] weights weights for the 5 terms in the GenzMalik rule
- * @param[in] weights_low_deg weights for the embedded lower-degree rule
+ * @param[in] genz_malik tuple of GenzMalik weights
  * @param dim dimension of the multidimensional integral
  * @param a lower limit of integration
  * @param b upper limit of integration
@@ -351,6 +354,8 @@ inline auto integrate_GenzMalik(const F& integrand, const GenzMalik& genz_malik,
  * Compute the integral of the function to be integrated (integrand) from a to b
  * for more than one dimensions.
  *
+ * @tparam T_a Type of return_type_t 1
+ * @tparam T_b Type of return_type_t 2
  * @tparam Vec1 Type of vector 1
  * @tparam Vec2 Type of vector 2
  * @param a lower bounds of the integral
@@ -375,46 +380,27 @@ struct Box {
 }  // namespace internal
 
 /**
- * Compute the dim-dimensional integral of the function \f$f\f$ from \f$a\f$ to
+ * Compute the [dim]-dimensional integral of the function \f$f\f$ from \f$a\f$ to
  \f$b\f$ within
  * specified relative and absolute tolerances or maximum number of evaluations.
  * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
  *
- * The prototype for \f$f\f$ is:
- \verbatim
-   template <typename T_x, typename T_p>
-   stan::return_type_t<T_x, T_p> f(const T_x& x, const T_p& p) {
-   using T_x_ref = stan::ref_type_t<T_x>;
-   T_x_ref x_ref = x;
-   stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-   my_params* pars = static_cast<my_params*>(p);
-   type_1 var_1 = (pars->par_1);
-   return ;
-   }
- \endverbatim
- *
- * The parameters can be handed over to f as a struct:
- \verbatim
-  struct my_params {
-  type_1 par_1;
-  type_2 par_2;
-  };
- \endverbatim
- *
+ * @tparam Scalar Type of scalars
  * @tparam F Type of f
- * @tparam T_pars Type of paramete-struct
+ * @tparam T_a Type of lower limit of integration 
+ * @tparam T_b Type of upper limit of integration
+ * @tparam ParsTuple Type of parameter-tuple
  *
  * @param integrand a functor with signature given above
- * @param pars parameters to be passed to f as a struct
+ * @param pars parameters to be passed to f as a tuple
  * @param dim dimension of the integral
  * @param a lower limit of integration as vector
  * @param b upper limit of integration as vector
  * @param max_eval maximal number of evaluations
  * @param reqAbsError absolute error
  * @param reqRelError relative error as vector
- * @param val correct value of integral
  *
- * @return The value of the dim-dimensional integral of \f$f\f$ from \f$a\f$ to
+ * @return The value of the [dim]-dimensional integral of \f$f\f$ from \f$a\f$ to
  \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
