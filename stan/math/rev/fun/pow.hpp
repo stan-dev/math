@@ -90,17 +90,11 @@ inline var pow(const Scal1& base, const Scal2& exponent) {
         const double vi_mul = vi.adj() * vi.val();
 
         if (!is_constant<Scal1>::value) {
-          if (value_of(base) != 0) {
-            forward_as<var>(base).adj() +=
+          forward_as<var>(base).adj() +=
                     vi_mul * value_of(exponent) / value_of(base);
-          }
         }
         if (!is_constant<Scal2>::value) {
-          if (value_of(exponent) == 0) {
-            forward_as<var>(exponent).adj() = vi.adj() * NOT_A_NUMBER;
-          } else {
-            forward_as<var>(exponent).adj() += vi_mul * std::log(value_of(base));
-          }
+          forward_as<var>(exponent).adj() += vi_mul * std::log(value_of(base));
         }
       });
 }
