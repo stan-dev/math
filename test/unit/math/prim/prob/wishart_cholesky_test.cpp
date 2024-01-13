@@ -211,12 +211,12 @@ TEST(ProbDistributionsWishartCholesky, error) {
   nu = 5;
   MatrixXd Sigma(2, 1);
   EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, Sigma),
-               std::invalid_argument);
+               std::domain_error);
 
   nu = 5;
   MatrixXd Y(2, 1);
   EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, MatrixXd::Identity(2, 2)),
-               std::invalid_argument);
+               std::domain_error);
 
   nu = 5;
   EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
