@@ -400,8 +400,8 @@ struct Box {
  to \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename F, typename T_a, typename T_b,
-          typename ParsTuple, typename TAbsErr, typename TRelErr>
+template <typename F, typename T_a, typename T_b, typename ParsTuple,
+          typename TAbsErr, typename TRelErr>
 inline Scalar hcubature(const F& integrand, const ParsTuple& pars,
                         const int dim,
                         const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
