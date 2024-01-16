@@ -380,11 +380,12 @@ struct Box {
  * specified relative and absolute tolerances or maximum number of evaluations.
  * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
  *
- * @tparam Scalar Type of scalars
  * @tparam F Type of f
  * @tparam T_a Type of lower limit of integration
  * @tparam T_b Type of upper limit of integration
  * @tparam ParsTuple Type of parameter-tuple
+ * @tparam TAbsErr Type of absolute error
+ * @tparam TRelErr Type of relative error
  *
  * @param integrand a functor with signature given above
  * @param pars parameters to be passed to f as a tuple
@@ -399,14 +400,15 @@ struct Box {
  to \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename Scalar, typename F, typename T_a, typename T_b,
-          typename ParsTuple>
+template <typename F, typename T_a, typename T_b,
+          typename ParsTuple, typename TAbsErr, typename TRelErr>
 inline Scalar hcubature(const F& integrand, const ParsTuple& pars,
                         const int dim,
                         const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
                         const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
-                        const int max_eval, const Scalar reqAbsError,
-                        const Scalar reqRelError) {
+                        const int max_eval, const TAbsErr reqAbsError,
+                        const TRelErr reqRelError) {
+  using Scalar = return_type_t<ParsTuple, T_a, T_b, TAbsErr, TRelErr>;
   using eig_vec_a = Eigen::Matrix<T_a, Eigen::Dynamic, 1>;
   using eig_vec_b = Eigen::Matrix<T_b, Eigen::Dynamic, 1>;
   const int maxEval = max_eval <= 0 ? 1000000 : max_eval;
