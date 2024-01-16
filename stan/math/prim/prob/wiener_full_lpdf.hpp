@@ -37,11 +37,11 @@ inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
   auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
   const auto lower_value
-      = wiener5_density<GradientCalc::ON>(y, a, v, low, sv, log_error);
+      = wiener5_density<internal::LogScale::ON>(y, a, v, low, sv, log_error);
   auto high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
   const auto upper_value
-      = wiener5_density<GradientCalc::ON>(y, a, v, high, sv, log_error);
+      = wiener5_density<internal::LogScale::ON>(y, a, v, high, sv, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
@@ -73,9 +73,9 @@ inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
  * @param log_error The log error tolerance
  * @return Functor applied to arguments
  */
-template <bool GradSW, typename F, typename T_y, typename T_a, typename T_v,
+template <GradientCalc GradSW, typename F, typename T_y, typename T_a, typename T_v,
           typename T_w, typename T_sv, typename T_sw, typename T_err,
-          std::enable_if_t<!GradSW>* = nullptr>
+          std::enable_if_t<!check(GradSW)>* = nullptr>
 inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
                                   T_w&& w, T_sv&& sv, T_sw&& sw,
                                   T_err&& log_error) {
@@ -110,9 +110,9 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  * @param log_error The log error tolerance
  * @return Functor applied to arguments
  */
-template <bool GradSW, typename F, typename T_y, typename T_a, typename T_v,
+template <GradientCalc GradSW, typename F, typename T_y, typename T_a, typename T_v,
           typename T_w, typename T_sv, typename T_sw, typename T_err,
-          std::enable_if_t<GradSW>* = nullptr>
+          std::enable_if_t<check(GradSW)>* = nullptr>
 inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
                                   T_w&& w, T_sv&& sv, T_sw&& sw,
                                   T_err&& log_error) {
@@ -135,7 +135,7 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  * @param args Additional arguments to be passed to the hcubature function
  * @return Wiener7 density or gradient calculated by integration
  */
-template <bool GradSW, GradientCalc GradW7 = GradientCalc::OFF,
+template <GradientCalc GradSW, GradientCalc GradW7 = GradientCalc::OFF,
           typename Wiener7FunctorT, typename T_err, typename... TArgs>
 inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                               T_err&& hcubature_err, TArgs&&... args) {
@@ -148,7 +148,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                             decltype(t0), decltype(sv), decltype(sw),
                             decltype(st0), decltype(st0), decltype(log_error)>;
         scalar_seq_view<decltype(x)> x_vec(x);
-        const auto sw_val = GradSW ? 0 : sw;
+        const auto sw_val = check(GradSW) ? 0 : sw;
         const auto new_w = w + sw_val * (x_vec[0] - 0.5);
         const auto new_t0 = (sw_val != 0)
                                 ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
@@ -163,7 +163,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
   const auto functor = [&wiener7_integrand_impl](auto&&... int_args) {
     return hcubature(wiener7_integrand_impl, int_args...);
   };
-  return estimate_with_err_check<0, GradW7, 8, GradientCalc::ON>(
+  return estimate_with_err_check<0, GradW7, 8, LogScale::ON>(
       functor, hcubature_err, args...);
 }
 }  // namespace internal
@@ -477,13 +477,14 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     T_partials_return hcubature_err
         = log_error_absolute - log_error_density + LOG_TWO + 1;
     using internal::GradientCalc;
+    using internal::LogScale;
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
                                         log_error_absolute - LOG_TWO);
     T_partials_return density
         = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
             [](auto&&... args) {
-              return internal::wiener5_density<GradientCalc::ON>(args...);
+              return internal::wiener5_density<LogScale::ON>(args...);
             },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -498,7 +499,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return deriv_t_7
         = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
               [](auto&&... args) {
-                return internal::wiener5_grad_t<GradientCalc::ON>(args...);
+                return internal::wiener5_grad_t<LogScale::ON>(args...);
               },
               hcubature_err, params, dim, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -514,7 +515,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
-                  return internal::wiener5_grad_a<GradientCalc::ON>(args...);
+                  return internal::wiener5_grad_a<LogScale::ON>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -528,7 +529,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<3>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::ON>(
                 [](auto&&... args) {
-                  return internal::wiener5_grad_w<GradientCalc::ON>(args...);
+                  return internal::wiener5_grad_w<LogScale::ON>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -539,7 +540,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
-                  return internal::wiener5_grad_v<GradientCalc::ON>(args...);
+                  return internal::wiener5_grad_v<LogScale::ON>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -550,7 +551,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<5>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
-                  return internal::wiener5_grad_sv<GradientCalc::ON>(args...);
+                  return internal::wiener5_grad_sv<LogScale::ON>(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -563,7 +564,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         if (st0_value == 0) {
           derivative = internal::estimate_with_err_check<6, GradientCalc::OFF,
-                                                         0, GradientCalc::ON>(
+                                                         0, LogScale::ON>(
               [](auto&&... args) { return internal::wiener7_grad_sw(args...); },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, sw_value, log_error_absolute - LOG_TWO);
@@ -588,9 +589,9 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0) {
           f = internal::estimate_with_err_check<5, GradientCalc::OFF, 0,
-                                                GradientCalc::ON>(
+                                                LogScale::ON>(
               [](auto&&... args) {
-                return internal::wiener5_density<GradientCalc::ON>(args...);
+                return internal::wiener5_density<LogScale::ON>(args...);
               },
               log_error_derivative + log(st0_value), y_value - t0_st0, a_value,
               v_value, w_value, sv_value, log_error_absolute - LOG_TWO);
@@ -601,7 +602,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 sv_value, sw_value, 0.0, new_error);
           f = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
               [](auto&&... args) {
-                return internal::wiener5_density<GradientCalc::ON>(args...);
+                return internal::wiener5_density<LogScale::ON>(args...);
               },
               hcubature_err, params_st, 1, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
