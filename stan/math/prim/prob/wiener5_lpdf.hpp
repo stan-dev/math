@@ -208,18 +208,23 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
         const auto w_minus_2_k = w - 2.0 * k;
         const auto square_w_plus_2_k_minus_offset = square(w_plus_2_k) - offset;
         if (square_w_plus_2_k_minus_offset > 0) {
-          const auto summand_plus = log(square_w_plus_2_k_minus_offset) - square(w_plus_2_k) * scaling;
+          const auto summand_plus = log(square_w_plus_2_k_minus_offset)
+                                    - square(w_plus_2_k) * scaling;
           fplus = log_sum_exp(fplus, summand_plus);
         } else if (square_w_plus_2_k_minus_offset < 0) {
-          const auto summand_plus = log(-square_w_plus_2_k_minus_offset) - square(w_plus_2_k) * scaling;
+          const auto summand_plus = log(-square_w_plus_2_k_minus_offset)
+                                    - square(w_plus_2_k) * scaling;
           fminus = log_sum_exp(fminus, summand_plus);
         }
-        const auto square_w_minus_2_k_minus_offset = square(w_minus_2_k) - offset;
+        const auto square_w_minus_2_k_minus_offset
+            = square(w_minus_2_k) - offset;
         if (square_w_minus_2_k_minus_offset > 0) {
-          const auto summand_minus = log(square_w_minus_2_k_minus_offset) - square(w_minus_2_k) * scaling;
+          const auto summand_minus = log(square_w_minus_2_k_minus_offset)
+                                     - square(w_minus_2_k) * scaling;
           fplus = log_sum_exp(fplus, summand_minus);
         } else if (square_w_minus_2_k_minus_offset < 0) {
-          const auto summand_minus = log(-square_w_minus_2_k_minus_offset) - square(w_minus_2_k) * scaling;
+          const auto summand_minus = log(-square_w_minus_2_k_minus_offset)
+                                     - square(w_minus_2_k) * scaling;
           fminus = log_sum_exp(fminus, summand_minus);
         }
       }
@@ -235,9 +240,11 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
       for (auto k = n_terms_small_t; k >= 1; k--) {
         const auto w_plus_2_k = w + 2.0 * k;
         const auto w_minus_2_k = w - 2.0 * k;
-        const auto summand_plus = mult * log(w_plus_2_k) - square(w_plus_2_k) * scaling;
+        const auto summand_plus
+            = mult * log(w_plus_2_k) - square(w_plus_2_k) * scaling;
         fplus = log_sum_exp(fplus, summand_plus);
-        const auto summand_minus = mult * log(-w_minus_2_k) - square(w_minus_2_k) * scaling;
+        const auto summand_minus
+            = mult * log(-w_minus_2_k) - square(w_minus_2_k) * scaling;
         if (fminus <= NEGATIVE_INFTY) {
           fminus = summand_minus;
         } else if (summand_minus <= NEGATIVE_INFTY) {
