@@ -33,7 +33,6 @@ namespace math {
 
 namespace internal {
 
-// Why are there 8 things in xd7? 8th element never used
 static constexpr std::array<double, 8> xd7{
     -9.9145537112081263920685469752598e-01,
     -9.4910791234275852452618968404809e-01,
@@ -41,8 +40,7 @@ static constexpr std::array<double, 8> xd7{
     -7.415311855993944398638647732811e-01,
     -5.8608723546769113029414483825842e-01,
     -4.0584515137739716690660641207707e-01,
-    -2.0778495500789846760068940377309e-01,
-    0.0};
+    -2.0778495500789846760068940377309e-01};
 
 static constexpr std::array<double, 8> wd7{
     2.2935322010529224963732008059913e-02,
@@ -88,7 +86,6 @@ inline void combination(Eigen::Matrix<int, Eigen::Dynamic, 1>& c, const int dim,
     }
     k = k - r;
   }
-  // Assumes p cannot be 0
   c[p - 1] = (p > 1) ? c[p - 2] + x - k : x;
 }
 
@@ -356,8 +353,6 @@ inline auto integrate_GenzMalik(const F& integrand, const GenzMalik& genz_malik,
  *
  * @tparam T_a Type of return_type_t 1
  * @tparam T_b Type of return_type_t 2
- * @tparam Vec1 Type of vector 1
- * @tparam Vec2 Type of vector 2
  * @param a lower bounds of the integral
  * @param b upper bounds of the integral
  * @param I value of the integral
@@ -445,7 +440,7 @@ inline Scalar hcubature(const F& integrand, const ParsTuple& pars,
   using box_t = internal::Box<T_a, T_b>;
   std::vector<box_t> ms;
   ms.reserve(numevals);
-  ms.emplace_back(std::move(a), std::move(b), result, kdivide);
+  ms.emplace_back(a, b, result, kdivide);
   auto get_largest_box_idx = [](auto&& box_vec) {
     auto max_it = std::max_element(box_vec.begin(), box_vec.end());
     return std::distance(box_vec.begin(), max_it);

@@ -204,48 +204,48 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
     if (GradW) {
       const auto offset = y_asq;
       for (auto k = n_terms_small_t; k >= 1; k--) {
-        const auto wp2k = w + 2.0 * k;
-        const auto wm2k = w - 2.0 * k;
-        const auto sqwp2k_mo = square(wp2k) - offset;
-        if (sqwp2k_mo > 0) {
-          const auto wp2k_quant = log(sqwp2k_mo) - square(wp2k) * scaling;
-          fplus = log_sum_exp(fplus, wp2k_quant);
-        } else if (sqwp2k_mo < 0) {
-          const auto wp2k_quant = log(-sqwp2k_mo) - square(wp2k) * scaling;
-          fminus = log_sum_exp(fminus, wp2k_quant);
+        const auto w_plus_2_k = w + 2.0 * k;
+        const auto w_minus_2_k = w - 2.0 * k;
+        const auto square_w_plus_2_k_minus_offset = square(w_plus_2_k) - offset;
+        if (square_w_plus_2_k_minus_offset > 0) {
+          const auto summand_plus = log(square_w_plus_2_k_minus_offset) - square(w_plus_2_k) * scaling;
+          fplus = log_sum_exp(fplus, summand_plus);
+        } else if (square_w_plus_2_k_minus_offset < 0) {
+          const auto summand_plus = log(-square_w_plus_2_k_minus_offset) - square(w_plus_2_k) * scaling;
+          fminus = log_sum_exp(fminus, summand_plus);
         }
-        const auto sqwm2k_mo = square(wm2k) - offset;
-        if (sqwm2k_mo > 0) {
-          const auto wm2k_quant = log(sqwm2k_mo) - square(wm2k) * scaling;
-          fplus = log_sum_exp(fplus, wm2k_quant);
-        } else if (sqwm2k_mo < 0) {
-          const auto wm2k_quant = log(-sqwm2k_mo) - square(wm2k) * scaling;
-          fminus = log_sum_exp(fminus, wm2k_quant);
+        const auto square_w_minus_2_k_minus_offset = square(w_minus_2_k) - offset;
+        if (square_w_minus_2_k_minus_offset > 0) {
+          const auto summand_minus = log(square_w_minus_2_k_minus_offset) - square(w_minus_2_k) * scaling;
+          fplus = log_sum_exp(fplus, summand_minus);
+        } else if (square_w_minus_2_k_minus_offset < 0) {
+          const auto summand_minus = log(-square_w_minus_2_k_minus_offset) - square(w_minus_2_k) * scaling;
+          fminus = log_sum_exp(fminus, summand_minus);
         }
       }
-      const auto sqw_mo = square(w) - offset;
-      if (sqw_mo > 0) {
-        const auto new_val = log(sqw_mo) - square(w) * scaling;
+      const auto square_w_minus_offset = square(w) - offset;
+      if (square_w_minus_offset > 0) {
+        const auto new_val = log(square_w_minus_offset) - square(w) * scaling;
         fplus = log_sum_exp(fplus, new_val);
-      } else if (sqw_mo < 0) {
-        const auto new_val = log(-sqw_mo) - square(w) * scaling;
+      } else if (square_w_minus_offset < 0) {
+        const auto new_val = log(-square_w_minus_offset) - square(w) * scaling;
         fminus = log_sum_exp(fminus, new_val);
       }
     } else {
       for (auto k = n_terms_small_t; k >= 1; k--) {
-        const auto wp2k = w + 2.0 * k;
-        const auto wm2k = w - 2.0 * k;
-        const auto wp2k_quant = mult * log(wp2k) - square(wp2k) * scaling;
-        fplus = log_sum_exp(fplus, wp2k_quant);
-        const auto wm2k_quant = mult * log(-wm2k) - square(wm2k) * scaling;
+        const auto w_plus_2_k = w + 2.0 * k;
+        const auto w_minus_2_k = w - 2.0 * k;
+        const auto summand_plus = mult * log(w_plus_2_k) - square(w_plus_2_k) * scaling;
+        fplus = log_sum_exp(fplus, summand_plus);
+        const auto summand_minus = mult * log(-w_minus_2_k) - square(w_minus_2_k) * scaling;
         if (fminus <= NEGATIVE_INFTY) {
-          fminus = wm2k_quant;
-        } else if (wm2k_quant <= NEGATIVE_INFTY) {
+          fminus = summand_minus;
+        } else if (summand_minus <= NEGATIVE_INFTY) {
           continue;
-        } else if (fminus > wm2k_quant) {
-          fminus = fminus + log1p(exp(wm2k_quant - fminus));
+        } else if (fminus > summand_minus) {
+          fminus = fminus + log1p(exp(summand_minus - fminus));
         } else {
-          fminus = wm2k_quant + log1p(exp(fminus - wm2k_quant));
+          fminus = summand_minus + log1p(exp(fminus - summand_minus));
         }
       }
       const auto new_val = mult * log(w) - square(w) * scaling;
