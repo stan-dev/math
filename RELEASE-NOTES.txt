@@ -1,6 +1,35 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.8.0 (16 January 2024)
+======================================================================
+
+ - Updated Boost headers to v1.81 (#2955)
+ - Added the Dirichlet-Multinomial distribution to the Stan Math library (dirichlet_multinomial_lpmf, dirichlet_multinomial_log, and dirichlet_multinomial_rng). (#2979)
+ - `binomial_logit_glm_lpmf` distribution added (#2946)
+ - Improved numerical stability of Bernoulli CDF functions (#2784)
+ - Replaced the `std::vector`s  for read/write events in `matrix_cl` with `tbb::concurrent_vectors` (#2905)
+ - Added framework for generic higher-order autodiff support through finite-differences. (#2929)
+ - Minor cleanup of numerical stability, constants, compound functions in OpenCL kernels (#2934)
+ - Fixes aliasing issue in adjoint acccumulation for OpenCL (#2943)
+ - Improve numerical stability of `binomial_logit` distribution (#2945)
+ - Automatically detect UCRT toolchain use on Windows (#2948)
+ - Update multiple functions to delegate to the compound functions (`log1p_exp`, etc.) where possible (#2950)
+ - Fixed the RPATH to the TBB library being passed twice on the command line (#2952)
+ - Split `eigendecompose` mix tests to fix CI memory issues (#2953)
+ - Fix distribution test failures with row-vector integer inputs to bernoulli CDF functions (#2954)
+ - Simplified usage of ref-type deduction (#2958)
+ - Added OpenCL support for the `binomial_logit_glm` distribution (#2960)
+ - Fixed a build configuration issue where the optional tbbmalloc and tbbmalloc_proxy libraries were built unconditionally. (#2969)
+ - Remove unused meta requires (#2976)
+ - Bugfix for uninitialized `var_value<Matrix>` types and assignment when the rhs of the assignment is an expression (#2978)
+ - Invert the input matrix in-place which reduces the memory requirement for this function. (#2981)
+ - Fixes the rng function for the Inverse Wishart Cholesky distribution. (#2984)
+ - Fixed a compilation issue with the `check_symmetric` function on complex-valued inputs under LLVM 17 (#2991)
+ - Fixed missing include guard for OpenCL rev headers (#2996)
+ - Add helpful context to the failure message for the ad testing framework (#2997)
+
+======================================================================
 v4.7.0 (5 September 2023)
 ======================================================================
 
