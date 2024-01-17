@@ -402,7 +402,7 @@ struct Box {
  */
 template <typename F, typename T_a, typename T_b, typename ParsTuple,
           typename TAbsErr, typename TRelErr>
-inline Scalar hcubature(const F& integrand, const ParsTuple& pars,
+inline auto hcubature(const F& integrand, const ParsTuple& pars,
                         const int dim,
                         const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
                         const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
