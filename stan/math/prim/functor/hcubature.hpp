@@ -402,12 +402,11 @@ struct Box {
  */
 template <typename F, typename T_a, typename T_b, typename ParsTuple,
           typename TAbsErr, typename TRelErr>
-inline auto hcubature(const F& integrand, const ParsTuple& pars,
-                        const int dim,
-                        const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
-                        const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
-                        const int max_eval, const TAbsErr reqAbsError,
-                        const TRelErr reqRelError) {
+inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
+                      const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
+                      const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
+                      const int max_eval, const TAbsErr reqAbsError,
+                      const TRelErr reqRelError) {
   using Scalar = return_type_t<ParsTuple, T_a, T_b, TAbsErr, TRelErr>;
   using eig_vec_a = Eigen::Matrix<T_a, Eigen::Dynamic, 1>;
   using eig_vec_b = Eigen::Matrix<T_b, Eigen::Dynamic, 1>;
