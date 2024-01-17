@@ -44,7 +44,7 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
     }
     B(j, j) = std::sqrt(chi_square_rng(nu - k + j + 1, rng));
   }
-  
+
   return mdivide_right_tri_low(L_S, B);
 }
 
