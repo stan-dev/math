@@ -390,19 +390,50 @@ class vari_view_eigen {
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
-  inline auto operator()(Eigen::Index i) { return this->coeff(i); }
+  template <typename Idx, require_integral_t<Idx>* = nullptr>
+  inline auto operator()(Idx i) { return this->coeff(i); }
+  template <typename Idx, require_integral_t<Idx>* = nullptr>
+  inline auto operator()(Idx i) const { return this->coeff(i); }
 
   /**
    * Get coefficient of eigen matrices
    * @param i Row index
    * @param j Column index
    */
-  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+  template <typename IdxRow, typename IdxCol, require_all_integral_t<IdxRow, IdxCol>* = nullptr>
+  inline auto operator()(IdxRow i, IdxCol j) {
     return this->coeff(i, j);
   }
-  inline auto operator()(Eigen::Index i, Eigen::Index j) {
+  template <typename IdxRow, typename IdxCol, require_all_integral_t<IdxRow, IdxCol>* = nullptr>
+  inline auto operator()(IdxRow i, IdxCol j) const {
     return this->coeff(i, j);
+  }
+
+  template <typename IdxRow, typename IdxCol, require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
+  inline auto operator()(const IdxRow& rowIndices, const IdxCol& colIndices) {
+    using inner_type = decltype(derived().val_(rowIndices, colIndices));
+    return vari_view<inner_type>(derived().val_(rowIndices, colIndices),
+      derived().adj_(rowIndices, colIndices));
+  }
+
+  template <typename IdxRow, typename IdxCol, require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
+  inline auto operator()(const IdxRow& rowIndices, const IdxCol& colIndices) const {
+    using inner_type = decltype(derived().val_(rowIndices, colIndices));
+    return vari_view<inner_type>(derived().val_(rowIndices, colIndices),
+      derived().adj_(rowIndices, colIndices));
+  }
+
+  template<typename Indices, require_not_integral_t<Indices>* = nullptr>
+  inline auto operator()(const Indices& indices) {
+    using inner_type = decltype(derived().val_(indices));
+    return vari_view<inner_type>(derived().val_(indices),
+      derived().adj_(indices));
+  }
+  template<typename Indices, require_not_integral_t<Indices>* = nullptr>
+  inline auto operator()(const Indices& indices) const {
+    using inner_type = decltype(derived().val_(indices));
+    return vari_view<inner_type>(derived().val_(indices),
+      derived().adj_(indices));
   }
 
   /**

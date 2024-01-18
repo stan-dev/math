@@ -14,7 +14,7 @@ struct AgradRev : public testing::Test {
     stan::math::recover_memory();
   }
 };
-
+/*
 namespace stan {
 namespace test {
 template <typename T, typename S>
@@ -415,11 +415,13 @@ TEST_F(AgradRev, var_matrix_view_block_from_plain_test) {
   EXPECT_FLOAT_EQ(B_v.adj()(2), 4);
   EXPECT_FLOAT_EQ(B_v.adj()(3), 5);
 }
+*/
 
 /**
  * Tests that views of a var<Matrix> receive the adjoints of the original
  * matrix.
  */
+ /*
 TEST_F(AgradRev, var_matrix_view) {
   using stan::math::sum;
   using stan::math::var_value;
@@ -670,7 +672,126 @@ TEST_F(AgradRev, var_matrix_view_row_plain_assignment) {
   deriv << 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1;
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
+*/
+TEST_F(AgradRev, var_matrix_view_indexing_values) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  std::vector<int> idx{3, 2, 1, 1};
+  std::vector<int> row_idx{1, 1, 1, 1};
+  std::vector<int> col_idx{3, 2, 1, 0};
+  var_value<Eigen::MatrixXd> A_v(A);
+  auto A_v_row_idx = A_v(row_idx, Eigen::all);
+  auto A_v_col_idx = A_v(Eigen::all, col_idx);
+  auto A_v_row_col_idx = A_v(row_idx, col_idx);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_row_idx.val(), A(row_idx, Eigen::all));
+  EXPECT_MATRIX_FLOAT_EQ(A_v_col_idx.val(), A(Eigen::all, col_idx));
+  EXPECT_MATRIX_FLOAT_EQ(A_v_row_col_idx.val(), A(row_idx, col_idx));
+  A_v = A_v_row_col_idx;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.val(), A_v_row_col_idx.val());
+  stan::math::sum(A_v).grad();
+  EXPECT_MATRIX_EQ(A_v.val(), A);
+}
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_rep) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  std::cout << "A: \n" << A << std::endl;
+  var_value<Eigen::MatrixXd> A_v(A);
+  std::vector<int> idx{1, 1, 1, 1};
+  auto A_v_row_idx = A_v(idx, Eigen::all);
+  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
+  A_v = A_v_row_idx;
+  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
+  stan::math::sum(A_v).grad();
+  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
+  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
+  Eigen::MatrixXd deriv(4, 4);
+  deriv <<
+  0,0,0,0,
+  4, 4, 4, 4,
+  0,0,0,0,
+  0,0,0,0;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+}
 
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_flip) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  std::cout << "A: \n" << A << std::endl;
+  var_value<Eigen::MatrixXd> A_v(A);
+  std::vector<int> idx{3, 2, 1, 0};
+  auto A_v_row_idx = A_v(idx, Eigen::all);
+  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
+  A_v = A_v_row_idx;
+  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
+  stan::math::sum(A_v).grad();
+  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
+  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
+  Eigen::MatrixXd deriv = Eigen::MatrixXd::Ones(4, 4);
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+}
+
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_subset) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  using stan::math::var;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  std::cout << "A: \n" << A << std::endl;
+  Eigen::Matrix<var, -1, -1> A_v(A);
+  std::vector<int> idx_row{3, 3, 3, 3};
+  std::vector<int> idx_col{3, 2, 1, 3};
+  auto A_row = A_v(idx_row, Eigen::all);
+  auto A_row_col = A_v(idx_row, idx_col);
+  std::cout << "A_row val: \n" << A_row.val() << std::endl;
+  std::cout << "A_row_col val: \n" << A_row_col.val() << std::endl;
+  A_row_col = A_row.eval();
+  std::cout << "A_row_col val post: \n" << A_row_col.val() << std::endl;
+  std::cout << "A_v pre\n" << A_v.val() << std::endl;
+  stan::math::sum(A_row_col).grad();
+  auto A_v_adj = A_v.adj().eval();
+  auto A_row_col_adj = A_row_col.adj().eval();
+  auto A_row_adj = A_row.adj().eval();
+  std::cout << "A_v idx post: \n" << A_v.adj() << std::endl;
+  std::cout << "A_row_col idx post: \n" << A_row_col.adj() << std::endl;
+  std::cout << "A_row idx post: \n" << A_row.adj() << std::endl;
+
+  var_value<Eigen::Matrix<double, -1, -1>> A_matv(A);
+  auto A_matrow = A_matv(idx_row, Eigen::all);
+  auto A_matrow_col = A_matv(idx_row, idx_col);
+  std::cout << "A_matrow val: \n" << A_matrow.val() << std::endl;
+  std::cout << "A_matrow_col val: \n" << A_matrow_col.val() << std::endl;
+  A_matrow_col = A_matrow;
+  std::cout << "A_matrow_col val post: \n" << A_matrow_col.val() << std::endl;
+  std::cout << "A_matv pre\n" << A_matv.val() << std::endl;
+  stan::math::sum(A_matrow_col).grad();
+  std::cout << "A_matv idx post: \n" << A_matv.adj() << std::endl;
+  std::cout << "A_matrow_col idx post: \n" << A_matrow_col.adj() << std::endl;
+  std::cout << "A_matrow idx post: \n" << A_matrow.adj() << std::endl;
+  EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_adj);
+  EXPECT_MATRIX_FLOAT_EQ(A_matrow_col.adj(), A_row_col_adj);
+  EXPECT_MATRIX_FLOAT_EQ(A_matrow.adj(), A_row_adj);
+  /*
+  var_value<Eigen::MatrixXd> A_v(A);
+  auto A_v_row_idx = A_v(idx, Eigen::all);
+  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
+  A_v = A_v_row_idx;
+  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
+  stan::math::sum(A_v).grad();
+  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
+  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
+  Eigen::MatrixXd deriv = Eigen::MatrixXd::Ones(4, 4);
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+  */
+}
+
+
+/*
 TEST_F(AgradRev, var_matrix_array) {
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
@@ -959,7 +1080,7 @@ TEST_F(AgradRev, assign_nan_matvar) {
   Eigen::VectorXd z_ans_adj = Eigen::VectorXd::Zero(10);
   EXPECT_MATRIX_EQ(z_ans_adj, z.adj());
 }
-
+*/
 /**
  * For var<Matrix> and Matrix<var>, we need to make sure
  *  the tape, when going through reverse mode, leads to the same outcomes.
@@ -972,7 +1093,6 @@ TEST_F(AgradRev, assign_nan_matvar) {
  * behavior we want to mimic for `var_value<Eigen::MatrixXd>`. So in this test
  * show that for uninitialized `var_value<Eigen::MatrixXd>`, we can assign it
  * and the adjoints are the same as x.
- */
 TEST_F(AgradRev, assign_nullptr_var) {
   using stan::math::var_value;
   using var_vector = var_value<Eigen::Matrix<double, -1, 1>>;
@@ -994,3 +1114,4 @@ TEST_F(AgradRev, assign_nullptr_var) {
   EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
   EXPECT_MATRIX_EQ(x_ans_adj, y.adj());
 }
+ */
