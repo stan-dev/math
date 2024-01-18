@@ -317,7 +317,8 @@ def findChangedTests(debug):
     import subprocess
 
     changed_files = subprocess.run(
-        ["git", "diff", "--name-only", "origin/develop...HEAD"], text=True, capture_output=True
+        ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
+        text=True, capture_output=True
     ).stdout.splitlines()
     if debug:
         print("Changed files:", changed_files)
