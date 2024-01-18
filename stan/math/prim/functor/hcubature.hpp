@@ -27,9 +27,7 @@
 #include <queue>
 #include <tuple>
 #include <iostream>
-
 #include <boost/math/quadrature/gauss_kronrod.hpp>
-//#include <boost/tools>
 
 namespace stan {
 namespace math {
