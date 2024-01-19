@@ -6,12 +6,9 @@ TEST(ProbDistributionsInvWishartCholesky, matvar) {
     auto symmetric_Sigma = ((Sigma + Sigma.transpose()) * 0.5).eval();
 
     auto L_Y = stan::math::cholesky_decompose(symmetric_Y);
-    stan::plain_type_t<decltype(L_Y)> L_Y_plain = L_Y;
-
     auto L_S = stan::math::cholesky_decompose(symmetric_Sigma);
-    stan::plain_type_t<decltype(L_S)> L_S_plain = L_S;
 
-    return stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S_plain);
+    return stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S);
   };
 
   double dof = 3.4;

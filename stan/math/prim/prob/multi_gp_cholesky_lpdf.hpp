@@ -49,10 +49,11 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
                    "rows of covariance parameter", L.rows());
   check_positive_finite(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
-  check_cholesky_factor(function, "Cholesky decomposition of kernel matrix", L);
 
   const auto& y_ref = to_ref(y);
   const auto& L_ref = to_ref(L);
+  check_cholesky_factor(function, "Cholesky decomposition of kernel matrix",
+                        L_ref);
   const auto& w_ref = to_ref(w);
 
   if (y.rows() == 0) {
