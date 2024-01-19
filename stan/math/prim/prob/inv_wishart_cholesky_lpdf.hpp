@@ -49,15 +49,16 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
   using T_return = return_type_t<T_y, T_dof, T_scale>;
   static const char* function = "inv_wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
-  check_cholesky_factor(function, "Cholesky random variable", L_Y);
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
-  check_cholesky_factor(function, "Cholesky Scale matrix", L_S);
   check_size_match(function, "Rows of random variable", L_Y.rows(),
                    "columns of scale parameter", L_S.rows());
 
   T_L_Y_ref L_Y_ref = L_Y;
+  check_cholesky_factor(function, "Cholesky random variable", L_Y_ref);
+
   T_nu_ref nu_ref = nu;
   T_L_S_ref L_S_ref = L_S;
+  check_cholesky_factor(function, "Cholesky Scale matrix", L_S_ref);
 
   T_return lp(0.0);
 
