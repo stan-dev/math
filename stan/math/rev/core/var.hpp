@@ -18,10 +18,15 @@
 #include <unordered_set>
 
 namespace stan {
-template <typename T>
-using eigen_index_view1 = Eigen::IndexedView<T, std::vector<int>, std::vector<int>>;
-template <typename T>
-using eigen_index_view2 = Eigen::IndexedView<T, std::vector<int>, Eigen::internal::all_t >;
+namespace internal {
+  template <typename T>
+  struct is_eigen_index_view : std::false_type {};
+
+  template<typename ArgType, typename RowIndices, typename ColIndices>
+  struct is_eigen_index_view<Eigen::IndexedView<ArgType, RowIndices, ColIndices>> : std::true_type {};
+
+}
+
   /**
  * Checks whether type T is derived from Eigen::DenseBase.
  * If true this will have a static member function named value with a type
@@ -31,11 +36,7 @@ using eigen_index_view2 = Eigen::IndexedView<T, std::vector<int>, Eigen::interna
  * @ingroup type_trait
  */
 template <typename T>
-struct is_eigen_index_view
-    : bool_constant<
-    is_base_pointer_convertible<eigen_index_view1, T>::value ||
-    is_base_pointer_convertible<eigen_index_view2, T>::value
-    > {};
+struct is_eigen_index_view : internal::is_eigen_index_view<std::decay_t<T>> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_index_view, is_eigen_index_view,
                        require_eigens_types);
@@ -1134,14 +1135,25 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     return *this;
   }
   private:
+  template <typename Set>
+  inline constexpr auto get_indices(const Eigen::internal::all_t& /* x*/, const Set& /*set*/) {
+    return Eigen::internal::all_t{};
+  }
+
+  template <int XprSize, typename Set>
+  inline constexpr auto get_indices(const Eigen::internal::AllRange<XprSize>& x, const Set& /*set*/) {
+    return x;
+  }
+
   template<typename FirstType, typename SizeType, typename IncrType, typename Set>
   inline const auto& get_indices(const Eigen::ArithmeticSequence< FirstType, SizeType, IncrType >& x, Set& /*x_set*/) {
     return x;
   }
   template <typename Set>
-  inline constexpr auto get_indices(const Eigen::internal::all_t& /* x*/, const Set& /*set*/) {
-    return Eigen::internal::all_t{};
+  inline constexpr auto get_indices(const Eigen::internal::SingleRange& x, const Set& /*set*/) {
+    return x;
   }
+
   template <typename Vec, typename Set>
   inline auto get_indices(const Vec& row_idx, Set& x_set) const {
     auto assign_rows = row_idx.size();
@@ -1149,7 +1161,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     arena_t<Vec> x_orig_idx(assign_rows);
     Eigen::Index unique_idx = 0;
   for (int i = assign_rows - 1; i >= 0; --i) {
-    if (likely(x_set.insert(row_idx[i]).second)) {
+    if (likely(x_set.insert({row_idx[i], row_idx[i]}).second)) {
       x_row_idx[unique_idx] = row_idx[i];
       x_orig_idx[unique_idx] = i;
       unique_idx++;
@@ -1171,7 +1183,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param other the value to assign
    * @return this
    */
-  template <typename S, typename T_ = T,
+  template <typename S, typename T_ = std::decay_t<T>,
             require_assignable_t<value_type, S>* = nullptr,
             require_eigen_index_view_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
@@ -1185,39 +1197,55 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             " of your model to the Stan math github repository.");
       }();
     }
-  using arena_vec = std::vector<int, stan::math::arena_allocator<int>>;
   auto&& row_idx = this->vi_->val_.rowIndices();
-  const auto assign_rows = row_idx.size();
-  std::unordered_set<int> x_set;
   auto&& col_idx = this->vi_->val_.colIndices();
-  const auto assign_cols = col_idx.size();
-  x_set.reserve(std::max(assign_rows, assign_cols));
+  std::unordered_map<int, int> x_set;
+  x_set.reserve(std::max(row_idx.size(), col_idx.size()));
   auto x_row_idxs = get_indices(row_idx, x_set);
-  auto x_row_idx = x_row_idxs.first;
-  auto x_row_orig_idx = x_row_idxs.second;
-//  arena_vec x_col_idx(assign_cols);
   x_set.clear();
   auto x_col_idxs = get_indices(col_idx, x_set);
-  auto x_col_idx = x_col_idxs.first;
-  auto x_col_orig_idx = x_col_idxs.second;
-  arena_t<Eigen::Matrix<double, -1, -1>> prev_vals = this->vi_->val_(x_row_idx, x_col_idx);
-  Eigen::Matrix<double, -1, -1> y_vals = other.val()(x_row_orig_idx, x_col_orig_idx);
-  this->vi_->val_(x_row_idx, x_col_idx) = y_vals;
+  arena_t<Eigen::Matrix<double, RowsAtCompileTime, ColsAtCompileTime>> prev_vals = this->vi_->val_(x_row_idxs.first, x_col_idxs.first);
+  Eigen::Matrix<double, S::RowsAtCompileTime, S::ColsAtCompileTime> y_vals = other.val()(x_row_idxs.first, x_col_idxs.first);
+  this->vi_->val_(x_row_idxs.first, x_col_idxs.first) = y_vals;
+              auto print_vec = [](auto&& name, auto&& x) {
+              std::cout << name << ": [";
+              for (int i = 0; i < x.size() - 1; ++i) {
+                std::cout << x[i] << ", ";
+              }
+              std::cout << x[x.size() - 1] << "]" << std::endl;
+            };
+print_vec("unique row first", x_row_idxs.first);
+print_vec("unique row second", x_row_idxs.second);
+print_vec("unique col first", x_col_idxs.first);
+print_vec("unique col second", x_col_idxs.second);
   stan::math::reverse_pass_callback(
-      [x = this->vi_, other, prev_vals, x_col_idx, x_row_idx, x_col_orig_idx, x_row_orig_idx]() mutable {
-        x->val_(x_row_idx, x_col_idx)
-            = prev_vals;
-        prev_vals
-            = x->adj()(x_row_idx, x_col_idx);
-        x->adj()(x_row_idx, x_col_idx).setZero();
-        other.adj()(x_row_orig_idx, x_col_orig_idx) += prev_vals;
+      [x = this->vi_, other, prev_vals, x_row_idxs, x_col_idxs]() mutable {
+        std::cout << "--------CHAIN BEGIN---------" << std::endl;
+        std::cout << "prev vals: \n" << prev_vals << std::endl;
+        x->val_(x_row_idxs.first, x_col_idxs.first) = prev_vals;
+        std::cout << "x val post: \n " << x->val_ << std::endl;
+        std::cout << "prev full x adj: \n" << x->adj() << std::endl;
+        std::cout << "prev x adj: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
+        prev_vals = x->adj()(x_row_idxs.first, x_col_idxs.first);
+        std::cout << "prev full x adj post: \n" << x->adj() << std::endl;
+        std::cout << "prev x adj post: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
+        std::cout << "other adj pre full x wipe: \n" << other.adj() << std::endl;
+        std::cout << "other adj pre x wipe: \n" << other.adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
+        x->adj()(x_row_idxs.first, x_col_idxs.first).setZero();
+        std::cout << "prev full x adj post zero: \n" << x->adj() << std::endl;
+        std::cout << "prev x adj post zero: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
+        std::cout << "full other adj pre: \n" << other.adj() << std::endl;
+        std::cout << "other adj pre: \n" << other.adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
+        std::cout << "prev x saved: \n" << prev_vals << std::endl;
+        other.adj()(x_row_idxs.first, x_col_idxs.first) += prev_vals;
+        std::cout << "other adj post: \n" << other.adj() << std::endl;
+        std::cout << "--------CHAIN END---------" << std::endl;
       });
     return *this;
   }
     template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
             require_not_plain_type_t<T_>* = nullptr,
-            require_not_eigen_index_view_t<S>* = nullptr,
             require_not_eigen_index_view_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     std::cout << "assign: not plain from plain called" << std::endl;

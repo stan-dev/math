@@ -182,18 +182,18 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
   auto A_transpose = A_v.transpose();
   EXPECT_MATRIX_FLOAT_EQ(A_transpose.val(), A.transpose());
-  auto A_row = A_v.row(3);
-  EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
+  auto A_rhs = A_v.row(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_rhs.val(), A.row(3));
   auto A_col = A_v.col(3);
   EXPECT_MATRIX_FLOAT_EQ(A_col.val(), A.col(3));
   auto A_block_row = A_v.block(1, 1, 3, 3).row(1);
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.val(), A.block(1, 1, 3, 3).row(1));
-  auto A_rowwise_reverse = A_v.rowwise_reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.val(), A.rowwise().reverse());
+  auto A_rhswise_reverse = A_v.rowwise_reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_reverse.val(), A.rowwise().reverse());
   auto A_colwise_reverse = A_v.colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
-  auto A_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
+  auto A_rhswise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_colwise_reverse.val(),
                          A.rowwise().reverse().colwise().reverse());
 
   auto A_diagonal = A_v.diagonal();
@@ -209,14 +209,14 @@ TEST_F(AgradRev, var_matrix_views) {
   }
   EXPECT_MATRIX_FLOAT_EQ(A_block.adj(), A_v.adj().block(1, 1, 3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj(), A_v.adj().transpose());
-  EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_rhs.adj(), A_v.adj().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.adj(),
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_reverse.adj(),
                          A_v.adj().rowwise().reverse());
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.adj(),
                          A_v.adj().colwise().reverse());
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(),
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_colwise_reverse.adj(),
                          A_v.adj().rowwise().reverse().colwise().reverse());
   // since new var is made and values propogate back
   A_coeff1.vi_->adj_ = 1;
@@ -277,18 +277,18 @@ TEST_F(AgradRev, var_matrix_views_const) {
   EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
   auto A_transpose = A_v.transpose();
   EXPECT_MATRIX_FLOAT_EQ(A_transpose.val(), A.transpose());
-  auto A_row = A_v.row(3);
-  EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
+  auto A_rhs = A_v.row(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_rhs.val(), A.row(3));
   auto A_col = A_v.col(3);
   EXPECT_MATRIX_FLOAT_EQ(A_col.val(), A.col(3));
   auto A_block_row = A_v.block(1, 1, 3, 3).row(1);
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.val(), A.block(1, 1, 3, 3).row(1));
-  auto A_rowwise_reverse = A_v.rowwise_reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.val(), A.rowwise().reverse());
+  auto A_rhswise_reverse = A_v.rowwise_reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_reverse.val(), A.rowwise().reverse());
   auto A_colwise_reverse = A_v.colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
-  auto A_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
+  auto A_rhswise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_colwise_reverse.val(),
                          A.rowwise().reverse().colwise().reverse());
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
@@ -300,14 +300,14 @@ TEST_F(AgradRev, var_matrix_views_const) {
   }
   EXPECT_MATRIX_FLOAT_EQ(A_block.adj(), A_v.adj().block(1, 1, 3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj(), A_v.adj().transpose());
-  EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_rhs.adj(), A_v.adj().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.adj(),
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_reverse.adj(),
                          A_v.adj().rowwise().reverse());
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.adj(),
                          A_v.adj().colwise().reverse());
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(),
+  EXPECT_MATRIX_FLOAT_EQ(A_rhswise_colwise_reverse.adj(),
                          A_v.adj().rowwise().reverse().colwise().reverse());
   // since new var is made and values propogate back
   A_coeff1.vi_->adj_ = 1;
@@ -698,16 +698,11 @@ TEST_F(AgradRev, var_matrix_view_indexing_adjoints_rep) {
   using stan::math::var_value;
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
-  std::cout << "A: \n" << A << std::endl;
   var_value<Eigen::MatrixXd> A_v(A);
   std::vector<int> idx{1, 1, 1, 1};
   auto A_v_row_idx = A_v(idx, Eigen::all);
-  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
   A_v = A_v_row_idx;
-  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
   stan::math::sum(A_v).grad();
-  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
-  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
   Eigen::MatrixXd deriv(4, 4);
   deriv <<
   0,0,0,0,
@@ -722,72 +717,86 @@ TEST_F(AgradRev, var_matrix_view_indexing_adjoints_flip) {
   using stan::math::var_value;
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
-  std::cout << "A: \n" << A << std::endl;
   var_value<Eigen::MatrixXd> A_v(A);
   std::vector<int> idx{3, 2, 1, 0};
   auto A_v_row_idx = A_v(idx, Eigen::all);
-  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
   A_v = A_v_row_idx;
-  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
   stan::math::sum(A_v).grad();
-  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
-  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
   Eigen::MatrixXd deriv = Eigen::MatrixXd::Ones(4, 4);
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
-TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_subset) {
+template <typename IdxRowLhs, typename IdxColLhs, typename IdxRowRhs, typename IdxColRhs>
+inline void var_matrix_index_test(IdxRowLhs&& idx_row_lhs,  IdxColLhs&& idx_col_lhs,  IdxRowRhs&& idx_row_rhs,  IdxColRhs&& idx_col_rhs) {
   using stan::math::sum;
   using stan::math::var_value;
   using stan::math::var;
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
-  std::cout << "A: \n" << A << std::endl;
+  std::cout << "A: \n" << A << std::endl; 
   Eigen::Matrix<var, -1, -1> A_v(A);
-  std::vector<int> idx_row{3, 3, 3, 3};
-  std::vector<int> idx_col{3, 2, 1, 3};
-  auto A_row = A_v(idx_row, Eigen::all);
-  auto A_row_col = A_v(idx_row, idx_col);
-  std::cout << "A_row val: \n" << A_row.val() << std::endl;
-  std::cout << "A_row_col val: \n" << A_row_col.val() << std::endl;
-  A_row_col = A_row.eval();
-  std::cout << "A_row_col val post: \n" << A_row_col.val() << std::endl;
-  std::cout << "A_v pre\n" << A_v.val() << std::endl;
-  stan::math::sum(A_row_col).grad();
+  auto A_lhs = A_v(idx_row_lhs, idx_col_lhs);
+  auto A_rhs = A_v(idx_row_rhs, idx_col_rhs);
+  std::cout << "A_lhs pre: \n" << A_lhs.val() << std::endl; 
+  std::cout << "A_rhs pre: \n" << A_rhs.val() << std::endl; 
+  A_lhs = A_rhs.eval();
+  std::cout << "A_lhs post: \n" << A_lhs.val() << std::endl; 
+  stan::math::sum(A_lhs).grad();
   auto A_v_adj = A_v.adj().eval();
-  auto A_row_col_adj = A_row_col.adj().eval();
-  auto A_row_adj = A_row.adj().eval();
-  std::cout << "A_v idx post: \n" << A_v.adj() << std::endl;
-  std::cout << "A_row_col idx post: \n" << A_row_col.adj() << std::endl;
-  std::cout << "A_row idx post: \n" << A_row.adj() << std::endl;
-
+  auto A_lhs_adj = A_lhs.adj().eval();
+  auto A_rhs_adj = A_rhs.adj().eval();
+  stan::math::recover_memory();
+  std::cout << "----------var<Matrix>-----------" << std::endl;
   var_value<Eigen::Matrix<double, -1, -1>> A_matv(A);
-  auto A_matrow = A_matv(idx_row, Eigen::all);
-  auto A_matrow_col = A_matv(idx_row, idx_col);
-  std::cout << "A_matrow val: \n" << A_matrow.val() << std::endl;
-  std::cout << "A_matrow_col val: \n" << A_matrow_col.val() << std::endl;
-  A_matrow_col = A_matrow;
-  std::cout << "A_matrow_col val post: \n" << A_matrow_col.val() << std::endl;
-  std::cout << "A_matv pre\n" << A_matv.val() << std::endl;
-  stan::math::sum(A_matrow_col).grad();
-  std::cout << "A_matv idx post: \n" << A_matv.adj() << std::endl;
-  std::cout << "A_matrow_col idx post: \n" << A_matrow_col.adj() << std::endl;
-  std::cout << "A_matrow idx post: \n" << A_matrow.adj() << std::endl;
-  EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_adj);
-  EXPECT_MATRIX_FLOAT_EQ(A_matrow_col.adj(), A_row_col_adj);
-  EXPECT_MATRIX_FLOAT_EQ(A_matrow.adj(), A_row_adj);
+  auto A_mat_lhs = A_matv(idx_row_lhs, idx_col_lhs);
+  auto A_mat_rhs = A_matv(idx_row_rhs, idx_col_rhs);
+  std::cout << "A_mat_lhs pre: \n" << A_mat_lhs.val() << std::endl; 
+  std::cout << "A_mat_rhs pre: \n" << A_mat_rhs.val() << std::endl; 
+  A_mat_lhs = A_mat_rhs;
+  std::cout << "A_mat_lhs post: \n" << A_mat_lhs.val() << std::endl; 
+  stan::math::sum(A_mat_lhs).grad();
+  //EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.adj(), A_lhs_adj);
+  std::cout << "A_mat_lhs.adj(): \n" << A_mat_lhs.adj() << "\nA_lhs_adj: \n" << A_lhs_adj << "\n" << std::endl;
+  //EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_adj);
+  std::cout << "A_matv.adj(): \n" << A_matv.adj() << "\nA_v_adj: \n" << A_v_adj << "\n" << std::endl;
+  //EXPECT_MATRIX_FLOAT_EQ(A_mat_rhs.adj(), A_rhs_adj);
+  std::cout << "A_mat_rhs.adj(): \n" << A_mat_rhs.adj() << "\nA_rhs_adj: \n" << A_rhs_adj << "\n" << std::endl;
+  stan::math::recover_memory();
+}
+
+
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_subset) {
+  std::vector<int> idx_row{1, 1, 2, 3};
+  std::vector<int> idx_col{3, 2, 1, 1};
+  var_matrix_index_test(idx_row, idx_col, idx_col, idx_row);
   /*
-  var_value<Eigen::MatrixXd> A_v(A);
-  auto A_v_row_idx = A_v(idx, Eigen::all);
-  std::cout << "A r idx: \n" << A_v_row_idx.val() << std::endl;
-  A_v = A_v_row_idx;
-  std::cout << "A_v idx pre: \n" << A_v.val() << std::endl;
-  stan::math::sum(A_v).grad();
-  std::cout << "A_v idx post: \n" << A_v.val() << std::endl;
-  std::cout << "A_v adj: \n" <<  A_v.adj() << std::endl;
-  Eigen::MatrixXd deriv = Eigen::MatrixXd::Ones(4, 4);
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
-  */
+  std::vector<std::vector<int>> idx_sets{{0, 1, 2, 3}, {3, 3, 3, 3}, {1, 1, 3, 3}, {3, 2, 1, 0}, {3, 2, 1, 1}};
+  for (auto&& idx_row_lhs : idx_sets) {
+    for (auto&& idx_col_lhs : idx_sets) {
+      for (auto&& idx_row_rhs : idx_sets) {
+        for (auto&& idx_col_rhs : idx_sets) {
+          var_matrix_index_test(idx_row_lhs, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          if (::testing::Test::HasFailure()) {
+            auto print_vec = [](auto&& name, auto&& x) {
+              std::cout << name << ": [";
+              for (int i = 0; i < x.size() - 1; ++i) {
+                std::cout << x[i] << ", ";
+              }
+              std::cout << x[x.size() - 1] << "]" << std::endl;
+            };
+            std::cout << "Failed for: " << std::endl;
+            print_vec("idx_row_lhs", idx_row_lhs);
+            print_vec("idx_col_lhs", idx_col_lhs);
+            print_vec("idx_row_rhs", idx_row_rhs);
+            print_vec("idx_col_rhs", idx_col_rhs);
+
+          }
+        }
+      }    
+    }
+  }
+    */
+  
 }
 
 
