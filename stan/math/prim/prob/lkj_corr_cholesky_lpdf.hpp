@@ -19,9 +19,10 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(const T_covar& L,
                                                        const T_shape& eta) {
   using lp_ret = return_type_t<T_covar, T_shape>;
   static const char* function = "lkj_corr_cholesky_lpdf";
-  const auto& L_ref = to_ref(L);
   check_positive(function, "Shape parameter", eta);
-  check_lower_triangular(function, "Random variable", L_ref);
+
+  const auto& L_ref = to_ref(L);
+  check_cholesky_factor(function, "Random variable", L_ref);
 
   const unsigned int K = L.rows();
   if (K == 0) {
