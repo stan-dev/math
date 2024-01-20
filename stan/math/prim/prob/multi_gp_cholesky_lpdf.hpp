@@ -55,7 +55,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
                         L_ref);
   const auto& w_ref = to_ref(w);
   check_positive_finite(function, "Kernel scales", w_ref);
-  
+
   if (y.rows() == 0) {
     return 0;
   }
