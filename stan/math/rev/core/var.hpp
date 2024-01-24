@@ -19,15 +19,16 @@
 
 namespace stan {
 namespace internal {
-  template <typename T>
-  struct is_eigen_index_view : std::false_type {};
+template <typename T>
+struct is_eigen_index_view : std::false_type {};
 
-  template<typename ArgType, typename RowIndices, typename ColIndices>
-  struct is_eigen_index_view<Eigen::IndexedView<ArgType, RowIndices, ColIndices>> : std::true_type {};
+template <typename ArgType, typename RowIndices, typename ColIndices>
+struct is_eigen_index_view<Eigen::IndexedView<ArgType, RowIndices, ColIndices>>
+    : std::true_type {};
 
-}
+}  // namespace internal
 
-  /**
+/**
  * Checks whether type T is derived from Eigen::DenseBase.
  * If true this will have a static member function named value with a type
  * of true, else value is false.
@@ -43,8 +44,58 @@ STAN_ADD_REQUIRE_UNARY(eigen_index_view, is_eigen_index_view,
 STAN_ADD_REQUIRE_CONTAINER(eigen_index_view, is_eigen_index_view,
                            require_eigens_types);
 
-namespace math {
 
+namespace math {
+namespace internal {
+
+  template <typename Vec, typename Set, require_container_t<Vec>* = nullptr>
+  inline auto get_indices(Vec&& row_idx, Set& x_set) {
+    auto assign_rows = row_idx.size();
+    using idx_t = Eigen::Matrix<typename std::decay_t<Vec>::value_type, -1, 1>;
+    arena_t<idx_t> x_orig_idx(assign_rows);
+    Eigen::Index unique_idx = 0;
+    for (int i = assign_rows - 1; i >= 0; --i) {
+      if (likely(x_set.insert(row_idx[i]).second)) {
+        x_orig_idx[unique_idx] = i;
+        unique_idx++;
+      }
+    }
+    return Eigen::Map<idx_t>(x_orig_idx.data(), unique_idx);
+  }
+  template <typename AllT, typename Set, require_same_t<AllT, Eigen::internal::all_t>* = nullptr>
+  inline constexpr auto get_indices(AllT&&  x, Set&& /*set*/) {
+    return x;
+  }
+  // Primary template: by default, the type is not Eigen::internal::AllRange, so derive from std::false_type.
+  template<typename T>
+  struct is_allrange : std::false_type {};
+
+  // Specialization for Eigen::internal::AllRange<XprSize>: in this case, derive from std::true_type.
+  template<int XprSize>
+  struct is_allrange<Eigen::internal::AllRange<XprSize>> : std::true_type {};
+
+  // Helper variable template to easily check the trait.
+  template<typename T>
+  constexpr bool is_allrange_v = is_allrange<std::decay_t<T>>::value;
+
+  template <typename AllRangeT, typename Set, std::enable_if_t<is_allrange_v<AllRangeT>>* = nullptr>
+  inline constexpr auto get_indices(AllRangeT&& x, Set&& /*set*/) {
+    return x;
+  }
+
+  template <typename FirstType, typename SizeType, typename IncrType,
+            typename Set>
+  inline const auto& get_indices(
+      const Eigen::ArithmeticSequence<FirstType, SizeType, IncrType>& x,
+      Set&& /*x_set*/) {
+    return x;
+  }
+  template <typename Set>
+  inline constexpr auto get_indices(const Eigen::internal::SingleRange& x,
+                                    Set&& /*set*/) {
+    return x;
+  }
+}
 // forward declare
 template <typename Vari>
 static void grad(Vari* vi);
@@ -380,7 +431,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var_value() : vi_(nullptr) {}
+  var_value() : vi_(nullptr) {
+  }
 
   /**
    * Construct a variable from the specified floating point argument
@@ -390,7 +442,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param x Value of the variable.
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr>
-  var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
+  var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {
+  }  // NOLINT
 
   /**
    * Copy constructor for var_val.
@@ -400,7 +453,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
-  var_value(const var_value<S>& other) : vi_(other.vi_) {}
+  var_value(const var_value<S>& other) : vi_(other.vi_) {
+  }
 
   /**
    * Construct a `var_value` with a plain type
@@ -414,13 +468,11 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_not_plain_type_t<S>* = nullptr,
             require_plain_type_t<T_>* = nullptr>
   var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
-    std::cout << "constructor: plain from not plain" << std::endl;
-    reverse_pass_callback(
-        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
-          std::cout << "other_vi: \n" << other_vi->adj_ << std::endl;
-          std::cout << "this_vi: \n" << this_vi->adj_ << std::endl;
-          other_vi->adj_ += this_vi->adj_;
-        });
+    // If vi_ is nullptr then the var needs initialized via copy constructor
+      reverse_pass_callback(
+          [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+            other_vi->adj_ += this_vi->adj_;
+          });
   }
 
   /**
@@ -786,9 +838,13 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param i Element to access
    */
   template <typename Idx, require_integral_t<Idx>* = nullptr>
-  inline auto operator()(Idx i) const { return this->coeff(i); }
+  inline auto operator()(Idx i) const {
+    return this->coeff(i);
+  }
   template <typename Idx, require_integral_t<Idx>* = nullptr>
-  inline auto operator()(Idx i) { return this->coeff(i); }
+  inline auto operator()(Idx i) {
+    return this->coeff(i);
+  }
 
   /**
    * View element of eigen matrices. This creates a new
@@ -798,40 +854,45 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @param i Row to access
    * @param j Column to access
    */
-  template <typename IdxRow, typename IdxCol, require_all_integral_t<IdxRow, IdxCol>* = nullptr>
+  template <typename IdxRow, typename IdxCol,
+            require_all_integral_t<IdxRow, IdxCol>* = nullptr>
   inline auto operator()(IdxRow i, IdxCol j) const {
     return this->coeff(i, j);
   }
-  template <typename IdxRow, typename IdxCol, require_all_integral_t<IdxRow, IdxCol>* = nullptr>
+  template <typename IdxRow, typename IdxCol,
+            require_all_integral_t<IdxRow, IdxCol>* = nullptr>
   inline auto operator()(IdxRow i, IdxCol j) {
     return this->coeff(i, j);
   }
 
-  template <typename IdxRow, typename IdxCol, require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
+  template <typename IdxRow, typename IdxCol,
+            require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
   inline auto operator()(const IdxRow& rowIndices, const IdxCol& colIndices) {
     using vari_sub = decltype(vi_->operator()(rowIndices, colIndices));
-    using var_sub = var_value<value_type_t<vari_sub>>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->operator()(rowIndices, colIndices)));
   }
 
-  template <typename IdxRow, typename IdxCol, require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
-  inline auto operator()(const IdxRow& rowIndices, const IdxCol& colIndices) const {
+  template <typename IdxRow, typename IdxCol,
+            require_all_not_integral_t<IdxRow, IdxCol>* = nullptr>
+  inline auto operator()(const IdxRow& rowIndices,
+                         const IdxCol& colIndices) const {
     using vari_sub = decltype(vi_->operator()(rowIndices, colIndices));
-    using var_sub = var_value<value_type_t<vari_sub>>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->operator()(rowIndices, colIndices)));
   }
 
-  template<typename Indices, require_not_integral_t<Indices>* = nullptr>
+  template <typename Indices, require_not_integral_t<Indices>* = nullptr>
   inline auto operator()(const Indices& indices) {
     using vari_sub = decltype(vi_->operator()(indices));
-    using var_sub = var_value<value_type_t<vari_sub>>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->operator()(indices)));
   }
 
-  template<typename Indices, require_not_integral_t<Indices>* = nullptr>
+  template <typename Indices, require_not_integral_t<Indices>* = nullptr>
   inline auto operator()(const Indices& indices) const {
     using vari_sub = decltype(vi_->operator()(indices));
-    using var_sub = var_value<value_type_t<vari_sub>>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->operator()(indices)));
   }
 
@@ -1069,7 +1130,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_all_plain_type_t<T, S>* = nullptr,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    std::cout << "assign: plain from plain same called" << std::endl;
     vi_ = other.vi_;
     return *this;
   }
@@ -1088,7 +1148,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_all_plain_type_t<T_, S>* = nullptr,
             require_not_same_t<plain_type_t<T_>, plain_type_t<S>>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-        std::cout << "assign: plain from plain not same called" << std::endl;
     static_assert(
         EIGEN_PREDICATE_SAME_MATRIX_SIZE(T, S),
         "You mixed matrices of different sizes that are not assignable.");
@@ -1108,7 +1167,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_not_plain_type_t<S>* = nullptr,
             require_plain_type_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    std::cout << "plain from not plain called" << std::endl;
     // If vi_ is nullptr then the var needs initialized via copy constructor
     if (!(this->vi_)) {
       *this = var_value<T>(other);
@@ -1134,45 +1192,9 @@ class var_value<T, internal::require_matrix_var_value<T>> {
         });
     return *this;
   }
-  private:
-  template <typename Set>
-  inline constexpr auto get_indices(const Eigen::internal::all_t& /* x*/, const Set& /*set*/) {
-    return Eigen::internal::all_t{};
-  }
 
-  template <int XprSize, typename Set>
-  inline constexpr auto get_indices(const Eigen::internal::AllRange<XprSize>& x, const Set& /*set*/) {
-    return x;
-  }
 
-  template<typename FirstType, typename SizeType, typename IncrType, typename Set>
-  inline const auto& get_indices(const Eigen::ArithmeticSequence< FirstType, SizeType, IncrType >& x, Set& /*x_set*/) {
-    return x;
-  }
-  template <typename Set>
-  inline constexpr auto get_indices(const Eigen::internal::SingleRange& x, const Set& /*set*/) {
-    return x;
-  }
-
-  template <typename Vec, typename Set>
-  inline auto get_indices(const Vec& row_idx, Set& x_set) const {
-    auto assign_rows = row_idx.size();
-    arena_t<Vec> x_row_idx(assign_rows);
-    arena_t<Vec> x_orig_idx(assign_rows);
-    Eigen::Index unique_idx = 0;
-  for (int i = assign_rows - 1; i >= 0; --i) {
-    if (likely(x_set.insert({row_idx[i], row_idx[i]}).second)) {
-      x_row_idx[unique_idx] = row_idx[i];
-      x_orig_idx[unique_idx] = i;
-      unique_idx++;
-    } else {
-    }
-  }
-    using eig_map = Eigen::Map<Eigen::Matrix<int, -1, 1>>;
-    return std::make_pair(eig_map(x_row_idx.data(), unique_idx),
-     eig_map(x_orig_idx.data(), unique_idx));
-  }
-  public:
+ public:
   /**
    * Assignment of another var value, when either both `this` or other does not
    * contain a plain type.
@@ -1187,7 +1209,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_assignable_t<value_type, S>* = nullptr,
             require_eigen_index_view_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    std::cout << "assign index view: not plain from plain called" << std::endl;
     // If vi_ is nullptr then the var needs initialized via copy constructor
     if (!(this->vi_)) {
       []() STAN_COLD_PATH {
@@ -1199,56 +1220,36 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     }
   auto&& row_idx = this->vi_->val_.rowIndices();
   auto&& col_idx = this->vi_->val_.colIndices();
-  std::unordered_map<int, int> x_set;
-  x_set.reserve(std::max(row_idx.size(), col_idx.size()));
-  auto x_row_idxs = get_indices(row_idx, x_set);
+  const auto assign_rows = row_idx.size();
+  const auto assign_cols = col_idx.size();
+  using arena_vec = std::vector<int, stan::math::arena_allocator<int>>;
+  arena_vec x_col_idx(assign_cols);
+  arena_vec x_row_idx(assign_rows);
+  std::unordered_set<int> x_set;
+  x_set.reserve(assign_cols);
+  auto unique_row_idx = internal::get_indices(row_idx, x_set);
   x_set.clear();
-  auto x_col_idxs = get_indices(col_idx, x_set);
-  arena_t<Eigen::Matrix<double, RowsAtCompileTime, ColsAtCompileTime>> prev_vals = this->vi_->val_(x_row_idxs.first, x_col_idxs.first);
-  Eigen::Matrix<double, S::RowsAtCompileTime, S::ColsAtCompileTime> y_vals = other.val()(x_row_idxs.first, x_col_idxs.first);
-  this->vi_->val_(x_row_idxs.first, x_col_idxs.first) = y_vals;
-              auto print_vec = [](auto&& name, auto&& x) {
-              std::cout << name << ": [";
-              for (int i = 0; i < x.size() - 1; ++i) {
-                std::cout << x[i] << ", ";
-              }
-              std::cout << x[x.size() - 1] << "]" << std::endl;
-            };
-print_vec("unique row first", x_row_idxs.first);
-print_vec("unique row second", x_row_idxs.second);
-print_vec("unique col first", x_col_idxs.first);
-print_vec("unique col second", x_col_idxs.second);
+  auto unique_col_idx = internal::get_indices(col_idx, x_set);
+  arena_t<Eigen::Matrix<double, -1, -1>> prev_vals = this->vi_->val_(unique_row_idx,
+                                                unique_col_idx);
+  this->vi_->val_(unique_row_idx, unique_col_idx) = other.val()(unique_row_idx,
+                                                unique_col_idx).eval();
   stan::math::reverse_pass_callback(
-      [x = this->vi_, other, prev_vals, x_row_idxs, x_col_idxs]() mutable {
-        std::cout << "--------CHAIN BEGIN---------" << std::endl;
-        std::cout << "prev vals: \n" << prev_vals << std::endl;
-        x->val_(x_row_idxs.first, x_col_idxs.first) = prev_vals;
-        std::cout << "x val post: \n " << x->val_ << std::endl;
-        std::cout << "prev full x adj: \n" << x->adj() << std::endl;
-        std::cout << "prev x adj: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
-        prev_vals = x->adj()(x_row_idxs.first, x_col_idxs.first);
-        std::cout << "prev full x adj post: \n" << x->adj() << std::endl;
-        std::cout << "prev x adj post: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
-        std::cout << "other adj pre full x wipe: \n" << other.adj() << std::endl;
-        std::cout << "other adj pre x wipe: \n" << other.adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
-        x->adj()(x_row_idxs.first, x_col_idxs.first).setZero();
-        std::cout << "prev full x adj post zero: \n" << x->adj() << std::endl;
-        std::cout << "prev x adj post zero: \n" << x->adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
-        std::cout << "full other adj pre: \n" << other.adj() << std::endl;
-        std::cout << "other adj pre: \n" << other.adj()(x_row_idxs.first, x_col_idxs.first) << std::endl;
-        std::cout << "prev x saved: \n" << prev_vals << std::endl;
-        other.adj()(x_row_idxs.first, x_col_idxs.first) += prev_vals;
-        std::cout << "other adj post: \n" << other.adj() << std::endl;
-        std::cout << "--------CHAIN END---------" << std::endl;
+      [this, other, prev_vals, x_col_idx, x_row_idx, unique_row_idx, unique_col_idx]() mutable {
+        this->vi_->val_(unique_row_idx, unique_col_idx) = prev_vals;
+        prev_vals = this->adj()(unique_row_idx, unique_col_idx);
+        this->adj()(unique_row_idx, unique_col_idx).setZero();
+        other.adj()(unique_row_idx, unique_col_idx) += prev_vals;
       });
-    return *this;
-  }
-    template <typename S, typename T_ = T,
+  return *this;
+}
+
+
+  template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,
             require_not_plain_type_t<T_>* = nullptr,
             require_not_eigen_index_view_t<T_>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    std::cout << "assign: not plain from plain called" << std::endl;
     // If vi_ is nullptr then the var needs initialized via copy constructor
     if (!(this->vi_)) {
       []() STAN_COLD_PATH {
@@ -1265,16 +1266,13 @@ print_vec("unique col second", x_col_idxs.second);
 
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
-          std::cout << "assign rev: not plain from plain called" << std::endl;
           this_vi->val_ = prev_val;
           // we have no way of detecting aliasing between this->vi_->adj_ and
           // other.vi_->adj_, so we must copy adjoint before reseting to zero
 
           // we can reuse prev_val instead of allocating a new matrix
           prev_val.deep_copy(this_vi->adj_);
-          std::cout << "this adjoint: " << this_vi->adj_ << std::endl;
           this_vi->adj_.setZero();
-          std::cout << "other adjoint: " << other_vi->adj_ << std::endl;
           other_vi->adj_ += prev_val;
         });
     return *this;

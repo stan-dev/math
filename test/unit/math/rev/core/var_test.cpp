@@ -727,76 +727,174 @@ TEST_F(AgradRev, var_matrix_view_indexing_adjoints_flip) {
 }
 
 template <typename IdxRowLhs, typename IdxColLhs, typename IdxRowRhs, typename IdxColRhs>
+inline void var_matrix_index_test_noalias(IdxRowLhs&& idx_row_lhs,  IdxColLhs&& idx_col_lhs,  IdxRowRhs&& idx_row_rhs,  IdxColRhs&& idx_col_rhs) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  using stan::math::var;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  Eigen::Matrix<var, -1, -1> A_v(A);
+  Eigen::Matrix<var, -1, -1> A_v_orig(4, 4);
+  for (Eigen::Index i = 0; i < A_v.size(); ++i) {
+    A_v_orig(i).vi_ = A_v(i).vi_;
+  }
+
+  auto A_lhs = A_v(idx_row_lhs, idx_col_lhs);
+  Eigen::Matrix<var, -1, -1> A_rhs(A(idx_row_rhs, idx_col_rhs));
+  A_lhs = A_rhs;
+  stan::math::sum(A_v).grad();
+  auto A_v_adj = A_v.adj().eval();
+  auto A_v_orig_adj = A_v_orig.adj().eval();
+  auto A_lhs_adj = A_lhs.adj().eval();
+  auto A_rhs_adj = A_rhs.adj().eval();
+  auto A_v_val = A_v.val().eval();
+  auto A_lhs_val = A_lhs.val().eval();
+  auto A_rhs_val = A_rhs.val().eval();
+
+  stan::math::recover_memory();
+  var_value<Eigen::Matrix<double, -1, -1>> A_matv(A);
+  auto A_mat_lhs = A_matv(idx_row_lhs, idx_col_lhs);
+  var_value<Eigen::Matrix<double, -1, -1>> A_mat_rhs(A(idx_row_rhs, idx_col_rhs));
+  A_mat_lhs = A_mat_rhs;
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.val(), A_lhs_val);
+  stan::math::sum(A_matv).grad();
+  EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_orig_adj);
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.adj(), A_v_orig_adj(idx_row_lhs, idx_col_lhs));
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_rhs.adj(), A_rhs_adj);
+  stan::math::recover_memory();
+}
+
+
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_noalias) {
+  auto print_vec = [](auto&& name, auto&& x) {
+    std::cout << name << ": [";
+    for (int i = 0; i < x.size() - 1; ++i) {
+      std::cout << x[i] << ", ";
+    }
+    std::cout << x[x.size() - 1] << "]" << std::endl;
+  };
+  using arr_t = std::array<int, 4>;
+  constexpr std::array<arr_t, 9> idx_sets{
+    arr_t{0, 1, 2, 3}, arr_t{3, 3, 3, 3}, arr_t{1, 1, 3, 3}, arr_t{3, 3, 0, 0},
+    arr_t{3, 2, 1, 0}, arr_t{3, 2, 1, 1}, arr_t{0, 1, 1, 3}, arr_t{0, 0, 0, 0},
+    arr_t{3, 2, 3, 2}};
+  for (auto&& idx_row_lhs : idx_sets) {
+    for (auto&& idx_col_lhs : idx_sets) {
+      for (auto&& idx_row_rhs : idx_sets) {
+        for (auto&& idx_col_rhs : idx_sets) {
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(Eigen::all, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, Eigen::all, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, Eigen::all, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, idx_row_rhs, Eigen::all);
+          var_matrix_index_test_noalias(Eigen::seq(0, 3), idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, Eigen::seq(0, 3), idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, Eigen::seq(0, 3), idx_col_rhs);
+          var_matrix_index_test_noalias(idx_row_lhs, idx_col_lhs, idx_row_rhs, Eigen::seq(0, 3));
+          if (::testing::Test::HasFailure()) {
+            std::cout << "Failed for: " << std::endl;
+            print_vec("idx_row_lhs", idx_row_lhs);
+            print_vec("idx_col_lhs", idx_col_lhs);
+            print_vec("idx_row_rhs", idx_row_rhs);
+            print_vec("idx_col_rhs", idx_col_rhs);
+          }
+        }
+      }
+    }
+  }
+
+}
+
+
+template <typename IdxRowLhs, typename IdxColLhs, typename IdxRowRhs, typename IdxColRhs>
 inline void var_matrix_index_test(IdxRowLhs&& idx_row_lhs,  IdxColLhs&& idx_col_lhs,  IdxRowRhs&& idx_row_rhs,  IdxColRhs&& idx_col_rhs) {
   using stan::math::sum;
   using stan::math::var_value;
   using stan::math::var;
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
-  std::cout << "A: \n" << A << std::endl; 
   Eigen::Matrix<var, -1, -1> A_v(A);
+  Eigen::Matrix<var, -1, -1> A_v_orig(4, 4);
+  for (Eigen::Index i = 0; i < A_v.size(); ++i) {
+    A_v_orig(i).vi_ = A_v(i).vi_;
+  }
   auto A_lhs = A_v(idx_row_lhs, idx_col_lhs);
-  auto A_rhs = A_v(idx_row_rhs, idx_col_rhs);
-  std::cout << "A_lhs pre: \n" << A_lhs.val() << std::endl; 
-  std::cout << "A_rhs pre: \n" << A_rhs.val() << std::endl; 
-  A_lhs = A_rhs.eval();
-  std::cout << "A_lhs post: \n" << A_lhs.val() << std::endl; 
-  stan::math::sum(A_lhs).grad();
+  Eigen::Matrix<var, -1, -1> A_rhs = A_v(idx_row_rhs, idx_col_rhs);
+  Eigen::Matrix<var, -1, 1> b_v(A.col(0));
+  Eigen::Matrix<var, -1, 1> mul = stan::math::multiply(A_lhs, b_v);
+  A_lhs = A_rhs;
+  (stan::math::sum(A_v) + stan::math::sum(mul)).grad();
   auto A_v_adj = A_v.adj().eval();
   auto A_lhs_adj = A_lhs.adj().eval();
   auto A_rhs_adj = A_rhs.adj().eval();
+  auto A_v_val = A_v.val().eval();
+  auto A_lhs_val = A_lhs.val().eval();
+  auto A_rhs_val = A_rhs.val().eval();
+  // Store the original adjoint values without overwrites
+  auto A_v_orig_adj = A_v_orig.adj().eval();
+  auto A_v_orig_lhs_adj = A_v_orig(idx_row_lhs, idx_col_rhs).adj().eval();
+
   stan::math::recover_memory();
-  std::cout << "----------var<Matrix>-----------" << std::endl;
   var_value<Eigen::Matrix<double, -1, -1>> A_matv(A);
   auto A_mat_lhs = A_matv(idx_row_lhs, idx_col_lhs);
   auto A_mat_rhs = A_matv(idx_row_rhs, idx_col_rhs);
-  std::cout << "A_mat_lhs pre: \n" << A_mat_lhs.val() << std::endl; 
-  std::cout << "A_mat_rhs pre: \n" << A_mat_rhs.val() << std::endl; 
+  var_value<Eigen::Matrix<double, -1, 1>> b_matv(A.col(0));
+  var_value<Eigen::Matrix<double, -1, 1>> mul_mat = stan::math::multiply(A_mat_lhs, b_matv);
   A_mat_lhs = A_mat_rhs;
-  std::cout << "A_mat_lhs post: \n" << A_mat_lhs.val() << std::endl; 
-  stan::math::sum(A_mat_lhs).grad();
-  //EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.adj(), A_lhs_adj);
-  std::cout << "A_mat_lhs.adj(): \n" << A_mat_lhs.adj() << "\nA_lhs_adj: \n" << A_lhs_adj << "\n" << std::endl;
-  //EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_adj);
-  std::cout << "A_matv.adj(): \n" << A_matv.adj() << "\nA_v_adj: \n" << A_v_adj << "\n" << std::endl;
-  //EXPECT_MATRIX_FLOAT_EQ(A_mat_rhs.adj(), A_rhs_adj);
-  std::cout << "A_mat_rhs.adj(): \n" << A_mat_rhs.adj() << "\nA_rhs_adj: \n" << A_rhs_adj << "\n" << std::endl;
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.val(), A_lhs_val);
+  (stan::math::sum(A_matv) + stan::math::sum(mul_mat)).grad();
+  // After grad, values should be restored to original
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.val(), A(idx_row_lhs, idx_col_lhs));
+  EXPECT_MATRIX_FLOAT_EQ(A_matv.adj(), A_v_orig_adj);
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_lhs.adj(), A_v_orig_adj(idx_row_lhs, idx_col_lhs));
+  EXPECT_MATRIX_FLOAT_EQ(A_mat_rhs.adj(), A_rhs_adj);
   stan::math::recover_memory();
 }
 
 
-TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_subset) {
-  std::vector<int> idx_row{1, 1, 2, 3};
-  std::vector<int> idx_col{3, 2, 1, 1};
-  var_matrix_index_test(idx_row, idx_col, idx_col, idx_row);
-  /*
-  std::vector<std::vector<int>> idx_sets{{0, 1, 2, 3}, {3, 3, 3, 3}, {1, 1, 3, 3}, {3, 2, 1, 0}, {3, 2, 1, 1}};
+TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_alias) {
+  std::vector<int> idx_row{0, 1, 2, 3};
+  std::vector<int> idx_col{0, 2, 2, 3};
+  std::vector<int> idx_row1{0, 1, 2, 3};
+  std::vector<int> idx_col1{0, 1, 3, 3};
+  var_matrix_index_test(idx_row, idx_col, idx_row1, idx_col1);
+
+  std::vector<std::vector<int>> idx_sets{
+    {0, 1, 2, 3}, {3, 3, 3, 3}, {1, 1, 3, 3}, {3, 3, 0, 0},
+    {3, 2, 1, 0}, {3, 2, 1, 1}, {0, 1, 1, 3}, {0, 0, 0, 0}, {3, 2, 3, 2}};
+  auto print_vec = [](auto&& name, auto&& x) {
+    std::cout << name << ": [";
+    for (int i = 0; i < x.size() - 1; ++i) {
+      std::cout << x[i] << ", ";
+    }
+    std::cout << x[x.size() - 1] << "]" << std::endl;
+  };
   for (auto&& idx_row_lhs : idx_sets) {
     for (auto&& idx_col_lhs : idx_sets) {
       for (auto&& idx_row_rhs : idx_sets) {
         for (auto&& idx_col_rhs : idx_sets) {
           var_matrix_index_test(idx_row_lhs, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test(Eigen::all, idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, Eigen::all, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, idx_col_lhs, Eigen::all, idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, idx_col_lhs, idx_row_rhs, Eigen::all);
+          var_matrix_index_test(Eigen::seq(0, 3), idx_col_lhs, idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, Eigen::seq(0, 3), idx_row_rhs, idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, idx_col_lhs, Eigen::seq(0, 3), idx_col_rhs);
+          var_matrix_index_test(idx_row_lhs, idx_col_lhs, idx_row_rhs, Eigen::seq(0, 3));
           if (::testing::Test::HasFailure()) {
-            auto print_vec = [](auto&& name, auto&& x) {
-              std::cout << name << ": [";
-              for (int i = 0; i < x.size() - 1; ++i) {
-                std::cout << x[i] << ", ";
-              }
-              std::cout << x[x.size() - 1] << "]" << std::endl;
-            };
             std::cout << "Failed for: " << std::endl;
             print_vec("idx_row_lhs", idx_row_lhs);
             print_vec("idx_col_lhs", idx_col_lhs);
             print_vec("idx_row_rhs", idx_row_rhs);
             print_vec("idx_col_rhs", idx_col_rhs);
-
           }
         }
-      }    
+      }
     }
   }
-    */
-  
+
 }
 
 
