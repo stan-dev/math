@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/mdivide_left_tri_low.hpp>
+#include <stan/math/prim/fun/mdivide_right_tri_low.hpp>
 
 namespace stan {
 namespace math {
@@ -34,10 +34,8 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
   using Eigen::MatrixXd;
   static const char* function = "inv_wishart_cholesky_rng";
   index_type_t<MatrixXd> k = L_S.rows();
-  check_square(function, "Cholesky Scale matrix", L_S);
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
-  check_positive(function, "Cholesky Scale matrix", L_S.diagonal());
-  check_positive(function, "columns of Cholesky Scale matrix", L_S.cols());
+  check_cholesky_factor(function, "Cholesky Scale matrix", L_S);
 
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {
@@ -47,7 +45,7 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
     B(j, j) = std::sqrt(chi_square_rng(nu - k + j + 1, rng));
   }
 
-  return mdivide_left_tri_low(B, L_S);
+  return mdivide_right_tri_low(L_S, B);
 }
 
 }  // namespace math
