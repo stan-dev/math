@@ -50,8 +50,11 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
   static const char* function = "inv_wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
-  check_size_match(function, "Rows of random variable", L_Y.rows(),
-                   "columns of scale parameter", L_S.rows());
+
+  check_square(function, "Cholesky random variable", L_Y);
+  check_square(function, "Cholesky Scale parameter", L_S);
+  check_size_match(function, "side length of random variable", L_Y.rows(),
+                   "side length of scale parameter", L_S.rows());
 
   T_L_Y_ref L_Y_ref = L_Y;
   check_cholesky_factor(function, "Cholesky random variable", L_Y_ref);
