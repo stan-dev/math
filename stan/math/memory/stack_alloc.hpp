@@ -167,9 +167,11 @@ class stack_alloc {
    * @return A pointer to the allocated memory.
    */
   inline void* alloc(size_t len) {
+    size_t pad = len % 8 == 0 ? 0 : 8 - len % 8;
+
     // Typically, just return and increment the next location.
     char* result = next_loc_;
-    next_loc_ += len;
+    next_loc_ += len + pad;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
       result = move_to_next_block(len);
