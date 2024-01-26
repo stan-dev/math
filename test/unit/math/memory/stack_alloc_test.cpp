@@ -91,7 +91,7 @@ TEST(stack_alloc, alloc) {
   allocator.recover_all();
 }
 
-TEST(stack_alloc, alloc_aligned){
+TEST(stack_alloc, alloc_aligned) {
   stan::math::stack_alloc allocator;
   int* x = allocator.alloc_array<int>(3);
 
