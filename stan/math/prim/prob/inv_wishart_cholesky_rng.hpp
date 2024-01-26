@@ -34,6 +34,7 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
   using Eigen::MatrixXd;
   static const char* function = "inv_wishart_cholesky_rng";
   index_type_t<MatrixXd> k = L_S.rows();
+  check_square(function, "Cholesky Scale matrix", L_S);
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
   check_cholesky_factor(function, "Cholesky Scale matrix", L_S);
 
