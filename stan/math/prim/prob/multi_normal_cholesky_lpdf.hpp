@@ -99,6 +99,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
                    "size of location parameter", size_mu);
   check_size_match(function, "Size of random variable", size_y,
                    "rows of covariance parameter", L.rows());
+  check_size_match(function, "Size of random variable", size_y,
+                   "columns of covariance parameter", L.cols());
 
   for (size_t i = 0; i < size_vec; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);

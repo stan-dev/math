@@ -168,7 +168,7 @@ TEST(ProbDistributionsInvWishartCholesky, Error) {
   nu = 5;
   MatrixXd Y(2, 1);
   EXPECT_THROW(inv_wishart_cholesky_lpdf(Y, nu, MatrixXd::Identity(2, 2)),
-               std::domain_error);
+               std::invalid_argument);
 
   nu = 5;
   EXPECT_THROW(inv_wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
