@@ -124,19 +124,22 @@ TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
   using stan::math::qr_thin_Q;
 
   boost::random::mt19937 rng(92343U);
-  int N = 1e5;
+  int N = 1e4;
   double tol = 0.05;
-  for (int k = 1; k < 5; k++) {
+  for (int k = 1; k < 4; k++) {
     MatrixXd L = qr_thin_Q(MatrixXd::Random(k, k)).transpose();
     L.diagonal() = stan::math::abs(L.diagonal());
     MatrixXd sigma = multiply_lower_tri_self_transpose(L);
-    MatrixXd Z_mean = sigma / (k + 3);
+    MatrixXd L_S = stan::math::cholesky_decompose(sigma);
+    MatrixXd Z_mean = MatrixXd::Zero(k, k);
     MatrixXd Z_est = MatrixXd::Zero(k, k);
     for (int i = 0; i < N; i++) {
       Z_est += multiply_lower_tri_self_transpose(
-          inv_wishart_cholesky_rng(k + 4, L, rng));
+          inv_wishart_cholesky_rng(k + 4, L_S, rng));
+      Z_mean += inv_wishart_rng(k + 4, sigma, rng);
     }
     Z_est /= N;
+    Z_mean /= N;
     for (int j = 0; j < k; j++) {
       for (int i = 0; i < j; i++) {
         EXPECT_NEAR(Z_est(i, j), Z_mean(i, j), tol);

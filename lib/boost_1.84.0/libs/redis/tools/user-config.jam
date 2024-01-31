@@ -1,0 +1,12 @@
+# Used on CI. This is required on Windows to make b2 find openssl
+
+import os ;
+
+local OPENSSL_ROOT = [ os.environ OPENSSL_ROOT ] ;
+
+using openssl : :
+    <include>$(OPENSSL_ROOT)/include
+    <search>$(OPENSSL_ROOT)/lib
+    <ssl-name>libssl
+    <crypto-name>libcrypto
+;

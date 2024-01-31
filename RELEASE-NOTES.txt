@@ -1,6 +1,13 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.8.1 (23 January 2024)
+======================================================================
+
+- The distributions defined over cholesky factors now check that their arguments are in support (#3007)
+- Fixed an issue with the `inv_wishart_cholesky_rng` function (#3007)
+
+======================================================================
 v4.8.0 (16 January 2024)
 ======================================================================
 

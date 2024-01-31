@@ -176,23 +176,19 @@ inline std::array<std::string, 2> cvodes_flag_msg(int flag) {
 }
 
 /**
- * Throws a std::runtime_error exception when a Sundial function fails
+ * Throws a std::domain_error exception when a Sundial function fails
  * (i.e. returns a negative flag)
  *
  * @param flag Error flag
  * @param func_name Name of the function that returned the flag
- * @throw <code>std::runtime_error</code> if the flag is negative
+ * @throw <code>std::domain_error</code> if the flag is negative
  */
 inline void cvodes_check(int flag, const char* func_name) {
   if (flag < 0) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ": \n"
        << cvodes_flag_msg(flag).at(1) << ".";
-    if (flag == -1 || flag == -4) {
-      throw std::domain_error(ss.str());
-    } else {
-      throw std::runtime_error(ss.str());
-    }
+    throw std::domain_error(ss.str());
   }
 }
 
@@ -368,11 +364,7 @@ inline void idas_check(int flag, const char* func_name) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ": \n"
        << idas_flag_msg(flag).at(1);
-    if (flag == -1 || flag == -4) {
-      throw std::domain_error(ss.str());
-    } else {
-      throw std::runtime_error(ss.str());
-    }
+    throw std::domain_error(ss.str());
   }
 }
 

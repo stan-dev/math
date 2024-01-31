@@ -55,6 +55,7 @@ multi_normal_cholesky_rng(
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
+  check_cholesky_factor(function, "Cholesky factor of covariance matrix", L);
 
   const auto& L_ref = to_ref(L);
 
