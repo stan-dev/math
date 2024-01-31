@@ -26,8 +26,10 @@ template <class T>
 struct temme_root_finder
 {
    temme_root_finder(const T t_, const T a_) : t(t_), a(a_) {
+      #ifndef BOOST_DISABLE_ASSERTS
       const T x_extrema = 1 / (1 + a);
       BOOST_MATH_ASSERT(0 < x_extrema && x_extrema < 1);
+      #endif
    }
 
    boost::math::tuple<T, T> operator()(T x)
@@ -121,7 +123,7 @@ T temme_method_1_ibeta_inverse(T a, T b, T z, const Policy& pol)
       x = 0;
    else if (x > 1)
       x = 1;
-   
+
    BOOST_MATH_ASSERT(eta * (x - 0.5) >= 0);
 #ifdef BOOST_INSTRUMENT
    std::cout << "Estimating x with Temme method 1: " << x << std::endl;
@@ -406,7 +408,7 @@ T temme_method_3_ibeta_inverse(T a, T b, T p, T q, const Policy& pol)
 
    // Early exit for cases with numerical precision issues.
    if (cross == 0 || cross == 1) { return cross; }
-   
+
    x = tools::newton_raphson_iterate(
       temme_root_finder<T>(u, mu), x, lower, upper, policies::digits<T, Policy>() / 2);
 #ifdef BOOST_INSTRUMENT
@@ -842,7 +844,7 @@ T ibeta_inv_imp(T a, T b, T p, T q, const Policy& pol, T* py)
       else if(pow(p, 1/a) < 0.5)
       {
 #ifndef BOOST_NO_EXCEPTIONS
-         try 
+         try
          {
 #endif
             x = pow(p * a * boost::math::beta(a, b, pol), 1 / a);
@@ -863,7 +865,7 @@ T ibeta_inv_imp(T a, T b, T p, T q, const Policy& pol, T* py)
       {
          // model a distorted quarter circle:
 #ifndef BOOST_NO_EXCEPTIONS
-         try 
+         try
          {
 #endif
             y = pow(1 - pow(p, b * boost::math::beta(a, b, pol)), 1/b);
