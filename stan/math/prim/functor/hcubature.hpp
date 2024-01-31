@@ -24,6 +24,7 @@
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/integrate_1d.hpp>
 #include <queue>
 #include <tuple>
 #include <iostream>
@@ -33,6 +34,30 @@ namespace stan {
 namespace math {
 
 namespace internal {
+
+  static constexpr std::array<double, 8> xd7{
+    -9.9145537112081263920685469752598e-01,
+    -9.4910791234275852452618968404809e-01,
+    -8.6486442335976907278971278864098e-01,
+    -7.415311855993944398638647732811e-01,
+    -5.8608723546769113029414483825842e-01,
+    -4.0584515137739716690660641207707e-01,
+    -2.0778495500789846760068940377309e-01};
+
+static constexpr std::array<double, 8> wd7{
+    2.2935322010529224963732008059913e-02,
+    6.3092092629978553290700663189093e-02,
+    1.0479001032225018383987632254189e-01,
+    1.4065325971552591874518959051021e-01,
+    1.6900472663926790282658342659795e-01,
+    1.9035057806478540991325640242055e-01,
+    2.0443294007529889241416199923466e-01,
+    2.0948214108472782801299917489173e-01};
+
+static constexpr std::array<double, 4> gwd7{
+    1.2948496616886969327061143267787e-01, 2.797053914892766679014677714229e-01,
+    3.8183005050511894495036977548818e-01,
+    4.1795918367346938775510204081658e-01};
 
 /**
  * Get the [x]-th lexicographically ordered set of [p] elements in [dim]
@@ -175,6 +200,53 @@ make_GenzMalik(const int dim) {
   points[3] = signcombos(dim, std::sqrt(9.0 * 1.0 / 19.0), dim);
   return std::make_tuple(std::move(points), std::move(weights),
                          std::move(weights_low_deg));
+}
+
+/**
+ * Compute the integral of the function to be integrated (integrand) from a to b
+ * for one dimension.
+ *
+ * @tparam F type of the integrand
+ * @tparam T_a type of lower limit of integration
+ * @tparam T_b type of upper limit of integration
+ * @tparam ParsPairT type of the pair of parameters for the integrand
+ * @param integrand function to be integrated
+ * @param a lower limit of integration
+ * @param b upper limit of integration
+ * @param pars_pair Pair of parameters for the integrand
+ * @return numeric integral of the integrand and error
+ */
+template <typename F, typename T_a, typename T_b, typename ParsPairT>
+inline auto gauss_kronrod(const F& integrand, const T_a a, const T_b b,
+                          const ParsPairT& pars_pair) {
+  using delta_t = return_type_t<T_a, T_b>;
+  const delta_t c = 0.5 * (a + b);
+  const delta_t delta = 0.5 * (b - a);
+  auto f0 = math::apply([](auto&& integrand, auto&& c,
+                           auto&&... args) { return integrand(c, args...); },
+                        pars_pair, integrand, c);
+
+  auto I = f0 * wd7[7];
+  auto Idash = f0 * gwd7[3];
+  std::array<delta_t, 7> deltax;
+  for (int i = 0; i < 7; ++i) {
+    deltax[i] = delta * xd7[i];
+  }
+  for (auto i = 0; i != 7; i++) {
+    auto fx = math::apply(
+        [](auto&& integrand, auto&& c, auto&& delta, auto&&... args) {
+          return integrand(c + delta, args...) + integrand(c - delta, args...);
+        },
+        pars_pair, integrand, c, deltax[i]);
+    I += fx * wd7[i];
+    if (i % 2 == 1) {
+      Idash += fx * gwd7[i / 2];
+    }
+  }
+  delta_t V = fabs(delta);
+  I *= V;
+  Idash *= V;
+  return std::make_pair(I, fabs(I - Idash));
 }
 
 /**
@@ -360,9 +432,8 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   };
 
   if (dim == 1) {
-    result = gauss_kronrod<Scalar, 15>::integrate(gk_lambda, a[0], b[0], 15, 0,
-                                                  &err);
-
+    std::tie(result, err)
+        = internal::gauss_kronrod(integrand, a[0], b[0], pars);
   } else {
     genz_malik = internal::make_GenzMalik(dim);
     std::tie(result, err, kdivide)
@@ -408,10 +479,10 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     Scalar err_1;
     Scalar err_2;
     if (dim == 1) {
-      result_1 = gauss_kronrod<Scalar, 15>::integrate(gk_lambda, ma[0],
-                                                      box.b_[0], 15, 0, &err_1);
-      result_2 = gauss_kronrod<Scalar, 15>::integrate(gk_lambda, box.a_[0],
-                                                      mb[0], 15, 0, &err_2);
+      std::tie(result_1, err_1)
+          = internal::gauss_kronrod(integrand, ma[0], box.b_[0], pars);
+      std::tie(result_2, err_2)
+          = internal::gauss_kronrod(integrand, box.a_[0], mb[0], pars);
     } else {
       std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
           integrand, genz_malik, dim, ma, box.b_, pars);
