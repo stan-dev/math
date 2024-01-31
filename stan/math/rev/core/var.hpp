@@ -18,83 +18,64 @@
 #include <unordered_set>
 
 namespace stan {
-namespace internal {
-template <typename T>
-struct is_eigen_index_view : std::false_type {};
-
-template <typename ArgType, typename RowIndices, typename ColIndices>
-struct is_eigen_index_view<Eigen::IndexedView<ArgType, RowIndices, ColIndices>>
-    : std::true_type {};
-
-}  // namespace internal
-
-/**
- * Checks whether type T is derived from Eigen::DenseBase.
- * If true this will have a static member function named value with a type
- * of true, else value is false.
- * @tparam T Type to check if it is derived from `DenseBase`
- * @tparam Enable used for SFINAE deduction.
- * @ingroup type_trait
- */
-template <typename T>
-struct is_eigen_index_view : internal::is_eigen_index_view<std::decay_t<T>> {};
-
-STAN_ADD_REQUIRE_UNARY(eigen_index_view, is_eigen_index_view,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_index_view, is_eigen_index_view,
-                           require_eigens_types);
-
-
 namespace math {
 namespace internal {
 
-  template <typename Vec, typename Set, require_container_t<Vec>* = nullptr>
-  inline auto get_indices(Vec&& row_idx, Set& x_set) {
-    auto assign_rows = row_idx.size();
-    using idx_t = Eigen::Matrix<typename std::decay_t<Vec>::value_type, -1, 1>;
-    arena_t<idx_t> x_orig_idx(assign_rows);
-    Eigen::Index unique_idx = 0;
-    for (int i = assign_rows - 1; i >= 0; --i) {
-      if (likely(x_set.insert(row_idx[i]).second)) {
-        x_orig_idx[unique_idx] = i;
-        unique_idx++;
-      }
+/**
+ * Return the indices of the unique elements in the vector.
+ * @tparam Vec A container type
+ * @tparam Set A class with an method `std::pair<value_type, bool> insert(const value_type&)`
+ * @param row_idx A vector of indices
+ * @param x_set A class to check if an element exists in the set already
+ * @return An Eigen map of the unique indices with memory allocated in Stan's arena
+ */
+template <typename Vec, typename Set, require_container_t<Vec>* = nullptr>
+inline auto get_indices(Vec&& row_idx, Set& x_set) {
+  auto assign_rows = row_idx.size();
+  using idx_t = Eigen::Matrix<value_type_t<Vec>, -1, 1>;
+  arena_t<idx_t> x_orig_idx(assign_rows);
+  Eigen::Index unique_idx = 0;
+  for (int i = assign_rows - 1; i >= 0; --i) {
+    if (likely(x_set.insert(row_idx[i]).second)) {
+      x_orig_idx[unique_idx] = i;
+      unique_idx++;
     }
-    return Eigen::Map<idx_t>(x_orig_idx.data(), unique_idx);
   }
-  template <typename AllT, typename Set, require_same_t<AllT, Eigen::internal::all_t>* = nullptr>
-  inline constexpr auto get_indices(AllT&&  x, Set&& /*set*/) {
-    return x;
-  }
-  // Primary template: by default, the type is not Eigen::internal::AllRange, so derive from std::false_type.
-  template<typename T>
-  struct is_allrange : std::false_type {};
+  return Eigen::Map<idx_t>(x_orig_idx.data(), unique_idx);
+}
+template <typename AllT, typename Set, require_same_t<AllT, Eigen::internal::all_t>* = nullptr>
+inline constexpr auto get_indices(AllT&&  x, Set&& /*set*/) {
+  return x;
+}
+// Primary template: by default, the type is not Eigen::internal::AllRange, so derive from std::false_type.
+template<typename T>
+struct is_allrange : std::false_type {};
 
-  // Specialization for Eigen::internal::AllRange<XprSize>: in this case, derive from std::true_type.
-  template<int XprSize>
-  struct is_allrange<Eigen::internal::AllRange<XprSize>> : std::true_type {};
+// Specialization for Eigen::internal::AllRange<XprSize>: in this case, derive from std::true_type.
+template<int XprSize>
+struct is_allrange<Eigen::internal::AllRange<XprSize>> : std::true_type {};
 
-  // Helper variable template to easily check the trait.
-  template<typename T>
-  constexpr bool is_allrange_v = is_allrange<std::decay_t<T>>::value;
+// Helper variable template to easily check the trait.
+template<typename T>
+constexpr bool is_allrange_v = is_allrange<std::decay_t<T>>::value;
 
-  template <typename AllRangeT, typename Set, std::enable_if_t<is_allrange_v<AllRangeT>>* = nullptr>
-  inline constexpr auto get_indices(AllRangeT&& x, Set&& /*set*/) {
-    return x;
-  }
+template <typename AllRangeT, typename Set, std::enable_if_t<is_allrange_v<AllRangeT>>* = nullptr>
+inline constexpr auto get_indices(AllRangeT&& x, Set&& /*set*/) {
+  return x;
+}
 
-  template <typename FirstType, typename SizeType, typename IncrType,
-            typename Set>
-  inline const auto& get_indices(
-      const Eigen::ArithmeticSequence<FirstType, SizeType, IncrType>& x,
-      Set&& /*x_set*/) {
-    return x;
-  }
-  template <typename Set>
-  inline constexpr auto get_indices(const Eigen::internal::SingleRange& x,
-                                    Set&& /*set*/) {
-    return x;
-  }
+template <typename FirstType, typename SizeType, typename IncrType,
+          typename Set>
+inline const auto& get_indices(
+    const Eigen::ArithmeticSequence<FirstType, SizeType, IncrType>& x,
+    Set&& /*x_set*/) {
+  return x;
+}
+template <typename Set>
+inline constexpr auto get_indices(const Eigen::internal::SingleRange& x,
+                                  Set&& /*set*/) {
+  return x;
+}
 }
 // forward declare
 template <typename Vari>

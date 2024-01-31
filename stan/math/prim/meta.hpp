@@ -92,6 +92,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_base.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
+#include <stan/math/prim/meta/is_eigen_index_view.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>

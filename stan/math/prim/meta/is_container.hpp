@@ -16,7 +16,7 @@
 namespace stan {
 
 /**
- * Deduces whether type is eigen matrix or standard vector.
+ * Deduces whether type is eigen matrix, standard vector, or standard array.
  * @tparam Container type to check
  */
 template <typename Container>

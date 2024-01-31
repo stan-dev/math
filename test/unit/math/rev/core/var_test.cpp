@@ -859,10 +859,11 @@ TEST_F(AgradRev, var_matrix_view_indexing_adjoints_assign_alias) {
   std::vector<int> idx_row1{0, 1, 2, 3};
   std::vector<int> idx_col1{0, 1, 3, 3};
   var_matrix_index_test(idx_row, idx_col, idx_row1, idx_col1);
-
-  std::vector<std::vector<int>> idx_sets{
-    {0, 1, 2, 3}, {3, 3, 3, 3}, {1, 1, 3, 3}, {3, 3, 0, 0},
-    {3, 2, 1, 0}, {3, 2, 1, 1}, {0, 1, 1, 3}, {0, 0, 0, 0}, {3, 2, 3, 2}};
+  using arr_t = std::array<int, 4>;
+  constexpr std::array<arr_t, 9> idx_sets{
+    arr_t{0, 1, 2, 3}, arr_t{3, 3, 3, 3}, arr_t{1, 1, 3, 3}, arr_t{3, 3, 0, 0},
+    arr_t{3, 2, 1, 0}, arr_t{3, 2, 1, 1}, arr_t{0, 1, 1, 3}, arr_t{0, 0, 0, 0},
+    arr_t{3, 2, 3, 2}};
   auto print_vec = [](auto&& name, auto&& x) {
     std::cout << name << ": [";
     for (int i = 0; i < x.size() - 1; ++i) {
