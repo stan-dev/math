@@ -102,10 +102,6 @@ clean-sundials:
 # Note that the tbb targets must not be build in parallel (so no concurrent
 # build of tbb and tbbmalloc, for example). This is ensured here with proper
 # dependencies.
-#
-# On windows the mingw32-make (part of RTools, for example) is required to build
-# the TBB as this make has proper POSIX extensions needed by the used downstream
-# TBB makefiles.
 
 ifndef TBB_LIB
 
@@ -143,6 +139,13 @@ ifeq (Windows_NT, $(OS))
   ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
+	SH_CHECK := $(shell command -v sh 2>/dev/null)
+	ifdef SH_CHECK
+		WINDOWS_HAS_SH ?= true
+	endif
+	ifeq ($(WINDOWS_HAS_SH), true) # Stop TBB makefile changing SHELL on RTools
+		SHELL = sh.exe
+	endif
 endif
 
 # If brackets or spaces are found in MAKE on Windows
@@ -157,12 +160,6 @@ $(TBB_BIN)/tbb-make-check:
 ifeq ($(OS),Windows_NT)
 ifneq ($(MAKE),$(MAKE_ESCAPED))
 $(error '$nError:$n$nThe RTools toolchain is installed in a path with spaces or brackets.$nPlease reinstall the toolchain.$n$n')
-else
-	if ! [[ $(MAKE) =~ mingw32 ]]; then \
-		echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
-		echo "This is packaged with RTools, for example."; \
-		exit 1; \
-	fi
 endif
 endif
 	@mkdir -p $(TBB_BIN)
