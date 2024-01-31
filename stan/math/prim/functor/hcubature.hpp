@@ -35,7 +35,7 @@ namespace math {
 
 namespace internal {
 
-  static constexpr std::array<double, 8> xd7{
+static constexpr std::array<double, 8> xd7{
     -9.9145537112081263920685469752598e-01,
     -9.4910791234275852452618968404809e-01,
     -8.6486442335976907278971278864098e-01,
