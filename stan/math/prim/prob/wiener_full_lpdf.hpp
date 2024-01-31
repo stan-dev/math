@@ -399,11 +399,13 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
   for (size_t i = 0; i < N_y_t0; ++i) {
     if (y_vec[i] <= t0_vec[i]) {
+    [&]() STAN_COLD_PATH {
       std::stringstream msg;
       msg << ", but must be greater than nondecision time = " << t0_vec[i];
       std::string msg_str(msg.str());
       throw_domain_error(function_name, "Random variable", y_vec[i], " = ",
                          msg_str.c_str());
+    }();
     }
   }
   size_t N_beta_sw = max_size(w, sw);
