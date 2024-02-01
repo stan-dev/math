@@ -637,8 +637,8 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
  * @param err Error value to check against
  * @param args_tuple Tuple of arguments to pass to functor
  */
-template <size_t ErrIndex, GradientCalc GradW7 = GradientCalc::OFF,
-          size_t NestedIndex = 0, bool LogResult = true, typename F,
+template <size_t ErrIndex, size_t NestedIndex = 0, GradientCalc GradW7 = GradientCalc::OFF,
+          bool LogResult = true, typename F,
           typename T_err, typename... ArgsTupleT>
 inline auto estimate_with_err_check(F&& functor, T_err&& err,
                                     ArgsTupleT&&... args_tuple) {
@@ -777,7 +777,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto v_value = v_vec.val(i);
     const auto sv_value = sv_vec.val(i);
     using internal::GradientCalc;
-    auto l_density = internal::estimate_with_err_check<5, GradientCalc::OFF, 0,
+    auto l_density = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                                        GradientCalc::OFF>(
         [](auto&&... args) {
           return internal::wiener5_density<GradientCalc::OFF>(args...);
@@ -791,8 +791,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
-    const auto deriv_y = internal::estimate_with_err_check<5, GradientCalc::OFF,
-                                                           0, GradientCalc::ON>(
+    const auto deriv_y = internal::estimate_with_err_check<5, 0, GradientCalc::OFF, GradientCalc::ON>(
         [](auto&&... args) {
           return internal::wiener5_grad_t<GradientCalc::OFF>(args...);
         },
@@ -805,7 +804,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
-          = internal::estimate_with_err_check<5, GradientCalc::OFF, 0,
+          = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener5_grad_a<GradientCalc::OFF>(args...);
@@ -818,7 +817,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = internal::estimate_with_err_check<5, GradientCalc::OFF, 0,
+          = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener5_grad_w<GradientCalc::OFF>(args...);
