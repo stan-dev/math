@@ -474,9 +474,9 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     T_partials_return hcubature_err
         = log_error_absolute - log_error_density + LOG_TWO + 1;
     using internal::GradientCalc;
-    const auto params
-        = std::make_tuple(y_value, a_value, v_value, w_value, t0_value,
-                                sv_value, sw_value, st0_value, log_error_absolute - LOG_TWO);
+    const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
+                                        t0_value, sv_value, sw_value, st0_value,
+                                        log_error_absolute - LOG_TWO);
     T_partials_return density
         = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
             [](auto&&... args) {
@@ -558,7 +558,8 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0;
       } else {
         if (st0_value == 0) {
-          derivative = internal::estimate_with_err_check<6, 0, GradientCalc::OFF, GradientCalc::ON>(
+          derivative = internal::estimate_with_err_check<
+              6, 0, GradientCalc::OFF, GradientCalc::ON>(
               [](auto&&... args) { return internal::wiener7_grad_sw(args...); },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, sw_value, log_error_absolute - LOG_TWO);
