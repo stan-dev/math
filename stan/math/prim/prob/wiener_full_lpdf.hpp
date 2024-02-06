@@ -376,9 +376,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   check_finite(function_name, "Inter-trial variability in Nondecision time",
                st0_val);
 
-  if (size_zero(y, a, v, w, t0) || size_zero(sv, sw, st0)) {
-    return ret_t(0);
-  }
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
   if (!N) {
     return ret_t(0);
