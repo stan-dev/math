@@ -341,7 +341,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                          "Inter-trial variability in drift rate", sv,
                          "Inter-trial variability in A-priori bias", sw,
                          "Inter-trial variability in Nondecision time", st0);
-						 
+
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_v_ref v_ref = v;

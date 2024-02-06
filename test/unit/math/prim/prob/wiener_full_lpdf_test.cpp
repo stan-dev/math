@@ -284,7 +284,6 @@ TEST(mathPrimScalProbWienerFullPrecScal, invalid_st0) {
                std::domain_error);
 }
 
-
 TEST(mathPrimCorrectValues, wiener_lpdf) {
   // Test concrete values. True values are computed in R using the R-package
   // WienR and the function WienerPDF.
@@ -388,8 +387,6 @@ TEST(mathPrimCorrectValues, wiener_lpdf) {
   }
 }
 
-
-
 TEST(mathPrimCorrectValuesFourParamModel, wiener_lpdf) {
   // Test concrete values. True values are computed in R using the R-package
   // WienR and the function WienerPDF.
@@ -399,10 +396,8 @@ TEST(mathPrimCorrectValuesFourParamModel, wiener_lpdf) {
   std::vector<double> w_vec = {.1};
   std::vector<double> t0_vec = {1e-9};
 
-  std::vector<double> true_dens
-      = {-4.28564747866615};
-  std::vector<double> true_grad_y
-      = {-3.22509339523307};
+  std::vector<double> true_dens = {-4.28564747866615};
+  std::vector<double> true_grad_y = {-3.22509339523307};
   std::vector<double> true_grad_a = {3.25018678924105};
   std::vector<double> true_grad_t0 = {3.22509339523307};
   std::vector<double> true_grad_w = {5.67120184517318};
@@ -427,7 +422,6 @@ TEST(mathPrimCorrectValuesFourParamModel, wiener_lpdf) {
     EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
   }
 }
-
 
 TEST(mathPrimCorrectValuesFiveParameterModel, wiener_lpdf) {
   // Test concrete values. True values are computed in R using the R-package
