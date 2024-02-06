@@ -14,9 +14,7 @@ TEST(MathFunctions, linspaced_array) {
                              std::vector<int>({-2, -1, 0, 1, 2}));
 
   std::vector<double> x = linspaced_array(5, 1.1, 5.5);
-  EXPECT_STD_VECTOR_FLOAT_EQ(x,
-                             std::vector<int>({1.1,2.2,3.3,4.4,5.5}));
-                             
+  EXPECT_STD_VECTOR_FLOAT_EQ(x, std::vector<int>({1.1, 2.2, 3.3, 4.4, 5.5}));
 }
 
 TEST(MathFunctions, linspaced_array_throw) {
