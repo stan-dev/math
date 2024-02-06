@@ -4,7 +4,6 @@ import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
     try {
-        sh "cat make/local"
         if (jumbo && !params.disableJumbo) {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
@@ -345,7 +344,6 @@ pipeline {
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
-                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
@@ -395,7 +393,6 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
-                                sh "cat make/local"
                                 try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
@@ -403,7 +400,6 @@ pipeline {
                             sh "echo STAN_THREADS=true >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try {
-                                    sh "cat make/local"
                                     sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
 				                }
                                 finally { junit 'test/**/*.xml' }
@@ -502,7 +498,6 @@ pipeline {
                                             sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                                         }
                                     }
-                                    sh "cat make/local"
                                     sh "./runTests.py -j${PARALLEL} ${names}"
                                 }
                                 deleteDir()
