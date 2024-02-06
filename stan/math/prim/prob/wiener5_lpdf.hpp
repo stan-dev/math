@@ -40,46 +40,6 @@ inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
 }
 
 /**
- * Calculate the 'density_part_one' term for a wiener5 density or gradient
- *
- * @tparam GradA Whether the calculation is for gradient w.r.t. 'a'
- * @tparam GradT Whether the calculation is for gradient w.r.t. 't'
- * @tparam T_y type of scalar variable
- * @tparam T_a type of boundary separation
- * @tparam T_v_value type of drift rate
- * @tparam T_w_value type of relative starting point
- * @tparam T_sv type of inter-trial variability in v
- *
- * @param y A scalar variable; the reaction time in seconds
- * @param a The boundary separation
- * @param v_value The drift rate
- * @param w_value The relative starting point
- * @param sv The inter-trial variability of the drift rate
- * @return 'density_part_one' term
- */
-template <GradientCalc GradA, GradientCalc GradT, typename T_y, typename T_a,
-          typename T_v_value, typename T_w_value, typename T_sv>
-inline auto wiener5_density_part_one(T_y&& y, T_a&& a, T_v_value&& v_value,
-                                     T_w_value&& w_value, T_sv&& sv) noexcept {
-  const auto w = 1.0 - w_value;
-  const auto v = -v_value;
-  const auto sv_sqr = square(sv);
-  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
-  if (GradT) {
-    return -0.5
-           * (square(sv_sqr) * (y + square(a * w))
-              + sv_sqr * (1 - (2.0 * a * v * w)) + square(v))
-           / square(one_plus_svsqr_y);
-  } else {
-    if (GradA) {
-      return (-v * w + sv_sqr * square(w) * a) / one_plus_svsqr_y;
-    } else {
-      return (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
-    }
-  }
-}
-
-/**
  * Calculate the 'n_terms_small_t' term for a wiener5 density or gradient
  *
  * @tparam Density Whether the calculation is for the density
@@ -380,10 +340,12 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v_value,
   const auto two_log_a = 2 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto error_term
-      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
-  const auto density_part_one
-      = wiener5_density_part_one<GradientCalc::OFF, GradientCalc::ON>(
-          y, a, v_value, w_value, sv);
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);		  
+  const auto w = 1.0 - w_value;
+  const auto v = -v_value;
+  const auto sv_sqr = square(sv);
+  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto density_part_one = -0.5 * (square(sv_sqr) * (y + square(a * w)) + sv_sqr * (1 - (2.0 * a * v * w)) + square(v)) / square(one_plus_svsqr_y);	  
   const auto error = (err - error_term) + two_log_a;
   const auto n_terms_small_t
       = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(
@@ -442,10 +404,12 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v_value,
   const auto two_log_a = 2 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto error_term
-      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
-  const auto density_part_one
-      = wiener5_density_part_one<GradientCalc::ON, GradientCalc::OFF>(
-          y, a, v_value, w_value, sv);
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);  
+  const auto w = 1.0 - w_value;
+  const auto v = -v_value;
+  const auto sv_sqr = square(sv);
+  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto density_part_one =  (-v * w + sv_sqr * square(w) * a) / one_plus_svsqr_y;		  
   const auto error = err - error_term + 3 * log(a) - log(y) - LOG_TWO;
 
   const auto n_terms_small_t
@@ -539,10 +503,12 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
   const auto two_log_a = 2 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto error_term
-      = wiener5_compute_error_term(y, a, v_value, w_value, sv);
-  const auto density_part_one
-      = wiener5_density_part_one<GradientCalc::OFF, GradientCalc::OFF>(
-          y, a, v_value, w_value, sv);
+      = wiener5_compute_error_term(y, a, v_value, w_value, sv);		  
+  const auto w = 1.0 - w_value;
+  const auto v = -v_value;
+  const auto sv_sqr = square(sv);
+  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto density_part_one (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
   const auto error = (err - error_term);
 
   const auto n_terms_small_t
