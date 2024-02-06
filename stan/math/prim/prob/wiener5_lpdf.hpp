@@ -508,7 +508,7 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v_value,
   const auto v = -v_value;
   const auto sv_sqr = square(sv);
   const auto one_plus_svsqr_y = 1 + sv_sqr * y;
-  const auto density_part_one (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
+  const auto density_part_one = (-v * a + sv_sqr * square(a) * w) / one_plus_svsqr_y;
   const auto error = (err - error_term);
 
   const auto n_terms_small_t
@@ -665,10 +665,10 @@ inline auto estimate_with_err_check(F&& functor, T_err&& err,
  *  the specified arguments for upper boundary responses
  */
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
-          typename T_w, typename T_v, typename T_sv, typename T_precision>
+          typename T_w, typename T_v, typename T_sv>
 inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const T_w& w, const T_v& v, const T_sv& sv,
-                        const T_precision& precision_derivatives) {
+                        const double& precision_derivatives = 1e-4) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
@@ -825,7 +825,17 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
   }  // end for loop
   return ops_partials.build(log_density);
-}  // end wiener5_lpdf
+}  // end wiener_lpdf
+
+
+template <bool propto = false, typename T_y, typename T_a, typename T_t0,
+          typename T_w, typename T_v>
+inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
+                        const T_w& w, const T_v& v,
+                        const double& precision_derivatives = 1e-4) {
+	return wiener_lpdf(y, a, t0, w, v, 0, precision_derivatives);
+}  // end wiener_lpdf
+							
 }  // namespace math
 }  // namespace stan
 #endif

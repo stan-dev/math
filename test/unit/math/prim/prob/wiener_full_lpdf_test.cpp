@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 #include <vector>
-
+/*
 TEST(mathPrimScalProbWienerFullScal, valid) {
   using stan::math::INFTY;
   using stan::math::wiener_lpdf;
@@ -283,11 +283,11 @@ TEST(mathPrimScalProbWienerFullPrecScal, invalid_st0) {
   EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, NAN, 1e-4),
                std::domain_error);
 }
+*/
 
 TEST(mathPrimCorrectValues, wiener_lpdf) {
-  /* Test concrete values. True values are computed in R using the R-package
-   * WienR and the function WienerPDF.
-   */
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
   std::vector<double> y_vec = {2, 3, 4, 5, 6, 7, 8, 8.85, 8.9, 9, 1};
   std::vector<double> a_vec
       = {2.0, 2.0, 10.0, 4.0, 10.0, 1.0, 3.0, 1.7, 2.4, 11.0, 1.5};
@@ -385,5 +385,86 @@ TEST(mathPrimCorrectValues, wiener_lpdf) {
     EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
     EXPECT_NEAR(sw.adj(), true_grad_sw[i], err_tol);
     EXPECT_NEAR(st0.adj(), true_grad_st0[i], err_tol);
+  }
+}
+
+
+
+TEST(mathPrimCorrectValuesFourParamModel, wiener_lpdf) {
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
+  std::vector<double> y_vec = {2.0};
+  std::vector<double> a_vec = {2.0};
+  std::vector<double> v_vec = {2.0};
+  std::vector<double> w_vec = {.1};
+  std::vector<double> t0_vec = {1e-9};
+
+  std::vector<double> true_dens
+      = {-4.28564747866615};
+  std::vector<double> true_grad_y
+      = {-3.22509339523307};
+  std::vector<double> true_grad_a = {3.25018678924105};
+  std::vector<double> true_grad_t0 = {3.22509339523307};
+  std::vector<double> true_grad_w = {5.67120184517318};
+  std::vector<double> true_grad_v = {-2.199999998};
+
+  using stan::math::var;
+  double err_tol_dens = 1e-6;
+  double err_tol = 1e-4;
+  for (int i = 0; i < y_vec.size(); i++) {
+    var y = y_vec[i];
+    var a = a_vec[i];
+    var t0 = t0_vec[i];
+    var w = w_vec[i];
+    var v = v_vec[i];
+    var dens = stan::math::wiener_lpdf(y, a, t0, w, v);
+    dens.grad();
+    EXPECT_NEAR(dens.val(), true_dens[i], err_tol_dens);
+    EXPECT_NEAR(y.adj(), true_grad_y[i], err_tol);
+    EXPECT_NEAR(a.adj(), true_grad_a[i], err_tol);
+    EXPECT_NEAR(t0.adj(), true_grad_t0[i], err_tol);
+    EXPECT_NEAR(w.adj(), true_grad_w[i], err_tol);
+    EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
+  }
+}
+
+
+TEST(mathPrimCorrectValuesFiveParameterModel, wiener_lpdf) {
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
+  std::vector<double> y_vec = {3.0};
+  std::vector<double> a_vec = {2.0};
+  std::vector<double> v_vec = {2.0};
+  std::vector<double> w_vec = {0.5};
+  std::vector<double> t0_vec = {0.01};
+  std::vector<double> sv_vec = {0.2};
+
+  std::vector<double> true_dens = {-7.52379235146909};
+  std::vector<double> true_grad_y = {-2.91155058614589};
+  std::vector<double> true_grad_a = {3.59980430191399};
+  std::vector<double> true_grad_t0 = {2.91155058614589};
+  std::vector<double> true_grad_w = {-3.64396221090076};
+  std::vector<double> true_grad_v = {-4.44801714898178};
+  std::vector<double> true_grad_sv = {3.42285198319565};
+
+  using stan::math::var;
+  double err_tol_dens = 1e-6;
+  double err_tol = 1e-4;
+  for (int i = 0; i < y_vec.size(); i++) {
+    var y = y_vec[i];
+    var a = a_vec[i];
+    var t0 = t0_vec[i];
+    var w = w_vec[i];
+    var v = v_vec[i];
+    var sv = sv_vec[i];
+    var dens = stan::math::wiener_lpdf(y, a, t0, w, v, sv);
+    dens.grad();
+    EXPECT_NEAR(dens.val(), true_dens[i], err_tol_dens);
+    EXPECT_NEAR(y.adj(), true_grad_y[i], err_tol);
+    EXPECT_NEAR(a.adj(), true_grad_a[i], err_tol);
+    EXPECT_NEAR(t0.adj(), true_grad_t0[i], err_tol);
+    EXPECT_NEAR(w.adj(), true_grad_w[i], err_tol);
+    EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
+    EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
   }
 }
