@@ -1,6 +1,14 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.8.2 (12 February 2024)
+======================================================================
+
+- Fixed an issue introduced in 4.8.1 with distributions defined over cholesky factors not checking their inputs were square (#3012)
+- Fixed an issue where the autodiff arena could give unaligned pointers in certain circumstances (#3014)
+- Fixed the `linspaced_array` function truncating its return values to integers (#3023)
+
+======================================================================
 v4.8.1 (23 January 2024)
 ======================================================================
 
