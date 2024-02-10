@@ -166,3 +166,71 @@ struct is_double_only
     : bool_constant<std::is_same<double, std::decay_t<T>>::value> {};
 
 ```
+
+#### Requires API
+
+The Stan library requires a strict API to ensure consistency for the `requires`. The below go over all of the possible API configurations a developer should use when writing a new `requires`
+
+For the API docs below, let `T` represent the type parameter we want to check, `is_type` is a generic type trait which will be replaced by the developer, and `InnerCheck` is a type trait used to check either the @ref value_type or @ref scalar_type of `T`.
+
+Each requires ends in `_t`, `_vt`, or `_st`. They differ in the following ways
+
+* `_t` uses `Check` to test the type `T` passed in
+
+    Ex:
+
+    ```
+    // Always decay types coming into the requires
+    template <typename T>
+    require_autodiff_t = require_t<is_autodiff<std::decay_t<T>>>;
+    ```
+
+* `_vt` uses `Check` to test the type `T` passed in and uses `InnerCheck` to test the @ref value_type of `T`
+
+    ```
+    template <template <class...> class TypeCheck, class... Check>   
+    require_std_vector_vt = require_vt<is_std_vector, TypeCheck, std::decay_t<Check>...>;
+
+    // Ex: Used to define a signature for `std::vectors` with a value type that is autodiffable
+    template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
+    auto my_func(StdVec&& vec);
+    ```
+
+* `_st` uses `Check` to test the type `T` passed in and uses `InnerCheck` to test the @ref scalar_type of `T`
+
+    ```
+    template <template <class...> class TypeCheck, class... Check>   
+    require_std_vector_st = require_st<is_std_vector, TypeCheck, std::decay_t<Check>...>;
+
+    // Ex: Used to define a signature for `std::vectors` with a scalar type that is autodiffable
+    template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
+    auto my_func(StdVec&& vec);
+    ```
+
+There variant of the requires that places the `vt` or `st` before the type trait name only checks the @ref value_type or @ref `scalar_type` of `T` without testing `T`.
+
+```
+// Require the scalar type is an std::vector
+template <typename T>   
+require_st_std_vector = require_t<is_std_vector<scalar_type_t<std::decay_t<T>>>>;
+
+// Ex: Used to define a signature for `std::vectors` with a scalar type that is autodiffable
+template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
+auto my_func(StdVec&& vec);
+```
+
+In the below, `{TYPE_TRAIT}` represents the name of the trait the requires checks. Each new require _must_ follow this standard API.
+
+`require_{TYPE_TRAIT}_t`: The template parameter must return `true` when passed to the type trait
+
+`require_not_{TYPE_TRAIT}_t`: The template parameter must return `false` when passed to the type trait
+
+`require_all_{TYPE_TRAIT}_t`: The template parameters must all return `true` when passed to the type trait
+
+`require_all_not_{TYPE_TRAIT}_t`: The template parameters must all return `false` when passed to the type trait
+
+`require_any_{TYPE_TRAIT}_t`: At least one of the template parameters must return `true` when passed to the type trait
+
+`require_any_not_{TYPE_TRAIT}_t`: At least one of the template parameters must return `false` when passed to the type trait
+
+In addition to all the requires with an `_t` at the end, the requires also have `_st`, `_vt` variants where in addition to the logic above, the @ref value_type or @ref scalar_type must follow the same logic as the type for `T`. The `_st_`, and `_vt_` variants must also follow the same logic but for checking only the inner @ref value_type or @scalar_type.
