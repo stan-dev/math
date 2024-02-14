@@ -66,7 +66,6 @@ TEST(MathMatrixPrimMat, min) {
   EXPECT_FLOAT_EQ(-10.0, min(m));
 }
 
-
 TEST(MathMatrixPrimMat, min_scalars) {
   int a = 3, b = 2, c = 1;
   int max_ab = stan::math::min(a, b);
