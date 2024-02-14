@@ -70,7 +70,7 @@ TEST(MathMatrixPrimMat, max_scalars) {
   int a = 1, b = 2, c = 3;
   int max_ab = stan::math::max(a, b);
   EXPECT_EQ(2, max_ab);
-  int max_abc = stan::math::max(stan::math::max(a,b), c);
+  int max_abc = stan::math::max(stan::math::max(a, b), c);
   EXPECT_EQ(3, max_abc);
 }
 
