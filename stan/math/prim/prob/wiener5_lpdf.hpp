@@ -832,11 +832,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   return ops_partials.build(log_density);
 }  // end wiener_lpdf
 
-
 // ToDo: delete old wiener_lpdf implementation to use this one
-//template <bool propto = false, typename T_y, typename T_a, typename T_t0,
+// template <bool propto = false, typename T_y, typename T_a, typename T_t0,
 //          typename T_w, typename T_v>
-//inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
+// inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 //                        const T_w& w, const T_v& v,
 //                        const double& precision_derivatives = 1e-4) {
 //  return wiener_lpdf(y, a, t0, w, v, 0, precision_derivatives);
