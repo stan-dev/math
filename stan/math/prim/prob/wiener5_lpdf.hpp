@@ -181,11 +181,10 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
   if (small_n_terms_small_t) {
     constexpr double mult = Density ? 1.0 : 3.0;
     if (GradW) {
-      const auto offset = y_asq;
       for (auto k = n_terms_small_t; k >= 1; k--) {
         const auto w_plus_2_k = w + 2.0 * k;
         const auto w_minus_2_k = w - 2.0 * k;
-        const auto square_w_plus_2_k_minus_offset = square(w_plus_2_k) - offset;
+        const auto square_w_plus_2_k_minus_offset = square(w_plus_2_k) - y_asq;
         if (square_w_plus_2_k_minus_offset > 0) {
           const auto summand_plus = log(square_w_plus_2_k_minus_offset)
                                     - square(w_plus_2_k) * scaling;
@@ -196,7 +195,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
           fminus = log_sum_exp(fminus, summand_plus);
         }
         const auto square_w_minus_2_k_minus_offset
-            = square(w_minus_2_k) - offset;
+            = square(w_minus_2_k) - y_asq;
         if (square_w_minus_2_k_minus_offset > 0) {
           const auto summand_minus = log(square_w_minus_2_k_minus_offset)
                                      - square(w_minus_2_k) * scaling;
@@ -207,7 +206,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
           fminus = log_sum_exp(fminus, summand_minus);
         }
       }
-      const auto square_w_minus_offset = square(w) - offset;
+      const auto square_w_minus_offset = square(w) - y_asq;
       if (square_w_minus_offset > 0) {
         const auto new_val = log(square_w_minus_offset) - square(w) * scaling;
         fplus = log_sum_exp(fplus, new_val);
@@ -229,9 +228,9 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
         } else if (summand_minus <= NEGATIVE_INFTY) {
           continue;
         } else if (fminus > summand_minus) {
-          fminus = fminus + log1p(exp(summand_minus - fminus));
+          fminus = fminus + log1p_exp(summand_minus - fminus);
         } else {
-          fminus = summand_minus + log1p(exp(fminus - summand_minus));
+          fminus = summand_minus + log1p_exp(fminus - summand_minus);
         }
       }
       const auto new_val = mult * log(w) - square(w) * scaling;
