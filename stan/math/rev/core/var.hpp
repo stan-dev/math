@@ -366,7 +366,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
-   * Copy constructor for var_val.
+   * Copy constructor for var_val when the vari_type from `other` is directly assignable.
    * @tparam S type of the value in the `var_value` to assing
    * @param other the value to assign
    * @return this
