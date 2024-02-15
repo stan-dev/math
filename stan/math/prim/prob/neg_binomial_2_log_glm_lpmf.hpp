@@ -90,11 +90,10 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using T_xbeta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
                                   Array<T_xbeta_partials, Dynamic, 1>>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_phi_ref
-      = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
+  using T_x_ref = ref_type_if_not_constant_t<T_x>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_alpha>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
+  using T_phi_ref = ref_type_if_not_constant_t<T_precision>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();

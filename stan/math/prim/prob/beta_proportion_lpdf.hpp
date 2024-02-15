@@ -53,9 +53,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_kappa_ref = ref_type_if_t<!is_constant<T_prec>::value, T_prec>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_kappa_ref = ref_type_if_not_constant_t<T_prec>;
   static const char* function = "beta_proportion_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);

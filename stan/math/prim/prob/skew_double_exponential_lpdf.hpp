@@ -44,10 +44,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_tau_ref = ref_type_if_not_constant_t<T_skewness>;
   static const char* function = "skew_double_exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",

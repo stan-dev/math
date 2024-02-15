@@ -47,11 +47,9 @@ template <bool propto, typename T_y, typename T_scale_succ,
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref
-      = ref_type_if_t<!is_constant<T_scale_succ>::value, T_scale_succ>;
-  using T_beta_ref
-      = ref_type_if_t<!is_constant<T_scale_fail>::value, T_scale_fail>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_scale_succ>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_scale_fail>;
   static const char* function = "beta_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,

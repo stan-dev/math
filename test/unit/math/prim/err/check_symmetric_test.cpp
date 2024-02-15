@@ -64,3 +64,14 @@ TEST(ErrorHandlingMatrix, checkSymmetric_non_square) {
   EXPECT_THROW(stan::math::check_symmetric("checkSymmetric", "y", y),
                std::invalid_argument);
 }
+
+TEST(ErrorHandlingMatrix, checkSymmetric_complex) {
+  Eigen::MatrixXcd y(2, 2);
+  y << std::complex<double>(1, 1), std::complex<double>(2, 2),
+      std::complex<double>(2, 2), std::complex<double>(1, 1);
+
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric", "y", y));
+  y(0, 1) = std::complex<double>(2, 3);
+  EXPECT_THROW(stan::math::check_symmetric("checkSymmetric", "y", y),
+               std::domain_error);
+}

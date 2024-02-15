@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export SHELL = cmd
+SHELL ?= cmd
 
 ifdef tbb_build_dir
   test_dir:=$(tbb_build_dir)
@@ -22,7 +22,7 @@ endif
 
 # A convenience wrapper for calls to detect.js.
 # $(1) is the full command line for the script, e.g. /minversion icl 12
-detect_js = $(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js $(1)")
+detect_js = $(shell cmd //C "cscript //nologo //E:jscript $(tbb_root)/build/detect.js $(1)")
 
 # TODO give an error if archs doesn't match
 ifndef arch
@@ -110,8 +110,8 @@ ifneq ($(filter vc8 vc9,$(runtime)),)
 RML.MANIFEST = tbbmanifest.exe.manifest
 endif
 
-MAKE_VERSIONS = cmd /C cscript /nologo /E:jscript $(subst \,/,$(tbb_root))/build/version_info_windows.js $(compiler) $(arch) $(subst \,/,"$(VERSION_FLAGS)") > version_string.ver
-MAKE_TBBVARS  = cmd /C "$(subst /,\,$(tbb_root))\build\generate_tbbvars.bat"
+MAKE_VERSIONS = cmd //C cscript //nologo //E:jscript $(subst \,/,$(tbb_root))/build/version_info_windows.js $(compiler) $(arch) $(subst \,/,"$(VERSION_FLAGS)") > version_string.ver
+MAKE_TBBVARS  = cmd //C "$(subst /,\,$(tbb_root))\build\generate_tbbvars.bat"
 
 TEST_LAUNCHER = $(subst /,\,$(tbb_root))\build\test_launcher.bat $(largs)
 
