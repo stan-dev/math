@@ -7,7 +7,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log_inv_logit.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 
 namespace stan {
 namespace math {
@@ -60,18 +61,15 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
       = check_cl(function, "Probability parameter", alpha_val, "finite");
   auto alpha_finite = isfinite(alpha_val);
 
-  auto inv_logit_alpha = inv_logit(alpha_val);
-  auto inv_logit_neg_alpha = inv_logit(-alpha_val);
-  auto log_inv_logit_alpha = log(inv_logit_alpha);
-  auto log_inv_logit_neg_alpha = log(inv_logit_neg_alpha);
+  auto log_inv_logit_alpha = log_inv_logit(alpha_val);
+  auto log1m_inv_logit_alpha = log1m_inv_logit(alpha_val);
   auto n_diff = N - n;
   auto logp_expr1 = elt_multiply(n, log_inv_logit_alpha)
-                    + elt_multiply(n_diff, log_inv_logit_neg_alpha);
+                    + elt_multiply(n_diff, log1m_inv_logit_alpha);
   auto logp_expr
       = static_select<include_summand<propto, T_n_cl, T_N_cl>::value>(
           logp_expr1 + binomial_coefficient_log(N, n), logp_expr1);
-  auto alpha_deriv = elt_multiply(n, inv_logit_neg_alpha)
-                     - elt_multiply(n_diff, inv_logit_alpha);
+  auto alpha_deriv = n - elt_multiply(N, exp(log_inv_logit_alpha));
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> alpha_deriv_cl;

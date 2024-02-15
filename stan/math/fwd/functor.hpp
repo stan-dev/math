@@ -3,7 +3,9 @@
 
 #include <stan/math/fwd/functor/apply_scalar_unary.hpp>
 #include <stan/math/fwd/functor/gradient.hpp>
+#include <stan/math/fwd/functor/finite_diff.hpp>
 #include <stan/math/fwd/functor/hessian.hpp>
+#include <stan/math/fwd/functor/integrate_1d.hpp>
 #include <stan/math/fwd/functor/jacobian.hpp>
 #include <stan/math/fwd/functor/operands_and_partials.hpp>
 #include <stan/math/fwd/functor/partials_propagator.hpp>

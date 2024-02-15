@@ -5,7 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/mdivide_left_tri_low.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 
 namespace stan {
@@ -35,7 +35,7 @@ plain_type_t<T> chol2inv(const T& L) {
     X.coeffRef(0) = inv_square(L_ref.coeff(0, 0));
     return X;
   }
-  T_result L_inv = mdivide_left_tri_low(L_ref, T_result::Identity(K, K));
+  T_result L_inv = mdivide_left_tri<Eigen::Lower>(L_ref);
   T_result X(K, K);
   for (int k = 0; k < K; ++k) {
     X.coeffRef(k, k) = dot_self(L_inv.col(k).tail(K - k).eval());

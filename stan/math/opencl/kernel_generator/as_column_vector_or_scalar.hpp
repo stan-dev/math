@@ -71,8 +71,8 @@ class as_column_vector_or_scalar_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -82,7 +82,7 @@ class as_column_vector_or_scalar_
       std::string row_index_name_arg = row_index_name;
       std::string col_index_name_arg = col_index_name;
       modify_argument_indices(row_index_name_arg, col_index_name_arg);
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       res = this->template get_arg<0>().get_kernel_parts(
           generated2, generated_all, name_gen, row_index_name_arg,
           col_index_name_arg, view_handled);
@@ -134,8 +134,8 @@ class as_column_vector_or_scalar_
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
@@ -145,7 +145,7 @@ class as_column_vector_or_scalar_
     std::string row_index_name_arg = row_index_name;
     std::string col_index_name_arg = col_index_name;
     modify_argument_indices(row_index_name_arg, col_index_name_arg);
-    std::map<const void*, const char*> generated2;
+    std::unordered_map<const void*, const char*> generated2;
     kernel_parts res = this->template get_arg<0>().get_kernel_parts_lhs(
         generated2, generated_all, name_gen, row_index_name_arg,
         col_index_name_arg);
@@ -185,12 +185,13 @@ class as_column_vector_or_scalar_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       this->template get_arg<0>().set_args(generated2, generated_all, kernel,
                                            arg_num);
       if (generated_all.count(this) == 0) {

@@ -54,9 +54,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   using std::isfinite;
   using std::log;
   using T_y_ref = ref_type_t<T_y>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_x_ref = ref_type_if_not_constant_t<T_x>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_alpha>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
   using T_beta_partials = partials_type_t<scalar_type_t<T_beta>>;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
 
