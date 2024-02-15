@@ -2,20 +2,10 @@
 #define STAN_MATH_REV_META_PARTIALS_PROPOGATOR_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core/chainablestack.hpp>
-#include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/functor/operands_and_partials.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_vector_like.hpp>
-#include <stan/math/prim/meta/compiler_attributes.hpp>
-#include <stan/math/prim/meta/promote_scalar_type.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 #include <tuple>

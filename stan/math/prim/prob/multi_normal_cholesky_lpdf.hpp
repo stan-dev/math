@@ -106,6 +106,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
+  check_cholesky_factor(function, "Cholesky decomposition of a variance matrix",
+                        L_ref);
 
   if (unlikely(size_y == 0)) {
     return T_return(0);

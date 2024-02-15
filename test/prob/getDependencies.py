@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """
 This script determines which distributions may have changed
 based on the files #included by their test. It then prints a set of strings

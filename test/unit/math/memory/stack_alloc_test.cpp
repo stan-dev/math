@@ -91,6 +91,15 @@ TEST(stack_alloc, alloc) {
   allocator.recover_all();
 }
 
+TEST(stack_alloc, alloc_aligned) {
+  stan::math::stack_alloc allocator;
+  int* x = allocator.alloc_array<int>(3);
+
+  double* y = allocator.alloc_array<double>(4);
+  EXPECT_TRUE(stan::math::is_aligned(y, 8));
+  allocator.recover_all();
+}
+
 TEST(stack_alloc, in_stack) {
   stan::math::stack_alloc allocator;
 
@@ -113,7 +122,11 @@ TEST(stack_alloc, in_stack_second_block) {
   char* y = allocator.alloc_array<char>(1);
   EXPECT_TRUE(allocator.in_stack(x));
   EXPECT_TRUE(allocator.in_stack(y));
-  EXPECT_FALSE(allocator.in_stack(y + 1));
+  // effect of padding
+  EXPECT_TRUE(allocator.in_stack(y + 1));
+  EXPECT_TRUE(allocator.in_stack(y + 7));
+
+  EXPECT_FALSE(allocator.in_stack(y + 8));
 
   allocator.recover_all();
   EXPECT_FALSE(allocator.in_stack(x));
