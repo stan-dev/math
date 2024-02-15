@@ -64,12 +64,12 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
   auto sigma_positive_expr = 0 < sigma_val;
 
   auto scaled_diff = elt_divide(y_val - mu_val, sigma_val * SQRT_TWO);
-  auto one_m_erf = select(
+  matrix_cl<double> one_m_erf = select(
       scaled_diff < -37.5 * INV_SQRT_TWO, 2.0,
       select(scaled_diff < -5.0 * INV_SQRT_TWO, 2.0 - erfc(-scaled_diff),
              select(scaled_diff > 8.25 * INV_SQRT_TWO, 0.0,
                     1.0 - erf(scaled_diff))));
-  auto lccdf_expr = colwise_sum(log(one_m_erf));
+  auto lccdf_expr = log(one_m_erf);
   auto mu_deriv = select(scaled_diff > 8.25 * INV_SQRT_TWO, INFTY,
                          SQRT_TWO_OVER_SQRT_PI
                              * elt_divide(exp(-square(scaled_diff)),
@@ -88,7 +88,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
       = expressions(lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
-  T_partials_return lccdf = LOG_HALF + sum(from_matrix_cl(lccdf_cl));
+
+  T_partials_return lccdf
+      = LOG_HALF * lccdf_cl.size() + sum(from_matrix_cl(lccdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 

@@ -47,11 +47,14 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),
                    "rows of covariance parameter", L.rows());
+
   const auto& y_ref = to_ref(y);
+  check_finite(function, "Random variable", y_ref);
   const auto& L_ref = to_ref(L);
+  check_cholesky_factor(function, "Cholesky decomposition of kernel matrix",
+                        L_ref);
   const auto& w_ref = to_ref(w);
   check_positive_finite(function, "Kernel scales", w_ref);
-  check_finite(function, "Random variable", y_ref);
 
   if (y.rows() == 0) {
     return 0;

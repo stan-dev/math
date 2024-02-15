@@ -92,8 +92,8 @@ class indexing_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
@@ -110,7 +110,7 @@ class indexing_
       kernel_parts parts_col_idx = col_index.get_kernel_parts(
           generated, generated_all, name_gen, row_index_name, col_index_name,
           view_handled);
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       kernel_parts parts_mat = mat.get_kernel_parts(
           generated2, generated_all, name_gen, row_index.var_name_,
           col_index.var_name_, false);
@@ -134,8 +134,8 @@ class indexing_
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
@@ -151,7 +151,7 @@ class indexing_
     kernel_parts parts_col_idx
         = col_index.get_kernel_parts(generated, generated_all, name_gen,
                                      row_index_name, col_index_name, false);
-    std::map<const void*, const char*> generated2;
+    std::unordered_map<const void*, const char*> generated2;
     kernel_parts parts_mat
         = mat.get_kernel_parts_lhs(generated2, generated_all, name_gen,
                                    row_index.var_name_, col_index.var_name_);
@@ -171,16 +171,17 @@ class indexing_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
       this->template get_arg<1>().set_args(generated, generated_all, kernel,
                                            arg_num);
       this->template get_arg<2>().set_args(generated, generated_all, kernel,
                                            arg_num);
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       this->template get_arg<0>().set_args(generated2, generated_all, kernel,
                                            arg_num);
     }
