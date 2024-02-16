@@ -83,8 +83,7 @@ static constexpr double LOG_TWO = boost::math::constants::ln_two<double>();
  * The natural logarithm of \f$ \pi \f$,
  * \f$ \log \pi \f$.
  */
-static constexpr double LOG_PI
-    = 2 * boost::math::constants::log_root_two_pi<double>() - LOG_TWO;
+static constexpr double LOG_PI = 1.14472988584940017414342735135;
 
 /**
  * The natural logarithm of 0.5,

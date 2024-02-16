@@ -92,10 +92,9 @@ TEST(ProbDistributionsLkjCorrCholesky, gradients) {
   double fx_1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad_1;
   double fx_ad_1;
-  /*
+
   finite_diff_gradient(test_func_1, x1, fx_1, grad_1);
   gradient(test_func_1, x1, fx_ad_1, grad_ad_1);
   test_grad_eq(grad_1, grad_ad_1);
   EXPECT_FLOAT_EQ(fx, fx_ad);
-  */
 }
