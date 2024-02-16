@@ -66,6 +66,14 @@ TEST(MathMatrixPrimMat, max) {
   EXPECT_FLOAT_EQ(2.0, max(m));
 }
 
+TEST(MathMatrixPrimMat, max_scalars) {
+  int a = 1, b = 2, c = 3;
+  int max_ab = stan::math::max(a, b);
+  EXPECT_EQ(2, max_ab);
+  int max_abc = stan::math::max(stan::math::max(a, b), c);
+  EXPECT_EQ(3, max_abc);
+}
+
 TEST(MathMatrixPrimMat, max_exception) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
