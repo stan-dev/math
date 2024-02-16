@@ -377,7 +377,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                st0_val);
 
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
-  if (!N) {
+  if (N == 0) {
     return ret_t(0);
   }
   scalar_seq_view<T_y_ref> y_vec(y_ref);
