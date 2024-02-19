@@ -39,7 +39,7 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
   using boost::random::poisson_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv>;
-  static const char* function = "neg_binomial_rng";
+  static constexpr const char* function = "neg_binomial_rng";
   check_consistent_sizes(function, "Shape parameter", alpha,
                          "Inverse scale Parameter", beta);
   T_alpha_ref alpha_ref = alpha;

@@ -32,7 +32,7 @@ template <typename T_y_cl, typename T_inv_scale_cl,
           require_any_not_stan_scalar_t<T_y_cl, T_inv_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
-  static const char* function = "exponential_lcdf(OpenCL)";
+  static constexpr const char* function = "exponential_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;

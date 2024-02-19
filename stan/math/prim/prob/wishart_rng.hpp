@@ -15,7 +15,7 @@ template <class RNG>
 inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
                                    RNG& rng) {
   using Eigen::MatrixXd;
-  static const char* function = "wishart_rng";
+  static constexpr const char* function = "wishart_rng";
   index_type_t<MatrixXd> k = S.rows();
   check_square(function, "scale parameter", S);
   check_symmetric(function, "scale parameter", S);

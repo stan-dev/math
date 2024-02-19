@@ -37,7 +37,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   using boost::variate_generator;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_beta_ref = ref_type_t<T_scale>;
-  static const char* function = "gumbel_rng";
+  static constexpr const char* function = "gumbel_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          beta);
   T_mu_ref mu_ref = mu;

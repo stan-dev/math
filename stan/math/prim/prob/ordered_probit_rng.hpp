@@ -11,7 +11,7 @@ namespace math {
 
 template <class RNG>
 inline int ordered_probit_rng(double eta, const Eigen::VectorXd& c, RNG& rng) {
-  static const char* function = "ordered_probit";
+  static constexpr const char* function = "ordered_probit";
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
   check_ordered(function, "Cut points vector", c);

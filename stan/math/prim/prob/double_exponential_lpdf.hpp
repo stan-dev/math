@@ -45,7 +45,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "double_exponential_lpdf";
+  static constexpr const char* function = "double_exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma);
   T_y_ref y_ref = y;

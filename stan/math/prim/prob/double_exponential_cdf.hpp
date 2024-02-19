@@ -48,7 +48,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "double_exponential_cdf";
+  static constexpr const char* function = "double_exponential_cdf";
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;

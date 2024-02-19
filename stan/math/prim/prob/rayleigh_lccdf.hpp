@@ -24,7 +24,7 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "rayleigh_lccdf";
+  static constexpr const char* function = "rayleigh_lccdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 

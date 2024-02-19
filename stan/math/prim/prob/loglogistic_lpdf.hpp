@@ -50,7 +50,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   using T_scale_ref = ref_type_if_not_constant_t<T_scale>;
   using T_shape_ref = ref_type_if_not_constant_t<T_shape>;
   using std::pow;
-  static const char* function = "loglogistic_lpdf";
+  static constexpr const char* function = "loglogistic_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          alpha, "Shape parameter", beta);
 

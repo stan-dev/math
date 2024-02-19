@@ -76,7 +76,7 @@ template <typename T_theta, typename T_lam,
           require_any_vector_t<T_theta, T_lam>* = nullptr>
 return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                       const T_lam& lambda) {
-  static const char* function = "log_mix";
+  static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, T_lam>;
   using T_partials_vec =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
@@ -143,7 +143,7 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 template <typename T_theta, typename T_lam, require_vector_t<T_lam>* = nullptr>
 return_type_t<T_theta, std::vector<T_lam>> log_mix(
     const T_theta& theta, const std::vector<T_lam>& lambda) {
-  static const char* function = "log_mix";
+  static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, std::vector<T_lam>>;
   using T_partials_vec =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;

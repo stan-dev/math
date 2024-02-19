@@ -94,7 +94,7 @@ inline matrix_cl_view from_eigen_uplo_type(Eigen::UpLoType eigen_type) {
 }
 
 // \cond
-static const char* view_kernel_helpers = STRINGIFY(
+static constexpr const char* view_kernel_helpers = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Determines which parts are nonzero in any of the input views.
