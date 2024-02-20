@@ -11,7 +11,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
+static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
     // \endcond
 
     /** \ingroup opencl_kernels

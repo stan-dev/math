@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
-  static const char* function = "chi_square_lpdf";
+  static constexpr const char* function = "chi_square_lpdf";
   using T_y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   check_consistent_sizes(function, "Random variable", y,

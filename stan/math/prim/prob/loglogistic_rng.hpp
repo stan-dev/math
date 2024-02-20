@@ -37,7 +37,7 @@ loglogistic_rng(const T_scale& alpha, const T_shape& beta, RNG& rng) {
   using std::pow;
   using T_alpha_ref = ref_type_t<T_scale>;
   using T_beta_ref = ref_type_t<T_shape>;
-  static const char* function = "loglogistic_rng";
+  static constexpr const char* function = "loglogistic_rng";
   check_consistent_sizes(function, "Scale parameter", alpha, "Shape Parameter",
                          beta);
   T_alpha_ref alpha_ref = alpha;

@@ -60,7 +60,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   using T_n_ref = ref_type_if_not_constant_t<T_n>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "normal_sufficient_lpdf";
+  static constexpr const char* function = "normal_sufficient_lpdf";
   check_consistent_sizes(function, "Location parameter sufficient statistic",
                          y_bar, "Scale parameter sufficient statistic",
                          s_squared, "Number of observations", n_obs,

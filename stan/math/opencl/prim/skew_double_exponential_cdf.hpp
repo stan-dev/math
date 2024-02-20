@@ -36,7 +36,7 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
 return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
 skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
                             const T_scale_cl& sigma, const T_skewness_cl& tau) {
-  static const char* function = "skew_double_exponential_cdf(OpenCL)";
+  static constexpr const char* function = "skew_double_exponential_cdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
   using std::isfinite;

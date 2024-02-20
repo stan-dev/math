@@ -44,7 +44,7 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
     const T_y_cl& y, const T_scale_succ_cl& alpha,
     const T_scale_fail_cl& beta) {
   using std::isfinite;
-  static const char* function = "beta_lpdf(OpenCL)";
+  static constexpr const char* function = "beta_lpdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl>;
 

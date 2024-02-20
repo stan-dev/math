@@ -24,7 +24,7 @@ namespace math {
  * if high is nan or infinite, or if high is less than low.
  */
 inline std::vector<double> linspaced_array(int K, double low, double high) {
-  static const char* function = "linspaced_array";
+  static constexpr const char* function = "linspaced_array";
   check_nonnegative(function, "size", K);
   check_finite(function, "low", low);
   check_finite(function, "high", high);
