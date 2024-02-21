@@ -18,7 +18,7 @@ namespace math {
  * greater than K.
  */
 inline std::vector<double> one_hot_array(int K, int k) {
-  static const char* function = "one_hot_array";
+  static constexpr const char* function = "one_hot_array";
   check_positive(function, "size", K);
   check_bounded(function, "k", k, 1, K);
 

@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* binomial_coefficient_log_device_function
+static constexpr const char* binomial_coefficient_log_device_function
     = "\n"
       "#ifndef "
       "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_BINOMIAL_COEFFICIENT_LOG\n"

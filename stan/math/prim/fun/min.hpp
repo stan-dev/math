@@ -21,7 +21,7 @@ namespace math {
  * @return minimum value of the two arguments
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-return_type_t<T1, T2> min(T1 x, T2 y) {
+auto min(T1 x, T2 y) {
   return std::min(x, y);
 }
 

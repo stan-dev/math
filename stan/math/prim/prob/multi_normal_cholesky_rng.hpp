@@ -37,7 +37,7 @@ multi_normal_cholesky_rng(
   using boost::normal_distribution;
   using boost::variate_generator;
 
-  static const char* function = "multi_normal_cholesky_rng";
+  static constexpr const char* function = "multi_normal_cholesky_rng";
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
 

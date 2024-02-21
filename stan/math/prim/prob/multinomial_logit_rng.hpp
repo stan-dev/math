@@ -26,7 +26,7 @@ template <class RNG, typename T_beta,
           require_eigen_col_vector_t<T_beta>* = nullptr>
 inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
                                               RNG& rng) {
-  static const char* function = "multinomial_logit_rng";
+  static constexpr const char* function = "multinomial_logit_rng";
   const auto& beta_ref = to_ref(beta);
   check_finite(function, "Log-probabilities parameter", beta_ref);
   check_positive(function, "number of trials variables", N);

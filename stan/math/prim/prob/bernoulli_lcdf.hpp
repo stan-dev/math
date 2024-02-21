@@ -29,7 +29,7 @@ template <typename T_n, typename T_prob,
               T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
-  static const char* function = "bernoulli_lcdf";
+  static constexpr const char* function = "bernoulli_lcdf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;

@@ -91,7 +91,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
       // Max error in interpolated form : 3.042e-18
       // Max Error found at double precision = Poly : 5.106609e-16
       //                                       Cheb : 5.239199e-16
-      static const double P[]
+      static constexpr double P[15]
           = {1.00000000000000000e+00, 2.49999999999999909e-01,
              2.77777777777782257e-02, 1.73611111111023792e-03,
              6.94444444453352521e-05, 1.92901234513219920e-06,
@@ -107,7 +107,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
       // Max error in interpolated form : 1.685e-16
       // Max Error found at double precision = Poly : 2.575063e-16
       //                                       Cheb : 2.247615e+00
-      static const double P[]
+      static constexpr double P[22]
           = {3.98942280401425088e-01,  4.98677850604961985e-02,
              2.80506233928312623e-02,  2.92211225166047873e-02,
              4.44207299493659561e-02,  1.30970574605856719e-01,
@@ -123,9 +123,10 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
     }
     // Max error in interpolated form : 2.437e-18
     // Max Error found at double precision = Poly : 1.216719e-16
-    static const double P[] = {3.98942280401432905e-01, 4.98677850491434560e-02,
-                               2.80506308916506102e-02, 2.92179096853915176e-02,
-                               4.53371208762579442e-02};
+    static constexpr double P[5]
+        = {3.98942280401432905e-01, 4.98677850491434560e-02,
+           2.80506308916506102e-02, 2.92179096853915176e-02,
+           4.53371208762579442e-02};
     return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
   }
   if (v == 1) {  // WARNING: will not autodiff for v = 1 correctly
@@ -136,7 +137,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
       // Max error in interpolated form: 5.639e-17
       // Max Error found at double precision = Poly: 1.795559e-16
 
-      static const double P[]
+      static constexpr double P[13]
           = {8.333333333333333803e-02, 6.944444444444341983e-03,
              3.472222222225921045e-04, 1.157407407354987232e-05,
              2.755731926254790268e-07, 4.920949692800671435e-09,
@@ -152,7 +153,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
       // Max error in interpolated form: 1.796e-16
       // Max Error found at double precision = Poly: 2.898731e-16
 
-      static const double P[]
+      static constexpr double P[22]
           = {3.989422804014406054e-01,  -1.496033551613111533e-01,
              -4.675104253598537322e-02, -4.090895951581637791e-02,
              -5.719036414430205390e-02, -1.528189554374492735e-01,
@@ -168,7 +169,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
     }
     // Max error in interpolated form: 1.320e-19
     // Max Error found at double precision = Poly: 7.065357e-17
-    static const double P[]
+    static constexpr double P[5]
         = {3.989422804014314820e-01, -1.496033551467584157e-01,
            -4.675105322571775911e-02, -4.090421597376992892e-02,
            -5.843630344778927582e-02};

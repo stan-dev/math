@@ -40,7 +40,7 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
-  static const char* function = "skew_double_exponential_lccdf";
+  static constexpr const char* function = "skew_double_exponential_lccdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",

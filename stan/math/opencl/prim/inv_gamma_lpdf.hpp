@@ -40,7 +40,7 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& beta) {
   using std::isfinite;
   using std::isnan;
-  static const char* function = "inv_gamma_lpdf(OpenCL)";
+  static constexpr const char* function = "inv_gamma_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y,

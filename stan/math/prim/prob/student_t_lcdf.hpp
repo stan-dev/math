@@ -33,7 +33,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   using std::exp;
   using std::log;
   using std::pow;
-  static const char* function = "student_t_lcdf";
+  static constexpr const char* function = "student_t_lcdf";
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
   T_mu_ref mu_ref = mu;
