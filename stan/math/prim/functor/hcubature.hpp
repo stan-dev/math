@@ -73,7 +73,7 @@ static constexpr std::array<double, 4> gwd7{
  * @param x x-th lexicographically ordered set
  */
 inline void combination(Eigen::Matrix<int, Eigen::Dynamic, 1>& c, const int dim,
-                        const int p, const int x) {
+                        const int p, const int x) noexcept {
   int r = 0;
   int k = 0;
   c[0] = 0;
@@ -89,6 +89,7 @@ inline void combination(Eigen::Matrix<int, Eigen::Dynamic, 1>& c, const int dim,
     k = k - r;
   }
   c[p - 1] = (p > 1) ? c[p - 2] + x - k : x;
+  c.array() -= 1;
 }
 
 /**
@@ -110,14 +111,14 @@ inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> combos(
   for (size_t i = 0; i < choose_dimk; i++) {
     combination(c, dim, k, i + 1);
     for (size_t j = 0; j < k; j++) {
-      p.coeffRef(c.coeff(j) - 1, i) = lambda;
+      p.coeffRef(c.coeff(j), i) = lambda;
     }
   }
   return p;
 }
 
 /**
- * Compute a vector [p] of all [dim]-component vectors
+ * Compute a matrix [p] of all [dim]-component vectors
  * with [k] components equal to [±lambda] and other components equal to zero
  * (with all possible signs).
  *
@@ -133,31 +134,31 @@ inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> signcombos(
   const auto choose_dimk = choose(dim, k);
   Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> p
       = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
-  int current_col = 0;
+  std::size_t current_col = 0;
   const auto inner_iter_len = std::pow(2, k);
   std::vector<bool> index;
   index.reserve(inner_iter_len * (choose_dimk + 1));
   for (int i = 1; i != choose_dimk + 1; i++) {
     combination(c, dim, k, i);
-    index.push_back(false);
-    p(c.array() - 1.0, current_col).setConstant(lambda);
+    p(c.array(), current_col).setConstant(lambda);
     current_col += 1;
+    index.push_back(false);
     for (int j = 1; j != inner_iter_len; j++, current_col++) {
       p.col(current_col) = p.col(current_col - 1);
-      int first_zero
+      const std::size_t first_zero
           = std::distance(std::begin(index),
                           std::find(std::begin(index), std::end(index), false));
       const std::size_t index_size = index.size();
       if (first_zero == index_size) {
+        p(c.segment(0, index_size).array(), current_col).array() *= -1;
+        p(c[index_size], current_col) = -lambda;
         index.flip();
-        p(c.segment(0, index.size()).array() - 1, current_col).array() *= -1;
         index.push_back(true);
-        p(c[index.size() - 1] - 1, current_col) = -lambda;
       } else {
-        for (int h = 0; h != first_zero + 1; h++) {
+        for (std::size_t h = 0; h != first_zero + 1; h++) {
           index[h].flip();
         }
-        p(c.segment(0, first_zero + 1).array() - 1, current_col).array() *= -1;
+        p(c.segment(0, first_zero + 1U).array(), current_col).array() *= -1;
       }
     }
     index.clear();
@@ -179,25 +180,24 @@ inline std::tuple<
     std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4>,
     Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 4, 1>>
 make_GenzMalik(const int dim) {
-  std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4> points;
-  Eigen::Matrix<double, 5, 1> weights;
-  Eigen::Matrix<double, 4, 1> weights_low_deg;
   double twopn = std::pow(2, dim);
-  weights[0]
-      = twopn * ((12824.0 - 9120.0 * dim + 400.0 * dim * dim) * 1.0 / 19683.0);
-  weights[1] = twopn * (980.0 / 6561.0);
-  weights[2] = twopn * ((1820.0 - 400.0 * dim) * 1.0 / 19683.0);
-  weights[3] = twopn * (200.0 / 19683.0);
-  weights[4] = 6859.0 / 19683.0;
-  weights_low_deg[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
-  weights_low_deg[1] = twopn * (245.0 / 486);
-  weights_low_deg[2] = twopn * ((265.0 - 100.0 * dim) * 1.0 / 1458.0);
-  weights_low_deg[3] = twopn * (25.0 / 729.0);
-  points[0] = combos(1, std::sqrt(9.0 * 1.0 / 70.0), dim);
+  Eigen::Matrix<double, 5, 1> weights{{
+    twopn * ((12824.0 - 9120.0 * dim + 400.0 * dim * dim) * 1.0 / 19683.0),
+    twopn * (980.0 / 6561.0),
+    twopn * ((1820.0 - 400.0 * dim) * 1.0 / 19683.0),
+    twopn * (200.0 / 19683.0),
+    6859.0 / 19683.0}};
+  Eigen::Matrix<double, 4, 1> weights_low_deg{{
+    twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729),
+    twopn * (245.0 / 486),
+    twopn * ((265.0 - 100.0 * dim) * 1.0 / 1458.0),
+    twopn * (25.0 / 729.0)}};
   double l3 = std::sqrt(9.0 * 1.0 / 10.0);
-  points[1] = combos(1, l3, dim);
-  points[2] = signcombos(2, l3, dim);
-  points[3] = signcombos(dim, std::sqrt(9.0 * 1.0 / 19.0), dim);
+  std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4> points{{
+    combos(1, std::sqrt(9.0 * 1.0 / 70.0), dim),
+    combos(1, l3, dim),
+    signcombos(2, l3, dim),
+    signcombos(dim, std::sqrt(9.0 * 1.0 / 19.0), dim)}};
   return std::make_tuple(std::move(points), std::move(weights),
                          std::move(weights_low_deg));
 }
@@ -293,41 +293,29 @@ inline auto integrate_GenzMalik(const F& integrand, const GenzMalik& genz_malik,
     v *= deltac[i];
   }
   Eigen::Matrix<Scalar, 5, 1> f = Eigen::Matrix<Scalar, 5, 1>::Zero();
-  f.coeffRef(0)
-      = math::apply([](auto&& integrand, auto&& c,
-                       auto&&... args) { return integrand(c, args...); },
+  const auto f_delta = [](auto&& integrand, auto&& cc, auto&&... args) {
+          return integrand(cc, args...);
+        };
+  f.coeffRef(0) = math::apply(f_delta,
                     pars_tuple, integrand, c);
   Eigen::Matrix<Scalar, Eigen::Dynamic, 1> divdiff(dim);
+  const auto f_delta_i = [](auto&& integrand, auto&& c, auto&& p, auto&&... args) {
+          return integrand(c + p, args...) + integrand(c - p, args...);
+        };
   for (auto i = 0; i != dim; i++) {
     auto p2 = deltac.cwiseProduct(points[0].col(i));
-    auto f2i = math::apply(
-        [](auto&& integrand, auto&& c, auto&& p2, auto&&... args) {
-          return integrand(c + p2, args...) + integrand(c - p2, args...);
-        },
-        pars_tuple, integrand, c, p2);
+    auto f2i = math::apply(f_delta_i, pars_tuple, integrand, c, p2);
     auto p3 = deltac.cwiseProduct(points[1].col(i));
-    auto f3i = math::apply(
-        [](auto&& integrand, auto&& c, auto&& p3, auto&&... args) {
-          return integrand(c + p3, args...) + integrand(c - p3, args...);
-        },
-        pars_tuple, integrand, c, p3);
+    auto f3i = math::apply(f_delta_i, pars_tuple, integrand, c, p3);
     f.coeffRef(1) += f2i;
     f.coeffRef(2) += f3i;
     divdiff[i] = fabs(f3i + 12.0 * f.coeff(0) - 7.0 * f2i);
   }
   for (auto i = 0; i != points[2].cols(); i++) {
-    f.coeffRef(3) += math::apply(
-        [](auto&& integrand, auto&& cc, auto&&... args) {
-          return integrand(cc, args...);
-        },
-        pars_tuple, integrand, c + deltac.cwiseProduct(points[2].col(i)));
+    f.coeffRef(3) += math::apply(f_delta, pars_tuple, integrand, c + deltac.cwiseProduct(points[2].col(i)));
   }
   for (auto i = 0; i != points[3].cols(); i++) {
-    f.coeffRef(4) += math::apply(
-        [](auto&& integrand, auto&& cc, auto&&... args) {
-          return integrand(cc, args...);
-        },
-        pars_tuple, integrand, c + deltac.cwiseProduct(points[3].col(i)));
+    f.coeffRef(4) += math::apply(f_delta, pars_tuple, integrand, c + deltac.cwiseProduct(points[3].col(i)));
   }
 
   Scalar I = v * weights.dot(f);
@@ -441,8 +429,7 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   }
   auto numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
-
-  auto evals_per_box = numevals;
+  const auto evals_per_box = numevals;
   Scalar error = err;
   Scalar val = result;
 
@@ -455,17 +442,13 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   std::vector<box_t> ms;
   ms.reserve(numevals);
   ms.emplace_back(a, b, result, kdivide);
-  auto get_largest_box_idx = [](auto&& box_vec) {
-    auto max_it = std::max_element(box_vec.begin(), box_vec.end());
-    return std::distance(box_vec.begin(), max_it);
-  };
   std::vector<Scalar> err_vec;
   err_vec.reserve(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
          && (error > fmax(reqRelError * fabs(val), reqAbsError))
          && fabs(val) < INFTY) {
-    auto err_idx = get_largest_box_idx(err_vec);
+    auto err_idx = std::distance(err_vec.begin(), std::max_element(err_vec.begin(), err_vec.end()));
     auto&& box = ms[err_idx];
     auto w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
     eig_vec_a ma = Eigen::Map<const eig_vec_a>(box.a_.data(), box.a_.size());
@@ -502,13 +485,8 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     numevals += 2 * evals_per_box;
   }
   result = 0.0;
-  err = 0.0;
-
   for (auto&& box : ms) {
     result += box.I_;
-  }
-  for (auto err_i : err_vec) {
-    err += err_i;
   }
   return result;
 }  // hcubature

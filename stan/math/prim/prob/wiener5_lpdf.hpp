@@ -32,11 +32,9 @@ inline auto wiener5_compute_error_term(T_y&& y, T_a&& a, T_v&& v_value,
   const auto v = -v_value;
   const auto sv_sqr = square(sv);
   const auto one_plus_svsqr_y = 1 + sv_sqr * y;
-  const auto two_avw = 2.0 * a * v * w;
-  const auto two_log_a = 2.0 * log(a);
-  return stan::math::eval((sv_sqr * square(a * w) - two_avw - square(v) * y)
+  return stan::math::eval((sv_sqr * square(a * w) - 2.0 * a * v * w - square(v) * y)
                               / 2.0 / one_plus_svsqr_y
-                          - two_log_a - 0.5 * log(one_plus_svsqr_y));
+                          - 2.0 * log(a) - 0.5 * log(one_plus_svsqr_y));
 }
 
 /**
@@ -61,8 +59,7 @@ inline auto wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
                                     T_err&& error) noexcept {
   const auto two_error = 2.0 * error;
   const auto y_asq = y / square(a);
-  const auto two_log_a = 2 * log(a);
-  const auto log_y_asq = log(y) - two_log_a;
+  const auto log_y_asq = log(y) - 2 * log(a);
   const auto w = 1.0 - w_value;
 
   const auto n_1_factor = Density ? 2 : 3;
@@ -99,10 +96,9 @@ inline auto wiener5_density_large_reaction_time_terms(T_y&& y, T_a&& a,
                                                       T_w_value&& w_value,
                                                       T_err&& error) noexcept {
   const auto y_asq = y / square(a);
-  const auto log_y_asq = log(y) - 2 * log(a);
   static constexpr double PI_SQUARED = pi() * pi();
   auto n_1 = 1.0 / (pi() * sqrt(y_asq));
-  const auto two_log_piy = -2.0 * (LOG_PI + log_y_asq + error);
+  const auto two_log_piy = -2.0 * (LOG_PI + log(y) - 2 * log(a) + error);
   auto n_2
       = (two_log_piy >= 0) ? sqrt(two_log_piy / (PI_SQUARED * y_asq)) : 0.0;
   return ceil(fmax(n_1, n_2));
@@ -128,18 +124,18 @@ template <GradientCalc GradW, typename T_y, typename T_a, typename T_w_value,
 inline auto wiener5_gradient_large_reaction_time_terms(T_y&& y, T_a&& a,
                                                        T_w_value&& w_value,
                                                        T_err&& error) noexcept {
-  const auto y_asq = y / square(a);
   const auto log_y_asq = log(y) - 2 * log(a);
-  static constexpr double PI_SQUARED = pi() * pi();
-  const auto n_1_factor = GradW ? 2 : 3;
-  auto n_1 = sqrt(n_1_factor / y_asq) / pi();
   const auto two_error = 2.0 * error;
   const auto u_eps_arg
       = GradW ? log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_error
               : log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + error;
-  const auto u_eps = fmin(-1, u_eps_arg);
+  const auto y_asq = y / square(a);
+  static constexpr double PI_SQUARED = pi() * pi();
   const auto arg_mult = GradW ? 1 : (2.0 / PI_SQUARED / y_asq);
+  const auto u_eps = fmin(-1, u_eps_arg);
   const auto arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+  const auto n_1_factor = GradW ? 2 : 3;
+  auto n_1 = sqrt(n_1_factor / y_asq) / pi();
   auto n_2 = GradW ? ((arg > 0) ? sqrt(arg / y_asq) / pi() : n_1)
                    : ((arg > 0) ? sqrt(arg) : n_1);
   return ceil(fmax(n_1, n_2));
@@ -588,7 +584,8 @@ inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v_value,
  * @param arg argument to be replaced
  * @param err argument to replace
  */
-template <size_t NestedIndex, typename Scalar1, typename Scalar2>
+template <size_t NestedIndex, typename Scalar1, typename Scalar2,
+ require_not_tuple_t<Scalar1>* = nullptr>
 inline void assign_err(Scalar1 arg, Scalar2 err) {
   arg = err;
 }
@@ -604,8 +601,8 @@ inline void assign_err(Scalar1 arg, Scalar2 err) {
  * @param args_tuple argument tuple to be replaced
  * @param err argument to replace
  */
-template <size_t NestedIndex, typename Scalar, typename... TArgs>
-inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
+template <size_t NestedIndex, typename Tup, typename Scalar, require_tuple_t<Tup>* = nullptr>
+inline void assign_err(Tup&& args_tuple, Scalar err) {
   std::get<NestedIndex>(args_tuple) = err;
 }
 
@@ -635,13 +632,10 @@ inline auto estimate_with_err_check(F&& functor, T_err&& err,
   auto log_fabs_result = LogResult ? log(fabs(result)) : fabs(result);
   if (log_fabs_result < err) {
     log_fabs_result = is_inf(log_fabs_result) ? 0 : log_fabs_result;
-    auto err_args_tuple = std::make_tuple(args_tuple...);
     const auto new_error
         = GradW7 ? err + log_fabs_result + LOG_TWO : err + log_fabs_result;
-    assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple), new_error);
-    result
-        = math::apply([](auto&& func, auto&&... args) { return func(args...); },
-                      err_args_tuple, functor);
+    assign_err<NestedIndex>(std::get<ErrIndex>(std::forward_as_tuple(args_tuple...)), new_error);
+    result = functor(args_tuple...);
   }
   return result;
 }
@@ -831,15 +825,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   }  // end for loop
   return ops_partials.build(log_density);
 }  // end wiener_lpdf
-
-// ToDo: delete old wiener_lpdf implementation to use this one
-// template <bool propto = false, typename T_y, typename T_a, typename T_t0,
-//          typename T_w, typename T_v>
-// inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
-//                        const T_w& w, const T_v& v,
-//                        const double& precision_derivatives = 1e-4) {
-//  return wiener_lpdf(y, a, t0, w, v, 0, precision_derivatives);
-//}  // end wiener_lpdf
 
 }  // namespace math
 }  // namespace stan

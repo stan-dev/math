@@ -34,12 +34,10 @@ template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv,
 inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
                             const T_w& w, const T_sv& sv, const T_sw& sw,
                             T_err log_error) {
-  auto low = w - sw / 2.0;
   const auto lower_value
-      = wiener5_density<GradientCalc::ON>(y, a, v, low, sv, log_error);
-  auto high = w + sw / 2.0;
+      = wiener5_density<GradientCalc::ON>(y, a, v, w - sw / 2.0, sv, log_error);
   const auto upper_value
-      = wiener5_density<GradientCalc::ON>(y, a, v, high, sv, log_error);
+      = wiener5_density<GradientCalc::ON>(y, a, v, w + sw / 2.0, sv, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
@@ -135,7 +133,7 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  */
 template <GradientCalc GradSW, GradientCalc GradW7 = GradientCalc::OFF,
           typename Wiener7FunctorT, typename T_err, typename... TArgs>
-inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
+inline auto wiener7_integrate(Wiener7FunctorT&& wiener7_functor,
                               T_err&& hcubature_err, TArgs&&... args) {
   const auto functor = [&wiener7_functor](auto&&... integration_args) {
     return hcubature(
@@ -394,7 +392,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   scalar_seq_view<T_sw_ref> sw_vec(sw_ref);
   scalar_seq_view<T_st0_ref> st0_vec(st0_ref);
   const size_t N_y_t0 = max_size(y, t0, st0);
-
   for (size_t i = 0; i < N_y_t0; ++i) {
     if (y_vec[i] <= t0_vec[i]) {
       [&]() STAN_COLD_PATH {
@@ -448,7 +445,8 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
-    if (sw_vec[i] == 0 && st0_vec[i] == 0) {
+    const int dim = static_cast<int>(sw_vec[i] != 0) + static_cast<int>(st0_vec[i] != 0);
+    if (dim == 0) {
       result += wiener_lpdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
                                     v_vec[i], sv_vec[i], precision_derivatives);
       continue;
@@ -461,7 +459,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return sv_value = sv_vec.val(i);
     const T_partials_return sw_value = sw_vec.val(i);
     const T_partials_return st0_value = st0_vec.val(i);
-    const int dim = (sw_value != 0) + (st0_value != 0);
     check_positive(function_name,
                    "(Inter-trial variability in A-priori bias) + "
                    "(Inter-trial variability in nondecision time)",
@@ -469,16 +466,14 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     Eigen::Matrix<T_partials_return, -1, 1> xmin = Eigen::VectorXd::Zero(dim);
     Eigen::Matrix<T_partials_return, -1, 1> xmax = Eigen::VectorXd::Ones(dim);
-    if (st0_value != 0) {
-      xmax[dim - 1] = fmin(1.0, (y_value - t0_value) / st0_value);
-    }
-
+    xmax[dim - 1] = (st0_value == 0) ? xmax[dim - 1]: fmin(1.0, (y_value - t0_value) / st0_value);
     T_partials_return hcubature_err
         = log_error_absolute - log_error_density + LOG_TWO + 1;
     using internal::GradientCalc;
-    const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
+    T_partials_return err_log = log_error_absolute - LOG_TWO;
+    auto params = std::forward_as_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
-                                        log_error_absolute - LOG_TWO);
+                                        err_log);
     T_partials_return density
         = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
             [](auto&&... args) {
@@ -504,7 +499,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
           / density;
 
     // computation of derivatives and precision checks
-    T_partials_return derivative;
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] = deriv_t_7;
     }
@@ -559,6 +553,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
+        T_partials_return derivative;
         if (st0_value == 0) {
           derivative = internal::estimate_with_err_check<
               6, 0, GradientCalc::OFF, GradientCalc::ON>(
@@ -577,12 +572,12 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       }
     }
     if (!is_constant_all<T_st0>::value) {
-      T_partials_return f;
       if (st0_value == 0) {
         partials<7>(ops_partials)[i] = 0;
       } else if (y_value - (t0_value + st0_value) <= 0) {
         partials<7>(ops_partials)[i] = -1 / st0_value;
       } else {
+      T_partials_return f;
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0) {
           f = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
@@ -593,9 +588,9 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               log_error_derivative + log(st0_value), y_value - t0_st0, a_value,
               v_value, w_value, sv_value, log_error_absolute - LOG_TWO);
         } else {
-          const T_partials_return new_error = log_error_absolute - LOG_TWO;
+          T_partials_return new_error = log_error_absolute - LOG_TWO;
           auto params_st
-              = std::make_tuple(y_value, a_value, v_value, w_value, t0_st0,
+              = std::forward_as_tuple(y_value, a_value, v_value, w_value, t0_st0,
                                 sv_value, sw_value, 0.0, new_error);
           f = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
               [](auto&&... args) {
