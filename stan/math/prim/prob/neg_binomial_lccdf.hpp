@@ -32,7 +32,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   using std::pow;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv_scale>;
-  static const char* function = "neg_binomial_lccdf";
+  static constexpr const char* function = "neg_binomial_lccdf";
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta_param);
 

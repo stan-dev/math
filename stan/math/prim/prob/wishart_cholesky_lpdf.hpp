@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   using T_nu_ref = ref_type_t<T_dof>;
   using T_L_S_ref = ref_type_t<T_scale>;
   using T_return = return_type_t<T_y, T_dof, T_scale>;
-  static const char* function = "wishart_cholesky_lpdf";
+  static constexpr const char* function = "wishart_cholesky_lpdf";
   Eigen::Index k = L_Y.rows();
 
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);

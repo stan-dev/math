@@ -32,7 +32,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "lognormal_lccdf";
+  static constexpr const char* function = "lognormal_lccdf";
 
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;

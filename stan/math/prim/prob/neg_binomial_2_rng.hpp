@@ -39,7 +39,7 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   using boost::random::poisson_distribution;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_phi_ref = ref_type_t<T_prec>;
-  static const char* function = "neg_binomial_2_rng";
+  static constexpr const char* function = "neg_binomial_2_rng";
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", phi);
   T_mu_ref mu_ref = mu;

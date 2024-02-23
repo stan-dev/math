@@ -133,7 +133,7 @@ class operation_cl : public operation_cl_base {
   static constexpr int N = sizeof...(Args);
   using view_transitivity = std::tuple<std::is_same<Args, void>...>;
   // value representing a not yet determined size
-  static const int dynamic = -1;
+  static constexpr int dynamic = -1;
 
   /**
     Returns an argument to this operation

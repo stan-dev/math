@@ -154,7 +154,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
   constexpr int C1 = EigMat1::ColsAtCompileTime;
   constexpr int R2 = EigMat2::RowsAtCompileTime;
   constexpr int C2 = EigMat2::ColsAtCompileTime;
-  static const char *function = "mdivide_left_spd";
+  static constexpr const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   const auto &A_ref = to_ref(A);
   check_symmetric(function, "A", A_ref);
@@ -185,7 +185,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
   constexpr int C1 = EigMat1::ColsAtCompileTime;
   constexpr int R2 = EigMat2::RowsAtCompileTime;
   constexpr int C2 = EigMat2::ColsAtCompileTime;
-  static const char *function = "mdivide_left_spd";
+  static constexpr const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   const auto &A_ref = to_ref(A);
   check_symmetric(function, "A", A_ref);
@@ -216,7 +216,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
   constexpr int C1 = EigMat1::ColsAtCompileTime;
   constexpr int R2 = EigMat2::RowsAtCompileTime;
   constexpr int C2 = EigMat2::ColsAtCompileTime;
-  static const char *function = "mdivide_left_spd";
+  static constexpr const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   const auto &A_ref = to_ref(A);
   check_symmetric(function, "A", A_ref);

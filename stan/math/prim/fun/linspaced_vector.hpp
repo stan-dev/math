@@ -23,7 +23,7 @@ namespace math {
  * if high is nan or infinite, or if high is less than low.
  */
 inline auto linspaced_vector(int K, double low, double high) {
-  static const char* function = "linspaced_vector";
+  static constexpr const char* function = "linspaced_vector";
   check_nonnegative(function, "size", K);
   check_finite(function, "low", low);
   check_finite(function, "high", high);

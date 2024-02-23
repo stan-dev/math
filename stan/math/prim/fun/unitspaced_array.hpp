@@ -21,7 +21,7 @@ namespace math {
  * @throw std::domain_error if high is less than low.
  */
 inline std::vector<int> unitspaced_array(int low, int high) {
-  static const char* function = "unitspaced_array";
+  static constexpr const char* function = "unitspaced_array";
   check_greater_or_equal(function, "high", high, low);
 
   int K = std::abs(high - low + 1);

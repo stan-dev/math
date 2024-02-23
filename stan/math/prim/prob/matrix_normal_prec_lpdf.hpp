@@ -35,7 +35,7 @@ template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
 return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
-  static const char* function = "matrix_normal_prec_lpdf";
+  static constexpr const char* function = "matrix_normal_prec_lpdf";
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);

@@ -18,7 +18,7 @@ template <bool propto, typename T_covar, typename T_shape>
 return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(const T_covar& L,
                                                        const T_shape& eta) {
   using lp_ret = return_type_t<T_covar, T_shape>;
-  static const char* function = "lkj_corr_cholesky_lpdf";
+  static constexpr const char* function = "lkj_corr_cholesky_lpdf";
   check_positive(function, "Shape parameter", eta);
 
   const auto& L_ref = to_ref(L);

@@ -32,7 +32,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl, T_shape_cl>* = nullptr>
 return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lccdf(
     const T_y_cl& y, const T_scale_cl& y_min, const T_shape_cl& alpha) {
-  static const char* function = "pareto_lccdf(OpenCL)";
+  static constexpr const char* function = "pareto_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
   using std::isinf;

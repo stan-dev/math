@@ -49,7 +49,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   using boost::random::uniform_real_distribution;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_kappa_ref = ref_type_t<T_conc>;
-  static const char* function = "von_mises_rng";
+  static constexpr const char* function = "von_mises_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale parameter",
                          kappa);
   T_mu_ref mu_ref = mu;
