@@ -31,7 +31,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_y_min_ref = ref_type_if_not_constant_t<T_scale>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
-  static const char* function = "pareto_lpdf";
+  static constexpr const char* function = "pareto_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
   if (size_zero(y, y_min, alpha)) {

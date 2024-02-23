@@ -27,7 +27,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lpmf(const T_y& y,
                                              const T_theta& theta) {
-  static const char* function = "poisson_binomial_lpmf";
+  static constexpr const char* function = "poisson_binomial_lpmf";
 
   size_t size_theta = size_mvt(theta);
   if (size_theta > 1) {

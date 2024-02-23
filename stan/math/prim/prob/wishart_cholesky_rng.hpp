@@ -32,12 +32,11 @@ inline Eigen::MatrixXd wishart_cholesky_rng(double nu,
                                             const Eigen::MatrixXd& L_S,
                                             RNG& rng) {
   using Eigen::MatrixXd;
-  static const char* function = "wishart_cholesky_rng";
+  static constexpr const char* function = "wishart_cholesky_rng";
   index_type_t<MatrixXd> k = L_S.rows();
-  check_square(function, "Cholesky Scale matrix", L_S);
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
-  check_positive(function, "Cholesky Scale matrix", L_S.diagonal());
-  check_positive(function, "columns of Cholesky Scale matrix", L_S.cols());
+  check_square(function, "Cholesky Scale matrix", L_S);
+  check_cholesky_factor(function, "Cholesky Scale matrix", L_S);
 
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {

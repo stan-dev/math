@@ -41,7 +41,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_covar_cl,
                                                       T_covar_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_covar_cl& L) {
-  static const char* function = "multi_normal_cholesky_lpdf(OpenCL)";
+  static constexpr const char* function = "multi_normal_cholesky_lpdf(OpenCL)";
 
   check_consistent_sizes(function, "y", y, "mu", mu);
   check_square(function, "covariance parameter", L);

@@ -32,7 +32,7 @@ void check_scalar_types(F& f, double value, double res, double deriv) {
 TEST(ProbWienerFull, wiener_full_all_scalar) {
   // tests all parameter types individually, with other
   // parameters set to double
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
 
   std::vector<double> rt{1, 1, 1, 1, 1, 1, 1, 1, 1};
   std::vector<double> a{1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -69,50 +69,42 @@ TEST(ProbWienerFull, wiener_full_all_scalar) {
   for (int i = 0; i < result.size(); i++) {
     // rt
     auto f_rt = [&](auto value) {
-      return wiener_full_lpdf(value, a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                              st0[i]);
+      return wiener_lpdf(value, a[i], t0[i], w[i], v[i], sv[i], sw[i], st0[i]);
     };
     check_scalar_types(f_rt, rt[i], result[i], drt[i]);
     // a
     auto f_a = [&](auto value) {
-      return wiener_full_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i], sw[i],
-                              st0[i]);
+      return wiener_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i], sw[i], st0[i]);
     };
     check_scalar_types(f_a, a[i], result[i], da[i]);
     // v
     auto f_v = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i], sw[i],
-                              st0[i]);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i], sw[i], st0[i]);
     };
     check_scalar_types(f_v, v[i], result[i], dv[i]);
     // w
     auto f_w = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i], sw[i],
-                              st0[i]);
+      return wiener_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i], sw[i], st0[i]);
     };
     check_scalar_types(f_w, w[i], result[i], dw[i]);
     // t0
     auto f_t0 = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], value, w[i], v[i], sv[i], sw[i],
-                              st0[i]);
+      return wiener_lpdf(rt[i], a[i], value, w[i], v[i], sv[i], sw[i], st0[i]);
     };
     check_scalar_types(f_t0, t0[i], result[i], dt0[i]);
     // sv
     auto f_sv = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], value, sw[i],
-                              st0[i]);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], value, sw[i], st0[i]);
     };
     check_scalar_types(f_sv, sv[i], result[i], dsv[i]);
     // sw
     auto f_sw = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], value,
-                              st0[i]);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], value, st0[i]);
     };
     check_scalar_types(f_sw, sw[i], result[i], dsw[i]);
     // st0
     auto f_st0 = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                              value);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], sw[i], value);
     };
     check_scalar_types(f_st0, st0[i], result[i], dst0[i]);
   }
@@ -121,7 +113,7 @@ TEST(ProbWienerFull, wiener_full_all_scalar) {
 TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
   // tests all parameter types individually, with other parameters
   // set to double
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double err_tol = 2e-6;
 
   std::vector<double> rt{1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -159,50 +151,50 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
   for (int i = 0; i < result.size(); i++) {
     // rt
     auto f_rt = [&](auto value) {
-      return wiener_full_lpdf(value, a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(value, a[i], t0[i], w[i], v[i], sv[i], sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_rt, rt[i], result[i], drt[i]);
     // a
     auto f_a = [&](auto value) {
-      return wiener_full_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i], sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], value, t0[i], w[i], v[i], sv[i], sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_a, a[i], result[i], da[i]);
     // v
     auto f_v = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i], sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], value, sv[i], sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_v, v[i], result[i], dv[i]);
     // w
     auto f_w = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i], sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], a[i], t0[i], value, v[i], sv[i], sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_w, w[i], result[i], dw[i]);
     // t0
     auto f_t0 = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], value, w[i], v[i], sv[i], sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], a[i], value, w[i], v[i], sv[i], sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_t0, t0[i], result[i], dt0[i]);
     // sv
     auto f_sv = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], value, sw[i],
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], value, sw[i], st0[i],
+                         1e-6);
     };
     check_scalar_types(f_sv, sv[i], result[i], dsv[i]);
     // sw
     auto f_sw = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], value,
-                              st0[i], 1e-6);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], value, st0[i],
+                         1e-6);
     };
     check_scalar_types(f_sw, sw[i], result[i], dsw[i]);
     // st0
     auto f_st0 = [&](auto value) {
-      return wiener_full_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], sw[i],
-                              value, 1e-6);
+      return wiener_lpdf(rt[i], a[i], t0[i], w[i], v[i], sv[i], sw[i], value,
+                         1e-6);
     };
     check_scalar_types(f_st0, st0[i], result[i], dst0[i]);
   }
@@ -231,7 +223,7 @@ void check_vector_types(F& f, std::vector<double> value, double res) {
 TEST(ProbWienerFull, wiener_full_all_vector) {
   // tests all parameter types individually, with other
   // parameters set to std::vector<double>
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
 
   std::vector<double> rt{1, 1, 1, 1, 1, 1, 1, 1, 1};
   std::vector<double> a{1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -246,42 +238,41 @@ TEST(ProbWienerFull, wiener_full_all_vector) {
 
   // rt
   auto f_rt = [&](auto value) {
-    return wiener_full_lpdf(value, a, t0, w, v, sv, sw, st0);
+    return wiener_lpdf(value, a, t0, w, v, sv, sw, st0);
   };
   check_vector_types(f_rt, rt, result);
   // a
   auto f_a = [&](auto value) {
-    return wiener_full_lpdf(rt, value, t0, w, v, sv, sw, st0);
+    return wiener_lpdf(rt, value, t0, w, v, sv, sw, st0);
   };
   check_vector_types(f_a, a, result);
   // v
   auto f_v = [&](auto value) {
-    return wiener_full_lpdf(rt, a, t0, w, value, sv, sw, st0);
+    return wiener_lpdf(rt, a, t0, w, value, sv, sw, st0);
   };
   check_vector_types(f_v, v, result);
   // w
   auto f_w = [&](auto value) {
-    return wiener_full_lpdf(rt, a, t0, value, v, sv, sw, st0);
+    return wiener_lpdf(rt, a, t0, value, v, sv, sw, st0);
   };
   check_vector_types(f_w, w, result);
   // t0
   auto f_t0 = [&](auto value) {
-    return wiener_full_lpdf(rt, a, value, w, v, sv, sw, st0);
+    return wiener_lpdf(rt, a, value, w, v, sv, sw, st0);
   };
   check_vector_types(f_t0, t0, result);
   // sv
   auto f_sv = [&](auto value) {
-    return wiener_full_lpdf(rt, a, t0, w, v, value, sw, st0);
+    return wiener_lpdf(rt, a, t0, w, v, value, sw, st0);
   };
   check_vector_types(f_sv, sv, result);
   // sw
   auto f_sw = [&](auto value) {
-    return wiener_full_lpdf(rt, a, t0, w, v, sv, value, st0);
+    return wiener_lpdf(rt, a, t0, w, v, sv, value, st0);
   };
   check_vector_types(f_sw, sw, result);
   // st0
-  auto f_st0 = [&](auto value) {
-    return wiener_full_lpdf(rt, a, t0, w, v, sv, sw, value);
-  };
+  auto f_st0
+      = [&](auto value) { return wiener_lpdf(rt, a, t0, w, v, sv, sw, value); };
   check_vector_types(f_st0, st0, result);
 }

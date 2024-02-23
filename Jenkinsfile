@@ -193,9 +193,11 @@ pipeline {
                     }
 
                     steps {
-                        unstash 'MathSetup'
-                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                        sh "make -j${PARALLEL} test-headers"
+                        retry(1){
+                            unstash 'MathSetup'
+                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                            sh "make -j${PARALLEL} test-headers"
+                        }
                     }
                     post { always { deleteDir() } }
                 }
@@ -416,19 +418,21 @@ pipeline {
                     }
                     steps {
                         script {
-                            unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                            sh "echo STAN_THREADS=true >> make/local"
-                            sh "export STAN_NUM_THREADS=4"
-                            if (isBranch('develop') || isBranch('master')) {
-                                runTests("test/unit")
-                                sh "find . -name *_test.xml | xargs rm"
-                            } else {
-                                runTests("test/unit -f thread")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f map_rect")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f reduce_sum")
+                            retry(1){
+                                unstash 'MathSetup'
+                                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                                sh "echo STAN_THREADS=true >> make/local"
+                                sh "export STAN_NUM_THREADS=4"
+                                if (isBranch('develop') || isBranch('master')) {
+                                    runTests("test/unit")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                } else {
+                                    runTests("test/unit -f thread")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                    runTests("test/unit -f map_rect")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                    runTests("test/unit -f reduce_sum")
+                                }
                             }
                         }
                     }

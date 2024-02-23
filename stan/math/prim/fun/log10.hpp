@@ -67,7 +67,7 @@ namespace internal {
  */
 template <typename V>
 inline std::complex<V> complex_log10(const std::complex<V>& z) {
-  static const double inv_log_10 = 1 / std::log(10);
+  static constexpr double inv_log_10 = 1.0f / LOG_TEN;
   return log(z) * inv_log_10;
 }
 }  // namespace internal

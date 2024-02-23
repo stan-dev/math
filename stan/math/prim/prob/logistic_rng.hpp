@@ -37,7 +37,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
   using boost::random::exponential_distribution;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "logistic_rng";
+  static constexpr const char* function = "logistic_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
   T_mu_ref mu_ref = mu;

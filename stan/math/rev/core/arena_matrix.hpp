@@ -128,6 +128,15 @@ class arena_matrix : public Eigen::Map<MatrixType> {
     Base::operator=(a);
     return *this;
   }
+  /**
+   * Forces hard copying matrices into an arena matrix
+   * @tparam T Any type assignable to `Base`
+   * @param x the values to write to `this`
+   */
+  template <typename T>
+  void deep_copy(const T& x) {
+    Base::operator=(x);
+  }
 };
 
 }  // namespace math

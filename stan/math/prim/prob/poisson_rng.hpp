@@ -31,7 +31,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
     const T_rate& lambda, RNG& rng) {
   using boost::variate_generator;
   using boost::random::poisson_distribution;
-  static const char* function = "poisson_rng";
+  static constexpr const char* function = "poisson_rng";
   const auto& lambda_ref = to_ref(lambda);
   check_positive(function, "Rate parameter", lambda_ref);
   check_less(function, "Rate parameter", lambda_ref, POISSON_MAX_RATE);

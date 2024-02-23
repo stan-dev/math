@@ -30,7 +30,7 @@ inline typename VectorBuilder<true, double, T_deg>::type chi_square_rng(
   using boost::variate_generator;
   using boost::random::chi_squared_distribution;
   using T_nu_ref = ref_type_t<T_deg>;
-  static const char* function = "chi_square_rng";
+  static constexpr const char* function = "chi_square_rng";
   T_nu_ref nu_ref = nu;
   check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
 

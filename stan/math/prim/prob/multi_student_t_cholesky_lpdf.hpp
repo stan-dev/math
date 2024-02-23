@@ -55,7 +55,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
   using T_mu_ref = ref_type_t<T_loc>;
   using T_L_ref = ref_type_t<T_scale>;
 
-  static const char* function = "multi_student_t_cholesky";
+  static constexpr const char* function = "multi_student_t_cholesky";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Degrees of freedom parameter", nu);

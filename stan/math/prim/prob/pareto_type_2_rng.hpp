@@ -43,7 +43,7 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
                   RNG& rng) {
   using boost::variate_generator;
   using boost::random::uniform_real_distribution;
-  static const char* function = "pareto_type_2_rng";
+  static constexpr const char* function = "pareto_type_2_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          lambda, "Shape Parameter", alpha);
   const auto& mu_ref = to_ref(mu);

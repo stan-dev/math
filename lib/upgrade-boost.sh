@@ -113,12 +113,14 @@ cd boost_${boost_version}
 
 git rm -rf boost.css boost.png index.htm index.html INSTALL rst.css --ignore-unmatch
 git rm -rf doc/ libs/*/test/ libs/*/example/ libs/*/doc/ libs/*/*/doc/ --ignore-unmatch
-git rm -rf boost/leaf/ libs/leaf/ boost/nowide/ libs/nowide --ignore-unmatch 
+git rm -rf boost/leaf/ libs/leaf/ boost/nowide/ libs/nowide --ignore-unmatch
 git rm -rf boost/pfr libs/pfr boost/json/ libs/json/ --ignore-unmatch
 git rm -rf boost/static_string libs/static_string --ignore-unmatch
 git rm -rf boost/stl_interfaces/ libs/stl_interfaces --ignore-unmatch
 git rm -rf boost/phoenix/ libs/phoenix --ignore-unmatch
 git rm -rf boost/msm/ libs/msm --ignore-unmatch
+git rm -rf boost/redis/ libs/redis --ignore-unmatch
+git rm -rf boost/mysql/ libs/mysql --ignore-unmatch
 git rm -rf boost/log/ libs/log --ignore-unmatch
 git rm -rf libs/*/examples libs/*/*/examples --ignore-unmatch
 git rm -rf **/*.svg **/*.png **/*.jpg **/*.html **/*.htm **/*.gold **/*.json --ignore-unmatch

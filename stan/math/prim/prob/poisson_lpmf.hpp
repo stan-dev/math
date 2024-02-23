@@ -31,7 +31,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_n_ref = ref_type_if_not_constant_t<T_n>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;
   using std::isinf;
-  static const char* function = "poisson_lpmf";
+  static constexpr const char* function = "poisson_lpmf";
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 

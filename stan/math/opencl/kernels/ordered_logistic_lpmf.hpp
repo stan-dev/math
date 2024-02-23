@@ -12,7 +12,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* ordered_logistic_kernel_code = STRINGIFY(
+static constexpr const char* ordered_logistic_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU implementation of ordinal regression.

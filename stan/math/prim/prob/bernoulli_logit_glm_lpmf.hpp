@@ -72,7 +72,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
-  static const char* function = "bernoulli_logit_glm_lpmf";
+  static constexpr const char* function = "bernoulli_logit_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
@@ -118,7 +118,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
   // And compute the derivatives wrt theta.
-  static const double cutoff = 20.0;
+  static constexpr double cutoff = 20.0;
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = exp(-ytheta);
   T_partials_return logp = sum(
       (ytheta > cutoff)

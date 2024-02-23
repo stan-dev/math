@@ -12,7 +12,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* mergesort_kernel_code = STRINGIFY(
+static constexpr const char* mergesort_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Merges two sorted runs into a single sorted run of combined length.

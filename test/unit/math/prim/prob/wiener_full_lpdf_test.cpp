@@ -8,10 +8,10 @@
 
 TEST(mathPrimScalProbWienerFullScal, valid) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2,
          st0 = 0.1;
-  EXPECT_NO_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, st0));
+  EXPECT_NO_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, st0));
   rt = 5;
   a = 1;
   v = 1;
@@ -20,150 +20,124 @@ TEST(mathPrimScalProbWienerFullScal, valid) {
   sv = 0.0;
   sw = 0.0;
   st0 = 0.0;
-  EXPECT_NO_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, st0));
+  EXPECT_NO_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, st0));
 }
 
 // rt
 TEST(mathPrimScalProbWienerFullScal, invalid_rt) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(0, a, t0, w, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(0, a, t0, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(-1, a, t0, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(INFTY, a, t0, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(-INFTY, a, t0, w, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(-1, a, t0, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(INFTY, a, t0, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(-INFTY, a, t0, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(NAN, a, t0, w, v, sv, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(NAN, a, t0, w, v, sv, sw, st0), std::domain_error);
 }
 
 // a
 TEST(mathPrimScalProbWienerFullScal, invalid_a) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, 0, t0, w, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, 0, t0, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, -1, t0, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, INFTY, t0, w, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, -1, t0, w, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, -INFTY, t0, w, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, INFTY, t0, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, -INFTY, t0, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, NAN, t0, w, v, sv, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, NAN, t0, w, v, sv, sw, st0), std::domain_error);
 }
 
 // v
 TEST(mathPrimScalProbWienerFullScal, invalid_v) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2,
          st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, INFTY, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, INFTY, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, -INFTY, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, -INFTY, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, NAN, sv, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, NAN, sv, sw, st0), std::domain_error);
 }
 
 // w
 TEST(mathPrimScalProbWienerFullScal, invalid_w) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, -0.1, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, -0.1, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 1, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 1.1, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, INFTY, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, -INFTY, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 1, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 1.1, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, INFTY, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, -INFTY, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, NAN, v, sv, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, NAN, v, sv, sw, st0), std::domain_error);
 }
 
 // t0
 TEST(mathPrimScalProbWienerFullScal, invalid_t0) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, 2, w, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, 2, w, v, sv, sw, st0),
                std::domain_error);  // rt must be greater than t0
-  EXPECT_THROW(wiener_full_lpdf(rt, a, -1, w, v, sv, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, -1, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, INFTY, w, v, sv, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, -INFTY, w, v, sv, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, INFTY, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, -INFTY, w, v, sv, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, NAN, w, v, sv, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, NAN, w, v, sv, sw, st0), std::domain_error);
 }
 
 // sv
 TEST(mathPrimScalProbWienerFullScal, invalid_sv) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, -1, sw, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, -1, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, INFTY, sw, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, -INFTY, sw, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, INFTY, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, -INFTY, sw, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, NAN, sw, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, NAN, sw, st0), std::domain_error);
 }
 
 // sw
 TEST(mathPrimScalProbWienerFullScal, invalid_sw) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, -1, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0.8, v, sv, 0.5, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, -1, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0.8, v, sv, 0.5, st0),
                std::domain_error);  // sw must be smaller than 2*(1-w)
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0.3, v, sv, 0.7, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0.3, v, sv, 0.7, st0),
                std::domain_error);  // sw must be smaller than 2*w
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, INFTY, st0),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, INFTY, st0), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, -INFTY, st0),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, -INFTY, st0),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, NAN, st0),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, NAN, st0), std::domain_error);
 }
 
 // st0
 TEST(mathPrimScalProbWienerFullScal, invalid_st0) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, -1),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, INFTY),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, -INFTY),
-               std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, NAN),
-               std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, -1), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, INFTY), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, -INFTY), std::domain_error);
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, NAN), std::domain_error);
 }
 
 TEST(mathPrimScalProbWienerFullPrecScal, valid) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2,
          st0 = 0.1;
-  EXPECT_NO_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, st0, 1e-4));
+  EXPECT_NO_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, st0, 1e-4));
   rt = 5;
   a = 1;
   v = 1;
@@ -172,148 +146,147 @@ TEST(mathPrimScalProbWienerFullPrecScal, valid) {
   sv = 0.0;
   sw = 0.0;
   st0 = 0.0;
-  EXPECT_NO_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, st0, 1e-4));
+  EXPECT_NO_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, st0, 1e-4));
 }
 
 // rt
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_rt) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(0, a, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(0, a, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(-1, a, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(-1, a, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(INFTY, a, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(INFTY, a, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(-INFTY, a, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(-INFTY, a, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(NAN, a, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(NAN, a, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // a
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_a) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, 0, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, 0, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, -1, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, -1, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, INFTY, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, INFTY, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, -INFTY, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, -INFTY, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, NAN, t0, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, NAN, t0, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // v
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_v) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2,
          st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, INFTY, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, INFTY, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, -INFTY, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, -INFTY, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, NAN, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, NAN, sv, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // w
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_w) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, t0 = 0.1, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, -0.1, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, -0.1, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 1, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 1, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 1.1, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 1.1, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, INFTY, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, INFTY, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, -INFTY, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, -INFTY, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, NAN, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, NAN, v, sv, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // t0
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_t0) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, sv = 0.2, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, 2, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, 2, w, v, sv, sw, st0, 1e-4),
                std::domain_error);  // rt must be greater than t0
-  EXPECT_THROW(wiener_full_lpdf(rt, a, -1, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, -1, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, INFTY, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, INFTY, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, -INFTY, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, -INFTY, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, NAN, w, v, sv, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, NAN, w, v, sv, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // sv
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_sv) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sw = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, -1, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, -1, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, INFTY, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, INFTY, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, -INFTY, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, -INFTY, sw, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, NAN, sw, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, NAN, sw, st0, 1e-4),
                std::domain_error);
 }
 
 // sw
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_sw) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, st0 = 0.1;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, -1, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, -1, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0.8, v, sv, 0.5, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0.8, v, sv, 0.5, st0, 1e-4),
                std::domain_error);  // sw must be smaller than 2*(1-w)
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, 0.3, v, sv, 0.7, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, 0.3, v, sv, 0.7, st0, 1e-4),
                std::domain_error);  // sw must be smaller than 2*w
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, INFTY, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, INFTY, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, -INFTY, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, -INFTY, st0, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, NAN, st0, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, NAN, st0, 1e-4),
                std::domain_error);
 }
 
 // st0
 TEST(mathPrimScalProbWienerFullPrecScal, invalid_st0) {
   using stan::math::INFTY;
-  using stan::math::wiener_full_lpdf;
+  using stan::math::wiener_lpdf;
   double rt = 1, a = 1, v = -1, w = 0.5, t0 = 0.1, sv = 0.2, sw = 0.2;
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, -1, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, -1, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, INFTY, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, INFTY, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, -INFTY, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, -INFTY, 1e-4),
                std::domain_error);
-  EXPECT_THROW(wiener_full_lpdf(rt, a, t0, w, v, sv, sw, NAN, 1e-4),
+  EXPECT_THROW(wiener_lpdf(rt, a, t0, w, v, sv, sw, NAN, 1e-4),
                std::domain_error);
 }
 
-TEST(mathPrimCorrectValues, wiener_full_lpdf) {
-  /* Test concrete values. True values are computed in R using the R-package
-   * WienR and the function WienerPDF.
-   */
+TEST(mathPrimCorrectValues, wiener_lpdf) {
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
   std::vector<double> y_vec = {2, 3, 4, 5, 6, 7, 8, 8.85, 8.9, 9, 1};
   std::vector<double> a_vec
       = {2.0, 2.0, 10.0, 4.0, 10.0, 1.0, 3.0, 1.7, 2.4, 11.0, 1.5};
@@ -400,7 +373,7 @@ TEST(mathPrimCorrectValues, wiener_full_lpdf) {
     var sv = sv_vec[i];
     var sw = sw_vec[i];
     var st0 = st0_vec[i];
-    var dens = stan::math::wiener_full_lpdf(y, a, t0, w, v, sv, sw, st0);
+    var dens = stan::math::wiener_lpdf(y, a, t0, w, v, sv, sw, st0);
     dens.grad();
     EXPECT_NEAR(dens.val(), true_dens[i], err_tol_dens);
     EXPECT_NEAR(y.adj(), true_grad_y[i], err_tol);
@@ -411,5 +384,81 @@ TEST(mathPrimCorrectValues, wiener_full_lpdf) {
     EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
     EXPECT_NEAR(sw.adj(), true_grad_sw[i], err_tol);
     EXPECT_NEAR(st0.adj(), true_grad_st0[i], err_tol);
+  }
+}
+
+TEST(mathPrimCorrectValuesFourParamModel, wiener_lpdf) {
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
+  std::vector<double> y_vec = {2.0};
+  std::vector<double> a_vec = {2.0};
+  std::vector<double> v_vec = {2.0};
+  std::vector<double> w_vec = {.1};
+  std::vector<double> t0_vec = {1e-9};
+
+  std::vector<double> true_dens = {-4.28564747866615};
+  std::vector<double> true_grad_y = {-3.22509339523307};
+  std::vector<double> true_grad_a = {3.25018678924105};
+  std::vector<double> true_grad_t0 = {3.22509339523307};
+  std::vector<double> true_grad_w = {5.67120184517318};
+  std::vector<double> true_grad_v = {-2.199999998};
+
+  using stan::math::var;
+  double err_tol_dens = 1e-6;
+  double err_tol = 1e-4;
+  for (int i = 0; i < y_vec.size(); i++) {
+    var y = y_vec[i];
+    var a = a_vec[i];
+    var t0 = t0_vec[i];
+    var w = w_vec[i];
+    var v = v_vec[i];
+    var dens = stan::math::wiener_lpdf(y, a, t0, w, v);
+    dens.grad();
+    EXPECT_NEAR(dens.val(), true_dens[i], err_tol_dens);
+    EXPECT_NEAR(y.adj(), true_grad_y[i], err_tol);
+    EXPECT_NEAR(a.adj(), true_grad_a[i], err_tol);
+    EXPECT_NEAR(t0.adj(), true_grad_t0[i], err_tol);
+    EXPECT_NEAR(w.adj(), true_grad_w[i], err_tol);
+    EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
+  }
+}
+
+TEST(mathPrimCorrectValuesFiveParameterModel, wiener_lpdf) {
+  // Test concrete values. True values are computed in R using the R-package
+  // WienR and the function WienerPDF.
+  std::vector<double> y_vec = {3.0};
+  std::vector<double> a_vec = {2.0};
+  std::vector<double> v_vec = {2.0};
+  std::vector<double> w_vec = {0.5};
+  std::vector<double> t0_vec = {0.01};
+  std::vector<double> sv_vec = {0.2};
+
+  std::vector<double> true_dens = {-7.52379235146909};
+  std::vector<double> true_grad_y = {-2.91155058614589};
+  std::vector<double> true_grad_a = {3.59980430191399};
+  std::vector<double> true_grad_t0 = {2.91155058614589};
+  std::vector<double> true_grad_w = {-3.64396221090076};
+  std::vector<double> true_grad_v = {-4.44801714898178};
+  std::vector<double> true_grad_sv = {3.42285198319565};
+
+  using stan::math::var;
+  double err_tol_dens = 1e-6;
+  double err_tol = 1e-4;
+  for (int i = 0; i < y_vec.size(); i++) {
+    var y = y_vec[i];
+    var a = a_vec[i];
+    var t0 = t0_vec[i];
+    var w = w_vec[i];
+    var v = v_vec[i];
+    var sv = sv_vec[i];
+    var dens = stan::math::wiener_lpdf(y, a, t0, w, v, sv);
+    dens.grad();
+    EXPECT_NEAR(dens.val(), true_dens[i], err_tol_dens);
+    EXPECT_NEAR(y.adj(), true_grad_y[i], err_tol);
+    EXPECT_NEAR(a.adj(), true_grad_a[i], err_tol);
+    EXPECT_NEAR(t0.adj(), true_grad_t0[i], err_tol);
+    EXPECT_NEAR(w.adj(), true_grad_w[i], err_tol);
+    EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
+    EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
   }
 }

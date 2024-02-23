@@ -33,7 +33,7 @@ template <typename T_y_cl, typename T_low_cl, typename T_high_cl,
 return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(const T_y_cl& y,
                                                        const T_low_cl& alpha,
                                                        const T_high_cl& beta) {
-  static const char* function = "uniform_cdf(OpenCL)";
+  static constexpr const char* function = "uniform_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;
   using std::isnan;
