@@ -27,7 +27,8 @@ struct is_eigen_sparse_base
 /*! \addtogroup eigen_sparse_base_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_eigen_sparse_base */
+/*! \brief Require type satisfies @ref is_eigen_sparse_base */
+/*! @tparam T the type to check */  
 template <typename T>
 using require_eigen_sparse_base_t
     = require_t<is_eigen_sparse_base<std::decay_t<T>>>;

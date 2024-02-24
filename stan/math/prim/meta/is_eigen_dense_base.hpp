@@ -26,7 +26,8 @@ struct is_eigen_dense_base
 /*! \addtogroup eigen_dense_base_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_eigen_dense_base */
+/*! \brief Require type satisfies @ref is_eigen_dense_base */
+/*! @tparam T the type to check */
 template <typename T>
 using require_eigen_dense_base_t
     = require_t<is_eigen_dense_base<std::decay_t<T>>>;

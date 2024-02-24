@@ -24,19 +24,23 @@ struct is_tuple : internal::is_tuple_impl<std::decay_t<T>> {};
 /*! \addtogroup tuple_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_tuple */
+/*! \brief Require type satisfies @ref is_tuple */
+/*! @tparam T the type to check */  
 template <typename T>
 using require_tuple_t = require_t<is_tuple<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_tuple */
+/*! \brief Require type does not satisfy @ref is_tuple */
+/*! @tparam T the type to check */  
 template <typename T>
 using require_not_tuple_t = require_not_t<is_tuple<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_tuple */
+/*! \brief Require all of the types satisfy @ref is_tuple */
+/*! @tparam Types The types that are checked */  
 template <typename... Types>
 using require_all_tuple_t = require_all_t<is_tuple<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_tuple */
+/*! \brief Require none of the types satisfy @ref is_tuple */
+/*! @tparam Types The types that are checked */  
 template <typename... Types>
 using require_all_not_tuple_t
     = require_all_not_t<is_tuple<std::decay_t<Types>>...>;

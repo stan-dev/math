@@ -24,25 +24,30 @@ struct is_var_matrix
 /*! \addtogroup var_matrix_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_var_matrix */
+/*! \brief Require type satisfies @ref is_var_matrix */
+/*! @tparam T the type to check */
 template <typename T>
 using require_var_matrix_t = require_t<is_var_matrix<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_var_matrix */
+/*! \brief Require type does not satisfy @ref is_var_matrix */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_var_matrix_t = require_not_t<is_var_matrix<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_var_matrix */
+/*! \brief Require all of the types satisfy @ref is_var_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_var_matrix_t
     = require_all_t<is_var_matrix<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_var_matrix */
+/*! \brief Require any of the types satisfy @ref is_var_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_var_matrix_t
     = require_any_t<is_var_matrix<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_var_matrix */
+/*! \brief Require none of the types satisfy @ref is_var_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_var_matrix_t
     = require_all_not_t<is_var_matrix<std::decay_t<Types>>...>;
@@ -65,11 +70,13 @@ struct is_var_col_vector
 /*! \addtogroup var_col_vector_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_var_col_vector */
+/*! \brief Require type satisfies @ref is_var_col_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_var_col_vector_t = require_t<is_var_col_vector<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_var_col_vector */
+/*! \brief Require type does not satisfy @ref is_var_col_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_var_col_vector_t
     = require_not_t<is_var_col_vector<std::decay_t<T>>>;
@@ -92,7 +99,8 @@ struct is_var_row_vector
 /*! \addtogroup var_row_vector_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_var_row_vector */
+/*! \brief Require type satisfies @ref is_var_row_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_var_row_vector_t = require_t<is_var_row_vector<std::decay_t<T>>>;
 /*! @} */
@@ -114,16 +122,19 @@ struct is_var_vector
 /*! \addtogroup var_vector_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_var_vector */
+/*! \brief Require type satisfies @ref is_var_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_var_vector_t = require_t<is_var_vector<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_var_vector */
+/*! \brief Require all of the types satisfy @ref is_var_vector */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_var_vector_t
     = require_all_t<is_var_vector<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_var_vector */
+/*! \brief Require any of the types satisfy @ref is_var_vector */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_var_vector_t
     = require_any_t<is_var_vector<std::decay_t<Types>>...>;

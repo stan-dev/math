@@ -19,25 +19,30 @@ struct is_rev_matrix : std::false_type {};
 /*! \addtogroup rev_matrix_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_rev_matrix */
+/*! \brief Require type satisfies @ref is_rev_matrix */
+/*! @tparam T the type to check */  
 template <typename T>
 using require_rev_matrix_t = require_t<is_rev_matrix<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_rev_matrix */
+/*! \brief Require type does not satisfy @ref is_rev_matrix */
+/*! @tparam T the type to check */  
 template <typename T>
 using require_not_rev_matrix_t = require_not_t<is_rev_matrix<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_rev_matrix */
+/*! \brief Require all of the types satisfy @ref is_rev_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_rev_matrix_t
     = require_all_t<is_rev_matrix<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_rev_matrix */
+/*! \brief Require any of the types satisfy @ref is_rev_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_rev_matrix_t
     = require_any_t<is_rev_matrix<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_rev_matrix */
+/*! \brief Require none of the types satisfy @ref is_rev_matrix */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_rev_matrix_t
     = require_all_not_t<is_rev_matrix<std::decay_t<Types>>...>;
@@ -58,7 +63,8 @@ struct is_rev_col_vector : std::false_type {};
 /*! \addtogroup rev_col_vector_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_rev_col_vector */
+/*! \brief Require type satisfies @ref is_rev_col_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_rev_col_vector_t = require_t<is_rev_col_vector<std::decay_t<T>>>;
 /*! @} */
@@ -88,7 +94,8 @@ struct is_rev_vector : std::false_type {};
 /*! \addtogroup rev_vector_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_rev_vector */
+/*! \brief Require type satisfies @ref is_rev_vector */
+/*! @tparam T the type to check */
 template <typename T>
 using require_rev_vector_t = require_t<is_rev_vector<std::decay_t<T>>>;
 /*! @} */

@@ -17,7 +17,8 @@ struct is_arena_matrix : std::false_type {};
 /*! \addtogroup arena_matrix_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_arena_matrix */
+/*! \brief Require type satisfies @ref is_arena_matrix */
+/*! @tparam T the type to check */
 template <typename T>
 using require_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
 /*! @} */

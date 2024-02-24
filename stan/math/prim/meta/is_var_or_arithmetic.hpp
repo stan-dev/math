@@ -34,33 +34,38 @@ using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 /*! \addtogroup var_or_arithmetic_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_var_or_arithmetic */
+/*! \brief Require type satisfies @ref is_var_or_arithmetic */
+/*! @tparam T the type to check */
 template <typename T>
 using require_var_or_arithmetic_t
     = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_var_or_arithmetic */
+/*! \brief Require type does not satisfy @ref is_var_or_arithmetic */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_var_or_arithmetic_t
     = require_not_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_var_or_arithmetic */
+/*! \brief Require all of the types satisfy @ref is_var_or_arithmetic */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_var_or_arithmetic_t
     = require_all_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_var_or_arithmetic */
+/*! \brief Require any of the types satisfy @ref is_var_or_arithmetic */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_var_or_arithmetic_t
     = require_any_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_var_or_arithmetic */
+/*! \brief Require none of the types satisfy @ref is_var_or_arithmetic */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_var_or_arithmetic_t
     = require_all_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy is_var_or_arithmetic
- */
+/*! \brief Require at least one of the types do not satisfy @ref is_var_or_arithmetic */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
@@ -70,7 +75,8 @@ using require_any_not_var_or_arithmetic_t
 /*! \addtogroup var_or_arithmetic_types */
 /*! @{ */
 
-/*! \brief Require all of the scalar types satisfy is_var_or_arithmetic */
+/*! \brief Require all of the scalar types satisfy @ref is_var_or_arithmetic */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available */
 template <typename... Types>
 using require_all_st_var_or_arithmetic = require_all_t<
     is_var_or_arithmetic<scalar_type_t<std::decay_t<Types>>>...>;

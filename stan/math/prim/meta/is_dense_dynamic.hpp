@@ -43,11 +43,13 @@ using is_dense_dynamic = internal::is_dense_dynamic_impl<std::decay_t<T>>;
 /*! \addtogroup dense_dynamic_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_dense_dynamic */
+/*! \brief Require type satisfies @ref is_dense_dynamic */
+/*! @tparam T the type to check */
 template <typename T>
 using require_dense_dynamic_t = require_t<is_dense_dynamic<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_dense_dynamic */
+/*! \brief Require all of the types satisfy @ref is_dense_dynamic */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_dense_dynamic_t
     = require_all_t<is_dense_dynamic<std::decay_t<Types>>...>;

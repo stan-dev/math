@@ -27,13 +27,14 @@ using is_eigen_dense_dynamic = stan::internal::is_eigen_matrix_dynamic_impl<
 /*! \addtogroup eigen_dense_dynamic_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_eigen_dense_dynamic */
-
+/*! \brief Require type satisfies @ref is_eigen_dense_dynamic */
+/*! @tparam T the type to check */
 template <typename T>
 using require_eigen_dense_dynamic_t
     = require_t<is_eigen_dense_dynamic<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_eigen_dense_dynamic */
+/*! \brief Require all of the types satisfy @ref is_eigen_dense_dynamic */
+/*! @tparam Types The types that are checked */  
 template <typename... Types>
 using require_all_eigen_dense_dynamic_t
     = require_all_t<is_eigen_dense_dynamic<std::decay_t<Types>>...>;
@@ -44,9 +45,10 @@ using require_all_eigen_dense_dynamic_t
 /*! \addtogroup eigen_dense_dynamic_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_eigen_dense_dynamic */
+/*! \brief Require type satisfies @ref is_eigen_dense_dynamic */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_dense_dynamic for and whose @ref value_type is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_dense_dynamic_vt
     = require_t<container_type_check_base<is_eigen_dense_dynamic, value_type_t,

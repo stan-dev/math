@@ -24,30 +24,36 @@ struct is_autodiff
 /*! \addtogroup autodiff_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_autodiff */
+/*! \brief Require type satisfies @ref is_autodiff */
+/*! @tparam T the type to check */
 template <typename T>
 using require_autodiff_t = require_t<is_autodiff<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_autodiff */
+/*! \brief Require type does not satisfy @ref is_autodiff */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_autodiff_t = require_not_t<is_autodiff<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_autodiff */
+/*! \brief Require all of the types satisfy @ref is_autodiff */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_autodiff_t
     = require_all_t<is_autodiff<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_autodiff */
+/*! \brief Require any of the types satisfy @ref is_autodiff */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_autodiff_t
     = require_any_t<is_autodiff<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_autodiff */
+/*! \brief Require none of the types satisfy @ref is_autodiff */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_autodiff_t
     = require_all_not_t<is_autodiff<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy is_autodiff */
+/*! \brief Require at least one of the types do not satisfy @ref is_autodiff */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_autodiff_t
     = require_any_not_t<is_autodiff<std::decay_t<Types>>...>;
@@ -57,27 +63,32 @@ using require_any_not_autodiff_t
 /*! \addtogroup autodiff_types */
 /*! @{ */
 
-/*! \brief Require value type does not satisfy is_autodiff */
+/*! \brief Require value type does not satisfy @ref is_autodiff */
+/*! @tparam T A type with a valid overload of @ref value_type available */
 template <typename T>
 using require_not_vt_autodiff
     = require_not_t<is_autodiff<value_type_t<std::decay_t<T>>>>;
 
-/*! \brief Require none of the value types satisfy is_autodiff */
+/*! \brief Require none of the value types satisfy @ref is_autodiff */
+/*! @tparam Types The types with a valid overload of @ref value_type available */
 template <typename... Types>
 using require_all_not_vt_autodiff
     = require_all_not_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
 
-/*! \brief Require scalar type satisfies is_autodiff */
+/*! \brief Require scalar type satisfies @ref is_autodiff */
+/*! @tparam T A type with a valid overload of @ref scalar_type available */
 template <typename T>
 using require_st_autodiff
     = require_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
-/*! \brief Require scalar type does not satisfy is_autodiff */
+/*! \brief Require scalar type does not satisfy @ref is_autodiff */
+/*! @tparam T A type with a valid overload of @ref scalar_type available */
 template <typename T>
 using require_not_st_autodiff
     = require_not_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
 /*! \brief Require any of the scalar types satisfy is_autodiff */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available */
 template <typename... Types>
 using require_any_st_autodiff
     = require_any_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;

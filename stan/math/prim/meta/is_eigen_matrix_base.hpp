@@ -27,9 +27,10 @@ struct is_eigen_matrix_base
 /*! \addtogroup eigen_matrix_base_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_eigen_matrix_base */
+/*! \brief Require type satisfies @ref is_eigen_matrix_base */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_matrix_base for and whose @ref value_type is checked with `TypeCheck` */  
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_matrix_base_vt
     = require_t<container_type_check_base<is_eigen_matrix_base, value_type_t,
@@ -38,6 +39,7 @@ using require_eigen_matrix_base_vt
 /*! \brief Require all of the types satisfy is_eigen_matrix_base */
 /*! and all of the value types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_matrix_base for and whose @ref value_type is checked with `TypeCheck` */  
 template <template <class...> class TypeCheck, class... Check>
 using require_all_eigen_matrix_base_vt
     = require_all_t<container_type_check_base<

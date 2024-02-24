@@ -60,23 +60,28 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
 /*! \addtogroup complex_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_complex */
+/*! \brief Require type satisfies @ref is_complex */
+/*! @tparam T the type to check */
 template <typename T>
 using require_complex_t = require_t<is_complex<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_complex */
+/*! \brief Require type does not satisfy @ref is_complex */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_complex_t = require_not_t<is_complex<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_complex */
+/*! \brief Require all of the types satisfy @ref is_complex */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_complex_t = require_all_t<is_complex<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_complex */
+/*! \brief Require any of the types satisfy @ref is_complex */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_complex_t = require_any_t<is_complex<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_complex */
+/*! \brief Require none of the types satisfy @ref is_complex */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_complex_t
     = require_all_not_t<is_complex<std::decay_t<Types>>...>;
@@ -86,16 +91,19 @@ using require_all_not_complex_t
 /*! \addtogroup complex_types */
 /*! @{ */
 
-/*! \brief Require value type satisfies is_complex */
+/*! \brief Require value type satisfies @ref is_complex */
+/*! @tparam T A type with a valid overload of @ref value_type available */
 template <typename T>
 using require_vt_complex = require_t<is_complex<value_type_t<std::decay_t<T>>>>;
 
-/*! \brief Require value type does not satisfy is_complex */
+/*! \brief Require value type does not satisfy @ref is_complex */
+/*! @tparam T A type with a valid overload of @ref value_type available */
 template <typename T>
 using require_not_vt_complex
     = require_not_t<is_complex<value_type_t<std::decay_t<T>>>>;
 
-/*! \brief Require scalar type does not satisfy is_complex */
+/*! \brief Require scalar type does not satisfy @ref is_complex */
+/*! @tparam T A type with a valid overload of @ref scalar_type available */
 template <typename T>
 using require_not_st_complex
     = require_not_t<is_complex<scalar_type_t<std::decay_t<T>>>>;

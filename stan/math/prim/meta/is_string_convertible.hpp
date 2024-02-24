@@ -20,33 +20,39 @@ using is_string_convertible = std::is_convertible<T, std::string>;
 /*! \addtogroup string_convertible_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_string_convertible */
+/*! \brief Require type satisfies @ref is_string_convertible */
+/*! @tparam T the type to check */
 template <typename T>
 using require_string_convertible_t
     = require_t<is_string_convertible<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_string_convertible */
+/*! \brief Require type does not satisfy @ref is_string_convertible */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_string_convertible_t
     = require_not_t<is_string_convertible<std::decay_t<T>>>;
 
-/*! \brief Require all of the types satisfy is_string_convertible */
+/*! \brief Require all of the types satisfy @ref is_string_convertible */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_string_convertible_t
     = require_all_t<is_string_convertible<std::decay_t<Types>>...>;
 
-/*! \brief Require any of the types satisfy is_string_convertible */
+/*! \brief Require any of the types satisfy @ref is_string_convertible */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_string_convertible_t
     = require_any_t<is_string_convertible<std::decay_t<Types>>...>;
 
-/*! \brief Require none of the types satisfy is_string_convertible */
+/*! \brief Require none of the types satisfy @ref is_string_convertible */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_string_convertible_t
     = require_all_not_t<is_string_convertible<std::decay_t<Types>>...>;
 
 /*! \brief Require at least one of the types do not satisfy
- * is_string_convertible */
+ * @ref is_string_convertible */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_string_convertible_t
     = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;

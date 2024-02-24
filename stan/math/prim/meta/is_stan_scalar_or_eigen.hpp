@@ -26,7 +26,8 @@ using is_stan_scalar_or_eigen
 /*! \addtogroup stan_scalar_or_eigen_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_stan_scalar_or_eigen */
+/*! \brief Require type satisfies @ref is_stan_scalar_or_eigen */
+/*! @tparam T the type to check */
 template <typename T>
 using require_stan_scalar_or_eigen_t
     = require_t<is_stan_scalar_or_eigen<std::decay_t<T>>>;

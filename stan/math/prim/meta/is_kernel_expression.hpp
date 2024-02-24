@@ -110,7 +110,8 @@ struct is_nonscalar_prim_or_rev_kernel_expression
 /*! \addtogroup kernel_expression_lhs_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_kernel_expression_lhs */
+/*! \brief Require type satisfies @ref is_kernel_expression_lhs */
+/*! @tparam T the type to check */
 template <typename T>
 using require_kernel_expression_lhs_t
     = require_t<is_kernel_expression_lhs<std::decay_t<T>>>;
@@ -121,12 +122,14 @@ using require_kernel_expression_lhs_t
 /*! \addtogroup rev_kernel_expression_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_rev_kernel_expression */
+/*! \brief Require type satisfies @ref is_rev_kernel_expression */
+/*! @tparam T the type to check */
 template <typename T>
 using require_rev_kernel_expression_t
     = require_t<is_rev_kernel_expression<std::decay_t<T>>>;
 
-/*! \brief Require type does not satisfy is_rev_kernel_expression */
+/*! \brief Require type does not satisfy @ref is_rev_kernel_expression */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_rev_kernel_expression_t
     = require_not_t<is_rev_kernel_expression<std::decay_t<T>>>;
@@ -138,7 +141,8 @@ using require_not_rev_kernel_expression_t
 /*! \addtogroup prim_or_rev_kernel_expression_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_prim_or_rev_kernel_expression */
+/*! \brief Require type satisfies @ref is_prim_or_rev_kernel_expression */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_prim_or_rev_kernel_expression_t
     = require_all_t<is_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
@@ -150,31 +154,36 @@ using require_all_prim_or_rev_kernel_expression_t
 /*! \addtogroup nonscalar_prim_or_rev_kernel_expression_types */
 /*! @{ */
 
-/*! \brief Require type satisfies is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require type satisfies @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! @tparam Types The types that are checked */
 template <typename T>
 using require_nonscalar_prim_or_rev_kernel_expression_t
     = require_t<is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
 
 /*! \brief Require type does not satisfy
- * is_nonscalar_prim_or_rev_kernel_expression */
+ * @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_nonscalar_prim_or_rev_kernel_expression_t = require_not_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<T>>>;
 
 /*! \brief Require all of the types satisfy
- * is_nonscalar_prim_or_rev_kernel_expression */
+ * @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_nonscalar_prim_or_rev_kernel_expression_t = require_all_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
 
 /*! \brief Require any of the types satisfy
- * is_nonscalar_prim_or_rev_kernel_expression */
+ * @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_nonscalar_prim_or_rev_kernel_expression_t = require_any_t<
     is_nonscalar_prim_or_rev_kernel_expression<std::decay_t<Types>>...>;
 
 /*! \brief Require none of the types satisfy
- * is_nonscalar_prim_or_rev_kernel_expression */
+ * @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_all_not_nonscalar_prim_or_rev_kernel_expression_t
     = require_all_not_t<
