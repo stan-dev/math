@@ -98,13 +98,10 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
   Tb_Array b_array = as_column_vector_or_scalar(b).array();
 
   std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> ret_tuple;
-  std::get<0>(ret_tuple).setConstant(a.size(), 0);
-  std::get<1>(ret_tuple).setConstant(b.size(), 0);
-  std::get<2>(ret_tuple) = 0.0;
 
   if (CalcA || CalcB) {
-    std::get<0>(ret_tuple).setConstant(-pfq_val);
-    std::get<1>(ret_tuple).setConstant(pfq_val);
+    std::get<0>(ret_tuple).setConstant(a.size(), -pfq_val);
+    std::get<1>(ret_tuple).setConstant(b.size(), pfq_val);
     Eigen::Array<T_Rtn, -1, 1> a_grad(a.size());
     Eigen::Array<T_Rtn, -1, 1> b_grad(b.size());
 
