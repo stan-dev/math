@@ -69,7 +69,8 @@ template <typename... Types>
 using require_all_not_vector_like_t
     = require_all_not_t<is_vector_like<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy @ref is_vector_like */
+/*! \brief Require at least one of the types do not satisfy @ref is_vector_like
+ */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_vector_like_t
@@ -84,7 +85,8 @@ using require_any_not_vector_like_t
 /*! \brief Require type satisfies @ref is_vector_like */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_vector_like for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_vector_like for and whose @ref
+ * value_type is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_like_vt
     = require_t<container_type_check_base<is_vector_like, value_type_t,

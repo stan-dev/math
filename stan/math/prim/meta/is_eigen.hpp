@@ -90,7 +90,8 @@ using require_any_not_eigen_t
 /*! \brief Require type satisfies @ref is_eigen */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vt = require_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
@@ -98,7 +99,8 @@ using require_eigen_vt = require_t<
 /*! \brief Require type does not satisfy @ref is_eigen or */
 /*! value type does not satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_vt = require_not_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
@@ -106,7 +108,8 @@ using require_not_eigen_vt = require_not_t<
 /*! \brief Require any of the types satisfy @ref is_eigen */
 /*! and any of the value types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_eigen_vt = require_any_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
@@ -114,7 +117,8 @@ using require_any_eigen_vt = require_any_t<
 /*! \brief Require at least one of the types does not satisfy @ref is_eigen */
 /*! and none of the value types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_eigen_vt = require_any_not_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
@@ -122,7 +126,8 @@ using require_any_not_eigen_vt = require_any_not_t<
 /*! \brief Require all of the types satisfy @ref is_eigen */
 /*! and all of the value types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_eigen_vt = require_all_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
@@ -130,7 +135,8 @@ using require_all_eigen_vt = require_all_t<
 /*! \brief Require none of the types satisfy @ref is_eigen */
 /*! and none of the value types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vt = require_all_not_t<
     container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
@@ -138,7 +144,8 @@ using require_all_not_eigen_vt = require_all_not_t<
 /*! \brief Require type satisfies @ref is_eigen */
 /*! and scalar type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_st = require_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
@@ -146,7 +153,8 @@ using require_eigen_st = require_t<
 /*! \brief Require type does not satisfy @ref is_eigen */
 /*! or scalar type does not satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_st = require_not_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
@@ -154,7 +162,8 @@ using require_not_eigen_st = require_not_t<
 /*! \brief Require any of the types satisfy @ref is_eigen */
 /*! and any scalar type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_eigen_st = require_any_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
@@ -162,7 +171,8 @@ using require_any_eigen_st = require_any_t<
 /*! \brief Require at least one of the types does not satisfy @ref is_eigen */
 /*! and any scalar type does not satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_not_eigen_st = require_any_not_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
@@ -170,7 +180,8 @@ using require_any_not_eigen_st = require_any_not_t<
 /*! \brief Require all of the types does not satisfy @ref is_eigen */
 /*! and all scalar types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_eigen_st = require_all_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
@@ -178,7 +189,8 @@ using require_all_eigen_st = require_all_t<
 /*! \brief Require none of the types satisfy @ref is_eigen */
 /*! and none of the scalar types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_st = require_all_not_t<
     container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
@@ -233,7 +245,8 @@ using is_eigen_matrix_or_array
 /*! \brief Require type satisfies @ref is_eigen_array */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
-/*! @tparam Check The type to test @ref is_eigen_array for and whose @ref value_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_eigen_array for and whose @ref
+ * value_type is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_array_vt
     = require_t<container_type_check_base<is_eigen_array, value_type_t,

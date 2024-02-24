@@ -57,13 +57,15 @@ using require_any_not_fvar_t
 /*! @{ */
 
 /*! \brief Require any of the value types satisfy @ref is_fvar */
-/*! @tparam Types The types with a valid overload of @ref value_type available */
+/*! @tparam Types The types with a valid overload of @ref value_type available
+ */
 template <typename... Types>
 using require_any_vt_fvar
     = require_any_t<is_fvar<value_type_t<std::decay_t<Types>>>...>;
 
 /*! \brief Require none of the value types satisfy @ref is_fvar */
-/*! @tparam Types The types with a valid overload of @ref value_type available */
+/*! @tparam Types The types with a valid overload of @ref value_type available
+ */
 template <typename... Types>
 using require_all_not_vt_fvar
     = require_all_not_t<is_fvar<value_type_t<std::decay_t<Types>>>...>;
@@ -80,13 +82,15 @@ using require_not_st_fvar
     = require_not_t<is_fvar<scalar_type_t<std::decay_t<T>>>>;
 
 /*! \brief Require any of the scalar types satisfy @ref is_fvar */
-/*! @tparam Types The types with a valid overload of @ref scalar_type available */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available
+ */
 template <typename... Types>
 using require_any_st_fvar
     = require_any_t<is_fvar<scalar_type_t<std::decay_t<Types>>>...>;
 
 /*! \brief Require none of the scalar types satisfy @ref is_fvar */
-/*! @tparam Types The types with a valid overload of @ref scalar_type available */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available
+ */
 template <typename... Types>
 using require_all_not_st_fvar
     = require_all_not_t<is_fvar<scalar_type_t<std::decay_t<Types>>>...>;

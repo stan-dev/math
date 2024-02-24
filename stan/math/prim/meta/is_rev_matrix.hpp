@@ -20,12 +20,12 @@ struct is_rev_matrix : std::false_type {};
 /*! @{ */
 
 /*! \brief Require type satisfies @ref is_rev_matrix */
-/*! @tparam T the type to check */  
+/*! @tparam T the type to check */
 template <typename T>
 using require_rev_matrix_t = require_t<is_rev_matrix<std::decay_t<T>>>;
 
 /*! \brief Require type does not satisfy @ref is_rev_matrix */
-/*! @tparam T the type to check */  
+/*! @tparam T the type to check */
 template <typename T>
 using require_not_rev_matrix_t = require_not_t<is_rev_matrix<std::decay_t<T>>>;
 

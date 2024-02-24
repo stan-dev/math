@@ -64,7 +64,8 @@ using require_all_not_container_t
 /*! \brief Require type satisfies @ref is_container */
 /*! and scalar type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_container for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_container for and whose @ref
+ * scalar_type is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_container_st
     = require_t<container_type_check_base<is_container, scalar_type_t,
@@ -73,7 +74,8 @@ using require_container_st
 /*! \brief Require type does not satisfy @ref is_container */
 /*! or scalar type does not satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_container for and whose @ref scalar_type is checked with `TypeCheck` */  
+/*! @tparam Check The type to test @ref is_container for and whose @ref
+ * scalar_type is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_not_container_st
     = require_not_t<container_type_check_base<is_container, scalar_type_t,

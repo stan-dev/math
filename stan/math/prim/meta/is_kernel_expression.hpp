@@ -154,7 +154,8 @@ using require_all_prim_or_rev_kernel_expression_t
 /*! \addtogroup nonscalar_prim_or_rev_kernel_expression_types */
 /*! @{ */
 
-/*! \brief Require type satisfies @ref is_nonscalar_prim_or_rev_kernel_expression */
+/*! \brief Require type satisfies @ref
+ * is_nonscalar_prim_or_rev_kernel_expression */
 /*! @tparam Types The types that are checked */
 template <typename T>
 using require_nonscalar_prim_or_rev_kernel_expression_t

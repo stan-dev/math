@@ -70,7 +70,8 @@ using require_not_vt_autodiff
     = require_not_t<is_autodiff<value_type_t<std::decay_t<T>>>>;
 
 /*! \brief Require none of the value types satisfy @ref is_autodiff */
-/*! @tparam Types The types with a valid overload of @ref value_type available */
+/*! @tparam Types The types with a valid overload of @ref value_type available
+ */
 template <typename... Types>
 using require_all_not_vt_autodiff
     = require_all_not_t<is_autodiff<value_type_t<std::decay_t<Types>>>...>;
@@ -88,7 +89,8 @@ using require_not_st_autodiff
     = require_not_t<is_autodiff<scalar_type_t<std::decay_t<T>>>>;
 
 /*! \brief Require any of the scalar types satisfy is_autodiff */
-/*! @tparam Types The types with a valid overload of @ref scalar_type available */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available
+ */
 template <typename... Types>
 using require_any_st_autodiff
     = require_any_t<is_autodiff<scalar_type_t<std::decay_t<Types>>>...>;

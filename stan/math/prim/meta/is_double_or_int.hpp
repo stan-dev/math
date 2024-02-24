@@ -52,7 +52,8 @@ template <typename... Types>
 using require_all_not_double_or_int_t
     = require_all_not_t<is_double_or_int<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy @ref is_double_or_int */
+/*! \brief Require at least one of the types do not satisfy @ref
+ * is_double_or_int */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_double_or_int_t

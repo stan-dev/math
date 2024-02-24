@@ -57,7 +57,8 @@ using require_all_not_matrix_t
 /*! \brief Require any of the types satisfy @ref is_matrix */
 /*! and any scalar type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_any_matrix_st = require_any_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;
@@ -65,7 +66,8 @@ using require_any_matrix_st = require_any_t<
 /*! \brief Require all of the types does not satisfy @ref is_matrix */
 /*! and all scalar types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_matrix_st = require_all_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;
@@ -73,7 +75,8 @@ using require_all_matrix_st = require_all_t<
 /*! \brief Require none of the types satisfy @ref is_matrix */
 /*! and none of the scalar types satisfy `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the scalar type against */
-/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type is checked with `TypeCheck` */
+/*! @tparam Check The type to test @ref is_matrix for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_matrix_st = require_all_not_t<
     container_type_check_base<is_matrix, scalar_type_t, TypeCheck, Check>...>;

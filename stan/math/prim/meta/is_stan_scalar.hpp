@@ -62,7 +62,8 @@ template <typename... Types>
 using require_all_not_stan_scalar_t
     = require_all_not_t<is_stan_scalar<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy @ref is_stan_scalar */
+/*! \brief Require at least one of the types do not satisfy @ref is_stan_scalar
+ */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_stan_scalar_t
@@ -92,7 +93,8 @@ using require_not_st_stan_scalar
     = require_not_t<is_stan_scalar<scalar_type_t<std::decay_t<T>>>>;
 
 /*! \brief Require all of the scalar types satisfy @ref is_stan_scalar */
-/*! @tparam Types The types with a valid overload of @ref scalar_type available */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available
+ */
 template <typename... Types>
 using require_all_st_stan_scalar
     = require_all_t<is_stan_scalar<scalar_type_t<std::decay_t<Types>>>...>;
