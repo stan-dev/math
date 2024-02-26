@@ -126,7 +126,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
             += exp(a_grad) * base_sign * sign(value_of_rec(digamma_a));
 
         curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
-        digamma_a += select(a_k == 0.0, 0.0, inv(a_k));
+        digamma_a += inv(a_k);
       }
 
       if (CalcB) {
@@ -135,7 +135,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
             -= exp(b_grad) * base_sign * sign(value_of_rec(digamma_b));
 
         curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
-        digamma_b += select(b_k == 0.0, 0.0, inv(b_k));
+        digamma_b += inv(b_k);
       }
 
       log_base
@@ -143,8 +143,8 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
       base_sign *= z_sign * sign(value_of_rec(a_k)).prod()
                    * sign(value_of_rec(b_k)).prod();
 
-      a_k += 1.0;
-      b_k += 1.0;
+      a_k = (a_k == 0.0).select(std::numeric_limits<double>::min(), a_k + 1.0);
+      b_k = (b_k == 0.0).select(std::numeric_limits<double>::min(), b_k + 1.0);
       k += 1;
     }
   }
