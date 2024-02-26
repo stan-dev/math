@@ -118,13 +118,13 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
 
     // Identify the number of iterations to needed for each element to sign
     // flip from negative to positive - rather than checking at each iteration
-    Eigen::ArrayXi a_pos_k
-      = (a_array < 0.0).select(-floor(value_of_rec(a_array)), 0)
-                        .template cast<int>();
+    Eigen::ArrayXi a_pos_k = (a_array < 0.0)
+                                 .select(-floor(value_of_rec(a_array)), 0)
+                                 .template cast<int>();
     int all_a_pos_k = a_pos_k.maxCoeff();
-    Eigen::ArrayXi b_pos_k
-      = (b_array < 0.0).select(-floor(value_of_rec(b_array)), 0)
-                        .template cast<int>();
+    Eigen::ArrayXi b_pos_k = (b_array < 0.0)
+                                 .select(-floor(value_of_rec(b_array)), 0)
+                                 .template cast<int>();
     int all_b_pos_k = b_pos_k.maxCoeff();
     Eigen::ArrayXi a_sign = select(a_pos_k == 0, 1, -1);
     Eigen::ArrayXi b_sign = select(b_pos_k == 0, 1, -1);
@@ -166,8 +166,8 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
         //  - This is smaller than EPSILON, so the following iteration will
         //    still be 1.0
         a_k = (a_k == 1.0 && a_sign == -1)
-                .select(dbl_min, (a_k < 1.0 && a_sign == -1)
-                                      .select(1.0 - a_k, a_k + 1.0 * a_sign));
+                  .select(dbl_min, (a_k < 1.0 && a_sign == -1)
+                                       .select(1.0 - a_k, a_k + 1.0 * a_sign));
         a_sign = select(k == a_pos_k - 1, 1, a_sign);
       } else {
         a_k += 1.0;
@@ -179,8 +179,8 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
 
       if (k < all_a_pos_k) {
         b_k = (b_k == 1.0 && b_sign == -1)
-                .select(dbl_min, (b_k < 1.0 && b_sign == -1)
-                                    .select(1.0 - b_k, b_k + 1.0 * b_sign));
+                  .select(dbl_min, (b_k < 1.0 && b_sign == -1)
+                                       .select(1.0 - b_k, b_k + 1.0 * b_sign));
         b_sign = select(k == b_pos_k - 1, 1, b_sign);
       } else {
         b_k += 1.0;
@@ -195,7 +195,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
   }
   if (CalcZ) {
     std::get<2>(ret_tuple)
-      = hypergeometric_pFq(add(a, 1.0), add(b, 1.0), z) * prod(a) / prod(b);
+        = hypergeometric_pFq(add(a, 1.0), add(b, 1.0), z) * prod(a) / prod(b);
   }
   return ret_tuple;
 }
