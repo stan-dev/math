@@ -3,12 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/prod.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/fun/select.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
@@ -108,9 +111,24 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
     int k = 0;
     int base_sign = 1;
 
-    Ta_Array a_k = a_array;
-    Tb_Array b_k = b_array;
+    static constexpr double dbl_min = std::numeric_limits<double>::min();
+    Ta_Array a_k = (a_array == 0.0).select(dbl_min, abs(a_array));
+    Tb_Array b_k = (b_array == 0.0).select(dbl_min, abs(b_array));
     Tz log_z = log(abs(z));
+
+    // Identify the number of iterations to needed for each element to sign
+    // flip from negative to positive - rather than checking at each iteration
+    Eigen::ArrayXi a_pos_k
+      = (a_array < 0.0).select(-floor(value_of_rec(a_array)), 0)
+                        .template cast<int>();
+    int all_a_pos_k = a_pos_k.maxCoeff();
+    Eigen::ArrayXi b_pos_k
+      = (b_array < 0.0).select(-floor(value_of_rec(b_array)), 0)
+                        .template cast<int>();
+    int all_b_pos_k = b_pos_k.maxCoeff();
+    Eigen::ArrayXi a_sign = select(a_pos_k == 0, 1, -1);
+    Eigen::ArrayXi b_sign = select(b_pos_k == 0, 1, -1);
+
     int z_sign = sign(value_of_rec(z));
 
     Ta_Array digamma_a = Ta_Array::Ones(a.size());
@@ -126,7 +144,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
             += exp(a_grad) * base_sign * sign(value_of_rec(digamma_a));
 
         curr_log_prec = max(curr_log_prec, a_grad.maxCoeff());
-        digamma_a += inv(a_k);
+        digamma_a += inv(a_k) * a_sign;
       }
 
       if (CalcB) {
@@ -135,23 +153,49 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
             -= exp(b_grad) * base_sign * sign(value_of_rec(digamma_b));
 
         curr_log_prec = max(curr_log_prec, b_grad.maxCoeff());
-        digamma_b += inv(b_k);
+        digamma_b += inv(b_k) * b_sign;
       }
 
-      log_base
-          += (sum(log(abs(a_k))) + log_z) - (sum(log(abs(b_k))) + log1p(k));
-      base_sign *= z_sign * sign(value_of_rec(a_k)).prod()
-                   * sign(value_of_rec(b_k)).prod();
+      log_base += (sum(log(a_k)) + log_z) - (sum(log(b_k)) + log1p(k));
+      base_sign *= z_sign * a_sign.prod() * b_sign.prod();
 
-      a_k = (a_k == 0.0).select(std::numeric_limits<double>::min(), a_k + 1.0);
-      b_k = (b_k == 0.0).select(std::numeric_limits<double>::min(), b_k + 1.0);
+      // Wrap negative value handling in a conditional on iteration number so
+      // branch prediction likely to ignore once positive
+      if (k < all_a_pos_k) {
+        // Avoid log(0) and 1/0 in next iteration by using smallest double
+        //  - This is smaller than EPSILON, so the following iteration will
+        //    still be 1.0
+        a_k = (a_k == 1.0 && a_sign == -1)
+                .select(dbl_min, (a_k < 1.0 && a_sign == -1)
+                                      .select(1.0 - a_k, a_k + 1.0 * a_sign));
+        a_sign = select(k == a_pos_k - 1, 1, a_sign);
+      } else {
+        a_k += 1.0;
+
+        if (k == all_a_pos_k) {
+          a_sign.setOnes();
+        }
+      }
+
+      if (k < all_a_pos_k) {
+        b_k = (b_k == 1.0 && b_sign == -1)
+                .select(dbl_min, (b_k < 1.0 && b_sign == -1)
+                                    .select(1.0 - b_k, b_k + 1.0 * b_sign));
+        b_sign = select(k == b_pos_k - 1, 1, b_sign);
+      } else {
+        b_k += 1.0;
+
+        if (k == all_b_pos_k) {
+          b_sign.setOnes();
+        }
+      }
+
       k += 1;
     }
   }
   if (CalcZ) {
-    T_Rtn pfq_p1_val
-        = hypergeometric_pFq((a_array + 1).matrix(), (b_array + 1).matrix(), z);
-    std::get<2>(ret_tuple) = prod(a) / prod(b) * pfq_p1_val;
+    std::get<2>(ret_tuple)
+      = hypergeometric_pFq(add(a, 1.0), add(b, 1.0), z) * prod(a) / prod(b);
   }
   return ret_tuple;
 }
