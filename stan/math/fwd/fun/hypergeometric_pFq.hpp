@@ -23,9 +23,9 @@ namespace math {
  */
 template <typename Ta, typename Tb, typename Tz,
           typename FvarT = return_type_t<Ta, Tb, Tz>,
-          bool GradA = !is_constant<Ta>::value,
-          bool GradB = !is_constant<Tb>::value,
-          bool GradZ = !is_constant<Tz>::value,
+          bool grad_a = !is_constant<Ta>::value,
+          bool grad_b = !is_constant<Tb>::value,
+          bool grad_z = !is_constant<Tz>::value,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_fvar, FvarT>* = nullptr>
 inline FvarT hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
@@ -39,19 +39,20 @@ inline FvarT hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   auto&& b_val = value_of(b_ref);
   auto&& z_val = value_of(z);
   PartialsT pfq_val = hypergeometric_pFq(a_val, b_val, z_val);
-  auto grad_tuple = grad_pFq<GradA, GradB, GradZ>(pfq_val, a_val, b_val, z_val);
+  auto grad_tuple
+    = grad_pFq<grad_a, grad_b, grad_z>(pfq_val, a_val, b_val, z_val);
 
   FvarT rtn = FvarT(pfq_val, 0.0);
 
-  if (GradA) {
+  if (grad_a) {
     rtn.d_ += dot_product(forward_as<promote_scalar_t<FvarT, ARefT>>(a_ref).d(),
                           std::get<0>(grad_tuple));
   }
-  if (GradB) {
+  if (grad_b) {
     rtn.d_ += dot_product(forward_as<promote_scalar_t<FvarT, BRefT>>(b_ref).d(),
                           std::get<1>(grad_tuple));
   }
-  if (GradZ) {
+  if (grad_z) {
     rtn.d_ += forward_as<promote_scalar_t<FvarT, Tz>>(z).d_
               * std::get<2>(grad_tuple);
   }

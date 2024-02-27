@@ -69,9 +69,9 @@ namespace math {
  *      {k!\prod_{j=1}^q\left(b_j\right)_k}}
  * \f$
  *
- * @tparam CalcA Boolean for whether to calculate derivatives wrt to 'a'
- * @tparam CalcB Boolean for whether to calculate derivatives wrt to 'b'
- * @tparam CalcZ Boolean for whether to calculate derivatives wrt to 'z'
+ * @tparam calc_a Boolean for whether to calculate derivatives wrt to 'a'
+ * @tparam calc_b Boolean for whether to calculate derivatives wrt to 'b'
+ * @tparam calc_z Boolean for whether to calculate derivatives wrt to 'z'
  * @tparam TpFq Scalar type of hypergeometric_pFq return value
  * @tparam Ta Eigen type with either one row or column at compile time
  * @tparam Tb Eigen type with either one row or column at compile time
@@ -84,7 +84,7 @@ namespace math {
  * @param[in] max_steps Maximum number of iterations
  * @return Tuple of gradients
  */
-template <bool CalcA = true, bool CalcB = true, bool CalcZ = true,
+template <bool calc_a = true, bool calc_b = true, bool calc_z = true,
           typename TpFq, typename Ta, typename Tb, typename Tz,
           typename T_Rtn = return_type_t<Ta, Tb, Tz>,
           typename Ta_Rtn = promote_scalar_t<T_Rtn, plain_type_t<Ta>>,
@@ -102,7 +102,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
 
   std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> ret_tuple;
 
-  if (CalcA || CalcB) {
+  if (calc_a || calc_b) {
     std::get<0>(ret_tuple).setConstant(a.size(), -pfq_val);
     std::get<1>(ret_tuple).setConstant(b.size(), pfq_val);
     Eigen::Array<T_Rtn, -1, 1> a_grad(a.size());
@@ -138,7 +138,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
     T_Rtn log_base = 0;
     while ((k < 10 || curr_log_prec > log(precision)) && (k <= max_steps)) {
       curr_log_prec = NEGATIVE_INFTY;
-      if (CalcA) {
+      if (calc_a) {
         a_grad = log(abs(digamma_a)) + log_base;
         std::get<0>(ret_tuple).array()
             += exp(a_grad) * base_sign * sign(value_of_rec(digamma_a));
@@ -147,7 +147,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
         digamma_a += inv(a_k) * a_sign;
       }
 
-      if (CalcB) {
+      if (calc_b) {
         b_grad = log(abs(digamma_b)) + log_base;
         std::get<1>(ret_tuple).array()
             -= exp(b_grad) * base_sign * sign(value_of_rec(digamma_b));
@@ -193,7 +193,7 @@ std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
       k += 1;
     }
   }
-  if (CalcZ) {
+  if (calc_z) {
     std::get<2>(ret_tuple)
         = hypergeometric_pFq(add(a, 1.0), add(b, 1.0), z) * prod(a) / prod(b);
   }
