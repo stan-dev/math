@@ -24,8 +24,8 @@ struct change_eigen_options_impl<var_value<Mat>, NewOptions,
       NewOptions, Mat::MaxRowsAtCompileTime, Mat::MaxColsAtCompileTime>>;
 };
 
-}
-}
-}
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
 
 #endif

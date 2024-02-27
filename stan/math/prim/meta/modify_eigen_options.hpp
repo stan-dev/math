@@ -31,18 +31,17 @@ struct change_eigen_options_impl<Mat, NewOptions, require_eigen_array_t<Mat>> {
                      Mat::ColsAtCompileTime, NewOptions,
                      Mat::MaxRowsAtCompileTime, Mat::MaxColsAtCompileTime>;
 };
-}
+}  // namespace internal
 /**
  * Change the options of an Eigen matrix or array.
  * @tparam Mat type of the matrix or array
  * @tparam NewOptions new options for the matrix or array
  */
 template <typename Mat, int NewOptions>
-using change_eigen_options_t =
-    typename internal::change_eigen_options_impl<plain_type_t<std::decay_t<Mat>>,
-                                       NewOptions>::type;
+using change_eigen_options_t = typename internal::change_eigen_options_impl<
+    plain_type_t<std::decay_t<Mat>>, NewOptions>::type;
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
