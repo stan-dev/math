@@ -40,7 +40,7 @@ inline FvarT hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   auto&& z_val = value_of(z);
   PartialsT pfq_val = hypergeometric_pFq(a_val, b_val, z_val);
   auto grad_tuple
-    = grad_pFq<grad_a, grad_b, grad_z>(pfq_val, a_val, b_val, z_val);
+      = grad_pFq<grad_a, grad_b, grad_z>(pfq_val, a_val, b_val, z_val);
 
   FvarT rtn = FvarT(pfq_val, 0.0);
 
