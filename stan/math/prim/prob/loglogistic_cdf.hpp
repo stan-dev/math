@@ -51,7 +51,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   using T_alpha_ref = ref_type_t<T_scale>;
   using T_beta_ref = ref_type_t<T_shape>;
   using std::pow;
-  static const char* function = "loglogistic_cdf";
+  static constexpr const char* function = "loglogistic_cdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          alpha, "Shape parameter", beta);
   T_y_ref y_ref = y;

@@ -30,7 +30,7 @@ template <typename T_n, typename T_prob,
 return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_theta_ref = ref_type_t<T_prob>;
-  static const char* function = "bernoulli_cdf";
+  static constexpr const char* function = "bernoulli_cdf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;

@@ -24,7 +24,7 @@ namespace math {
 template <typename T_theta, typename RNG,
           require_eigen_vt<std::is_arithmetic, T_theta>* = nullptr>
 inline int poisson_binomial_rng(const T_theta& theta, RNG& rng) {
-  static const char* function = "poisson_binomial_rng";
+  static constexpr const char* function = "poisson_binomial_rng";
   check_finite(function, "Probability parameters", theta);
   check_bounded(function, "Probability parameters", value_of(theta), 0.0, 1.0);
 

@@ -51,7 +51,7 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
   const size_t N = x.cols();
   const size_t M = x.rows();
 
-  static const char* function = "bernoulli_logit_glm_rng";
+  static constexpr const char* function = "bernoulli_logit_glm_rng";
   check_consistent_size(function, "Weight vector", beta, N);
   check_consistent_size(function, "Vector of intercepts", alpha, M);
   T_x_ref x_ref = x;

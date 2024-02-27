@@ -36,7 +36,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_inv_scale>;
-  static const char* function = "exp_mod_normal_lccdf";
+  static constexpr const char* function = "exp_mod_normal_lccdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);

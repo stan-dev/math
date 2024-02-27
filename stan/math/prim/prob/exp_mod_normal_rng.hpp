@@ -39,7 +39,7 @@ template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
 exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
                    const T_inv_scale& lambda, RNG& rng) {
-  static const char* function = "exp_mod_normal_rng";
+  static constexpr const char* function = "exp_mod_normal_rng";
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
   using T_lambda_ref = ref_type_t<T_inv_scale>;

@@ -35,7 +35,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "frechet_lpdf";
+  static constexpr const char* function = "frechet_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
   T_y_ref y_ref = y;

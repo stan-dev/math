@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
   using boost::random::cauchy_distribution;
-  static const char* function = "cauchy_rng";
+  static constexpr const char* function = "cauchy_rng";
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",

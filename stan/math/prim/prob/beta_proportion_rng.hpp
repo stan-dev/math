@@ -36,7 +36,7 @@ inline typename VectorBuilder<true, double, T_loc, T_prec>::type
 beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   using T_mu_ref = ref_type_t<T_loc>;
   using T_kappa_ref = ref_type_t<T_prec>;
-  static const char *function = "beta_proportion_rng";
+  static constexpr const char *function = "beta_proportion_rng";
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", kappa);
   T_mu_ref mu_ref = mu;
