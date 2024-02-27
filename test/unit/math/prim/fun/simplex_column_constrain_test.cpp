@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(prob_transform, row_simplex_rt0) {
+TEST(prob_transform, col_simplex_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> x(4, 4);
@@ -11,25 +11,24 @@ TEST(prob_transform, row_simplex_rt0) {
   }
   double lp = 0;
   Matrix<double, Dynamic, Dynamic> x_test
-      = stan::math::simplex_row_constrain<false>(x, lp);
+      = stan::math::simplex_column_constrain<false>(x, lp);
   EXPECT_EQ(lp, 0.0);
-  Matrix<double, Dynamic, Dynamic> x_res(4, 5);
+  Matrix<double, Dynamic, Dynamic> x_res(5, 4);
   double lp_orig = 0.0;
   for (Eigen::Index i = 0; i < x.cols(); ++i) {
-    x_res.row(i) = stan::math::simplex_constrain<false>(x.row(i), lp_orig);
+    x_res.col(i) = stan::math::simplex_constrain<false>(x.col(i), lp_orig);
   }
   EXPECT_EQ(lp_orig, 0.0);
   EXPECT_MATRIX_EQ(x_test, x_res);
   Matrix<double, Dynamic, Dynamic> x_lp_test
-      = stan::math::simplex_row_constrain<true>(x, lp);
+      = stan::math::simplex_column_constrain<true>(x, lp);
   for (Eigen::Index i = 0; i < x.cols(); ++i) {
-    x_res.row(i) = stan::math::simplex_constrain<true>(x.row(i), lp_orig);
+    x_res.col(i) = stan::math::simplex_constrain<true>(x.col(i), lp_orig);
   }
   EXPECT_MATRIX_EQ(x_lp_test, x_res);
 }
 
-
-TEST(prob_transform, row_simplex_constrain_free) {
+TEST(prob_transform, col_simplex_constrain_free) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> x(4, 4);
@@ -38,10 +37,10 @@ TEST(prob_transform, row_simplex_constrain_free) {
   }
   double lp = 0;
   Matrix<double, Dynamic, Dynamic> x_test
-      = stan::math::simplex_row_free(stan::math::simplex_row_constrain<false>(x, lp));
+      = stan::math::simplex_column_free(stan::math::simplex_column_constrain<false>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
   Matrix<double, Dynamic, Dynamic> x_lp_test
-      = stan::math::simplex_row_free(stan::math::simplex_row_constrain<true>(x, lp));
+      = stan::math::simplex_column_free(stan::math::simplex_column_constrain<true>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_lp_test, 1e-9);
 }
