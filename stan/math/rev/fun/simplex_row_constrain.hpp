@@ -28,7 +28,7 @@ namespace math {
  * @return Matrix with Simplexes along the rows of dimensionality (N, K)
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto simplex_row_constrain(const T& y) {
+inline plain_type_t<T> simplex_row_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -64,7 +64,6 @@ inline auto simplex_row_constrain(const T& y) {
                                   * (1.0 - arena_z_arr.col(k));
     }
   });
-
   return ret_type(arena_x);
 }
 
@@ -77,12 +76,12 @@ inline auto simplex_row_constrain(const T& y) {
  * stick-breaking process.
  *
  * @tparam T type of the matrix to constrain
- * @param y Free matrix input of dimensionality (N, M).
+ * @param y Free matrix input of dimensionality (N, K).
  * @param lp Log probability reference to increment.
- * @return Matrix with simplexes along the rows of dimensionality (N, M + 1).
+ * @return Matrix with simplexes along the rows of dimensionality (N, K + 1).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
+inline plain_type_t<T> simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -124,7 +123,6 @@ inline auto simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
                    * (1.0 - arena_z_arr.col(k));
     }
   });
-
   return ret_type(arena_x);
 }
 

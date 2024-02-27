@@ -15,41 +15,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-template <typename Mat, int NewOptions, typename = void>
-struct change_eigen_options_impl {};
-
-template <typename Mat, int NewOptions>
-struct change_eigen_options_impl<Mat, NewOptions,
-                                 require_eigen_matrix_base_t<Mat>> {
-  using type
-      = Eigen::Matrix<typename Mat::Scalar, Mat::RowsAtCompileTime,
-                      Mat::ColsAtCompileTime, NewOptions,
-                      Mat::MaxRowsAtCompileTime, Mat::MaxColsAtCompileTime>;
-};
-
-template <typename Mat, int NewOptions>
-struct change_eigen_options_impl<var_value<Mat>, NewOptions,
-                                 require_eigen_matrix_base_t<Mat>> {
-  using type = var_value<Eigen::Matrix<
-      typename Mat::Scalar, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime,
-      NewOptions, Mat::MaxRowsAtCompileTime, Mat::MaxColsAtCompileTime>>;
-};
-
-template <typename Mat, int NewOptions>
-struct change_eigen_options_impl<Mat, NewOptions, require_eigen_array_t<Mat>> {
-  using type
-      = Eigen::Array<typename Mat::Scalar, Mat::RowsAtCompileTime,
-                     Mat::ColsAtCompileTime, NewOptions,
-                     Mat::MaxRowsAtCompileTime, Mat::MaxColsAtCompileTime>;
-};
-
-template <typename Mat, int NewOptions>
-using change_eigen_options_t =
-    typename change_eigen_options_impl<plain_type_t<std::decay_t<Mat>>,
-                                       NewOptions>::type;
-}  // namespace internal
-
 /**
  * Return a matrix with columns as simplex vectors.
  * A simplex is a vector containing values greater than or equal
@@ -63,7 +28,7 @@ using change_eigen_options_t =
  * @return matrix of column simplexes of dimensionality (K, M)
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto simplex_column_constrain(const T& y) {
+inline plain_type_t<T> simplex_column_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -73,7 +38,7 @@ inline auto simplex_column_constrain(const T& y) {
   if (unlikely(N == 0 || M == 0)) {
     return ret_type(x_val);
   }
-  arena_t<internal::change_eigen_options_t<T, Eigen::RowMajor>> arena_y = y;
+  arena_t<change_eigen_options_t<T, Eigen::RowMajor>> arena_y = y;
   arena_t<eigen_mat_rowmajor> arena_z(N, M);
   using arr_vec = Eigen::Array<double, 1, -1>;
   arr_vec stick_len = arr_vec::Constant(M, 1.0);
@@ -114,12 +79,12 @@ inline auto simplex_column_constrain(const T& y) {
  * stick-breaking process.
  *
  * @tparam T type of the matrix to constrain
- * @param y Free matrix input of dimensionality N, M.
+ * @param y Free matrix input of dimensionality N, K.
  * @param lp Log probability reference to increment.
- * @return Matrix of simplex columns of dimensionality (N + 1, M).
+ * @return Matrix of simplex columns of dimensionality (N + 1, K).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-auto simplex_column_constrain(const T& y, scalar_type_t<T>& lp) {
+inline plain_type_t<T> simplex_column_constrain(const T& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -129,7 +94,7 @@ auto simplex_column_constrain(const T& y, scalar_type_t<T>& lp) {
   if (unlikely(N == 0 || M == 0)) {
     return ret_type(x_val);
   }
-  arena_t<internal::change_eigen_options_t<T, Eigen::RowMajor>> arena_y = y;
+  arena_t<change_eigen_options_t<T, Eigen::RowMajor>> arena_y = y;
   arena_t<eigen_mat_rowmajor> arena_z(N, M);
   using arr_vec = Eigen::Array<double, 1, -1>;
   arr_vec stick_len = arr_vec::Constant(M, 1.0);
