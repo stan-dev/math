@@ -28,7 +28,7 @@ namespace math {
  * @return Hypergeometric 1F0 function
  */
 template <typename Ta, typename Tz, require_all_arithmetic_t<Ta, Tz>* = nullptr>
-double hypergeometric_1f0(const Ta& a, const Tz& z) {
+return_type<Ta, Tz> hypergeometric_1f0(const Ta& a, const Tz& z) {
   constexpr const char* function = "hypergeometric_1f0";
   check_less("hypergeometric_1f0", "abs(z)", std::fabs(z), 1.0);
 
