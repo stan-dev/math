@@ -10,8 +10,9 @@ namespace math {
 
 /**
  * Return an unconstrained matrix that when transformed produces
- * the specified columnwise simplex matrix.  It applies to a simplex of dimensionality
- * (N, K) and produces an unconstrained vector of dimensionality (N - 1, K).
+ * the specified columnwise simplex matrix.  It applies to a simplex of
+ * dimensionality (N, K) and produces an unconstrained vector of dimensionality
+ * (N - 1, K).
  *
  * @tparam Mat type of the Matrix
  * @param y Columnwise simplex matrix input of dimensionality (N, K)
@@ -43,7 +44,5 @@ inline auto simplex_column_free(const T& y) {
 
 }  // namespace math
 }  // namespace stan
-
-
 
 #endif

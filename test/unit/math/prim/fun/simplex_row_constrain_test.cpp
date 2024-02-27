@@ -28,7 +28,6 @@ TEST(prob_transform, row_simplex_rt0) {
   EXPECT_MATRIX_EQ(x_lp_test, x_res);
 }
 
-
 TEST(prob_transform, row_simplex_constrain_free) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -37,11 +36,11 @@ TEST(prob_transform, row_simplex_constrain_free) {
     x(i) = static_cast<double>(i);
   }
   double lp = 0;
-  Matrix<double, Dynamic, Dynamic> x_test
-      = stan::math::simplex_row_free(stan::math::simplex_row_constrain<false>(x, lp));
+  Matrix<double, Dynamic, Dynamic> x_test = stan::math::simplex_row_free(
+      stan::math::simplex_row_constrain<false>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
-  Matrix<double, Dynamic, Dynamic> x_lp_test
-      = stan::math::simplex_row_free(stan::math::simplex_row_constrain<true>(x, lp));
+  Matrix<double, Dynamic, Dynamic> x_lp_test = stan::math::simplex_row_free(
+      stan::math::simplex_row_constrain<true>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_lp_test, 1e-9);
 }

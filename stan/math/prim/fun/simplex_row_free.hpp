@@ -44,6 +44,4 @@ inline auto simplex_row_free(const T& y) {
 }  // namespace math
 }  // namespace stan
 
-
-
 #endif

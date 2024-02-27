@@ -36,11 +36,11 @@ TEST(prob_transform, col_simplex_constrain_free) {
     x(i) = static_cast<double>(i);
   }
   double lp = 0;
-  Matrix<double, Dynamic, Dynamic> x_test
-      = stan::math::simplex_column_free(stan::math::simplex_column_constrain<false>(x, lp));
+  Matrix<double, Dynamic, Dynamic> x_test = stan::math::simplex_column_free(
+      stan::math::simplex_column_constrain<false>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
-  Matrix<double, Dynamic, Dynamic> x_lp_test
-      = stan::math::simplex_column_free(stan::math::simplex_column_constrain<true>(x, lp));
+  Matrix<double, Dynamic, Dynamic> x_lp_test = stan::math::simplex_column_free(
+      stan::math::simplex_column_constrain<true>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_lp_test, 1e-9);
 }
