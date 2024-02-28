@@ -74,16 +74,16 @@ static constexpr double LOG_ZERO = -INFTY;
 const double LOG_EPSILON = std::log(EPSILON);
 
 /**
- * The natural logarithm of \f$ \pi \f$,
- * \f$ \log \pi \f$.
- */
-const double LOG_PI = std::log(pi());
-
-/**
  * The natural logarithm of 2,
  * \f$ \log 2 \f$.
  */
 static constexpr double LOG_TWO = boost::math::constants::ln_two<double>();
+
+/**
+ * The natural logarithm of \f$ \pi \f$,
+ * \f$ \log \pi \f$.
+ */
+static constexpr double LOG_PI = 1.14472988584940017414342735135;
 
 /**
  * The natural logarithm of 0.5,
@@ -95,19 +95,19 @@ static constexpr double LOG_HALF = -LOG_TWO;
  * The natural logarithm of 2 plus the natural logarithm of \f$ \pi \f$,
  * \f$ \log(2\pi) \f$.
  */
-const double LOG_TWO_PI = LOG_TWO + LOG_PI;
+static constexpr double LOG_TWO_PI = LOG_TWO + LOG_PI;
 
 /**
  * The value of one quarter the natural logarithm of \f$ \pi \f$,
  * \f$ \log(\pi) / 4 \f$.
  */
-const double LOG_PI_OVER_FOUR = 0.25 * LOG_PI;
+static constexpr double LOG_PI_OVER_FOUR = 0.25 * LOG_PI;
 
 /**
  * The natural logarithm of the square root of \f$ \pi \f$,
  * \f$ \log(sqrt{\pi}) \f$.
  */
-const double LOG_SQRT_PI = std::log(boost::math::constants::root_pi<double>());
+static constexpr double LOG_SQRT_PI = LOG_PI / 2;
 
 /**
  * The natural logarithm of 10,
@@ -178,7 +178,7 @@ static constexpr double HALF_LOG_TWO = 0.5 * LOG_TWO;
  * The value of half the natural logarithm \f$ 2\pi \f$,
  * \f$ \log(2\pi) / 2 \f$.
  */
-const double HALF_LOG_TWO_PI = 0.5 * LOG_TWO_PI;
+static constexpr double HALF_LOG_TWO_PI = 0.5 * LOG_TWO_PI;
 
 /**
  * The value of minus the natural logarithm of the square root of \f$ 2\pi \f$,

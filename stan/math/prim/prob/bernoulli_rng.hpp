@@ -30,7 +30,7 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
     const T_theta& theta, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
-  static const char* function = "bernoulli_rng";
+  static constexpr const char* function = "bernoulli_rng";
   ref_type_t<T_theta> theta_ref = theta;
   check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
                 1.0);

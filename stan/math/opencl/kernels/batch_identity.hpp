@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string batch_identity_kernel_code = STRINGIFY(
+static constexpr const char* batch_identity_kernel_code = STRINGIFY(
     // \endcond
 
     /** \ingroup opencl_kernels

@@ -54,7 +54,7 @@ inline return_type_t<T1, T2> log_rising_factorial(const T1& x, const T2& n) {
   if (is_any_nan(x, n)) {
     return NOT_A_NUMBER;
   }
-  static const char* function = "log_rising_factorial";
+  static constexpr const char* function = "log_rising_factorial";
   check_positive(function, "first argument", x);
   return lgamma(x + n) - lgamma(x);
 }

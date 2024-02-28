@@ -40,7 +40,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::log;
-  static const char* function = "double_exponential_lccdf";
+  static constexpr const char* function = "double_exponential_lccdf";
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;

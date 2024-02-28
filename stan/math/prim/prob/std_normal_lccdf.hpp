@@ -26,7 +26,7 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
   using std::exp;
   using std::log;
   using T_y_ref = ref_type_t<T_y>;
-  static const char* function = "std_normal_lccdf";
+  static constexpr const char* function = "std_normal_lccdf";
   T_y_ref y_ref = y;
   check_not_nan(function, "Random variable", y_ref);
 

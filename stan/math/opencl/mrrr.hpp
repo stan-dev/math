@@ -21,7 +21,7 @@ namespace internal {
 using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
 using MatrixXdd = Eigen::Matrix<double_d, -1, -1>;
 
-const double_d perturbation_range = 1e-20;
+static const double_d perturbation_range = 1e-20;
 
 /**
  * Generates a random number for perturbing a relatively robust representation

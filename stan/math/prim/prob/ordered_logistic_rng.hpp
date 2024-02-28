@@ -14,7 +14,7 @@ template <class RNG>
 inline int ordered_logistic_rng(
     double eta, const Eigen::Matrix<double, Eigen::Dynamic, 1>& c, RNG& rng) {
   using boost::variate_generator;
-  static const char* function = "ordered_logistic";
+  static constexpr const char* function = "ordered_logistic";
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
   check_ordered(function, "Cut points parameter", c);

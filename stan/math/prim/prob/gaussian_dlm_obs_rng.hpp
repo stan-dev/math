@@ -92,7 +92,7 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd &F,
                                             const Eigen::VectorXd &m0,
                                             const Eigen::MatrixXd &C0,
                                             const int T, RNG &rng) {
-  static const char *function = "gaussian_dlm_obs_rng";
+  static constexpr const char *function = "gaussian_dlm_obs_rng";
 
   int r = F.cols();  // number of variables
   int n = G.rows();  // number of states

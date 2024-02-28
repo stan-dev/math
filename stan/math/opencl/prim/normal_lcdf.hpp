@@ -179,7 +179,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static const char* function = "normal_lcdf(OpenCL)";
+  static constexpr const char* function = "normal_lcdf(OpenCL)";
   using std::isfinite;
   using std::isnan;
 

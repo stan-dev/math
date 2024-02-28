@@ -30,7 +30,7 @@ template <bool propto, typename T_n_cl, typename T_log_rate_cl,
           require_any_not_stan_scalar_t<T_n_cl, T_log_rate_cl>* = nullptr>
 return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
                                               const T_log_rate_cl& alpha) {
-  static const char* function = "poisson_log_lpmf(OpenCL)";
+  static constexpr const char* function = "poisson_log_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_log_rate_cl>;
   using std::isinf;
   using std::isnan;

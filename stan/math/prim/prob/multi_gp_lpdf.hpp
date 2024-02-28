@@ -37,7 +37,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
                                                const T_covar& Sigma,
                                                const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
-  static const char* function = "multi_gp_lpdf";
+  static constexpr const char* function = "multi_gp_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),

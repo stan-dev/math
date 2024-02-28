@@ -36,7 +36,7 @@ inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
   using boost::variate_generator;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv>;
-  static const char* function = "gamma_rng";
+  static constexpr const char* function = "gamma_rng";
   check_consistent_sizes(function, "Shape parameter", alpha,
                          "Inverse scale Parameter", beta);
   T_alpha_ref alpha_ref = alpha;

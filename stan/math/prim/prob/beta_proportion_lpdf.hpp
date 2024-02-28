@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_kappa_ref = ref_type_if_not_constant_t<T_prec>;
-  static const char* function = "beta_proportion_lpdf";
+  static constexpr const char* function = "beta_proportion_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
   if (size_zero(y, mu, kappa)) {
