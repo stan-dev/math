@@ -27,8 +27,6 @@
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <queue>
 #include <tuple>
-#include <iostream>
-#include <boost/math/quadrature/gauss_kronrod.hpp>
 
 namespace stan {
 namespace math {
