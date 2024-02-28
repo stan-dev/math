@@ -249,18 +249,6 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
             fminus, mult * log(k) - square(pi_k) * scaling + log(-check));
       }
     }
-    if (fplus == NEGATIVE_INFTY) {
-      current_val = fminus;
-    } else if (fminus == NEGATIVE_INFTY) {
-      current_val = fplus;
-    } else if (fplus > fminus) {
-      current_val = log_diff_exp(fplus, fminus);
-    } else if (fplus < fminus) {
-      current_val = log_diff_exp(fminus, fplus);
-    } else {
-      current_val = NEGATIVE_INFTY;
-    }
-    current_sign = (fplus < fminus) ? -1 : 1;
   }
   current_sign = (fplus < fminus) ? -1 : 1;
   if (fplus == NEGATIVE_INFTY) {
