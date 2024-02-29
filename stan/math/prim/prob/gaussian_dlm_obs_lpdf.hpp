@@ -72,7 +72,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_m0& m0, const T_C0& C0) {
   using T_lp = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::pow;
-  static const char* function = "gaussian_dlm_obs_lpdf";
+  static constexpr const char* function = "gaussian_dlm_obs_lpdf";
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
   check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
   check_size_match(function, "rows of V", V.rows(), "rows of y", y.rows());
@@ -197,7 +197,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_m0& m0, const T_C0& C0) {
   using T_lp = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::log;
-  static const char* function = "gaussian_dlm_obs_lpdf";
+  static constexpr const char* function = "gaussian_dlm_obs_lpdf";
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
   check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
   check_size_match(function, "rows of G", G.rows(), "columns of G", G.cols());

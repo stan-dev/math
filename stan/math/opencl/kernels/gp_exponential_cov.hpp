@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string gp_exponential_cov_kernel_code = STRINGIFY(
+static constexpr const char* gp_exponential_cov_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU part of calculation of Matern exponential kernel.
@@ -53,7 +53,7 @@ const kernel_cl<in_buffer, out_buffer, double, double, int, int>
     gp_exponential_cov("gp_exponential_cov", {gp_exponential_cov_kernel_code});
 
 // \cond
-static const std::string gp_exponential_cov_cross_kernel_code = STRINGIFY(
+static constexpr const char* gp_exponential_cov_cross_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU part of calculation of Matern exponential kernel.

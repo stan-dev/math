@@ -44,7 +44,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using std::pow;
-  static const char* function = "weibull_lcdf";
+  static constexpr const char* function = "weibull_lcdf";
 
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;

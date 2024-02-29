@@ -30,7 +30,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_scale_cl> rayleigh_cdf(const T_y_cl& y,
                                                const T_scale_cl& sigma) {
-  static const char* function = "rayleigh_cdf(OpenCL)";
+  static constexpr const char* function = "rayleigh_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;

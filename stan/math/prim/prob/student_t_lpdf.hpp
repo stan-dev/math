@@ -65,7 +65,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   using T_nu_ref = ref_type_if_not_constant_t<T_dof>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
-  static const char* function = "student_t_lpdf";
+  static constexpr const char* function = "student_t_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale parameter", sigma);

@@ -29,7 +29,7 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
   using T_beta_ref = ref_type_if_not_constant_t<T_high>;
-  static const char* function = "uniform_lccdf";
+  static constexpr const char* function = "uniform_lccdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);

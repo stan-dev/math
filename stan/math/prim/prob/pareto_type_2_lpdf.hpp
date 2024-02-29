@@ -32,7 +32,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_scale>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
-  static const char* function = "pareto_type_2_lpdf";
+  static constexpr const char* function = "pareto_type_2_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", lambda, "Shape parameter",
                          alpha);

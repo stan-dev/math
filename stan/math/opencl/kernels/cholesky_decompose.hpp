@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string cholesky_decompose_kernel_code = STRINGIFY(
+static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates the Cholesky Decomposition of a matrix on an OpenCL
@@ -30,7 +30,7 @@ static const std::string cholesky_decompose_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      *
      */
-    __kernel void cholesky_decompose(__global double *A, int rows) {
+    __kernel void cholesky_decompose(__global double* A, int rows) {
       const int local_index = get_local_id(0);
       // The following code is the sequential version of the inplace
       // cholesky decomposition. Only the innermost loops are parallelized. The

@@ -37,7 +37,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& beta) {
   using std::isfinite;
   using std::isnan;
-  static const char* function = "gumbel_lpdf(OpenCL)";
+  static constexpr const char* function = "gumbel_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",

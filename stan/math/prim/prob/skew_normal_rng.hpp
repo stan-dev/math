@@ -41,7 +41,7 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
                 RNG& rng) {
   using boost::variate_generator;
   using boost::random::normal_distribution;
-  static const char* function = "skew_normal_rng";
+  static constexpr const char* function = "skew_normal_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Shape Parameter", alpha);
   const auto& mu_ref = to_ref(mu);

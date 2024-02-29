@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
+#ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
+#endif
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>

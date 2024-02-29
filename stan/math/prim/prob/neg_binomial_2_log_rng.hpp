@@ -40,7 +40,7 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   using boost::random::poisson_distribution;
   using T_eta_ref = ref_type_t<T_loc>;
   using T_phi_ref = ref_type_t<T_inv>;
-  static const char* function = "neg_binomial_2_log_rng";
+  static constexpr const char* function = "neg_binomial_2_log_rng";
   check_consistent_sizes(function, "Log-location parameter", eta,
                          "Inverse dispersion parameter", phi);
   T_eta_ref eta_ref = eta;

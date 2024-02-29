@@ -30,7 +30,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "frechet_lcdf";
+  static constexpr const char* function = "frechet_lcdf";
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
