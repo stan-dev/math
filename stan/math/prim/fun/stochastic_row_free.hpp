@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_SIMPLEX_COLUMN_FREE_HPP
-#define STAN_MATH_PRIM_FUN_SIMPLEX_COLUMN_FREE_HPP
+#ifndef STAN_MATH_PRIM_FUN_STOCHASTIC_ROW_FREE_HPP
+#define STAN_MATH_PRIM_FUN_STOCHASTIC_ROW_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -10,21 +10,20 @@ namespace math {
 
 /**
  * Return an unconstrained matrix that when transformed produces
- * the specified columnwise simplex matrix.  It applies to a simplex of
- * dimensionality (N, K) and produces an unconstrained vector of dimensionality
- * (N - 1, K).
+ * the specified simplex matrix.  It applies to a simplex of dimensionality
+ * (N, K) and produces an unconstrained vector of dimensionality (N, K - 1).
  *
  * @tparam Mat type of the Matrix
- * @param y Columnwise simplex matrix input of dimensionality (N, K)
+ * @param y Rowwise simplex Matrix input of dimensionality (N, K)
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_column_free(const Mat& y) {
+inline plain_type_t<Mat> stochastic_row_free(const Mat& y) {
   auto&& y_ref = to_ref(y);
-  const Eigen::Index M = y_ref.cols();
-  plain_type_t<Mat> ret(y_ref.rows() - 1, M);
-  for (Eigen::Index i = 0; i < M; ++i) {
-    ret.col(i) = simplex_free(y_ref.col(i));
+  const Eigen::Index N = y_ref.rows();
+  plain_type_t<Mat> ret(N, y_ref.cols() - 1);
+  for (Eigen::Index i = 0; i < N; ++i) {
+    ret.row(i) = simplex_free(y_ref.row(i));
   }
   return ret;
 }
@@ -34,12 +33,12 @@ inline plain_type_t<Mat> simplex_column_free(const Mat& y) {
  *
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic rows
- * @param[in] y vector of columnwise simplex matrix of size (N, K)
+ * @param[in] y vector of rowwise simplex matrices each of size (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_column_free(const T& y) {
+inline auto stochastic_row_free(const T& y) {
   return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return simplex_column_free(v); });
+      y, [](auto&& v) { return stochastic_row_free(v); });
 }
 
 }  // namespace math

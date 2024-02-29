@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_SIMPLEX_COLUMN_CONSTRAIN_HPP
-#define STAN_MATH_REV_FUN_SIMPLEX_COLUMN_CONSTRAIN_HPP
+#ifndef STAN_MATH_REV_FUN_STOCHASTIC_COLUMN_CONSTRAIN_HPP
+#define STAN_MATH_REV_FUN_STOCHASTIC_COLUMN_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
@@ -16,11 +16,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return a matrix with columns as simplex vectors.
- * A simplex is a vector containing values greater than or equal
- * to 0 that sum to 1.  A matrix (K-1, M) unconstrained values
- * will produce a matrix of simplex vectors of size (K, M).
- *
+ * Return a column stochastic matrix.
  * The transform is based on a centered stick-breaking process.
  *
  * @tparam T Type of matrix to constrain
@@ -28,7 +24,7 @@ namespace math {
  * @return matrix of column simplexes of dimensionality (K, M)
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> simplex_column_constrain(const T& y) {
+inline plain_type_t<T> stochastic_column_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -71,7 +67,7 @@ inline plain_type_t<T> simplex_column_constrain(const T& y) {
 }
 
 /**
- * Return a matrix with columns as simplex vectors
+ * Return a column stochastic matrix
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
@@ -81,10 +77,10 @@ inline plain_type_t<T> simplex_column_constrain(const T& y) {
  * @tparam T type of the matrix to constrain
  * @param y Free matrix input of dimensionality N, K.
  * @param lp Log probability reference to increment.
- * @return Matrix of simplex columns of dimensionality (N + 1, K).
+ * @return Matrix of stochastic columns of dimensionality (N + 1, K).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> simplex_column_constrain(const T& y,
+inline plain_type_t<T> stochastic_column_constrain(const T& y,
                                                 scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();

@@ -160,11 +160,11 @@
 #include <stan/math/rev/fun/rows_dot_product.hpp>
 #include <stan/math/rev/fun/rows_dot_self.hpp>
 #include <stan/math/rev/fun/sd.hpp>
-#include <stan/math/rev/fun/simplex_column_constrain.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
-#include <stan/math/rev/fun/simplex_row_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
+#include <stan/math/rev/fun/stochastic_column_constrain.hpp>
+#include <stan/math/rev/fun/stochastic_row_constrain.hpp>
 #include <stan/math/rev/fun/svd.hpp>
 #include <stan/math/rev/fun/svd_U.hpp>
 #include <stan/math/rev/fun/svd_V.hpp>

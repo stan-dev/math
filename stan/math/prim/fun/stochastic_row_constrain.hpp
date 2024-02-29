@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_SIMPLEX_ROW_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_FUN_SIMPLEX_ROW_CONSTRAIN_HPP
+#ifndef STAN_MATH_PRIM_FUN_STOCHASTIC_ROW_CONSTRAIN_HPP
+#define STAN_MATH_PRIM_FUN_STOCHASTIC_ROW_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -14,10 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the simplex corresponding to the specified free vector.
- * A simplex is a vector containing values greater than or equal
- * to 0 that sum to 1.  A vector with (K-1) unconstrained values
- * will produce a simplex of size K.
+ * Return a row stochastic matrix.
  *
  * The transform is based on a centered stick-breaking process.
  *
@@ -27,7 +24,7 @@ namespace math {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_row_constrain(const Mat& y) {
+inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   int Km1 = y_ref.cols();
@@ -44,10 +41,7 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y) {
 }
 
 /**
- * Return a matrix with simplex rows corresponding to the specified free matrix
- * and increment the specified log probability reference with
- * the log absolute Jacobian determinant of the transform.
- *
+ * Return a row stochastic matrix.
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
@@ -58,7 +52,7 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y) {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
+inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
                                                value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
@@ -80,7 +74,7 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
 }
 
 /**
- * Return a matrix with simplex rows corresponding to the specified free matrix.
+ * Return a row stochastic matrix.
  * If the `Jacobian` parameter is `true`, the log density accumulator is
  * incremented with the log absolute Jacobian determinant of the transform.  All
  * of the transforms are specified with their Jacobians in the *Stan Reference
@@ -96,18 +90,18 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
+inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
                                                return_type_t<Mat>& lp) {
   if (Jacobian) {
-    return simplex_row_constrain(y, lp);
+    return stochastic_row_constrain(y, lp);
   } else {
-    return simplex_row_constrain(y);
+    return stochastic_row_constrain(y);
   }
 }
 
 /**
- * Return the simplex corresponding to the specified free vector. If the
- * `Jacobian` parameter is `true`, the log density accumulator is incremented
+ * Return a row stochastic matrix. 
+ * If the `Jacobian` parameter is `true`, the log density accumulator is incremented
  * with the log absolute Jacobian determinant of the transform.  All of the
  * transforms are specified with their Jacobians in the *Stan Reference Manual*
  * chapter Constraint Transforms.
@@ -122,9 +116,9 @@ inline plain_type_t<Mat> simplex_row_constrain(const Mat& y,
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_row_constrain(const T& y, return_type_t<T>& lp) {
+inline auto stochastic_row_constrain(const T& y, return_type_t<T>& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return simplex_row_constrain<Jacobian>(v, lp); });
+      y, [&lp](auto&& v) { return stochastic_row_constrain<Jacobian>(v, lp); });
 }
 
 }  // namespace math

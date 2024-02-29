@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_SIMPLEX_ROW_CONSTRAIN_HPP
-#define STAN_MATH_REV_FUN_SIMPLEX_ROW_CONSTRAIN_HPP
+#ifndef STAN_MATH_REV_FUN_STOCHASTIC_ROW_CONSTRAIN_HPP
+#define STAN_MATH_REV_FUN_STOCHASTIC_ROW_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
@@ -16,19 +16,14 @@ namespace stan {
 namespace math {
 
 /**
- * Return a matrix of simplex columns corresponding to the specified free
- * matrix. A simplex is a vector containing values greater than or equal to 0
- * that sum to 1.  A matrix with (N, K - 1) unconstrained values will produce a
- * matrix with simplexes on the rows of size (N, K).
- *
- * The transform is based on a centered stick-breaking process.
+ * Return a row stochastic matrix.
  *
  * @tparam T Type of matrix to constrain
  * @param y Free vector input of dimensionality (N, K - 1)
  * @return Matrix with Simplexes along the rows of dimensionality (N, K)
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> simplex_row_constrain(const T& y) {
+inline plain_type_t<T> stochastic_row_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();
@@ -68,7 +63,7 @@ inline plain_type_t<T> simplex_row_constrain(const T& y) {
 }
 
 /**
- * Return a matrix of simplex columns corresponding to the specified free matrix
+ * Return a row stochastic matrix
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
@@ -81,7 +76,7 @@ inline plain_type_t<T> simplex_row_constrain(const T& y) {
  * @return Matrix with simplexes along the rows of dimensionality (N, K + 1).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> simplex_row_constrain(const T& y, scalar_type_t<T>& lp) {
+inline plain_type_t<T> stochastic_row_constrain(const T& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();

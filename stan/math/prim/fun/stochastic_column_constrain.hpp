@@ -14,10 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return a matrix with columns as simplex vectors.
- * A simplex is a vector containing values greater than or equal
- * to 0 that sum to 1.  A vector with (K-1) unconstrained values
- * will produce a simplex of size K.
+ * Return a column stochastic matrix.
  *
  * The transform is based on a centered stick-breaking process.
  *
@@ -27,8 +24,7 @@ namespace math {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_column_constrain(const Mat& y) {
-  // cut & paste simplex_column_constrain(Eigen::Matrix, T) w/o Jacobian
+inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
   plain_type_t<Mat> ret(y_ref.rows() + 1, M);
@@ -39,7 +35,7 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y) {
 }
 
 /**
- * Return a matrix with columns as simplex vectors
+ * Return a column stochastic matrix
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
@@ -49,11 +45,11 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y) {
  * @tparam Mat type of the Matrix
  * @param y Free Matrix input of dimensionality (K - 1, M)
  * @param lp Log probability reference to increment.
- * @return Matrix with simplex columns of dimensionality (K, M)
+ * @return Matrix with stochastic columns of dimensionality (K, M)
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_column_constrain(const Mat& y,
+inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
                                                   value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
@@ -65,7 +61,7 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y,
 }
 
 /**
- * Return a matrix with columns as simplex vectors. If the
+ * Return a column stochastic matrix. If the
  * `Jacobian` parameter is `true`, the log density accumulator is incremented
  * with the log absolute Jacobian determinant of the transform.  All of the
  * transforms are specified with their Jacobians in the *Stan Reference Manual*
@@ -79,17 +75,17 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y,
  * @return Matrix with simplex columns of dimensionality (K, M).
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> simplex_column_constrain(const Mat& y,
+inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
                                                   return_type_t<Mat>& lp) {
   if (Jacobian) {
-    return simplex_column_constrain(y, lp);
+    return stochastic_column_constrain(y, lp);
   } else {
-    return simplex_column_constrain(y);
+    return stochastic_column_constrain(y);
   }
 }
 
 /**
- * Return a standard vector of matrices with columns as simplex vectors. If the
+ * Return a vector of column stochastic matrices. If the
  * `Jacobian` parameter is `true`, the log density accumulator is incremented
  * with the log absolute Jacobian determinant of the transform.  All of the
  * transforms are specified with their Jacobians in the *Stan Reference Manual*
@@ -106,9 +102,9 @@ inline plain_type_t<Mat> simplex_column_constrain(const Mat& y,
  * dimensionality (K, M).
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_column_constrain(const T& y, return_type_t<T>& lp) {
+inline auto stochastic_column_constrain(const T& y, return_type_t<T>& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return simplex_column_constrain<Jacobian>(v, lp); });
+      y, [&lp](auto&& v) { return stochastic_column_constrain<Jacobian>(v, lp); });
 }
 
 }  // namespace math
