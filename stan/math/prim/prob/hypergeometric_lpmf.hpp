@@ -17,7 +17,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
 double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                            const T_b& b) {
-  static const char* function = "hypergeometric_lpmf";
+  static constexpr const char* function = "hypergeometric_lpmf";
   check_bounded(function, "Successes variable", value_of(n), 0, a);
   check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
                          N, "Successes in population parameter", a,

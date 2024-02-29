@@ -50,7 +50,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   using T_W_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   using T_S_ref = ref_type_t<T_scale>;
-  static const char* function = "inv_wishart_lpdf";
+  static constexpr const char* function = "inv_wishart_lpdf";
   check_size_match(function, "Rows of random variable", W.rows(),
                    "columns of scale parameter", S.rows());
   check_square(function, "random variable", W);

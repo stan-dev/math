@@ -22,7 +22,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
                                                          const T_loc& mu,
                                                          const T_scale& sigma,
                                                          const T_shape& eta) {
-  static const char* function = "lkj_cov_lpdf";
+  static constexpr const char* function = "lkj_cov_lpdf";
   check_size_match(function, "Rows of location parameter", mu.rows(),
                    "columns of scale parameter", sigma.rows());
   check_square(function, "random variable", y);
@@ -67,7 +67,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
                                                          const T_loc& mu,
                                                          const T_scale& sigma,
                                                          const T_shape& eta) {
-  static const char* function = "lkj_cov_lpdf";
+  static constexpr const char* function = "lkj_cov_lpdf";
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);

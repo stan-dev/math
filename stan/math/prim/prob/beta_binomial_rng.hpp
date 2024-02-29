@@ -35,7 +35,7 @@ beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
   using T_N_ref = ref_type_t<T_N>;
   using T_alpha_ref = ref_type_t<T_shape1>;
   using T_beta_ref = ref_type_t<T_shape2>;
-  static const char *function = "beta_binomial_rng";
+  static constexpr const char *function = "beta_binomial_rng";
   check_consistent_sizes(function, "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 

@@ -46,7 +46,7 @@ multi_student_t_rng(
   using boost::variate_generator;
   using boost::random::gamma_distribution;
 
-  static const char* function = "multi_student_t_rng";
+  static constexpr const char* function = "multi_student_t_rng";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Covariance matrix rows", S.rows());

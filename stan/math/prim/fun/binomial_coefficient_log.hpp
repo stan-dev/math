@@ -96,7 +96,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   const T_partials_return n_plus_1 = n_dbl + 1;
   const T_partials_return n_plus_1_mk = n_plus_1 - k_dbl;
 
-  static const char* function = "binomial_coefficient_log";
+  static constexpr const char* function = "binomial_coefficient_log";
   check_greater_or_equal(function, "first argument", n, -1);
   check_greater_or_equal(function, "second argument", k, -1);
   check_greater_or_equal(function, "(first argument - second argument + 1)",

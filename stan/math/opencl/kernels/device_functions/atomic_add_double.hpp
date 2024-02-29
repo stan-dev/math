@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *atomic_add_double_device_function
+static constexpr const char *atomic_add_double_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_ATOMIC_ADD_DOUBLE\n"
       "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_ATOMIC_ADD_DOUBLE\n"

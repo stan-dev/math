@@ -72,7 +72,7 @@ struct multi_result_kernel_internal {
       next::check_assign_dimensions(n_rows, n_cols, assignment_pairs);
       const auto& expression = std::get<N>(assignment_pairs).second;
       const auto& result = std::get<N>(assignment_pairs).first;
-      const char* function = "results.operator=";
+      constexpr const char* function = "results.operator=";
 
       int expression_rows = expression.rows();
       int expression_cols = expression.cols();
@@ -437,8 +437,9 @@ class results_cl {
     using impl = typename internal::multi_result_kernel_internal<
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
-    static const bool require_specific_local_size = std::max(
-        {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
+    static constexpr bool require_specific_local_size
+        = stan::math::disjunction<stan::bool_constant<std::decay_t<
+            T_expressions>::Deriv::require_specific_local_size>...>::value;
 
     name_generator ng;
     std::unordered_map<const void*, const char*> generated;
@@ -503,14 +504,16 @@ class results_cl {
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
 
-    static const bool any_output = std::max(
-        {false, !is_without_output<std::decay_t<T_expressions>>::value...});
+    static constexpr bool any_output
+        = stan::math::disjunction<stan::bool_constant<
+            !is_without_output<std::decay_t<T_expressions>>::value>...>::value;
     if (!any_output) {
       return;
     }
 
-    static const bool require_specific_local_size = std::max(
-        {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
+    static constexpr bool require_specific_local_size
+        = stan::math::disjunction<stan::bool_constant<std::decay_t<
+            T_expressions>::Deriv::require_specific_local_size>...>::value;
 
     int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
     int n_cols = std::get<0>(assignment_pairs).second.thread_cols();

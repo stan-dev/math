@@ -44,7 +44,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   using std::exp;
   using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  static const char* function = "skew_double_exponential_lcdf";
+  static constexpr const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);

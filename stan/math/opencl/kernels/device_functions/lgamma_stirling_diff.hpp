@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* lgamma_stirling_diff_device_function
+static constexpr const char* lgamma_stirling_diff_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LGAMMA_STIRLING_DIFF\n"
       "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LGAMMA_STIRLING_DIFF\n"
