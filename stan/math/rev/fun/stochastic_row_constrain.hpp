@@ -76,7 +76,8 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y) {
  * @return Matrix with simplexes along the rows of dimensionality (N, K + 1).
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> stochastic_row_constrain(const T& y, scalar_type_t<T>& lp) {
+inline plain_type_t<T> stochastic_row_constrain(const T& y,
+                                                scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();

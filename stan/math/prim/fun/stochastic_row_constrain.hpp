@@ -53,7 +53,7 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
-                                               value_type_t<Mat>& lp) {
+                                                  value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   Eigen::Index Km1 = y_ref.cols();
@@ -91,7 +91,7 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
-                                               return_type_t<Mat>& lp) {
+                                                  return_type_t<Mat>& lp) {
   if (Jacobian) {
     return stochastic_row_constrain(y, lp);
   } else {
@@ -100,11 +100,11 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
 }
 
 /**
- * Return a row stochastic matrix. 
- * If the `Jacobian` parameter is `true`, the log density accumulator is incremented
- * with the log absolute Jacobian determinant of the transform.  All of the
- * transforms are specified with their Jacobians in the *Stan Reference Manual*
- * chapter Constraint Transforms.
+ * Return a row stochastic matrix.
+ * If the `Jacobian` parameter is `true`, the log density accumulator is
+ * incremented with the log absolute Jacobian determinant of the transform.  All
+ * of the transforms are specified with their Jacobians in the *Stan Reference
+ * Manual* chapter Constraint Transforms.
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform

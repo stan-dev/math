@@ -50,7 +50,7 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y) {
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
 inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
-                                                  value_type_t<Mat>& lp) {
+                                                     value_type_t<Mat>& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
   plain_type_t<Mat> ret(y_ref.rows() + 1, M);
@@ -76,7 +76,7 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
  */
 template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
 inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
-                                                  return_type_t<Mat>& lp) {
+                                                     return_type_t<Mat>& lp) {
   if (Jacobian) {
     return stochastic_column_constrain(y, lp);
   } else {
@@ -103,8 +103,9 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto stochastic_column_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return stochastic_column_constrain<Jacobian>(v, lp); });
+  return apply_vector_unary<T>::apply(y, [&lp](auto&& v) {
+    return stochastic_column_constrain<Jacobian>(v, lp);
+  });
 }
 
 }  // namespace math

@@ -81,7 +81,7 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y) {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline plain_type_t<T> stochastic_column_constrain(const T& y,
-                                                scalar_type_t<T>& lp) {
+                                                   scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
   const Eigen::Index N = y.rows();
   const Eigen::Index M = y.cols();

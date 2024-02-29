@@ -10,9 +10,9 @@ namespace math {
 
 /**
  * Return an unconstrained matrix that when transformed produces
- * the specified columnwise stochastic matrix.  It applies to a stochastic matrix of
- * dimensionality (N, K) and produces an unconstrained vector of dimensionality
- * (N - 1, K).
+ * the specified columnwise stochastic matrix.  It applies to a stochastic
+ * matrix of dimensionality (N, K) and produces an unconstrained vector of
+ * dimensionality (N - 1, K).
  *
  * @tparam Mat type of the Matrix
  * @param y Columnwise stochastic matrix input of dimensionality (N, K)

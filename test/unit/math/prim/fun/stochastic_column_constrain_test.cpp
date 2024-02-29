@@ -40,7 +40,8 @@ TEST(prob_transform, stochastic_column_constrain_and_free) {
       stan::math::stochastic_column_constrain<false>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
-  Matrix<double, Dynamic, Dynamic> x_lp_test = stan::math::stochastic_column_free(
-      stan::math::stochastic_column_constrain<true>(x, lp));
+  Matrix<double, Dynamic, Dynamic> x_lp_test
+      = stan::math::stochastic_column_free(
+          stan::math::stochastic_column_constrain<true>(x, lp));
   EXPECT_MATRIX_NEAR(x, x_lp_test, 1e-9);
 }
