@@ -200,8 +200,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    */
   template <typename S, require_convertible_t<S&, PlainObject>* = nullptr,
             require_not_same_t<S, PlainObject>* = nullptr>
-  arena_matrix(S&& x)  // NOLINT
-      : arena_matrix(PlainObject(x)) {}
+  arena_matrix(S&& other)  // NOLINT
+      : arena_matrix(PlainObject(std::forward<S>(other))) {}
 
   /**
    * Constructs `arena_matrix` from an expression. This makes an assumption that
