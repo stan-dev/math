@@ -27,8 +27,6 @@
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <queue>
 #include <tuple>
-#include <iostream>
-#include <boost/math/quadrature/gauss_kronrod.hpp>
 
 namespace stan {
 namespace math {
@@ -92,10 +90,10 @@ inline void combination(Eigen::Matrix<int, Eigen::Dynamic, 1>& c, const int dim,
 }
 
 /**
- * Compute a vector [p] of all [dim]-component vectors
+ * Compute a matrix [p] of all [dim]-component vectors
  * with [k] components equal to [lambda] and other components equal to zero.
  *
- * @param[in,out] p vector of vectors
+ * @param[in,out] p matrix
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
@@ -117,11 +115,11 @@ inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> combos(
 }
 
 /**
- * Compute a vector [p] of all [dim]-component vectors
+ * Compute a matrix [p] of all [dim]-component vectors
  * with [k] components equal to [±lambda] and other components equal to zero
  * (with all possible signs).
  *
- * @param[in,out] p vector of vectors
+ * @param[in,out] p matrix
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
