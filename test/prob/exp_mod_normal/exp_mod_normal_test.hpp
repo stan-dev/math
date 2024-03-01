@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/exp_mod_normal_log.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
@@ -79,7 +79,7 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_inv_scale& lambda, const T4&, const T5&) {
-    return stan::math::exp_mod_normal_log(y, mu, sigma, lambda);
+    return stan::math::exp_mod_normal_lpdf(y, mu, sigma, lambda);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -87,7 +87,7 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_inv_scale& lambda, const T4&, const T5&) {
-    return stan::math::exp_mod_normal_log<propto>(y, mu, sigma, lambda);
+    return stan::math::exp_mod_normal_lpdf<propto>(y, mu, sigma, lambda);
   }
 
   template <typename T_y, typename T_loc, typename T_scale,

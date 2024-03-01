@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/prob/poisson_log_log.hpp>
+#include <stan/math/prim/prob/poisson_log_lpmf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -46,7 +46,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
   stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& alpha,
                                             const T2&, const T3&, const T4&,
                                             const T5&) {
-    return stan::math::poisson_log_log(n, alpha);
+    return stan::math::poisson_log_lpmf(n, alpha);
   }
 
   template <bool propto, class T_n, class T_rate, typename T2, typename T3,
@@ -54,7 +54,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
   stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& alpha,
                                             const T2&, const T3&, const T4&,
                                             const T5&) {
-    return stan::math::poisson_log_log<propto>(n, alpha);
+    return stan::math::poisson_log_lpmf<propto>(n, alpha);
   }
 
   template <class T_n, class T_rate, typename T2, typename T3, typename T4,

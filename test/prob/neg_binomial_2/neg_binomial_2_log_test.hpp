@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/prob/neg_binomial_2_log_log.hpp>
+#include <stan/math/prim/prob/neg_binomial_2_log_lpmf.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <boost/math/special_functions/binomial.hpp>
@@ -54,7 +54,7 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
   stan::return_type_t<T_log_location, T_inv_scale> log_prob(
       const T_n& n, const T_log_location& eta, const T_inv_scale& phi,
       const T3&, const T4&, const T5&) {
-    return stan::math::neg_binomial_2_log_log(n, eta, phi);
+    return stan::math::neg_binomial_2_log_lpmf(n, eta, phi);
   }
 
   template <bool propto, class T_n, class T_log_location, class T_inv_scale,
@@ -62,7 +62,7 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
   stan::return_type_t<T_log_location, T_inv_scale> log_prob(
       const T_n& n, const T_log_location& eta, const T_inv_scale& phi,
       const T3&, const T4&, const T5&) {
-    return stan::math::neg_binomial_2_log_log<propto>(n, eta, phi);
+    return stan::math::neg_binomial_2_log_lpmf<propto>(n, eta, phi);
   }
 
   template <class T_n, class T_log_location, class T_inv_scale, typename T3,

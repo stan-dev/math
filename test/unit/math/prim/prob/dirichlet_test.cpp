@@ -12,20 +12,20 @@ TEST(ProbDistributions, Dirichlet) {
   theta << 0.2, 0.3, 0.5;
   Matrix<double, Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
-  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta, alpha));
+  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_lpdf(theta, alpha));
 
   Matrix<double, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
   Matrix<double, Dynamic, 1> alpha2(4, 1);
   alpha2 << 10.5, 11.5, 19.3, 5.1;
-  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2, alpha2));
+  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_lpdf(theta2, alpha2));
 }
 
 TEST(ProbDistributions, DirichletVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  using stan::math::dirichlet_log;
+  using stan::math::dirichlet_lpdf;
   Matrix<double, Dynamic, 1> theta1(3, 1), theta2(3, 1), theta3(3, 1);
   theta1 << 0.2, 0.3, 0.5;
   theta2 << 0.1, 0.8, 0.1;
@@ -47,23 +47,23 @@ TEST(ProbDistributions, DirichletVectorized) {
   alpha_vec[2] = alpha3;
 
   Matrix<double, Dynamic, 1> result(3);
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha2);
-  result[2] = dirichlet_log(theta3, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha2);
+  result[2] = dirichlet_lpdf(theta3, alpha3);
 
-  EXPECT_FLOAT_EQ(result.sum(), dirichlet_log(theta_vec, alpha_vec));
+  EXPECT_FLOAT_EQ(result.sum(), dirichlet_lpdf(theta_vec, alpha_vec));
 
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha1);
-  result[2] = dirichlet_log(theta3, alpha1);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha1);
+  result[2] = dirichlet_lpdf(theta3, alpha1);
 
-  EXPECT_FLOAT_EQ(result.sum(), dirichlet_log(theta_vec, alpha1));
+  EXPECT_FLOAT_EQ(result.sum(), dirichlet_lpdf(theta_vec, alpha1));
 
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta1, alpha2);
-  result[2] = dirichlet_log(theta1, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta1, alpha2);
+  result[2] = dirichlet_lpdf(theta1, alpha3);
 
-  EXPECT_FLOAT_EQ(result.sum(), dirichlet_log(theta1, alpha_vec));
+  EXPECT_FLOAT_EQ(result.sum(), dirichlet_lpdf(theta1, alpha_vec));
 }
 
 TEST(ProbDistributions, DirichletPropto) {
@@ -74,13 +74,13 @@ TEST(ProbDistributions, DirichletPropto) {
   theta << 0.2, 0.3, 0.5;
   Matrix<double, Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
-  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta, alpha));
+  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_lpdf<true>(theta, alpha));
 
   Matrix<double, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
   Matrix<double, Dynamic, 1> alpha2(4, 1);
   alpha2 << 10.5, 11.5, 19.3, 5.1;
-  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta2, alpha2));
+  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_lpdf<true>(theta2, alpha2));
 }
 
 TEST(ProbDistributions, DirichletBounds) {
@@ -92,41 +92,41 @@ TEST(ProbDistributions, DirichletBounds) {
 
   good_theta << 0.25, 0.75;
   good_alpha << 2, 3;
-  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta, good_alpha));
+  EXPECT_NO_THROW(stan::math::dirichlet_lpdf(good_theta, good_alpha));
 
   good_theta << 1.0, 0.0;
   good_alpha << 2, 3;
-  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta, good_alpha))
+  EXPECT_NO_THROW(stan::math::dirichlet_lpdf(good_theta, good_alpha))
       << "elements of theta can be 0";
 
   bad_theta << 0.25, 0.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(bad_theta, good_alpha),
                std::domain_error)
       << "sum of theta is not 1";
 
   bad_theta << -0.25, 1.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(bad_theta, good_alpha),
                std::domain_error)
       << "theta has element less than 0";
 
   bad_theta << -0.25, 1.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(bad_theta, good_alpha),
                std::domain_error)
       << "theta has element less than 0";
 
   bad_alpha << 0.0, 1.0;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(good_theta, bad_alpha),
                std::domain_error)
       << "alpha has element equal to 0";
 
   bad_alpha << -0.5, 1.0;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(good_theta, bad_alpha),
                std::domain_error)
       << "alpha has element less than 0";
 
   bad_alpha = Matrix<double, Dynamic, 1>(4, 1);
   bad_alpha << 1, 2, 3, 4;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_lpdf(good_theta, bad_alpha),
                std::invalid_argument)
       << "size mismatch: theta is a 2-vector, alpha is a 4-vector";
 }

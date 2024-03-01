@@ -14,7 +14,8 @@ TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<var, Dynamic, Dynamic> L = Sigma.inverse();
-  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_prec_log(y, mu, L).val());
+  EXPECT_FLOAT_EQ(-11.73908,
+                  stan::math::multi_normal_prec_lpdf(y, mu, L).val());
 
   stan::math::recover_memory();
 }
@@ -32,35 +33,35 @@ TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.inverse();
 
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(
+  test::check_varis_on_stack(stan::math::multi_normal_prec_lpdf<true>(
       to_var(y), to_var(mu), to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(to_var(y), to_var(mu), L));
+      stan::math::multi_normal_prec_lpdf<true>(to_var(y), to_var(mu), L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(to_var(y), mu, to_var(L)));
+      stan::math::multi_normal_prec_lpdf<true>(to_var(y), mu, to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(to_var(y), mu, L));
+      stan::math::multi_normal_prec_lpdf<true>(to_var(y), mu, L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(y, to_var(mu), to_var(L)));
+      stan::math::multi_normal_prec_lpdf<true>(y, to_var(mu), to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(y, to_var(mu), L));
+      stan::math::multi_normal_prec_lpdf<true>(y, to_var(mu), L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<true>(y, mu, to_var(L)));
+      stan::math::multi_normal_prec_lpdf<true>(y, mu, to_var(L)));
 
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(
+  test::check_varis_on_stack(stan::math::multi_normal_prec_lpdf<false>(
       to_var(y), to_var(mu), to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(to_var(y), to_var(mu), L));
+      stan::math::multi_normal_prec_lpdf<false>(to_var(y), to_var(mu), L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(to_var(y), mu, to_var(L)));
+      stan::math::multi_normal_prec_lpdf<false>(to_var(y), mu, to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(to_var(y), mu, L));
+      stan::math::multi_normal_prec_lpdf<false>(to_var(y), mu, L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(y, to_var(mu), to_var(L)));
+      stan::math::multi_normal_prec_lpdf<false>(y, to_var(mu), to_var(L)));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(y, to_var(mu), L));
+      stan::math::multi_normal_prec_lpdf<false>(y, to_var(mu), L));
   test::check_varis_on_stack(
-      stan::math::multi_normal_prec_log<false>(y, mu, to_var(L)));
+      stan::math::multi_normal_prec_lpdf<false>(y, mu, to_var(L)));
 
   stan::math::recover_memory();
 }

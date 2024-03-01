@@ -25,9 +25,9 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_double) {
 
   Matrix<fvar<double>, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).val_);
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).val_);
   EXPECT_FLOAT_EQ(0.54899865,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).d_);
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).d_);
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_double) {
@@ -52,7 +52,7 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_double) {
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).val_.val_);
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).val_.val_);
   EXPECT_FLOAT_EQ(0.54899865,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).d_.val_);
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).d_.val_);
 }

@@ -68,7 +68,7 @@ TEST_F(Math, paper_example_3) {
   double y = 1.3;
   stan::math::var mu = 0.5, sigma = 1.2;
 
-  stan::math::var lp = normal_log(y, mu, sigma);
+  stan::math::var lp = normal_lpdf(y, mu, sigma);
   EXPECT_FLOAT_EQ(-1.323482, lp.val());
 }
 

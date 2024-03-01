@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/scaled_inv_chi_square_log.hpp>
+#include <stan/math/prim/prob/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -60,7 +60,7 @@ class AgradDistributionsScaledInvChiSquare : public AgradDistributionTest {
                                                     const T_dof& nu,
                                                     const T_scale& s, const T3&,
                                                     const T4&, const T5&) {
-    return stan::math::scaled_inv_chi_square_log(y, nu, s);
+    return stan::math::scaled_inv_chi_square_lpdf(y, nu, s);
   }
 
   template <bool propto, class T_y, class T_dof, class T_scale, typename T3,
@@ -69,7 +69,7 @@ class AgradDistributionsScaledInvChiSquare : public AgradDistributionTest {
                                                     const T_dof& nu,
                                                     const T_scale& s, const T3&,
                                                     const T4&, const T5&) {
-    return stan::math::scaled_inv_chi_square_log<propto>(y, nu, s);
+    return stan::math::scaled_inv_chi_square_lpdf<propto>(y, nu, s);
   }
 
   template <class T_y, class T_dof, class T_scale, typename T3, typename T4,

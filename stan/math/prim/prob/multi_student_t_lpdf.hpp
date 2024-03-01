@@ -13,7 +13,6 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
-#include <stan/math/prim/prob/multi_normal_log.hpp>
 #include <cmath>
 #include <cstdlib>
 

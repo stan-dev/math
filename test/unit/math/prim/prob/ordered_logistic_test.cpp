@@ -23,7 +23,7 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   using Eigen::Matrix;
 
   using stan::math::inv_logit;
-  using stan::math::ordered_logistic_log;
+  using stan::math::ordered_logistic_lpmf;
 
   std::vector<int> y{1, 2, 3, 4, 5};
   std::vector<int> zero{1, 2, 0, 4, 5};
@@ -46,15 +46,15 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   EXPECT_FLOAT_EQ(1.0, sum);
 
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k + 1, lambda[k], c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_lpmf(k + 1, lambda[k], c));
 
-  EXPECT_FLOAT_EQ(log_sum, ordered_logistic_log(y, lambda, c));
+  EXPECT_FLOAT_EQ(log_sum, ordered_logistic_lpmf(y, lambda, c));
 
-  EXPECT_THROW(ordered_logistic_log(0, lambda[0], c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(6, lambda[0], c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(0, lambda[0], c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(6, lambda[0], c), std::domain_error);
 
-  EXPECT_THROW(ordered_logistic_log(zero, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(six, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(zero, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(six, lambda, c), std::domain_error);
 }
 
 TEST(ProbDistributions, ordered_logistic_vals_2) {
@@ -62,7 +62,7 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   using Eigen::Matrix;
 
   using stan::math::inv_logit;
-  using stan::math::ordered_logistic_log;
+  using stan::math::ordered_logistic_lpmf;
 
   std::vector<int> y{1, 2, 3};
   std::vector<int> zero{1, 0, 3};
@@ -85,19 +85,19 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   EXPECT_FLOAT_EQ(1.0, sum);
 
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k + 1, lambda[0], c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_lpmf(k + 1, lambda[0], c));
 
-  EXPECT_FLOAT_EQ(log_sum, ordered_logistic_log(y, lambda, c));
+  EXPECT_FLOAT_EQ(log_sum, ordered_logistic_lpmf(y, lambda, c));
 
-  EXPECT_THROW(ordered_logistic_log(0, lambda[0], c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(4, lambda[0], c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(0, lambda[0], c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(4, lambda[0], c), std::domain_error);
 
-  EXPECT_THROW(ordered_logistic_log(zero, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(six, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(zero, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(six, lambda, c), std::domain_error);
 }
 
 TEST(ProbDistributions, ordered_logistic) {
-  using stan::math::ordered_logistic_log;
+  using stan::math::ordered_logistic_lpmf;
   std::vector<int> y{1, 1, 1, 1};
   int K = 4;
   Eigen::Matrix<double, Eigen::Dynamic, 1> c(K - 1);
@@ -107,12 +107,12 @@ TEST(ProbDistributions, ordered_logistic) {
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;
-  EXPECT_NO_THROW(ordered_logistic_log(1, lambda[0], c_neg));
+  EXPECT_NO_THROW(ordered_logistic_lpmf(1, lambda[0], c_neg));
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_unord(3);
   c_unord << 1.0, 0.4, 2.0;
-  EXPECT_THROW(ordered_logistic_log(1, lambda[0], c_unord), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, c_unord), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, lambda[0], c_unord), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, c_unord), std::domain_error);
 
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -123,38 +123,39 @@ TEST(ProbDistributions, ordered_logistic) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> inf_vec(4);
   inf_vec << inf, inf, inf, inf;
 
-  EXPECT_THROW(ordered_logistic_log(1, nan, c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(1, inf, c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, nan_vec, c), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, inf_vec, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, nan, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, inf, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, nan_vec, c), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, inf_vec, c), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad(2);
   cbad << 0.2, inf;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad), std::domain_error);
   cbad[1] = nan;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad1(1);
   cbad1 << inf;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad1), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad1), std::domain_error);
   cbad1[0] = nan;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad1), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad1), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad3(3);
   cbad3 << 0.5, inf, 1.0;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad3), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad3), std::domain_error);
   cbad3[1] = nan;
-  EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad3), std::domain_error);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(1, 1.0, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, cbad3), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_small(3);
   lambda_small << 1, 1, 1;
-  EXPECT_THROW(ordered_logistic_log(y, lambda_small, c), std::invalid_argument);
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda_small, c),
+               std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_small(K - 2);
   c_small << -0.3, 0.1;
@@ -163,7 +164,7 @@ TEST(ProbDistributions, ordered_logistic) {
   c_small_vec[1] = c;
   c_small_vec[2] = c_small;
   c_small_vec[3] = c;
-  EXPECT_THROW(ordered_logistic_log(y, lambda, c_small_vec),
+  EXPECT_THROW(ordered_logistic_lpmf(y, lambda, c_small_vec),
                std::invalid_argument);
 }
 

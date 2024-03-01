@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/gumbel_log.hpp>
+#include <stan/math/prim/prob/gumbel_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 
@@ -72,7 +72,7 @@ class AgradDistributionGumbel : public AgradDistributionTest {
                                                     const T_scale& beta,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::gumbel_log(y, mu, beta);
+    return stan::math::gumbel_lpdf(y, mu, beta);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -82,7 +82,7 @@ class AgradDistributionGumbel : public AgradDistributionTest {
                                                     const T_scale& beta,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::gumbel_log<propto>(y, mu, beta);
+    return stan::math::gumbel_lpdf<propto>(y, mu, beta);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,

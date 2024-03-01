@@ -10,10 +10,10 @@
 template <typename T_y, typename T_scale, typename T_w>
 void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
                    T_w w2, std::string message = "") {
-  expect_eq_diffs(stan::math::multi_gp_log<false>(y1, sigma1, w1),
-                  stan::math::multi_gp_log<false>(y2, sigma2, w2),
-                  stan::math::multi_gp_log<true>(y1, sigma1, w1),
-                  stan::math::multi_gp_log<true>(y2, sigma2, w2), message);
+  expect_eq_diffs(stan::math::multi_gp_lpdf<false>(y1, sigma1, w1),
+                  stan::math::multi_gp_lpdf<false>(y2, sigma2, w2),
+                  stan::math::multi_gp_lpdf<true>(y1, sigma1, w1),
+                  stan::math::multi_gp_lpdf<true>(y2, sigma2, w2), message);
 }
 
 TEST_F(agrad_distributions_multi_gp, Propto) {
@@ -73,7 +73,7 @@ TEST(ProbDistributionsMultiGP, MultiGPVar) {
   w << 1.0, 0.5, 3.0;
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-46.087162, stan::math::multi_gp_log(y, Sigma, w).val());
+  EXPECT_FLOAT_EQ(-46.087162, stan::math::multi_gp_lpdf(y, Sigma, w).val());
 
   stan::math::recover_memory();
 }
@@ -82,7 +82,7 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  using stan::math::multi_gp_log;
+  using stan::math::multi_gp_lpdf;
   using stan::math::var;
   using std::vector;
 
@@ -100,7 +100,7 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   x.push_back(w_var(0));
   x.push_back(Sigma_var(0, 0));
 
-  var lp = stan::math::multi_gp_log(y_var, Sigma_var, w_var);
+  var lp = stan::math::multi_gp_lpdf(y_var, Sigma_var, w_var);
   vector<double> grad;
   lp.grad(x, grad);
 
@@ -121,15 +121,16 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   Matrix<double, Dynamic, Dynamic> y_p(1, 1);
   y_p(0) = y(0) + epsilon;
   y_m(0) = y(0) - epsilon;
-  double grad_diff = (multi_gp_log(y_p, Sigma, w) - multi_gp_log(y_m, Sigma, w))
-                     / (2 * epsilon);
+  double grad_diff
+      = (multi_gp_lpdf(y_p, Sigma, w) - multi_gp_lpdf(y_m, Sigma, w))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
   Matrix<double, Dynamic, 1> w_m(1, 1);
   Matrix<double, Dynamic, 1> w_p(1, 1);
   w_p[0] = w[0] + epsilon;
   w_m[0] = w[0] - epsilon;
-  grad_diff = (multi_gp_log(y, Sigma, w_p) - multi_gp_log(y, Sigma, w_m))
+  grad_diff = (multi_gp_lpdf(y, Sigma, w_p) - multi_gp_lpdf(y, Sigma, w_m))
               / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
@@ -137,7 +138,7 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   Matrix<double, Dynamic, Dynamic> Sigma_p(1, 1);
   Sigma_p(0) = Sigma(0) + epsilon;
   Sigma_m(0) = Sigma(0) - epsilon;
-  grad_diff = (multi_gp_log(y, Sigma_p, w) - multi_gp_log(y, Sigma_m, w))
+  grad_diff = (multi_gp_lpdf(y, Sigma_p, w) - multi_gp_lpdf(y, Sigma_m, w))
               / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 
@@ -170,7 +171,7 @@ struct multi_gp_fun {
     }
     for (int i = 0; i < K_; ++i)
       w(i) = x[pos++];
-    return stan::math::multi_gp_log<false>(y, Sigma, w);
+    return stan::math::multi_gp_lpdf<false>(y, Sigma, w);
   }
 };
 
@@ -219,34 +220,34 @@ TEST(MultiGP, check_varis_on_stack) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
 
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(to_var(y), to_var(Sigma), to_var(w)));
+      stan::math::multi_gp_lpdf<true>(to_var(y), to_var(Sigma), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(to_var(y), to_var(Sigma), w));
+      stan::math::multi_gp_lpdf<true>(to_var(y), to_var(Sigma), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(to_var(y), Sigma, to_var(w)));
+      stan::math::multi_gp_lpdf<true>(to_var(y), Sigma, to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(to_var(y), Sigma, w));
+      stan::math::multi_gp_lpdf<true>(to_var(y), Sigma, w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(y, to_var(Sigma), to_var(w)));
+      stan::math::multi_gp_lpdf<true>(y, to_var(Sigma), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(y, to_var(Sigma), w));
+      stan::math::multi_gp_lpdf<true>(y, to_var(Sigma), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<true>(y, Sigma, to_var(w)));
+      stan::math::multi_gp_lpdf<true>(y, Sigma, to_var(w)));
 
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(to_var(y), to_var(Sigma), to_var(w)));
+      stan::math::multi_gp_lpdf<false>(to_var(y), to_var(Sigma), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(to_var(y), to_var(Sigma), w));
+      stan::math::multi_gp_lpdf<false>(to_var(y), to_var(Sigma), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(to_var(y), Sigma, to_var(w)));
+      stan::math::multi_gp_lpdf<false>(to_var(y), Sigma, to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(to_var(y), Sigma, w));
+      stan::math::multi_gp_lpdf<false>(to_var(y), Sigma, w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(y, to_var(Sigma), to_var(w)));
+      stan::math::multi_gp_lpdf<false>(y, to_var(Sigma), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(y, to_var(Sigma), w));
+      stan::math::multi_gp_lpdf<false>(y, to_var(Sigma), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_log<false>(y, Sigma, to_var(w)));
+      stan::math::multi_gp_lpdf<false>(y, Sigma, to_var(w)));
 
   stan::math::recover_memory();
 }

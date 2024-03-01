@@ -30,7 +30,7 @@ struct multi_normal_cholesky_fun {
       for (int j = i + 1; j < K_; ++j)
         L(i, j) = 0;
     }
-    return stan::math::multi_normal_cholesky_log<false>(y, mu, L);
+    return stan::math::multi_normal_cholesky_lpdf<false>(y, mu, L);
     // can't test propto=true because finite diffs are
     // all 0 by design for double inputs
   }
@@ -116,14 +116,14 @@ struct vectorized_multi_normal_cholesky_fun {
 
     if (dont_vectorize_y) {
       if (dont_vectorize_mu)
-        return stan::math::multi_normal_cholesky_log<false>(y[0], mu[0], L);
+        return stan::math::multi_normal_cholesky_lpdf<false>(y[0], mu[0], L);
       else
-        return stan::math::multi_normal_cholesky_log<false>(y[0], mu, L);
+        return stan::math::multi_normal_cholesky_lpdf<false>(y[0], mu, L);
     } else {
       if (dont_vectorize_mu)
-        return stan::math::multi_normal_cholesky_log<false>(y, mu[0], L);
+        return stan::math::multi_normal_cholesky_lpdf<false>(y, mu[0], L);
       else
-        return stan::math::multi_normal_cholesky_log<false>(y, mu, L);
+        return stan::math::multi_normal_cholesky_lpdf<false>(y, mu, L);
     }
   }
 };

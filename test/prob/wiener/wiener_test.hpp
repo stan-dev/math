@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/wiener_log.hpp>
+#include <stan/math/prim/prob/wiener_lpdf.hpp>
 #include <limits>
 #include <vector>
 
@@ -80,7 +80,7 @@ class AgradDistributionWiener : public AgradDistributionTest {
   stan::return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> log_prob(
       const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
       const T_delta& delta, const T5&) {
-    return stan::math::wiener_log(y, alpha, tau, beta, delta);
+    return stan::math::wiener_lpdf(y, alpha, tau, beta, delta);
   }
 
   template <bool propto, typename T_y, typename T_alpha, typename T_tau,
@@ -88,7 +88,7 @@ class AgradDistributionWiener : public AgradDistributionTest {
   stan::return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> log_prob(
       const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
       const T_delta& delta, const T5&) {
-    return stan::math::wiener_log<propto>(y, alpha, tau, beta, delta);
+    return stan::math::wiener_lpdf<propto>(y, alpha, tau, beta, delta);
   }
 
   template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
@@ -96,6 +96,6 @@ class AgradDistributionWiener : public AgradDistributionTest {
   stan::return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta, T5>
   log_prob_function(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                     const T_beta& beta, const T_delta& delta, const T5&) {
-    return stan::math::wiener_log<true>(y, alpha, tau, beta, delta);
+    return stan::math::wiener_lpdf<true>(y, alpha, tau, beta, delta);
   }
 };

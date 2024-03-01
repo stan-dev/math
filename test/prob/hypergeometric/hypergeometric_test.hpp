@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Ints, Ints
-#include <stan/math/prim/prob/hypergeometric_log.hpp>
+#include <stan/math/prim/prob/hypergeometric_lpmf.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
 using stan::math::var;
@@ -51,14 +51,14 @@ class AgradDistributionsHypergeometric : public AgradDistributionTest {
   stan::return_type_t<T_n, T_N, T_a, T_b> log_prob(const T_n& n, const T_N& N,
                                                    const T_a& a, const T_b& b,
                                                    const T4&, const T5&) {
-    return stan::math::hypergeometric_log(n, N, a, b);
+    return stan::math::hypergeometric_lpmf(n, N, a, b);
   }
 
   template <bool propto, class T_n, class T_N, class T_a, class T_b,
             typename T4, typename T5>
   double log_prob(const T_n& n, const T_N& N, const T_a& a, const T_b& b,
                   const T4&, const T5&) {
-    return stan::math::hypergeometric_log<propto>(n, N, a, b);
+    return stan::math::hypergeometric_lpmf<propto>(n, N, a, b);
   }
 
   template <class T_n, class T_N, class T_a, class T_b, typename T4,

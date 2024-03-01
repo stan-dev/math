@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/student_t_log.hpp>
+#include <stan/math/prim/prob/student_t_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -73,7 +73,7 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
   stan::return_type_t<T_y, T_dof, T_loc, T_scale> log_prob(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
-    return stan::math::student_t_log(y, nu, mu, sigma);
+    return stan::math::student_t_lpdf(y, nu, mu, sigma);
   }
 
   template <bool propto, class T_y, class T_dof, class T_loc, class T_scale,
@@ -81,7 +81,7 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
   stan::return_type_t<T_y, T_dof, T_loc, T_scale> log_prob(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
-    return stan::math::student_t_log<propto>(y, nu, mu, sigma);
+    return stan::math::student_t_lpdf<propto>(y, nu, mu, sigma);
   }
 
   template <class T_y, class T_dof, class T_loc, class T_scale, typename T4,

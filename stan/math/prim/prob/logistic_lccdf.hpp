@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/prob/logistic_log.hpp>
+#include <stan/math/prim/prob/logistic_lpdf.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -79,16 +79,16 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
 
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[n]
-          -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+          -= exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials)[n]
-          -= -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+          -= -exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials)[n]
           -= -(y_dbl - mu_dbl) * sigma_inv_vec
-             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+             * exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
   }
   return ops_partials.build(P);

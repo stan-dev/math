@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/lognormal_log.hpp>
+#include <stan/math/prim/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/square.hpp>
@@ -58,7 +58,7 @@ class AgradDistributionsLognormal : public AgradDistributionTest {
                                                     const T_scale& sigma,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::lognormal_log(y, mu, sigma);
+    return stan::math::lognormal_lpdf(y, mu, sigma);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -68,7 +68,7 @@ class AgradDistributionsLognormal : public AgradDistributionTest {
                                                     const T_scale& sigma,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::lognormal_log<propto>(y, mu, sigma);
+    return stan::math::lognormal_lpdf<propto>(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
