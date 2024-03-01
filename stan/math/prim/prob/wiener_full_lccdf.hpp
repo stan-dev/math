@@ -217,6 +217,9 @@ inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return sw_value = sw_vec.val(i);
     const T_partials_return st0_value = st0_vec.val(i);
     const int dim = (sv_value != 0) + (sw_value != 0) + (st0_value != 0);
+	
+	using internal::GradientCalc;
+	
     check_positive(function_name,
                    "(Inter-trial variability in drift rate) + "
                    "(Inter-trial variability in A-priori bias) + "
@@ -265,7 +268,7 @@ inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         = -internal::wiener7_integrate_cdf<T_partials_return, false, false,
                                            false, false, false, true>(
               [&](auto&&... args) {
-                return internal::wiener5_density<true>(args...);
+                return internal::wiener5_density<GradientCalc::ON>(args...);
               },
               hcubature_err, params, dim, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -339,7 +342,7 @@ inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         if (st0_value == 0 && sv_value == 0) {
           deriv = internal::estimate_with_err_check<T_partials_return, 5>(
-              [&](auto&&... args) {
+              [](auto&&... args) {
                 return internal::conditionally_grad_sw_cdf<T_partials_return,
                                                            true>(
                     internal::wiener7_ccdf_grad_sw<T_partials_return>, args...);
@@ -372,7 +375,7 @@ inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
           deriv = internal::estimate_with_err_check<T_partials_return, 4>(
-              [&](auto&&... args) {
+              [](auto&&... args) {
                 return internal::wiener4_ccdf<T_partials_return>(args...);
               },
               log_error_derivatives + log(st0_value), y_value - t0_st0, a_value,

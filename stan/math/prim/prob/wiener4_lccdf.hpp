@@ -205,7 +205,7 @@ inline Scalar wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, Scalar wildcard = 0,
                            Scalar err = log(1e-12)) noexcept {
   const Scalar prob = exp(wiener_prob<Scalar>(a, v, w));
-  const Scalar cdf = wiener4_distribution<true, Scalar>(y, a, v, w, 0, err);
+  const Scalar cdf = wiener4_distribution<GradientCalc::ON>(y, a, v, w, 0, err);
   return prob - cdf;
 }
 
@@ -375,12 +375,14 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v> wiener4_lccdf(
     const T_partials_return t0_value = t0_vec.val(i);
     const T_partials_return w_value = w_vec.val(i);
     const T_partials_return v_value = v_vec.val(i);
+	
+	using internal::GradientCalc;
 
     const T_partials_return cdf
         = internal::estimate_with_err_check<T_partials_return, 5, false, 0,
                                             false>(
-            [&](auto&&... args) {
-              return internal::wiener4_distribution<true, T_partials_return>(
+            [](auto&&... args) {
+              return internal::wiener4_distribution<GradientCalc::ON>(
                   args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
@@ -397,8 +399,8 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v> wiener4_lccdf(
 
     const T_partials_return deriv_y
         = internal::estimate_with_err_check<T_partials_return, 5>(
-            [&](auto&&... args) {
-              return internal::wiener5_density<true, T_partials_return>(
+            [](auto&&... args) {
+              return internal::wiener5_density<GradientCalc::ON>(
                   args...);
             },
             new_est_err, y_value - t0_value, a_value, v_value, w_value, 0,
@@ -410,7 +412,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v> wiener4_lccdf(
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<T_partials_return, 5>(
-                [&](auto&&... args) {
+                [](auto&&... args) {
                   return internal::wiener4_ccdf_grad_a<T_partials_return>(
                       args...);
                 },
@@ -424,7 +426,7 @@ inline return_type_t<T_y, T_a, T_t0, T_w, T_v> wiener4_lccdf(
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<T_partials_return, 5>(
-                [&](auto&&... args) {
+                [](auto&&... args) {
                   return internal::wiener4_ccdf_grad_w<T_partials_return>(
                       args...);
                 },
