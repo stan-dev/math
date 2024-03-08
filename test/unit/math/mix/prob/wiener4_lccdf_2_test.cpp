@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/prob/util.hpp>
-/*
+
 TEST_F(Wiener4MixArgs, wiener_lccdf_y_w_v) {
 auto f_y_w_v = [](const auto& a, const auto& t0) {
      return [&a, &t0](const auto& y, const auto& w, const auto& v) {
@@ -44,7 +44,7 @@ auto f_a_w_v = [](const auto& y, const auto& t0) {
   stan::test::expect_ad(f_a_w_v(y, t0), a, w, v);
 }
 
-*/
+
 
 TEST_F(Wiener4MixArgs, wiener_lccdf_t0_w_v) {
 auto f_t0_w_v = [](const auto& y, const auto& a) {

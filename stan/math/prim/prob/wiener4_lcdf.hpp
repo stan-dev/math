@@ -152,7 +152,7 @@ inline auto log_probability_distribution(const T_a& a, const T_v& v, const T_w& 
       return ret_t(log1p(-w));
     }
     auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
-	auto prob = minus_two_va_one_minus_w; // to have an initializer.
+	ret_t prob;
     if (minus_two_va_one_minus_w < 0) {
       const auto exp_arg = exp(minus_two_va_one_minus_w);
       if (exp_arg >= nearly_one) {
@@ -191,7 +191,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) noe
       return ret_t(-w);
     }
     nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
-	auto prob = ret_t(0.0); // to have an initializer.
+	ret_t prob;
     if (v < 0) {
       const auto two_va_one_minus_w = (2.0 * v * a * (1.0 - w));
       const auto two_avw = 2 * a * v * w;
@@ -220,7 +220,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) noe
         return ret_t(-w);
       }
       prob = LOG_TWO - log1p(-exp_minus_two_va_one_minus_w);
-      auto log_quotient = ret_t(0.0); // to have an initializer.
+      ret_t log_quotient; 
       if (minus_two_va_one_minus_w > minus_two_av) {
         log_quotient = log_diff_exp(minus_two_va_one_minus_w, minus_two_av) - log1p(-exp_minus_two_av);
       } else if (minus_two_va_one_minus_w < minus_two_av) {
@@ -298,7 +298,7 @@ inline auto K_Small(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
   const auto sqrt_y = sqrt(y);
   const auto factor = v * a * w + square(v) * y / 2 + precision;
   const auto wdash = fmin(w, 1.0 - w);
-  auto K_small = ret_t(0.0); // to have initializer
+  ret_t K_small; 
   auto K_large = fabs(v) / a * y - wdash;
   if (GradA) {
     const auto lv = log1p(square(v) * y);
@@ -368,7 +368,7 @@ inline auto K_Large(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
     return ret_t(1.0);
   } else {
     const auto temp = -rexp(log_a - LOG_PI - 0.5 * log_y);
-    auto alphK = ret_t(0.0); //to have initializer
+    ret_t alphK; 
     if (GradV) {
       const auto log_v = log(fabs(v));
       alphK = rexp(factor + 0.5 * (7 * LOG_PI + log_y) - 2.5 * LOG_TWO
@@ -441,12 +441,12 @@ inline auto summands_small_y(const T_y& y, const T_a& a, const T_v& v, const T_w
     auto x = r_k - vy;
     auto xsqrt_y = x / sqrt_y;
     auto temp = rexp(d_k + logMill(xsqrt_y));
-    auto temp2 = ret_t(0.0); //to have initializer
-    auto temp3 = ret_t(0.0); //to have initializer
-    auto t1 = ret_t(0.0); //to have initializer
-    auto t2 = ret_t(0.0); //to have initializer
-    auto t3 = ret_t(0.0); //to have initializer
-    auto t4 = ret_t(0.0); //to have initializer
+    ret_t temp2;
+    ret_t temp3;
+    ret_t t1;
+    ret_t t2;
+    ret_t t3; 
+    ret_t t4; 
     const auto factor = GradW ? a : (2 * k + w);
     const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
     if (GradA || GradW) {
