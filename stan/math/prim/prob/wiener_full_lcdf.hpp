@@ -36,7 +36,6 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const 
   low = (0 > low) ? 0 : low;
   auto high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
-
   const auto lower_value
       = wiener4_distribution<GradientCalc::ON>(y, a, v, low, 0, log_error);
   const auto upper_value
@@ -53,6 +52,14 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const 
  *
  * @tparam GradSW Whether the wiener7 gradient function is passed
  * @tparam F Type of Gradient/density functor
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_sw type of inter-trial variability in w
+ * @tparam T_cdf type of CDF
+ * @tparam T_err type of log error tolerance
  *
  * @param functor Gradient/density functor to apply
  * @param y A scalar variable; the reaction time in seconds
@@ -85,6 +92,14 @@ inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff,
  *
  * @tparam GradSW Whether the wiener7 gradient function is passed
  * @tparam F Type of Gradient/density functor
+ * @tparam T_y type of scalar variable
+ * @tparam T_a type of boundary separation
+ * @tparam T_v type of drift rate
+ * @tparam T_w type of relative starting point
+ * @tparam T_sv type of inter-trial variability in v
+ * @tparam T_sw type of inter-trial variability in w
+ * @tparam T_cdf type of CDF
+ * @tparam T_err type of log error tolerance
  *
  * @param functor Gradient/density functor to apply
  * @param y A scalar variable; the reaction time in seconds
@@ -123,7 +138,7 @@ inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff,
  * @return Wiener7 density or gradient calculated by integration
  */
 template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradW7 = GradientCalc::OFF,
-          GradientCalc GradSV = GradientCalc::OFF, GradientCalc GradSW = GradientCalc::OFF, GradientCalc GradSW_ord = GradientCalc::OFF,
+          GradientCalc GradSV = GradientCalc::OFF, GradientCalc GradSW_ord = GradientCalc::OFF,
           GradientCalc GradT = GradientCalc::OFF, typename Wiener7FunctorT, typename T_err, typename... TArgs>
 inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                               T_err&& hcubature_err, TArgs&&... args) {
@@ -141,8 +156,8 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 			const auto temp = (sv != 0) ? square(x_vec[0]) : 0;
 			const auto factor = (sv != 0) ? x_vec[0] / (1 - temp) : 0;
 			const auto new_v = (sv != 0) ? v + sv * factor : v;
-			const auto sv_val = (GradSW) ? 0 : sv;
-			const auto sw_val = (GradSW) ? 0 : sw;
+			const auto sv_val = sv;
+			const auto sw_val = sw;
 			const auto new_w = (sv_val != 0)
 									 ? ((sw != 0) ? w + sw * (x_vec[1] - 0.5) : w)
 									 : ((sw_val != 0) ? w + sw * (x_vec[0] - 0.5) : w);
@@ -165,14 +180,14 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 			  const auto factor_sw
 				  = GradSW_ord ? ((sv_val != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5)) : 1;
 			  const auto integrand
-				  = Distribution
-						? dist
-						: GradT ? internal::conditionally_grad_sw<GradSW>(
+				  = Distribution ? dist
+						: GradT ? 
+						internal::conditionally_grad_sw<GradientCalc::OFF>(
 							  wiener7_functor, y - new_t0, a, v, new_w, sv, sw, lerr)
-								: factor_sv * factor_sw
-									  * conditionally_grad_sw_cdf<GradSW>(
-										  wiener7_functor, y - new_t0, a, new_v, new_w,
-										  sv, sw, dist, lerr);
+						: factor_sv * factor_sw
+									* conditionally_grad_sw<GradientCalc::OFF>(
+                wiener7_functor, y - new_t0, a, new_v, new_w, dist, sw, lerr); 
+//GradSW is always false for the cdf functions, instead of sv the cdf functions need dist.
 			  return ret_t(integrand * exp(temp2));
 			}
 		},
@@ -407,7 +422,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
         st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
     T_partials_return deriv_t_7
         = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
-                                          GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+                                          GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
               [&](auto&&... args) {
                 return internal::wiener5_density<GradientCalc::ON>(args...);
               },
@@ -495,7 +510,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
           deriv = deriv / cdf - 1 / sw_value;
         } else {
           deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF,
-                                                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+                                                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
                       [&](auto&&... args) {
                         return internal::wiener4_cdf_grad_w(
                             args...);
