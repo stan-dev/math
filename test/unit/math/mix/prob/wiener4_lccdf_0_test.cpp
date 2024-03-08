@@ -7,7 +7,7 @@ TEST(mathMixDouble, wiener4_lccdf) {
   double t0 = 0.2;
   double w = 0.5;
   double v = 1.5;
-  stan::math::wiener4_lccdf(y, a, t0, w, v, 1e-4);
+  stan::math::wiener_lccdf(y, a, t0, w, v, 1e-4);
 }
 
 TEST(mathMixVar, wiener4_lccdf) {
@@ -17,7 +17,7 @@ TEST(mathMixVar, wiener4_lccdf) {
   var t0 = 0.2;
   var w = 0.5;
   var v = 1.5;
-  stan::math::wiener4_lccdf(y, a, t0, w, v, 1e-4);
+  stan::math::wiener_lccdf(y, a, t0, w, v, 1e-4);
 }
 
 TEST(mathMixFVar, wiener4_lccdf) {
@@ -29,5 +29,5 @@ TEST(mathMixFVar, wiener4_lccdf) {
   fvar<var> w = 0.5;
   fvar<var> v = 1.5;
   double error = 1e-4;
-  stan::math::wiener4_lccdf(y, a, t0, w, v, error);
+  stan::math::wiener_lccdf(y, a, t0, w, v, error);
 }

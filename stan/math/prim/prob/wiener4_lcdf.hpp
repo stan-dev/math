@@ -19,63 +19,61 @@ inline auto rexp(T_x&& x) noexcept {
   return (x <= 700) ? exp(x) : exp(700);
 }
 
-// DOKU!!
 /**
- * Helper function. ?
+ * Helper function for Mill's ratio. This is dnorm on log-scale.
  *
  * @param x A scalar
- * @return ?
+ * @return dnorm on log-scale
  */
 template <typename T_x>
 inline auto lognormal(T_x&& x) noexcept {
   return -0.5 * x * x - LOG_SQRT_PI - 0.5 * LOG_TWO;
 }
 
-// DOKU!!
 /**
- * Helper function. ?
+ * Helper function for Mill's ratio. This is pnorm on log-scale.
  *
  * @param z A scalar
- * @return ?
+ * @return pnorm on log-scale
+ *
+ * The original function lnnorm was written by ...
+ *     Jean Marie Linhart
+ *     StataCorp LP
+ *     jlinhart@stata.com
+ *     January 4, 2008
+ * and later modified and adapted to Stan
  */
-/** The original function lnnorm was written by ...
-        Jean Marie Linhart
-        StataCorp LP
-        jlinhart@stata.com
-        January 4, 2008
-and later modified and adapted to Stan
-*/
 template <typename T_z>
 inline auto lnnorm(T_z&& z) noexcept {
   using ret_t = return_type_t<T_z>;
-  static const double LNNORM_MAX_X = 38;
+  static const double LNNORM_MAX_X = 38.0;
   static const double LNNORM_MIN_X = -1e9;
   int lower;
 
-  auto t = 0.0; 
+  auto t = ret_t(0.0); 
   auto z_ = z;
   auto s = z_; 
 
-  if (z_ == 0) {
-    return (log(0.5));
+  if (z_ == 0.0) {
+    return ret_t(log(0.5));
   }
   if (z_ > LNNORM_MAX_X) {
-    return ret_t(0);
+    return ret_t(0.0);
   }
   if (z_ <= LNNORM_MIN_X) {
-    return (-0.5 * z_ * z_);
+    return ret_t(-0.5 * z_ * z_);
   }
-  if (z_ < 0) {
+  if (z_ < 0.0) {
     z_ = -z_;
     lower = 1;
   } else
     lower = 0;
 
-  const auto z2 = z_ * z_;
+  const auto z2 = square(z_);
   const auto y = exp(-0.5 * z2) / SQRT_TWO_PI;
   auto n = y / z_;
 
-  if (!(z_ > 2)) {
+  if (!(z_ > 2.0)) {
     z_ *= y;
     s = z_;
     for (n = 3; s != t; n += 2) {
@@ -84,15 +82,15 @@ inline auto lnnorm(T_z&& z) noexcept {
       s += z_;
     }
     if (lower) {
-      return (log(0.5 - s));
+      return ret_t(log(0.5 - s));
     }
-    return (log(0.5 + s));
+    return ret_t(log(0.5 + s));
   }
 
-  auto a1 = 2;
-  auto a2 = 0;
+  auto a1 = ret_t(2.0);
+  auto a2 = ret_t(0.0);
   n = z2 + 3;
-  auto p1 = 1;
+  auto p1 = ret_t(1.0);
   auto q1 = z_;
   auto p2 = (n - 1);
   auto q2 = n * z_;
@@ -101,7 +99,7 @@ inline auto lnnorm(T_z&& z) noexcept {
   s = m;
 
   for (n += 4; m != t && s != t; n += 4) {
-    a1 -= 8;
+    a1 -= 8.0;
     a2 += a1;
     s = a2 * p1 + n * p2;
     p1 = p2;
@@ -111,11 +109,11 @@ inline auto lnnorm(T_z&& z) noexcept {
     q2 = s;
     s = m;
     m = t;
-    if (q2 > 1e30) {
-      p1 /= 1e30;
-      p2 /= 1e30;
-      q1 /= 1e30;
-      q2 /= 1e30;
+    if (q2 > 1.0e30) {
+      p1 /= 1.0e30;
+      p2 /= 1.0e30;
+      q1 /= 1.0e30;
+      q2 /= 1.0e30;
     }
     t = p2 / q2;
   }
@@ -123,12 +121,11 @@ inline auto lnnorm(T_z&& z) noexcept {
   return ret_t(t);
 }
 
-// DOKU!!
 /**
- * Helper function. ?
+ * Helper function. Log of Mill's ratio for the normal distribution
  *
  * @param x A scalar
- * @return ?
+ * @return Log of Mill's ratio
  */
 template <typename T_x>
 inline auto logMill(T_x&& x) noexcept {
@@ -140,116 +137,132 @@ inline auto logMill(T_x&& x) noexcept {
 }
 
 /**
- * Calculate the 'P' term
- *
- * @tparam Distribution Whether the calculation is for the distribution
- * @tparam GradAV Whether the calculation is for gradient w.r.t. 'a' or
- * w.r.t. 'v'
- * @tparam GradW Whether the calculation is for gradient w.r.t. 'w'
+ * Calculate the probability term 'P' on log scale
  *
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
  * @return 'P' term
  */
-template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradAV = GradientCalc::OFF,
-          GradientCalc GradW = GradientCalc::OFF, typename T_a, typename T_w, typename T_v>
-inline auto logP(const T_a& a, const T_v& v, const T_w& w) noexcept {
-  auto em1 = 1.0 - 1.0e-6;
-  if (Distribution) {
+template <typename T_a, typename T_w, typename T_v>
+inline auto log_probability_distribution(const T_a& a, const T_v& v, const T_w& w) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
+  auto nearly_one = ret_t(1.0 - 1.0e-6);
     if (fabs(v) == 0.0) {
-      return log1p(-w);
+      return ret_t(log1p(-w));
     }
-    auto e = (-2.0 * v * a * (1.0 - w));
-	auto prob = e; // to have an initializer.
-    if (e < 0) {
-      auto tt = exp(e);
-      if (tt >= em1) {
-        return log1p(-w);
+    auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
+	auto prob = minus_two_va_one_minus_w; // to have an initializer.
+    if (minus_two_va_one_minus_w < 0) {
+      const auto exp_arg = exp(minus_two_va_one_minus_w);
+      if (exp_arg >= nearly_one) {
+        return ret_t(log1p(-w));
       }
       auto two_vaw = 2 * v * a * w;
-      if (two_vaw > e) {
-        tt = log1p(-tt) - log_diff_exp(two_vaw, e);
-      } else if (two_vaw < e) {
-        tt = log1p(-tt) - log_diff_exp(e, two_vaw);
+      if (two_vaw > minus_two_va_one_minus_w) {
+        prob = log1p(-exp_arg) - log_diff_exp(two_vaw, minus_two_va_one_minus_w);
+      } else if (two_vaw < minus_two_va_one_minus_w) {
+        prob = log1p(-exp_arg) - log_diff_exp(minus_two_va_one_minus_w, two_vaw);
       } else {
-        tt = log1p(-tt) - NEGATIVE_INFTY;
+        prob = log1p(-exp_arg) - NEGATIVE_INFTY;
       }
-      prob = tt;
     } else {
-      auto tt = exp(-e);
-      if (tt >= em1)
-        return log1p(-w);
-      tt = log1p(-tt) - log1p(-exp(2 * v * a));
-      prob = tt;
+      const auto exp_arg = exp(-minus_two_va_one_minus_w);
+      if (exp_arg >= nearly_one)
+        return ret_t(log1p(-w));
+      prob = log1p(-exp_arg) - log1p(-exp(2 * v * a));
     }
     return prob;
-  }
-  if (GradAV) {
+}
+
+/**
+ * Calculate the probability term 'P' on log scale
+ *
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @return 'P' term
+ */
+template <typename T_a, typename T_w, typename T_v>
+inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
+  auto nearly_one = ret_t(1.0 - 1.0e-6);
     if (fabs(v) == 0.0) {
-      return -w;
+      return ret_t(-w);
     }
-    em1 = 1.0 - 1.1 * 1.0e-5;
-	auto tt = 0.0; // to have an initializer.
+    nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
+	auto prob = ret_t(0.0); // to have an initializer.
     if (v < 0) {
-      const auto emw = (2.0 * v * a * (1.0 - w));
-      const auto ew = 2 * a * v * w;
-      const auto e = 2 * a * v;
-      const auto eemw = exp(emw);
-      const auto eew = exp(ew);
-      const auto ee = exp(e);
-      if (((eemw >= em1) || (eew >= em1)) || (ee >= em1)) {
-        return -w;
+      const auto two_va_one_minus_w = (2.0 * v * a * (1.0 - w));
+      const auto two_avw = 2 * a * v * w;
+      const auto two_av = 2 * a * v;
+      const auto exp_two_va_one_minus_w = exp(two_va_one_minus_w);
+      const auto exp_two_avw = exp(two_avw);
+      const auto exp_two_av = exp(two_av);
+      if (((exp_two_va_one_minus_w >= nearly_one) || (exp_two_avw >= nearly_one)) || (exp_two_av >= nearly_one)) {
+        return ret_t(-w);
       }
-      tt = LOG_TWO + emw - log1p(-eemw);
-      auto temp = log1p(-eew) - log1p(-ee);
-      auto sign_tt = sign(tt);
-      if (log(w) > temp) {
-        tt += log_diff_exp(log(w), temp);
-        tt = exp(tt);
+      prob = LOG_TWO + two_va_one_minus_w - log1p(-exp_two_va_one_minus_w);
+      auto log_quotient = log1p(-exp_two_avw) - log1p(-exp_two_av);
+      if (log(w) > log_quotient) {
+        prob += log_diff_exp(log(w), log_quotient);
+        prob = exp(prob);
       } else {
-        tt += log_diff_exp(temp, log(w));
-        tt = -exp(tt);
+        prob += log_diff_exp(log_quotient, log(w));
+        prob = -exp(prob);
       }
     } else {
-      const auto emw = (-2.0 * v * a * (1.0 - w)), e = (-2 * a * v);
-      const auto eemw = exp(emw), ee = exp(e);
-      if ((eemw >= em1) || (ee >= em1)) {
-        return -w;
+      const auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
+	  const auto minus_two_av = (-2 * a * v);
+      const auto exp_minus_two_va_one_minus_w = exp(minus_two_va_one_minus_w);
+	  const auto exp_minus_two_av = exp(minus_two_av);
+      if ((exp_minus_two_va_one_minus_w >= nearly_one) || (exp_minus_two_av >= nearly_one)) {
+        return ret_t(-w);
       }
-      tt = LOG_TWO - log1p(-eemw);
-      auto temp = e; // to have an initializer.
-      if (emw > e) {
-        temp = log_diff_exp(emw, e) - log1p(-ee);
-      } else if (emw < e) {
-        temp = log_diff_exp(e, emw) - log1p(-ee);
+      prob = LOG_TWO - log1p(-exp_minus_two_va_one_minus_w);
+      auto log_quotient = ret_t(0.0); // to have an initializer.
+      if (minus_two_va_one_minus_w > minus_two_av) {
+        log_quotient = log_diff_exp(minus_two_va_one_minus_w, minus_two_av) - log1p(-exp_minus_two_av);
+      } else if (minus_two_va_one_minus_w < minus_two_av) {
+        log_quotient = log_diff_exp(minus_two_av, minus_two_va_one_minus_w) - log1p(-exp_minus_two_av);
       } else {
-        temp = NEGATIVE_INFTY - log1p(-ee);
+        log_quotient = NEGATIVE_INFTY - log1p(-exp_minus_two_av);
       }
-      if (log(w) > temp) {
-        tt += log_diff_exp(log(w), temp);
-        tt = -exp(tt);
+      if (log(w) > log_quotient) {
+        prob += log_diff_exp(log(w), log_quotient);
+        prob = -exp(prob);
       } else {
-        tt += log_diff_exp(temp, log(w));
-        tt = exp(tt);
+        prob += log_diff_exp(log_quotient, log(w));
+        prob = exp(prob);
       }
     }
-    return (is_inf(tt)) ? NEGATIVE_INFTY : tt;
-  }
-  if (GradW) {
+    return (is_inf(prob)) ? NEGATIVE_INFTY : prob;
+}
+
+/**
+ * Calculate the probability term 'P' on log scale
+ *
+ * @param a The boundary separation
+ * @param v The drift rate
+ * @param w The relative starting point
+ * @return 'P' term
+ */
+template <typename T_a, typename T_w, typename T_v>
+inline auto log_probability_GradW(const T_a& a, const T_v& v, const T_w& w) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
+  auto nearly_one = ret_t(1.0 - 1.0e-6);
     if (fabs(v) == 0.0) {
-      return -1 / (1.0 - w);
+      return ret_t(-1 / (1.0 - w));
     }
-    const auto sign_e = (v < 0) ? 1 : -1;
-    const auto e = sign_e * (2.0 * v * a * (1.0 - w));
-    const auto ee = exp(e);
-    if (ee >= em1) {
-      return -1 / (1.0 - w);
+    const auto sign_v = (v < 0) ? 1 : -1;
+    const auto sign_two_va_one_minus_w = sign_v * (2.0 * v * a * (1.0 - w));
+    const auto exp_arg = exp(sign_two_va_one_minus_w);
+    if (exp_arg >= nearly_one) {
+      return ret_t(-1 / (1.0 - w));
     }
-    auto temp = LOG_TWO + log(fabs(v)) + log(a) - log1p(-ee);
-    temp = (v < 0) ? temp + e : temp;
-    return -exp(temp);
-  }
+    auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1p(-exp_arg);
+    prob = (v < 0) ? prob + sign_two_va_one_minus_w : prob;
+    return -exp(prob);
 }
 
 /**
@@ -272,6 +285,7 @@ template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradA = Gr
           typename T_v, typename T_w, typename T_prec>
 inline auto K_Small(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                       T_prec&& precision) noexcept {
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   if (Distribution) {
     const auto K1 = 0.5 * (fabs(v) / a * y - w);
     const auto arg = fmax(
@@ -284,7 +298,7 @@ inline auto K_Small(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
   const auto sqrt_y = sqrt(y);
   const auto factor = v * a * w + square(v) * y / 2 + precision;
   const auto wdash = fmin(w, 1.0 - w);
-  auto K_small = 0.0; // to have initializer
+  auto K_small = ret_t(0.0); // to have initializer
   auto K_large = fabs(v) / a * y - wdash;
   if (GradA) {
     const auto lv = log1p(square(v) * y);
@@ -305,7 +319,7 @@ inline auto K_Small(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                          : (arg == 1) ? NEGATIVE_INFTY
                                       : -sqrt_y / a * inv_Phi(arg) - wdash;
   }
-  return ceil(fmax(fmax(K_small, K_large), 1.0));
+  return ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 }
 
 /**
@@ -327,6 +341,7 @@ template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradA = Gr
           typename T_w, typename T_prec>
 inline auto K_Large(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                       T_prec&& precision) noexcept {
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   if (Distribution) {
     const auto api = a / pi();
     const auto v_square = square(v);
@@ -343,17 +358,17 @@ inline auto K_Large(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
   const auto factor = v * a * w + square(v) * y / 2 + precision;
   if (GradA) {
     const auto K = a / pi() / sqrt(y);
-    auto C1 = LOG_TWO - log_sum_exp(2 * log(fabs(v)), 2 * (LOG_PI - log_a));
+    auto C1 = ret_t(LOG_TWO - log_sum_exp(2 * log(fabs(v)), 2 * (LOG_PI - log_a)));
     C1 = log_sum_exp(C1, log_y);
     const auto alphK
         = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
-    return ceil(fmax(fmax(sqrt(-2 * alphK / y) * a / pi(), K), 1.0));
+    return ceil(fmax(fmax(sqrt(-2 * alphK / y) * a / pi(), K), ret_t(1.0)));
   }
   if (GradV && v == 0) {
-    return 1.0;
+    return ret_t(1.0);
   } else {
     const auto temp = -rexp(log_a - LOG_PI - 0.5 * log_y);
-    auto alphK = 0.0; //to have initializer
+    auto alphK = ret_t(0.0); //to have initializer
     if (GradV) {
       const auto log_v = log(fabs(v));
       alphK = rexp(factor + 0.5 * (7 * LOG_PI + log_y) - 2.5 * LOG_TWO
@@ -364,10 +379,10 @@ inline auto K_Large(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                            - log_a);
       alphK = fmax(0.0, fmin(1.0, alphK));
     }
-    return fmax(ceil((alphK == 0) ? INFTY
-                                  : (alphK == 1) ? NEGATIVE_INFTY
+    return fmax(ceil((alphK == 0) ? ret_t(INFTY)
+                                  : (alphK == 1) ? ret_t(NEGATIVE_INFTY)
                                                  : temp * inv_Phi(alphK)),
-                1.0);
+                ret_t(1.0));
   }
 }
 
@@ -389,14 +404,15 @@ inline auto K_Large(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
 template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradA = GradientCalc::OFF,
           GradientCalc GradV = GradientCalc::OFF, GradientCalc GradW = GradientCalc::OFF, typename T_y, typename T_a,
           typename T_v, typename T_w, typename T_K>
-inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
+inline auto summands_small_y(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                     T_K&& K) noexcept {
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto sqrt_y = sqrt(y);
   const auto vy = v * y;
-  auto ans = 0.0;
+  auto ans = ret_t(0.0);
   if (Distribution) {
-    auto fplus = NEGATIVE_INFTY;
-    auto fminus = NEGATIVE_INFTY;
+    ret_t fplus = NEGATIVE_INFTY;
+    ret_t fminus = NEGATIVE_INFTY;
     for (auto k = K; k >= 0; k--) {
       auto rj = a * (2 * k + w);
       auto dj = lognormal(rj / sqrt_y);
@@ -409,9 +425,6 @@ inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
       auto neg2 = dj + logMill((rj + vy) / sqrt_y);
       fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
     }
-    //		auto ans_sign;
-    //		std::forward_as_tuple(ans, ans_sign)
-    //        = stan::math::log_sum_exp_signed(fplus, 1, fminus, -1);
     if (fplus > fminus) {
       ans = log_diff_exp(fplus, fminus);
     } else if (fplus < fminus) {
@@ -421,32 +434,32 @@ inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
     }
     return ans + -v * a * w - square(v) * y / 2;
   }
-  auto Fj = 0.0;
+  auto F_k = ret_t(0.0);
   for (auto k = K; k >= 0; k--) {
-    auto rj = 2 * k * a + a * w;
-    auto dj = lognormal(rj / sqrt_y);
-    auto x = rj - vy;
+    auto r_k = 2 * k * a + a * w;
+    auto d_k = lognormal(r_k / sqrt_y);
+    auto x = r_k - vy;
     auto xsqrt_y = x / sqrt_y;
-    auto temp = rexp(dj + logMill(xsqrt_y));
-    auto temp2 = 0.0; //to have initializer
-    auto temp3 = 0.0; //to have initializer
-    auto t1 = 0.0; //to have initializer
-    auto t2 = 0.0; //to have initializer
-    auto t3 = 0.0; //to have initializer
-    auto t4 = 0.0; //to have initializer
+    auto temp = rexp(d_k + logMill(xsqrt_y));
+    auto temp2 = ret_t(0.0); //to have initializer
+    auto temp3 = ret_t(0.0); //to have initializer
+    auto t1 = ret_t(0.0); //to have initializer
+    auto t2 = ret_t(0.0); //to have initializer
+    auto t3 = ret_t(0.0); //to have initializer
+    auto t4 = ret_t(0.0); //to have initializer
     const auto factor = GradW ? a : (2 * k + w);
     const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
     if (GradA || GradW) {
-      temp2 = exp(dj);
+      temp2 = exp(d_k);
       temp3 = temp * (-vy) - sqrt_y * temp2;
       t1 = temp3 * factor;
     }
     if (GradV) {
       t1 = -temp * x;
     }
-    x = rj + vy;
+    x = r_k + vy;
     xsqrt_y = x / sqrt_y;
-    temp = rexp(dj + logMill(xsqrt_y));
+    temp = rexp(d_k + logMill(xsqrt_y));
     if (GradA || GradW) {
       temp3 = temp * vy - sqrt_y * temp2;
       t2 = temp3 * factor;
@@ -454,22 +467,22 @@ inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
     if (GradV) {
       t2 = temp * x;
     }
-    rj = (2 * k + 1) * a + a * (1 - w);
-    dj = lognormal(rj / sqrt_y);
-    x = rj - vy;
+    r_k = (2 * k + 1) * a + a * (1 - w);
+    d_k = lognormal(r_k / sqrt_y);
+    x = r_k - vy;
     xsqrt_y = x / sqrt_y;
-    temp = rexp(dj + logMill(xsqrt_y));
+    temp = rexp(d_k + logMill(xsqrt_y));
     if (GradA || GradW) {
-      temp2 = exp(dj);
+      temp2 = exp(d_k);
       temp3 = temp * (-vy) - sqrt_y * temp2;
       t3 = -temp3 * factor_2;
     }
     if (GradV) {
       t3 = temp * x;
     }
-    x = rj + vy;
+    x = r_k + vy;
     xsqrt_y = x / sqrt_y;
-    temp = rexp(dj + logMill(xsqrt_y));
+    temp = rexp(d_k + logMill(xsqrt_y));
     if (GradA || GradW) {
       temp3 = temp * vy - sqrt_y * temp2;
       t4 = -temp3 * factor;
@@ -479,8 +492,8 @@ inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
     }
     ans += (t1 + t2 + t3 + t4);
   }
-  Fj = rexp(v * a * w + 0.5 * square(v) * y);
-  return (GradA || GradW) ? ans / y / Fj : ans / Fj;
+  F_k = rexp(v * a * w + 0.5 * square(v) * y);
+  return (GradA || GradW) ? ans / y / F_k : ans / F_k;
 }
 
 /**
@@ -501,33 +514,28 @@ inline auto logFs(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
 template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradA = GradientCalc::OFF,
           GradientCalc GradV = GradientCalc::OFF, GradientCalc GradW = GradientCalc::OFF, typename T_y, typename T_a,
           typename T_v, typename T_w, typename T_K, typename T_cdf>
-inline auto logFl(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
+inline auto summands_large_y(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                     T_K&& K, T_cdf&& cdf = 0.0) noexcept {
-  auto ans = NEGATIVE_INFTY;
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
+  ret_t ans = NEGATIVE_INFTY;
   if (Distribution) {
     const auto log_a = log(a);
     const auto log_v = log(fabs(v));
-    auto fplus = NEGATIVE_INFTY;
-    auto fminus = NEGATIVE_INFTY;
-    //		int ans_sign = -1;
+    ret_t fplus = NEGATIVE_INFTY;
+    ret_t fminus = NEGATIVE_INFTY;
     for (auto k = K; k >= 1; k--) {
-      auto temp0 = log(k * 1.0);
-      auto temp1 = k * pi();
-      auto temp2 = temp1 * w;
-      auto check = sin(temp2);
-      //			int check_sign = sign(check);
-      //			auto summand_2 = temp0 - log_sum_exp(2 *
-      //log_v, 2 * (temp0 + LOG_PI - log_a)) - 0.5 * square(temp1 / a) * y +
-      //log(fabs(check)); 			std::forward_as_tuple(ans, ans_sign) 			=
-      //stan::math::log_sum_exp_signed(ans, ans_sign, summand_2, check_sign);
-      if (check > 0) {
+      auto log_k = log(k * 1.0);
+      auto k_pi = k * pi();
+      auto k_pi_w = k_pi * w;
+      auto sin_k_pi_w = sin(k_pi_w);
+      if (sin_k_pi_w > 0) {
         fplus = log_sum_exp(
-            fplus, temp0 - log_sum_exp(2 * log_v, 2 * (temp0 + LOG_PI - log_a))
-                       - 0.5 * square(temp1 / a) * y + log(check));
-      } else if (check < 0) {
+            fplus, log_k - log_sum_exp(2 * log_v, 2 * (log_k + LOG_PI - log_a))
+                       - 0.5 * square(k_pi / a) * y + log(sin_k_pi_w));
+      } else if (sin_k_pi_w < 0) {
         fminus = log_sum_exp(
-            fminus, temp0 - log_sum_exp(2 * log_v, 2 * (temp0 + LOG_PI - log_a))
-                        - 0.5 * square(temp1 / a) * y + log(-check));
+            fminus, log_k - log_sum_exp(2 * log_v, 2 * (log_k + LOG_PI - log_a))
+                        - 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
       }
     }
     if (fplus > fminus) {
@@ -551,20 +559,20 @@ inline auto logFl(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
     ans += -last * factor;
   }
   const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-  const auto temp = rexp(logP<GradientCalc::ON>(a, v, w));
+  const auto prob = rexp(log_probability_distribution(a, v, w));
   const auto GradAV = (GradA || GradV)? GradientCalc::ON : GradientCalc::OFF;
-  const auto dav = logP<GradientCalc::OFF, GradAV, GradW>(a, v, w);
+  const auto dav = (GradA || GradV) ? log_probability_GradAV(a, v, w) : log_probability_GradW(a, v, w);
   const auto pia2 = 2 * pi() / square(a);
-  auto temp_deriv
+  auto prob_deriv
       = GradA
             ? ((fabs(v) == 0) ? 0 : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v)
             : GradV ? is_inf(dav * a) ? NEGATIVE_INFTY : dav * a : dav;
-  temp_deriv *= temp;
-  ans = GradA ? (-2 / a - v * w) * (cdf - temp) + ans * pia2 * evaw
-              : GradV ? (-w * a - v * y) * (cdf - temp)
+  prob_deriv *= prob;
+  ans = GradA ? (-2 / a - v * w) * (cdf - prob) + ans * pia2 * evaw
+              : GradV ? (-w * a - v * y) * (cdf - prob)
                             + ans * (-2 * v) * pia2 * evaw
-                      : -v * a * (cdf - temp) + ans * pia2 * evaw;
-  return temp_deriv + ans;
+                      : -v * a * (cdf - prob) + ans * pia2 * evaw;
+  return prob_deriv + ans;
 }
 
 /**
@@ -581,16 +589,17 @@ inline auto logFl(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
  * @return distribution
  */
 template <bool NaturalScale = false, typename T_y,
-          typename T_a, typename T_w, typename T_v, typename T_wildcard>
+          typename T_a, typename T_w, typename T_v, typename T_wildcard, typename T_err>
 inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
-                                   const T_w& wn, T_wildcard&& wildcard = 0,
-                                   const double& err = log(1e-12)) noexcept {
-  auto ans = 0.0; //to have initializer
+                                   const T_w& wn, T_wildcard&& wildcard = 0.0,
+                                   T_err&& err = log(1e-12)) noexcept {
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
+  ret_t log_distribution = NEGATIVE_INFTY;
   const auto v = -vn;
   const auto w = 1 - wn;
 
   if (is_inf(y)) {
-    logP<GradientCalc::ON>(a, v, w);
+    return ret_t(log_probability_distribution(a, v, w));
   }
 
   auto K_small = K_Small<GradientCalc::ON>(y, a, v, w, err);
@@ -598,22 +607,17 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
   auto lg = LOG_TWO + LOG_PI - 2.0 * log(a);
 
   if (3 * K_small < K_large) {
-    ans = logFs<GradientCalc::ON>(y, a, v, w, K_small);
+    log_distribution = summands_small_y<GradientCalc::ON>(y, a, v, w, K_small);
   } else {
-    auto summand_1 = logP<GradientCalc::ON>(a, v, w);
-    auto summand_2 = lg + logFl<GradientCalc::ON>(y, a, v, w, K_large, 0);
-    //		Scalar ans_sign;
-    //		std::forward_as_tuple(ans, ans_sign)
-    //       = stan::math::log_sum_exp_signed(summand_1, 1, summand_2, -1);
+    auto summand_1 = log_probability_distribution(a, v, w);
+    auto summand_2 = lg + summands_large_y<GradientCalc::ON>(y, a, v, w, K_large, 0);
     if (summand_1 > summand_2) {
-      ans = log_diff_exp(summand_1, summand_2);
+      log_distribution = log_diff_exp(summand_1, summand_2);
     } else if (summand_1 < summand_2) {
-      ans = log_diff_exp(summand_2, summand_1);
-    } else {
-      ans = NEGATIVE_INFTY;
+      log_distribution = log_diff_exp(summand_2, summand_1);
     }
   }
-  return NaturalScale ? exp(ans) : ans;
+  return NaturalScale ? exp(log_distribution) : log_distribution;
 }
 
 /**
@@ -628,18 +632,18 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
  * @return Gradient w.r.t. a
  */
 template <typename T_y, typename T_a, typename T_v,
-          typename T_w, typename T_cdf>
+          typename T_w, typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
                                  const T_w& wn, T_cdf&& cdf,
-                                 const double& err = log(1e-12)) noexcept {
+                                 T_err&& err = log(1e-12)) noexcept {
   const auto v = -vn;
   const auto w = 1 - wn;
   const auto K_large = K_Large<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, err);
   const auto K_small = K_Small<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, err);
   if (K_large > 4 * K_small) {
-    return -v * w * cdf + logFs<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_small));
+    return -v * w * cdf + summands_small_y<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_small));
   } else {
-    return logFl<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, K_large, cdf);
+    return summands_large_y<GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, K_large, cdf);
   }
 }
 
@@ -655,10 +659,10 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
  * @return Gradient w.r.t. v
  */
 template <typename T_y, typename T_a, typename T_v,
-          typename T_w, typename T_cdf>
+          typename T_w, typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
                                  const T_w& wn, T_cdf&& cdf,
-                                 const double& err = log(1e-12)) noexcept {
+                                 T_err&& err = log(1e-12)) noexcept {
   const auto v = -vn;
   const auto w = 1 - wn;
   const auto K_large = K_Large<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, err);
@@ -666,9 +670,9 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
   if (K_large > 4 * K_small) {
     return -1
            * ((-w * a - v * y) * cdf
-              + logFs<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_small)));
+              + summands_small_y<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_small)));
   } else {
-    return -1 * logFl<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_large), cdf);
+    return -1 * summands_large_y<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, (K_large), cdf);
   }
 }
 
@@ -684,10 +688,10 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
  * @return Gradient w.r.t. w
  */
 template <typename T_y, typename T_a, typename T_v,
-          typename T_w, typename T_cdf>
+          typename T_w, typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
                                  const T_w& wn, T_cdf&& cdf,
-                                 const double& err = log(1e-12)) noexcept {
+                                 T_err&& err = log(1e-12)) noexcept {
   const auto v = -vn;
   const auto w = 1 - wn;
   const auto K_large = K_Large(y, a, v, w, err);
@@ -696,11 +700,11 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
   if (K_large > 4 * K_small) {
     return -1
            * (-v * a * cdf
-              + logFs<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w,
+              + summands_small_y<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w,
                                                          K_small));
   } else {
     return -1
-           * logFl<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, K_large,
+           * summands_large_y<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(y, a, v, w, K_large,
                                                       cdf);
   }
 }
@@ -708,7 +712,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
 
 /**
  * Log-CDF function for the 4-parameter Wiener distribution.
- * See 'wiener_full_lpdf' for more comprehensive documentation
+ * See 'wiener_lpdf' for more comprehensive documentation
  *
  * @tparam T_y type of scalar
  * @tparam T_a type of boundary
@@ -726,9 +730,9 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
  */
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v>
-inline auto wiener4_lcdf(
+inline auto wiener_lcdf(
     const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
-    const double& precision_derivatives) {
+    const double& precision_derivatives = 1e-4) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v>;
   
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
@@ -791,7 +795,7 @@ inline auto wiener4_lcdf(
 
   const auto log_error_cdf = log(1e-6);
   const auto log_error_derivative = log(precision_derivatives);
-  const auto log_error_absolute = log(1e-12);
+  const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return lcdf = 0.0;
   auto ops_partials
       = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref);
@@ -807,7 +811,7 @@ inline auto wiener4_lcdf(
     const auto v_value = v_vec.val(i);
 	
     using internal::GradientCalc;
-    const auto log_cdf
+    const T_partials_return log_cdf
         = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                                        GradientCalc::OFF>(
             [](auto&&... args) {
@@ -815,9 +819,9 @@ inline auto wiener4_lcdf(
                   args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, 0, log_error_absolute);
+            w_value, 0.0, log_error_absolute);
 
-    const auto cdf = exp(log_cdf);
+    const T_partials_return cdf = exp(log_cdf);
 
     lcdf += log_cdf;
 
@@ -867,7 +871,7 @@ inline auto wiener4_lcdf(
     if (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener4_cdf_grad_v(
-                y_value - t0_value, a_value, v_value, w_value, cdf)
+                y_value - t0_value, a_value, v_value, w_value, cdf, log_error_absolute)
             / cdf;
     }
   }  // for loop

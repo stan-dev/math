@@ -78,7 +78,7 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_st0,
           typename ReturnT
           = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>>
-inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
+inline ReturnT wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                                  const T_w& w, const T_v& v, const T_sv& sv,
                                  const T_sw& sw, const T_st0& st0,
                                  const double& precision_derivatives = 1e-8) {
@@ -98,7 +98,7 @@ inline ReturnT wiener_full_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
 
-  static constexpr const char* function_name = "wiener_full_lccdf";
+  static constexpr const char* function_name = "wiener_lccdf";
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
                          "A-priori bias", w, "Nondecision time", t0,

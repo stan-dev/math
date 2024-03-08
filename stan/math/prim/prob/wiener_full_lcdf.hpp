@@ -178,9 +178,6 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 		},
 		integration_args...);
 	 };
- // const auto functor = [&](auto&&... int_args) {
- //   return hcubature(wiener7_integrand_impl, int_args...);
- // };
   
   return estimate_with_err_check<0, 8, GradW7, GradientCalc::ON>(functor, hcubature_err,
                                                        args...);
@@ -191,7 +188,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * Returns the log CDF of the Wiener distribution for a
  * (Wiener) drift diffusion model with up to 7 parameters. If containers
  * are supplied, returns the log sum of the probabilities.
- * See 'wiener_full_lpdf' for more comprehensive documentation
+ * See 'wiener_lpdf' for more comprehensive documentation
  * If the reaction time goes to infinity, the CDF goes to the probability to
  * hit the upper bound (instead of 1, as it is usually the case)
  *
@@ -225,7 +222,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
           typename T_st0>
-inline auto wiener_full_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
+inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                                 const T_w& w, const T_v& v, const T_sv& sv,
                                 const T_sw& sw, const T_st0& st0,
                                 const double& precision_derivatives = 1e-8) {
@@ -332,14 +329,14 @@ inline auto wiener_full_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
   }
 
-  const auto log_error_cdf = log(1e-6);  // precision for density
+  const T_partials_return log_error_cdf = log(1e-6);  // precision for density
   const auto error_bound = precision_derivatives;  // precision for
   // derivatives (controllable by user)
   const auto lerror_bound = log(error_bound);
-  const auto absolute_error_hcubature = 0.0;
-  const auto relative_error_hcubature
+  const T_partials_return absolute_error_hcubature = 0.0;
+  const T_partials_return relative_error_hcubature
       = .9 * error_bound;  // eps_rel(Integration)
-  const auto log_error_absolute = log(1e-12);
+  const T_partials_return log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
   T_partials_return lcdf = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
@@ -349,7 +346,7 @@ inline auto wiener_full_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
     if (sv_vec[i] == 0 && sw_vec[i] == 0 && st0_vec[i] == 0) {
-      result += wiener4_lcdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
+      result += wiener_lcdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
                                      v_vec[i], precision_derivatives);
       continue;
     }
@@ -484,16 +481,17 @@ inline auto wiener_full_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
-        if (st0_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<5, 0, GradientCalc::OFF, GradientCalc::ON>(
+        if (st0_value == 0 && sv_value == 0) {	  
+	      deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF, GradientCalc::ON>(
               [](auto&&... args) {
-                return internal::conditionally_grad_sw_cdf<GradientCalc::ON>(
-                    internal::wiener7_cdf_grad_sw, args...);
+                return internal::wiener7_cdf_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
-              sv_value, sw_value, 0.0,
+              sw_value, 0.0,
               log_error_absolute
-                  - LOG_TWO);  // added wildcard 0. delete later somehow
+                  - LOG_TWO);  // added wildcard 0. delete later somehow, and then change 6 to 5
+				  
+				  
           deriv = deriv / cdf - 1 / sw_value;
         } else {
           deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF,
