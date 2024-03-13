@@ -23,6 +23,8 @@
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/max.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/integrate_1d.hpp>
 #include <queue>
 #include <tuple>
 
@@ -31,28 +33,29 @@ namespace math {
 
 namespace internal {
 
-static constexpr double xd7[8] = {-9.9145537112081263920685469752598e-01,
-                                  -9.4910791234275852452618968404809e-01,
-                                  -8.6486442335976907278971278864098e-01,
-                                  -7.415311855993944398638647732811e-01,
-                                  -5.8608723546769113029414483825842e-01,
-                                  -4.0584515137739716690660641207707e-01,
-                                  -2.0778495500789846760068940377309e-01,
-                                  0.0};
+static constexpr std::array<double, 8> xd7{
+    -9.9145537112081263920685469752598e-01,
+    -9.4910791234275852452618968404809e-01,
+    -8.6486442335976907278971278864098e-01,
+    -7.415311855993944398638647732811e-01,
+    -5.8608723546769113029414483825842e-01,
+    -4.0584515137739716690660641207707e-01,
+    -2.0778495500789846760068940377309e-01};
 
-static constexpr double wd7[8] = {2.2935322010529224963732008059913e-02,
-                                  6.3092092629978553290700663189093e-02,
-                                  1.0479001032225018383987632254189e-01,
-                                  1.4065325971552591874518959051021e-01,
-                                  1.6900472663926790282658342659795e-01,
-                                  1.9035057806478540991325640242055e-01,
-                                  2.0443294007529889241416199923466e-01,
-                                  2.0948214108472782801299917489173e-01};
+static constexpr std::array<double, 8> wd7{
+    2.2935322010529224963732008059913e-02,
+    6.3092092629978553290700663189093e-02,
+    1.0479001032225018383987632254189e-01,
+    1.4065325971552591874518959051021e-01,
+    1.6900472663926790282658342659795e-01,
+    1.9035057806478540991325640242055e-01,
+    2.0443294007529889241416199923466e-01,
+    2.0948214108472782801299917489173e-01};
 
-static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
-                                   2.797053914892766679014677714229e-01,
-                                   3.8183005050511894495036977548818e-01,
-                                   4.1795918367346938775510204081658e-01};
+static constexpr std::array<double, 4> gwd7{
+    1.2948496616886969327061143267787e-01, 2.797053914892766679014677714229e-01,
+    3.8183005050511894495036977548818e-01,
+    4.1795918367346938775510204081658e-01};
 
 /**
  * Get the [x]-th lexicographically ordered set of [p] elements in [dim]
@@ -62,119 +65,139 @@ static constexpr double gwd7[4] = {1.2948496616886969327061143267787e-01,
  * Vol. 3, No. 2, June 1977. User lucaroni from
  * https://stackoverflow.com/questions/561/how-to-use-combinations-of-sets-as-test-data#794
  *
- * @param c output vector
+ * @param[out] c output vector
  * @param dim dimension
  * @param p number of elements
  * @param x x-th lexicographically ordered set
  */
-inline void combination(std::vector<int>& c, const int& dim, const int& p,
-                        const int& x) {
-  size_t r, k = 0;
-  for (std::size_t i = 0; i < p - 1; i++) {
-    c[i] = (i != 0) ? c[i - 1] : 0;
-    do {
+inline void combination(Eigen::Matrix<int, Eigen::Dynamic, 1>& c, const int dim,
+                        const int p, const int x) {
+  int r = 0;
+  int k = 0;
+  c[0] = 0;
+  for (; k < x; r = choose(dim - c[0], p - 1), k = k + r) {
+    c[0]++;
+  }
+  k = k - r;
+  for (int i = 1; i < p - 1; i++) {
+    c[i] = c[i - 1];
+    for (; k < x; r = choose(dim - c[i], p - (i + 1)), k = k + r) {
       c[i]++;
-      r = choose(dim - c[i], p - (i + 1));
-      k = k + r;
-    } while (k < x);
+    }
     k = k - r;
   }
-  if (p > 1) {
-    c[p - 1] = c[p - 2] + x - k;
-  } else {
-    c[0] = x;
-  }
+  c[p - 1] = (p > 1) ? c[p - 2] + x - k : x;
 }
 
 /**
- * Compute a vector [p] of all [dim]-component vectors
+ * Compute a matrix [p] of all [dim]-component vectors
  * with [k] components equal to [lambda] and other components equal to zero.
  *
+ * @param[in,out] p matrix
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
- * @param p vector of vectors
  */
-inline void combos(const int& k, const double& lambda, const int& dim,
-                   std::vector<std::vector<double>>& p) {
-  std::vector<int> c(k);
+template <typename Scalar>
+inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> combos(
+    const int k, const Scalar lambda, const int dim) {
+  Eigen::Matrix<int, Eigen::Dynamic, 1> c(k);
   const auto choose_dimk = choose(dim, k);
-  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-    std::vector<double> temp(dim, 0.0);
-    combination(c, dim, k, i);
-    for (std::size_t j = 0; j != k; j++) {
-      temp[c[j] - 1] = lambda;
+  Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> p
+      = Eigen::MatrixXd::Zero(dim, choose_dimk);
+  for (size_t i = 0; i < choose_dimk; i++) {
+    combination(c, dim, k, i + 1);
+    for (size_t j = 0; j < k; j++) {
+      p.coeffRef(c.coeff(j) - 1, i) = lambda;
     }
-    p.push_back(temp);
   }
+  return p;
 }
 
 /**
- * Helper function for signcombos
- *
- * @param index helper vector
- * @param k number of components equal to lambda
- * @param lambda scalar
- * @param c ordered vector
- * @param temp helper vector
- */
-inline void increment(std::vector<bool>& index, const int& k,
-                      const double& lambda, const std::vector<int>& c,
-                      std::vector<double>& temp) {
-  if (index.size() == 0) {
-    index.push_back(false);
-    for (std::size_t j = 0; j != k; j++) {
-      temp[c[j] - 1] = lambda;
-    }
-    return;
-  }
-  int first_zero = 0;
-  while ((first_zero < index.size()) && index[first_zero]) {
-    first_zero++;
-  }
-  if (first_zero == index.size()) {
-    index.flip();
-    for (std::size_t j = 0; j != index.size(); j++) {
-      temp[c[j] - 1] *= -1;
-    }
-    index.push_back(true);
-    temp[c[index.size() - 1] - 1] = -lambda;
-  } else {
-    for (std::size_t i = 0; i != first_zero + 1; i++) {
-      if (index[i]) {
-        index[i] = 0;
-      } else {
-        index[i] = 1;
-      }
-      temp[c[i] - 1] *= -1;
-    }
-  }
-}
-
-/**
- * Compute a vector [p] of all [dim]-component vectors
+ * Compute a matrix [p] of all [dim]-component vectors
  * with [k] components equal to [±lambda] and other components equal to zero
  * (with all possible signs).
  *
+ * @param[in,out] p matrix
  * @param k number of components equal to lambda
  * @param lambda scalar
  * @param dim dimension
- * @param p vector of vectors
  */
-inline void signcombos(const int& k, const double& lambda, const int& dim,
-                       std::vector<std::vector<double>>& p) {
-  std::vector<int> c(k);
+template <typename Scalar>
+inline Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> signcombos(
+    const int k, const Scalar lambda, const int dim) {
+  Eigen::Matrix<int, Eigen::Dynamic, 1> c(k);
   const auto choose_dimk = choose(dim, k);
-  for (std::size_t i = 1; i != choose_dimk + 1; i++) {
-    std::vector<double> temp(dim, 0.0);
+  Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> p
+      = Eigen::MatrixXd::Zero(dim, choose_dimk * std::pow(2, k));
+  int current_col = 0;
+  const auto inner_iter_len = std::pow(2, k);
+  std::vector<bool> index;
+  index.reserve(inner_iter_len * (choose_dimk + 1));
+  for (int i = 1; i != choose_dimk + 1; i++) {
     combination(c, dim, k, i);
-    std::vector<bool> index;
-    index.clear();
-    for (std::size_t j = 0; j != std::pow(2, k); j++) {
-      increment(index, k, lambda, c, temp);
-      p.push_back(temp);
+    index.push_back(false);
+    p(c.array() - 1.0, current_col).setConstant(lambda);
+    current_col += 1;
+    for (int j = 1; j != inner_iter_len; j++, current_col++) {
+      p.col(current_col) = p.col(current_col - 1);
+      int first_zero
+          = std::distance(std::begin(index),
+                          std::find(std::begin(index), std::end(index), false));
+      const std::size_t index_size = index.size();
+      if (first_zero == index_size) {
+        index.flip();
+        p(c.segment(0, index.size()).array() - 1, current_col).array() *= -1;
+        index.push_back(true);
+        p(c[index.size() - 1] - 1, current_col) = -lambda;
+      } else {
+        for (int h = 0; h != first_zero + 1; h++) {
+          index[h].flip();
+        }
+        p(c.segment(0, first_zero + 1).array() - 1, current_col).array() *= -1;
+      }
     }
+    index.clear();
   }
+  return p;
+}
+
+/**
+ * Compute the points and weights corresponding to a [dim]-dimensional
+ * Genz-Malik cubature rule
+ *
+ * @param[in,out] points points for the last 4 GenzMalik weights
+ * @param[in,out] weights weights for the 5 terms in the GenzMalik rule
+ * @param[in,out] weights_low_deg weights for the embedded lower-degree rule
+ * @param dim dimension
+ */
+
+inline std::tuple<
+    std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4>,
+    Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 4, 1>>
+make_GenzMalik(const int dim) {
+  std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4> points;
+  Eigen::Matrix<double, 5, 1> weights;
+  Eigen::Matrix<double, 4, 1> weights_low_deg;
+  double twopn = std::pow(2, dim);
+  weights[0]
+      = twopn * ((12824.0 - 9120.0 * dim + 400.0 * dim * dim) * 1.0 / 19683.0);
+  weights[1] = twopn * (980.0 / 6561.0);
+  weights[2] = twopn * ((1820.0 - 400.0 * dim) * 1.0 / 19683.0);
+  weights[3] = twopn * (200.0 / 19683.0);
+  weights[4] = 6859.0 / 19683.0;
+  weights_low_deg[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
+  weights_low_deg[1] = twopn * (245.0 / 486);
+  weights_low_deg[2] = twopn * ((265.0 - 100.0 * dim) * 1.0 / 1458.0);
+  weights_low_deg[3] = twopn * (25.0 / 729.0);
+  points[0] = combos(1, std::sqrt(9.0 * 1.0 / 70.0), dim);
+  double l3 = std::sqrt(9.0 * 1.0 / 10.0);
+  points[1] = combos(1, l3, dim);
+  points[2] = signcombos(2, l3, dim);
+  points[3] = signcombos(dim, std::sqrt(9.0 * 1.0 / 19.0), dim);
+  return std::make_tuple(std::move(points), std::move(weights),
+                         std::move(weights_low_deg));
 }
 
 /**
@@ -182,75 +205,46 @@ inline void signcombos(const int& k, const double& lambda, const int& dim,
  * for one dimension.
  *
  * @tparam F type of the integrand
- * @tparam T_pars type of the parameters for the integrand
+ * @tparam T_a type of lower limit of integration
+ * @tparam T_b type of upper limit of integration
+ * @tparam ParsPairT type of the pair of parameters for the integrand
  * @param integrand function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param pars parameters for the integrand
+ * @param pars_pair Pair of parameters for the integrand
  * @return numeric integral of the integrand and error
  */
-template <typename F, typename T_pars>
-std::tuple<double, double> gauss_kronrod(const F& integrand, const double& a,
-                                         const double& b, T_pars& pars) {
-  std::vector<double> c(1, 0);
-  std::vector<double> cp(1, 0);
-  std::vector<double> cm(1, 0);
-  c[0] = 0.5 * (a + b);
-  double delta = 0.5 * (b - a);
-  double f0 = integrand(c, pars);
-  double I = f0 * wd7[7];
-  double Idash = f0 * gwd7[3];
-  for (std::size_t i = 0; i != 7; i++) {
-    double deltax = delta * xd7[i];
-    cp[0] = c[0] + deltax;
-    cm[0] = c[0] - deltax;
-    double fx = integrand(cp, pars);
-    double temp = integrand(cm, pars);
-    fx += temp;
+template <typename F, typename T_a, typename T_b, typename ParsPairT>
+inline auto gauss_kronrod(const F& integrand, const T_a a, const T_b b,
+                          const ParsPairT& pars_pair) {
+  using delta_t = return_type_t<T_a, T_b>;
+  const delta_t c = 0.5 * (a + b);
+  const delta_t delta = 0.5 * (b - a);
+  auto f0 = math::apply([](auto&& integrand, auto&& c,
+                           auto&&... args) { return integrand(c, args...); },
+                        pars_pair, integrand, c);
+
+  auto I = f0 * wd7[7];
+  auto Idash = f0 * gwd7[3];
+  std::array<delta_t, 7> deltax;
+  for (int i = 0; i < 7; ++i) {
+    deltax[i] = delta * xd7[i];
+  }
+  for (auto i = 0; i != 7; i++) {
+    auto fx = math::apply(
+        [](auto&& integrand, auto&& c, auto&& delta, auto&&... args) {
+          return integrand(c + delta, args...) + integrand(c - delta, args...);
+        },
+        pars_pair, integrand, c, deltax[i]);
     I += fx * wd7[i];
     if (i % 2 == 1) {
       Idash += fx * gwd7[i / 2];
     }
   }
-  double V = fabs(delta);
+  delta_t V = fabs(delta);
   I *= V;
   Idash *= V;
-  return std::make_tuple(I, fabs(I - Idash));
-}
-
-/**
- * Compute the points and weights corresponding to a [dim]-dimensional
- * Genz-Malik cubature rule
- *
- * @param dim dimension
- * @param p points for the last 4 GenzMalik weights
- * @param w weights for the 5 terms in the GenzMalik rule
- * @param wd weights for the embedded lower-degree rule
- */
-inline void make_GenzMalik(const int& dim,
-                           std::vector<std::vector<std::vector<double>>>& p,
-                           std::vector<double>& w, std::vector<double>& wd) {
-  double l4 = std::sqrt(9 * 1.0 / 10);
-  double l2 = std::sqrt(9 * 1.0 / 70);
-  double l3 = l4;
-  double l5 = std::sqrt(9 * 1.0 / 19);
-
-  double twopn = std::pow(2, dim);
-
-  w[0] = twopn * ((12824 - 9120 * dim + 400 * dim * dim) * 1.0 / 19683);
-  w[1] = twopn * (980.0 / 6561);
-  w[2] = twopn * ((1820 - 400 * dim) * 1.0 / 19683);
-  w[3] = twopn * (200.0 / 19683);
-  w[4] = 6859.0 / 19683;
-  wd[3] = twopn * (25.0 / 729);
-  wd[2] = twopn * ((265 - 100 * dim) * 1.0 / 1458);
-  wd[1] = twopn * (245.0 / 486);
-  wd[0] = twopn * ((729 - 950 * dim + 50 * dim * dim) * 1.0 / 729);
-
-  combos(1, l2, dim, p[0]);
-  combos(1, l3, dim, p[1]);
-  signcombos(2, l4, dim, p[2]);
-  signcombos(dim, l5, dim, p[3]);
+  return std::make_pair(I, fabs(I - Idash));
 }
 
 /**
@@ -258,118 +252,91 @@ inline void make_GenzMalik(const int& dim,
  * for more than one dimensions.
  *
  * @tparam F type of the integrand
- * @tparam T_pars type of the parameters for the integrand
- * @param integrand function to be integrated
- * @param p
- * @param w
- * @param wd
+ * @tparam GenzMalik type of -----
+ * @tparam T_a type of lower limit of integration
+ * @tparam T_b type of upper limit of integration
+ * @tparam ParsTupleT type of the tuple of parameters for the integrand
+ * @param[out] integrand function to be integrated
+ * @param[in] genz_malik tuple of GenzMalik weights
  * @param dim dimension of the multidimensional integral
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param pars parameters for the integrand
+ * @param pars_tuple Tuple of parameters for the integrand
  * @return numeric integral of the integrand, error, and suggested coordinate to
  * subdivide next
  */
-template <typename F, typename T_pars>
-std::tuple<double, double, int> integrate_GenzMalik(
-    const F& integrand, std::vector<std::vector<std::vector<double>>>& p,
-    std::vector<double>& w, std::vector<double>& wd, const int& dim,
-    const std::vector<double>& a, const std::vector<double>& b, T_pars& pars) {
-  std::vector<double> c(dim, 0);
-  std::vector<double> deltac(dim);
-
-  for (std::size_t i = 0; i != dim; i++) {
+template <typename F, typename GenzMalik, typename T_a, typename T_b,
+          typename ParsTupleT>
+inline auto integrate_GenzMalik(const F& integrand, const GenzMalik& genz_malik,
+                                const int dim,
+                                const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
+                                const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
+                                const ParsTupleT& pars_tuple) {
+  auto&& points = std::get<0>(genz_malik);
+  auto&& weights = std::get<1>(genz_malik);
+  auto&& weights_low_deg = std::get<2>(genz_malik);
+  using delta_t = return_type_t<T_a, T_b>;
+  Eigen::Matrix<delta_t, Eigen::Dynamic, 1> c(dim);
+  Eigen::Matrix<delta_t, Eigen::Dynamic, 1> deltac(dim);
+  using Scalar = return_type_t<ParsTupleT, delta_t>;
+  for (auto i = 0; i != dim; i++) {
+    if (a[i] == b[i]) {
+      return std::make_tuple(Scalar(0.0), Scalar(0.0), 0);
+    }
     c[i] = (a[i] + b[i]) / 2;
+    deltac[i] = (b[i] - a[i]) / 2.0;
   }
-
-  for (std::size_t i = 0; i != dim; i++) {
-    deltac[i] = fabs(b[i] - a[i]) / 2;
-  }
-  double v = 1.0;
+  delta_t v = 1.0;
   for (std::size_t i = 0; i != dim; i++) {
     v *= deltac[i];
   }
-
-  if (v == 0.0) {
-    return std::make_tuple(0.0, 0.0, 0);
+  Eigen::Matrix<Scalar, 5, 1> f = Eigen::Matrix<Scalar, 5, 1>::Zero();
+  f.coeffRef(0)
+      = math::apply([](auto&& integrand, auto&& c,
+                       auto&&... args) { return integrand(c, args...); },
+                    pars_tuple, integrand, c);
+  Eigen::Matrix<Scalar, Eigen::Dynamic, 1> divdiff(dim);
+  for (auto i = 0; i != dim; i++) {
+    auto p2 = deltac.cwiseProduct(points[0].col(i));
+    auto f2i = math::apply(
+        [](auto&& integrand, auto&& c, auto&& p2, auto&&... args) {
+          return integrand(c + p2, args...) + integrand(c - p2, args...);
+        },
+        pars_tuple, integrand, c, p2);
+    auto p3 = deltac.cwiseProduct(points[1].col(i));
+    auto f3i = math::apply(
+        [](auto&& integrand, auto&& c, auto&& p3, auto&&... args) {
+          return integrand(c + p3, args...) + integrand(c - p3, args...);
+        },
+        pars_tuple, integrand, c, p3);
+    f.coeffRef(1) += f2i;
+    f.coeffRef(2) += f3i;
+    divdiff[i] = fabs(f3i + 12.0 * f.coeff(0) - 7.0 * f2i);
+  }
+  for (auto i = 0; i != points[2].cols(); i++) {
+    f.coeffRef(3) += math::apply(
+        [](auto&& integrand, auto&& cc, auto&&... args) {
+          return integrand(cc, args...);
+        },
+        pars_tuple, integrand, c + deltac.cwiseProduct(points[2].col(i)));
+  }
+  for (auto i = 0; i != points[3].cols(); i++) {
+    f.coeffRef(4) += math::apply(
+        [](auto&& integrand, auto&& cc, auto&&... args) {
+          return integrand(cc, args...);
+        },
+        pars_tuple, integrand, c + deltac.cwiseProduct(points[3].col(i)));
   }
 
-  double f1 = integrand(c, pars);
-  double f2 = 0.0;
-  double f3 = 0.0;
-  double twelvef1 = 12 * f1;
-
-  double maxdivdiff = 0.0;
-  std::vector<double> divdiff(dim);
-  std::vector<double> p2(dim);
-  std::vector<double> p3(dim);
-  std::vector<double> cc(dim, 0);
-
-  for (std::size_t i = 0; i != dim; i++) {
-    for (std::size_t j = 0; j != dim; j++) {
-      p2[j] = deltac[j] * p[0][i][j];
-    }
-
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] + p2[j];
-    }
-    double f2i = integrand(cc, pars);
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] - p2[j];
-    }
-    double temp = integrand(cc, pars);
-    f2i += temp;
-
-    for (std::size_t j = 0; j != dim; j++) {
-      p3[j] = deltac[j] * p[1][i][j];
-    }
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] + p3[j];
-    }
-    double f3i = integrand(cc, pars);
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] - p3[j];
-    }
-    temp = integrand(cc, pars);
-    f3i += temp;
-    f2 += f2i;
-    f3 += f3i;
-    divdiff[i] = fabs(f3i + twelvef1 - 7 * f2i);
-  }
-  std::vector<double> p4(dim);
-  double f4 = 0.0;
-  for (std::size_t i = 0; i != p[2].size(); i++) {
-    for (std::size_t j = 0; j != dim; j++) {
-      p4[j] = deltac[j] * p[2][i][j];
-    }
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] + p4[j];
-    }
-    double temp = integrand(cc, pars);
-    f4 += temp;
-  }
-  double f5 = 0.0;
-  std::vector<double> p5(dim);
-  for (std::size_t i = 0; i != p[3].size(); i++) {
-    for (std::size_t j = 0; j != dim; j++) {
-      p5[j] = deltac[j] * p[3][i][j];
-    }
-
-    for (std::size_t j = 0; j != dim; j++) {
-      cc[j] = c[j] + p5[j];
-    }
-    double temp = integrand(cc, pars);
-    f5 += temp;
-  }
-
-  double I = v * (w[0] * f1 + w[1] * f2 + w[2] * f3 + w[3] * f4 + w[4] * f5);
-  double Idash = v * (wd[0] * f1 + wd[1] * f2 + wd[2] * f3 + wd[3] * f4);
-  double E = fabs(I - Idash);
+  Scalar I = v * weights.dot(f);
+  Scalar Idash = v * weights_low_deg.dot(f.template head<4>());
+  Scalar E = fabs(I - Idash);
 
   int kdivide = 0;
-  double deltaf = E / (std::pow(10, dim) * v);
-  for (std::size_t i = 0; i != dim; i++) {
-    double delta = divdiff[i] - maxdivdiff;
+  Scalar deltaf = E / (std::pow(10, dim) * v);
+  Scalar maxdivdiff = 0.0;
+  for (auto i = 0; i != dim; i++) {
+    Scalar delta = divdiff[i] - maxdivdiff;
     if (delta > deltaf) {
       kdivide = i;
       maxdivdiff = divdiff[i];
@@ -380,148 +347,168 @@ std::tuple<double, double, int> integrate_GenzMalik(
   return std::make_tuple(I, E, kdivide);
 }
 
+/**
+ * Compute the integral of the function to be integrated (integrand) from a to b
+ * for more than one dimensions.
+ *
+ * @tparam T_a Type of return_type_t 1
+ * @tparam T_b Type of return_type_t 2
+ * @param a lower bounds of the integral
+ * @param b upper bounds of the integral
+ * @param I value of the integral
+ * @param kdivide number of subdividing the integration volume
+ */
+template <typename T_a, typename T_b>
 struct Box {
-  Box(const std::vector<double>& a, const std::vector<double>& b, double I,
-      double err, int kdivide)
-      : a(a), b(b), I(I), E(err), kdiv(kdivide) {}
-  bool operator<(const Box& box) const { return E < box.E; }
-  std::vector<double> a;
-  std::vector<double> b;
-  double I;
-  double E;
-  int kdiv;
+  template <typename Vec1, typename Vec2>
+  Box(Vec1&& a, Vec2&& b, return_type_t<T_a, T_b> I, int kdivide)
+      : a_(std::forward<Vec1>(a)),
+        b_(std::forward<Vec2>(b)),
+        I_(I),
+        kdiv_(kdivide) {}
+  Eigen::Matrix<T_a, Eigen::Dynamic, 1> a_;
+  Eigen::Matrix<T_b, Eigen::Dynamic, 1> b_;
+  return_type_t<T_a, T_b> I_;
+  int kdiv_;
 };
 
 }  // namespace internal
 
 /**
- * Compute the dim-dimensional integral of the function \f$f\f$ from \f$a\f$ to
- \f$b\f$ within
+ * Compute the [dim]-dimensional integral of the function \f$f\f$ from \f$a\f$
+ to \f$b\f$ within
  * specified relative and absolute tolerances or maximum number of evaluations.
  * \f$a\f$ and \f$b\f$ can be finite or infinite and should be given as vectors.
  *
- * The prototype for \f$f\f$ is:
- \verbatim
-   template <typename T_x, typename T_p>
-   stan::return_type_t<T_x, T_p> f(const T_x& x, const T_p& p) {
-   using T_x_ref = stan::ref_type_t<T_x>;
-   T_x_ref x_ref = x;
-   stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-   my_params* pars = static_cast<my_params*>(p);
-   type_1 var_1 = (pars->par_1);
-   return ;
-   }
- \endverbatim
- *
- * The parameters can be handed over to f as a struct:
- \verbatim
-  struct my_params {
-  type_1 par_1;
-  type_2 par_2;
-  };
- \endverbatim
- *
  * @tparam F Type of f
- * @tparam T_pars Type of paramete-struct
+ * @tparam T_a Type of lower limit of integration
+ * @tparam T_b Type of upper limit of integration
+ * @tparam ParsTuple Type of parameter-tuple
+ * @tparam TAbsErr Type of absolute error
+ * @tparam TRelErr Type of relative error
  *
  * @param integrand a functor with signature given above
- * @param pars parameters to be passed to f as a struct
+ * @param pars parameters to be passed to f as a tuple
  * @param dim dimension of the integral
  * @param a lower limit of integration as vector
  * @param b upper limit of integration as vector
- * @param maxEval maximal number of evaluations
+ * @param max_eval maximal number of evaluations
  * @param reqAbsError absolute error
  * @param reqRelError relative error as vector
- * @param val correct value of integral
  *
- * @return The value of the dim-dimensional integral of \f$f\f$ from \f$a\f$ to
- \f$b\f$.
+ * @return The value of the [dim]-dimensional integral of \f$f\f$ from \f$a\f$
+ to \f$b\f$.
  * @throw std::domain_error no errors will be thrown.
  */
-template <typename F, typename T_pars>
-double hcubature(const F& integrand, const T_pars& pars, const int& dim,
-                 const std::vector<double>& a, const std::vector<double>& b,
-                 int& maxEval, const double& reqAbsError,
-                 const double& reqRelError) {
-  if (maxEval <= 0) {
-    maxEval = 1000000;
-  }
+template <typename F, typename T_a, typename T_b, typename ParsTuple,
+          typename TAbsErr, typename TRelErr>
+inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
+                      const Eigen::Matrix<T_a, Eigen::Dynamic, 1>& a,
+                      const Eigen::Matrix<T_b, Eigen::Dynamic, 1>& b,
+                      const int max_eval, const TAbsErr reqAbsError,
+                      const TRelErr reqRelError) {
+  using Scalar = return_type_t<ParsTuple, T_a, T_b, TAbsErr, TRelErr>;
+  using eig_vec_a = Eigen::Matrix<T_a, Eigen::Dynamic, 1>;
+  using eig_vec_b = Eigen::Matrix<T_b, Eigen::Dynamic, 1>;
+  using namespace boost::math::quadrature;
 
-  double result, err;
-  int kdivide = 0;
+  const int maxEval = max_eval <= 0 ? 1000000 : max_eval;
+  Scalar result;
+  Scalar err;
+  auto kdivide = 0;
+  std::tuple<
+      std::array<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>, 4>,
+      Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 4, 1>>
+      genz_malik;
 
-  std::vector<std::vector<std::vector<double>>> p(4);
-  std::vector<double> w_five(5);
-  std::vector<double> wd_four(4);
+  auto gk_lambda = [&integrand, &pars](auto&& c) {
+    return stan::math::apply(
+        [](auto&& integrand, auto&& c, auto&&... args) {
+          return integrand(c, args...);
+        },
+        pars, integrand, c);
+  };
 
   if (dim == 1) {
     std::tie(result, err)
         = internal::gauss_kronrod(integrand, a[0], b[0], pars);
   } else {
-    internal::make_GenzMalik(dim, p, w_five, wd_four);
-    std::tie(result, err, kdivide) = internal::integrate_GenzMalik(
-        integrand, p, w_five, wd_four, dim, a, b, pars);
+    genz_malik = internal::make_GenzMalik(dim);
+    std::tie(result, err, kdivide)
+        = internal::integrate_GenzMalik(integrand, genz_malik, dim, a, b, pars);
   }
-  int numevals
+  auto numevals
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
-  int evals_per_box = numevals;
-  double error = err;
-  double val = result;
+
+  auto evals_per_box = numevals;
+  Scalar error = err;
+  Scalar val = result;
 
   if ((error <= fmax(reqRelError * fabs(val), reqAbsError))
       || (numevals >= maxEval)) {
-    return val;
+    return result;
   }
-  std::priority_queue<internal::Box> ms;
-  internal::Box box(a, b, result, err, kdivide);
-  ms.push(box);
-
   numevals += 2 * evals_per_box;
+  using box_t = internal::Box<T_a, T_b>;
+  std::vector<box_t> ms;
+  ms.reserve(numevals);
+  ms.emplace_back(a, b, result, kdivide);
+  auto get_largest_box_idx = [](auto&& box_vec) {
+    auto max_it = std::max_element(box_vec.begin(), box_vec.end());
+    return std::distance(box_vec.begin(), max_it);
+  };
+  std::vector<Scalar> err_vec;
+  err_vec.reserve(numevals);
+  err_vec.push_back(err);
   while ((numevals < maxEval)
-         && (error > max(reqRelError * fabs(val), reqAbsError))
-         && std::isfinite(val)) {
-    internal::Box box = ms.top();
-    ms.pop();
-
-    double w = (box.b[box.kdiv] - box.a[box.kdiv]) / 2;
-    std::vector<double> ma(box.a);
-
-    ma[box.kdiv] += w;
-    std::vector<double> mb(box.b);
-    mb[box.kdiv] -= w;
-
-    double result_1, result_2, err_1, err_2;
-    double kdivide_1 = math::NOT_A_NUMBER;
-    double kdivide_2 = math::NOT_A_NUMBER;
-
+         && (error > fmax(reqRelError * fabs(val), reqAbsError))
+         && fabs(val) < INFTY) {
+    auto err_idx = get_largest_box_idx(err_vec);
+    auto&& box = ms[err_idx];
+    auto w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
+    eig_vec_a ma = Eigen::Map<const eig_vec_a>(box.a_.data(), box.a_.size());
+    ma[box.kdiv_] += w;
+    eig_vec_b mb = Eigen::Map<const eig_vec_b>(box.b_.data(), box.b_.size());
+    mb[box.kdiv_] -= w;
+    int kdivide_1{0};
+    int kdivide_2{0};
+    Scalar result_1;
+    Scalar result_2;
+    Scalar err_1;
+    Scalar err_2;
     if (dim == 1) {
       std::tie(result_1, err_1)
-          = internal::gauss_kronrod(integrand, ma[0], box.b[0], pars);
+          = internal::gauss_kronrod(integrand, ma[0], box.b_[0], pars);
       std::tie(result_2, err_2)
-          = internal::gauss_kronrod(integrand, box.a[0], mb[0], pars);
+          = internal::gauss_kronrod(integrand, box.a_[0], mb[0], pars);
     } else {
       std::tie(result_1, err_1, kdivide_1) = internal::integrate_GenzMalik(
-          integrand, p, w_five, wd_four, dim, ma, box.b, pars);
+          integrand, genz_malik, dim, ma, box.b_, pars);
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
-          integrand, p, w_five, wd_four, dim, box.a, mb, pars);
+          integrand, genz_malik, dim, box.a_, mb, pars);
     }
-    internal::Box box1(ma, box.b, result_1, err_1, kdivide_1);
-    ms.push(box1);
-    internal::Box box2(box.a, mb, result_2, err_2, kdivide_2);
-    ms.push(box2);
-    val += box1.I + box2.I - box.I;
-    error += box1.E + box2.E - box.E;
+    box_t box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
+    box_t box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
+    result += result_1 + result_2 - box.I_;
+    err += err_1 + err_2 - err_vec[err_idx];
+    ms[err_idx].I_ = 0;
+    err_vec[err_idx] = 0;
+    ms.push_back(std::move(box1));
+    ms.push_back(std::move(box2));
+    err_vec.push_back(err_1);
+    err_vec.push_back(err_2);
     numevals += 2 * evals_per_box;
   }
-  val = 0.0;
-  error = 0.0;
+  result = 0.0;
+  err = 0.0;
 
-  for (; !ms.empty(); ms.pop()) {
-    internal::Box box = ms.top();
-    val += box.I;
-    error += box.E;
+  for (auto&& box : ms) {
+    result += box.I_;
   }
-  return val;
+  for (auto err_i : err_vec) {
+    err += err_i;
+  }
+  return result;
 }  // hcubature
 
 }  // namespace math
