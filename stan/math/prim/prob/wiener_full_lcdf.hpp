@@ -30,8 +30,8 @@ namespace internal {
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_sw, typename T_wildcard, typename T_err>
 inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
-                                   const T_sw& sw, T_wildcard wildcard,
-                                   T_err log_error) {
+                                   const T_sw& sw, T_wildcard&& wildcard,
+                                   T_err&& log_error) {
   auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
   auto high = w + sw / 2.0;
@@ -138,7 +138,7 @@ inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff,
  * @return Wiener7 density or gradient calculated by integration
  */
 template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradW7 = GradientCalc::OFF,
-          GradientCalc GradSV = GradientCalc::OFF, GradientCalc GradSW_ord = GradientCalc::OFF,
+          GradientCalc GradSV = GradientCalc::OFF, GradientCalc GradSW = GradientCalc::OFF,
           GradientCalc GradT = GradientCalc::OFF, typename Wiener7FunctorT, typename T_err, typename... TArgs>
 inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                               T_err&& hcubature_err, TArgs&&... args) {
@@ -156,15 +156,13 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 			const auto temp = (sv != 0) ? square(x_vec[0]) : 0;
 			const auto factor = (sv != 0) ? x_vec[0] / (1 - temp) : 0;
 			const auto new_v = (sv != 0) ? v + sv * factor : v;
-			const auto sv_val = sv;
-			const auto sw_val = sw;
-			const auto new_w = (sv_val != 0)
+			const auto new_w = (sv != 0)
 									 ? ((sw != 0) ? w + sw * (x_vec[1] - 0.5) : w)
-									 : ((sw_val != 0) ? w + sw * (x_vec[0] - 0.5) : w);
+									 : ((sw != 0) ? w + sw * (x_vec[0] - 0.5) : w);
 			const auto new_t0
-				= (sv_val != 0) ? ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[2] : t0)
+				= (sv != 0) ? ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[2] : t0)
 											 : ((st0 != 0) ? t0 + st0 * x_vec[1] : t0))
-								: ((sw_val != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
+								: ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
 												 : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0));
 			if (y - new_t0 <= 0) {
 			  return ret_t(0.0);
@@ -178,7 +176,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 											 : 0;
 			  const auto factor_sv = GradSV ? factor : 1;
 			  const auto factor_sw
-				  = GradSW_ord ? ((sv_val != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5)) : 1;
+				  = GradSW ? ((sv != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5)) : 1;
 			  const auto integrand
 				  = Distribution ? dist
 						: GradT ? 
@@ -187,7 +185,6 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 						: factor_sv * factor_sw
 									* conditionally_grad_sw<GradientCalc::OFF>(
                 wiener7_functor, y - new_t0, a, new_v, new_w, dist, sw, lerr); 
-//GradSW is always false for the cdf functions, instead of sv the cdf functions need dist.
 			  return ret_t(integrand * exp(temp2));
 			}
 		},
@@ -356,7 +353,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_partials_return lcdf = 0.0;
   auto ops_partials = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref,
                                                v_ref, sv_ref, sw_ref, st0_ref);
-  ret_t result = 0;
+  ret_t result = 0.0;
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
@@ -396,7 +393,9 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_cdf + LOG_TWO + 1;
+		
     using internal::GradientCalc;
+	
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
                                         log_error_absolute - LOG_TWO);
