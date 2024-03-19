@@ -150,6 +150,36 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * time \c y.
  * @throw std::domain_error if \c 1-sw/2 is smaller than or equal to \c w.
  * @throw std::domain_error if \c sw/2 is larger than or equal to \c w.
+ 
+ 
+ **References**
+ * - Blurton, S. P., Kesselmeier, M., & Gondan, M. (2017). The first-passage
+ * time distribution for the diffusion model with variable drift.
+ * *Journal of Mathematical Psychology, 76*, 7–12.
+ * https://doi.org/10.1016/j.jmp.2016.11.003
+ * - Foster, K., & Singmann, H. (2021). Another Approximation of the
+ * First-Passage
+ * Time Densities for the Ratcliff Diffusion Decision Model.
+ * *arXiv preprint arXiv:2104.01902*
+ * - Gondan, M., Blurton, S. P., & Kesselmeier, M. (2014). Even faster and even
+ * more accurate first-passage time densities and distributions for the Wiener
+ * diffusion model. *Journal of Mathematical Psychology, 60*, 20–22.
+ * https://doi.org/10.1016/j.jmp.2014.05.002
+ * - Hartmann, R., & Klauer, K. C. (2021). Partial derivatives for the
+ * first-passage time distribution in Wiener diffusion models.
+ * *Journal of Mathematical Psychology, 103*, 102550.
+ * https://doi.org/10.1016/j.jmp.2021.102550
+ * - Henrich, F., Hartmann, R., Pratz, V., Voss, A., & Klauer, K.C. (2023).
+ * The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian
+ * Analyses. *Behavior Research Methods*.
+ * https://doi.org/10.3758/s13428-023-02179-1 
+ * - Linhart, J. M. (2008). Algorithm 885: Computing the Logarithm of the 
+ * Normal Distribution. *ACM Transactions on Mathematical Software*.
+ * http://doi.acm.org/10.1145/1391989.1391993
+ * - Navarro, D. J., & Fuss, I. G. (2009). Fast and accurate calculations for
+ * first-passage times in Wiener diffusion models.
+ * *Journal of Mathematical Psychology, 53*(4), 222–230.
+ * https://doi.org/10.1016/j.jmp.2009.02.003
  */
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
