@@ -405,7 +405,6 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v_value,
                            const T_w& w_value, const T_sv& sv,
                            T_err&& err = log(1e-12)) noexcept {
   const auto two_log_a = 2 * log(a);
-  const auto log_y_asq = log(y) - two_log_a;
   const auto error_term
       = wiener5_compute_error_term(y, a, v_value, w_value, sv);
   const auto w = 1.0 - w_value;
