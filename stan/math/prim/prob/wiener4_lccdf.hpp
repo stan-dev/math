@@ -177,10 +177,11 @@ inline auto wiener_prob_grad_v(const T_a& a, const T_v& v,
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_grad_w(const T_a& a, const T_v& v_value,
                                  const T_w& w_value) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
   if (fabs(v) == 0.0) {
-    return 1 / (1.0 - w);
+    return ret_t(1 / (1.0 - w));
   }
 
   if (v < 0) {
