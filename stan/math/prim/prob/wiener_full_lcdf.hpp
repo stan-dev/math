@@ -44,86 +44,6 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const 
 }
 
 /**
- * Helper function for agnostically calling wiener5 functions
- * (to be integrated over) or directly calling wiener7 functions,
- * accounting for the different number of arguments.
- *
- * Specialisation for wiener5 functions
- *
- * @tparam GradSW Whether the wiener7 gradient function is passed
- * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
- * @tparam T_a type of boundary separation
- * @tparam T_v type of drift rate
- * @tparam T_w type of relative starting point
- * @tparam T_sv type of inter-trial variability in v
- * @tparam T_sw type of inter-trial variability in w
- * @tparam T_cdf type of CDF
- * @tparam T_err type of log error tolerance
- *
- * @param functor Gradient/density functor to apply
- * @param y A scalar variable; the reaction time in seconds
- * @param a The boundary separation
- * @param v The drift rate
- * @param w The relative starting point
- * @param t0 The non-decision time
- * @param sv The inter-trial variability of the drift rate
- * @param sw The inter-trial variability of the relative starting point
- * @param cdf The value of the distribution
- * @param log_error The log error tolerance
- * @return Functor applied to arguments
- */
-template <GradientCalc GradSW, typename F, typename T_y, typename T_a,
-          typename T_v, typename T_w, typename T_sv, typename T_sw, typename T_cdf,
-          typename T_err, std::enable_if_t<!GradSW>* = nullptr>
-inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff,
-                                        T_a&& a, T_v&& v, T_w&& w, T_sv&& sv,
-                                        T_sw&& sw, T_cdf&& cdf,
-                                        T_err&& log_error) {
-  return functor(y_diff, a, v, w, cdf, log_error);
-}
-
-/**
- * Helper function for agnostically calling wiener5 functions
- * (to be integrated over) or directly calling wiener7 functions,
- * accounting for the different number of arguments.
- *
- * Specialisation for wiener7 functions
- *
- * @tparam GradSW Whether the wiener7 gradient function is passed
- * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
- * @tparam T_a type of boundary separation
- * @tparam T_v type of drift rate
- * @tparam T_w type of relative starting point
- * @tparam T_sv type of inter-trial variability in v
- * @tparam T_sw type of inter-trial variability in w
- * @tparam T_cdf type of CDF
- * @tparam T_err type of log error tolerance
- *
- * @param functor Gradient/density functor to apply
- * @param y A scalar variable; the reaction time in seconds
- * @param a The boundary separation
- * @param v The drift rate
- * @param w The relative starting point
- * @param t0 The non-decision time
- * @param sv The inter-trial variability of the drift rate
- * @param sw The inter-trial variability of the relative starting point
- * @param cdf The value of the distribution
- * @param log_error The log error tolerance
- * @return Functor applied to arguments
- */
-template <GradientCalc GradSW, typename F, typename T_y, typename T_a,
-          typename T_v, typename T_w, typename T_sv, typename T_sw, typename T_cdf,
-          typename T_err, std::enable_if_t<GradSW>* = nullptr>
-inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff,
-                                        T_a&& a, T_v&& v, T_w&& w, T_sv&& sv,
-                                        T_sw&& sw, T_cdf&& cdf,
-                                        T_err&& log_error) {
-  return functor(y_diff, a, v, w, sw, cdf, log_error);
-}
-
-/**
  * Implementation function for preparing arguments and functor to be passed
  * to the hcubature() function for calculating wiener7 parameters via
  * integration
@@ -180,7 +100,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
 			  const auto integrand
 				  = Distribution ? dist
 						: GradT ? 
-						internal::conditionally_grad_sw<GradientCalc::OFF>(
+						conditionally_grad_sw<GradientCalc::OFF>( //deleted internal::
 							  wiener7_functor, y - new_t0, a, v, new_w, sv, sw, lerr)
 						: factor_sv * factor_sw
 									* conditionally_grad_sw<GradientCalc::OFF>(

@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 
+
 namespace stan {
 namespace math {
 namespace internal {
@@ -37,8 +38,8 @@ inline auto wiener7_ccdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const
   auto high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
 
-  const auto lower_value = wiener4_ccdf(y, a, v, low, log_error);
-  const auto upper_value = wiener4_ccdf(y, a, v, high, log_error);
+  const auto lower_value = wiener4_ccdf(y, a, v, low, wildcard, log_error);
+  const auto upper_value = wiener4_ccdf(y, a, v, high, wildcard, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
@@ -223,8 +224,6 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return sw_value = sw_vec.val(i);
     const T_partials_return st0_value = st0_vec.val(i);
     const int dim = (sv_value != 0) + (sw_value != 0) + (st0_value != 0);
-	
-	
     check_positive(function_name,
                    "(Inter-trial variability in drift rate) + "
                    "(Inter-trial variability in A-priori bias) + "
@@ -272,8 +271,8 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto params_dt7 = std::make_tuple(
         y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
         st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
-    const auto deriv_t_7
-        = -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+    const T_partials_return deriv_t_7
+        = -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
               [&](auto&&... args) {
                 return internal::wiener5_density<GradientCalc::ON>(args...);
               },
@@ -283,7 +282,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
           / ccdf;
 
     // computation of derivatives and precision checks
-    ret_t deriv;
+    T_partials_return deriv;
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] = deriv_t_7;
     }
@@ -328,7 +327,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_sv>::value) {
       if (sv_value == 0) {
-        partials<5>(ops_partials)[i] = 0;
+        partials<5>(ops_partials)[i] = 0.0;
       } else {
         partials<5>(ops_partials)[i]
             = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
@@ -344,21 +343,19 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_sw>::value) {
       if (sw_value == 0) {
-        partials<6>(ops_partials)[i] = 0;
+        partials<6>(ops_partials)[i] = 0.0;
       } else {
         if (st0_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<5, 0>(
+          deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF, GradientCalc::ON>(
               [](auto&&... args) {
-                return internal::conditionally_grad_sw_cdf<GradientCalc::ON>(
-                    internal::wiener7_ccdf_grad_sw, args...);
+                return internal::wiener7_ccdf_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
-              sv_value, sw_value, 0,
-              log_error_absolute
+			  sw_value, 0.0, log_error_absolute
                   - LOG_TWO);  // added wildcard 0. delete later somehow
           deriv = deriv / ccdf - 1 / sw_value;
         } else {
-          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
                       [&](auto&&... args) {
                         return internal::wiener4_ccdf_grad_w(args...);
                       },
@@ -372,18 +369,18 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_st0>::value) {
       if (st0_value == 0) {
-        partials<7>(ops_partials)[i] = 0;
+        partials<7>(ops_partials)[i] = 0.0;
       } else if (y_value - (t0_value + st0_value) <= 0) {
         partials<7>(ops_partials)[i] = -1 / st0_value;
       } else {
         const auto t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<4, 0>(
+          deriv = internal::estimate_with_err_check<5, 0>(
               [](auto&&... args) {
                 return internal::wiener4_ccdf(args...);
               },
               log_error_derivatives + log(st0_value), y_value - t0_st0, a_value,
-              v_value, w_value,
+              v_value, w_value, 0.0,
               log_error_absolute
                   - LOG_TWO);  // added wildcard 0. delete later somehow
           deriv = deriv / st0_value / ccdf - 1 / st0_value;
@@ -391,7 +388,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
           const int dim_st = (sv_value != 0) + (sw_value != 0);
           const auto new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
-              y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value, 0,
+			  y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value, 0.0,
               new_error);  // added wildcard 0. delete later somehow
           deriv = internal::wiener7_integrate_cdf(
               [&](auto&&... args) {

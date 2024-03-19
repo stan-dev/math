@@ -22,17 +22,18 @@ namespace internal {
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob(const T_a& a, const T_v& v_value,
                           const T_w& w_value) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
   if (fabs(v) == 0.0) {
-    return log1p(-w);
+    return ret_t(log1p(-w));
   }
 
   const auto exponent = -2.0 * v * a * (1.0 - w);
   if (exponent < 0) {
-    return log1m_exp(exponent) - log_diff_exp(2 * v * a * w, exponent);
+    return ret_t(log1m_exp(exponent) - log_diff_exp(2 * v * a * w, exponent));
   } else {
-    return log1m_exp(-exponent) - log1m_exp(2 * v * a);
+    return ret_t(log1m_exp(-exponent) - log1m_exp(2 * v * a));
   }
 }
 
@@ -59,7 +60,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
   const auto w = 1 - w_value;
 
   if (fabs(v) == 0.0) {
-    return (-w);
+    return ret_t(-w);
   }
   if (v < 0) {
     const auto exponent_with_1mw = 2.0 * v * a * (1.0 - w);
@@ -68,7 +69,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
 
     if (((exponent_with_1mw >= exponent_m1) || (exponent_with_w >= exponent_m1))
         || (exponent >= exponent_m1)) {
-      return (-w);
+      return ret_t(-w);
     }
     ans = LOG_TWO + exponent_with_1mw - log1m_exp(exponent_with_1mw);
     const auto diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
@@ -84,7 +85,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
     const auto exponent_with_1mw = -2.0 * v * a * (1.0 - w);
     const auto exponent = (-2 * a * v);
     if ((exponent_with_1mw >= exponent_m1) || (exponent >= exponent_m1)) {
-      return (-w);
+      return ret_t(-w);
     }
     ans = LOG_TWO - log1m_exp(exponent_with_1mw);
     const auto diff_term
@@ -101,7 +102,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
   if (fabs(ans) < INFTY) {
     return ans;
   } else {
-    return (ret_t(NEGATIVE_INFTY));
+    return ret_t(NEGATIVE_INFTY);
   }
   return ans;
 }
