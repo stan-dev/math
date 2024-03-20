@@ -142,11 +142,11 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues enabledForFailure: true, tools:
-                        [cppLint(),
-                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    recordIssues( 
+                        enabledForFailure: true, 
+                        tools: [cppLint(),groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    )
                     deleteDir()
-
                 }
             }
         }
@@ -574,7 +574,10 @@ pipeline {
     post {
         always {
             node("linux") {
-                recordIssues enabledForFailure: false, tool: clang()
+                recordIssues(
+                    enabledForFailure: false, 
+                    tool: clang()
+                )
             }
         }
         success {
