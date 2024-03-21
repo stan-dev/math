@@ -134,6 +134,7 @@
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/head.hpp>
+#include <stan/math/prim/fun/hypergeometric_1F0.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F2.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
