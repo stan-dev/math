@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 
 namespace stan {
@@ -41,7 +41,7 @@ template <bool propto, typename T_n_cl, typename T_location_cl,
                                         T_precision_cl>* = nullptr>
 inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
     const T_n_cl& n, const T_location_cl& mu, const T_precision_cl& phi) {
-  static const char* function = "neg_binomial_2_lpmf(OpenCL)";
+  static constexpr const char* function = "neg_binomial_2_lpmf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_n_cl, T_location_cl, T_precision_cl>;
   using std::isfinite;
@@ -106,14 +106,13 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(mu_col), decltype(phi_col)> ops_partials(
-      mu_col, phi_col);
+  auto ops_partials = make_partials_propagator(mu_col, phi_col);
 
   if (!is_constant<T_location_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(mu_deriv_cl);
+    partials<0>(ops_partials) = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_precision_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(phi_deriv_cl);
+    partials<1>(ops_partials) = std::move(phi_deriv_cl);
   }
   return ops_partials.build(logp);
 }

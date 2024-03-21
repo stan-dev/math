@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <limits>
 
 namespace stan {
@@ -27,7 +27,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   using T_n_ref = ref_type_t<T_n>;
   using T_mu_ref = ref_type_t<T_location>;
   using T_phi_ref = ref_type_t<T_precision>;
-  static const char* function = "neg_binomial_2_cdf";
+  static constexpr const char* function = "neg_binomial_2_cdf";
   check_consistent_sizes(function, "Random variable", n, "Location parameter",
                          mu, "Precision Parameter", phi);
 
@@ -44,7 +44,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_mu_ref, T_phi_ref> ops_partials(mu_ref, phi_ref);
+  auto ops_partials = make_partials_propagator(mu_ref, phi_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -101,11 +101,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     P *= P_i;
 
     if (!is_constant_all<T_location>::value) {
-      ops_partials.edge1_.partials_[i] -= inc_beta_ddz_i * phi_dbl;
+      partials<0>(ops_partials)[i] -= inc_beta_ddz_i * phi_dbl;
     }
 
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
+      partials<1>(ops_partials)[i]
           += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
                           digamma_sum_vec[i])
                  / P_i
@@ -115,13 +115,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
   if (!is_constant_all<T_location>::value) {
     for (size_t i = 0; i < stan::math::size(mu); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      partials<0>(ops_partials)[i] *= P;
     }
   }
 
   if (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < size_phi; ++i) {
-      ops_partials.edge2_.partials_[i] *= P;
+      partials<1>(ops_partials)[i] *= P;
     }
   }
 

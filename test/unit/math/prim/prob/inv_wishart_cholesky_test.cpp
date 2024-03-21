@@ -80,7 +80,7 @@ TEST(ProbDistributionsInvWishartCholesky, dof_0) {
   MatrixXd L_Y = Y.llt().matrixL();
   MatrixXd L_S = Sigma.llt().matrixL();
 
-  unsigned int dof = std::numeric_limits<double>::quiet_NaN();
+  double dof = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S),
                std::domain_error);
 }

@@ -26,9 +26,7 @@ namespace math {
  */
 template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
-mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
+inline auto mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
@@ -36,21 +34,18 @@ mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
                        "triangular view must be Eigen::Lower or Eigen::Upper",
                        "", "");
   }
+  using T_return = return_type_t<EigMat1, EigMat2>;
+  using ret_type = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
   if (A.rows() == 0) {
-    return {b.rows(), 0};
+    return ret_type(b.rows(), 0);
   }
 
-  return Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                       EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(
-             A)
+  return ret_type(A)
       .template triangularView<TriView>()
       .transpose()
-      .solve(
-          Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                        EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(
-              b)
-              .transpose())
-      .transpose();
+      .solve(ret_type(b).transpose())
+      .transpose()
+      .eval();
 }
 
 }  // namespace math

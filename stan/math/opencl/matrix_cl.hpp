@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/opencl.hpp>
+#include <tbb/concurrent_vector.h>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -50,8 +51,8 @@ class matrix_cl : public matrix_cl_base {
   int cols_{0};           // Number of columns.
   // Holds info on if matrix is a special type
   matrix_cl_view view_{matrix_cl_view::Entire};
-  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
-  mutable std::vector<cl::Event> read_events_;   // Tracks reads
+  mutable tbb::concurrent_vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable tbb::concurrent_vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   using Scalar = T;  // Underlying type of the matrix
@@ -99,7 +100,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The write event stack.
    */
-  inline const std::vector<cl::Event>& write_events() const {
+  inline const tbb::concurrent_vector<cl::Event>& write_events() const {
     return write_events_;
   }
 
@@ -107,7 +108,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event>& read_events() const {
+  inline const tbb::concurrent_vector<cl::Event>& read_events() const {
     return read_events_;
   }
 
@@ -115,7 +116,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event> read_write_events() const {
+  inline const tbb::concurrent_vector<cl::Event> read_write_events() const {
     return vec_concat(this->read_events(), this->write_events());
   }
 
@@ -481,8 +482,8 @@ class matrix_cl : public matrix_cl_base {
 
   /**
    * Assignment of `arena_matrix_cl<T>`.
-   * @tparam Expr type of the expression
-   * @param expression expression
+   * @tparam T type of matrix
+   * @param other matrix
    */
   // defined in rev/arena_matrix_cl.hpp
   matrix_cl<T>& operator=(const arena_matrix_cl<T>& other);
@@ -499,6 +500,37 @@ class matrix_cl : public matrix_cl_base {
    * memory that has already been reused.
    */
   ~matrix_cl() { wait_for_read_write_events(); }
+
+  /**
+   * Set the values of a `matrix_cl` to zero.
+   */
+  void setZero() {
+    if (this->size() == 0) {
+      return;
+    }
+    cl::Event zero_event;
+    const std::size_t write_events_size = this->write_events().size();
+    const std::size_t read_events_size = this->read_events().size();
+    const std::size_t read_write_size = write_events_size + read_events_size;
+    std::vector<cl::Event> read_write_events(read_write_size, cl::Event{});
+    auto&& read_events_vec = this->read_events();
+    auto&& write_events_vec = this->write_events();
+    for (std::size_t i = 0; i < read_events_size; ++i) {
+      read_write_events[i] = read_events_vec[i];
+    }
+    for (std::size_t i = read_events_size, j = 0; j < write_events_size;
+         ++i, ++j) {
+      read_write_events[i] = write_events_vec[j];
+    }
+    try {
+      opencl_context.queue().enqueueFillBuffer(buffer_cl_, static_cast<T>(0), 0,
+                                               sizeof(T) * this->size(),
+                                               &read_write_events, &zero_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("setZero", e);
+    }
+    this->add_write_event(zero_event);
+  }
 
  private:
   /**
@@ -615,15 +647,28 @@ class matrix_cl : public matrix_cl_base {
    * @param A matrix_cl
    */
   void initialize_buffer_cl(const matrix_cl<T>& A) {
+    cl::Event cstr_event;
+    std::vector<cl::Event>* dep_events = new std::vector<cl::Event>(
+        A.write_events().begin(), A.write_events().end());
     try {
-      cl::Event cstr_event;
       opencl_context.queue().enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                                               A.size() * sizeof(T),
-                                               &A.write_events(), &cstr_event);
+                                               A.size() * sizeof(T), dep_events,
+                                               &cstr_event);
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        buffer_cl_.setDestructorCallback(
+            &delete_it_destructor<std::vector<cl::Event>>, dep_events);
+      } else {
+        cstr_event.setCallback(
+            CL_COMPLETE, &delete_it_event<std::vector<cl::Event>>, dep_events);
+      }
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
+      delete dep_events;
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    } catch (...) {
+      delete dep_events;
+      throw;
     }
   }
 

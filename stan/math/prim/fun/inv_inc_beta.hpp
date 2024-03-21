@@ -32,6 +32,28 @@ inline double inv_inc_beta(double a, double b, double p) {
   return boost::math::ibeta_inv(a, b, p, boost_policy_t<>());
 }
 
+/**
+ * Enables the vectorized application of the inv_inc_beta function, when
+ *  any arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @tparam T3 type of third input
+ * @param a First input
+ * @param b Second input
+ * @param c Third input
+ * @return Inverse of the incomplete Beta function applied to the three inputs.
+ */
+template <typename T1, typename T2, typename T3,
+          require_any_container_t<T1, T2, T3>* = nullptr>
+inline auto inv_inc_beta(const T1& a, const T2& b, const T3& c) {
+  return apply_scalar_ternary(
+      [](const auto& d, const auto& e, const auto& f) {
+        return inv_inc_beta(d, e, f);
+      },
+      a, b, c);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

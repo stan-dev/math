@@ -77,7 +77,7 @@ inline double gamma_p(double z, double a) {
 }
 
 /**
- * Enables the vectorised application of the gamma_p function,
+ * Enables the vectorized application of the gamma_p function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -37,9 +37,9 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_theta_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
-  static const char* function = "bernoulli_logit_lpmf";
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_theta_ref = ref_type_if_not_constant_t<T_prob>;
+  static constexpr const char* function = "bernoulli_logit_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   if (size_zero(n, theta)) {
@@ -70,15 +70,15 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);
-  static const double cutoff = 20.0;
+  static constexpr double cutoff = 20.0;
   T_partials_return logp = sum(
       (ntheta > cutoff)
           .select(-exp_m_ntheta,
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = make_partials_propagator(theta_ref);
   if (!is_constant_all<T_prob>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (ntheta > cutoff)
               .select(-exp_m_ntheta,
                       (ntheta >= -cutoff)

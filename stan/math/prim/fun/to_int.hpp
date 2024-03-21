@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the input scalar as an integer type. Specialisation for integral
+ * Returns the input scalar as an integer type. Specialization for integral
  * types which do not need conversion, reduces to a no-op.
  *
  * @tparam T type of integral argument
@@ -40,7 +40,7 @@ inline T to_int(T x) {
  */
 template <typename T, require_floating_point_t<T>* = nullptr>
 inline int to_int(T x) {
-  static const char* function = "to_int";
+  static constexpr const char* function = "to_int";
   check_bounded(function, "x", x, std::numeric_limits<int>::min(),
                 std::numeric_limits<int>::max());
   return static_cast<int>(x);

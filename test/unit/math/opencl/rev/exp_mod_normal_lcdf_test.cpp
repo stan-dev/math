@@ -5,6 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace exp_mod_normal_lcdf_test {
+
 TEST(ProbDistributionsDoubleExpModNormalLcdf, error_checking) {
   int N = 3;
 
@@ -86,7 +88,6 @@ auto exp_mod_normal_lcdf_functor
 
 TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, 1.4;
@@ -107,7 +108,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
 TEST(ProbDistributionsDoubleExpModNormalLcdf,
      opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, INFINITY;
@@ -128,7 +128,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf,
 TEST(ProbDistributionsDoubleExpModNormalLcdf,
      opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, -INFINITY;
@@ -183,5 +182,6 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big) {
       exp_mod_normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval(), lambda.transpose().eval());
 }
+}  // namespace exp_mod_normal_lcdf_test
 
 #endif

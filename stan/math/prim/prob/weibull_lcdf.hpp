@@ -9,12 +9,14 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,7 +47,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;
   using std::pow;
-  static const char* function = "weibull_lcdf";
+  static constexpr const char* function = "weibull_lcdf";
 
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;

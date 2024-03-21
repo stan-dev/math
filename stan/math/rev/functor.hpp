@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUNCTOR_HPP
 
 #include <stan/math/rev/functor/algebra_solver_fp.hpp>
-#include <stan/math/rev/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/functor/solve_powell.hpp>
+#include <stan/math/rev/functor/solve_newton.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/apply_scalar_binary.hpp>
@@ -26,7 +26,9 @@
 #include <stan/math/rev/functor/map_rect_concurrent.hpp>
 #include <stan/math/rev/functor/map_rect_reduce.hpp>
 #include <stan/math/rev/functor/operands_and_partials.hpp>
+#include <stan/math/rev/functor/partials_propagator.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
 #include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
+#include <stan/math/rev/functor/finite_diff_hessian_times_vector_auto.hpp>
 
 #endif

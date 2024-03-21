@@ -37,7 +37,7 @@ namespace math {
 template <typename T_y, typename T_lower, typename T_upper>
 double discrete_range_cdf(const T_y& y, const T_lower& lower,
                           const T_upper& upper) {
-  static const char* function = "discrete_range_cdf";
+  static constexpr const char* function = "discrete_range_cdf";
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
   check_greater_or_equal(function, "Upper bound parameter", upper, lower);

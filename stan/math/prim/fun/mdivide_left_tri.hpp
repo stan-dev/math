@@ -26,20 +26,19 @@ namespace math {
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
           require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
-inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
-                     T2::ColsAtCompileTime>
-mdivide_left_tri(const T1 &A, const T2 &b) {
+inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
   using T_return = return_type_t<T1, T2>;
+  using ret_type = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
-    return {0, b.cols()};
+    return ret_type(0, b.cols());
   }
 
-  return A.template cast<T_return>()
-      .eval()
+  return ret_type(A)
       .template triangularView<TriView>()
-      .solve(b.template cast<T_return>().eval());
+      .solve(ret_type(b))
+      .eval();
 }
 
 /**

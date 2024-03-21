@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* inv_logit_device_function
+static constexpr const char* inv_logit_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_INV_LOGIT\n"
       "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_INV_LOGIT\n" STRINGIFY(
@@ -56,7 +56,7 @@ static const char* inv_logit_device_function
            */
           double inv_logit(double x) {
             if (x < 0) {
-              if (x < log(2.2204460492503131E-16)) {
+              if (x < log(DBL_EPSILON)) {
                 return exp(x);
               }
               return exp(x) / (1 + exp(x));

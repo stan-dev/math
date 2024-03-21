@@ -36,7 +36,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
     const T_scale& y_min, const T_shape& alpha, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
-  static const char* function = "pareto_rng";
+  static constexpr const char* function = "pareto_rng";
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",
                          alpha);
   const auto& y_min_ref = to_ref(y_min);

@@ -34,7 +34,7 @@ namespace math {
 template <typename T_lower, typename T_upper, class RNG>
 inline typename VectorBuilder<true, int, T_lower, T_upper>::type
 discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
-  static const char* function = "discrete_range_rng";
+  static constexpr const char* function = "discrete_range_rng";
   using boost::variate_generator;
   using boost::random::uniform_int_distribution;
   check_consistent_sizes(function, "Lower bound parameter", lower,

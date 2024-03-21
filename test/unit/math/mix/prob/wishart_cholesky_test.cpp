@@ -1,37 +1,41 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(ProbDistributionsWishartCholesky, matvar) {
-  auto f = [](const auto& L_Y, const auto& dof, const auto& L_S) {
+  auto f = [](const auto& Y, const auto& dof, const auto& Sigma) {
+    auto symmetric_Y = ((Y + Y.transpose()) * 0.5).eval();
+    auto symmetric_Sigma = ((Sigma + Sigma.transpose()) * 0.5).eval();
+
+    auto L_Y = stan::math::cholesky_decompose(symmetric_Y);
+    auto L_S = stan::math::cholesky_decompose(symmetric_Sigma);
+
     return stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S);
   };
 
   double dof = 3.4;
-  Eigen::MatrixXd L_Y11(1, 1);
-  L_Y11 << 1;
-  Eigen::MatrixXd L_S11(1, 1);
-  L_S11 << 1;
-  stan::test::expect_ad(f, L_Y11, dof, L_S11);
-  stan::test::expect_ad_matvar(f, L_Y11, dof, L_S11);
+  Eigen::MatrixXd Y11(1, 1);
+  Y11 << 1;
+  Eigen::MatrixXd Sigma11(1, 1);
+  Sigma11 << 1;
+  stan::test::expect_ad(f, Y11, dof, Sigma11);
+  stan::test::expect_ad_matvar(f, Y11, dof, Sigma11);
 
-  Eigen::MatrixXd L_Y00(0, 0);
-  Eigen::MatrixXd L_S00(0, 0);
-  stan::test::expect_ad(f, L_Y00, dof, L_S00);
-  stan::test::expect_ad_matvar(f, L_Y00, dof, L_S00);
+  Eigen::MatrixXd Y00(0, 0);
+  Eigen::MatrixXd Sigma00(0, 0);
+  stan::test::expect_ad(f, Y00, dof, Sigma00);
+  stan::test::expect_ad_matvar(f, Y00, dof, Sigma00);
 
-  Eigen::MatrixXd y22(2, 2);
-  y22 << 1.0, 0.1, 0.1, 1.5;
-  Eigen::MatrixXd L_Y22 = y22.llt().matrixL();
+  Eigen::MatrixXd Y22(2, 2);
+  Y22 << 1.0, 0.1, 0.1, 1.5;
   Eigen::MatrixXd Sigma22(2, 2);
   Sigma22 << 1.5, 0.5, 0.5, 1.1;
-  Eigen::MatrixXd L_S22 = Sigma22.llt().matrixL();
-  stan::test::expect_ad(f, L_Y22, dof, L_S22);
-  stan::test::expect_ad_matvar(f, L_Y22, dof, L_S22);
+  stan::test::expect_ad(f, Y22, dof, Sigma22);
+  stan::test::expect_ad_matvar(f, Y22, dof, Sigma22);
 
   // Error sizes
-  stan::test::expect_ad(f, L_Y00, dof, L_S11);
-  stan::test::expect_ad(f, L_Y11, dof, L_S00);
-  stan::test::expect_ad_matvar(f, L_Y00, dof, L_S11);
-  stan::test::expect_ad_matvar(f, L_Y11, dof, L_S00);
+  stan::test::expect_ad(f, Y00, dof, Sigma11);
+  stan::test::expect_ad(f, Y11, dof, Sigma00);
+  stan::test::expect_ad_matvar(f, Y00, dof, Sigma11);
+  stan::test::expect_ad_matvar(f, Y11, dof, Sigma00);
 }
 
 TEST(ProbDistributionsWishartCholesky, fvar_var) {

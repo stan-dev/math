@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -33,7 +33,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
 return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static const char* function = "normal_lccdf(OpenCL)";
+  static constexpr const char* function = "normal_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
@@ -64,12 +64,12 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
   auto sigma_positive_expr = 0 < sigma_val;
 
   auto scaled_diff = elt_divide(y_val - mu_val, sigma_val * SQRT_TWO);
-  auto one_m_erf = select(
+  matrix_cl<double> one_m_erf = select(
       scaled_diff < -37.5 * INV_SQRT_TWO, 2.0,
       select(scaled_diff < -5.0 * INV_SQRT_TWO, 2.0 - erfc(-scaled_diff),
              select(scaled_diff > 8.25 * INV_SQRT_TWO, 0.0,
                     1.0 - erf(scaled_diff))));
-  auto lccdf_expr = colwise_sum(log(one_m_erf));
+  auto lccdf_expr = log(one_m_erf);
   auto mu_deriv = select(scaled_diff > 8.25 * INV_SQRT_TWO, INFTY,
                          SQRT_TWO_OVER_SQRT_PI
                              * elt_divide(exp(-square(scaled_diff)),
@@ -82,26 +82,26 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lccdf(
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
-  results(check_y_not_nan, check_mu_finite, check_sigma_positive, lccdf_cl,
-          y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
-      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr,
-                    lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
+  results(check_y_not_nan, check_mu_finite, check_sigma_positive)
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr);
+  results(lccdf_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
+      = expressions(lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
 
-  T_partials_return lccdf = LOG_HALF + sum(from_matrix_cl(lccdf_cl));
+  T_partials_return lccdf
+      = LOG_HALF * lccdf_cl.size() + sum(from_matrix_cl(lccdf_cl));
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col)>
-      ops_partials(y_col, mu_col, sigma_col);
+  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+    partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge3_.partials_ = std::move(sigma_deriv_cl);
+    partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(lccdf);
 }

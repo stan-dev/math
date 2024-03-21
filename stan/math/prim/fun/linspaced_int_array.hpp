@@ -31,7 +31,7 @@ namespace math {
  * @throw std::domain_error if K is negative or high is less than low.
  */
 inline std::vector<int> linspaced_int_array(int K, int low, int high) {
-  static const char* function = "linspaced_int_array";
+  static constexpr const char* function = "linspaced_int_array";
   check_nonnegative(function, "size", K);
   check_greater_or_equal(function, "high", high, low);
   if (K == 0) {

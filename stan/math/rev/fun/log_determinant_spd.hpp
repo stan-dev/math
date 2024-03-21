@@ -17,7 +17,7 @@ namespace math {
  * Returns the log det of a symmetric, positive-definite matrix
  *
  * @tparam T Type is an Eigen Matrix or `var_value` with inner Eigen matrix type
- * @param m a symmetric, positive-definite matrix
+ * @param M a symmetric, positive-definite matrix
  * @return The log determinant of the specified matrix
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>

@@ -35,7 +35,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type frechet_rng(
   using boost::random::weibull_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "frechet_rng";
+  static constexpr const char* function = "frechet_rng";
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          sigma);
   T_alpha_ref alpha_ref = alpha;

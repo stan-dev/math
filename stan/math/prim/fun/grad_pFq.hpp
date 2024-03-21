@@ -22,7 +22,7 @@ namespace stan {
 namespace math {
 namespace internal {
 /**
- * Returns the gradient of generalised hypergeometric function wrt to the
+ * Returns the gradient of generalized hypergeometric function wrt to the
  * input arguments:
  * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
  *
@@ -55,11 +55,10 @@ namespace internal {
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
- * @param[in] outer_precision Convergence criteria for infinite sum
- * @param[in] inner_precision Convergence criteria for infinite sum
+ * @param[in] precision Convergence criteria for infinite sum
  * @param[in] outer_steps Maximum number of iterations for infinite sum
  * @param[in] inner_steps Maximum number of iterations for infinite sum
- * @return Generalised hypergeometric function
+ * @return Generalized hypergeometric function
  */
 template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
           typename Tb, typename Tz,
@@ -234,12 +233,18 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         log_phammer_1n += log1p(n);
         log_phammer_2_mpn += log(2 + m + n);
 
-        log_phammer_ap1_n += log(stan::math::fabs(ap1n));
-        log_phammer_bp1_n += log(stan::math::fabs(bp1n));
-        log_phammer_an += log(stan::math::fabs(an));
-        log_phammer_bn += log(stan::math::fabs(bn));
-        log_phammer_ap1_mpn += log(stan::math::fabs(ap1mn));
-        log_phammer_bp1_mpn += log(stan::math::fabs(bp1mn));
+        log_phammer_ap1_n.array()
+            += log(math::fabs((ap1n.array() == 0).select(1.0, ap1n.array())));
+        log_phammer_bp1_n.array()
+            += log(math::fabs((bp1n.array() == 0).select(1.0, bp1n.array())));
+        log_phammer_an.array()
+            += log(math::fabs((an.array() == 0).select(1.0, an.array())));
+        log_phammer_bn.array()
+            += log(math::fabs((bn.array() == 0).select(1.0, bn.array())));
+        log_phammer_ap1_mpn.array()
+            += log(math::fabs((ap1mn.array() == 0).select(1.0, ap1mn.array())));
+        log_phammer_bp1_mpn.array()
+            += log(math::fabs((bp1mn.array() == 0).select(1.0, bp1mn.array())));
 
         z_pow_mn_sign *= z_sign;
         log_phammer_ap1n_sign.array() *= sign(value_of_rec(ap1n)).array();
@@ -266,9 +271,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       log_z_m += log_z;
       log_phammer_1m += log1p(m);
       log_phammer_2m += log(2 + m);
-      log_phammer_ap1_m += log(stan::math::fabs(ap1m));
+      log_phammer_ap1_m += log(math::fabs(ap1m));
       log_phammer_ap1m_sign.array() *= sign(value_of_rec(ap1m)).array();
-      log_phammer_bp1_m += log(stan::math::fabs(bp1m));
+      log_phammer_bp1_m += log(math::fabs(bp1m));
       log_phammer_bp1m_sign.array() *= sign(value_of_rec(bp1m)).array();
 
       m += 1;
@@ -319,7 +324,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
  * @param[in] precision Convergence criteria for infinite sum
- * @param[in] max_steps Maximum number of iterations for infinite sum
+ * @param[in] outer_steps Maximum number of iterations for outer_steps
+ * @param[in] inner_steps Maximum number of iterations for inner_steps
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>

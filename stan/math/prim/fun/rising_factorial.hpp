@@ -61,14 +61,14 @@ namespace math {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline return_type_t<T> rising_factorial(const T& x, int n) {
-  static const char* function = "rising_factorial";
+  static constexpr const char* function = "rising_factorial";
   check_not_nan(function, "first argument", x);
   check_nonnegative(function, "second argument", n);
   return boost::math::rising_factorial(x, n, boost_policy_t<>());
 }
 
 /**
- * Enables the vectorised application of the rising_factorial
+ * Enables the vectorized application of the rising_factorial
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

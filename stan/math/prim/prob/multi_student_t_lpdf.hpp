@@ -48,13 +48,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   using Eigen::Matrix;
   using std::log;
   using std::vector;
-  static const char* function = "multi_student_t";
+  static constexpr const char* function = "multi_student_t";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Degrees of freedom parameter", nu);
 
-  size_t num_y = size_mvt(y);
-  size_t num_mu = size_mvt(mu);
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);

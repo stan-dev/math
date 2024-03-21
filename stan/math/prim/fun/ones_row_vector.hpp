@@ -11,7 +11,7 @@ namespace math {
  * Return a row vector of ones
  *
  * @param K size of the row vector
- * @return A row vector of size K with all elements initialised to 1.
+ * @return A row vector of size K with all elements initialized to 1.
  * @throw std::domain_error if K is negative.
  */
 inline auto ones_row_vector(int K) {

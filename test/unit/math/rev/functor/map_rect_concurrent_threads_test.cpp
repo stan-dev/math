@@ -44,7 +44,7 @@ void setup_job(int N, Eigen::VectorXd& shared_params_d,
   }
 }
 
-struct map_rect : public ::testing::Test {
+struct map_rect_con_threads : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
@@ -54,7 +54,7 @@ struct map_rect : public ::testing::Test {
   virtual void SetUp() {}
 };
 
-TEST_F(map_rect, concurrent_varying_num_threads_ragged_dd) {
+TEST_F(map_rect_con_threads, concurrent_varying_num_threads_ragged_dd) {
   set_n_threads(-1);
 
   for (std::size_t i = 1; i < 20; ++i) {
@@ -94,7 +94,7 @@ TEST_F(map_rect, concurrent_varying_num_threads_ragged_dd) {
   }
 }
 
-TEST_F(map_rect, concurrent_varying_num_threads_eval_ok_dd) {
+TEST_F(map_rect_con_threads, concurrent_varying_num_threads_eval_ok_dd) {
   set_n_threads(-1);
   for (std::size_t i = 1; i < 20; ++i) {
     for (std::size_t n = 0; n < N_test.size(); ++n) {
@@ -116,5 +116,4 @@ TEST_F(map_rect, concurrent_varying_num_threads_eval_ok_dd) {
     set_n_threads(i);
   }
 }
-
 #endif

@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* logit_device_function
+static constexpr const char* logit_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOGIT\n"
       "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOGIT\n" STRINGIFY(
@@ -49,7 +49,7 @@ static const char* logit_device_function
           * @param x argument
           * @return log odds of argument
           */
-          double logit(double x) { return log(x / (1 - x)); }
+          double logit(double x) { return log(x) - log1m(x); }
           // \cond
           ) "\n#endif\n";  // NOLINT
 // \endcond

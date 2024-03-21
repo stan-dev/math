@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the generalised hypergeometric function applied to the
+ * Returns the generalized hypergeometric function applied to the
  * input arguments:
  * \f$_2F_2(a_1,a_2;b_1,b_2;z)\f$
  *
@@ -17,7 +17,7 @@ namespace math {
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
- * @return Generalised hypergeometric function
+ * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
           require_all_eigen_t<Ta, Tb>* = nullptr,

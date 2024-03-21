@@ -35,7 +35,7 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   using boost::variate_generator;
   using T_N_ref = ref_type_t<T_N>;
   using T_theta_ref = ref_type_t<T_theta>;
-  static const char* function = "binomial_rng";
+  static constexpr const char* function = "binomial_rng";
   check_consistent_sizes(function, "Population size parameter", N,
                          "Probability Parameter", theta);
   T_N_ref N_ref = N;
