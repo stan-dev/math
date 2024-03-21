@@ -6,11 +6,21 @@ TEST(mathMixMatFun, sqrt) {
     using stan::math::sqrt;
     return sqrt(x1);
   };
+  auto ff = [](const auto& x1) {
+    using stan::math::sqrt;
+    return sqrt((x1 >= 0.0) ? x1 : -x1);
+  };
   stan::test::expect_common_nonzero_unary_vectorized<
       stan::test::ScalarSupport::Real>(f);
   stan::test::expect_unary_vectorized(f, -6, -5.2, 1.3, 7, 10.7, 36, 1e6);
 
-  // undefined with 0 in denominator
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 2.0;
+  tols.hessian_fvar_hessian_ = 2.0;
+  tols.grad_hessian_hessian_ = 2.0;
+  tols.grad_hessian_grad_hessian_ = 2.0;
+  stan::test::expect_ad(tols, ff, 0.0);
+
   stan::test::expect_ad(f, std::complex<double>(0.9, 0.8));
   for (double im : std::vector<double>{-1.3, 2.3}) {
     for (double re : std::vector<double>{-3.6, -0.0, 0.0, 0.5}) {
