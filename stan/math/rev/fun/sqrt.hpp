@@ -43,8 +43,9 @@ namespace math {
  */
 inline var sqrt(const var& a) {
   return make_callback_var(std::sqrt(a.val()), [a](auto& vi) mutable {
-    if (vi.val() != 0.0)
+    if (vi.val() != 0.0) {
       a.adj() += vi.adj() / (2.0 * vi.val());
+    }
   });
 }
 
