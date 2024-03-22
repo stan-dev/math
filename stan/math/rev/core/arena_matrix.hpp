@@ -55,18 +55,18 @@ class arena_matrix : public Eigen::Map<MatrixType> {
 
  private:
   template <typename T>
-  constexpr auto get_rows(T&& x) {
+  constexpr auto get_rows(const T& x) {
     return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-               ? other.cols()
-               : other.rows();
+               ? x.cols()
+               : x.rows();
   }
   template <typename T>
-  constexpr auto get_cols(T&& x) {
+  constexpr auto get_cols(const T& x) {
     return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-               ? other.rows()
-               : other.cols()
+               ? x.rows()
+               : x.cols();
   }
 
  public:
