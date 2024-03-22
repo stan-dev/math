@@ -207,7 +207,7 @@ Eigen::Matrix<var, -1, 1> mu_good = multiply(X, y);
 mu_good(4) = 1.0;
 ```
 
-The reason we do this is for cases where functions returns are passe to other functions. An `arena_matrix` will always make a shallow copy when being constructed from another `arena_matrix`, which let's the functions avoid unnecessary copies.
+The reason we do this is for cases where function returns are passed to other functions. An `arena_matrix` will always make a shallow copy when being constructed from another `arena_matrix`, which lets the functions avoid unnecessary copies.
 
 ```c++
 Eigen::Matrix<var, -1, 1> y1;
