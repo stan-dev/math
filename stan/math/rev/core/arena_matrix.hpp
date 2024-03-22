@@ -53,52 +53,48 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
           size) {}
 
-  private:
-    template <typename T>
-    constexpr auto get_rows(T&& x) {
-      return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-              ? other.cols()
-              : other.rows();
-    }
-    template <typename T>
-    constexpr auto get_cols(T&& x) {
-      return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                  || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-              ? other.rows()
-              : other.cols()
-    }
-  public:
+ private:
+  template <typename T>
+  constexpr auto get_rows(T&& x) {
+    return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                   || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+               ? other.cols()
+               : other.rows();
+  }
+  template <typename T>
+  constexpr auto get_cols(T&& x) {
+    return (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
+                   || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
+               ? other.rows()
+               : other.cols()
+  }
 
+ public:
   /**
    * Constructs `arena_matrix` from an expression
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
-      : Base::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-              other.size()),
-          get_rows(other),
-          get_cols(other)) {
+      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                      other.size()),
+                  get_rows(other), get_cols(other)) {
     *this = other;
   }
   /**
-   * Overwrite the current arena_matrix with new memory and assign a matrix to it
-   * @tparam T An eigen type inheriting from `Eigen::EigenBase` 
+   * Overwrite the current arena_matrix with new memory and assign a matrix to
+   * it
+   * @tparam T An eigen type inheriting from `Eigen::EigenBase`
    * @param other A matrix that will be copied over to the arena allocator
    */
   template <typename T, require_eigen_t<T>* = nullptr>
-  arena_matrix& operator=(const T& other)  {
+  arena_matrix& operator=(const T& other) {
     new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-              other.size()),
-          get_rows(other),
-          get_cols(other));
+        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(other.size()),
+        get_rows(other), get_cols(other));
     Base::operator=(other);
     return *this;
   }
-
 
   /**
    * Constructs `arena_matrix` from an rvalue expression that is a `plain_type`,
@@ -122,24 +118,24 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           return base_map_t(&(other_ptr->coeffRef(0)), other_ptr->rows(),
                             other_ptr->cols());
         }(std::move(other))) {}
-  
+
   /**
    * Assignment operator for assigning an expression.
-   * This is for rvalue plain type objects that can be moved over to the object 
+   * This is for rvalue plain type objects that can be moved over to the object
    * stack instead of allocating new memory.
    * @param other expression to evaluate into this
    * @return `*this`
    */
-  template <typename T, require_eigen_t<T>* = nullptr, 
-   require_not_arena_matrix_t<T>* = nullptr,
-   require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-   require_plain_type_t<T>* = nullptr>
+  template <typename T, require_eigen_t<T>* = nullptr,
+            require_not_arena_matrix_t<T>* = nullptr,
+            require_t<std::is_rvalue_reference<T&&>>* = nullptr,
+            require_plain_type_t<T>* = nullptr>
   arena_matrix& operator=(T&& other) {
     auto other_ptr = make_chainable_ptr(std::move(other));
-    new (this) Base(&(other_ptr->coeffRef(0)), other_ptr->rows(), other_ptr->cols());
+    new (this)
+        Base(&(other_ptr->coeffRef(0)), other_ptr->rows(), other_ptr->cols());
     return *this;
   }
-
 
   /**
    * Constructs `arena_matrix` from an expression. This makes an assumption that
