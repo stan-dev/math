@@ -60,7 +60,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using lp_type = return_type_t<T_y, T_dof, T_loc, T_covar>;
   using Eigen::Matrix;
-    using T_return = return_type_t<T_y, T_dof, T_loc, T_covar>;
+  using T_return = return_type_t<T_y, T_dof, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_covar>;
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
