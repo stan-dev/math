@@ -36,7 +36,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
   using T_n_ref = ref_type_t<T_n>;
   using std::log;
-  static const char* function = "bernoulli_lpmf";
+  static constexpr const char* function = "bernoulli_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   const T_n_ref n_ref = to_ref(n);

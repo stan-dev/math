@@ -47,7 +47,7 @@ template <bool propto, typename T_y_cl, typename T_inv_scale_cl,
 return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   using std::isfinite;
-  static const char* function = "exponential_lpdf(OpenCL)";
+  static constexpr const char* function = "exponential_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y,

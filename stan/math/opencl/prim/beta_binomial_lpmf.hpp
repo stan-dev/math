@@ -44,7 +44,7 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
     const T_n_cl& n, const T_N_cl N, const T_size1_cl& alpha,
     const T_size2_cl& beta) {
   using std::isfinite;
-  static const char* function = "beta_binomial_lpmf(OpenCL)";
+  static constexpr const char* function = "beta_binomial_lpmf(OpenCL)";
 
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,

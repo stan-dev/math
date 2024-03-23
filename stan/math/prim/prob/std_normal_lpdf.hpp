@@ -32,7 +32,7 @@ template <
 return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using T_y_ref = ref_type_t<T_y>;
-  static const char* function = "std_normal_lpdf";
+  static constexpr const char* function = "std_normal_lpdf";
   T_y_ref y_ref = y;
   check_not_nan(function, "Random variable", y_ref);
 

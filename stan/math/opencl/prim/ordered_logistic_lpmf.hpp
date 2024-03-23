@@ -70,7 +70,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_cuts_cl,
 inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     const T_y_cl& y, const T_loc_cl& lambda, const T_cuts_cl& cuts) {
   constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
-  static const char* function = "ordered_logistic_lpmf(OpenCL)";
+  static constexpr const char* function = "ordered_logistic_lpmf(OpenCL)";
 
   if (size(y) != 1) {
     check_size_match(function, "Size of ", "y", math::size(y), "Size of",

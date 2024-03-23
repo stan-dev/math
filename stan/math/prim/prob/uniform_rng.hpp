@@ -38,7 +38,7 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
   using T_beta_ref = ref_type_t<T_beta>;
   using boost::variate_generator;
   using boost::random::uniform_real_distribution;
-  static const char* function = "uniform_rng";
+  static constexpr const char* function = "uniform_rng";
   check_consistent_sizes(function, "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
   T_alpha_ref alpha_ref = alpha;

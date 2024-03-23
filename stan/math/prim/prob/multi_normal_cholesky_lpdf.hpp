@@ -47,7 +47,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
               T_y, T_loc, T_covar>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
-  static const char* function = "multi_normal_cholesky_lpdf";
+  static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
@@ -106,6 +106,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
+  check_cholesky_factor(function, "Cholesky decomposition of a variance matrix",
+                        L_ref);
 
   if (unlikely(size_y == 0)) {
     return T_return(0);
@@ -204,7 +206,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
               T_y, T_loc, T_covar>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
-  static const char* function = "multi_normal_cholesky_lpdf";
+  static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;

@@ -11,7 +11,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* eigenvals_bisect_kernel_code = STRINGIFY(
+static constexpr const char* eigenvals_bisect_kernel_code = STRINGIFY(
     // \endcond
 
     /**
@@ -196,7 +196,7 @@ const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, out_buffer,
                             eigenvals_bisect_kernel_code});
 
 // \cond
-static const char* get_eigenvectors_kernel_code = STRINGIFY(
+static constexpr const char* get_eigenvectors_kernel_code = STRINGIFY(
     // \endcond
 
     /**

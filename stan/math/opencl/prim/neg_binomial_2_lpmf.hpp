@@ -41,7 +41,7 @@ template <bool propto, typename T_n_cl, typename T_location_cl,
                                         T_precision_cl>* = nullptr>
 inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
     const T_n_cl& n, const T_location_cl& mu, const T_precision_cl& phi) {
-  static const char* function = "neg_binomial_2_lpmf(OpenCL)";
+  static constexpr const char* function = "neg_binomial_2_lpmf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_n_cl, T_location_cl, T_precision_cl>;
   using std::isfinite;

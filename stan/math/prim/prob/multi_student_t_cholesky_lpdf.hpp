@@ -46,7 +46,7 @@ namespace math {
  * @tparam T_y Type of scalar.
  * @tparam T_dof Type of scalar.
  * @tparam T_loc Type of location.
- * @tparam T_scale Type of scale.
+ * @tparam T_covar Type of scale.
  * @return log probability of the multivariate student t distribution.
  */
 template <
@@ -58,8 +58,9 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_student_t_cholesky";
   using T_covar_elem = typename scalar_type<T_covar>::type;
+  using lp_type = return_type_t<T_y, T_dof, T_loc, T_covar>;
   using Eigen::Matrix;
-  using T_return = return_type_t<T_y, T_dof, T_loc, T_covar>;
+    using T_return = return_type_t<T_y, T_dof, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_covar>;
   using matrix_partials_t
       = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
@@ -74,6 +75,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
   size_t num_y = size_mvt(y);
   size_t num_mu = size_mvt(mu);
+
   if (num_y == 0 || num_mu == 0) {
     return 0;
   }
@@ -233,7 +235,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
  * @tparam T_y Type of scalar.
  * @tparam T_dof Type of scalar.
  * @tparam T_loc Type of location.
- * @tparam T_scale Type of scale.
+ * @tparam T_covar Type of scale.
  * @return log probability of the multivariate student t distribution.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,

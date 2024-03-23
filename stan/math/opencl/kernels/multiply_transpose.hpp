@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string multiply_transpose_kernel_code = STRINGIFY(
+static constexpr const char* multiply_transpose_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Matrix multiplication of the form A*A^T on the OpenCL device

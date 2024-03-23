@@ -51,7 +51,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
   using std::exp;
   using std::log;
   using T_lambda_ref = ref_type_t<T_loc>;
-  static const char* function = "ordered_probit";
+  static constexpr const char* function = "ordered_probit";
 
   check_nonzero_size(function, "Cut-points", c);
   int N = math::size(lambda);

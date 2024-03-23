@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string divide_columns_kernel_code = STRINGIFY(
+static constexpr const char *divide_columns_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Takes vector A and divides columns vector in A element-wise by the values
