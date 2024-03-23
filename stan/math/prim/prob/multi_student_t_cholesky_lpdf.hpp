@@ -56,7 +56,7 @@ template <
         T_y, T_loc, T_covar>* = nullptr>
 return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_covar& L) {
-  static const char* function = "multi_student_t_cholesky";
+  static constexpr const char* function = "multi_student_t_cholesky";
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using lp_type = return_type_t<T_y, T_dof, T_loc, T_covar>;
   using Eigen::Matrix;
@@ -97,10 +97,14 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   const int size_mu = mu_vec[0].size();
   const int num_dims = L.rows();
 
+  if (unlikely(num_dims == 0)) {
+    return T_return(0);
+  }
+
   for (size_t i = 1, size_mvt_y = num_y; i < size_mvt_y; i++) {
     check_size_match(
         function, "Size of one of the vectors of the random variable",
-        y_vec[i].size(), "Size of the first vector of the random variable",
+        y_vec[i].size(), "Size of another vector of the random variable",
         y_vec[i - 1].size());
   }
 
@@ -126,10 +130,6 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
   for (size_t i = 0; i < size_vec; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
-  }
-
-  if (unlikely(num_dims == 0)) {
-    return T_return(0);
   }
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref, mu_ref, L_ref);
