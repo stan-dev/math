@@ -5,6 +5,17 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+struct AgradRev : public testing::Test {
+  void SetUp() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+  void TearDown() {
+    // make sure memory's clean after each test
+    stan::math::recover_memory();
+  }
+};
+
 namespace stan {
 namespace math {
 namespace test {

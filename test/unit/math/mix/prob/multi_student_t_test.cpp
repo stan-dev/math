@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiStudentT, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_matvar) {
   auto f
       = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {
           auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
@@ -58,7 +58,7 @@ TEST(ProbDistributionsMultiStudentT, matvar) {
   stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma00);
 }
 
-TEST(ProbDistributionsMultiStudentT, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -87,7 +87,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

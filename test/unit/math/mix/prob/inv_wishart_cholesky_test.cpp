@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 
-TEST(ProbDistributionsInvWishartCholesky, matvar) {
+TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_matvar) {
   auto f = [](const auto& Y, const auto& dof, const auto& Sigma) {
     auto symmetric_Y = ((Y + Y.transpose()) * 0.5).eval();
     auto symmetric_Sigma = ((Sigma + Sigma.transpose()) * 0.5).eval();
@@ -38,7 +39,7 @@ TEST(ProbDistributionsInvWishartCholesky, matvar) {
   stan::test::expect_ad_matvar(f, Y11, dof, Sigma00);
 }
 
-TEST(ProbDistributionsInvWishartCholesky, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -73,7 +74,7 @@ TEST(ProbDistributionsInvWishartCholesky, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsInvWishartCholesky, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

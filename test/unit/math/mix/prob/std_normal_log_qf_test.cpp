@@ -4,7 +4,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math/fwd/prob/std_normal_log_qf.hpp>
 
-TEST(mathMixLogFun, stdNormalLogQf) {
+TEST_F(AgradRev, mathMixLogFun_stdNormalLogQf) {
   auto f = [](const auto& x1) { return stan::math::std_normal_log_qf(x1); };
   stan::test::expect_ad(f, -100.25);
   stan::test::expect_unary_vectorized(
@@ -14,7 +14,7 @@ TEST(mathMixLogFun, stdNormalLogQf) {
   stan::test::expect_unary_vectorized(f, log(0.02425), log(0.97575));
 }
 
-TEST(mathMixScalLogFun, stdNormalLogQfInt) {
+TEST_F(AgradRev, mathMixScalLogFun_stdNormalLogQfInt) {
   auto f = [](const auto& x1) { return stan::math::std_normal_log_qf(x1); };
   int y = 1;
   stan::test::expect_ad(f, y);
@@ -22,7 +22,7 @@ TEST(mathMixScalLogFun, stdNormalLogQfInt) {
   stan::test::expect_ad(f, y);
 }
 
-TEST(mathMixZeroLogFun, stdNormalLogQfZero) {
+TEST_F(AgradRev, mathMixZeroLogFun_stdNormalLogQfZero) {
   auto f = [](const auto& x1) { return stan::math::std_normal_log_qf(x1); };
   int y_int = 0;
   stan::test::expect_ad(f, y_int);
@@ -31,7 +31,7 @@ TEST(mathMixZeroLogFun, stdNormalLogQfZero) {
   stan::test::expect_ad(f, y);
 }
 
-TEST(mathMixMatFunLog, stdNormalLogQfVarmat) {
+TEST_F(AgradRev, mathMixMatFunLog_stdNormalLogQfVarmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

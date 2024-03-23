@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, von_mises_cdf) {
+TEST_F(AgradRev, mathMixScalFun_von_mises_cdf) {
   auto f = [](const auto& x, const auto& mu, const auto& k) {
     return stan::math::von_mises_cdf(x, mu, k);
   };

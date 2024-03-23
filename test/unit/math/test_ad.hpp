@@ -8,12 +8,13 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/test_ad_matvar.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>
-
+#include <test/unit/math/test_ad.hpp>
 using d_t = double;
 using v_t = stan::math::var;
 using fd_t = stan::math::fvar<d_t>;
