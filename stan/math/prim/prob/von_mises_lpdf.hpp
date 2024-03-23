@@ -82,7 +82,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     edge<2>(ops_partials).partials_
         = cos_mu_minus_y
           - exp(log_modified_bessel_first_kind(1, kappa_val)
-                - log_modified_bessel_first_kind(0, kappa_val));   
+                - log_modified_bessel_first_kind(0, kappa_val));
   }
 
   return ops_partials.build(logp);
