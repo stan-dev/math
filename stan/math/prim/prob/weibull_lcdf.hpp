@@ -68,8 +68,8 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
   const auto& log_y = to_ref_if<any_derivs>(log(y_val));
   const auto& log_sigma = to_ref_if<any_derivs>(log(sigma_val));
-  const auto& log_pow_n = to_ref_if<any_derivs>(
-    alpha_val * log_y - alpha_val * log_sigma);
+  const auto& log_pow_n
+      = to_ref_if<any_derivs>(alpha_val * log_y - alpha_val * log_sigma);
   const auto& pow_n = to_ref_if<any_derivs>(exp(log_pow_n));
 
   if (any_derivs) {

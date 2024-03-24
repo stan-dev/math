@@ -16,7 +16,7 @@ TEST(mathMixScalFun, weibull_lcdf) {
   using stan::math::log;
 
   Eigen::VectorXd y(3);
-  y << stan::math::NEGATIVE_INFTY, 1.2, 0.0; // lb_constrain(y[0], 0.0) = 0.0
+  y << stan::math::NEGATIVE_INFTY, 1.2, 0.0;  // lb_constrain(y[0], 0.0) = 0.0
 
   Eigen::VectorXd alpha(3);
   alpha << 2.0, 3.0, 4.0;
