@@ -26,14 +26,14 @@ namespace math {
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr>
-auto simplex_free(const Vec& x) {
+template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
+inline plain_type_t<Vec> simplex_free(const Vec& x) {
   using std::log;
   using T = value_type_t<Vec>;
 
   const auto& x_ref = to_ref(x);
   check_simplex("stan::math::simplex_free", "Simplex variable", x_ref);
-  int Km1 = x_ref.size() - 1;
+  Eigen::Index Km1 = x_ref.size() - 1;
   plain_type_t<Vec> y(Km1);
   T stick_len = x_ref.coeff(Km1);
   for (Eigen::Index k = Km1; --k >= 0;) {
