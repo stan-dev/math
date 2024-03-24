@@ -11,46 +11,100 @@ than overloaded functions for a number of reasons including the sheer
 number of implementations we would need to write to handle the
 combinations of arguments that are allowed in the Stan language.
 
-In the Stan Math library, all the primary function templates are
-declared in `stan/math/prim/`. The role of the primary function
-template is to define a generic implementation for all valid argument
-types. The definition of the function often restricts the valid
-argument types through [substitution failure is not an error
-(SFINAE)](https://en.cppreference.com/w/cpp/language/sfinae).
+Many functions in the Stan Math library have a single function
+template defined in the `stan/math/prim` folder that is flexible
+enough to accept both primitive and autodiff types. Some of these
+functions also have template specializations (usually [partial
+template
+specializations](https://en.cppreference.com/w/cpp/language/partial_specialization))
+that define an implementation where at least one template parameters
+is restricted to a specific type. The source code for the function
+template specializations are found in either `stan/math/rev/` for
+reverse-mode implementations, `stan/math/fwd/` for forward-mode
+implementations, or `stan/math/mix/` for implementations that are for
+nested autodiff. This pattern of a primary template function
+definition with specialization is commonly used in templated C++.
 
-For many functions, we write specializations of the function
-templates, usually for readability of code and computationaly
-efficiency. To take advantage of generic template types while
-limiting the implementation to a subset of valid types, we use
-[partial template
-specialization](https://en.cppreference.com/w/cpp/language/partial_specialization)
-and specifically [SFINAE in partial
-specialization](https://en.cppreference.com/w/cpp/language/sfinae#SFINAE_in_partial_specializations)
-to enable this behavior. The source code for function specializations are
-found in either `stan/math/rev/` for reverse-mode implementations,
-`stan/math/fwd/` for forward-mode implementations, or
-`stan/math/mix/` for implementations that are for nested
-autodiff.
+In the Stan Math library, we have also adopted another technique which
+allows multiple template function definitions, while restricting the
+definition to apply only to when certain criteria are met. Since this
+technique is used repeatedly through the Math library and this is not a
+common use of template metaprogramming, we'll describe it in the next
+subsection.
 
-In the partial template specializations, we include a `requires`
-template parameter as a pointer [non-type template
+### Using SFINAE to allow multiple template function definitions
+
+In the Stan Math library, each function exposed through to the Stan
+language must have definitions that allow for both primitive and
+autodiff types. As the language has grown, we have also added
+broadcasting, which allows users to mix scalars arguments with vector
+or array arguments. 
+
+The typical C++ method of defining a primary function template and a
+set of function template specialization is untenable for many
+functions in the Math library. For example, a single argument of the
+function may take 6 distinct C++ types: `double`, `stan::math::var`,
+`std::vector<double>`, `std::vector<stan::math::var>`,
+`Eigen::Matrix<double, -1, 1>`, or `Eigen::Matrix<stan::math::var, -1,
+1>`.  For a 3-argument function, we would need to define 108 different
+function template specializations to handle all the autodiff types.
+
+In the Math library, we use a technique that allows the definition of
+multiple template functions where each handles a subset of allowable
+types. We add a pointer [non-type template
 parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter)
-with a default value of `nullptr`; any `void*` non-template parameter
-with a default of `nullptr` is ignored by the compiler. When we pass a
-type that satisfies the `requires`, the `requires` trait evaluates to
-`void`, the template parameter evaluates to `void*=nullptr`, and the
-template argument is safely ignored by the compiler. When a type that
-does not satisfy the `requires` template parameter is passed, the
-definition is removed from the set of possible functions via
-SFINAE. With this scheme we end up having a very nice pattern for
-writing generic templates for functions while also being able to
-restrict the set of types that a function can be used for.
+to the template parameter list with a default value of `nullptr`. Any
+`void*` non-type template parameter with a default of `nullptr` is
+valid and the non-type template parameter is ignored by the
+compiler. Utilizing [substitution failure is not an error
+(SFNIAE)](https://en.cppreference.com/w/cpp/language/sfinae), a
+substitution failure for the non-type template parameter will result
+in that definition being removed from the possible function
+definitions. Using this technique we have to be careful not to violate
+the [One Definition
+Rule](https://en.cppreference.com/w/cpp/language/definition) and only
+provide one definition for any set of types.
 
-For convenience in writing partial template specializations, we have
+For convenience in using this technique, the Math library has
 implemented a set of [`requires` type traits](@ref require_meta).
+When we pass a type that satisfies the `requires` type trait, the
+trait evaluates to `void`. When a type that does not satisfy the
+`requires` template parameter is passed, there is a substitution
+failure. These traits are used in the template functions by adding a
+call to a `requires` type trait to the parameter list.
 
-The rest of this page describes what the requires type traits are, how
-to use them, and how to add new ones if necessary.
+Below is an example to illustrate how this technique is used. After
+the example, the rest of this page describes what the requires type
+traits are, how to use them, and how to add new ones if necessary.
+
+#### Example
+
+Here's a function that would have two different template functions for
+`stan::math::var` and `double`:
+
+```
+template <typename T, requires_var_t<T>* = nullptr>
+T foo(T& t) {
+  // handles stan::math::var
+  return t;
+}
+
+template <typename T, requires_not_var_t<T>* = nullptr>
+T foo(T& t) {
+  // handles primitives
+  return t;
+}
+```
+
+When `foo()` is called with a `stan::math::var`, the first template
+function matches but not the second. This works because
+`requires_var_t<stan::math::var>` evaluates to `void` whereas
+`requires_not_var_t<stan::math::var>` is a subsitution error causing
+the compiler to omit the second definition for `stan::math::var`.
+
+When `foo()` is called with `double` or `int`, the second template
+function matches, but not the first.
+
 
 ### Requires<> type traits
 
@@ -61,12 +115,11 @@ are named `is_{condition}` and the struct contains a `value` that is
 `true` or `false` at compile time. For example, `is_var<T>::value` is
 `true` if and only if the type `T` is `stan::math::var_value`.
 
-For ease of use in partial template specialization, we provide
-`requires<>` type traits based on the boolean `is_{condition}` type
-traits. When types satisfy the condition, the `requires<>::value` will
-evaluate to `void`. When the types do not satisfy the condition,
-`requires<>::value` is an invalid subsitution and is not used. (See
-@ref requires_impl for more details.)
+We provide `requires<>` type traits based on the boolean
+`is_{condition}` type traits. When types satisfy the condition, the
+`requires<>::value` will evaluate to `void`. When the types do not
+satisfy the condition, `requires<>::value` is an invalid subsitution
+and is not used. (See @ref requires_impl for more details.)
 
 Note: every possible requires<> type trait is not implemented in the
 Stan Math library. If one of the missing requires<> type trait is
@@ -272,7 +325,7 @@ available.
 ### Adding a new boolean type trait
 
 If you are adding a new boolean type trait, please add the primary
-template function to `stan/math/prim/meta/`, then add any autodiff
+function template to `stan/math/prim/meta/`, then add any autodiff
 specialization to the appropriate `stan/math/{rev, fwd, mix}/meta/`
 folder.
 
