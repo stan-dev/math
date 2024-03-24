@@ -27,12 +27,12 @@ struct is_eigen_matrix_base
 /*! \addtogroup eigen_matrix_base_types */
 /*! @{ */
 
-
 /*! \brief Require type satisfies @ref is_eigen_matrix_base */
 /*! @tparam T the type to check */
 template <typename T>
-using require_eigen_matrix_base_t = require_t<is_eigen_matrix_base<std::decay_t<T>>>;
-  
+using require_eigen_matrix_base_t
+    = require_t<is_eigen_matrix_base<std::decay_t<T>>>;
+
 /*! \brief Require type satisfies @ref is_eigen_matrix_base */
 /*! and value type satisfies `TypeCheck` */
 /*! @tparam TypeCheck The type trait to check the value type against */
