@@ -5,6 +5,7 @@
 #include <stan/math/mix/fun.hpp>
 #include <stan/math/mix/functor.hpp>
 
+#include <stan/math/fwd/constraint.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun.hpp>
