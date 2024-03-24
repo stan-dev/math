@@ -39,7 +39,6 @@ template <typename T_y, typename T_shape, typename T_scale,
 return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
