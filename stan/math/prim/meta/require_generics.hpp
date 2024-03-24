@@ -123,7 +123,7 @@ using require_assignable_t
 template <typename T, typename S>
 using require_not_assignable_t
     = require_not_t<std::is_assignable<std::decay_t<T>, std::decay_t<S>>>;
- /*! @} */
+/*! @} */
 
 /*! \ingroup require_std */
 /*! \addtogroup assignable_types */
