@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
+static constexpr const char* rep_matrix_rev_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Implements reverse pass of rep_matrix.

@@ -1,0 +1,4 @@
+This file documents changes done for the stan-math project
+
+- Added a `#ifndef BOOST_DISABLE_ASSERTS` to boost/math/special_functions/detail/ibeta_inverse.hpp
+  to silence a warning about an unused variable.

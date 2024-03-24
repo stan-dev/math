@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "cauchy_cdf";
+  static constexpr const char* function = "cauchy_cdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale Parameter", sigma);
   T_y_ref y_ref = y;

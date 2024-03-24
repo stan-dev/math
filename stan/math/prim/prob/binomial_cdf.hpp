@@ -41,7 +41,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
   using T_theta_ref = ref_type_t<T_prob>;
   using std::exp;
   using std::pow;
-  static const char* function = "binomial_cdf";
+  static constexpr const char* function = "binomial_cdf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", theta);

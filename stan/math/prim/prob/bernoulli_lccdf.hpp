@@ -31,11 +31,11 @@ template <typename T_n, typename T_prob,
               T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
-  static const char* function = "bernoulli_lccdf";
+  static constexpr const char* function = "bernoulli_lccdf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;
-  const auto& n_arr = as_array_or_scalar(n);
+  const auto& n_arr = as_value_column_array_or_scalar(n);
   const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
   check_bounded(function, "Probability parameter", theta_arr, 0.0, 1.0);
 

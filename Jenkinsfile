@@ -4,6 +4,7 @@ import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
     try {
+        sh "cat make/local"
         if (jumbo && !params.disableJumbo) {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
@@ -44,6 +45,8 @@ pipeline {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
         parallelsAlwaysFailFast()
+        buildDiscarder(logRotator(numToKeepStr: '20', daysToKeepStr: '30'))
+        disableConcurrentBuilds(abortPrevious: true)
     }
     environment {
         STAN_NUM_THREADS = 4
@@ -64,18 +67,6 @@ pipeline {
         GIT_COMMITTER_EMAIL = 'mc.stanislaw@gmail.com'
     }
     stages {
-
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
 
         stage("Clang-format") {
             agent {
@@ -151,11 +142,11 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues enabledForFailure: true, tools:
-                        [cppLint(),
-                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    recordIssues( 
+                        enabledForFailure: true, 
+                        tools: [cppLint(),groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    )
                     deleteDir()
-
                 }
             }
         }
@@ -203,9 +194,11 @@ pipeline {
                     }
 
                     steps {
-                        unstash 'MathSetup'
-                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                        sh "make -j${PARALLEL} test-headers"
+                        retry(1){
+                            unstash 'MathSetup'
+                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                            sh "make -j${PARALLEL} test-headers"
+                        }
                     }
                     post { always { deleteDir() } }
                 }
@@ -352,6 +345,7 @@ pipeline {
                             runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
@@ -401,6 +395,7 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
+                                sh "cat make/local"
                                 try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
@@ -408,6 +403,7 @@ pipeline {
                             sh "echo STAN_THREADS=true >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try {
+                                    sh "cat make/local"
                                     sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
 				                }
                                 finally { junit 'test/**/*.xml' }
@@ -426,19 +422,21 @@ pipeline {
                     }
                     steps {
                         script {
-                            unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                            sh "echo STAN_THREADS=true >> make/local"
-                            sh "export STAN_NUM_THREADS=4"
-                            if (isBranch('develop') || isBranch('master')) {
-                                runTests("test/unit")
-                                sh "find . -name *_test.xml | xargs rm"
-                            } else {
-                                runTests("test/unit -f thread")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f map_rect")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f reduce_sum")
+                            retry(1){
+                                unstash 'MathSetup'
+                                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                                sh "echo STAN_THREADS=true >> make/local"
+                                sh "export STAN_NUM_THREADS=4"
+                                if (isBranch('develop') || isBranch('master')) {
+                                    runTests("test/unit")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                } else {
+                                    runTests("test/unit -f thread")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                    runTests("test/unit -f map_rect")
+                                    sh "find . -name *_test.xml | xargs rm"
+                                    runTests("test/unit -f reduce_sum")
+                                }
                             }
                         }
                     }
@@ -504,6 +502,7 @@ pipeline {
                                             sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                                         }
                                     }
+                                    sh "cat make/local"
                                     sh "./runTests.py -j${PARALLEL} ${names}"
                                 }
                                 deleteDir()
@@ -575,7 +574,10 @@ pipeline {
     post {
         always {
             node("linux") {
-                recordIssues enabledForFailure: false, tool: clang()
+                recordIssues(
+                    enabledForFailure: false, 
+                    tool: clang()
+                )
             }
         }
         success {

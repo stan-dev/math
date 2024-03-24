@@ -4,6 +4,11 @@
 TEST_F(mathMix, distance) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::distance(x, y); };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 2.0;
+  tols.hessian_fvar_hessian_ = 2.0;
+  tols.grad_hessian_hessian_ = 2.0;
+  tols.grad_hessian_grad_hessian_ = 2.0;
 
   // 0 x 0
   Eigen::VectorXd x0(0);
@@ -14,6 +19,7 @@ TEST_F(mathMix, distance) {
   // 1 x 1
   Eigen::VectorXd x1(1);
   x1 << 1;
+  stan::test::expect_ad(tols, f, x1, x1);
   Eigen::VectorXd y1(1);
   y1 << -2.3;
   stan::test::expect_ad(f, x1, y1);
@@ -22,6 +28,7 @@ TEST_F(mathMix, distance) {
   // 2 x 2
   Eigen::VectorXd x2(2);
   x2 << 2, -3;
+  stan::test::expect_ad(tols, f, x2, x2);
   Eigen::VectorXd y2(2);
   y2 << -2.3, 1.1;
   stan::test::expect_ad(f, x2, y2);
@@ -30,6 +37,7 @@ TEST_F(mathMix, distance) {
   // 3 x 3
   Eigen::VectorXd x(3);
   x << 1, 3, -5;
+  stan::test::expect_ad(tols, f, x, x);
   Eigen::VectorXd y(3);
   y << 4, -2, -1;
   stan::test::expect_ad(f, x, y);

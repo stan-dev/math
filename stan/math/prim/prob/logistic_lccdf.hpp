@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -29,7 +30,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "logistic_lccdf";
+  static constexpr const char* function = "logistic_lccdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   T_y_ref y_ref = y;
@@ -71,8 +72,9 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
     const T_partials_return sigma_dbl = sigma_vec.val(n);
     const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
 
+    // TODO(Andrew) Further simplify derivatives and log-scale below
     const T_partials_return Pn
-        = 1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
+        = 1.0 - inv_logit((y_dbl - mu_dbl) * sigma_inv_vec);
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {

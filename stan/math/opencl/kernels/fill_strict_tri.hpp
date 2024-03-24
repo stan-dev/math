@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string fill_strict_tri_kernel_code = STRINGIFY(
+static constexpr const char* fill_strict_tri_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Stores constant in the triangular part of a matrix

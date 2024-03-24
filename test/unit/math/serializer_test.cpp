@@ -1,10 +1,10 @@
-#include <test/unit/math/serializer.hpp>
+#include <stan/math/prim/fun/serializer.hpp>
 #include <gtest/gtest.h>
 #include <complex>
 #include <vector>
 
 TEST(testUnitMathSerializer, serializer_deserializer) {
-  stan::test::serializer<double> s;
+  stan::math::serializer<double> s;
 
   s.write(3.2);
   s.write(-1);
@@ -30,7 +30,7 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   for (size_t i = 0; i < expected.size(); ++i)
     EXPECT_EQ(expected[i], s.vals_[i]);
 
-  stan::test::deserializer<double> d = stan::test::to_deserializer(s.vals_);
+  stan::math::deserializer<double> d = stan::math::to_deserializer(s.vals_);
 
   EXPECT_EQ(3.2, d.read(0.0));
   EXPECT_EQ(-1, d.read(0.0));
@@ -58,7 +58,7 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
 }
 
 TEST(testUnitMathSerializer, serialize) {
-  std::vector<double> xs = stan::test::serialize<double>();
+  std::vector<double> xs = stan::math::serialize<double>();
   EXPECT_EQ(0, xs.size());
 
   double a = 2;
@@ -66,7 +66,7 @@ TEST(testUnitMathSerializer, serialize) {
   std::vector<double> c{3, 4, 5};
   Eigen::MatrixXd d(2, 3);
   d << -1, -2, -3, -4, -5, -6;
-  std::vector<double> ys = stan::test::serialize<double>(a, b, c, d);
+  std::vector<double> ys = stan::math::serialize<double>(a, b, c, d);
 
   std::vector<double> expected{2, 1, 2, 3, 4, 5, -1, -4, -2, -5, -3, -6};
   for (size_t i = 0; i < expected.size(); ++i)

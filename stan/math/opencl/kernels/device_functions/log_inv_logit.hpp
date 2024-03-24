@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char* log_inv_logit_device_function
+static constexpr const char* log_inv_logit_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG_INV_LOGIT\n"
       "#define "
@@ -27,9 +27,9 @@ static const char* log_inv_logit_device_function
            */
           double log_inv_logit(double x) {
             if (x < 0.0) {
-              return x - log1p(exp(x));  // prevent underflow
+              return x - log1p_exp(x);  // prevent underflow
             }
-            return -log1p(exp(-x));
+            return -log1p_exp(-x);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT

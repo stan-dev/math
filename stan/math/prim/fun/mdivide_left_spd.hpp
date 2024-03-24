@@ -28,7 +28,7 @@ template <typename EigMat1, typename EigMat2,
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_left_spd(const EigMat1& A, const EigMat2& b) {
-  static const char* function = "mdivide_left_spd";
+  static constexpr const char* function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   const auto& A_ref = to_ref(A);
   check_symmetric(function, "A", A_ref);

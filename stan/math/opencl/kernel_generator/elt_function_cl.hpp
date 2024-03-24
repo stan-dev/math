@@ -298,6 +298,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(digamma,
                                  opencl_kernels::digamma_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m, opencl_kernels::log1m_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log_inv_logit,
+                                 opencl_kernels::log1p_exp_device_function,
                                  opencl_kernels::log_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m_exp,
                                  opencl_kernels::log1m_exp_device_function)
@@ -317,7 +318,8 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
                                  opencl_kernels::phi_device_function,
                                  opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
-    log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+    log1m_inv_logit, opencl_kernels::log1p_exp_device_function,
+    opencl_kernels::log1m_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(trigamma,
                                  opencl_kernels::trigamma_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(

@@ -47,7 +47,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   using T_N_ref = ref_type_t<T_N>;
   using T_alpha_ref = ref_type_t<T_size1>;
   using T_beta_ref = ref_type_t<T_size2>;
-  static const char* function = "beta_binomial_lpmf";
+  static constexpr const char* function = "beta_binomial_lpmf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "First prior sample size parameter", alpha,

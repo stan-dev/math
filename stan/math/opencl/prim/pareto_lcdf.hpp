@@ -32,7 +32,7 @@ template <
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl, T_shape_cl>* = nullptr>
 return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
     const T_y_cl& y, const T_scale_cl& y_min, const T_shape_cl& alpha) {
-  static const char* function = "pareto_lcdf(OpenCL)";
+  static constexpr const char* function = "pareto_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
   using std::isinf;
@@ -68,7 +68,8 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
 
   auto log_quot = log(elt_divide(y_min_val, y_val));
   auto exp_prod = exp(elt_multiply(alpha_val, log_quot));
-  auto lcdf_expr = colwise_sum(log(1.0 - exp_prod));
+  // TODO(Andrew) Further simplify derivatives and log1m_exp below
+  auto lcdf_expr = colwise_sum(log1m(exp_prod));
 
   auto common_deriv = elt_divide(exp_prod, 1.0 - exp_prod);
 

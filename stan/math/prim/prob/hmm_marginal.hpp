@@ -79,9 +79,9 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
   using eig_matrix_partial
       = Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>;
   using eig_vector_partial = Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>;
-  using T_omega_ref = ref_type_if_t<!is_constant<T_omega>::value, T_omega>;
-  using T_Gamma_ref = ref_type_if_t<!is_constant<T_Gamma>::value, T_Gamma>;
-  using T_rho_ref = ref_type_if_t<!is_constant<T_rho>::value, T_rho>;
+  using T_omega_ref = ref_type_if_not_constant_t<T_omega>;
+  using T_Gamma_ref = ref_type_if_not_constant_t<T_Gamma>;
+  using T_rho_ref = ref_type_if_not_constant_t<T_rho>;
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 

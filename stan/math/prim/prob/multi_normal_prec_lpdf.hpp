@@ -23,7 +23,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   using lp_type = return_type_t<T_y, T_loc, T_covar>;
   using Eigen::Matrix;
   using std::vector;
-  static const char* function = "multi_normal_prec_lpdf";
+  static constexpr const char* function = "multi_normal_prec_lpdf";
   check_positive(function, "Precision matrix rows", Sigma.rows());
 
   size_t number_of_y = size_mvt(y);
