@@ -22,10 +22,37 @@ struct is_eigen_matrix_base
     : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {
 };
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix_base, is_eigen_matrix_base,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_base, is_eigen_matrix_base,
-                           require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_matrix_base_types eigen_matrix_base  */
+/*! \addtogroup eigen_matrix_base_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_matrix_base */
+/*! @tparam T the type to check */
+template <typename T>
+using require_eigen_matrix_base_t
+    = require_t<is_eigen_matrix_base<std::decay_t<T>>>;
+
+/*! \brief Require type satisfies @ref is_eigen_matrix_base */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_matrix_base for and whose @ref
+ * value_type is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_matrix_base_vt
+    = require_t<container_type_check_base<is_eigen_matrix_base, value_type_t,
+                                          TypeCheck, Check...>>;
+
+/*! \brief Require all of the types satisfy is_eigen_matrix_base */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_matrix_base for and whose @ref
+ * value_type is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_matrix_base_vt
+    = require_all_t<container_type_check_base<
+        is_eigen_matrix_base, value_type_t, TypeCheck, Check>...>;
+/*! @} */
 
 }  // namespace stan
 

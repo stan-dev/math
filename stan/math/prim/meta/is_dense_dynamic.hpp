@@ -38,9 +38,22 @@ struct is_dense_dynamic_impl<T, require_t<is_var<T>>>
 template <typename T>
 using is_dense_dynamic = internal::is_dense_dynamic_impl<std::decay_t<T>>;
 
-STAN_ADD_REQUIRE_UNARY(dense_dynamic, is_dense_dynamic, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(dense_dynamic, is_dense_dynamic,
-                           require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup dense_dynamic_types dense_dynamic  */
+/*! \addtogroup dense_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_dense_dynamic */
+/*! @tparam T the type to check */
+template <typename T>
+using require_dense_dynamic_t = require_t<is_dense_dynamic<std::decay_t<T>>>;
+
+/*! \brief Require all of the types satisfy @ref is_dense_dynamic */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_dense_dynamic_t
+    = require_all_t<is_dense_dynamic<std::decay_t<Types>>...>;
+/*! @} */
 
 }  // namespace stan
 

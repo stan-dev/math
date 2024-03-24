@@ -13,8 +13,33 @@ namespace stan {
 template <typename S>
 using is_plain_type = std::is_same<std::decay_t<S>, plain_type_t<S>>;
 
-STAN_ADD_REQUIRE_UNARY(plain_type, is_plain_type, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(plain_type, is_plain_type, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup plain_type_types plain_type  */
+/*! \addtogroup plain_type_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_plain_type */
+/*! @tparam T the type to check */
+template <typename T>
+using require_plain_type_t = require_t<is_plain_type<std::decay_t<T>>>;
+
+/*! \brief Require type does not satisfy @ref is_plain_type */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_plain_type_t = require_not_t<is_plain_type<std::decay_t<T>>>;
+
+/*! \brief Require all of the types satisfy @ref is_plain_type */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_plain_type_t
+    = require_all_t<is_plain_type<std::decay_t<Types>>...>;
+
+/*! \brief Require any of the types satisfy @ref is_plain_type */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_not_plain_type_t
+    = require_any_not_t<is_plain_type<std::decay_t<Types>>...>;
+/*! @} */
 
 }  // namespace stan
 #endif

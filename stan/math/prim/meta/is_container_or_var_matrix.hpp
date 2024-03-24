@@ -24,11 +24,6 @@ using is_container_or_var_matrix
     = bool_constant<math::disjunction<is_container<Container>,
                                       is_var_matrix<Container>>::value>;
 
-STAN_ADD_REQUIRE_UNARY(container_or_var_matrix, is_container_or_var_matrix,
-                       general_types);
-STAN_ADD_REQUIRE_CONTAINER(container_or_var_matrix, is_container_or_var_matrix,
-                           general_types);
-
 }  // namespace stan
 
 #endif
