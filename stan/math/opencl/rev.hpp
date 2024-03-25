@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/prim.hpp>
+#include <stan/math/opencl/rev_constraint.hpp>
+
 #include <stan/math/opencl/rev/append_col.hpp>
 #include <stan/math/opencl/rev/append_row.hpp>
 #include <stan/math/opencl/rev/as_column_vector_or_scalar.hpp>
