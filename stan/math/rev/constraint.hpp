@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_CONSTRAINT_HPP
 #define STAN_MATH_REV_CONSTRAINT_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+
 #include <stan/math/rev/constraint/cholesky_corr_constrain.hpp>
 #include <stan/math/rev/constraint/cholesky_factor_constrain.hpp>
 #include <stan/math/rev/constraint/corr_matrix_constrain.hpp>

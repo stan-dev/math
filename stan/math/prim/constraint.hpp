@@ -1,5 +1,8 @@
 #ifndef STAN_MATH_PRIM_CONSTRAINT_HPP
 #define STAN_MATH_PRIM_CONSTRAINT_HPP
+
+#include <stan/math/prim/fun.hpp>
+
 #include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/constraint/cholesky_corr_free.hpp>
 #include <stan/math/prim/constraint/cholesky_factor_constrain.hpp>
