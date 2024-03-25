@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST_F(mathMixFun, eigendecomposeComplex) {
+TEST_F(mathMix, eigendecomposeComplex) {
   auto f = [](const auto& x) {
     using stan::math::eigendecompose;
     return std::get<0>(eigendecompose(stan::math::to_complex(x, 0)));

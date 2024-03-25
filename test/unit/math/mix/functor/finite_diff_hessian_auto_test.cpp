@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 namespace finite_diff_hessian_auto_test {
