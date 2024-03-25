@@ -23,9 +23,12 @@ testsfx = "_test.cpp"
 
 allowed_paths_with_jumbo = [
     "test/unit/math/prim/",
+    "test/unit/math/prim/constraint",
     "test/unit/math/",
     "test/unit/math/rev/",
+     "test/unit/math/rev/constraint",
     "test/unit/math/fwd/",
+    "test/unit/math/fwd/constraint",
     "test/unit/math/mix/",
     "test/unit/math/mix/fun/",
     "test/unit/math/opencl/",
@@ -33,18 +36,21 @@ allowed_paths_with_jumbo = [
 ]
 
 jumbo_folders = [
+    "test/unit/math/prim/constraint",
     "test/unit/math/prim/core",
     "test/unit/math/prim/err",
     "test/unit/math/prim/fun",
     "test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
     "test/unit/math/prim/prob",
+     "test/unit/math/rev/constraint",
     "test/unit/math/rev/core",
     "test/unit/math/rev/err",
     "test/unit/math/rev/fun",
     "test/unit/math/rev/functor",
     "test/unit/math/rev/meta",
     "test/unit/math/rev/prob",
+    "test/unit/math/fwd/constraint",
     "test/unit/math/fwd/core",
     "test/unit/math/fwd/fun",
     "test/unit/math/fwd/functor",
@@ -58,7 +64,9 @@ jumbo_folders = [
     "test/unit/math/opencl/device_functions",
     "test/unit/math/opencl/kernel_generator",
     "test/unit/math/opencl/prim",
+    "test/unit/math/opencl/prim/constraint",
     "test/unit/math/opencl/rev",
+    "test/unit/math/opencl/rev/constraint",
 ]
 
 
