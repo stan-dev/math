@@ -177,7 +177,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
  private:
   template <typename T, typename Integral>
   inline T* copy_vector(const T* ptr, Integral size) {
-    if (size == 0) return nullptr;
+    if (size == 0)
+      return nullptr;
     T* ret = ChainableStack::instance_->memalloc_.alloc_array<T>(size);
     std::copy_n(ptr, size, ret);
     return ret;
@@ -190,11 +191,14 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    */
   template <typename T, require_same_t<T, PlainObject>* = nullptr>
   arena_matrix(T&& other)  // NOLINT
-      : Base::Map(other.rows(), other.cols(), other.nonZeros(),
-                  copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
-                  copy_vector(other.innerIndexPtr(), other.nonZeros()),
-                  copy_vector(other.valuePtr(), other.nonZeros()),
-                  copy_vector(other.innerNonZeroPtr(), other.innerNonZeroPtr() == nullptr ? 0 : other.innerSize())) {}
+      : Base::Map(
+          other.rows(), other.cols(), other.nonZeros(),
+          copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
+          copy_vector(other.innerIndexPtr(), other.nonZeros()),
+          copy_vector(other.valuePtr(), other.nonZeros()),
+          copy_vector(
+              other.innerNonZeroPtr(),
+              other.innerNonZeroPtr() == nullptr ? 0 : other.innerSize())) {}
 
   /**
    * Constructs `arena_matrix` from an Eigen expression
