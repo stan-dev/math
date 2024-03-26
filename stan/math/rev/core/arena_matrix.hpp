@@ -176,7 +176,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
 
  private:
   template <typename T, typename Integral>
-  auto* copy_vector(const T* ptr, Integral size) {
+  inline T* copy_vector(const T* ptr, Integral size) {
+    if (size == 0) return nullptr;
     T* ret = ChainableStack::instance_->memalloc_.alloc_array<T>(size);
     std::copy_n(ptr, size, ret);
     return ret;
@@ -192,7 +193,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
                   copy_vector(other.outerIndexPtr(), other.outerSize() + 1),
                   copy_vector(other.innerIndexPtr(), other.nonZeros()),
-                  copy_vector(other.valuePtr(), other.nonZeros())) {}
+                  copy_vector(other.valuePtr(), other.nonZeros()),
+                  copy_vector(other.innerNonZeroPtr(), other.innerNonZeroPtr() == nullptr ? 0 : other.innerSize())) {}
 
   /**
    * Constructs `arena_matrix` from an Eigen expression
@@ -220,7 +222,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   arena_matrix(const arena_matrix<MatrixType>& other)
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
                   other.outerIndexPtr(), other.innerIndexPtr(),
-                  other.valuePtr()) {}
+                  other.valuePtr(), other.innernonZeroPtr()) {}
   /**
    * Move constructor.
    * @note Since the memory for the arena matrix sits in Stan's memory arena all
@@ -230,7 +232,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   arena_matrix(arena_matrix<MatrixType>&& other)
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
                   other.outerIndexPtr(), other.innerIndexPtr(),
-                  other.valuePtr()) {}
+                  other.valuePtr(), other.innerNonZeroPtr()) {}
   /**
    * Copy constructor. No actual copy is performed
    * @note Since the memory for the arena matrix sits in Stan's memory arena all
@@ -240,7 +242,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   arena_matrix(arena_matrix<MatrixType>& other)
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
                   other.outerIndexPtr(), other.innerIndexPtr(),
-                  other.valuePtr()) {}
+                  other.valuePtr(), other.innerNonZeroPtr()) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -259,7 +261,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
     new (this) Base(other.rows(), other.cols(), other.nonZeros(),
                     const_cast<StorageIndex*>(other.outerIndexPtr()),
                     const_cast<StorageIndex*>(other.innerIndexPtr()),
-                    const_cast<Scalar*>(other.valuePtr()));
+                    const_cast<Scalar*>(other.valuePtr()),
+                    const_cast<StorageIndex*>(other.innerNonZeroPtr()));
     return *this;
   }
 
@@ -289,8 +292,32 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    * @param other The right hand side of the inplace operation
    */
   template <typename F, typename Expr,
-            require_convertible_t<Expr&, MatrixType>* = nullptr>
-  void inplace_ops_impl(F&& f, Expr&& other) {
+            require_convertible_t<Expr&, MatrixType>* = nullptr,
+            require_same_t<Expr, arena_matrix<MatrixType>>* = nullptr>
+  inline void inplace_ops_impl(F&& f, Expr&& other) {
+    auto&& x = to_ref(other);
+    auto* val_ptr = (*this).valuePtr();
+    auto* x_val_ptr = x.valuePtr();
+    const auto non_zeros = (*this).nonZeros();
+    for (Eigen::Index i = 0; i < non_zeros; ++i) {
+      f(val_ptr[i], x_val_ptr[i]);
+    }
+  }
+
+  /**
+   * inplace operations functor for `Sparse (.*)= Sparse`.
+   * @note This assumes that each matrix is of the same size and sparsity
+   * pattern.
+   * @tparam F A type with a valid `operator()(Scalar& x, const Scalar& y)`
+   * method
+   * @tparam Expr Type derived from `Eigen::SparseMatrixBase`
+   * @param f Functor that performs the inplace operation
+   * @param other The right hand side of the inplace operation
+   */
+  template <typename F, typename Expr,
+            require_convertible_t<Expr&, MatrixType>* = nullptr,
+            require_not_same_t<Expr, arena_matrix<MatrixType>>* = nullptr>
+  inline void inplace_ops_impl(F&& f, Expr&& other) {
     auto&& x = to_ref(other);
     for (int k = 0; k < (*this).outerSize(); ++k) {
       typename Base::InnerIterator it(*this, k);
@@ -314,7 +341,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   template <typename F, typename Expr,
             require_not_convertible_t<Expr&, MatrixType>* = nullptr,
             require_eigen_dense_base_t<Expr>* = nullptr>
-  void inplace_ops_impl(F&& f, Expr&& other) {
+  inline void inplace_ops_impl(F&& f, Expr&& other) {
     auto&& x = to_ref(other);
     for (int k = 0; k < (*this).outerSize(); ++k) {
       typename Base::InnerIterator it(*this, k);
@@ -336,12 +363,11 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    */
   template <typename F, typename T,
             require_convertible_t<T&, Scalar>* = nullptr>
-  void inplace_ops_impl(F&& f, T&& other) {
-    for (int k = 0; k < (*this).outerSize(); ++k) {
-      typename Base::InnerIterator it(*this, k);
-      for (; static_cast<bool>(it); ++it) {
-        f(it.valueRef(), other);
-      }
+  inline void inplace_ops_impl(F&& f, T&& other) {
+    auto* val_ptr = (*this).valuePtr();
+    const auto non_zeros = (*this).nonZeros();
+    for (Eigen::Index i = 0; i < non_zeros; ++i) {
+      f(val_ptr[i], other);
     }
   }
 
@@ -349,17 +375,17 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
   /**
    * Inplace operator `+=`
    * @note Caution! Inplace operators assume that either
-   *  1. The right hand side sparse matrix has the same sparcity pattern
+   *  1. The right hand side sparse matrix has the same sparsity pattern
    *  2. You only intend to add a scalar or dense matrix coefficients to the
-   * nonzero values of `this` This is intended to be used within the reverse
+   * nonzero values of `this`. This is intended to be used within the reverse
    * pass for accumulation of the adjoint and is built as such. Any other use
-   * case should be be sure the above assumptions are satisfied.
+   * case should be be sure that the above assumptions are satisfied.
    * @tparam T A type derived from `Eigen::SparseMatrixBase` or
    * `Eigen::DenseMatrixBase` or a `Scalar`
    * @param other value to be added inplace to the matrix.
    */
   template <typename T>
-  arena_matrix& operator+=(T&& other) {
+  inline arena_matrix& operator+=(T&& other) {
     inplace_ops_impl(
         [](auto&& x, auto&& y) {
           x += y;
@@ -371,18 +397,18 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
 
   /**
    * Inplace operator `+=`
-   * @note Caution!! Inplace operators assume that either
-   *  1. The right hand side sparse matrix has the same sparcity pattern
+   * @note Caution! Inplace operators assume that either
+   *  1. The right hand side sparse matrix has the same sparsity pattern
    *  2. You only intend to add a scalar or dense matrix coefficients to the
-   * nonzero values of `this` This is intended to be used within the reverse
+   * nonzero values of `this`. This is intended to be used within the reverse
    * pass for accumulation of the adjoint and is built as such. Any other use
-   * case should be be sure the above assumptions are satisfied.
+   * case should be be sure that the above assumptions are satisfied.
    * @tparam T A type derived from `Eigen::SparseMatrixBase` or
    * `Eigen::DenseMatrixBase` or a `Scalar`
    * @param other value to be added inplace to the matrix.
    */
   template <typename T>
-  arena_matrix& operator-=(T&& other) {
+  inline arena_matrix& operator-=(T&& other) {
     inplace_ops_impl(
         [](auto&& x, auto&& y) {
           x -= y;

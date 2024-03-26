@@ -9,9 +9,9 @@ class var_value;
 
 /**
  * Equivalent to `Eigen::Matrix`, except that the data is stored on AD stack.
- * That makes these objects triviali destructible and usable in `vari`s.
+ * That makes these objects trivially destructible and usable in `vari`s.
  *
- * @tparam MatrixType Eigen matrix type this works as (`MatrixXd`, `VectorXd`
+ * @tparam MatrixType Eigen matrix type this works as (`MatrixXd`, `VectorXd`,
  * ...)
  */
 template <typename MatrixType, typename = void>

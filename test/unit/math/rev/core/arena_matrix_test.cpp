@@ -136,7 +136,7 @@ TEST_F(AgradRev, arena_sparse_matrix_constructors) {
   using stan::test::make_sparse_matrix_random;
   eig_mat A = make_sparse_matrix_random(10, 10);
   // Testing each constructor
-  arena_mat empty_m();
+  arena_mat empty_m{};
   arena_mat nocopy(A.rows(), A.cols(), A.nonZeros(), A.outerIndexPtr(),
                    A.innerIndexPtr(), A.valuePtr(), A.innerNonZeroPtr());
   Eigen::Map<eig_mat> sparse_map(A.rows(), A.cols(), A.nonZeros(),
@@ -206,6 +206,15 @@ TEST_F(AgradRev, arena_sparse_matrix_inplace_ops) {
 
   A_m = A;
   A_m -= A;
+  expect_sparse_matrix_equal(A_m, eig_mat(A - A));
+
+  arena_mat B_m = A;
+  A_m = A;
+  A_m += B_m;
+  expect_sparse_matrix_equal(A_m, eig_mat(A + A));
+
+  A_m = A;
+  A_m -= B_m;
   expect_sparse_matrix_equal(A_m, eig_mat(A - A));
 
   Eigen::Matrix<double, -1, -1> B
