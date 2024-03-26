@@ -24,9 +24,9 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, require_eigen_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline auto simplex_constrain(const Vec& y) {
+inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using std::log;
   using T = value_type_t<Vec>;
@@ -56,9 +56,10 @@ inline auto simplex_constrain(const Vec& y) {
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, require_eigen_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
+inline plain_type_t<Vec> simplex_constrain(const Vec& y,
+                                           value_type_t<Vec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -98,7 +99,8 @@ inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
  * @return simplex of dimensionality one greater than `y`
  */
 template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
-auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
+inline plain_type_t<Vec> simplex_constrain(const Vec& y,
+                                           return_type_t<Vec>& lp) {
   if (Jacobian) {
     return simplex_constrain(y, lp);
   } else {

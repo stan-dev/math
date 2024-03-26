@@ -16,6 +16,9 @@ namespace math {
 template <typename T>
 inline fvar<T> sqrt(const fvar<T>& x) {
   using std::sqrt;
+  if (value_of_rec(x.val_) == 0.0) {
+    return fvar<T>(sqrt(x.val_), 0.0 * x.d_);
+  }
   return fvar<T>(sqrt(x.val_), 0.5 * x.d_ * inv_sqrt(x.val_));
 }
 
