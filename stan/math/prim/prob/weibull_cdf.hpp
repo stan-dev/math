@@ -69,8 +69,8 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
   const auto& log_y = to_ref_if<any_derivs>(log(y_val));
   const auto& log_sigma = to_ref_if<any_derivs>(log(sigma_val));
-  const auto& log_pow_n
-      = to_ref_if<any_derivs>(alpha_val * log_y - alpha_val * log_sigma);
+  const auto& log_y_div_sigma = to_ref_if<any_derivs>(log_y - log_sigma);
+  const auto& log_pow_n = to_ref_if<any_derivs>(alpha_val * log_y_div_sigma);
   const auto& pow_n = to_ref_if<any_derivs>(exp(log_pow_n));
   const auto& log_cdf_n = to_ref_if<any_derivs>(log1m_exp(-pow_n));
 
@@ -88,7 +88,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      partials<1>(ops_partials) = exp(log_rep_deriv) * (log_y - log_sigma);
+      partials<1>(ops_partials) = exp(log_rep_deriv) * log_y_div_sigma;
     }
   }
   return ops_partials.build(exp(log_cdf));
