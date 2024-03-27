@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/chainable_object.hpp>
 #include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 
