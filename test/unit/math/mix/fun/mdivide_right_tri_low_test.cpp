@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(MathMixMatFun, mdivideRightTriLow) {
+TEST_F(mathMix, mdivideRightTriLow) {
   auto f = [](const auto& x, const auto& y) {
     // no need to symmetrize because only uses view
     return stan::math::mdivide_right_tri_low(x, y);

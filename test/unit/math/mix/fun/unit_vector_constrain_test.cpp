@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stan/math.hpp>
 
 namespace unit_vector_constrain_test {
@@ -43,7 +44,7 @@ void expect_unit_vector_constrain(const T& x) {
 }
 }  // namespace unit_vector_constrain_test
 
-TEST(MathMixMatFun, unitVectorConstrain) {
+TEST_F(mathMix, unitVectorConstrain) {
   Eigen::VectorXd v0;
   unit_vector_constrain_test::expect_unit_vector_constrain(v0);
 

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, cholesky_factor_constrain) {
+TEST_F(mathMix, cholesky_factor_constrain) {
   auto f = [](int M, int N) {
     return [M, N](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;
@@ -19,7 +20,7 @@ TEST(mathMixMatFun, cholesky_factor_constrain) {
   stan::test::expect_ad_matvar(f(5, 3), x2);
 }
 
-TEST(mathMixMatFun, cholesky_factor_constrain_lp) {
+TEST_F(mathMix, cholesky_factor_constrain_lp) {
   auto f1 = [](int M, int N) {
     return [M, N](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;

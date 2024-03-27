@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_MATH_MIX_FUN_MULTIPLY_UTIL_HPP
 #define TEST_UNIT_MATH_MIX_FUN_MULTIPLY_UTIL_HPP
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 template <typename T>
 void instantiate_multiply() {

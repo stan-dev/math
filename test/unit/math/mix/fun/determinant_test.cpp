@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <vector>
 
-TEST(MathMixMatFun, determinant) {
+TEST_F(mathMix, determinant) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& y) { return stan::math::determinant(y); };
 

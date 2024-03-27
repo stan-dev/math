@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, multinomialLogit) {
+TEST_F(mathMix, mathMixScalFun_multinomialLogit) {
   std::vector<int> ns{0, 1, 2, 3};
   Eigen::VectorXd beta(4);
   beta << 0.1, 0.1, 0.5, 0.3;

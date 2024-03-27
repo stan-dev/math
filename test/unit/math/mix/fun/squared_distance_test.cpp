@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, squaredDistance) {
+TEST_F(mathMix, squaredDistance_nan) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::squared_distance(x1, x2);
   };
@@ -40,7 +41,7 @@ void expect_squared_distance(const std::vector<double>& sv1,
   stan::test::expect_ad_matvar(tols, f, rv1, v2);
 }
 
-TEST(MathMixMatFun, squaredDistance) {
+TEST_F(mathMix, squaredDistance_matrix) {
   std::vector<double> a0;
   std::vector<double> b0;
   expect_squared_distance(a0, b0);

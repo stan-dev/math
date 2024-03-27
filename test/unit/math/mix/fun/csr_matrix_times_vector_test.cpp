@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, csr_matrix_times_vector) {
+TEST_F(mathMix, csr_matrix_times_vector) {
   auto f = [](const auto& w, const auto& b) {
     using stan::math::csr_matrix_times_vector;
     std::vector<int> v{1, 2, 3, 1, 2};

@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRevMatrix, fill) {
+TEST_F(AgradRev, fill) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -43,7 +44,7 @@ TEST(AgradRevMatrix, fill) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val());
 }
-TEST(AgradRevMatrix, fillDouble) {
+TEST_F(AgradRev, fillDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -53,13 +54,14 @@ TEST(AgradRevMatrix, fillDouble) {
   EXPECT_FLOAT_EQ(3.0, y[0]);
 }
 
-TEST(AgradRevMatrix, fillVarMatDouble) {
+TEST_F(AgradRev, fillVarMatDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
   using stan::math::sum;
   using stan::math::var_value;
-  Matrix<double, Dynamic, 1> y_val(3);
+  Matrix<double, Dynamic, 1> y_val
+      = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -71,14 +73,15 @@ TEST(AgradRevMatrix, fillVarMatDouble) {
   }
 }
 
-TEST(AgradRevMatrix, fillVarMatVar) {
+TEST_F(AgradRev, fillVarMatVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
-  Matrix<double, Dynamic, 1> y_val(3);
+  Matrix<double, Dynamic, 1> y_val
+      = Matrix<double, Dynamic, 1>::Constant(3, 2.0);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   var z(3.0);
   fill(y, z);

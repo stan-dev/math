@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, matrixExpPade) {
+TEST_F(mathMix, matrixExpPade) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x) { return stan::math::matrix_exp_pade(x); };
 

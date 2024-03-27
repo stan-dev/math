@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, logSumExp) {
+TEST_F(mathMix, log_sum_exp_scalar) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_sum_exp(x1, x2);
   };
@@ -40,7 +41,7 @@ TEST(mathMixScalFun, logSumExp) {
   stan::test::expect_value(f, 1000.0, 10.0);
 }
 
-TEST(MathMixMatFun, logSumExp) {
+TEST_F(mathMix, log_sum_exp_matrix) {
   auto f = [](const auto& x) { return stan::math::log_sum_exp(x); };
 
   Eigen::VectorXd x0(0);
@@ -97,7 +98,7 @@ TEST(MathMixMatFun, logSumExp) {
   stan::test::expect_ad(tols, f, ststx);
 }
 
-TEST(mathMixScalFun, logSumExp_vec) {
+TEST_F(mathMix, logSumExp_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_sum_exp;
     return log_sum_exp(x1, x2);

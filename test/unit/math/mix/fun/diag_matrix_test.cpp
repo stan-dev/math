@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, diagMatrix) {
+TEST_F(mathMix, diagMatrix) {
   auto f = [](const auto& y) { return stan::math::diag_matrix(y); };
 
   for (int i = 0; i < 5; ++i) {

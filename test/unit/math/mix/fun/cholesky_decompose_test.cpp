@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <vector>
 
@@ -31,7 +32,7 @@ void expect_cholesky(const Eigen::MatrixXd& Sigma) {
 }
 }  // namespace cholesky_decompose_test
 
-TEST(MathMixMatFun, choleskyDecomposeSpecific) {
+TEST_F(mathMix, choleskyDecomposeSpecific) {
   // 1 x 1 matrix;  (1 choose 2) + 1 = 1
   Eigen::VectorXd x1(1);
   x1 << 1;
@@ -74,7 +75,7 @@ TEST(MathMixMatFun, choleskyDecomposeSpecific) {
   stan::test::expect_ad_matvar(g, y);
 }
 
-TEST(MathMixMatFun, choleskyDecomposeGeneral) {
+TEST_F(mathMix, choleskyDecomposeGeneral) {
   // general sizes
   for (int n = 0; n < 8; ++n) {
     int dof = (n * (n + 1)) / 2;
@@ -91,7 +92,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneral) {
   }
 }
 
-TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
+TEST_F(mathMix, choleskyDecomposeGeneralBig) {
   // general sizes
   for (int n : std::vector<int>{12, 13, 20, 40, 50}) {
     int dof = (n * (n + 1)) / 2;
@@ -107,7 +108,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
 }
 
 // GP covar
-TEST(MathMixMatFun, choleskyDecomposeGP) {
+TEST_F(mathMix, choleskyDecomposeGP) {
   for (size_t n = 1; n < 5; ++n) {
     std::vector<double> xx(n);
     for (size_t i = 0; i < n; ++i) {

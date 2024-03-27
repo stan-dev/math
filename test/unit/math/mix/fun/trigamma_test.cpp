@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, trigamma) {
+TEST_F(mathMix, trigamma) {
   using stan::math::trigamma;
   using stan::test::ad_tolerances;
   using stan::test::expect_unary_vectorized;

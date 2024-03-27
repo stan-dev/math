@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, subRow) {
+TEST_F(mathMix, subRow) {
   auto f = [](int i, int j, int k) {
     return [=](const auto& y) { return stan::math::sub_row(y, i, j, k); };
   };

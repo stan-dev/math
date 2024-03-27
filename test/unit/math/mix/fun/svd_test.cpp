@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST(MathMixMatFun, svd) {
+TEST_F(mathMix, svd) {
   auto f = [](const auto& x) { return std::get<0>(stan::math::svd(x)); };
   auto g = [](const auto& x) { return std::get<1>(stan::math::svd(x)); };
   auto h = [](const auto& x) { return std::get<2>(stan::math::svd(x)); };

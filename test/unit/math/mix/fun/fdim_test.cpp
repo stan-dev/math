@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, fdim) {
+TEST_F(mathMix, fdim) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::fdim(x1, x2); };
   stan::test::expect_ad(f, -3.0, 4.0);
@@ -22,7 +23,7 @@ TEST(mathMixScalFun, fdim) {
   stan::test::expect_ad(f, nan, nan);
 }
 
-TEST(mathMixScalFun, fdim_vec) {
+TEST_F(mathMix, fdim_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::fdim;
     return fdim(x1, x2);

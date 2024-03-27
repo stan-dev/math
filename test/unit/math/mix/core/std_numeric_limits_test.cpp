@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(AgradMixNumericLimits, All_Fvar) {
+TEST_F(mathMix, All_Fvar) {
   using stan::math::fvar;
   using stan::math::INFTY;
   using stan::math::var;

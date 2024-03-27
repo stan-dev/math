@@ -21,6 +21,7 @@ TEST_F(AgradRev, arena_matrix_matrix_test) {
   a = c;
   a2 = std::move(d);
   a3 = 2 * a;
+
   b = d;
   b2 = std::move(c);
   e = e + a;
@@ -238,4 +239,14 @@ TEST_F(AgradRev, arena_sparse_matrix_inplace_ops) {
     }
   }
   expect_sparse_dense_matrix_equal(A_m, C);
+}
+
+TEST(AgradRevArenaMat, arena_matrix_move_test) {
+  using stan::math::arena_matrix;
+  Eigen::VectorXd c = Eigen::VectorXd::Random(3);
+  Eigen::VectorXd d = c;
+  arena_matrix<Eigen::VectorXd> a(std::move(c));
+  EXPECT_MATRIX_EQ(a, d);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
+  stan::math::recover_memory();
 }

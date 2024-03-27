@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -21,7 +22,7 @@ void expect_all_logb(double x) {
   expect_logb<fvar<fvar<var>>>(x);
 }
 
-TEST(mathMixMatFun, logb) {
+TEST_F(mathMix, logb) {
   double inf = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
   for (double x : std::vector<double>{-inf, -2.3, 0, 1, 2, 3.9, inf, nan}) {

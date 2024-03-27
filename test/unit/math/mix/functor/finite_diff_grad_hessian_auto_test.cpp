@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <string>
 #include <vector>
 
@@ -35,7 +36,7 @@ void test_grad_hessian_finite_diff(const std::string& msg, const F& f,
   }
 }
 
-TEST(MixMatFunctor, FiniteDiffGradHessianAuto) {
+TEST_F(mathMix, func_FiniteDiffGradHessianAuto) {
   auto norm_fun
       = [](const auto& x) { return stan::math::normal_lpdf(x(0), x(1), x(2)); };
   Eigen::VectorXd x(3);

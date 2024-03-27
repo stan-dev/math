@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixCore, operatorDivideEqual) {
+TEST_F(mathMix, operatorDivideEqual) {
   auto f = [](const auto& x1, const auto& x2) {
     // decltype instead of auto to make following statement legal
     decltype(x1 + x2) y = x1;

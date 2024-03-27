@@ -1,7 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiGPCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -48,7 +50,7 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiGPCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

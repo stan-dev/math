@@ -22,13 +22,15 @@ template <typename EigMat1, typename EigMat2,
           require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<double, Eigen::Dynamic, EigMat2::ColsAtCompileTime>
 matrix_exp_multiply(const EigMat1& A, const EigMat2& B) {
-  check_square("matrix_exp_multiply", "input matrix", A);
-  check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
-  if (A.size() == 0) {
-    return {0, B.cols()};
+  auto&& A_ref = to_ref(A);
+  auto&& B_ref = to_ref(B);
+  check_square("matrix_exp_multiply", "input matrix", A_ref);
+  check_multiplicable("matrix_exp_multiply", "A", A_ref, "B", B_ref);
+  if (A_ref.size() == 0) {
+    return {0, B_ref.cols()};
   }
 
-  return matrix_exp_action_handler().action(A, B);
+  return matrix_exp_action_handler().action(A_ref, B_ref);
 }
 
 }  // namespace math

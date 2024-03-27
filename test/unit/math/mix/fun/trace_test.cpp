@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, trace) {
+TEST_F(mathMix, trace) {
   auto f = [](const auto& x) { return stan::math::trace(x); };
 
   Eigen::MatrixXd a(0, 0);

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 
-TEST(MathMixMatFun, quadForm) {
+TEST_F(mathMix, quadForm) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
     return stan::math::quad_form(x, y);

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, fma_matrix_error) {
+TEST_F(mathMix, fma_matrix_error) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::fma(x1, x2, x3);
   };

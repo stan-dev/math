@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, log) {
+TEST_F(mathMix, log) {
   auto f = [](const auto& x1) {
     using stan::math::log;
     return log(x1);

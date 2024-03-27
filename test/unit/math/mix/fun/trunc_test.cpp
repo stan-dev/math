@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, trunc) {
+TEST_F(mathMix, trunc) {
   auto f = [](const auto& x1) { return stan::math::trunc(x1); };
   // can't diff trunc through integers
   for (auto x : stan::test::internal::common_nonzero_args())
