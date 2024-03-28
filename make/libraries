@@ -11,7 +11,6 @@ MATH ?=
 BOOST ?= $(MATH)lib/boost_1.84.0
 EIGEN ?= $(MATH)lib/eigen_3.4.0
 OPENCL ?= $(MATH)lib/opencl_3.0.0
-VULKAN ?= $(MATH)lib/vulkan_hpp_1.3.280
 TBB ?= $(MATH)lib/tbb_2020.3
 SUNDIALS ?= $(MATH)lib/sundials_6.1.1
 BENCHMARK ?= $(MATH)lib/benchmark_1.5.1

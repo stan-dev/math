@@ -218,7 +218,6 @@ ifdef STAN_VULKAN
   VULKAN_PLATFORM_ID ?= 0
   VULKAN_DEVICE_ID ?= 0
   CPPFLAGS_VULKAN ?= -DSTAN_VULKAN -DVULKAN_PLATFORM_ID=$(VULKAN_PLATFORM_ID) -DVULKAN_DEVICE_ID=$(VULKAN_DEVICE_ID)
-  CXXFLAGS_VULKAN ?= -I $(VULKAN)
 endif
 
 ################################################################################
