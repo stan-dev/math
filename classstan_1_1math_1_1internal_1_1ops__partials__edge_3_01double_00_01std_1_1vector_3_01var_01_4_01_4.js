@@ -1,0 +1,12 @@
+var classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4 =
+[
+    [ "Op", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a1f14a9efe0c7d7bb280eac1deae0e38f.html#a1f14a9efe0c7d7bb280eac1deae0e38f", null ],
+    [ "partials_t", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_ac7ce35f215c006596fdb696170b9d9b2.html#ac7ce35f215c006596fdb696170b9d9b2", null ],
+    [ "ops_partials_edge", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_ac1b63067d469c85c2b18f9a84c12f0c1.html#ac1b63067d469c85c2b18f9a84c12f0c1", null ],
+    [ "size", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a459d2582a0b0086a17bf3820cf00d816.html#a459d2582a0b0086a17bf3820cf00d816", null ],
+    [ "operand", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a0367863b28027761ddd143c610410893.html#a0367863b28027761ddd143c610410893", null ],
+    [ "partial", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a2095c21782b316f36c4fcf9004df1e22.html#a2095c21782b316f36c4fcf9004df1e22", null ],
+    [ "partials_", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a322ba760aa834b610e01cc713baa6381.html#a322ba760aa834b610e01cc713baa6381", null ],
+    [ "partials_vec_", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a6cb0ae9cee6135c2ee811ee59eba867b.html#a6cb0ae9cee6135c2ee811ee59eba867b", null ],
+    [ "operands_", "classstan_1_1math_1_1internal_1_1ops__partials__edge_3_01double_00_01std_1_1vector_3_01var_01_4_01_4_a98992daf5a7d7afcb7d69cf823dd9849.html#a98992daf5a7d7afcb7d69cf823dd9849", null ]
+];

@@ -1,0 +1,4 @@
+var structstan_1_1internal_1_1arena__type__impl_3_01_t_00_01require__eigen__t_3_01_t_01_4_00_01std_1ab0a97132cd5442971cc749448703680 =
+[
+    [ "type", "structstan_1_1internal_1_1arena__type__impl_3_01_t_00_01require__eigen__t_3_01_t_01_4_00_01std_1ab0a97132cd5442971cc749448703680_ac983275d7a2e299f4c7caa1f11f150e8.html#ac983275d7a2e299f4c7caa1f11f150e8", null ]
+];
