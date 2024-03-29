@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 
-
 namespace stan {
 namespace math {
 namespace internal {
@@ -28,11 +27,11 @@ namespace internal {
  * @param log_error The log error tolerance
  * @return Gradient w.r.t. sw
  */
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sw, typename T_wildcard, typename T_err>
-inline auto wiener7_ccdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
-                                    const T_sw& sw, T_wildcard&& wildcard,
-                                    T_err&& log_error) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
+          typename T_wildcard, typename T_err>
+inline auto wiener7_ccdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
+                                 const T_w& w, const T_sw& sw,
+                                 T_wildcard&& wildcard, T_err&& log_error) {
   auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
   auto high = w + sw / 2.0;
@@ -87,9 +86,9 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
           typename T_st0>
 inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
-                                 const T_w& w, const T_v& v, const T_sv& sv,
-                                 const T_sw& sw, const T_st0& st0,
-                                 const double& precision_derivatives = 1e-8) {
+                         const T_w& w, const T_v& v, const T_sv& sv,
+                         const T_sw& sw, const T_st0& st0,
+                         const double& precision_derivatives = 1e-8) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
@@ -149,7 +148,6 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   check_finite(function_name, "Inter-trial variability in Nondecision time",
                st0_val);
 
-
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
   if (!N) {
     return ret_t(0.0);
@@ -195,7 +193,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
 
   const T_partials_return log_error_cdf = log(1e-6);  // precision for density
-  const auto error_bound = precision_derivatives;  // precision for
+  const auto error_bound = precision_derivatives;     // precision for
   // derivatives (controllable by user)
   const auto log_error_derivatives = log(error_bound);
   const T_partials_return absolute_error_hcubature = 0.0;
@@ -212,7 +210,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   for (size_t i = 0; i < N; i++) {
     if (sv_vec[i] == 0 && sw_vec[i] == 0 && st0_vec[i] == 0) {
       result += wiener_lccdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
-                                      v_vec[i], precision_derivatives);
+                                     v_vec[i], precision_derivatives);
       continue;
     }
     const T_partials_return y_value = y_vec.val(i);
@@ -246,18 +244,16 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_cdf + LOG_TWO + 1;
-	
-	using internal::GradientCalc;
-	
+
+    using internal::GradientCalc;
+
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
                                         log_error_absolute - LOG_TWO);
 
     const T_partials_return ccdf
         = internal::wiener7_integrate_cdf<GradientCalc::OFF>(
-            [&](auto&&... args) {
-              return internal::wiener4_ccdf(args...);
-            },
+            [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
             relative_error_hcubature / 2);
@@ -272,7 +268,9 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
         st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
     const T_partials_return deriv_t_7
-        = -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+        = -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
+                                           GradientCalc::OFF, GradientCalc::OFF,
+                                           GradientCalc::ON>(
               [&](auto&&... args) {
                 return internal::wiener5_density<GradientCalc::ON>(args...);
               },
@@ -290,8 +288,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
-                  return internal::wiener4_ccdf_grad_a(
-                      args...);
+                  return internal::wiener4_ccdf_grad_a(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -303,10 +300,10 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::ON>(
+          = internal::wiener7_integrate_cdf<GradientCalc::OFF,
+                                            GradientCalc::ON>(
                 [&](auto&&... args) {
-                  return internal::wiener4_ccdf_grad_w(
-                      args...);
+                  return internal::wiener4_ccdf_grad_w(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -317,8 +314,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
-                  return internal::wiener4_ccdf_grad_v(
-                      args...);
+                  return internal::wiener4_ccdf_grad_v(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -330,10 +326,10 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<5>(ops_partials)[i] = 0.0;
       } else {
         partials<5>(ops_partials)[i]
-            = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+            = internal::wiener7_integrate_cdf<
+                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
                   [&](auto&&... args) {
-                    return internal::wiener4_ccdf_grad_v(
-                        args...);
+                    return internal::wiener4_ccdf_grad_v(args...);
                   },
                   hcubature_err, params, dim, xmin, xmax,
                   maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -346,16 +342,20 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0.0;
       } else {
         if (st0_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF, GradientCalc::ON>(
+          deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF,
+                                                    GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener7_ccdf_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
-			  sw_value, 0.0, log_error_absolute
+              sw_value, 0.0,
+              log_error_absolute
                   - LOG_TWO);  // added wildcard 0. delete later somehow
           deriv = deriv / ccdf - 1 / sw_value;
         } else {
-          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+          deriv = internal::wiener7_integrate_cdf<
+                      GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+                      GradientCalc::ON>(
                       [&](auto&&... args) {
                         return internal::wiener4_ccdf_grad_w(args...);
                       },
@@ -376,9 +376,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         const auto t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
           deriv = internal::estimate_with_err_check<5, 0>(
-              [](auto&&... args) {
-                return internal::wiener4_ccdf(args...);
-              },
+              [](auto&&... args) { return internal::wiener4_ccdf(args...); },
               log_error_derivatives + log(st0_value), y_value - t0_st0, a_value,
               v_value, w_value, 0.0,
               log_error_absolute
@@ -388,12 +386,11 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
           const int dim_st = (sv_value != 0) + (sw_value != 0);
           const auto new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
-			  y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value, 0.0,
+              y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value,
+              0.0,
               new_error);  // added wildcard 0. delete later somehow
           deriv = internal::wiener7_integrate_cdf(
-              [&](auto&&... args) {
-                return internal::wiener4_ccdf(args...);
-              },
+              [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
               hcubature_err, params_st, dim_st, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,
               relative_error_hcubature / 2);

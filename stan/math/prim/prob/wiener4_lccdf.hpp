@@ -21,7 +21,7 @@ namespace internal {
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob(const T_a& a, const T_v& v_value,
-                          const T_w& w_value) noexcept {
+                        const T_w& w_value) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
@@ -40,7 +40,7 @@ inline auto wiener_prob(const T_a& a, const T_v& v_value,
 /**
  * Calculate parts of the partial derivatives for wiener_prob_grad_a and
  * wiener_prob_grad_v (on log-scale)
- * 
+ *
  * @tparam T_a type of boundary
  * @tparam T_w type of relative starting point
  * @tparam T_v type of drift rate
@@ -52,7 +52,7 @@ inline auto wiener_prob(const T_a& a, const T_v& v_value,
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
-                                          const T_w& w_value) noexcept {
+                                        const T_w& w_value) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto exponent_m1 = log1p(-1.1 * 1.0e-8);
   ret_t ans;
@@ -121,7 +121,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_grad_a(const T_a& a, const T_v& v,
-                                 const T_w& w) noexcept {
+                               const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   if (fabs(v) == 0.0) {
     return ret_t(0.0);
@@ -138,7 +138,7 @@ inline auto wiener_prob_grad_a(const T_a& a, const T_v& v,
 
 /**
  * Calculate the derivative of the wiener probability w.r.t. 'v' (on log-scale)
- * 
+ *
  * @tparam T_a type of boundary
  * @tparam T_w type of relative starting point
  * @tparam T_v type of drift rate
@@ -150,7 +150,7 @@ inline auto wiener_prob_grad_a(const T_a& a, const T_v& v,
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_grad_v(const T_a& a, const T_v& v,
-                                 const T_w& w) noexcept {
+                               const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto deriv_term = wiener_prob_derivative_term(a, v, w);
   const auto ans = -1 * deriv_term * a;
@@ -176,7 +176,7 @@ inline auto wiener_prob_grad_v(const T_a& a, const T_v& v,
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_grad_w(const T_a& a, const T_v& v_value,
-                                 const T_w& w_value) noexcept {
+                               const T_w& w_value) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
@@ -203,11 +203,11 @@ inline auto wiener_prob_grad_w(const T_a& a, const T_v& v_value,
  * @param w The drift rate
  * @return ccdf
  */
-template <typename T_y, typename T_a, typename T_w,
-          typename T_v, typename T_wildcard, typename T_err>
-inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v,
-                           const T_w& w, T_wildcard&& wildcard = 0.0,
-                           T_err&& err = log(1e-12)) noexcept {
+template <typename T_y, typename T_a, typename T_w, typename T_v,
+          typename T_wildcard, typename T_err>
+inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
+                         T_wildcard&& wildcard = 0.0,
+                         T_err&& err = log(1e-12)) noexcept {
   const auto prob = exp(wiener_prob(a, v, w));
   const auto cdf = wiener4_distribution<GradientCalc::ON>(y, a, v, w, 0, err);
   return prob - cdf;
@@ -222,11 +222,11 @@ inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v,
  * @param w The drift rate
  * @return Gradient w.r.t. a
  */
-template <typename T_y, typename T_a, typename T_w,
-          typename T_v, typename T_cdf, typename T_err>
+template <typename T_y, typename T_a, typename T_w, typename T_v,
+          typename T_cdf, typename T_err>
 inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
-                                  const T_w& w, T_cdf&& cdf,
-                                  T_err&& err = log(1e-12)) noexcept {
+                                const T_w& w, T_cdf&& cdf,
+                                T_err&& err = log(1e-12)) noexcept {
   const auto prob = wiener_prob(a, v, w);
   const auto prob_grad_a = wiener_prob_grad_a(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
@@ -242,14 +242,14 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
  * @param w The drift rate
  * @return Gradient w.r.t. v
  */
-template <typename T_y, typename T_a, typename T_w,
-          typename T_v, typename T_cdf, typename T_err>
+template <typename T_y, typename T_a, typename T_w, typename T_v,
+          typename T_cdf, typename T_err>
 inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
-                                  const T_w& w, T_cdf&& cdf,
-                                  T_err&& err = log(1e-12)) noexcept {
-  const auto prob = wiener_prob(
-      a, v, w);  // maybe hand over to this function, but then
-                 // wiener7_integrate_cdf has problems
+                                const T_w& w, T_cdf&& cdf,
+                                T_err&& err = log(1e-12)) noexcept {
+  const auto prob
+      = wiener_prob(a, v, w);  // maybe hand over to this function, but then
+                               // wiener7_integrate_cdf has problems
   const auto prob_grad_v = wiener_prob_grad_v(a, v, w);
   const auto cdf_grad_v = wiener4_cdf_grad_v(y, a, v, w, cdf, err);
   return prob_grad_v * exp(prob) - cdf_grad_v;
@@ -264,14 +264,14 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
  * @param w The drift rate
  * @return Gradient w.r.t. w
  */
-template <typename T_y, typename T_a, typename T_w,
-          typename T_v, typename T_cdf, typename T_err>
+template <typename T_y, typename T_a, typename T_w, typename T_v,
+          typename T_cdf, typename T_err>
 inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
-                                  const T_w& w, T_cdf&& cdf,
-                                  T_err&& err = log(1e-12)) noexcept {
-  const auto prob = wiener_prob(
-      a, v, w);  // maybe hand over to this function, but then
-                 // wiener7_integrate_cdf has problems
+                                const T_w& w, T_cdf&& cdf,
+                                T_err&& err = log(1e-12)) noexcept {
+  const auto prob
+      = wiener_prob(a, v, w);  // maybe hand over to this function, but then
+                               // wiener7_integrate_cdf has problems
   const auto prob_grad_w = wiener_prob_grad_w(a, v, w);
   const auto cdf_grad_w = wiener4_cdf_grad_w(y, a, v, w, cdf, err);
   return prob_grad_w * exp(prob) - cdf_grad_w;
@@ -299,28 +299,26 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
  */
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v>
-inline auto wiener_lccdf(
-    const T_y& y, const T_a& a, const T_t0& t0, const T_w& w, const T_v& v,
-    const double& precision_derivatives) {
+inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
+                         const T_w& w, const T_v& v,
+                         const double& precision_derivatives) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
-  
-   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
+
+  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
-  
+
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
   using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
   using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
 
-
   static constexpr const char* function_name = "wiener4_lccdf";
   if (size_zero(y, a, t0, w, v)) {
     return ret_t(0.0);
   }
-
 
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
@@ -380,34 +378,30 @@ inline auto wiener_lccdf(
     const auto t0_value = t0_vec.val(i);
     const auto w_value = w_vec.val(i);
     const auto v_value = v_vec.val(i);
-	
-	using internal::GradientCalc;
+
+    using internal::GradientCalc;
     const T_partials_return cdf
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF, GradientCalc::OFF>(
+        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+                                            GradientCalc::OFF>(
             [](auto&&... args) {
-              return internal::wiener4_distribution<GradientCalc::ON>(
-                  args...);
+              return internal::wiener4_distribution<GradientCalc::ON>(args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
             w_value, 0.0, log_error_absolute);
 
-    const auto prob = exp(
-        internal::wiener_prob(a_value, v_value, w_value));
+    const auto prob = exp(internal::wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;
 
     lccdf += log(ccdf);
 
-    const auto new_est_err
-        = log(ccdf) + log_error_derivative - LOG_FOUR;
+    const auto new_est_err = log(ccdf) + log_error_derivative - LOG_FOUR;
 
-    const auto deriv_y
-        = internal::estimate_with_err_check<5, 0>(
-            [](auto&&... args) {
-              return internal::wiener5_density<GradientCalc::ON>(
-                  args...);
-            },
-            new_est_err, y_value - t0_value, a_value, v_value, w_value, 0.0,
-            log_error_absolute);
+    const auto deriv_y = internal::estimate_with_err_check<5, 0>(
+        [](auto&&... args) {
+          return internal::wiener5_density<GradientCalc::ON>(args...);
+        },
+        new_est_err, y_value - t0_value, a_value, v_value, w_value, 0.0,
+        log_error_absolute);
 
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] = -deriv_y / ccdf;
@@ -416,8 +410,7 @@ inline auto wiener_lccdf(
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(
                 [](auto&&... args) {
-                  return internal::wiener4_ccdf_grad_a(
-                      args...);
+                  return internal::wiener4_ccdf_grad_a(args...);
                 },
                 new_est_err, y_value - t0_value, a_value, v_value, w_value, cdf,
                 log_error_absolute)
@@ -430,8 +423,7 @@ inline auto wiener_lccdf(
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(
                 [](auto&&... args) {
-                  return internal::wiener4_ccdf_grad_w(
-                      args...);
+                  return internal::wiener4_ccdf_grad_w(args...);
                 },
                 new_est_err, y_value - t0_value, a_value, v_value, w_value, cdf,
                 log_error_absolute)
@@ -439,8 +431,8 @@ inline auto wiener_lccdf(
     }
     if (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
-          = internal::wiener4_ccdf_grad_v(
-                y_value - t0_value, a_value, v_value, w_value, cdf, log_error_absolute)
+          = internal::wiener4_ccdf_grad_v(y_value - t0_value, a_value, v_value,
+                                          w_value, cdf, log_error_absolute)
             / ccdf;
     }
   }  // for loop

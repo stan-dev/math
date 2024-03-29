@@ -41,14 +41,13 @@ TEST(mathMixFVar, wiener_lccdf) {
   stan::math::wiener_lccdf(y, a, t0, w, v, sv, sw, st0);
 }
 
-
 TEST_F(Wiener7MixArgs, wiener_lccdf_y_a_t0) {
-auto f_y_a_t0 = [](const auto& w, const auto& v, const auto& sv, const auto& sw, const auto& st0) {
-     return [&w, &v, &sv, &sw, &st0](const auto& y, const auto& a, const auto& t0) {
+  auto f_y_a_t0 = [](const auto& w, const auto& v, const auto& sv,
+                     const auto& sw, const auto& st0) {
+    return
+        [&w, &v, &sv, &sw, &st0](const auto& y, const auto& a, const auto& t0) {
           return stan::math::wiener_lccdf(y, a, t0, w, v, sv, sw, st0);
-    };
+        };
   };
-      stan::test::expect_ad(f_y_a_t0(w, v, sv, sw, st0), y, a, t0);
+  stan::test::expect_ad(f_y_a_t0(w, v, sv, sw, st0), y, a, t0);
 }
-
-

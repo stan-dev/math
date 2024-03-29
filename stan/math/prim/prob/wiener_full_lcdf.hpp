@@ -27,11 +27,11 @@ namespace internal {
  * @param log_error The log error tolerance
  * @return Gradient w.r.t. sw
  */
-template <typename T_y, typename T_a, typename T_v, typename T_w,
-          typename T_sw, typename T_wildcard, typename T_err>
-inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
-                                   const T_sw& sw, T_wildcard&& wildcard,
-                                   T_err&& log_error) {
+template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
+          typename T_wildcard, typename T_err>
+inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
+                                const T_w& w, const T_sw& sw,
+                                T_wildcard&& wildcard, T_err&& log_error) {
   auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
   auto high = w + sw / 2.0;
@@ -57,62 +57,69 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v, const 
  * @param args Additional arguments to be passed to the hcubature function
  * @return Wiener7 density or gradient calculated by integration
  */
-template <GradientCalc Distribution = GradientCalc::OFF, GradientCalc GradW7 = GradientCalc::OFF,
-          GradientCalc GradSV = GradientCalc::OFF, GradientCalc GradSW = GradientCalc::OFF,
-          GradientCalc GradT = GradientCalc::OFF, typename Wiener7FunctorT, typename T_err, typename... TArgs>
+template <GradientCalc Distribution = GradientCalc::OFF,
+          GradientCalc GradW7 = GradientCalc::OFF,
+          GradientCalc GradSV = GradientCalc::OFF,
+          GradientCalc GradSW = GradientCalc::OFF,
+          GradientCalc GradT = GradientCalc::OFF, typename Wiener7FunctorT,
+          typename T_err, typename... TArgs>
 inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
-                              T_err&& hcubature_err, TArgs&&... args) {
+                                  T_err&& hcubature_err, TArgs&&... args) {
   const auto functor = [&wiener7_functor](auto&&... integration_args) {
-	  return hcubature(
-		[&wiener7_functor](auto&& x, auto&& y, auto&& a,
-						   auto&& v, auto&& w, auto&& t0,
-						   auto&& sv, auto&& sw, auto&& st0,
-						   auto&& lerr) {
-		  using ret_t = return_type_t<decltype(x), decltype(a), decltype(v),
-						  decltype(w), decltype(t0), decltype(sv),
-						  decltype(sw), decltype(st0),
-						  decltype(lerr)>;
-		  scalar_seq_view<decltype(x)> x_vec(x);
-			const auto temp = (sv != 0) ? square(x_vec[0]) : 0;
-			const auto factor = (sv != 0) ? x_vec[0] / (1 - temp) : 0;
-			const auto new_v = (sv != 0) ? v + sv * factor : v;
-			const auto new_w = (sv != 0)
-									 ? ((sw != 0) ? w + sw * (x_vec[1] - 0.5) : w)
-									 : ((sw != 0) ? w + sw * (x_vec[0] - 0.5) : w);
-			const auto new_t0
-				= (sv != 0) ? ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[2] : t0)
-											 : ((st0 != 0) ? t0 + st0 * x_vec[1] : t0))
-								: ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
-												 : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0));
-			if (y - new_t0 <= 0) {
-			  return ret_t(0.0);
-			} else {
-			  const auto dist = GradT ? 0
-									  : wiener4_distribution<true>(
-										  y - new_t0, a, new_v, new_w, 0, lerr);
-			  const auto temp2 = (sv != 0) ? -0.5 * square(factor) - LOG_SQRT_PI
-												   - 0.5 * LOG_TWO + log1p(temp)
-												   - 2 * log1p(-temp)
-											 : 0;
-			  const auto factor_sv = GradSV ? factor : 1;
-			  const auto factor_sw
-				  = GradSW ? ((sv != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5)) : 1;
-			  const auto integrand
-				  = Distribution ? dist
-						: GradT ? 
-						conditionally_grad_sw<GradientCalc::OFF>( //deleted internal::
-							  wiener7_functor, y - new_t0, a, v, new_w, sv, sw, lerr)
-						: factor_sv * factor_sw
-									* conditionally_grad_sw<GradientCalc::OFF>(
-                wiener7_functor, y - new_t0, a, new_v, new_w, dist, sw, lerr); 
-			  return ret_t(integrand * exp(temp2));
-			}
-		},
-		integration_args...);
-	 };
-  
-  return estimate_with_err_check<0, 8, GradW7, GradientCalc::ON>(functor, hcubature_err,
-                                                       args...);
+    return hcubature(
+        [&wiener7_functor](auto&& x, auto&& y, auto&& a, auto&& v, auto&& w,
+                           auto&& t0, auto&& sv, auto&& sw, auto&& st0,
+                           auto&& lerr) {
+          using ret_t
+              = return_type_t<decltype(x), decltype(a), decltype(v),
+                              decltype(w), decltype(t0), decltype(sv),
+                              decltype(sw), decltype(st0), decltype(lerr)>;
+          scalar_seq_view<decltype(x)> x_vec(x);
+          const auto temp = (sv != 0) ? square(x_vec[0]) : 0;
+          const auto factor = (sv != 0) ? x_vec[0] / (1 - temp) : 0;
+          const auto new_v = (sv != 0) ? v + sv * factor : v;
+          const auto new_w = (sv != 0)
+                                 ? ((sw != 0) ? w + sw * (x_vec[1] - 0.5) : w)
+                                 : ((sw != 0) ? w + sw * (x_vec[0] - 0.5) : w);
+          const auto new_t0
+              = (sv != 0)
+                    ? ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[2] : t0)
+                                 : ((st0 != 0) ? t0 + st0 * x_vec[1] : t0))
+                    : ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
+                                 : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0));
+          if (y - new_t0 <= 0) {
+            return ret_t(0.0);
+          } else {
+            const auto dist = GradT ? 0
+                                    : wiener4_distribution<true>(
+                                        y - new_t0, a, new_v, new_w, 0, lerr);
+            const auto temp2 = (sv != 0) ? -0.5 * square(factor) - LOG_SQRT_PI
+                                               - 0.5 * LOG_TWO + log1p(temp)
+                                               - 2 * log1p(-temp)
+                                         : 0;
+            const auto factor_sv = GradSV ? factor : 1;
+            const auto factor_sw
+                = GradSW ? ((sv != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5))
+                         : 1;
+            const auto integrand
+                = Distribution
+                      ? dist
+                      : GradT ? conditionally_grad_sw<
+                            GradientCalc::OFF>(  // deleted internal::
+                            wiener7_functor, y - new_t0, a, v, new_w, sv, sw,
+                            lerr)
+                              : factor_sv * factor_sw
+                                    * conditionally_grad_sw<GradientCalc::OFF>(
+                                        wiener7_functor, y - new_t0, a, new_v,
+                                        new_w, dist, sw, lerr);
+            return ret_t(integrand * exp(temp2));
+          }
+        },
+        integration_args...);
+  };
+
+  return estimate_with_err_check<0, 8, GradW7, GradientCalc::ON>(
+      functor, hcubature_err, args...);
 }
 }  // namespace internal
 
@@ -150,8 +157,8 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * time \c y.
  * @throw std::domain_error if \c 1-sw/2 is smaller than or equal to \c w.
  * @throw std::domain_error if \c sw/2 is larger than or equal to \c w.
- 
- 
+
+
  **References**
  * - Blurton, S. P., Kesselmeier, M., & Gondan, M. (2017). The first-passage
  * time distribution for the diffusion model with variable drift.
@@ -172,8 +179,8 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * - Henrich, F., Hartmann, R., Pratz, V., Voss, A., & Klauer, K.C. (2023).
  * The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian
  * Analyses. *Behavior Research Methods*.
- * https://doi.org/10.3758/s13428-023-02179-1 
- * - Linhart, J. M. (2008). Algorithm 885: Computing the Logarithm of the 
+ * https://doi.org/10.3758/s13428-023-02179-1
+ * - Linhart, J. M. (2008). Algorithm 885: Computing the Logarithm of the
  * Normal Distribution. *ACM Transactions on Mathematical Software*.
  * http://doi.acm.org/10.1145/1391989.1391993
  * - Navarro, D. J., & Fuss, I. G. (2009). Fast and accurate calculations for
@@ -185,9 +192,9 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
           typename T_st0>
 inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
-                                const T_w& w, const T_v& v, const T_sv& sv,
-                                const T_sw& sw, const T_st0& st0,
-                                const double& precision_derivatives = 1e-8) {
+                        const T_w& w, const T_v& v, const T_sv& sv,
+                        const T_sw& sw, const T_st0& st0,
+                        const double& precision_derivatives = 1e-8) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
@@ -292,7 +299,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
 
   const T_partials_return log_error_cdf = log(1e-6);  // precision for density
-  const auto error_bound = precision_derivatives;  // precision for
+  const auto error_bound = precision_derivatives;     // precision for
   // derivatives (controllable by user)
   const auto lerror_bound = log(error_bound);
   const T_partials_return absolute_error_hcubature = 0.0;
@@ -309,7 +316,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   for (size_t i = 0; i < N; i++) {
     if (sv_vec[i] == 0 && sw_vec[i] == 0 && st0_vec[i] == 0) {
       result += wiener_lcdf<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
-                                     v_vec[i], precision_derivatives);
+                                    v_vec[i], precision_derivatives);
       continue;
     }
     const T_partials_return y_value = y_vec.val(i);
@@ -343,9 +350,9 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_cdf + LOG_TWO + 1;
-		
+
     using internal::GradientCalc;
-	
+
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
                                         log_error_absolute - LOG_TWO);
@@ -353,8 +360,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return cdf
         = internal::wiener7_integrate_cdf<GradientCalc::ON>(
             [&](auto&&... args) {
-              return internal::wiener4_distribution<true>(
-                  args...);
+              return internal::wiener4_distribution<true>(args...);
             },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -371,7 +377,8 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
         st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
     T_partials_return deriv_t_7
         = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
-                                          GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+                                          GradientCalc::OFF, GradientCalc::OFF,
+                                          GradientCalc::ON>(
               [&](auto&&... args) {
                 return internal::wiener5_density<GradientCalc::ON>(args...);
               },
@@ -389,8 +396,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
-                  return internal::wiener4_cdf_grad_a(
-                      args...);
+                  return internal::wiener4_cdf_grad_a(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -402,10 +408,10 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::ON>(
+          = internal::wiener7_integrate_cdf<GradientCalc::OFF,
+                                            GradientCalc::ON>(
                 [&](auto&&... args) {
-                  return internal::wiener4_cdf_grad_w(
-                      args...);
+                  return internal::wiener4_cdf_grad_w(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -416,8 +422,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
-                  return internal::wiener4_cdf_grad_v(
-                      args...);
+                  return internal::wiener4_cdf_grad_v(args...);
                 },
                 hcubature_err, params, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -429,11 +434,10 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<5>(ops_partials)[i] = 0;
       } else {
         partials<5>(ops_partials)[i]
-            = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
-                                              GradientCalc::ON>(
+            = internal::wiener7_integrate_cdf<
+                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
                   [&](auto&&... args) {
-                    return internal::wiener4_cdf_grad_v(
-                        args...);
+                    return internal::wiener4_cdf_grad_v(args...);
                   },
                   hcubature_err, params, dim, xmin, xmax,
                   maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -445,24 +449,24 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
-        if (st0_value == 0 && sv_value == 0) {	  
-	      deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF, GradientCalc::ON>(
+        if (st0_value == 0 && sv_value == 0) {
+          deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF,
+                                                    GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener7_cdf_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
               sw_value, 0.0,
-              log_error_absolute
-                  - LOG_TWO);  // added wildcard 0. delete later somehow, and then change 6 to 5
-				  
-				  
+              log_error_absolute - LOG_TWO);  // added wildcard 0. delete later
+                                              // somehow, and then change 6 to 5
+
           deriv = deriv / cdf - 1 / sw_value;
         } else {
-          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF,
-                                                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+          deriv = internal::wiener7_integrate_cdf<
+                      GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+                      GradientCalc::ON>(
                       [&](auto&&... args) {
-                        return internal::wiener4_cdf_grad_w(
-                            args...);
+                        return internal::wiener4_cdf_grad_w(args...);
                       },
                       hcubature_err, params, dim, xmin, xmax,
                       maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -480,7 +484,8 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<5, 0, GradientCalc::OFF, GradientCalc::ON>(
+          deriv = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+                                                    GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener4_distribution<GradientCalc::ON>(
                     args...);
