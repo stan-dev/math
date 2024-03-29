@@ -421,14 +421,6 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 4, 1>>
       genz_malik;
 
-  auto gk_lambda = [&integrand, &pars](auto&& c) {
-    return stan::math::apply(
-        [](auto&& integrand, auto&& c, auto&&... args) {
-          return integrand(c, args...);
-        },
-        pars, integrand, c);
-  };
-
   if (dim == 1) {
     std::tie(result, err)
         = internal::gauss_kronrod(integrand, a[0], b[0], pars);

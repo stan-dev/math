@@ -1,19 +1,13 @@
 #include <stan/math.hpp>
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
-
-struct AgradRev : public testing::Test {
-  void SetUp() {
-    // make sure memory's clean before starting each test
-    stan::math::recover_memory();
-  }
-};
 
 namespace stan {
 namespace test {
@@ -129,7 +123,10 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   inplace_add_var.adj() += test_y;
   // adjoints sparsity pattern will be pattern of x and test_y for addition
   for (int k = 0; k < x.outerSize(); ++k) {
-    for (inner_iterator it(test_y, k), iz(inplace_add_var.adj(), k); iz; ++iz) {
+    typename vari_value<eigen_plain>::InnerIterator iz(inplace_add_var.adj(),
+                                                       k);
+    for (inner_iterator it(test_y, k);
+         static_cast<bool>(iz) && static_cast<bool>(it); ++iz) {
       if (iz.row() == it.row() && iz.col() == it.col()) {
         EXPECT_FLOAT_EQ(iz.value() - 1, it.value());
         ++it;

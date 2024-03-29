@@ -334,6 +334,10 @@
 #include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/prim/fun/stan_print.hpp>
 #include <stan/math/prim/fun/step.hpp>
+#include <stan/math/prim/fun/stochastic_column_constrain.hpp>
+#include <stan/math/prim/fun/stochastic_column_free.hpp>
+#include <stan/math/prim/fun/stochastic_row_constrain.hpp>
+#include <stan/math/prim/fun/stochastic_row_free.hpp>
 #include <stan/math/prim/fun/sub_col.hpp>
 #include <stan/math/prim/fun/sub_row.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
