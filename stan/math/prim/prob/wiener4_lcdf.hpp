@@ -65,8 +65,9 @@ inline auto lnnorm(T_z&& z) noexcept {
   if (z_ < 0.0) {
     z_ = -z_;
     lower = 1;
-  } else
+  } else {
     lower = 0;
+  }
 
   const auto z2 = square(z_);
   const auto y = exp(-0.5 * z2) / SQRT_TWO_PI;
