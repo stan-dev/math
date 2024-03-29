@@ -601,6 +601,8 @@ inline auto summands_large_y(const T_y& y, const T_a& a, const T_v& v,
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
+ * @param wildcard This parameter space is needed for a functor. Could be
+ * deleted when another solution is found
  * @param err The log error tolerance
  * @return distribution
  */
@@ -757,6 +759,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
  * @param t0 The non-decision time
  * @param w The relative starting point
  * @param v The drift rate
+ * @param precision_derivatives Level of precision in estimation
  * @return The log of the Wiener first passage time distribution with
  *  the specified arguments for upper boundary responses
  */

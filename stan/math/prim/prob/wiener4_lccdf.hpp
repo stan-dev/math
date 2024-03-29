@@ -15,8 +15,8 @@ namespace internal {
  * @tparam T_v type of drift rate
  *
  * @param a The boundary separation
- * @param w The relative starting point
- * @param v The drift rate
+ * @param w_value The relative starting point
+ * @param v_value The drift rate
  * @return log probability to reach the upper bound
  */
 template <typename T_a, typename T_w, typename T_v>
@@ -46,8 +46,8 @@ inline auto wiener_prob(const T_a& a, const T_v& v_value,
  * @tparam T_v type of drift rate
  *
  * @param a The boundary separation
- * @param w The relative starting point
- * @param v The drift rate
+ * @param w_value The relative starting point
+ * @param v_value The drift rate
  * @return 'ans' term
  */
 template <typename T_a, typename T_w, typename T_v>
@@ -170,8 +170,8 @@ inline auto wiener_prob_grad_v(const T_a& a, const T_v& v,
  * @tparam T_v type of drift rate
  *
  * @param a The boundary separation
- * @param w The relative starting point
- * @param v The drift rate
+ * @param w_value The relative starting point
+ * @param v_value The drift rate
  * @return Gradient w.r.t. w
  */
 template <typename T_a, typename T_w, typename T_v>
@@ -201,6 +201,9 @@ inline auto wiener_prob_grad_w(const T_a& a, const T_v& v_value,
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
+ * @param wildcard This parameter space is needed for a functor. Could be
+ * deleted when another solution is found
+ * @param err The log error tolerance
  * @return ccdf
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
@@ -220,6 +223,8 @@ inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
+ * @param cdf The CDF value
+ * @param err The log error tolerance
  * @return Gradient w.r.t. a
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
@@ -240,6 +245,8 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
+ * @param cdf The CDF value
+ * @param err The log error tolerance
  * @return Gradient w.r.t. v
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
@@ -262,6 +269,8 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
+ * @param cdf The CDF value
+ * @param err The log error tolerance
  * @return Gradient w.r.t. w
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
@@ -294,6 +303,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
  * @param t0 The non-decision time
  * @param w The relative starting point
  * @param v The drift rate
+ * @param precision_derivatives Level of precision in estimation
  * @return The log of the Wiener first passage time distribution with
  *  the specified arguments for upper boundary responses
  */

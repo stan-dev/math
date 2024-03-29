@@ -24,6 +24,8 @@ namespace internal {
  * @param v The drift rate
  * @param w The relative starting point
  * @param sw The inter-trial variability of the relative starting point
+ * @param wildcard This parameter space is needed for a functor. Could be
+ * deleted when another solution is found
  * @param log_error The log error tolerance
  * @return Gradient w.r.t. sw
  */
