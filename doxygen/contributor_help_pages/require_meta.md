@@ -84,13 +84,13 @@ Here's a function that would have two different template functions for
 
 ```
 template <typename T, requires_var_t<T>* = nullptr>
-T foo(T& t) {
+T foo(const T& t) {
   // handles stan::math::var
   return t;
 }
 
 template <typename T, requires_not_var_t<T>* = nullptr>
-T foo(T& t) {
+T foo(const T& t) {
   // handles primitives
   return t;
 }
@@ -117,8 +117,8 @@ are named `is_{condition}` and the struct contains a `value` that is
 
 We provide `requires<>` type traits based on the boolean
 `is_{condition}` type traits. When types satisfy the condition, the
-`requires<>::value` will evaluate to `void`. When the types do not
-satisfy the condition, `requires<>::value` is an invalid subsitution
+`requires<>::type` will evaluate to `void`. When the types do not
+satisfy the condition, `requires<>::type` is an invalid subsitution
 and is not used. (See @ref requires_impl for more details.)
 
 Note: every possible requires<> type trait is not implemented in the
@@ -314,13 +314,10 @@ forwarded to another function.
 
 Every requires type trait is not implemented for every boolean type
 trait available. This was done intentionally to allow us to identify
-which requires type traits are currently in use (as of 2024). If you
+which requires type traits are currently in use. If you
 need a requires type trait and it is not currently available, please
 feel free to implement the one you need and add a pull request.
 
-We expect this to happen very infrequently. If it is happening often,
-we can go back to having all possible combinations of requires traits
-available.
 
 ### Adding a new boolean type trait
 
@@ -331,7 +328,6 @@ folder.
 
 ### Adding a new requires
 
-If you need to add a new `requires`, please submit a pull request! 
 
 The Stan Math library requires a strict API to ensure consistency for
 the `requires`. The below go over all of the possible API
@@ -362,7 +358,7 @@ following ways
     template <template <class...> class TypeCheck, class... Check>   
     require_std_vector_vt = require_vt<is_std_vector, TypeCheck, std::decay_t<Check>...>;
 
-    // Ex: Used to define a signature for `std::vectors` with a value type that is autodiffable
+    // Ex: Used to define a signature for `std::vectors` with a value type that is @ref stan::math::var
     template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
     auto my_func(StdVec&& vec);
     ```
@@ -370,16 +366,15 @@ following ways
 * `_st` uses `Check` to test the type `T` passed in and uses
   `InnerCheck` to test the @ref scalar_type of `T`
 
-    ```
-    template <template <class...> class TypeCheck, class... Check>   
-    require_std_vector_st = require_st<is_std_vector, TypeCheck, std::decay_t<Check>...>;
+```cpp
+template <template <class...> class TypeCheck, class... Check>   
+require_std_vector_st = require_st<is_std_vector, TypeCheck, std::decay_t<Check>...>;
 
-    // Ex: Used to define a signature for `std::vectors` with a scalar type that is autodiffable
-    template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
-    auto my_func(StdVec&& vec);
-    ```
+// Ex: Used to define a signature for `std::vectors` with a scalar type that is autodiffable
+template <typename StdVec, require_std_vector_st<is_var, StdVec>* = nullptr>
+auto my_func(StdVec&& vec);
 
-There variant of the requires that places the `vt` or `st` before the
+The variant of the requires that places the `vt` or `st` before the
 type trait name only checks the @ref value_type or @ref `scalar_type`
 of `T` without testing `T`.
 
