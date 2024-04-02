@@ -45,8 +45,8 @@ set of function template specialization is untenable for many
 functions in the Math library. For example, a single argument of the
 function may take 6 distinct C++ types: `double`, `stan::math::var`,
 `std::vector<double>`, `std::vector<stan::math::var>`,
-`Eigen::Matrix<double, -1, 1>`, or `Eigen::Matrix<stan::math::var, -1,
-1>`.  For a 3-argument function, we would need to define 108 different
+`Eigen::Matrix<double, -1, 1>`, `Eigen::Matrix<stan::math::var, -1,
+1>`, or `stan::math::var_value<Eigen::Matrix<double, -1, -1>>`.  For a 3-argument function, we would need to define 108 different
 function template specializations to handle all the autodiff types.
 
 In the Math library, we use a technique that allows the definition of
