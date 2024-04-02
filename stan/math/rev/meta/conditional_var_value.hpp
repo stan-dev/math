@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_META_CONDITIONAL_VAR_EIGEN_HPP
 #define STAN_MATH_REV_META_CONDITIONAL_VAR_EIGEN_HPP
 
-#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/rev/meta/plain_type.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 
