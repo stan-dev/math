@@ -115,10 +115,10 @@ are named `is_{condition}` and the struct contains a `value` that is
 `true` or `false` at compile time. For example, `is_var<T>::value` is
 `true` if and only if the type `T` is `stan::math::var_value`.
 
-We provide `requires<>` type traits based on the boolean
+We provide [`requires<>` type traits](@ref require_meta) based on the boolean
 `is_{condition}` type traits. When types satisfy the condition, the
-`requires<>::type` will evaluate to `void`. When the types do not
-satisfy the condition, `requires<>::type` is an invalid subsitution
+`requires<>` will evaluate to `void`. When the types do not
+satisfy the condition, `requires<>` is an invalid subsitution
 and is not used. (See @ref requires_impl for more details.)
 
 Note: every possible requires<> type trait is not implemented in the
@@ -135,8 +135,8 @@ traits name is put in its place. For example, for `is_var`, we can
 substitute `var` for `*`.
 
 1. `require_*_t`: A template parameter `T` must satisfy the `is_*`
-type trait. This means `require_var_t<stan::math::var>::value` is
-`void`, but `require_var_t<double>::value` is an invalid subsitution.
+type trait. This means `require_var_t<stan::math::var>` is
+`void`, but `require_var_t<double>` is an invalid subsitution.
 
 2. `require_not_*_t`: A template parameter `T` must not satisfy the
 `is_*` type trait.
