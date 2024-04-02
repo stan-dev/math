@@ -3,6 +3,10 @@
 
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
+#include <stan/math/prim/prob/wiener5_lpdf.hpp>
+#include <stan/math/prim/prob/wiener4_lcdf.hpp>
+#include <stan/math/prim/prob/wiener4_lccdf.hpp>
+#include <stan/math/prim/prob/wiener_full_lccdf.hpp>
 
 namespace stan {
 namespace math {
