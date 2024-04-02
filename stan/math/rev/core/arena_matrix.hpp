@@ -105,7 +105,8 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
   template <typename T, require_eigen_t<T>* = nullptr,
             require_not_arena_matrix_t<T>* = nullptr,
             require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-            require_plain_type_t<T>* = nullptr>
+            require_plain_type_t<T>* = nullptr,
+            require_same_t<T, MatrixType>* = nullptr>
   arena_matrix(T&& other)  // NOLINT
       : Base::Map([](auto&& x) {
           using base_map_t =
@@ -126,7 +127,8 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
   template <typename T, require_eigen_t<T>* = nullptr,
             require_not_arena_matrix_t<T>* = nullptr,
             require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-            require_plain_type_t<T>* = nullptr>
+            require_plain_type_t<T>* = nullptr,
+            require_same_t<T, MatrixType>* = nullptr>
   arena_matrix& operator=(T&& other) {
     auto other_ptr = make_chainable_ptr(std::move(other));
     new (this)
