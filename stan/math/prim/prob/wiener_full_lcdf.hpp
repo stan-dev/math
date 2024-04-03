@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 #include <stan/math/prim/prob/wiener_full_lpdf.hpp>
+#include <stan/math/prim/prob/wiener4_lcdf.hpp>
 
 namespace stan {
 namespace math {
