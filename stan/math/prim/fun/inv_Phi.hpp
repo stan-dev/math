@@ -28,16 +28,7 @@ const int BIGINT = 2000000000;
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
-inline double inv_Phi_lambda(double p) {
-  check_bounded("inv_Phi", "Probability variable", p, 0, 1);
-
-  if (p < 8e-311) {
-    return NEGATIVE_INFTY;
-  }
-  if (p == 1) {
-    return INFTY;
-  }
-
+inline double inv_Phi_impl(double p, bool log_p) {
   static constexpr double log_a[8]
       = {1.2199838032983212, 4.8914137334471356, 7.5865960847956080,
          9.5274618535358388, 10.734698580862359, 11.116406781896242,
@@ -95,7 +86,7 @@ inline double inv_Phi_lambda(double p) {
   }
 
   // As computation requires evaluating r^8, this causes a loss of precision,
-  // even when using log space. We can mitigate this by scaling the
+  // even when on the log space. We can mitigate this by scaling the
   // exponentiated result (dividing by 10), since the same scaling is applied
   // to the numerator and denominator.
   Eigen::VectorXd log_r_pow = Eigen::ArrayXd::LinSpaced(8, 0, 7) * log(inner_r)
@@ -121,9 +112,17 @@ inline double inv_Phi_lambda(double p) {
  * @return real value of the inverse cdf for the standard normal distribution
  */
 inline double inv_Phi(double p) {
-  return p >= 0.9999 ? -internal::inv_Phi_lambda(
-             (internal::BIGINT - internal::BIGINT * p) / internal::BIGINT)
-                     : internal::inv_Phi_lambda(p);
+  check_bounded("inv_Phi", "Probability variable", p, 0, 1);
+
+  if (p < 8e-311) {
+    return NEGATIVE_INFTY;
+  }
+  if (p == 1) {
+    return INFTY;
+  }
+  return p >= 0.9999 ? -internal::inv_Phi_impl(
+             (internal::BIGINT - internal::BIGINT * p) / internal::BIGINT, false)
+                     : internal::inv_Phi_impl(p, false);
 }
 
 /**
