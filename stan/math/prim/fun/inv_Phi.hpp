@@ -76,35 +76,34 @@ inline double inv_Phi_lambda(double p) {
     return 0;
   }
 
-  double val;
   double inner_r;
   double pre_mult;
-  using Vector8d = Eigen::Matrix<double, 8, 1>;
-  Eigen::Map<const Vector8d> numerator_map(NULL);
-  Eigen::Map<const Vector8d> denonimator_map(NULL);
+  const double* num_ptr;
+  const double* den_ptr;
 
   if (std::fabs(q) <= .425) {
     inner_r = .180625 - square(q);
     pre_mult = q;
 
-    new (&numerator_map) Eigen::Map<const Vector8d>(a, 8);
-    new (&denonimator_map) Eigen::Map<const Vector8d>(b, 8);
+    num_ptr = &a[0];
+    den_ptr = &b[0];
   } else {
-
     double temp_r = std::sqrt(-std::log(r));
     if (temp_r <= 5.0) {
       inner_r = temp_r - 1.6;
-      new (&numerator_map) Eigen::Map<const Vector8d>(c, 8);
-      new (&denonimator_map) Eigen::Map<const Vector8d>(d, 8);
+      num_ptr = &c[0];
+      den_ptr = &d[0];
     } else {
       inner_r = temp_r - 5.0;
-      new (&numerator_map) Eigen::Map<const Vector8d>(e, 8);
-      new (&denonimator_map) Eigen::Map<const Vector8d>(f, 8);
+      num_ptr = &e[0];
+      den_ptr = &f[0];
     }
     pre_mult = q < 0 ? -1 : 1;
   }
 
   Eigen::VectorXd r_pow = pow(inner_r, Eigen::ArrayXd::LinSpaced(8, 0, 7)) / 10.0;
+  Eigen::Map<const Eigen::VectorXd> numerator_map(num_ptr, 8);
+  Eigen::Map<const Eigen::VectorXd> denonimator_map(den_ptr, 8);
   return pre_mult * (numerator_map.dot(r_pow) * 10.0) / (denonimator_map.dot(r_pow) * 10.0);
 }
 }  // namespace internal
