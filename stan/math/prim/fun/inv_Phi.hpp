@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/log_diff_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -25,10 +27,12 @@ const int BIGINT = 2000000000;
 /**
  * The inverse of the unit normal cumulative distribution function.
  *
+ * @tparam LogP Whether the input probability is already on the log scale.
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
-inline double inv_Phi_impl(double p, bool log_p) {
+template <bool LogP = false>
+inline double inv_Phi_impl(double p) {
   static constexpr double log_a[8]
       = {1.2199838032983212, 4.8914137334471356, 7.5865960847956080,
          9.5274618535358388, 10.734698580862359, 11.116406781896242,
@@ -54,48 +58,57 @@ inline double inv_Phi_impl(double p, bool log_p) {
          -7.147448611626374, -10.89973190740069, -15.76637472711685,
          -33.82373901099482};
 
-  double q = p - 0.5;
-  double r = q < 0 ? p : 1 - p;
+  double log_p = LogP ? p : log(p);
 
-  if (r <= 0) {
+  double log_q = log_p <= LOG_HALF ? log_diff_exp(LOG_HALF, log_p)
+                                   : log_diff_exp(log_p, LOG_HALF);
+  int log_q_sign = log_p <= LOG_HALF ? -1 : 1;
+  double log_r = log_q_sign == -1 ? log_p : log1m_exp(log_p);
+
+  if (stan::math::is_inf(log_r)) {
     return 0;
   }
 
-  double inner_r;
-  double pre_mult;
+  double log_inner_r;
+  double log_pre_mult;
   const double* num_ptr;
   const double* den_ptr;
 
-  if (std::fabs(q) <= .425) {
-    inner_r = .180625 - square(q);
-    pre_mult = q;
+  static constexpr double LOG_FIVE = LOG_TEN - LOG_TWO;
+  static constexpr double LOG_16 = LOG_TWO * 4;
+  static constexpr double LOG_425 = 6.0520891689244171729;
+  static constexpr double LOG_425_OVER_1000 = LOG_425 - LOG_TEN * 3;
+
+  if (log_q <= LOG_425_OVER_1000) {
+    log_inner_r = log_diff_exp(LOG_425_OVER_1000 * 2, log_q * 2);
+    log_pre_mult = log_q;
     num_ptr = &log_a[0];
     den_ptr = &log_b[0];
   } else {
-    double temp_r = std::sqrt(-std::log(r));
-    if (temp_r <= 5.0) {
-      inner_r = temp_r - 1.6;
+    double log_temp_r = log(-log_r) / 2.0;
+    if (log_temp_r <= LOG_FIVE) {
+      log_inner_r = log_diff_exp(log_temp_r, LOG_16 - LOG_TEN);
       num_ptr = &log_c[0];
       den_ptr = &log_d[0];
     } else {
-      inner_r = temp_r - 5.0;
+      log_inner_r = log_diff_exp(log_temp_r, LOG_FIVE);
       num_ptr = &log_e[0];
       den_ptr = &log_f[0];
     }
-    pre_mult = q < 0 ? -1 : 1;
+    log_pre_mult = 0.0;
   }
 
   // As computation requires evaluating r^8, this causes a loss of precision,
   // even when on the log space. We can mitigate this by scaling the
   // exponentiated result (dividing by 10), since the same scaling is applied
   // to the numerator and denominator.
-  Eigen::VectorXd log_r_pow = Eigen::ArrayXd::LinSpaced(8, 0, 7) * log(inner_r)
+  Eigen::VectorXd log_r_pow = Eigen::ArrayXd::LinSpaced(8, 0, 7) * log_inner_r
                               - LOG_TEN;
   Eigen::Map<const Eigen::VectorXd> num_map(num_ptr, 8);
   Eigen::Map<const Eigen::VectorXd> den_map(den_ptr, 8);
   double log_result = log_sum_exp(log_r_pow + num_map)
                       - log_sum_exp(log_r_pow + den_map);
-  return pre_mult * exp(log_result);
+  return log_q_sign * exp(log_pre_mult + log_result);
 }
 }  // namespace internal
 
@@ -121,8 +134,8 @@ inline double inv_Phi(double p) {
     return INFTY;
   }
   return p >= 0.9999 ? -internal::inv_Phi_impl(
-             (internal::BIGINT - internal::BIGINT * p) / internal::BIGINT, false)
-                     : internal::inv_Phi_impl(p, false);
+             (internal::BIGINT - internal::BIGINT * p) / internal::BIGINT)
+                     : internal::inv_Phi_impl(p);
 }
 
 /**
