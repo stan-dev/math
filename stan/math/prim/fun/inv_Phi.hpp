@@ -101,10 +101,17 @@ inline double inv_Phi_lambda(double p) {
     pre_mult = q < 0 ? -1 : 1;
   }
 
-  Eigen::VectorXd r_pow = pow(inner_r, Eigen::ArrayXd::LinSpaced(8, 0, 7)) / 10.0;
-  Eigen::Map<const Eigen::VectorXd> numerator_map(num_ptr, 8);
-  Eigen::Map<const Eigen::VectorXd> denonimator_map(den_ptr, 8);
-  return pre_mult * (numerator_map.dot(r_pow) * 10.0) / (denonimator_map.dot(r_pow) * 10.0);
+  // As computation requires evaluating r^8, this causes a loss of precision,
+  // even when using log space. We can mitigate this by scaling the
+  // exponentiated result (dividing by 10), since the same scaling is applied
+  // to the numerator and denominator.
+  Eigen::VectorXd log_r_pow = Eigen::ArrayXd::LinSpaced(8, 0, 7) * log(inner_r)
+                              - LOG_TEN;
+  Eigen::Map<const Eigen::VectorXd> num_map(num_ptr, 8);
+  Eigen::Map<const Eigen::VectorXd> den_map(den_ptr, 8);
+  double log_result = log_sum_exp(log_r_pow + log(num_map))
+                      - log_sum_exp(log_r_pow + log(den_map));
+  return pre_mult * exp(log_result);
 }
 }  // namespace internal
 
