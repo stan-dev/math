@@ -83,7 +83,7 @@ traits are, how to use them, and how to add new ones if necessary.
 Here's a function that would have two different template functions for
 `stan::math::var` and `double`:
 
-```
+```c++
 template <typename T, requires_not_var_t<T>* = nullptr>
 T foo(const T& t) {
   // handles primitives
