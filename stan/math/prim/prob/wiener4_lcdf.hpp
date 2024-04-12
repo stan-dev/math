@@ -437,8 +437,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
-      const auto factor = GradW ? a : (2 * k + w);
-      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      const auto factor = (2 * k + w);
+      const auto factor_2 = (2 * k + 2.0 - w);
       auto temp2 = exp(d_k);
       auto temp3 = temp * (-vy) - sqrt_y * temp2;
       const auto t1 = temp3 * factor;
@@ -514,7 +514,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
   const auto factor = v * a * w + square(v) * y / 2 + err;
 
   const auto log_a = log(a);
-  const auto K_large_value = ret_t(1.0);
+  auto K_large_value = ret_t(1.0);
   if (v != 0) {
     const auto temp = -rexp(log_a - LOG_PI - 0.5 * log_y);
     const auto log_v = log(fabs(v));
@@ -548,8 +548,8 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
-      const auto factor = GradW ? a : (2 * k + w);
-      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      const auto factor = 2 * k + w;
+      const auto factor_2 = 2 * k + 2.0 - w;
       const auto t1 = -temp * x;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
@@ -652,8 +652,8 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
-      const auto factor = GradW ? a : (2 * k + w);
-      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      const auto factor = a;
+      const auto factor_2 = -a;
       auto temp2 = exp(d_k);
       auto temp3 = temp * (-vy) - sqrt_y * temp2;
       const auto t1 = temp3 * factor;
