@@ -87,7 +87,7 @@ to do this is to start with a type trait like the below
 saying that `enable_if` is not well defined.
 
 ```
-// Declare enable_if. Note: `type` is not a member typedef.
+// Define enable_if. Note: `type` is not a member typedef.
 template<bool B, class T = void>
 struct enable_if {};
 
