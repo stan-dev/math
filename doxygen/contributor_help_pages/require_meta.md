@@ -50,21 +50,95 @@ function may take 7 distinct C++ types: `double`, `stan::math::var`,
 For a 3-argument function, we would need to define 343 (7^3) different
 function template specializations to handle all the autodiff types.
 
-In the Math library, we use a technique that allows the definition of
-multiple template functions where each handles a subset of allowable
-types. We add a pointer [non-type template
-parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter)
-to the template parameter list with a default value of `nullptr`. Any
-`void*` non-type template parameter with a default of `nullptr` is
-valid and the non-type template parameter is ignored by the
-compiler. Utilizing [substitution failure is not an error
-(SFNIAE)](https://en.cppreference.com/w/cpp/language/sfinae), a
-substitution failure for the non-type template parameter will result
-in that definition being removed from the possible function
-definitions. Using this technique we have to be careful not to violate
-the [One Definition
-Rule](https://en.cppreference.com/w/cpp/language/definition) and only
-provide one definition for any set of types.
+
+In the Math library, we use a technique similar to C++20's `require`
+keyword that allows the definition of multiple template functions
+where each handles a subset of allowable types.
+
+When the compiler attempts to resolve which function should be called
+from a set of templated function signatures there must be only one
+possibly valid function signature available. This is called the [One
+Definition
+Rule](https://en.cppreference.com/w/cpp/language/definition). For
+example, the following code would fail to compile because the compiler
+is unable to differentiate between the two function signatures.
+
+```c++
+template <typename T>
+T foo(T x) {
+  return x;
+}
+
+template <typename K>
+K foo(K x) {
+  return x;
+}
+```
+
+The compiler needs a way to differentiate between the two signatures
+to select one and satisfy the One Definition Rule. One trick to have a
+single valid definition is to utilize [Substitution Failure Is Not An
+Error (SFNIAE)](https://en.cppreference.com/w/cpp/language/sfinae) to
+purposefully create conditions where only one signature is valid
+because all of the other conditions fail to compile. The simplest way
+to do this is to start with a type trait like the below
+`enable_if`. The `enable_if` is only defined for the case where `B` is
+`true` and so if `B` is ever false the compiler would throw an error
+saying that `enable_if` is not well defined.
+
+```
+// Declare enable_if. Note: `type` is not a member typedef.
+template<bool B, class T = void>
+struct enable_if {};
+
+// Only define member typedef `type` when B is true
+template<class T>
+struct enable_if<true, T> { typedef T type; };
+
+template <bool B, typename T>
+using enable_if_t = typename enable_if<B, T>::type;
+```
+
+Attempting to construct this `enable_if` with `B` being `false`
+anywhere else in the program would cause the compiler to crash.
+Using it in the template of a function signature allows SFINAE to
+deduce which signature we would like to use.
+
+```c++
+// foo only works with floating point types 
+template <typename T,  enable_if_t<std::is_floating_point<T>::value>>* = nullptr>
+T foo(T x) {
+  return x;
+}
+
+// foo only works with integer types
+template <typename K,  enable_if_t<std::is_intergral<K>::value>>* = nullptr>
+K foo(K x) {
+  return x;
+}
+
+// Calls the first signature
+double x_dbl = 1.0;
+double y_dbl = foo(x_dbl); 
+
+// Calls the second signature
+int x = 1;
+int y = foo(x);
+
+```
+
+The second template argument is referred to as a [non-type template
+parameter](https://en.cppreference.com/w/cpp/language
+template_parameters#Non-type_template_parameter) and has a default
+value of `void`.  When the templated signature has the correct type
+the `enable_if_t ` produces a `void` type which is then made into a
+pointer and assigned a default value of `nullptr`.  When the templated
+signature does not have the correct type, the compiler utilizes
+[Substitution Failure Is Not An Error
+(SFNIAE)](https://en.cppreference.com/w/cpp/language/sfinae), to
+remove the offending signature from the list of possible matches while
+continuing to search for the correct signature.
+
 
 For convenience in using this technique, the Math library has
 implemented a set of [`requires` type traits](@ref require_meta).
