@@ -424,9 +424,9 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
   const auto ueps = fmin(-1, 2 * (factor + log(a) - lv) + LOG_PI);
   const auto K_small
       = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
-  const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)))
+  const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 
-      if (K_large_value > 4 * K_small_value) {
+  if (K_large_value > 4 * K_small_value) {
     const auto sqrt_y = sqrt(y);
     const auto vy = v * y;
     auto ans = ret_t(0.0);
@@ -465,8 +465,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
     F_k = rexp(v * a * w + 0.5 * square(v) * y);
     const auto summands_small_y = ans / y / F_k;
     return -v * w * cdf + summands_small_y;
-  }
-  else {
+  } else {
     ret_t ans = NEGATIVE_INFTY;
     ans = 0.0;
     for (auto k = K_large_value; k >= 1; k--) {
@@ -706,7 +705,6 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
   }
 }
 }  // namespace internal
-}  // namespace math
 
 /**
  * Log-CDF function for the 4-parameter Wiener distribution.
@@ -871,6 +869,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   }  // for loop
   return ops_partials.build(lcdf);
 }
-}  // namespace stan
+}  // namespace math
 }  // namespace stan
 #endif
