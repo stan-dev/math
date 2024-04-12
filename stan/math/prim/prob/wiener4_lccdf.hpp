@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_WIENER4_LCCDF_HPP
 #define STAN_MATH_PRIM_PROB_WIENER4_LCCDF_HPP
 
-// #include <stan/math/prim/fun.hpp>
-// #include <stan/math/prim/prob/wiener5_lpdf.hpp>
 #include <stan/math/prim/prob/wiener4_lcdf.hpp>
 
 namespace stan {

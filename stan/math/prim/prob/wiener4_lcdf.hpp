@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_WIENER4_LCDF_HPP
 #define STAN_MATH_PRIM_PROB_WIENER4_LCDF_HPP
 
-// #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/prob/wiener5_lpdf.hpp>
 
 namespace stan {
@@ -681,31 +680,30 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     }
     F_k = rexp(v * a * w + 0.5 * square(v) * y);
     const auto summands_small_y = ans / y / F_k;
+    return -1 * (-v * a * cdf + summands_small_y);
+  } else {
+    ret_t ans = NEGATIVE_INFTY;
+    ans = 0.0;
+    for (auto k = K_large_value; k >= 1; k--) {
+      const auto kpi = k * pi();
+      const auto factor = cos(kpi * w);
+      const auto kpia2 = square(kpi / a);
+      const auto ekpia2y = exp(-0.5 * kpia2 * y);
+      const auto denom = 1.0 / (square(v) + kpia2);
+      const auto denomk = k * denom;
+      auto last = kpi;
+      last *= denomk * ekpia2y;
+      ans += -last * factor;
+    }
+    const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
+    const auto prob = rexp(log_probability_distribution(a, v, w));
+    const auto dav = log_probability_GradW(a, v, w);
+    const auto pia2 = 2 * pi() / square(a);
+    auto prob_deriv = dav;
+    prob_deriv *= prob;
+    ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
+    return -1 * (prob_deriv + ans);
   }
-  return -1 * (-v * a * cdf + summands_small_y);
-}
-else {
-  ret_t ans = NEGATIVE_INFTY;
-  ans = 0.0;
-  for (auto k = K_large_value; k >= 1; k--) {
-    const auto kpi = k * pi();
-    const auto factor = cos(kpi * w);
-    const auto kpia2 = square(kpi / a);
-    const auto ekpia2y = exp(-0.5 * kpia2 * y);
-    const auto denom = 1.0 / (square(v) + kpia2);
-    const auto denomk = k * denom;
-    auto last = kpi;
-    last *= denomk * ekpia2y;
-    ans += -last * factor;
-  }
-  const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-  const auto prob = rexp(log_probability_distribution(a, v, w));
-  const auto dav = log_probability_GradW(a, v, w);
-  const auto pia2 = 2 * pi() / square(a);
-  auto prob_deriv = dav;
-  prob_deriv *= prob;
-  ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
-  return -1 * (prob_deriv + ans);
 }
 }  // namespace internal
 }  // namespace math
