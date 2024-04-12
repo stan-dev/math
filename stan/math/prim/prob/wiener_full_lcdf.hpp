@@ -6,7 +6,6 @@
 #include <stan/math/prim/prob/wiener4_lcdf.hpp>
 #include <stan/math/prim/prob/wiener_full_lpdf.hpp>
 
-
 namespace stan {
 namespace math {
 namespace internal {
