@@ -30,11 +30,11 @@ namespace math {
  *    \frac
  *      {\psi\left(k+a_1\right)\left(\prod_{j=1}^p\left(a_j\right)_k\right)z^k}
  *      {k!\prod_{j=1}^q\left(b_j\right)_k}}
- *    - \psi\left(a_1\right)_pF_q(a_1,...,a_p;b_1,...,b_q;z)
+ *    - \psi\left(a_1\right){}_pF_q(a_1,...,a_p;b_1,...,b_q;z)
  * \f$
  * \f$
  * \frac{\partial }{\partial b_1} =
- *  \psi\left(b_1\right)_pF_q(a_1,...,a_p;b_1,...,b_q;z) -
+ *  \psi\left(b_1\right){}_pF_q(a_1,...,a_p;b_1,...,b_q;z) -
  *  \sum_{k=0}^{\infty}{
  *    \frac
  *      {\psi\left(k+b_1\right)\left(\prod_{j=1}^p\left(a_j\right)_k\right)z^k}
@@ -44,24 +44,24 @@ namespace math {
  * \f$
  *  \frac{\partial }{\partial z} =
  *  \frac{\prod_{j=1}^{p}(a_j)}{\prod_{j=1}^{q} (b_j)}\
- *    * _pF_q(a_1+1,...,a_p+1;b_1+1,...,b_q+1;z)
+ *    {}_pF_q(a_1+1,...,a_p+1;b_1+1,...,b_q+1;z)
  * \f$
  *
  * Noting the the recurrence relation for the digamma function:
  * \f$ \psi(x + 1) = \psi(x) + \frac{1}{x} \f$, the gradients for the
- * function w.r.t a & b then simplify to:
+ * function with respect to a and b then simplify to:
  * \f$
  * \frac{\partial }{\partial a_1} =
  *  \sum_{k=1}^{\infty}{
  *    \frac
  *      {\left(1 + \sum_{m=0}^{k-1}\frac{1}{m+a_1}\right)
- *        * (\prod_{j=1}^p\left(a_j\right)_k\right)z^k}
+ *        * \left(\prod_{j=1}^p\left(a_j\right)_k\right)z^k}
  *      {k!\prod_{j=1}^q\left(b_j\right)_k}}
- *    - _pF_q(a_1,...,a_p;b_1,...,b_q;z)
+ *    - {}_pF_q(a_1,...,a_p;b_1,...,b_q;z)
  * \f$
  * \f$
  * \frac{\partial }{\partial b_1} =
- *  _pF_q(a_1,...,a_p;b_1,...,b_q;z) -
+ *  {}_pF_q(a_1,...,a_p;b_1,...,b_q;z) -
  *  \sum_{k=1}^{\infty}{
  *    \frac
  *      {\left(1 + \sum_{m=0}^{k-1}\frac{1}{m+b_1}\right)

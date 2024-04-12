@@ -27,7 +27,7 @@ template <typename Ta, typename Tb, typename Tz,
           bool grad_b = !is_constant<Tb>::value,
           bool grad_z = !is_constant<Tz>::value,
           require_all_vector_t<Ta, Tb>* = nullptr,
-          require_return_type_t<is_fvar, FvarT>* = nullptr>
+          require_fvar_t<FvarT>* = nullptr>
 inline FvarT hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   using PartialsT = partials_type_t<FvarT>;
   using ARefT = ref_type_t<Ta>;
