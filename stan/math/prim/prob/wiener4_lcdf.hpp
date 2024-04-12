@@ -303,52 +303,53 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
   }
 
   const auto K1 = 0.5 * (fabs(v) / a * y - w);
-  const auto arg = fmax(
-	  0, fmin(1, exp(v * a * w + square(v) * y / 2 + err) / 2));
+  const auto arg
+      = fmax(0, fmin(1, exp(v * a * w + square(v) * y / 2 + err) / 2));
   const auto K2 = (arg == 0) ? INFTY
-						   : (arg == 1) ? NEGATIVE_INFTY
-										: -sqrt(y) / 2 / a * inv_Phi(arg);
+                             : (arg == 1) ? NEGATIVE_INFTY
+                                          : -sqrt(y) / 2 / a * inv_Phi(arg);
   const auto K_small_value = ceil(fmax(K1, K1 + K2));
 
   const auto api = a / pi();
   const auto v_square = square(v);
   const auto sqrtL1 = sqrt(1 / y) * api;
-  const auto sqrtL2 = sqrt(fmax(1.0, -2 / y * square(api)
-            * (err + log(pi() * y / 2 * (v_square + square(pi() / a)))
-               + v * a * w + v_square * y / 2)));
+  const auto sqrtL2 = sqrt(
+      fmax(1.0, -2 / y * square(api)
+                    * (err + log(pi() * y / 2 * (v_square + square(pi() / a)))
+                       + v * a * w + v_square * y / 2)));
   const auto K_large_value = ceil(fmax(sqrtL1, sqrtL2));
-  
+
   auto lg = LOG_TWO + LOG_PI - 2.0 * log(a);
 
   if (3 * K_small_value < K_large_value) {
-	const auto sqrt_y = sqrt(y);
-	const auto vy = v * y;
-	auto ans = ret_t(0.0);
-	ret_t fplus = NEGATIVE_INFTY;
-	ret_t fminus = NEGATIVE_INFTY;
-	for (auto k = K_small_value; k >= 0; k--) {
-	  auto rj = a * (2 * k + w);
-	  auto dj = lognormal(rj / sqrt_y);
-	  auto pos1 = dj + logMill((rj - vy) / sqrt_y);
-	  auto pos2 = dj + logMill((rj + vy) / sqrt_y);
-	  fplus = log_sum_exp(fplus, log_sum_exp(pos1, pos2));
-	  rj = a * (2 * k + 2 - w);
-	  dj = lognormal(rj / sqrt_y);
-	  auto neg1 = dj + logMill((rj - vy) / sqrt_y);
-	  auto neg2 = dj + logMill((rj + vy) / sqrt_y);
-	  fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
-	}
-	if (fplus > fminus) {
-	  ans = log_diff_exp(fplus, fminus);
-	} else if (fplus < fminus) {
-	  ans = log_diff_exp(fminus, fplus);
-	} else {
-	  ans = NEGATIVE_INFTY;
-	}
-	log_distribution = ans + -v * a * w - square(v) * y / 2;
+    const auto sqrt_y = sqrt(y);
+    const auto vy = v * y;
+    auto ans = ret_t(0.0);
+    ret_t fplus = NEGATIVE_INFTY;
+    ret_t fminus = NEGATIVE_INFTY;
+    for (auto k = K_small_value; k >= 0; k--) {
+      auto rj = a * (2 * k + w);
+      auto dj = lognormal(rj / sqrt_y);
+      auto pos1 = dj + logMill((rj - vy) / sqrt_y);
+      auto pos2 = dj + logMill((rj + vy) / sqrt_y);
+      fplus = log_sum_exp(fplus, log_sum_exp(pos1, pos2));
+      rj = a * (2 * k + 2 - w);
+      dj = lognormal(rj / sqrt_y);
+      auto neg1 = dj + logMill((rj - vy) / sqrt_y);
+      auto neg2 = dj + logMill((rj + vy) / sqrt_y);
+      fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
+    }
+    if (fplus > fminus) {
+      ans = log_diff_exp(fplus, fminus);
+    } else if (fplus < fminus) {
+      ans = log_diff_exp(fminus, fplus);
+    } else {
+      ans = NEGATIVE_INFTY;
+    }
+    log_distribution = ans + -v * a * w - square(v) * y / 2;
   } else {
     auto summand_1 = log_probability_distribution(a, v, w);
-	
+
     ret_t ans = NEGATIVE_INFTY;
     const auto log_a = log(a);
     const auto log_v = log(fabs(v));
@@ -405,88 +406,90 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto v = -vn;
   const auto w = 1 - wn;
-  const auto factor = v * a * w + square(v) * y / 2 + err;	  
- 
+  const auto factor = v * a * w + square(v) * y / 2 + err;
+
   const auto log_y = log(y);
   const auto log_a = log(a);
   const auto K = a / pi() / sqrt(y);
   auto C1
       = ret_t(LOG_TWO - log_sum_exp(2 * log(fabs(v)), 2 * (LOG_PI - log_a)));
   C1 = log_sum_exp(C1, log_y);
-  const auto alphK
-      = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
-  const auto K_large_value = ceil(fmax(fmax(sqrt(-2 * alphK / y) * a / pi(), K), ret_t(1.0)));
- 
+  const auto alphK = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
+  const auto K_large_value
+      = ceil(fmax(fmax(sqrt(-2 * alphK / y) * a / pi(), K), ret_t(1.0)));
+
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
   const auto lv = log1p(square(v) * y);
   const auto K_large = sqrt_y / a - wdash;
   const auto ueps = fmin(-1, 2 * (factor + log(a) - lv) + LOG_PI);
-  const auto K_small = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
+  const auto K_small
+      = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)))
-  
-  if (K_large_value > 4 * K_small_value) {
-	  const auto sqrt_y = sqrt(y);
-	  const auto vy = v * y;
-	  auto ans = ret_t(0.0);
-	  auto F_k = ret_t(0.0);
-	  for (auto k = K_small_value; k >= 0; k--) {
-		auto r_k = 2 * k * a + a * w;
-		auto d_k = lognormal(r_k / sqrt_y);
-		auto x = r_k - vy;
-		auto xsqrt_y = x / sqrt_y;
-		auto temp = rexp(d_k + logMill(xsqrt_y));
-		const auto factor = GradW ? a : (2 * k + w);
-		const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
-		auto temp2 = exp(d_k);
-		auto temp3 = temp * (-vy) - sqrt_y * temp2;
-		const auto t1 = temp3 * factor;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp3 = temp * vy - sqrt_y * temp2;
-		const auto t2 = temp3 * factor;
-		r_k = (2 * k + 1) * a + a * (1 - w);
-		d_k = lognormal(r_k / sqrt_y);
-		x = r_k - vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp2 = exp(d_k);
-		temp3 = temp * (-vy) - sqrt_y * temp2;
-		const auto t3 = -temp3 * factor_2;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp3 = temp * vy - sqrt_y * temp2;
-		const auto t4 = -temp3 * factor;
-		ans += (t1 + t2 + t3 + t4);
-	  }
-	  F_k = rexp(v * a * w + 0.5 * square(v) * y);
-	  const auto summands_small_y = ans / y / F_k;
+
+      if (K_large_value > 4 * K_small_value) {
+    const auto sqrt_y = sqrt(y);
+    const auto vy = v * y;
+    auto ans = ret_t(0.0);
+    auto F_k = ret_t(0.0);
+    for (auto k = K_small_value; k >= 0; k--) {
+      auto r_k = 2 * k * a + a * w;
+      auto d_k = lognormal(r_k / sqrt_y);
+      auto x = r_k - vy;
+      auto xsqrt_y = x / sqrt_y;
+      auto temp = rexp(d_k + logMill(xsqrt_y));
+      const auto factor = GradW ? a : (2 * k + w);
+      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      auto temp2 = exp(d_k);
+      auto temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto t1 = temp3 * factor;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp3 = temp * vy - sqrt_y * temp2;
+      const auto t2 = temp3 * factor;
+      r_k = (2 * k + 1) * a + a * (1 - w);
+      d_k = lognormal(r_k / sqrt_y);
+      x = r_k - vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp2 = exp(d_k);
+      temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto t3 = -temp3 * factor_2;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp3 = temp * vy - sqrt_y * temp2;
+      const auto t4 = -temp3 * factor;
+      ans += (t1 + t2 + t3 + t4);
+    }
+    F_k = rexp(v * a * w + 0.5 * square(v) * y);
+    const auto summands_small_y = ans / y / F_k;
     return -v * w * cdf + summands_small_y;
-  } else {
-	  ret_t ans = NEGATIVE_INFTY;
-	  ans = 0.0;
-	  for (auto k = K_large_value; k >= 1; k--) {
-		const auto kpi = k * pi();
-		const auto factor = sin(kpi * w);
-		const auto kpia2 = square(kpi / a);
-		const auto ekpia2y = exp(-0.5 * kpia2 * y);
-		const auto denom = 1.0 / (square(v) + kpia2);
-		const auto denomk = k * denom;
-		auto last = square(kpi) / pow(a, 3) * (y + 2.0 * denom);
-		last *= denomk * ekpia2y;
-		ans += -last * factor;
-	  }
-	  const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-	  const auto prob = rexp(log_probability_distribution(a, v, w));
-	  const auto dav = log_probability_GradAV(a, v, w);
-	  const auto pia2 = 2 * pi() / square(a);
-	  auto prob_deriv
-		  = ((fabs(v) == 0) ? 0 : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v);
-	  prob_deriv *= prob;
-	  ans = (-2 / a - v * w) * (cdf - prob) + ans * pia2 * evaw;
-	  return prob_deriv + ans;
+  }
+  else {
+    ret_t ans = NEGATIVE_INFTY;
+    ans = 0.0;
+    for (auto k = K_large_value; k >= 1; k--) {
+      const auto kpi = k * pi();
+      const auto factor = sin(kpi * w);
+      const auto kpia2 = square(kpi / a);
+      const auto ekpia2y = exp(-0.5 * kpia2 * y);
+      const auto denom = 1.0 / (square(v) + kpia2);
+      const auto denomk = k * denom;
+      auto last = square(kpi) / pow(a, 3) * (y + 2.0 * denom);
+      last *= denomk * ekpia2y;
+      ans += -last * factor;
+    }
+    const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
+    const auto prob = rexp(log_probability_distribution(a, v, w));
+    const auto dav = log_probability_GradAV(a, v, w);
+    const auto pia2 = 2 * pi() / square(a);
+    auto prob_deriv
+        = ((fabs(v) == 0) ? 0 : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v);
+    prob_deriv *= prob;
+    ans = (-2 / a - v * w) * (cdf - prob) + ans * pia2 * evaw;
+    return prob_deriv + ans;
   }
 }
 
@@ -511,83 +514,86 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
   const auto w = 1 - wn;
   const auto log_y = log(y);
   const auto factor = v * a * w + square(v) * y / 2 + err;
-  
+
   const auto log_a = log(a);
   const auto K_large_value = ret_t(1.0);
   if (v != 0) {
     const auto temp = -rexp(log_a - LOG_PI - 0.5 * log_y);
     const auto log_v = log(fabs(v));
     auto alphK_large = rexp(factor + 0.5 * (7 * LOG_PI + log_y) - 2.5 * LOG_TWO
-                   - 3 * log_a - log_v);
+                            - 3 * log_a - log_v);
     alphK_large = fmax(0.0, fmin(1.0, alphK_large));
-    K_large_value = fmax(ceil((alphK_large == 0) ? ret_t(INFTY)
-                                  : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
-                                                 : temp * inv_Phi(alphK_large)),
-                ret_t(1.0));
+    K_large_value
+        = fmax(ceil((alphK_large == 0)
+                        ? ret_t(INFTY)
+                        : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
+                                             : temp * inv_Phi(alphK_large)),
+               ret_t(1.0));
   }
-	
+
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
   auto K_large = fabs(v) / a * y - wdash;
   const auto alphK_small = factor + 0.5 * (LOG_TWO - log_y + LOG_PI);
-  const auto K_small = (alphK_small < 0) ? sqrt_y * sqrt(-2 * alphK_small) / a - wdash : 0;
+  const auto K_small
+      = (alphK_small < 0) ? sqrt_y * sqrt(-2 * alphK_small) / a - wdash : 0;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 
   if (K_large_value > 4 * K_small_value) {
-	  const auto sqrt_y = sqrt(y);
-	  const auto vy = v * y;
-	  auto ans = ret_t(0.0);
-	  auto F_k = ret_t(0.0);
-	  for (auto k = K_small_value; k >= 0; k--) {
-		auto r_k = 2 * k * a + a * w;
-		auto d_k = lognormal(r_k / sqrt_y);
-		auto x = r_k - vy;
-		auto xsqrt_y = x / sqrt_y;
-		auto temp = rexp(d_k + logMill(xsqrt_y));
-		const auto factor = GradW ? a : (2 * k + w);
-		const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
-		const auto t1 = -temp * x;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		const auto t2 = temp * x;
-		r_k = (2 * k + 1) * a + a * (1 - w);
-		d_k = lognormal(r_k / sqrt_y);
-		x = r_k - vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		const auto t3 = temp * x;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		const auto t4 = -temp * x;
-		ans += (t1 + t2 + t3 + t4);
-	  }
-	  F_k = rexp(v * a * w + 0.5 * square(v) * y);
-	  const auto summands_small_y = ans / F_k;
+    const auto sqrt_y = sqrt(y);
+    const auto vy = v * y;
+    auto ans = ret_t(0.0);
+    auto F_k = ret_t(0.0);
+    for (auto k = K_small_value; k >= 0; k--) {
+      auto r_k = 2 * k * a + a * w;
+      auto d_k = lognormal(r_k / sqrt_y);
+      auto x = r_k - vy;
+      auto xsqrt_y = x / sqrt_y;
+      auto temp = rexp(d_k + logMill(xsqrt_y));
+      const auto factor = GradW ? a : (2 * k + w);
+      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      const auto t1 = -temp * x;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      const auto t2 = temp * x;
+      r_k = (2 * k + 1) * a + a * (1 - w);
+      d_k = lognormal(r_k / sqrt_y);
+      x = r_k - vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      const auto t3 = temp * x;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      const auto t4 = -temp * x;
+      ans += (t1 + t2 + t3 + t4);
+    }
+    F_k = rexp(v * a * w + 0.5 * square(v) * y);
+    const auto summands_small_y = ans / F_k;
     return -1 * ((-w * a - v * y) * cdf + summands_small_y);
   } else {
-	  ret_t ans = NEGATIVE_INFTY;
-	  ans = 0.0;
-	  for (auto k = K_large_value; k >= 1; k--) {
-		const auto kpi = k * pi();
-		const auto factor = sin(kpi * w);
-		const auto kpia2 = square(kpi / a);
-		const auto ekpia2y = exp(-0.5 * kpia2 * y);
-		const auto denom = 1.0 / (square(v) + kpia2);
-		const auto denomk = k * denom;
-		auto last = denom;
-		last *= denomk * ekpia2y;
-		ans += -last * factor;
-	  }
-	  const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-	  const auto prob = rexp(log_probability_distribution(a, v, w));
-	  const auto dav = log_probability_GradAV(a, v, w);
-	  const auto pia2 = 2 * pi() / square(a);
-	  auto prob_deriv = is_inf(dav * a) ? NEGATIVE_INFTY : dav * a;
-	  prob_deriv *= prob;
-	  ans =  (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * pia2 * evaw;
-	  return -1 * (prob_deriv + ans);
+    ret_t ans = NEGATIVE_INFTY;
+    ans = 0.0;
+    for (auto k = K_large_value; k >= 1; k--) {
+      const auto kpi = k * pi();
+      const auto factor = sin(kpi * w);
+      const auto kpia2 = square(kpi / a);
+      const auto ekpia2y = exp(-0.5 * kpia2 * y);
+      const auto denom = 1.0 / (square(v) + kpia2);
+      const auto denomk = k * denom;
+      auto last = denom;
+      last *= denomk * ekpia2y;
+      ans += -last * factor;
+    }
+    const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
+    const auto prob = rexp(log_probability_distribution(a, v, w));
+    const auto dav = log_probability_GradAV(a, v, w);
+    const auto pia2 = 2 * pi() / square(a);
+    auto prob_deriv = is_inf(dav * a) ? NEGATIVE_INFTY : dav * a;
+    prob_deriv *= prob;
+    ans = (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * pia2 * evaw;
+    return -1 * (prob_deriv + ans);
   }
 }
 
@@ -611,16 +617,19 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
   const auto v = -vn;
   const auto w = 1 - wn;
   const auto factor = v * a * w + square(v) * y / 2 + err;
- 
+
   const auto log_y = log(y);
   const auto log_a = log(a);
   const auto temp = -rexp(log_a - LOG_PI - 0.5 * log_y);
-  auto alphK_large = rexp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a);
+  auto alphK_large
+      = rexp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a);
   alphK_large = fmax(0.0, fmin(1.0, alphK_large));
-  const auto K_large_value = fmax(ceil((alphK_large == 0) ? ret_t(INFTY)
-                                  : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
-                                                 : temp * inv_Phi(alphK_large)),
-                ret_t(1.0));
+  const auto K_large_value
+      = fmax(ceil((alphK_large == 0)
+                      ? ret_t(INFTY)
+                      : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
+                                           : temp * inv_Phi(alphK_large)),
+             ret_t(1.0));
 
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
@@ -628,76 +637,78 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
   const auto lv = log1p(square(v) * y);
   const auto alphK_small = factor - LOG_TWO - lv;
   const auto arg = fmin(rexp(alphK_small), 1.0);
-  const auto K_small = (arg == 0) ? INFTY
-                         : (arg == 1) ? NEGATIVE_INFTY
-                                      : -sqrt_y / a * inv_Phi(arg) - wdash;
+  const auto K_small
+      = (arg == 0)
+            ? INFTY
+            : (arg == 1) ? NEGATIVE_INFTY : -sqrt_y / a * inv_Phi(arg) - wdash;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
-  
+
   if (K_large_value > 4 * K_small_value) {
-	  const auto sqrt_y = sqrt(y);
-	  const auto vy = v * y;
-	  auto ans = ret_t(0.0);
-	  auto F_k = ret_t(0.0);
-	  for (auto k = K_small_value; k >= 0; k--) {
-		auto r_k = 2 * k * a + a * w;
-		auto d_k = lognormal(r_k / sqrt_y);
-		auto x = r_k - vy;
-		auto xsqrt_y = x / sqrt_y;
-		auto temp = rexp(d_k + logMill(xsqrt_y));
-		const auto factor = GradW ? a : (2 * k + w);
-		const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
-		auto temp2 = exp(d_k);
-		auto temp3 = temp * (-vy) - sqrt_y * temp2;
-		const auto t1 = temp3 * factor;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp3 = temp * vy - sqrt_y * temp2;
-		const auto t2 = temp3 * factor;
-		r_k = (2 * k + 1) * a + a * (1 - w);
-		d_k = lognormal(r_k / sqrt_y);
-		x = r_k - vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp2 = exp(d_k);
-		temp3 = temp * (-vy) - sqrt_y * temp2;
-		const auto t3 = -temp3 * factor_2;
-		x = r_k + vy;
-		xsqrt_y = x / sqrt_y;
-		temp = rexp(d_k + logMill(xsqrt_y));
-		temp3 = temp * vy - sqrt_y * temp2;
-		const auto t4 = -temp3 * factor;
-		ans += (t1 + t2 + t3 + t4);
-	  }
-	  F_k = rexp(v * a * w + 0.5 * square(v) * y);
-	  const auto summands_small_y = ans / y / F_k;
-	}
-    return -1 * (-v * a * cdf + summands_small_y);
-  } else {
-	  ret_t ans = NEGATIVE_INFTY;
-	  ans = 0.0;
-	  for (auto k = K_large_value; k >= 1; k--) {
-		const auto kpi = k * pi();
-		const auto factor = cos(kpi * w);
-		const auto kpia2 = square(kpi / a);
-		const auto ekpia2y = exp(-0.5 * kpia2 * y);
-		const auto denom = 1.0 / (square(v) + kpia2);
-		const auto denomk = k * denom;
-		auto last = kpi;
-		last *= denomk * ekpia2y;
-		ans += -last * factor;
-	  }
-	  const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-	  const auto prob = rexp(log_probability_distribution(a, v, w));
-	  const auto dav = log_probability_GradW(a, v, w);
-	  const auto pia2 = 2 * pi() / square(a);
-	  auto prob_deriv = dav;
-	  prob_deriv *= prob;
-	  ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
-	  return -1 * (prob_deriv + ans);
+    const auto sqrt_y = sqrt(y);
+    const auto vy = v * y;
+    auto ans = ret_t(0.0);
+    auto F_k = ret_t(0.0);
+    for (auto k = K_small_value; k >= 0; k--) {
+      auto r_k = 2 * k * a + a * w;
+      auto d_k = lognormal(r_k / sqrt_y);
+      auto x = r_k - vy;
+      auto xsqrt_y = x / sqrt_y;
+      auto temp = rexp(d_k + logMill(xsqrt_y));
+      const auto factor = GradW ? a : (2 * k + w);
+      const auto factor_2 = GradW ? -a : (2 * k + 2.0 - w);
+      auto temp2 = exp(d_k);
+      auto temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto t1 = temp3 * factor;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp3 = temp * vy - sqrt_y * temp2;
+      const auto t2 = temp3 * factor;
+      r_k = (2 * k + 1) * a + a * (1 - w);
+      d_k = lognormal(r_k / sqrt_y);
+      x = r_k - vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp2 = exp(d_k);
+      temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto t3 = -temp3 * factor_2;
+      x = r_k + vy;
+      xsqrt_y = x / sqrt_y;
+      temp = rexp(d_k + logMill(xsqrt_y));
+      temp3 = temp * vy - sqrt_y * temp2;
+      const auto t4 = -temp3 * factor;
+      ans += (t1 + t2 + t3 + t4);
+    }
+    F_k = rexp(v * a * w + 0.5 * square(v) * y);
+    const auto summands_small_y = ans / y / F_k;
   }
+  return -1 * (-v * a * cdf + summands_small_y);
+}
+else {
+  ret_t ans = NEGATIVE_INFTY;
+  ans = 0.0;
+  for (auto k = K_large_value; k >= 1; k--) {
+    const auto kpi = k * pi();
+    const auto factor = cos(kpi * w);
+    const auto kpia2 = square(kpi / a);
+    const auto ekpia2y = exp(-0.5 * kpia2 * y);
+    const auto denom = 1.0 / (square(v) + kpia2);
+    const auto denomk = k * denom;
+    auto last = kpi;
+    last *= denomk * ekpia2y;
+    ans += -last * factor;
+  }
+  const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
+  const auto prob = rexp(log_probability_distribution(a, v, w));
+  const auto dav = log_probability_GradW(a, v, w);
+  const auto pia2 = 2 * pi() / square(a);
+  auto prob_deriv = dav;
+  prob_deriv *= prob;
+  ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
+  return -1 * (prob_deriv + ans);
 }
 }  // namespace internal
+}  // namespace math
 
 /**
  * Log-CDF function for the 4-parameter Wiener distribution.
@@ -862,6 +873,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   }  // for loop
   return ops_partials.build(lcdf);
 }
-}  // namespace math
+}  // namespace stan
 }  // namespace stan
 #endif
