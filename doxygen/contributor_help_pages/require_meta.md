@@ -84,15 +84,15 @@ Here's a function that would have two different template functions for
 `stan::math::var` and `double`:
 
 ```
-template <typename T, requires_var_t<T>* = nullptr>
-T foo(const T& t) {
-  // handles stan::math::var
-  return t;
-}
-
 template <typename T, requires_not_var_t<T>* = nullptr>
 T foo(const T& t) {
   // handles primitives
+  return t;
+}
+
+template <typename T, requires_var_t<T>* = nullptr>
+T foo(const T& t) {
+  // handles stan::math::var
   return t;
 }
 ```
