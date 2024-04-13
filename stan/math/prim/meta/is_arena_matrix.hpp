@@ -12,10 +12,16 @@ namespace stan {
 template <typename T, typename = void>
 struct is_arena_matrix : std::false_type {};
 
-STAN_ADD_REQUIRE_UNARY(arena_matrix, is_arena_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(arena_matrix, is_arena_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix,
-                             require_eigens_types);
+/*! \ingroup require_eigen_types */
+/*! \defgroup arena_matrix_types arena_matrix  */
+/*! \addtogroup arena_matrix_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_arena_matrix */
+/*! @tparam T the type to check */
+template <typename T>
+using require_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
+/*! @} */
 
 }  // namespace stan
 #endif

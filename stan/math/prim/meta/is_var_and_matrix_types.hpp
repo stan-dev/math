@@ -21,10 +21,6 @@ using is_var_and_matrix_types
                     && stan::math::disjunction<is_matrix<Types>...>::value>;
 
 template <typename... Types>
-using require_all_var_and_matrix_types
-    = require_t<is_var_and_matrix_types<Types...>>;
-
-template <typename... Types>
 using require_all_not_var_and_matrix_types
     = require_not_t<is_var_and_matrix_types<Types...>>;
 

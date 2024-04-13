@@ -44,8 +44,157 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 
-STAN_ADD_REQUIRE_UNARY(eigen, is_eigen, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_types eigen  */
+/*! \addtogroup eigen_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen */
+/*! @tparam T the type to check */
+template <typename T>
+using require_eigen_t = require_t<is_eigen<std::decay_t<T>>>;
+
+/*! \brief Require type does not satisfy @ref is_eigen */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_eigen_t = require_not_t<is_eigen<std::decay_t<T>>>;
+
+/*! \brief Require all of the types satisfy @ref is_eigen */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_eigen_t = require_all_t<is_eigen<std::decay_t<Types>>...>;
+
+/*! \brief Require any of the types satisfy @ref is_eigen */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_eigen_t = require_any_t<is_eigen<std::decay_t<Types>>...>;
+
+/*! \brief Require none of the types satisfy @ref is_eigen */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_not_eigen_t
+    = require_all_not_t<is_eigen<std::decay_t<Types>>...>;
+
+/*! \brief Require at least one of the types do not satisfy @ref is_eigen */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_not_eigen_t
+    = require_any_not_t<is_eigen<std::decay_t<Types>>...>;
+/*! @} */
+
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_types eigen  */
+/*! \addtogroup eigen_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_vt = require_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
+
+/*! \brief Require type does not satisfy @ref is_eigen or */
+/*! value type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_vt = require_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check...>>;
+
+/*! \brief Require any of the types satisfy @ref is_eigen */
+/*! and any of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_vt = require_any_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require at least one of the types does not satisfy @ref is_eigen */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_vt = require_any_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require all of the types satisfy @ref is_eigen */
+/*! and all of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_vt = require_all_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require none of the types satisfy @ref is_eigen */
+/*! and none of the value types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref value_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_vt = require_all_not_t<
+    container_type_check_base<is_eigen, value_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require type satisfies @ref is_eigen */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_st = require_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
+
+/*! \brief Require type does not satisfy @ref is_eigen */
+/*! or scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_not_eigen_st = require_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check...>>;
+
+/*! \brief Require any of the types satisfy @ref is_eigen */
+/*! and any scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_any_eigen_st = require_any_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require at least one of the types does not satisfy @ref is_eigen */
+/*! and any scalar type does not satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_eigen_st = require_any_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require all of the types does not satisfy @ref is_eigen */
+/*! and all scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_all_eigen_st = require_all_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+
+/*! \brief Require none of the types satisfy @ref is_eigen */
+/*! and none of the scalar types satisfy `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_eigen_st = require_all_not_t<
+    container_type_check_base<is_eigen, scalar_type_t, TypeCheck, Check>...>;
+/*! @} */
 
 /**
  * Check if a type is derived from `Eigen::ArrayBase`
@@ -56,8 +205,28 @@ template <typename T>
 struct is_eigen_array
     : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase, T>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_array_types eigen_array  */
+/*! \addtogroup eigen_array_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_array */
+/*! @tparam T the type to check */
+template <typename T>
+using require_eigen_array_t = require_t<is_eigen_array<std::decay_t<T>>>;
+
+/*! \brief Require type does not satisfy @ref is_eigen_array */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_eigen_array_t
+    = require_not_t<is_eigen_array<std::decay_t<T>>>;
+
+/*! \brief Require any of the types satisfy @ref is_eigen_array */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_eigen_array_t
+    = require_any_t<is_eigen_array<std::decay_t<Types>>...>;
+/*! @} */
 
 /**
  * Check if a type is derived from `Eigen::MatrixBase` or `Eigen::ArrayBase`
@@ -68,10 +237,21 @@ template <typename T>
 using is_eigen_matrix_or_array
     = math::disjunction<is_eigen_matrix_base<T>, is_eigen_array<T>>;
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix_or_array, is_eigen_matrix_or_array,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array,
-                           require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_array_types eigen_array  */
+/*! \addtogroup eigen_array_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_array */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_array for and whose @ref
+ * value_type is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_array_vt
+    = require_t<container_type_check_base<is_eigen_array, value_type_t,
+                                          TypeCheck, Check...>>;
+/*! @} */
 
 namespace internal {
 template <typename T>
@@ -89,11 +269,6 @@ struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
 template <typename T>
 struct is_eigen_contiguous_map
     : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
-
-STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
-                           require_eigens_types);
 
 }  // namespace stan
 #endif
