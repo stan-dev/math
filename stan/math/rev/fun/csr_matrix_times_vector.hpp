@@ -11,26 +11,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-
-template <typename T1, typename T2, typename Res,
-          require_var_matrix_t<T1>* = nullptr>
-inline void update_w(T1& w, T2&& b, Res&& res) {
-      std::cout << "pre w adj: \n" << w.adj() << std::endl;
-      std::cout << "pre b: \n" << value_of(b).eval() << std::endl;
-      std::cout << "pre res: \n" << res.adj() << std::endl;
-  for (int k = 0; k < w.adj().outerSize(); ++k) {
-    for (typename T1::vari_type::InnerIterator
-             it(w.adj(), k);
-         it; ++it) {
-      it.valueRef() += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
-    }
-  }
-      std::cout << "post w adj: \n" << w.adj() << std::endl;
-}
-
-}  // namespace internal
-
 /**
  * \addtogroup csr_format
  * Return the multiplication of the sparse matrix (specified by
@@ -66,7 +46,7 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
                                     const std::vector<int>& v,
                                     const std::vector<int>& u, const T2& b) {
   using sparse_val_mat
-      = Eigen::Map<const Eigen::SparseMatrix<double>>;
+      = Eigen::Map<const Eigen::SparseMatrix<double, Eigen::RowMajor>>;
   using sparse_dense_mul_type
       = decltype((std::declval<sparse_val_mat>() * value_of(b)).eval());
   using return_t = return_var_matrix_t<sparse_dense_mul_type, T1, T2>;
@@ -87,17 +67,24 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
   std::vector<int, arena_allocator<int>> u_arena(u.size());
   std::transform(u.begin(), u.end(), u_arena.begin(),
                  [](auto&& x) { return x - 1; });
+  using sparse_var_value_t
+      = var_value<Eigen::SparseMatrix<double, Eigen::RowMajor>>;
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
-    auto w_mat_arena = to_soa_sparse_matrix(m, n, w, u_arena, v_arena);
+    sparse_var_value_t w_mat_arena
+        = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w, u_arena, v_arena);
     arena_t<return_t> res = w_mat_arena.val() * value_of(b_arena);
-    reverse_pass_callback(
-        [res, w_mat_arena, b_arena]() mutable {
-          internal::update_w(w_mat_arena, b_arena, res);
-          //w_mat_arena.adj()  += res.adj() * b_arena.val().transpose();
-          b_arena.adj() += w_mat_arena.val().transpose() * res.adj();
-        });
-    std::cout << "NOT CALLED" << std::endl;
+    reverse_pass_callback([res, w_mat_arena, b_arena]() mutable {
+      for (int k = 0; k < w_mat_arena.adj().outerSize(); ++k) {
+        for (typename sparse_var_value_t::vari_type::InnerIterator it(
+                 w_mat_arena.adj(), k);
+             it; ++it) {
+          it.valueRef()
+              += res.adj().coeff(it.row()) * b_arena.val().coeff(it.col());
+        }
+      }
+      b_arena.adj() += w_mat_arena.val().transpose() * res.adj();
+    });
     return return_t(res);
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
@@ -105,21 +92,24 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
     sparse_val_mat w_val_mat(m, n, w_val_arena.size(), u_arena.data(),
                              v_arena.data(), w_val_arena.data());
     arena_t<return_t> res = w_val_mat * value_of(b_arena);
-    reverse_pass_callback(
-        [w_val_mat, res, b_arena]() mutable {
-          b_arena.adj() += w_val_mat.transpose() * res.adj();
-        });
-    std::cout << "NOT CALLED" << std::endl;
+    reverse_pass_callback([w_val_mat, res, b_arena]() mutable {
+      b_arena.adj() += w_val_mat.transpose() * res.adj();
+    });
     return return_t(res);
   } else {
-    auto w_mat_arena = to_soa_sparse_matrix(m, n, w, u_arena, v_arena);
+    sparse_var_value_t w_mat_arena
+        = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w, u_arena, v_arena);
     auto b_arena = to_arena(value_of(b));
     arena_t<return_t> res = w_mat_arena.val() * b_arena;
-    reverse_pass_callback(
-        [res, w_mat_arena, b_arena]() mutable {
-          internal::update_w(w_mat_arena, b_arena, res);
-          std::cout << "w_mat: " << w_mat_arena.adj();
-        });
+    reverse_pass_callback([res, w_mat_arena, b_arena]() mutable {
+      for (int k = 0; k < w_mat_arena.adj().outerSize(); ++k) {
+        for (typename sparse_var_value_t::vari_type::InnerIterator it(
+                 w_mat_arena.adj(), k);
+             it; ++it) {
+          it.valueRef() += res.adj().coeff(it.row()) * b_arena.coeff(it.col());
+        }
+      }
+    });
     return return_t(res);
   }
 }

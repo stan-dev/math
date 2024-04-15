@@ -419,6 +419,18 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   }
 
   /**
+   * Construct a `var_value` with a plain type
+   *  from another `var_value` containing an expression.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
+            require_arena_matrix_t<S>* = nullptr>
+  var_value(const S& val, const S& adj) : vi_(new vari_type(val, adj)) {}
+
+  /**
    * Construct a variable from a pointer to a variable implementation.
    * @param vi A vari_value pointer.
    */
