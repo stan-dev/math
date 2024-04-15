@@ -227,8 +227,7 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
                   const_cast<StorageIndex*>(other.outerIndexPtr()),
                   const_cast<StorageIndex*>(other.innerIndexPtr()),
                   const_cast<Scalar*>(other.valuePtr()),
-                  const_cast<StorageIndex*>(other.innerNonZeroPtr())) {
-                  }
+                  const_cast<StorageIndex*>(other.innerNonZeroPtr())) {}
   /**
    * Move constructor.
    * @note Since the memory for the arena matrix sits in Stan's memory arena all
@@ -249,11 +248,10 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    */
   arena_matrix(arena_matrix<MatrixType>& other)
       : Base::Map(other.rows(), other.cols(), other.nonZeros(),
-                    const_cast<StorageIndex*>(other.outerIndexPtr()),
-                    const_cast<StorageIndex*>(other.innerIndexPtr()),
-                    const_cast<Scalar*>(other.valuePtr()),
-                    const_cast<StorageIndex*>(other.innerNonZeroPtr())) {
-                    }
+                  const_cast<StorageIndex*>(other.outerIndexPtr()),
+                  const_cast<StorageIndex*>(other.innerIndexPtr()),
+                  const_cast<Scalar*>(other.valuePtr()),
+                  const_cast<StorageIndex*>(other.innerNonZeroPtr())) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -266,7 +264,8 @@ class arena_matrix<MatrixType, require_eigen_sparse_base_t<MatrixType>>
    * @return `*this`
    */
   template <typename ArenaMatrix,
-            require_same_t<std::decay_t<ArenaMatrix>, arena_matrix<MatrixType>>* = nullptr>
+            require_same_t<std::decay_t<ArenaMatrix>,
+                           arena_matrix<MatrixType>>* = nullptr>
   arena_matrix& operator=(ArenaMatrix&& other) {
     // placement new changes what data map points to - there is no allocation
     new (this) Base(other.rows(), other.cols(), other.nonZeros(),

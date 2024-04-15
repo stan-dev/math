@@ -18,7 +18,8 @@ namespace math {
  * @param a matrix to convert
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline var_value<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
+inline var_value<
+    Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
 to_var_value(const T& a) {
   arena_matrix<plain_type_t<T>> a_arena = a;
   var_value<promote_scalar_t<double, T>> res(a_arena.val());

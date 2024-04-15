@@ -21,7 +21,6 @@ TEST(MathMixMatFun, csr_matrix_times_vector_vals) {
   EXPECT_MATRIX_EQ(dbl_res, var_res_bw);
 }
 
-
 TEST(MathMixMatFun, csr_matrix_times_vector1) {
   auto f = [](const auto& w, const auto& b) {
     using stan::math::csr_matrix_times_vector;
@@ -53,4 +52,3 @@ TEST(MathMixMatFun, csr_matrix_times_vector2) {
 
   stan::test::expect_ad_matvar(f, w, b);
 }
-

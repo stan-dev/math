@@ -43,9 +43,9 @@ TEST_F(AgradRev, to_soa_sparse_matrix_matrix_var) {
 */
 
 TEST_F(AgradRev, to_soa_sparse_matrix_var_matrix) {
+  using stan::math::to_soa_sparse_matrix;
   using stan::math::var;
   using stan::math::var_value;
-  using stan::math::to_soa_sparse_matrix;
   std::vector<int> v{0, 1, 2, 0, 1};
   std::vector<int> u{0, 1, 2, 3, 4, 5};
   Eigen::VectorXd w(5);
@@ -53,8 +53,8 @@ TEST_F(AgradRev, to_soa_sparse_matrix_var_matrix) {
   int n = 5;
   w << 1, 2, 3, 4, 5;
   var_value<Eigen::VectorXd> w_var(w);
-  var_value<Eigen::SparseMatrix<double, Eigen::RowMajor>> w_mat_arena =
-    to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w_var, u, v);
+  var_value<Eigen::SparseMatrix<double, Eigen::RowMajor>> w_mat_arena
+      = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w_var, u, v);
   for (int i = 0; i < 5; ++i) {
     EXPECT_EQ(w_mat_arena.val().valuePtr()[i], w.val()(i));
   }
@@ -74,7 +74,4 @@ TEST_F(AgradRev, to_soa_sparse_matrix_var_matrix) {
   for (int i = 0; i < 5; ++i) {
     EXPECT_EQ(w_mat_arena.adj().valuePtr()[i], w_var.adj()(i));
   }
-
- }
-
-
+}

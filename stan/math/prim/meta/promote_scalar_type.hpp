@@ -98,8 +98,9 @@ struct promote_scalar_type<T, S, require_eigen_sparse_base_t<S>> {
   /**
    * The promoted type.
    */
-  using type = Eigen::SparseMatrix<typename promote_scalar_type<T, typename S::Scalar>::type,
-   S::Options, typename S::StorageIndex>;
+  using type = Eigen::SparseMatrix<
+      typename promote_scalar_type<T, typename S::Scalar>::type, S::Options,
+      typename S::StorageIndex>;
 };
 
 template <typename... PromotionScalars, typename... UnPromotedTypes>

@@ -82,7 +82,8 @@ template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
 inline auto value_of(EigMat&& M) {
   auto&& M_ref = to_ref(M);
   using scalar_t = decltype(value_of(std::declval<value_type_t<EigMat>>()));
-  promote_scalar_t<scalar_t, plain_type_t<EigMat>> ret(M_ref.rows(), M_ref.cols());
+  promote_scalar_t<scalar_t, plain_type_t<EigMat>> ret(M_ref.rows(),
+                                                       M_ref.cols());
   ret.reserve(M_ref.nonZeros());
   for (int k = 0; k < M_ref.outerSize(); ++k) {
     for (typename std::decay_t<EigMat>::InnerIterator it(M_ref, k); it; ++it) {
