@@ -419,11 +419,11 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   }
 
   /**
-   * Construct a `var_value` with a plain type
-   *  from another `var_value` containing an expression.
+   * Construct a `var_value` with premade @ref arena_matrix types.
+   *  The values and adjoint matrices passed here will be shallow copied.
    * @tparam S type of the value in the `var_value` to assing
-   * @param other the value to assign
-   * @return this
+   * @param val The value matrix to go into the vari
+   * @param adj the adjoint matrix to go into the vari
    */
   template <typename S, typename T_ = T,
             require_assignable_t<value_type, S>* = nullptr,

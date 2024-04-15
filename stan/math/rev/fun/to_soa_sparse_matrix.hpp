@@ -14,9 +14,9 @@ namespace math {
 /**
  * Create a sparse matrix from the given SoA matrix and indexes.
  * @tparam Options Eigen matrix options.
- * @tparam T1 A @ref var_value with a dense vector inner type
- * @tparam T2 Container type of the column indexes.
- * @tparam T3 Container type of the row indexes.
+ * @tparam VarMatrix A @ref var_value with a dense vector inner type
+ * @tparam Vec1 Container type of the column indexes.
+ * @tparam Vec2 Container type of the row indexes.
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -26,13 +26,13 @@ namespace math {
  *          length as w.
  * @return Sparse matrix.
  */
-template <int Options = Eigen::ColMajor, typename T1, typename T2, typename T3,
-  require_var_t<T1>* = nullptr,
-  require_eigen_dense_base_t<value_type_t<T1>>* = nullptr,
-  require_all_std_vector_vt<std::is_integral, T2, T3>* = nullptr>
-inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
-    auto v_arena = to_arena(v);
-    auto u_arena = to_arena(u);
+template <int Options = Eigen::ColMajor, typename VarMatrix, typename Vec1, typename Vec2,
+  require_var_t<VarMatrix>* = nullptr,
+  require_eigen_dense_base_t<value_type_t<VarMatrix>>* = nullptr,
+  require_all_std_vector_vt<std::is_integral, Vec1, Vec2>* = nullptr>
+inline auto to_soa_sparse_matrix(int m, int n, VarMatrix&& w, Vec1&& u, Vec2&& v) {
+    auto u_arena = to_arena(std::forward<Vec1>(u));
+    auto v_arena = to_arena(std::forward<Vec2>(v));
     using sparse_mat_t = Eigen::SparseMatrix<double, Options>;
     using sparse_arena_mat_t = arena_t<sparse_mat_t>;
     sparse_arena_mat_t arena_val_x(m, n, w.val().size(),
@@ -47,9 +47,9 @@ inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
 /**
  * Create a sparse matrix from the given AoS matrix of vars and indexes.
  * @tparam Options Eigen matrix options.
- * @tparam T1 A type inheriting from `Eigen::DenseBase` with a scalar type of @ref var_value
- * @tparam T2 Container type of the column indexes.
- * @tparam T3 Container type of the row indexes.
+ * @tparam MatrixVar A type inheriting from `Eigen::DenseBase` with a scalar type of @ref var_value
+ * @tparam Vec1 Container type of the column indexes.
+ * @tparam Vec2 Container type of the row indexes.
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -59,13 +59,13 @@ inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
  *          length as w.
  * @return Sparse matrix.
  */
-template <int Options = Eigen::ColMajor, typename T1, typename T2, typename T3,
-  require_eigen_dense_base_vt<is_var, T1>* = nullptr,
-  require_all_std_vector_vt<std::is_integral, T2, T3>* = nullptr>
-inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
-    auto w_arena = to_arena(w);
-    auto v_arena = to_arena(v);
-    auto u_arena = to_arena(u);
+template <int Options = Eigen::ColMajor, typename MatrixVar, typename Vec1, typename Vec2,
+  require_eigen_dense_base_vt<is_var, MatrixVar>* = nullptr,
+  require_all_std_vector_vt<std::is_integral, Vec1, Vec2>* = nullptr>
+inline auto to_soa_sparse_matrix(int m, int n, MatrixVar&& w, Vec1&& u, Vec2&& v) {
+    auto w_arena = to_arena(std::forward<MatrixVar>(w));
+    auto u_arena = to_arena(std::forward<Vec1>(u));
+    auto v_arena = to_arena(std::forward<Vec2>(v));
     arena_t<Eigen::SparseMatrix<var, Options>> arena_x(m, n, w_arena.size(),
       u_arena.data(), v_arena.data(), w_arena.data());
     var_value<Eigen::SparseMatrix<double, Options>> var_x(value_of(arena_x));
@@ -88,9 +88,9 @@ inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
 /**
  * Create a sparse matrix from the given matrix of floats and indexes.
  * @tparam Options Eigen matrix options.
- * @tparam T1 A type inheriting from `Eigen::DenseBase` with an arithmetic scalar type
- * @tparam T2 Container type of the column indexes.
- * @tparam T3 Container type of the row indexes.
+ * @tparam Mat A type inheriting from `Eigen::DenseBase` with an arithmetic scalar type
+ * @tparam Vec1 Container type of the column indexes.
+ * @tparam Vec2 Container type of the row indexes.
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -100,13 +100,13 @@ inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
  *          length as w.
  * @return Sparse matrix.
  */
-template <int Options = Eigen::ColMajor, typename T1, typename T2, typename T3,
-  require_eigen_dense_base_vt<std::is_arithmetic, T1>* = nullptr,
-  require_all_std_vector_vt<std::is_integral, T2, T3>* = nullptr>
-  inline auto to_soa_sparse_matrix(int m, int n, T1&& w, T2&& u, T3&& v) {
-    auto w_arena = to_arena(w);
-    auto v_arena = to_arena(v);
-    auto u_arena = to_arena(u);
+template <int Options = Eigen::ColMajor, typename Mat, typename Vec1, typename Vec2,
+  require_eigen_dense_base_vt<std::is_arithmetic, Mat>* = nullptr,
+  require_all_std_vector_vt<std::is_integral, Vec1, Vec2>* = nullptr>
+  inline auto to_soa_sparse_matrix(int m, int n, Mat&& w, Vec1&& u, Vec2&& v) {
+    auto w_arena = to_arena(std::forward<Mat>(w));
+    auto u_arena = to_arena(std::forward<Vec1>(u));
+    auto v_arena = to_arena(std::forward<Vec2>(v));
     arena_t<Eigen::SparseMatrix<double, Options>> arena_x(m, n, w_arena.size(),
       u_arena.data(), v_arena.data(), w_arena.data());
     return var_value<Eigen::SparseMatrix<double, Options>>(arena_x);
