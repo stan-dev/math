@@ -36,7 +36,7 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   using boost::random::gamma_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_scale>;
-  static const char* function = "inv_gamma_rng";
+  static constexpr const char* function = "inv_gamma_rng";
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          beta);
   T_alpha_ref alpha_ref = alpha;

@@ -227,6 +227,7 @@ auto make_sparse_matrix_random(int rows, int cols) {
   }
   Eigen::SparseMatrix<double> mat(rows, cols);
   mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  mat.makeCompressed();
   return mat;
 }
 

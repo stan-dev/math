@@ -31,7 +31,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   using T_y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   using T_s_ref = ref_type_t<T_scale>;
-  static const char* function = "scaled_inv_chi_square_lcdf";
+  static constexpr const char* function = "scaled_inv_chi_square_lcdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);

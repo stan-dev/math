@@ -6,91 +6,57 @@
 
 namespace hcubature_test {
 
-struct my_params {
-  long double x;
-  double y;
-};
-
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f1(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  return cos(x_vec[0]);
+template <typename T_x>
+inline auto f1(const T_x& x) {
+  return stan::math::sum(stan::math::cos(x));
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f2(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  return cos(x_vec[0]) * cos(x_vec[1]);
+template <typename T_x>
+inline auto f2(const T_x& x) {
+  return stan::math::prod(stan::math::cos(x));
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f3(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  my_params* pars = static_cast<my_params*>(p);
-  long double radius = (pars->x);
-  double result;
-  if (std::pow(x_vec[0], 2) + std::pow(x_vec[1], 2) < std::pow(radius, 2)) {
-    result = 1;
-  } else {
-    result = 0;
-  }
-  return result;
+template <typename T_x>
+inline auto f3(const T_x& x, double radius) {
+  using stan::math::square;
+  return stan::return_type_t<T_x>(stan::math::sum(square(x)) < square(radius));
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f4(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  using namespace stan::math;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  my_params* pars = static_cast<my_params*>(p);
-  double sigma = (pars->y);
-  double numerator = std::pow(x_vec[0] - 0.5, 2) + std::pow(x_vec[1] - 0.5, 2);
-  return std::pow(TWO_OVER_SQRT_PI / (2.0 * sigma), 2)
-         * exp(-numerator / std::pow(sigma, 2));
+template <typename T_x>
+inline auto f4(const T_x& x, double sigma) {
+  using stan::math::as_array_or_scalar;
+  using stan::math::square;
+  using stan::math::sum;
+  using stan::math::TWO_OVER_SQRT_PI;
+
+  auto numerator = sum(square(as_array_or_scalar(x) - 0.5));
+  return square(TWO_OVER_SQRT_PI / (2.0 * sigma))
+         * exp(-numerator / square(sigma));
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f5(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  using namespace stan::math;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  double val = std::pow((1 - x_vec[0]) / x_vec[0], 2)
-               + std::pow((1 - x_vec[1]) / x_vec[1], 2)
-               + std::pow((1 - x_vec[2]) / x_vec[2], 2);
-  double scale = TWO_OVER_SQRT_PI / std::pow(x_vec[0], 2) * TWO_OVER_SQRT_PI
-                 / std::pow(x_vec[1], 2) * TWO_OVER_SQRT_PI
-                 / std::pow(x_vec[2], 2);
+template <typename T_x>
+inline auto f5(const T_x& x) {
+  using stan::math::prod;
+  using stan::math::square;
+  using stan::math::TWO_OVER_SQRT_PI;
+
+  const auto& x_arr = stan::math::as_array_or_scalar(x);
+  auto val = stan::math::sum(square((1 - x_arr) / x_arr));
+  auto scale = prod(TWO_OVER_SQRT_PI / square(x_arr));
   return exp(-val) * scale;
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f6(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  return 2 * x_vec[0] * 2 * x_vec[1] * 2 * x_vec[2];
+template <typename T_x>
+inline auto f6(const T_x& x) {
+  const auto& x_arr = stan::math::as_array_or_scalar(x);
+  return stan::math::prod(2 * x_arr);
 }
 
-template <typename T_x, typename T_p>
-stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
-  using T_x_ref = stan::ref_type_t<T_x>;
-  T_x_ref x_ref = x;
-  stan::scalar_seq_view<T_x_ref> x_vec(x_ref);
-  my_params* pars = static_cast<my_params*>(p);
-  double a = (pars->y);
-  double result = (a / (a + 1) * std::pow((a + 1) / (a + x_vec[0]), 2))
-                  * (a / (a + 1) * std::pow((a + 1) / (a + x_vec[1]), 2))
-                  * (a / (a + 1) * std::pow((a + 1) / (a + x_vec[2]), 2))
-                  * (a / (a + 1) * std::pow((a + 1) / (a + x_vec[3]), 2));
-  return result;
+template <typename T_x>
+inline auto f7(const T_x& x, double a) {
+  const auto& x_arr = stan::math::as_array_or_scalar(x);
+  return stan::math::prod(a / (a + 1)
+                          * stan::math::square((a + 1) / (a + x_arr)));
 }
 }  // namespace hcubature_test
 
@@ -132,11 +98,11 @@ stan::return_type_t<T_x, T_p> f7(const T_x& x, const T_p& p) {
  * @param val correct value of integral
  */
 
-template <typename F>
-void test_integration(const F& f, hcubature_test::my_params* pars, int dim,
-                      std::vector<double> a, std::vector<double> b, int maxEval,
-                      double reqAbsError, std::vector<double> reqRelError,
-                      double val) {
+template <typename F, typename ArgsTupleT, typename T_a, typename T_b,
+          typename T_relerr>
+void test_integration(const F& f, const ArgsTupleT& pars, int dim, const T_a& a,
+                      const T_b& b, int maxEval, double reqAbsError,
+                      const T_relerr& reqRelError, double val) {
   using stan::math::hcubature;
 
   for (auto tolerance : reqRelError) {
@@ -151,48 +117,49 @@ TEST(StanMath_hcubature_prim, test1) {
   // https://www.quantargo.com/help/r/latest/packages/cubature/2.0.4.1/hcubature
 
   int dim = 1;
-  std::vector<double> a = {0.0};
-  std::vector<double> b = {1.0};
-  std::vector<double> reqRelError = {1e-4, 1e-6, 1e-7};
-  hcubature_test::my_params pars = {};
-  test_integration(hcubature_test::f1<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 0.841471);
+  const Eigen::VectorXd a{{0.0}};
+  const Eigen::VectorXd b{{1.0}};
+  const Eigen::VectorXd reqRelError{{1e-4, 1e-6, 1e-7}};
+  test_integration([](auto&& x) { return hcubature_test::f1(x); },
+                   std::make_tuple(), dim, a, b, 6000, 0.0, reqRelError,
+                   0.841471);
 
   dim = 2;
-  a = {0.0, 0.0};
-  b = {1.0, 1.0};
-  reqRelError = {1e-4, 1e-6, 1e-7};
-  test_integration(hcubature_test::f2<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 0.7080734);
+  const Eigen::VectorXd a_2{{0.0, 0.0}};
+  const Eigen::VectorXd b_2{{1.0, 1.0}};
+  test_integration([](auto&& x) { return hcubature_test::f2(x); },
+                   std::make_tuple(), dim, a_2, b_2, 6000, 0.0, reqRelError,
+                   0.7080734);
 
-  reqRelError = {1e-4};
-  pars = {0.50124145262344534123412, 0.0};
-  test_integration(hcubature_test::f3<std::vector<double>, void*>, &pars, dim,
-                   a, b, 10000, 0.0, reqRelError, 0.1972807);
+  const Eigen::VectorXd reqRelError_2{{1e-4}};
+  test_integration(
+      [](auto&& x, auto&& radius) { return hcubature_test::f3(x, radius); },
+      std::make_tuple(0.50124145262344534123412), dim, a_2, b_2, 10000, 0.0,
+      reqRelError_2, 0.1972807);
 
   // (Gaussian centered at 1/2)
-  reqRelError = {1e-4, 1e-6, 1e-7};
-  pars = {0.0, 0.1};
-  test_integration(hcubature_test::f4<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 1);
+  test_integration(
+      [](auto&& x, auto&& sigma) { return hcubature_test::f4(x, sigma); },
+      std::make_tuple(0.1), dim, a_2, b_2, 6000, 0.0, reqRelError, 1);
 
   dim = 3;
-  a = {0.0, 0.0, 0.0};
-  b = {1.0, 1.0, 1.0};
-  reqRelError = {1e-4, 1e-6};
-  test_integration(hcubature_test::f5<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 1.00001);
+  const Eigen::VectorXd a_3{{0.0, 0.0, 0.0}};
+  const Eigen::VectorXd b_3{{1.0, 1.0, 1.0}};
+  const Eigen::VectorXd reqRelError_3{{1e-4, 1e-6}};
+  test_integration([](auto&& x) { return hcubature_test::f5(x); },
+                   std::make_tuple(), dim, a_3, b_3, 6000, 0.0, reqRelError_3,
+                   1.00001);
 
-  reqRelError = {1e-4, 1e-6, 1e-8};
-  test_integration(hcubature_test::f6<std::vector<double>, void*>, &pars, dim,
-                   a, b, 6000, 0.0, reqRelError, 1);
+  const Eigen::VectorXd reqRelError_4{{1e-4, 1e-6, 1e-8}};
+  test_integration([](auto&& x) { return hcubature_test::f6(x); },
+                   std::make_tuple(), dim, a_3, b_3, 6000, 0.0, reqRelError_4,
+                   1);
 
   // (Tsuda's example)
   dim = 4;
-  a = {0.0, 0.0, 0.0, 0.0};
-  b = {1.0, 1.0, 1.0, 1.0};
-  reqRelError = {1e-4, 1e-6};
-  pars = {0.0, (1 + sqrt(10.0)) / 9.0};
-  test_integration(hcubature_test::f7<std::vector<double>, void*>, &pars, dim,
-                   a, b, 20000, 0.0, reqRelError, 0.999998);
+  const Eigen::VectorXd a_4{{0.0, 0.0, 0.0, 0.0}};
+  const Eigen::VectorXd b_4{{1.0, 1.0, 1.0, 1.0}};
+  test_integration([](auto&& x, auto&& a) { return hcubature_test::f7(x, a); },
+                   std::make_tuple((1 + sqrt(10.0)) / 9.0), dim, a_4, b_4,
+                   20000, 0.0, reqRelError_3, 0.999998);
 }

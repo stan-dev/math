@@ -158,7 +158,9 @@ class stack_alloc {
    * Return a newly allocated block of memory of the appropriate
    * size managed by the stack allocator.
    *
-   * The allocated pointer will be 8-byte aligned.
+   * The allocated pointer will be 8-byte aligned. If the number
+   * of bytes requested is not a multiple of 8, the reserved space
+   * will be padded up to the next multiple of 8.
    *
    * This function may call C++'s <code>malloc()</code> function,
    * with any exceptions percolated through this function.
@@ -167,9 +169,11 @@ class stack_alloc {
    * @return A pointer to the allocated memory.
    */
   inline void* alloc(size_t len) {
+    size_t pad = len % 8 == 0 ? 0 : 8 - len % 8;
+
     // Typically, just return and increment the next location.
     char* result = next_loc_;
-    next_loc_ += len;
+    next_loc_ += len + pad;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
       result = move_to_next_block(len);

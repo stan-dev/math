@@ -31,7 +31,7 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
                                         const T_prob_cl& theta) {
-  static const char* function = "bernoulli_lpmf(OpenCL)";
+  static constexpr const char* function = "bernoulli_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
   constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;

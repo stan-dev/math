@@ -130,7 +130,7 @@ map_rect(const T_shared_param& shared_params,
          const std::vector<std::vector<double>>& x_r,
          const std::vector<std::vector<int>>& x_i,
          std::ostream* msgs = nullptr) {
-  static const char* function = "map_rect";
+  static constexpr const char* function = "map_rect";
   using return_t = Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
                                  Eigen::Dynamic, 1>;
 

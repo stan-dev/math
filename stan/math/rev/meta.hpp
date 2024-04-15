@@ -8,6 +8,7 @@
 #include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/rev/meta/is_rev_matrix.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/meta/modify_eigen_options.hpp>
 #include <stan/math/rev/meta/partials_type.hpp>
 #include <stan/math/rev/meta/plain_type.hpp>
 #include <stan/math/rev/meta/promote_var_matrix.hpp>

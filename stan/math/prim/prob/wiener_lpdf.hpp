@@ -89,7 +89,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   using std::log;
   using std::sin;
   using std::sqrt;
-  static const char* function = "wiener_lpdf";
+  static constexpr const char* function = "wiener_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Boundary separation",
                          alpha, "A-priori bias", beta, "Nondecision time", tau,
                          "Drift rate", delta);
@@ -138,15 +138,16 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     return 0;
   }
 
-  static const double WIENER_ERR = 0.000001;
-  static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
-  static const double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
-  static const double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
+  static constexpr double WIENER_ERR = 0.000001;
+  static constexpr double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
+  static constexpr double LOG_PI_LOG_WIENER_ERR = LOG_PI - 6 * LOG_TEN;
+  static constexpr double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
       = 2.0 * SQRT_TWO_PI * WIENER_ERR;
-  static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
+  static constexpr double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
       = LOG_TWO / 2 + LOG_SQRT_PI;
-  static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
-  static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
+  // square(pi()) * 0.5
+  static constexpr double SQUARE_PI_OVER_TWO = (pi() * pi()) / 2;
+  static constexpr double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];

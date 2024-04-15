@@ -45,7 +45,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using std::pow;
-  static const char* function = "weibull_lpdf";
+  static constexpr const char* function = "weibull_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
 

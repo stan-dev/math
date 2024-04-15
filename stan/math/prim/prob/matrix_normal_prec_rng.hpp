@@ -35,7 +35,7 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
                                               RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-  static const char *function = "matrix_normal_prec_rng";
+  static constexpr const char *function = "matrix_normal_prec_rng";
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);

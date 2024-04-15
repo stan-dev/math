@@ -64,7 +64,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const size_t N_attributes = x.cols();
   const size_t N_classes = beta.cols();
 
-  static const char* function = "categorical_logit_glm_lpmf";
+  static constexpr const char* function = "categorical_logit_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Intercept vector", alpha, N_classes);

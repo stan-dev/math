@@ -15,7 +15,7 @@ inline int categorical_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
-  static const char* function = "categorical_rng";
+  static constexpr const char* function = "categorical_rng";
   check_simplex(function, "Probabilities parameter", theta);
 
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());

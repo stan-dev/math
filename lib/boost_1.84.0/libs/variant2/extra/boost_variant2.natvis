@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+    <Type Name="boost::variant2::detail::variant_ma_base_impl&lt;*&gt;" Inheritable="true">
+        <Intrinsic Name="index" Expression="$T2==1?((int)ix_-1):((int)((ix_-2)/2))"/>
+        <DisplayString Condition="index()==0&amp;&amp;$T2==1" Optional="true">{st_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==1&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==2&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==3&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==4&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==5&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==6&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==7&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==8&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==9&amp;&amp;$T2==1" Optional="true">{st_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==0&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==1&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==2&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==3&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==4&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==5&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==6&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==7&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==8&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <DisplayString Condition="index()==9&amp;&amp;$T2==0" Optional="true">{st_[ix_%2].rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.rest_.first_} ({index()})</DisplayString>
+        <Expand>
+            <Item Name="[index]">index()</Item>
+            <Item Name="ix_">ix_</Item>
+        </Expand>
+    </Type>
+
+</AutoVisualizer>

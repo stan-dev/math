@@ -55,7 +55,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
-  static const char* function = "exponential_lpdf";
+  static constexpr const char* function = "exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
   T_y_ref y_ref = y;
