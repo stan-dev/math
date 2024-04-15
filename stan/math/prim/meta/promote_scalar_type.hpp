@@ -4,6 +4,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_base.hpp>
+#include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <vector>
 
 namespace stan {
