@@ -81,7 +81,8 @@ inline auto to_soa_sparse_matrix(int m, int n, MatrixVar&& w, Vec1&& u,
     for (int k = 0; k < arena_x.outerSize(); ++k) {
       var_sparse_iterator_t it_arena_x(arena_x, k);
       dbl_sparse_iterator_t it_var_x(var_x.adj(), k);
-      for (; static_cast<bool>(it_arena_x) && static_cast<bool>(it_var_x); ++it_arena_x, ++it_var_x) {
+      for (; static_cast<bool>(it_arena_x) && static_cast<bool>(it_var_x);
+           ++it_arena_x, ++it_var_x) {
         it_arena_x.valueRef().adj() += it_var_x.valueRef();
       }
     }
