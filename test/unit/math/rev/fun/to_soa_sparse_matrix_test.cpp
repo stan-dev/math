@@ -4,7 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <vector>
-/*
+
 TEST_F(AgradRev, to_soa_sparse_matrix_matrix_double) {
   using stan::math::var;
   using stan::math::var_value;
@@ -40,7 +40,7 @@ TEST_F(AgradRev, to_soa_sparse_matrix_matrix_var) {
     EXPECT_EQ(w_mat_arena.val().valuePtr()[i], w.val()(i));
   }
 }
-*/
+
 
 TEST_F(AgradRev, to_soa_sparse_matrix_var_matrix) {
   using stan::math::to_soa_sparse_matrix;

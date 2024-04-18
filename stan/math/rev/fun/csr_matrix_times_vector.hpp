@@ -75,14 +75,7 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
         = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w, u_arena, v_arena);
     arena_t<return_t> res = w_mat_arena.val() * value_of(b_arena);
     reverse_pass_callback([res, w_mat_arena, b_arena]() mutable {
-      for (int k = 0; k < w_mat_arena.adj().outerSize(); ++k) {
-        for (typename sparse_var_value_t::vari_type::InnerIterator it(
-                 w_mat_arena.adj(), k);
-             it; ++it) {
-          it.valueRef()
-              += res.adj().coeff(it.row()) * b_arena.val().coeff(it.col());
-        }
-      }
+      w_mat_arena.adj() += res.adj() * b_arena.val().transpose();
       b_arena.adj() += w_mat_arena.val().transpose() * res.adj();
     });
     return return_t(res);
@@ -102,13 +95,7 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
     auto b_arena = to_arena(value_of(b));
     arena_t<return_t> res = w_mat_arena.val() * b_arena;
     reverse_pass_callback([res, w_mat_arena, b_arena]() mutable {
-      for (int k = 0; k < w_mat_arena.adj().outerSize(); ++k) {
-        for (typename sparse_var_value_t::vari_type::InnerIterator it(
-                 w_mat_arena.adj(), k);
-             it; ++it) {
-          it.valueRef() += res.adj().coeff(it.row()) * b_arena.coeff(it.col());
-        }
-      }
+      w_mat_arena.adj() += res.adj() * b_arena.transpose();
     });
     return return_t(res);
   }
