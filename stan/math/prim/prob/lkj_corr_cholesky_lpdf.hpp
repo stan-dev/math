@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/make_nu.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/prob/lkj_corr_log.hpp>
+#include <stan/math/prim/prob/lkj_corr_lpdf.hpp>
 
 namespace stan {
 namespace math {

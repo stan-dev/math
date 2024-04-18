@@ -28,7 +28,7 @@ Here, I'm just going to describe the steps that are taken to run the tests. Deta
 
 1. `make generate-tests` is called.
     1. This first builds the `test/prob/generate_tests` executable from `test/prob/generate_tests.cpp`.
-    2. For each test file inside `test/prob/*/*`, it will call the executable with the test file as the first argument and the number of template instantiations per file within the second argument. For example, for testing the `bernoulli_log()` function, make will call: `test/prob/generate_tests test/prob/bernoulli/bernoulli_test.hpp 100`
+    2. For each test file inside `test/prob/*/*`, it will call the executable with the test file as the first argument and the number of template instantiations per file within the second argument. For example, for testing the `bernoulli_lpmf()` function, make will call: `test/prob/generate_tests test/prob/bernoulli/bernoulli_test.hpp 100`
     The call to the executable will generate 5 different test files, all within the `test/prob/bernoulli/` folder:
         - bernoulli\_00000\_generated\_fd\_test.cpp
         - bernoulli\_00000\_generated\_ffd\_test.cpp

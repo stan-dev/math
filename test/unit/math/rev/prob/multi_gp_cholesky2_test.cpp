@@ -8,50 +8,51 @@
 #include <vector>
 
 template <typename T_y, typename T_scale, typename T_w>
-void expect_propto_multi_gp_cholesky_log(T_y y1, T_scale L1, T_w w1, T_y y2,
-                                         T_scale L2, T_w w2,
-                                         std::string message = "") {
-  expect_eq_diffs(stan::math::multi_gp_cholesky_log<false>(y1, L1, w1),
-                  stan::math::multi_gp_cholesky_log<false>(y2, L2, w2),
-                  stan::math::multi_gp_cholesky_log<true>(y1, L1, w1),
-                  stan::math::multi_gp_cholesky_log<true>(y2, L2, w2), message);
+void expect_propto_multi_gp_cholesky_lpdf(T_y y1, T_scale L1, T_w w1, T_y y2,
+                                          T_scale L2, T_w w2,
+                                          std::string message = "") {
+  expect_eq_diffs(stan::math::multi_gp_cholesky_lpdf<false>(y1, L1, w1),
+                  stan::math::multi_gp_cholesky_lpdf<false>(y2, L2, w2),
+                  stan::math::multi_gp_cholesky_lpdf<true>(y1, L1, w1),
+                  stan::math::multi_gp_cholesky_lpdf<true>(y2, L2, w2),
+                  message);
 }
 
 TEST_F(agrad_distributions_multi_gp_cholesky, Propto) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), to_var(w),
-                                      to_var(y2), to_var(L2), to_var(w2),
-                                      "All vars: y, w, sigma");
+  expect_propto_multi_gp_cholesky_lpdf(to_var(y), to_var(L), to_var(w),
+                                       to_var(y2), to_var(L2), to_var(w2),
+                                       "All vars: y, w, sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), L, w, to_var(y2), L, w,
-                                      "var: y");
+  expect_propto_multi_gp_cholesky_lpdf(to_var(y), L, w, to_var(y2), L, w,
+                                       "var: y");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoYMu) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), L, to_var(w), to_var(y2), L,
-                                      to_var(w2), "var: y and w");
+  expect_propto_multi_gp_cholesky_lpdf(to_var(y), L, to_var(w), to_var(y2), L,
+                                       to_var(w2), "var: y and w");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoYSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), w, to_var(y2),
-                                      to_var(L2), w, "var: y and sigma");
+  expect_propto_multi_gp_cholesky_lpdf(to_var(y), to_var(L), w, to_var(y2),
+                                       to_var(L2), w, "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoMu) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, L, to_var(w), y, L, to_var(w2),
-                                      "var: w");
+  expect_propto_multi_gp_cholesky_lpdf(y, L, to_var(w), y, L, to_var(w2),
+                                       "var: w");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoMuSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, to_var(L), to_var(w), y, to_var(L2),
-                                      to_var(w2), "var: w and sigma");
+  expect_propto_multi_gp_cholesky_lpdf(y, to_var(L), to_var(w), y, to_var(L2),
+                                       to_var(w2), "var: w and sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, to_var(L), w, y, to_var(L2), w,
-                                      "var: sigma");
+  expect_propto_multi_gp_cholesky_lpdf(y, to_var(L), w, y, to_var(L2), w,
+                                       "var: sigma");
 }
 
 TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
@@ -65,14 +66,15 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<var, Dynamic, Dynamic> L = Sigma.llt().matrixL();
-  EXPECT_FLOAT_EQ(-46.087162, stan::math::multi_gp_cholesky_log(y, L, w).val());
+  EXPECT_FLOAT_EQ(-46.087162,
+                  stan::math::multi_gp_cholesky_lpdf(y, L, w).val());
 }
 
 TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  using stan::math::multi_gp_cholesky_log;
+  using stan::math::multi_gp_cholesky_lpdf;
   using stan::math::var;
   using std::vector;
 
@@ -90,7 +92,7 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   x.push_back(w_var(0));
   x.push_back(L_var(0, 0));
 
-  var lp = stan::math::multi_gp_cholesky_log(y_var, L_var, w_var);
+  var lp = stan::math::multi_gp_cholesky_lpdf(y_var, L_var, w_var);
   vector<double> grad;
   lp.grad(x, grad);
 
@@ -112,7 +114,7 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   y_p(0) = y(0) + epsilon;
   y_m(0) = y(0) - epsilon;
   double grad_diff
-      = (multi_gp_cholesky_log(y_p, L, w) - multi_gp_cholesky_log(y_m, L, w))
+      = (multi_gp_cholesky_lpdf(y_p, L, w) - multi_gp_cholesky_lpdf(y_m, L, w))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
@@ -121,7 +123,7 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   w_p[0] = w[0] + epsilon;
   w_m[0] = w[0] - epsilon;
   grad_diff
-      = (multi_gp_cholesky_log(y, L, w_p) - multi_gp_cholesky_log(y, L, w_m))
+      = (multi_gp_cholesky_lpdf(y, L, w_p) - multi_gp_cholesky_lpdf(y, L, w_m))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
@@ -130,7 +132,7 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   L_p(0) = L(0) + epsilon;
   L_m(0) = L(0) - epsilon;
   grad_diff
-      = (multi_gp_cholesky_log(y, L_p, w) - multi_gp_cholesky_log(y, L_m, w))
+      = (multi_gp_cholesky_lpdf(y, L_p, w) - multi_gp_cholesky_lpdf(y, L_m, w))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 }
@@ -162,7 +164,7 @@ struct multi_gp_cholesky_fun {
     Matrix<T, Dynamic, Dynamic> L = Sigma.llt().matrixL();
     for (int i = 0; i < K_; ++i)
       w(i) = x[pos++];
-    return stan::math::multi_gp_cholesky_log<false>(y, L, w);
+    return stan::math::multi_gp_cholesky_lpdf<false>(y, L, w);
   }
 };
 
@@ -209,33 +211,33 @@ TEST(ProbDistributionsMultiGPCholesky, check_varis_on_stack) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), to_var(w)));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), w));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(to_var(y), L, to_var(w)));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(to_var(y), L, w));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(y, to_var(L), to_var(w)));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(y, to_var(L), w));
-  test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<true>(y, L, to_var(w)));
-
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_lpdf<true>(
       to_var(y), to_var(L), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), w));
+      stan::math::multi_gp_cholesky_lpdf<true>(to_var(y), to_var(L), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(to_var(y), L, to_var(w)));
+      stan::math::multi_gp_cholesky_lpdf<true>(to_var(y), L, to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(to_var(y), L, w));
+      stan::math::multi_gp_cholesky_lpdf<true>(to_var(y), L, w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(y, to_var(L), to_var(w)));
+      stan::math::multi_gp_cholesky_lpdf<true>(y, to_var(L), to_var(w)));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(y, to_var(L), w));
+      stan::math::multi_gp_cholesky_lpdf<true>(y, to_var(L), w));
   test::check_varis_on_stack(
-      stan::math::multi_gp_cholesky_log<false>(y, L, to_var(w)));
+      stan::math::multi_gp_cholesky_lpdf<true>(y, L, to_var(w)));
+
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_lpdf<false>(
+      to_var(y), to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(to_var(y), to_var(L), w));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(to_var(y), L, to_var(w)));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(to_var(y), L, w));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(y, to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(y, to_var(L), w));
+  test::check_varis_on_stack(
+      stan::math::multi_gp_cholesky_lpdf<false>(y, L, to_var(w)));
 }

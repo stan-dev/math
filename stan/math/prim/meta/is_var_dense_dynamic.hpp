@@ -18,10 +18,16 @@ struct is_var_dense_dynamic
     : bool_constant<math::conjunction<
           is_var<T>, is_eigen_dense_dynamic<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_dense_dynamic, is_var_dense_dynamic,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(var_dense_dynamic, is_var_dense_dynamic,
-                             require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup var_dense_dynamic_types var_dense_dynamic  */
+/*! \addtogroup var_dense_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies is_var_dense_dynamic */
+template <typename T>
+using require_var_dense_dynamic_t
+    = require_t<is_var_dense_dynamic<std::decay_t<T>>>;
+/*! @} */
 
 }  // namespace stan
 

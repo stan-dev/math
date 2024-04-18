@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/pareto_type_2_log.hpp>
+#include <stan/math/prim/prob/pareto_type_2_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 
@@ -65,7 +65,7 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
   stan::return_type_t<T_y, T_scale, T_shape, T_loc> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
-    return stan::math::pareto_type_2_log(y, mu, lambda, alpha);
+    return stan::math::pareto_type_2_lpdf(y, mu, lambda, alpha);
   }
 
   template <bool propto, class T_y, class T_loc, class T_scale, class T_shape,
@@ -73,7 +73,7 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
-    return stan::math::pareto_type_2_log<propto>(y, mu, lambda, alpha);
+    return stan::math::pareto_type_2_lpdf<propto>(y, mu, lambda, alpha);
   }
 
   template <class T_y, class T_loc, class T_scale, class T_shape, typename T4,

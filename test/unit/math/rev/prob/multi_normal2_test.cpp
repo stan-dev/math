@@ -9,113 +9,114 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto_multi_normal_log(T_y y1, T_loc mu1, T_scale sigma1, T_y y2,
-                                    T_loc mu2, T_scale sigma2,
-                                    std::string message = "") {
-  expect_eq_diffs(stan::math::multi_normal_log<false>(y1, mu1, sigma1),
-                  stan::math::multi_normal_log<false>(y2, mu2, sigma2),
-                  stan::math::multi_normal_log<true>(y1, mu1, sigma1),
-                  stan::math::multi_normal_log<true>(y2, mu2, sigma2), message);
+void expect_propto_multi_normal_lpdf(T_y y1, T_loc mu1, T_scale sigma1, T_y y2,
+                                     T_loc mu2, T_scale sigma2,
+                                     std::string message = "") {
+  expect_eq_diffs(stan::math::multi_normal_lpdf<false>(y1, mu1, sigma1),
+                  stan::math::multi_normal_lpdf<false>(y2, mu2, sigma2),
+                  stan::math::multi_normal_lpdf<true>(y1, mu1, sigma1),
+                  stan::math::multi_normal_lpdf<true>(y2, mu2, sigma2),
+                  message);
 }
 
 TEST_F(agrad_distributions_multi_normal, Propto) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), to_var(mu), to_var(Sigma),
-                                 to_var(y2), to_var(mu2), to_var(Sigma2),
-                                 "All vars: y, mu, sigma");
+  expect_propto_multi_normal_lpdf(to_var(y), to_var(mu), to_var(Sigma),
+                                  to_var(y2), to_var(mu2), to_var(Sigma2),
+                                  "All vars: y, mu, sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
-                                 "var: y");
+  expect_propto_multi_normal_lpdf(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
+                                  "var: y");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYMu) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), to_var(mu), Sigma, to_var(y2),
-                                 to_var(mu2), Sigma, "var: y and mu");
+  expect_propto_multi_normal_lpdf(to_var(y), to_var(mu), Sigma, to_var(y2),
+                                  to_var(mu2), Sigma, "var: y and mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
-                                 to_var(Sigma2), "var: y and sigma");
+  expect_propto_multi_normal_lpdf(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
+                                  to_var(Sigma2), "var: y and sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMu) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
-                                 "var: mu");
+  expect_propto_multi_normal_lpdf(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
+                                  "var: mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMuSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
-                                 to_var(Sigma2), "var: mu and sigma");
+  expect_propto_multi_normal_lpdf(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
+                                  to_var(Sigma2), "var: mu and sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
-                                 "var: sigma");
+  expect_propto_multi_normal_lpdf(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
+                                  "var: sigma");
 
   stan::math::recover_memory();
 }
 
 TEST_F(agrad_distributions_multi_normal_multi_row, Propto) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), to_var(mu), to_var(Sigma),
-                                 to_var(y2), to_var(mu2), to_var(Sigma2),
-                                 "All vars: y, mu, sigma");
+  expect_propto_multi_normal_lpdf(to_var(y), to_var(mu), to_var(Sigma),
+                                  to_var(y2), to_var(mu2), to_var(Sigma2),
+                                  "All vars: y, mu, sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
-                                 "var: y");
+  expect_propto_multi_normal_lpdf(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
+                                  "var: y");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYMu) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), to_var(mu), Sigma, to_var(y2),
-                                 to_var(mu2), Sigma, "var: y and mu");
+  expect_propto_multi_normal_lpdf(to_var(y), to_var(mu), Sigma, to_var(y2),
+                                  to_var(mu2), Sigma, "var: y and mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
-                                 to_var(Sigma2), "var: y and sigma");
+  expect_propto_multi_normal_lpdf(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
+                                  to_var(Sigma2), "var: y and sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMu) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
-                                 "var: mu");
+  expect_propto_multi_normal_lpdf(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
+                                  "var: mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMuSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
-                                 to_var(Sigma2), "var: mu and sigma");
+  expect_propto_multi_normal_lpdf(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
+                                  to_var(Sigma2), "var: mu and sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
   using stan::math::to_var;
-  expect_propto_multi_normal_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
-                                 "var: sigma");
+  expect_propto_multi_normal_lpdf(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
+                                  "var: sigma");
 
   stan::math::recover_memory();
 }
@@ -130,7 +131,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalVar2) {
   mu << 1.0, -1.0, 3.0;
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma).val());
+  EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_lpdf(y, mu, Sigma).val());
 
   stan::math::recover_memory();
 }
@@ -138,7 +139,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  using stan::math::multi_normal_log;
+  using stan::math::multi_normal_lpdf;
   using stan::math::var;
   using std::vector;
 
@@ -156,7 +157,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   x.push_back(mu_var(0));
   x.push_back(Sigma_var(0, 0));
 
-  var lp = stan::math::multi_normal_log(y_var, mu_var, Sigma_var);
+  var lp = stan::math::multi_normal_lpdf(y_var, mu_var, Sigma_var);
   vector<double> grad;
   lp.grad(x, grad);
 
@@ -178,7 +179,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   y_p[0] = y[0] + epsilon;
   y_m[0] = y[0] - epsilon;
   double grad_diff
-      = (multi_normal_log(y_p, mu, Sigma) - multi_normal_log(y_m, mu, Sigma))
+      = (multi_normal_lpdf(y_p, mu, Sigma) - multi_normal_lpdf(y_m, mu, Sigma))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
@@ -187,7 +188,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   mu_p[0] = mu[0] + epsilon;
   mu_m[0] = mu[0] - epsilon;
   grad_diff
-      = (multi_normal_log(y, mu_p, Sigma) - multi_normal_log(y, mu_m, Sigma))
+      = (multi_normal_lpdf(y, mu_p, Sigma) - multi_normal_lpdf(y, mu_m, Sigma))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
@@ -196,7 +197,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   Sigma_p(0) = Sigma(0) + epsilon;
   Sigma_m(0) = Sigma(0) - epsilon;
   grad_diff
-      = (multi_normal_log(y, mu, Sigma_p) - multi_normal_log(y, mu, Sigma_m))
+      = (multi_normal_lpdf(y, mu, Sigma_p) - multi_normal_lpdf(y, mu, Sigma_m))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 
@@ -227,7 +228,7 @@ struct multi_normal_fun {
         Sigma(j, i) = Sigma(i, j);
       }
     }
-    return stan::math::multi_normal_log<false>(y, mu, Sigma);
+    return stan::math::multi_normal_lpdf<false>(y, mu, Sigma);
   }
 };
 
@@ -314,14 +315,14 @@ struct vectorized_multi_normal_fun {
 
     if (dont_vectorize_y) {
       if (dont_vectorize_mu)
-        return stan::math::multi_normal_log<false>(y[0], mu[0], Sigma);
+        return stan::math::multi_normal_lpdf<false>(y[0], mu[0], Sigma);
       else
-        return stan::math::multi_normal_log<false>(y[0], mu, Sigma);
+        return stan::math::multi_normal_lpdf<false>(y[0], mu, Sigma);
     } else {
       if (dont_vectorize_mu)
-        return stan::math::multi_normal_log<false>(y, mu[0], Sigma);
+        return stan::math::multi_normal_lpdf<false>(y, mu[0], Sigma);
       else
-        return stan::math::multi_normal_log<false>(y, mu, Sigma);
+        return stan::math::multi_normal_lpdf<false>(y, mu, Sigma);
     }
   }
 };
