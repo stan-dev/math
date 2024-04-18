@@ -14,17 +14,17 @@ TEST(ProbDistributionsCategoricalLogit, fvar_double) {
     theta(i).d_ = i;
   Matrix<fvar<double>, Dynamic, 1> theta_log_softmax = log_softmax(theta);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_,
-                  stan::math::categorical_logit_log(1, theta).val_);
+                  stan::math::categorical_logit_lpmf(1, theta).val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[1].val_,
-                  stan::math::categorical_logit_log(2, theta).val_);
+                  stan::math::categorical_logit_lpmf(2, theta).val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[2].val_,
-                  stan::math::categorical_logit_log(3, theta).val_);
+                  stan::math::categorical_logit_lpmf(3, theta).val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_,
-                  stan::math::categorical_logit_log(1, theta).d_);
+                  stan::math::categorical_logit_lpmf(1, theta).d_);
   EXPECT_FLOAT_EQ(theta_log_softmax[1].d_,
-                  stan::math::categorical_logit_log(2, theta).d_);
+                  stan::math::categorical_logit_lpmf(2, theta).d_);
   EXPECT_FLOAT_EQ(theta_log_softmax[2].d_,
-                  stan::math::categorical_logit_log(3, theta).d_);
+                  stan::math::categorical_logit_lpmf(3, theta).d_);
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_double_vectorized) {
@@ -38,7 +38,7 @@ TEST(ProbDistributionsCategoricalLogit, fvar_double_vectorized) {
     theta(i).d_ = i;
 
   std::vector<int> ns(0);
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_log(ns, theta).val_);
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_lpmf(ns, theta).val_);
 
   Matrix<fvar<double>, Dynamic, 1> theta_log_softmax = log_softmax(theta);
 
@@ -48,10 +48,10 @@ TEST(ProbDistributionsCategoricalLogit, fvar_double_vectorized) {
   ms[2] = 1;
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_ + theta_log_softmax[1].val_
                       + theta_log_softmax[0].val_,
-                  stan::math::categorical_logit_log(ms, theta).val_);
+                  stan::math::categorical_logit_lpmf(ms, theta).val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_ + theta_log_softmax[1].d_
                       + theta_log_softmax[0].d_,
-                  stan::math::categorical_logit_log(ms, theta).d_);
+                  stan::math::categorical_logit_lpmf(ms, theta).d_);
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_double) {
@@ -66,17 +66,17 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_double) {
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta_log_softmax
       = log_softmax(theta);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_.val_,
-                  stan::math::categorical_logit_log(1, theta).val_.val_);
+                  stan::math::categorical_logit_lpmf(1, theta).val_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[1].val_.val_,
-                  stan::math::categorical_logit_log(2, theta).val_.val_);
+                  stan::math::categorical_logit_lpmf(2, theta).val_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[2].val_.val_,
-                  stan::math::categorical_logit_log(3, theta).val_.val_);
+                  stan::math::categorical_logit_lpmf(3, theta).val_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_.val_,
-                  stan::math::categorical_logit_log(1, theta).d_.val_);
+                  stan::math::categorical_logit_lpmf(1, theta).d_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[1].d_.val_,
-                  stan::math::categorical_logit_log(2, theta).d_.val_);
+                  stan::math::categorical_logit_lpmf(2, theta).d_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[2].d_.val_,
-                  stan::math::categorical_logit_log(3, theta).d_.val_);
+                  stan::math::categorical_logit_lpmf(3, theta).d_.val_);
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_double_vectorized) {
@@ -90,7 +90,7 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_double_vectorized) {
     theta(i).d_.val_ = i;
 
   std::vector<int> ns(0);
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_log(ns, theta).val_.val_);
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_lpmf(ns, theta).val_.val_);
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta_log_softmax
       = log_softmax(theta);
@@ -102,8 +102,8 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_double_vectorized) {
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_.val_
                       + theta_log_softmax[1].val_.val_
                       + theta_log_softmax[0].val_.val_,
-                  stan::math::categorical_logit_log(ms, theta).val_.val_);
+                  stan::math::categorical_logit_lpmf(ms, theta).val_.val_);
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_.val_ + theta_log_softmax[1].d_.val_
                       + theta_log_softmax[0].d_.val_,
-                  stan::math::categorical_logit_log(ms, theta).d_.val_);
+                  stan::math::categorical_logit_lpmf(ms, theta).d_.val_);
 }
