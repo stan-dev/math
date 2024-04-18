@@ -34,6 +34,5 @@ template <typename T>
 using require_not_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
 /*! @} */
 
-
 }  // namespace stan
 #endif
