@@ -85,9 +85,11 @@ inline void check_matching_dims(const char* function, const char* name1,
     [&]() STAN_COLD_PATH {
       std::ostringstream y1_err;
       std::ostringstream msg_str;
-      y1_err << "(" << y1.rows() << ", " << y1.cols() << ")";
-      msg_str << y2.rows() << ", " << y2.cols() << ") must match in size";
-      invalid_argument(function, name1, y1_err.str(), "(",
+      y1_err << "(" << y1.rows() << ", " << y1.cols() << ") and ";
+      msg_str << " (" << y2.rows() << ", " << y2.cols()
+              << ") must match in size";
+      invalid_argument(function, name1, name2,
+                       std::string(y1_err.str()).c_str(),
                        std::string(msg_str.str()).c_str());
     }();
   }

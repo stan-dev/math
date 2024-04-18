@@ -28,9 +28,77 @@ struct is_stan_scalar
           is_fvar<std::decay_t<T>>, std::is_arithmetic<std::decay_t<T>>,
           is_complex<std::decay_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
-                             require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup stan_scalar_types stan_scalar  */
+/*! \addtogroup stan_scalar_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_stan_scalar */
+/*! @tparam T the type to check */
+template <typename T>
+using require_stan_scalar_t = require_t<is_stan_scalar<std::decay_t<T>>>;
+
+/*! \brief Require type does not satisfy @ref is_stan_scalar */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_stan_scalar_t
+    = require_not_t<is_stan_scalar<std::decay_t<T>>>;
+
+/*! \brief Require all of the types satisfy @ref is_stan_scalar */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_stan_scalar_t
+    = require_all_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+/*! \brief Require any of the types satisfy @ref is_stan_scalar */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_stan_scalar_t
+    = require_any_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+/*! \brief Require none of the types satisfy @ref is_stan_scalar */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_not_stan_scalar_t
+    = require_all_not_t<is_stan_scalar<std::decay_t<Types>>...>;
+
+/*! \brief Require at least one of the types do not satisfy @ref is_stan_scalar
+ */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_not_stan_scalar_t
+    = require_any_not_t<is_stan_scalar<std::decay_t<Types>>...>;
+/*! @} */
+
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup stan_scalar_types */
+/*! @{ */
+
+/*! \brief Require value type does not satisfy @ref is_stan_scalar */
+/*! @tparam T A type with a valid overload of @ref value_type available */
+template <typename T>
+using require_not_vt_stan_scalar
+    = require_not_t<is_stan_scalar<value_type_t<std::decay_t<T>>>>;
+
+/*! \brief Require scalar type satisfies @ref is_stan_scalar */
+/*! @tparam T A type with a valid overload of @ref scalar_type available */
+template <typename T>
+using require_st_stan_scalar
+    = require_t<is_stan_scalar<scalar_type_t<std::decay_t<T>>>>;
+
+/*! \brief Require scalar type does not satisfy @ref is_stan_scalar */
+/*! @tparam T A type with a valid overload of @ref scalar_type available */
+template <typename T>
+using require_not_st_stan_scalar
+    = require_not_t<is_stan_scalar<scalar_type_t<std::decay_t<T>>>>;
+
+/*! \brief Require all of the scalar types satisfy @ref is_stan_scalar */
+/*! @tparam Types The types with a valid overload of @ref scalar_type available
+ */
+template <typename... Types>
+using require_all_st_stan_scalar
+    = require_all_t<is_stan_scalar<scalar_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 
