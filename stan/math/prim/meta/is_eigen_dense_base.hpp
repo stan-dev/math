@@ -33,6 +33,22 @@ using require_eigen_dense_base_t
     = require_t<is_eigen_dense_base<std::decay_t<T>>>;
 /*! @} */
 
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_dense_base_types eigen_dense_base_types  */
+/*! \addtogroup eigen_dense_base_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_dense_base */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_dense_base for and whose
+ * @ref value_type is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_dense_base_vt
+    = require_t<container_type_check_base<is_eigen_dense_base, value_type_t,
+                                          TypeCheck, Check...>>;
+/*! @} */
+
 }  // namespace stan
 
 #endif
