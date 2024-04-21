@@ -91,7 +91,9 @@ ifneq (,$(TBB.DEF))
 tbb.def: $(TBB.DEF) $(TBB.LST)
 	$(CPLUS) $(PREPROC_ONLY) $< $(CPLUS_FLAGS) $(INCLUDES) > $@
 
-LIB_LINK_FLAGS += $(EXPORT_KEY)tbb.def
+ifeq (, $(WINARM64))
+  LIB_LINK_FLAGS += $(EXPORT_KEY)tbb.def
+endif
 $(TBB.DLL): tbb.def
 endif
 

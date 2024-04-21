@@ -17,6 +17,7 @@ endif
 
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
+  WINARM64 := $(shell echo | $(CXX) -E -dM -  | findstr __aarch64__)
   LIBRARY_SUFFIX ?= .dll
 endif
 
@@ -271,8 +272,9 @@ CXXFLAGS_TBB ?= -I $(TBB_INC)
 else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
-
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags
+ifeq ($(WINARM64),)
+  LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags
+endif
 LDLIBS_TBB ?= -ltbb
 
 else
@@ -290,7 +292,9 @@ ifeq ($(OS),Linux)
 endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
+ifeq ($(WINARM64),)
+  LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
+endif
 LDLIBS_TBB ?= -ltbb
 
 endif

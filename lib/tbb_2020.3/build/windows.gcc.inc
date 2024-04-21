@@ -81,7 +81,9 @@ endif
 # elimination of stores done outside the object lifetime
 ifeq (ok,$(call detect_js,/minversion gcc 6.0))
     # keep pre-contruction stores for zero initialization
-    DSE_KEY = -flifetime-dse=1
+    ifeq (, $(WINARM64))
+      DSE_KEY = -flifetime-dse=1
+    endif
 endif
 
 ifeq ($(cfg), release)
