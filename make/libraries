@@ -139,6 +139,7 @@ ifeq (Windows_NT, $(OS))
   ifeq ($(IS_UCRT),true)
     TBB_CXXFLAGS += -D_UCRT
   endif
+  # TBB does not have assembly code for Windows ARM64, so we need to use GCC builtins
   ifneq ($(WINARM64),)
 	TBB_CXXFLAGS += -DTBB_USE_GCC_BUILTINS
 	CXXFLAGS_TBB += -DTBB_USE_GCC_BUILTINS
