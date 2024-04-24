@@ -12,48 +12,48 @@ namespace stan {
 namespace math {
 
 namespace internal {
-  template <typename Result_, typename WMat_, typename B_>
-  struct csr_adjoint : public vari {
-    std::decay_t<Result_> res_;
-    std::decay_t<WMat_> w_mat_;
-    std::decay_t<B_> b_;
-    template <typename T1, typename T2, typename T3>
-    csr_adjoint(T1&& res, T2&& w_mat, T3&& b)
-        : vari(0.0), res_(std::forward<T1>(res)),
-          w_mat_(std::forward<T2>(w_mat)), b_(std::forward<T3>(b)) {}
+template <typename Result_, typename WMat_, typename B_>
+struct csr_adjoint : public vari {
+  std::decay_t<Result_> res_;
+  std::decay_t<WMat_> w_mat_;
+  std::decay_t<B_> b_;
+  template <typename T1, typename T2, typename T3>
+  csr_adjoint(T1&& res, T2&& w_mat, T3&& b)
+      : vari(0.0),
+        res_(std::forward<T1>(res)),
+        w_mat_(std::forward<T2>(w_mat)),
+        b_(std::forward<T3>(b)) {}
 
-    void chain() {
-      chain_internal(res_, w_mat_, b_);
-    }
-    template <typename Result, typename WMat, typename B,
-      require_rev_matrix_t<WMat>* = nullptr,
-      require_rev_matrix_t<B>* = nullptr>
-    void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
-      w_mat.adj() += res.adj() * b.val().transpose();
-      b.adj() += w_mat.val().transpose() * res.adj();
-    }
-
-    template <typename Result, typename WMat, typename B,
-      require_rev_matrix_t<WMat>* = nullptr,
-      require_not_rev_matrix_t<B>* = nullptr>
-    void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
-      w_mat.adj() += res.adj() * b.transpose();
-    }
-
-    template <typename Result, typename WMat, typename B,
-      require_not_rev_matrix_t<WMat>* = nullptr,
-      require_rev_matrix_t<B>* = nullptr>
-    void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
-      b.adj() += w_mat.transpose() * res.adj();
-    }
-  };
-  template <typename Result_, typename WMat_, typename B_>
-  inline vari* make_csr_adjoint(Result_&& res, WMat_&& w_mat, B_&& b) {
-    return new csr_adjoint<Result_, WMat_, B_>(
-        std::forward<Result_>(res), std::forward<WMat_>(w_mat),
-        std::forward<B_>(b));
+  void chain() { chain_internal(res_, w_mat_, b_); }
+  template <typename Result, typename WMat, typename B,
+            require_rev_matrix_t<WMat>* = nullptr,
+            require_rev_matrix_t<B>* = nullptr>
+  void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
+    w_mat.adj() += res.adj() * b.val().transpose();
+    b.adj() += w_mat.val().transpose() * res.adj();
   }
+
+  template <typename Result, typename WMat, typename B,
+            require_rev_matrix_t<WMat>* = nullptr,
+            require_not_rev_matrix_t<B>* = nullptr>
+  void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
+    w_mat.adj() += res.adj() * b.transpose();
+  }
+
+  template <typename Result, typename WMat, typename B,
+            require_not_rev_matrix_t<WMat>* = nullptr,
+            require_rev_matrix_t<B>* = nullptr>
+  void chain_internal(Result&& res, WMat&& w_mat, B&& b) {
+    b.adj() += w_mat.transpose() * res.adj();
+  }
+};
+template <typename Result_, typename WMat_, typename B_>
+inline vari* make_csr_adjoint(Result_&& res, WMat_&& w_mat, B_&& b) {
+  return new csr_adjoint<Result_, WMat_, B_>(std::forward<Result_>(res),
+                                             std::forward<WMat_>(w_mat),
+                                             std::forward<B_>(b));
 }
+}  // namespace internal
 
 /**
  * \addtogroup csr_format
