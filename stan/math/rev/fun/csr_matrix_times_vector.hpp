@@ -14,14 +14,18 @@ namespace math {
 namespace internal {
 /**
  * `vari` for csr_matrix_times_vector
- * @note `csr_matrix_times_vector` uses the old inheritance 
- *  style to set up the reverse pass because of a linking 
+ * @note `csr_matrix_times_vector` uses the old inheritance
+ *  style to set up the reverse pass because of a linking
  *  issue on windows when using flto.
- * 
- * @tparam Result_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
- * @tparam WMat_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
- * @tparam B_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
- *   
+ *
+ * @tparam Result_ Either a type inheriting from `Eigen::DenseBase` with scalar
+ * type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+ * @tparam WMat_ Either a type inheriting from `Eigen::DenseBase` with scalar
+ * type `var` or `double`. Or a `var<T>` where `T` inherits from
+ * `Eigen::SparseBase`
+ * @tparam B_ Either a type inheriting from `Eigen::DenseBase` with scalar type
+ * `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+ *
  */
 template <typename Result_, typename WMat_, typename B_>
 struct csr_adjoint : public vari {
@@ -40,9 +44,12 @@ struct csr_adjoint : public vari {
 
   /**
    * Overload for calculating adjoints of `w_mat` and `b`
-   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
-   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar type `var`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
-   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type `var`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `var`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
+   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type
+   * `var`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
    * @param res The vector result of the forward pass calculation
    * @param w_mat A sparse matrix
    * @param b A vector
@@ -57,9 +64,12 @@ struct csr_adjoint : public vari {
 
   /**
    * Overload for calculating adjoints of `w_mat`
-   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
-   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar type `var`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
-   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type `double`
+   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `var`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
+   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type
+   * `double`
    * @param res The vector result of the forward pass calculation
    * @param w_mat A sparse matrix
    * @param b A vector
@@ -73,9 +83,12 @@ struct csr_adjoint : public vari {
 
   /**
    * Overload for calculating adjoints of `b`
-   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
-   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar type `double`
-   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+   * @tparam Result Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+   * @tparam WMat Either a type inheriting from `Eigen::DenseBase` with scalar
+   * type `double`
+   * @tparam B Either a type inheriting from `Eigen::DenseBase` with scalar type
+   * `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
    * @param res The vector result of the forward pass calculation
    * @param w_mat A sparse matrix
    * @param b A vector
@@ -90,19 +103,23 @@ struct csr_adjoint : public vari {
 
 /**
  * Helper function to construct the csr_adjoint struct.
- * @tparam Result_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
- * @tparam WMat_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::SparseBase`
- * @tparam B_ Either a type inheriting from `Eigen::DenseBase` with scalar type `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
- * 
+ * @tparam Result_ Either a type inheriting from `Eigen::DenseBase` with scalar
+ * type `var` or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+ * @tparam WMat_ Either a type inheriting from `Eigen::DenseBase` with scalar
+ * type `var` or `double`. Or a `var<T>` where `T` inherits from
+ * `Eigen::SparseBase`
+ * @tparam B_ Either a type inheriting from `Eigen::DenseBase` with scalar type
+ * `var` or `double`. Or a `var<T>` where `T` inherits from `Eigen::DenseBase`
+ *
  * @param res The vector result of the forward pass calculation
  * @param w_mat A sparse matrix
- * @param b A vector 
+ * @param b A vector
  */
 template <typename Result_, typename WMat_, typename B_>
 inline void make_csr_adjoint(Result_&& res, WMat_&& w_mat, B_&& b) {
-  new csr_adjoint<std::decay_t<Result_>, std::decay_t<WMat_>, std::decay_t<B_>>(std::forward<Result_>(res),
-                                             std::forward<WMat_>(w_mat),
-                                             std::forward<B_>(b));
+  new csr_adjoint<std::decay_t<Result_>, std::decay_t<WMat_>, std::decay_t<B_>>(
+      std::forward<Result_>(res), std::forward<WMat_>(w_mat),
+      std::forward<B_>(b));
   return;
 }
 }  // namespace internal
