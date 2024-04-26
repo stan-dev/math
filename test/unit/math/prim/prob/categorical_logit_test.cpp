@@ -12,11 +12,11 @@ TEST(ProbDistributionsCategoricalLogit, Categorical) {
   Matrix<double, Dynamic, 1> theta_log_softmax = log_softmax(theta);
 
   EXPECT_FLOAT_EQ(theta_log_softmax[0],
-                  stan::math::categorical_logit_log(1, theta));
+                  stan::math::categorical_logit_lpmf(1, theta));
   EXPECT_FLOAT_EQ(theta_log_softmax[1],
-                  stan::math::categorical_logit_log(2, theta));
+                  stan::math::categorical_logit_lpmf(2, theta));
   EXPECT_FLOAT_EQ(theta_log_softmax[2],
-                  stan::math::categorical_logit_log(3, theta));
+                  stan::math::categorical_logit_lpmf(3, theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
@@ -27,7 +27,7 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   theta << -1, 2, -10;
 
   std::vector<int> ns(0);
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_log(ns, theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_lpmf(ns, theta));
 
   Matrix<double, Dynamic, 1> theta_log_softmax = log_softmax(theta);
 
@@ -37,7 +37,7 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   ms[2] = 1;
   EXPECT_FLOAT_EQ(
       theta_log_softmax[0] + theta_log_softmax[1] + theta_log_softmax[0],
-      stan::math::categorical_logit_log(ms, theta));
+      stan::math::categorical_logit_lpmf(ms, theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, Propto) {
@@ -45,44 +45,44 @@ TEST(ProbDistributionsCategoricalLogit, Propto) {
   using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << -1, 2, 10;
-  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(1, theta));
-  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3, theta));
+  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_lpmf<true>(1, theta));
+  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_lpmf<true>(3, theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::categorical_logit_log;
+  using stan::math::categorical_logit_lpmf;
 
   unsigned int n = 1;
   unsigned int N = 3;
   Matrix<double, Dynamic, 1> theta(N, 1);
   theta << 0.3, 0.5, 0.2;
 
-  EXPECT_NO_THROW(categorical_logit_log(N, theta));
-  EXPECT_NO_THROW(categorical_logit_log(n, theta));
-  EXPECT_NO_THROW(categorical_logit_log(2, theta));
-  EXPECT_THROW(categorical_logit_log(N + 1, theta), std::domain_error);
-  EXPECT_THROW(categorical_logit_log(0, theta), std::domain_error);
+  EXPECT_NO_THROW(categorical_logit_lpmf(N, theta));
+  EXPECT_NO_THROW(categorical_logit_lpmf(n, theta));
+  EXPECT_NO_THROW(categorical_logit_lpmf(2, theta));
+  EXPECT_THROW(categorical_logit_lpmf(N + 1, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(0, theta), std::domain_error);
 
   theta(1) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(categorical_logit_log(1, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(1, theta), std::domain_error);
 
   theta(1) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(categorical_logit_log(1, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(1, theta), std::domain_error);
 
   std::vector<int> ns(2);
   ns[0] = 1;
   ns[1] = 2;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(ns, theta), std::domain_error);
 
   theta << 0.3, 0.5, 0.2;
-  EXPECT_NO_THROW(categorical_logit_log(ns, theta));
+  EXPECT_NO_THROW(categorical_logit_lpmf(ns, theta));
 
   ns[0] = -1;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(ns, theta), std::domain_error);
 
   ns[0] = 1;
   ns[1] = 12;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_lpmf(ns, theta), std::domain_error);
 }

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_PROB_WIENER5_LPDF_HPP
 
 #include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 
 namespace stan {
 namespace math {

@@ -20,13 +20,13 @@ TEST_F(AgradRev, ProbDistributionsLkjCorr_fvar_var) {
   fvar<var> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<var> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
-                  stan::math::lkj_corr_log(Sigma, eta).val_.val());
-  EXPECT_FLOAT_EQ(2.5177896, stan::math::lkj_corr_log(Sigma, eta).d_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).val_.val());
+  EXPECT_FLOAT_EQ(2.5177896, stan::math::lkj_corr_lpdf(Sigma, eta).d_.val());
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
-                  stan::math::lkj_corr_log(Sigma, eta).val_.val());
-  EXPECT_FLOAT_EQ(f.d_.val(), stan::math::lkj_corr_log(Sigma, eta).d_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).val_.val());
+  EXPECT_FLOAT_EQ(f.d_.val(), stan::math::lkj_corr_lpdf(Sigma, eta).d_.val());
 }
 
 TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_var) {
@@ -42,14 +42,14 @@ TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_var) {
   fvar<var> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<var> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
-                  stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val());
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_.val());
   EXPECT_FLOAT_EQ(6.7766843,
-                  stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val());
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val());
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
-                  stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val());
-  EXPECT_FLOAT_EQ(3, stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val());
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_.val());
+  EXPECT_FLOAT_EQ(3, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val());
 }
 
 TEST_F(AgradRev, ProbDistributionsLkjCorr_fvar_fvar_var) {
@@ -65,15 +65,15 @@ TEST_F(AgradRev, ProbDistributionsLkjCorr_fvar_fvar_var) {
   fvar<fvar<var> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_.val(),
-                  stan::math::lkj_corr_log(Sigma, eta).val_.val_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).val_.val_.val());
   EXPECT_FLOAT_EQ(2.5177896,
-                  stan::math::lkj_corr_log(Sigma, eta).d_.val_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).d_.val_.val());
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_.val(),
-                  stan::math::lkj_corr_log(Sigma, eta).val_.val_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).val_.val_.val());
   EXPECT_FLOAT_EQ(f.d_.val_.val(),
-                  stan::math::lkj_corr_log(Sigma, eta).d_.val_.val());
+                  stan::math::lkj_corr_lpdf(Sigma, eta).d_.val_.val());
 }
 
 TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_fvar_var) {
@@ -90,16 +90,16 @@ TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_fvar_var) {
   fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(
       f.val_.val_.val(),
-      stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val_.val());
+      stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_.val_.val());
   EXPECT_FLOAT_EQ(6.7766843,
-                  stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val_.val());
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val_.val());
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(
       f.val_.val_.val(),
-      stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val_.val());
+      stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_.val_.val());
   EXPECT_FLOAT_EQ(3,
-                  stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val_.val());
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val_.val());
 }
 
 TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_hessian) {
