@@ -91,7 +91,11 @@ ifneq (,$(TBB.DEF))
 tbb.def: $(TBB.DEF) $(TBB.LST)
 	$(CPLUS) $(PREPROC_ONLY) $< $(CPLUS_FLAGS) $(INCLUDES) > $@
 
-LIB_LINK_FLAGS += $(EXPORT_KEY)tbb.def
+# LLVM on Windows doesn't need --version-script export
+# https://reviews.llvm.org/D63743
+ifeq (, $(WINARM64))
+  LIB_LINK_FLAGS += $(EXPORT_KEY)tbb.def
+endif
 $(TBB.DLL): tbb.def
 endif
 

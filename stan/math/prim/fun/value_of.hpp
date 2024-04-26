@@ -67,7 +67,7 @@ inline auto value_of(const T& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+template <typename EigMat, require_eigen_dense_base_t<EigMat>* = nullptr,
           require_not_st_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   return make_holder(
@@ -75,6 +75,28 @@ inline auto value_of(EigMat&& M) {
         return a.unaryExpr([](const auto& scal) { return value_of(scal); });
       },
       std::forward<EigMat>(M));
+}
+
+template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  auto&& M_ref = to_ref(M);
+  using scalar_t = decltype(value_of(std::declval<value_type_t<EigMat>>()));
+  promote_scalar_t<scalar_t, plain_type_t<EigMat>> ret(M_ref.rows(),
+                                                       M_ref.cols());
+  ret.reserve(M_ref.nonZeros());
+  for (int k = 0; k < M_ref.outerSize(); ++k) {
+    for (typename std::decay_t<EigMat>::InnerIterator it(M_ref, k); it; ++it) {
+      ret.insert(it.row(), it.col()) = value_of(it.valueRef());
+    }
+  }
+  ret.makeCompressed();
+  return ret;
+}
+template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
+          require_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  return std::forward<EigMat>(M);
 }
 
 }  // namespace math

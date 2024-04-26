@@ -4,6 +4,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_base.hpp>
+#include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <vector>
 
 namespace stan {
@@ -80,7 +82,7 @@ struct promote_scalar_type<T, S,
  * @tparam S input matrix type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_eigen_t<S>> {
+struct promote_scalar_type<T, S, require_eigen_dense_base_t<S>> {
   /**
    * The promoted type.
    */
@@ -91,6 +93,16 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                     S::RowsAtCompileTime, S::ColsAtCompileTime>,
       Eigen::Array<typename promote_scalar_type<T, typename S::Scalar>::type,
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
+};
+
+template <typename T, typename S>
+struct promote_scalar_type<T, S, require_eigen_sparse_base_t<S>> {
+  /**
+   * The promoted type.
+   */
+  using type = Eigen::SparseMatrix<
+      typename promote_scalar_type<T, typename S::Scalar>::type, S::Options,
+      typename S::StorageIndex>;
 };
 
 template <typename... PromotionScalars, typename... UnPromotedTypes>
