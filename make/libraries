@@ -23,6 +23,7 @@ CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 #       Fortran bindings which we do not need for stan-math. Thus these targets
 #       are ignored here. This convention was introduced with 4.0.
 ##
+ifndef SUNDIALS_TARGETS
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
@@ -87,7 +88,7 @@ $(STAN_SUNDIALS_HEADERS) : $(SUNDIALS_TARGETS)
 clean-sundials:
 	@echo '  cleaning sundials targets'
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(SUNDIALS_TARGETS)))
-
+endif
 
 ############################################################
 # TBB build rules
