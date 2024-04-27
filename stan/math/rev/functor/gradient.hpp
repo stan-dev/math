@@ -42,17 +42,18 @@ namespace math {
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
  */
-template <typename F>
-void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-              double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
+template <typename F, typename VectorT,
+          require_vector_st<std::is_arithmetic, VectorT>* = nullptr>
+void gradient(const F& f, const VectorT& x, double& fx, VectorT& grad_fx) {
   nested_rev_autodiff nested;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
+  promote_scalar_t<var, plain_type_t<VectorT>> x_var(x.size());
+  as_column_vector_or_scalar(x_var) = as_column_vector_or_scalar(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
   grad_fx.resize(x.size());
   grad(fx_var.vi_);
-  grad_fx = x_var.adj();
+  as_column_vector_or_scalar(grad_fx) = as_column_vector_or_scalar(x_var).adj();
 }
 
 /**
