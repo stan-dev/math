@@ -439,12 +439,18 @@ template <typename T>
 struct traits<stan::math::arena_matrix<T>> {
   using base = traits<Eigen::Map<T>>;
   using XprKind = typename Eigen::internal::traits<std::decay_t<T>>::XprKind;
+  using StorageKind = typename Eigen::internal::traits<std::decay_t<T>>::StorageKind;
+  using StorageIndex = typename Eigen::internal::traits<std::decay_t<T>>::StorageIndex;
   enum {
     PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize,
     InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,
     OuterStrideAtCompileTime = base::OuterStrideAtCompileTime,
     Alignment = base::Alignment,
-    Flags = base::Flags
+    Flags = base::Flags,
+    RowsAtCompileTime = base::RowsAtCompileTime,
+    ColsAtCompileTime = base::ColsAtCompileTime,
+    MaxRowsAtCompileTime = base::MaxRowsAtCompileTime,
+    MaxColsAtCompileTime = base::MaxColsAtCompileTime
   };
 };
 
