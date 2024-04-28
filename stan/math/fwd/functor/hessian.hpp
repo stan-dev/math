@@ -68,7 +68,7 @@ void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
       if (i == j) {
         grad(i) = fx_fvar.d_.val_;
       }
-      H(j, i) = fx_fvar.d_.d_;
+      H.insert(j, i) = fx_fvar.d_.d_;
     }
   }
   H.makeCompressed();
