@@ -17,6 +17,9 @@ namespace internal {
  * automatically setting the stepsize between the function evaluations
  * along a dimension.
  *
+ * Instead of returning the full symmetric Hessian, we return the
+ * lower-triangular only as a column-major compressed sparse matrix.
+ *
  * <p>The functor must implement
  *
  * <code>
@@ -37,16 +40,23 @@ namespace internal {
  * @param[in] x Argument to function
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
- * @param[out] hess_fx Hessian of function at argument
+ * @param[out] hess_fx Hessian of function at argument, as a lower-triangular
+ *                      compressed sparse matrix
  */
 template <typename F>
 void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
                               Eigen::VectorXd& grad_fx,
-                              Eigen::MatrixXd& hess_fx) {
+                              Eigen::SparseMatrix<double>& hess_fx) {
   int d = x.size();
+  if (d == 0) {
+    fx = f(x);
+    return;
+  }
+
+  hess_fx.resize(d, d);
+  hess_fx.reserve(Eigen::VectorXi::LinSpaced(d, 1, d).reverse());
 
   Eigen::VectorXd x_temp(x);
-  hess_fx.resize(d, d);
 
   gradient(f, x, fx, grad_fx);
 
@@ -74,11 +84,36 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
   // approximate the hessian as a finite difference of gradients
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
-      hess_fx(j, i) = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
+      hess_fx.insert(j, i) = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
                       + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
-      hess_fx(i, j) = hess_fx(j, i);
     }
   }
+  hess_fx.makeCompressed();
+}
+
+/**
+ * Calculate the value and the Hessian of the specified function at
+ * the specified argument using first-order finite difference of gradients,
+ * automatically setting the stepsize between the function evaluations
+ * along a dimension.
+ *
+ * Overload for returning the Hessian as a symmetric dense matrix.
+ *
+ * @tparam F Type of function
+ * @param[in] f Function
+ * @param[in] x Argument to function
+ * @param[out] fx Function applied to argument
+ * @param[out] grad_fx Gradient of function at argument
+ * @param[out] hess_fx Hessian of function at argument, as a symmetric matrix
+ */
+template <typename F>
+void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
+                              Eigen::VectorXd& grad_fx,
+                              Eigen::MatrixXd& hess_fx) {
+  Eigen::SparseMatrix<double> hess_sparse;
+  finite_diff_hessian_auto(f, x, fx, grad_fx, hess_sparse);
+
+  hess_fx = Eigen::MatrixXd(hess_sparse).selfadjointView<Eigen::Lower>();
 }
 }  // namespace internal
 }  // namespace math
