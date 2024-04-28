@@ -99,7 +99,7 @@ void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
   hessian(f, x, fx, grad, hess_sparse);
 
   H = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(hess_sparse)
-        .template selfadjointView<Eigen::Lower>();
+          .template selfadjointView<Eigen::Lower>();
 }
 
 }  // namespace math

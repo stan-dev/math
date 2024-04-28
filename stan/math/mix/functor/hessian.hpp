@@ -43,9 +43,8 @@ namespace math {
  *                      compressed sparse matrix
  */
 template <typename F>
-void hessian(const F& f, const Eigen::VectorXd& x,
-             double& fx, Eigen::VectorXd& grad,
-             Eigen::SparseMatrix<double>& H) {
+void hessian(const F& f, const Eigen::VectorXd& x, double& fx,
+             Eigen::VectorXd& grad, Eigen::SparseMatrix<double>& H) {
   int d = x.size();
   if (d == 0) {
     fx = f(x);
@@ -92,9 +91,8 @@ void hessian(const F& f, const Eigen::VectorXd& x,
  * @param[out] H Hessian of function at argument, as a symmetric matrix
  */
 template <typename F>
-void hessian(const F& f, const Eigen::VectorXd& x,
-             double& fx, Eigen::VectorXd& grad,
-             Eigen::MatrixXd& H) {
+void hessian(const F& f, const Eigen::VectorXd& x, double& fx,
+             Eigen::VectorXd& grad, Eigen::MatrixXd& H) {
   Eigen::SparseMatrix<double> hess_sparse;
   hessian(f, x, fx, grad, hess_sparse);
 

@@ -84,8 +84,9 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
   // approximate the hessian as a finite difference of gradients
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
-      hess_fx.insert(j, i) = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
-                      + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
+      hess_fx.insert(j, i)
+          = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
+            + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
     }
   }
   hess_fx.makeCompressed();
