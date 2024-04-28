@@ -35,13 +35,12 @@ namespace internal {
 /**
  * Given a function and arguments, return the value and partial derivatives.
  *
- * @tparam T Argument type
  * @tparam F Function type
- * @param f Function
- * @param[in] x Argument vector
- * @param[in] n Index of argument with which to take derivative
- * @param[out] fx Value of function applied to argument
- * @param[out] dfx_dxn Value of partial derivative
+ * @tparam TArgs Types of input arguments
+ * @param func Function
+ * @param args... Parameter pack of input arguments
+ * @return Two-element tuple, where first element is the function result and
+ *          the second element is a tuple of partial derivatives
  */
 template <typename F, typename... TArgs,
           require_all_st_arithmetic<TArgs...>* = nullptr>
@@ -64,7 +63,10 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
 template <typename F, typename... TArgs,
           require_any_st_var<TArgs...>* = nullptr>
 inline auto partial_derivatives(const F& func, const TArgs&... args) {
-  std::vector<double> serialised_args = serialize<double>(value_of(args)...);
+  auto arena_args = std::make_tuple(to_arena(to_ref(args))...);
+  std::vector<double> serialised_args = math::apply(
+    [](auto&&... argpack){ return serialize<double>(value_of(argpack)...); },
+    std::forward<decltype(arena_args)>(arena_args));
 
   auto serial_functor = [&](const auto& v) {
     auto v_deserializer = to_deserializer(v);
@@ -82,20 +84,22 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
                                       rtn_value, grad, hess);
 #endif
 
-  auto grad_deserializer = to_deserializer(grad);
-  auto arena_args = std::make_tuple(stan::math::to_arena(args)...);
   var rtn = rtn_value;
+  auto grad_deserializer = to_deserializer(grad);
   auto rtn_grad = std::make_tuple(
     arena_t<promote_scalar_t<var, plain_type_t<TArgs>>>(
       grad_deserializer.read(args))...
   );
+  arena_t<Eigen::ArrayXd> hess_sum = hess.array().rowwise().sum();
 
-  reverse_pass_callback([rtn, arena_args, rtn_grad, hess]() mutable {
+  reverse_pass_callback([rtn, arena_args, rtn_grad, hess_sum]() mutable {
     std::vector<double> grad_adjs = math::apply(
       [&](auto&&... grad_args) {
         return serialize<double>(internal::get_adj(grad_args)...);
       }, std::forward<decltype(rtn_grad)>(rtn_grad));
-    Eigen::VectorXd hess_grad = hess * as_column_vector_or_scalar(grad_adjs);
+
+    Eigen::VectorXd hess_grad
+      = (hess_sum * as_array_or_scalar(grad_adjs)).matrix();
     auto hess_deserial = to_deserializer(hess_grad);
 
     math::for_each([&](auto&& curr_arg, auto&& arg_grad) {
