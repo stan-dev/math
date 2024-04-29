@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <cmath>
 
 namespace stan {
@@ -50,37 +51,25 @@ template <typename F, typename VectorT,
           typename ScalarT = return_type_t<VectorT>>
 void finite_diff_gradient_auto(const F& f, const VectorT& x, ScalarT& fx,
                                VectorT& grad_fx) {
+  using EigenVectorT = Eigen::Matrix<ScalarT, Eigen::Dynamic, 1>;
+  static constexpr int h_scale[6] = {3, 2, 1, -3, -2, -1};
+  static constexpr int mults[6] = {1, -9, 45, -1, 9, -45};
+
   VectorT x_temp(x);
   fx = f(x);
   grad_fx.resize(x.size());
-  for (int i = 0; i < x.size(); ++i) {
-    double h = finite_diff_stepsize(value_of_rec(x[i]));
 
-    ScalarT delta_f = 0;
-
-    x_temp[i] = x[i] + 3 * h;
-    delta_f += f(x_temp);
-
-    x_temp[i] = x[i] + 2 * h;
-    delta_f -= 9 * f(x_temp);
-
-    x_temp[i] = x[i] + h;
-    delta_f += 45 * f(x_temp);
-
-    x_temp[i] = x[i] + -3 * h;
-    delta_f -= f(x_temp);
-
-    x_temp[i] = x[i] + -2 * h;
-    delta_f += 9 * f(x_temp);
-
-    x_temp[i] = x[i] - h;
-    delta_f -= 45 * f(x_temp);
-
-    delta_f /= 60 * h;
-
-    x_temp[i] = x[i];
-    grad_fx[i] = delta_f;
-  }
+  as_column_vector_or_scalar(grad_fx) =
+    EigenVectorT::NullaryExpr(x.size(), [&f, &x, &x_temp](Eigen::Index i) {
+      double h = finite_diff_stepsize(value_of_rec(x[i]));
+      ScalarT delta_f = 0;
+      for (int j = 0; j < 6; ++j) {
+        x_temp[i] = x[i] + h * h_scale[j];
+        delta_f += f(x_temp) * mults[j];
+      }
+      x_temp[i] = x[i];
+      return delta_f / (60 * h);
+    });
 }
 
 }  // namespace math
