@@ -56,6 +56,7 @@ struct exp_full {
 struct one_arg {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    using stan::math::pow;
     return pow(x(0), 3);
   }
 };
