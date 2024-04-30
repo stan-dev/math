@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_FUNCTOR_HESSIAN_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
@@ -47,7 +48,7 @@ void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
              Eigen::SparseMatrix<T>& H) {
   int d = x.size();
   if (d == 0) {
-    fx = f(x);
+    fx = value_of(f(x));
     return;
   }
 

@@ -44,7 +44,7 @@ void hessian_times_vector(const F& f,
   Matrix<T, Eigen::Dynamic, 1> grad;
   Eigen::SparseMatrix<T> H;
   hessian(f, x, fx, grad, H);
-  Hv = H.template triangularview<Eigen::Lower>() * v;
+  Hv = H.template selfadjointView<Eigen::Lower>() * v;
 }
 
 }  // namespace math

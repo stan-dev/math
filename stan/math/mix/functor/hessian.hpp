@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_HESSIAN_HPP
 #define STAN_MATH_MIX_FUNCTOR_HESSIAN_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -47,7 +49,7 @@ void hessian(const F& f, const Eigen::VectorXd& x, double& fx,
              Eigen::VectorXd& grad, Eigen::SparseMatrix<double>& H) {
   int d = x.size();
   if (d == 0) {
-    fx = f(x);
+    fx = value_of_rec(f(x));
     return;
   }
 

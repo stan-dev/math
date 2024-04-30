@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/functor.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
@@ -23,7 +24,9 @@ namespace internal {
  * <p>The functor must implement
  *
  * <code>
- * double operator()(const Eigen::VectorXd&)
+ * var
+ * operator()(const
+ * Eigen::Matrix<var, Eigen::Dynamic, 1>&)
  * </code>
  *
  * <p>For details of the algorithm, see
@@ -49,16 +52,15 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
                               Eigen::SparseMatrix<double>& hess_fx) {
   int d = x.size();
   if (d == 0) {
-    fx = f(x);
+    fx = value_of(f(x));
     return;
   }
 
-  hess_fx.resize(d, d);
-  hess_fx.reserve(Eigen::VectorXi::LinSpaced(d, 1, d).reverse());
+  gradient(f, x, fx, grad_fx);
 
   Eigen::VectorXd x_temp(x);
-
-  gradient(f, x, fx, grad_fx);
+  hess_fx.resize(d, d);
+  hess_fx.reserve(Eigen::VectorXi::LinSpaced(d, 1, d).reverse());
 
   std::vector<Eigen::VectorXd> g_plus(d);
   std::vector<Eigen::VectorXd> g_minus(d);
@@ -84,9 +86,8 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
   // approximate the hessian as a finite difference of gradients
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
-      hess_fx.insert(j, i)
-          = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
-            + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
+      hess_fx.insert(j, i) = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
+                      + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
     }
   }
   hess_fx.makeCompressed();
@@ -116,6 +117,7 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
 
   hess_fx = Eigen::MatrixXd(hess_sparse).selfadjointView<Eigen::Lower>();
 }
+
 }  // namespace internal
 }  // namespace math
 }  // namespace stan
