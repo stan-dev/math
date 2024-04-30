@@ -119,7 +119,7 @@ TEST(MathMetaPrim, ScalarSeqNestVector) {
   Eigen::VectorXd a_eig(2);
   a_eig << 10, 4;
 
-  auto a_eig_tuple = std::make_tuple(a_eig, a);
+  auto a_eig_tuple = std::make_tuple(a_eig, a, a, a_eig, 10.5);
 
   scalar_seq_view<decltype(a_eig_tuple)> a_eig_vec(a_eig_tuple);
   EXPECT_EQ(10, a_eig_vec[0]);

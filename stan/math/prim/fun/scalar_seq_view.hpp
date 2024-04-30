@@ -301,7 +301,8 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
  public:
   explicit scalar_seq_view(const C& t) noexcept : t_(t) {}
 
-  inline const auto operator[](int /* i */) const noexcept { return t_; }
+  inline auto operator[](size_t i) const { return t_; }
+  inline auto& operator[](size_t i) { return t_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(int /* i */) const noexcept {
@@ -318,7 +319,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-  std::remove_const_t<std::decay_t<C>> t_;
+  C t_;
 };
 }  // namespace stan
 #endif
