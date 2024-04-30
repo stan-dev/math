@@ -2,11 +2,19 @@
 #define STAN_MATH_PRIM_FUN_SCALAR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/cumulative_sum.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
+#include <boost/mp11.hpp>
 #include <type_traits>
 #include <utility>
+#include <algorithm>
+#include <iostream>
 
 namespace stan {
+
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
  * scalar or a sequence of scalars.
@@ -16,6 +24,39 @@ namespace stan {
  */
 template <typename C, typename = void>
 class scalar_seq_view;
+
+namespace internal {
+  size_t lookup_index(size_t idx, const std::vector<size_t>& cumulative_sizes) {
+    auto it = std::find_if(cumulative_sizes.cbegin(), cumulative_sizes.cend(),
+                            [idx](size_t i){ return idx <= i; });
+    return it - cumulative_sizes.cbegin();
+  }
+
+  template <typename T>
+  struct nested_seq_type {
+    using type = stan::scalar_seq_view<T>;
+  };
+
+  template <typename T>
+  struct nested_seq_type<std::vector<T>> {
+    using type = std::vector<stan::scalar_seq_view<T>>;
+  };
+
+  template <typename... T>
+  struct nested_seq_type<std::tuple<T...>> {
+    using type = std::tuple<stan::scalar_seq_view<T>...>;
+  };
+
+  template <typename T>
+  using nested_seq_type_t = typename nested_seq_type<std::decay_t<T>>::type;
+
+  template <typename TupleT>
+  decltype(auto) tuple_coeff(size_t element, size_t coeff, TupleT& v) {
+    return boost::mp11::mp_with_index<std::tuple_size<std::remove_reference_t<TupleT>>{}>(element, [&](auto I) -> decltype(auto) {
+      return std::get<I>(v)[coeff];
+    });
+  }
+}
 
 template <typename C>
 class scalar_seq_view<C, require_eigen_vector_t<C>> {
@@ -30,6 +71,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_.coeff(i); }
+  inline auto& operator[](size_t i) { return c_.coeffRef(i); }
 
   inline auto size() const noexcept { return c_.size(); }
 
@@ -47,7 +89,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
   }
 
  private:
-  ref_type_t<C> c_;
+  C c_;
 };
 
 template <typename C>
@@ -63,6 +105,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_.coeff(i); }
+  inline auto& operator[](size_t i) { return c_.coeffRef(i); }
   inline const auto* data() const noexcept { return c_.vi_; }
   inline auto* data() noexcept { return c_.vi_; }
 
@@ -83,7 +126,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
 };
 
 template <typename C>
-class scalar_seq_view<C, require_std_vector_t<C>> {
+class scalar_seq_view<C, require_std_vector_vt<is_stan_scalar, C>> {
  public:
   template <typename T,
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
@@ -95,6 +138,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_[i]; }
+  inline auto& operator[](size_t i) { return c_[i]; }
   inline auto size() const noexcept { return c_.size(); }
   inline const auto* data() const noexcept { return c_.data(); }
 
@@ -109,7 +153,110 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
   }
 
  private:
-  const C& c_;
+  std::decay_t<C> c_;
+};
+
+template <typename C>
+class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
+ public:
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+  explicit scalar_seq_view(T&& c) {
+    std::vector<size_t> sizes_;
+    sizes_.reserve(c.size());
+    c_.reserve(c.size());
+
+    for (auto&& c_val : c) {
+      c_.push_back(scalar_seq_view<value_type_t<C>>(c_val));
+      sizes_.push_back(c_.back().size());
+    }
+
+    cumulative_sizes_ = math::cumulative_sum(sizes_);
+  }
+
+  inline auto size() const noexcept { return cumulative_sizes_.back(); }
+
+  /**
+   * Segfaults if out of bounds.
+   * @param i index
+   * @return the element at the specified position in the container
+   */
+  inline auto operator[](size_t i) const {
+    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
+    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
+    return c_[element][i - offset];
+  }
+
+  inline auto& operator[](size_t i) {
+    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
+    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
+    return c_[element][i - offset];
+  }
+
+  inline const auto* data() const noexcept { return c_.data(); }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return this[i];
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return this[i].val();
+  }
+
+ private:
+  internal::nested_seq_type_t<C> c_;
+  std::vector<size_t> cumulative_sizes_;
+};
+
+template <typename C>
+class scalar_seq_view<C, math::require_tuple_t<C>> {
+ public:
+  template <typename T>
+  explicit scalar_seq_view(T&& c) :
+    c_(math::apply([](auto... args) {
+        return std::make_tuple(scalar_seq_view<decltype(args)>(args)...);
+      }, c))
+  {
+    std::vector<size_t> sizes_;
+    math::for_each([&sizes_](auto&& elem) { sizes_.push_back(elem.size()); },
+                    std::forward<decltype(c_)>(c_));
+    cumulative_sizes_ = math::cumulative_sum(sizes_);
+  }
+
+  /**
+   * Segfaults if out of bounds.
+   * @param i index
+   * @return the element at the specified position in the container
+   */
+  inline const auto operator[](size_t i) const {
+    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
+    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
+    return internal::tuple_coeff(element, i - offset, c_);
+  }
+
+  inline auto& operator[](size_t i) {
+    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
+    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
+    return internal::tuple_coeff(element, i - offset, c_);
+  }
+
+  inline auto size() const noexcept { return cumulative_sizes_.back(); }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return this[i];
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return this[i].val();
+  }
+
+ private:
+  internal::nested_seq_type_t<C> c_;
+  std::vector<size_t> cumulative_sizes_;
 };
 
 template <typename C>
@@ -154,7 +301,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
  public:
   explicit scalar_seq_view(const C& t) noexcept : t_(t) {}
 
-  inline decltype(auto) operator[](int /* i */) const noexcept { return t_; }
+  inline const auto operator[](int /* i */) const noexcept { return t_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(int /* i */) const noexcept {
@@ -171,7 +318,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-  std::decay_t<C> t_;
+  std::remove_const_t<std::decay_t<C>> t_;
 };
 }  // namespace stan
 #endif

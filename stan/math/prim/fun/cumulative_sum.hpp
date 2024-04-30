@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 #include <numeric>
 #include <functional>

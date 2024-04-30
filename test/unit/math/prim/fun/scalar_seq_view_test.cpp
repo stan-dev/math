@@ -78,3 +78,64 @@ TEST(MathMetaPrim, ScalarSeqViewVector) {
 TEST(MathMetaPrim, ScalarSeqViewRowVector) {
   expect_scalar_seq_view_values(Eigen::RowVectorXd(4));
 }
+
+
+TEST(MathMetaPrim, ScalarSeqNestVector) {
+  using stan::scalar_seq_view;
+  std::vector<double> a{1, 2, 3};
+
+  scalar_seq_view<std::vector<double>> a_vec(a);
+  EXPECT_EQ(2, a_vec[1]);
+
+  std::vector<std::vector<double>> a_nest{a, a, a};
+  scalar_seq_view<std::vector<std::vector<double>>> a_nest_vec(a_nest);
+
+
+  EXPECT_EQ(9, a_nest_vec.size());
+  EXPECT_EQ(1, a_nest_vec[0]);
+  EXPECT_EQ(2, a_nest_vec[1]);
+  EXPECT_EQ(3, a_nest_vec[2]);
+  EXPECT_EQ(1, a_nest_vec[3]);
+  EXPECT_EQ(2, a_nest_vec[4]);
+  EXPECT_EQ(3, a_nest_vec[5]);
+  EXPECT_EQ(1, a_nest_vec[6]);
+  EXPECT_EQ(2, a_nest_vec[7]);
+  EXPECT_EQ(3, a_nest_vec[8]);
+
+  a_nest_vec[8] = 10;
+  EXPECT_EQ(10, a_nest_vec[8]);
+
+  std::tuple<std::vector<double>, std::vector<double>> x = std::make_tuple(a, a);
+  scalar_seq_view<std::tuple<std::vector<double>, std::vector<double>>> x_vec(x);
+
+  EXPECT_EQ(6, x_vec.size());
+  EXPECT_EQ(1, x_vec[0]);
+  EXPECT_EQ(2, x_vec[1]);
+  EXPECT_EQ(3, x_vec[2]);
+  EXPECT_EQ(1, x_vec[3]);
+  EXPECT_EQ(2, x_vec[4]);
+  EXPECT_EQ(3, x_vec[5]);
+
+  Eigen::VectorXd a_eig(2);
+  a_eig << 10, 4;
+
+  auto a_eig_tuple = std::make_tuple(a_eig, a);
+
+  scalar_seq_view<decltype(a_eig_tuple)> a_eig_vec(a_eig_tuple);
+  EXPECT_EQ(10, a_eig_vec[0]);
+  EXPECT_EQ(1, a_eig_vec[2]);
+
+
+
+/*
+  auto aa_tuple = std::make_tuple(a, a_eig);
+  scalar_seq_view<decltype(aa_tuple)> aa_vec(aa_tuple);
+
+  EXPECT_EQ(5, aa_vec.size());
+  EXPECT_EQ(1, aa_vec[0]);
+  EXPECT_EQ(2, aa_vec[1]);
+  EXPECT_EQ(3, aa_vec[2]);
+  EXPECT_EQ(10, aa_vec[3]);
+  EXPECT_EQ(4, aa_vec[4]);
+*/
+}
