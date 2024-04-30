@@ -1,14 +1,11 @@
 #ifndef STAN_MATH_REV_FUNCTOR_PARTIAL_DERIVATIVES_HPP
 #define STAN_MATH_REV_FUNCTOR_PARTIAL_DERIVATIVES_HPP
 
-#ifdef STAN_MODEL_FVAR_VAR
-#include <stan/math/mix/functor/hessian.hpp>
-#endif
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/functor/apply_scalar_ternary.hpp>
 #include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/gradient.hpp>
-#include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
+#include <stan/math/rev/functor/finite_diff_hessian_times_vector_auto.hpp>
 #include <vector>
 
 namespace stan {
@@ -33,7 +30,16 @@ namespace internal {
 }
 
 /**
- * Given a function and arguments, return the value and partial derivatives.
+ * Calculate the partial derivatives of a function with repect to an arbitrary
+ * number of input arguments using Stan's auto-differentiation algorithms.
+ *
+ * The functor returns a tuple with two elements:
+ *   1. Return value of the function
+ *   2. Tuple of partial derivatives for each argument, in the same shape/size
+ *        as the input argument
+ *
+ * This overload is for use with only arithmetic inputs, such that second-
+ *  order gradients are not required.
  *
  * @tparam F Function type
  * @tparam TArgs Types of input arguments
@@ -51,6 +57,7 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
     auto v_deserializer = to_deserializer(v);
     return func(v_deserializer.read(args)...);
   };
+
   double rtn_value;
   std::vector<double> grad;
   gradient(serial_functor, serialised_args, rtn_value, grad);
@@ -60,6 +67,26 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
                          std::make_tuple(grad_deserializer.read(args)...));
 }
 
+
+/**
+ * Calculate the partial derivatives of a function with repect to an arbitrary
+ * number of input arguments using Stan's auto-differentiation algorithms.
+ *
+ * The functor returns a tuple with two elements:
+ *   1. Return value of the function
+ *   2. Tuple of partial derivatives for each argument, in the same shape/size
+ *        as the input argument
+ *
+ * This overload is for use with only math::var inputs, such that second-
+ *  order gradients are needed in the reverse-pass.
+ *
+ * @tparam F Function type
+ * @tparam TArgs Types of input arguments
+ * @param func Function
+ * @param args... Parameter pack of input arguments
+ * @return Two-element tuple, where first element is the function result and
+ *          the second element is a tuple of partial derivatives
+ */
 template <typename F, typename... TArgs,
           require_any_st_var<TArgs...>* = nullptr>
 inline auto partial_derivatives(const F& func, const TArgs&... args) {
@@ -75,14 +102,7 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
 
   double rtn_value;
   std::vector<double> grad;
-  Eigen::MatrixXd hess;
-
-#ifdef STAN_MODEL_FVAR_VAR
-  hessian(serial_functor, serialised_args, rtn_value, grad, hess);
-#else
-  internal::finite_diff_hessian_auto(serial_functor, serialised_args,
-                                      rtn_value, grad, hess);
-#endif
+  gradient(serial_functor, serialised_args, rtn_value, grad);
 
   var rtn = rtn_value;
   auto grad_deserializer = to_deserializer(grad);
@@ -90,17 +110,29 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
     arena_t<promote_scalar_t<var, plain_type_t<TArgs>>>(
       grad_deserializer.read(args))...
   );
-  arena_t<Eigen::ArrayXd> hess_sum = hess.array().rowwise().sum();
 
-  reverse_pass_callback([rtn, arena_args, rtn_grad, hess_sum]() mutable {
+  reverse_pass_callback([rtn, arena_args, rtn_grad, serialised_args, func]() mutable {
     std::vector<double> grad_adjs = math::apply(
       [&](auto&&... grad_args) {
         return serialize<double>(internal::get_adj(grad_args)...);
       }, std::forward<decltype(rtn_grad)>(rtn_grad));
 
-    Eigen::VectorXd hess_grad
-      = (hess_sum * as_array_or_scalar(grad_adjs)).matrix();
-    auto hess_deserial = to_deserializer(hess_grad);
+    auto serial_functor = [&](const auto& v) {
+      auto v_deserializer = to_deserializer(v);
+      return math::apply(
+      [&](auto&&... grad_args) {
+        return func(v_deserializer.read(grad_args)...);
+      }, std::forward<decltype(rtn_grad)>(rtn_grad));
+    };
+
+    Eigen::VectorXd args_vec = to_vector(serialised_args);
+    Eigen::VectorXd grad_vec = to_vector(grad_adjs);
+
+    double fx;
+    Eigen::VectorXd hvp;
+    internal::finite_diff_hessian_times_vector_auto(serial_functor, args_vec,
+                                                  grad_vec, fx, hvp);
+    auto hess_deserial = to_deserializer(hvp);
 
     math::for_each([&](auto&& curr_arg, auto&& arg_grad) {
       auto arg_grad_hess
@@ -125,9 +157,6 @@ inline auto partial_derivatives(const F& func, const TArgs&... args) {
   using return_t = std::tuple<promote_scalar_t<var, plain_type_t<TArgs>>...>;
   return std::make_tuple(rtn_value, return_t(rtn_grad));
 }
-
-
-//STAN_MODEL_FVAR_VAR
 
 }  // namespace math
 }  // namespace stan

@@ -169,6 +169,11 @@ struct deserializer {
     }
     return y;
   }
+
+  template <typename U>
+  U read(const arena_matrix<U>& x) {
+    return read<U>(x);
+  }
 };
 
 /**

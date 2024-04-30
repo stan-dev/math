@@ -42,12 +42,12 @@ namespace math {
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
  */
-template <typename F, typename VectorT,
-          require_vector_st<std::is_arithmetic, VectorT>* = nullptr>
-void gradient(const F& f, const VectorT& x, double& fx, VectorT& grad_fx) {
+template <typename F, typename VectorTx, typename VectorTGrad,
+          require_vector_st<std::is_arithmetic, VectorTx>* = nullptr>
+void gradient(const F& f, const VectorTx& x, double& fx, VectorTGrad& grad_fx) {
   nested_rev_autodiff nested;
 
-  promote_scalar_t<var, plain_type_t<VectorT>> x_var(x.size());
+  promote_scalar_t<var, plain_type_t<VectorTx>> x_var(x.size());
   as_column_vector_or_scalar(x_var) = as_column_vector_or_scalar(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
