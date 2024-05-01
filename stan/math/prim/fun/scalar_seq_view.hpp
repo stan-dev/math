@@ -8,10 +8,9 @@
 namespace stan {
 namespace internal {
 template <typename T>
-using require_nested_t = require_t<
-  math::disjunction<math::is_tuple<T>,
-                    math::conjunction<is_std_vector<T>,
-                                      is_container<value_type_t<T>>>>>;
+using require_nested_t = require_t<math::disjunction<
+    math::is_tuple<T>,
+    math::conjunction<is_std_vector<T>, is_container<value_type_t<T>>>>>;
 }
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
