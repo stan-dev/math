@@ -156,17 +156,11 @@ class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
       c_.push_back(scalar_seq_view<value_type_t<C>>(c_val));
       sizes_.push_back(c_.back().size());
     }
-
     cumulative_sizes_ = math::cumulative_sum(sizes_);
   }
 
   inline auto size() const noexcept { return cumulative_sizes_.back(); }
 
-  /**
-   * Segfaults if out of bounds.
-   * @param i index
-   * @return the element at the specified position in the container
-   */
   inline auto operator[](size_t i) const {
     std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
     return c_[idxs[0]][idxs[1]];
@@ -211,11 +205,6 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
     cumulative_sizes_ = math::cumulative_sum(sizes_);
   }
 
-  /**
-   * Segfaults if out of bounds.
-   * @param i index
-   * @return the element at the specified position in the container
-   */
   inline const auto operator[](size_t i) const {
     std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
     auto index_func = [idxs](auto&& tuple_elem) {
