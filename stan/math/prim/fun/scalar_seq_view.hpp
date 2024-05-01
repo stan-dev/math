@@ -59,7 +59,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
   }
 
  private:
-  C c_;
+  plain_type_t<C> c_;
 };
 
 template <typename C>
@@ -277,16 +277,16 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
  public:
   explicit scalar_seq_view(const C& t) noexcept : t_(t) {}
 
-  inline auto operator[](size_t i) const { return t_; }
-  inline auto& operator[](size_t i) { return t_; }
+  inline auto operator[](size_t /* i */) const { return t_; }
+  inline auto& operator[](size_t /* i */) { return t_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline decltype(auto) val(int /* i */) const noexcept {
+  inline decltype(auto) val(size_t /* i */) const noexcept {
     return t_;
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline decltype(auto) val(int /* i */) const noexcept {
+  inline decltype(auto) val(size_t /* i */) const noexcept {
     return t_.val();
   }
 
@@ -295,7 +295,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-  C t_;
+  std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif
