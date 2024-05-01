@@ -10,46 +10,46 @@ namespace stan {
 namespace math {
 
 /**
- * Template metaprogram to calculate a type for converting a
- * convertible type.  This is the base case.
+ * Template metaprogram for modifying the nested types of containers.
+ * This is the base case.
  *
- * @tparam T result scalar type.
- * @tparam S input type
+ * @tparam TypeModifier Templated struct or alias that takes and returns
+ *                        a single type
+ * @tparam S Input type to modified
  */
 template <template <class...> class TypeModifier, typename S,
           typename Enable = void>
 struct modify_nested_value_type {
-  /**
-   * The promoted type.
-   */
   using type = TypeModifier<S>;
 };
 
 /**
- * Template metaprogram to calculate a type for a container whose
- * underlying scalar is converted from the second template
- * parameter type to the first.
+ * Template metaprogram for modifying the nested types of containers.
  *
- * @tparam T result scalar type.
- * @tparam S input type
+ * Overload for std::vectors of container types
+ *
+ * @tparam TypeModifier Templated struct or alias that takes and returns
+ *                        a single type
+ * @tparam S Input type to modified
  */
 template <template <class...> class TypeModifier, typename S>
 struct modify_nested_value_type<TypeModifier, std::vector<S>,
                                 require_container_t<S>> {
-  /**
-   * The promoted type.
-   */
-  using type =
-    std::vector<typename modify_nested_value_type<TypeModifier, S>::type>;
+  using type = std::vector<TypeModifier<S>>;
 };
 
+/**
+ * Template metaprogram for modifying the nested types of containers.
+ *
+ * Overload for tuples.
+ *
+ * @tparam TypeModifier Templated struct or alias that takes and returns
+ *                        a single type
+ * @tparam S Input type to modified
+ */
 template <template <class...> class TypeModifier, typename... S>
 struct modify_nested_value_type<TypeModifier, std::tuple<S...>> {
-  /**
-   * The promoted type.
-   */
-  using type =
-    std::tuple<typename modify_nested_value_type<TypeModifier, S>::type...>;
+  using type = std::tuple<TypeModifier<S>...>;
 };
 
 template <template <class...> class TypeModifier, typename S>

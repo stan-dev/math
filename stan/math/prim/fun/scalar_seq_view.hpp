@@ -11,10 +11,26 @@
 
 namespace stan {
 namespace internal {
-  size_t lookup_index(size_t idx, const std::vector<size_t>& cumulative_sizes) {
-    auto it = std::find_if(cumulative_sizes.cbegin(), cumulative_sizes.cend(),
-                            [idx](size_t i){ return idx <= i; });
-    return it - cumulative_sizes.cbegin();
+
+/**
+ * Utility function to help with indexing nested containers. Given an index
+ * and a vector containing the cumulative sum of the container sizes, returns
+ * the index of the desired container and the index of the desired value
+ * within that container.
+ *
+ * @param idx The index passed to operator[]
+ * @param cumulative_sizes The cumulative sum of container sizes
+ * @return Two-element array containing index of container and index of value
+ *            within container
+ */
+  std::array<size_t, 2>
+  lookup_index(size_t idx, const std::vector<size_t>& cumulative_sizes) {
+    size_t element = std::find_if(cumulative_sizes.cbegin(),
+                                  cumulative_sizes.cend(),
+                                  [idx](size_t i){ return (idx + 1) <= i; })
+            - cumulative_sizes.cbegin();
+    size_t offset = element == 0 ? 0 : cumulative_sizes[element - 1];
+    return { element, idx - offset };
   }
 } // namespace internal
 
@@ -29,7 +45,7 @@ template <typename C, typename = void>
 class scalar_seq_view;
 
 template <typename C>
-class scalar_seq_view<C, require_eigen_vector_t<C>> {
+class scalar_seq_view<C, require_eigen_t<C>> {
  public:
   template <typename T,
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
@@ -152,15 +168,13 @@ class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const {
-    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
-    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
-    return c_[element][i - offset];
+    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
+    return c_[idxs[0]][idxs[1]];
   }
 
   inline auto& operator[](size_t i) {
-    size_t element = internal::lookup_index(i + 1, cumulative_sizes_);
-    size_t offset = element == 0 ? 0 : cumulative_sizes_[element - 1];
-    return c_[element][i - offset];
+    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
+    return c_[idxs[0]][idxs[1]];
   }
 
   inline const auto* data() const noexcept { return c_.data(); }
@@ -185,9 +199,11 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
  public:
   template <typename T>
   explicit scalar_seq_view(T&& c) :
-    c_(math::apply([](auto... args) {
-        return std::make_tuple(scalar_seq_view<decltype(args)>(args)...);
-      }, c))
+    c_(math::apply([](auto&&... args) {
+        return std::make_tuple(
+          scalar_seq_view<std::decay_t<decltype(args)>>(args)...
+        );
+      }, std::forward<decltype(c)>(c)))
   {
     std::vector<size_t> sizes_;
     math::for_each([&sizes_](auto&& elem) { sizes_.push_back(elem.size()); },
@@ -201,21 +217,19 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
    * @return the element at the specified position in the container
    */
   inline const auto operator[](size_t i) const {
-    size_t idx = internal::lookup_index(i + 1, cumulative_sizes_);
-    size_t inner_idx = i - (idx == 0 ? 0 : cumulative_sizes_[idx - 1]);
-    auto index_func = [inner_idx](auto&& tuple_elem) {
-      return tuple_elem[inner_idx];
+    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
+    auto index_func = [idxs](auto&& tuple_elem) {
+      return tuple_elem[idxs[1]];
     };
-    return math::apply_at(index_func, idx, std::forward<decltype(c_)>(c_));
+    return math::apply_at(index_func, idxs[0], std::forward<decltype(c_)>(c_));
   }
 
   inline auto& operator[](size_t i) {
-    size_t idx = internal::lookup_index(i + 1, cumulative_sizes_);
-    size_t inner_idx = i - (idx == 0 ? 0 : cumulative_sizes_[idx - 1]);
-    auto index_func = [inner_idx](auto&& tuple_elem) -> decltype(auto) {
-      return tuple_elem[inner_idx];
+    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
+    auto index_func = [idxs](auto&& tuple_elem) -> decltype(auto) {
+      return tuple_elem[idxs[1]];
     };
-    return math::apply_at(index_func, idx, std::forward<decltype(c_)>(c_));
+    return math::apply_at(index_func, idxs[0], std::forward<decltype(c_)>(c_));
   }
 
   inline auto size() const noexcept { return cumulative_sizes_.back(); }

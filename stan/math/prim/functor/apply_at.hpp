@@ -16,6 +16,7 @@ struct require_same_result_type_impl {
     decltype(std::declval<F>()(std::declval<TArgs>()))...
   >;
 };
+
 template <typename F, typename T, typename... TArgs>
 struct require_same_result_type_impl<F, std::tuple<T, TArgs...>> {
   using type = require_all_same_t<
@@ -25,31 +26,27 @@ struct require_same_result_type_impl<F, std::tuple<T, TArgs...>> {
 };
 
 template <typename F, typename T>
-using require_same_result_type_t = typename require_same_result_type_impl<F, T>::type;
+using require_same_result_type_t =
+      typename require_same_result_type_impl<F, T>::type;
 }
 
-/*
- * Call the functor f with the tuple of arguments t, like:
- *
- * f(std::get<0>(t), std::get<1>(t), ...)
- *
- * TODO: replace this with implementation in C++ std when C++17 is available
+/**
+ * Call a functor f at a runtime-specified index of a tuple. This requires that
+ * the return type of the functor is identical for every tuple element.
  *
  * @tparam F Type of functor
- * @tparam Tuple Type of tuple containing arguments
- * @tparam PreArgs Parameter pack of arguments before the tuple
- * @param f functor callable
- * @param t tuple of arguments
- * @param pre_args parameter pack of arguments to place before elements in
- * tuple.
+ * @tparam TupleT Type of tuple containing arguments
+ * @param func Functor callable
+ * @param t Tuple of arguments
+ * @param element Element of tuple to apply functor to
  */
   template <typename F, typename TupleT,
             internal::require_same_result_type_t<F, TupleT>* = nullptr>
-  decltype(auto) apply_at(F&& func, size_t element, TupleT&& v) {
+  decltype(auto) apply_at(F&& func, size_t element, TupleT&& t) {
     constexpr size_t tuple_size = std::tuple_size<std::decay_t<TupleT>>{};
     return boost::mp11::mp_with_index<tuple_size>(
       element, [&](auto I) -> decltype(auto) {
-        return func(std::forward<decltype(std::get<I>(v))>(std::get<I>(v)));
+        return func(std::forward<decltype(std::get<I>(t))>(std::get<I>(t)));
       });
   }
 }  // namespace math
