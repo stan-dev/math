@@ -23,7 +23,7 @@ namespace internal {
  * @return Two-element array containing index of container and index of value
  *            within container
  */
-std::array<size_t, 2> lookup_index(
+inline std::array<size_t, 2> lookup_index(
     size_t idx, const std::vector<size_t>& cumulative_sizes) {
   size_t element
       = std::find_if(cumulative_sizes.cbegin(), cumulative_sizes.cend(),
