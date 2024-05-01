@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/apply_at.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/functor/apply_scalar_ternary.hpp>

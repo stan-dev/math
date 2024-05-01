@@ -125,17 +125,8 @@ TEST(MathMetaPrim, ScalarSeqNestVector) {
   EXPECT_EQ(10, a_eig_vec[0]);
   EXPECT_EQ(1, a_eig_vec[2]);
 
-
-
-/*
-  auto aa_tuple = std::make_tuple(a, a_eig);
-  scalar_seq_view<decltype(aa_tuple)> aa_vec(aa_tuple);
-
-  EXPECT_EQ(5, aa_vec.size());
-  EXPECT_EQ(1, aa_vec[0]);
-  EXPECT_EQ(2, aa_vec[1]);
-  EXPECT_EQ(3, aa_vec[2]);
-  EXPECT_EQ(10, aa_vec[3]);
-  EXPECT_EQ(4, aa_vec[4]);
-*/
+  a_eig_vec[0] = 20;
+  a_eig_vec[2] = 10;
+  EXPECT_EQ(20, a_eig_vec[0]);
+  EXPECT_EQ(10, a_eig_vec[2]);
 }
