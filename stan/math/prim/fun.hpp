@@ -312,6 +312,7 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
+#include <stan/math/prim/fun/sequential_index.hpp>
 #include <stan/math/prim/fun/serializer.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/sign.hpp>

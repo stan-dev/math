@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <vector>
 #include <algorithm>
 
@@ -17,7 +19,8 @@ namespace math {
  * @param v argument
  * @return number of contained arguments
  */
-template <typename T, require_not_std_vector_vt<is_container, T>* = nullptr>
+template <typename T, require_not_std_vector_vt<is_container, T>* = nullptr,
+          require_not_tuple_t<T>* = nullptr>
 inline size_t num_elements(const T& v) {
   return math::size(v);
 }
@@ -35,6 +38,16 @@ inline size_t num_elements(const T& v) {
   for (auto&& v_val : v) {
     size += num_elements(v_val);
   }
+  return size;
+}
+
+template <typename T, require_tuple_t<T>* = nullptr>
+inline size_t num_elements(const T& v) {
+  size_t size = 0;
+  math::apply([&size](const auto&... args){
+    static_cast<void>(
+      std::initializer_list<int>{(size += num_elements(args), 0)...});
+  }, v);
   return size;
 }
 
