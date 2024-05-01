@@ -32,7 +32,7 @@ namespace internal {
     size_t offset = element == 0 ? 0 : cumulative_sizes[element - 1];
     return { element, idx - offset };
   }
-} // namespace internal
+}  // namespace internal
 
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
@@ -193,12 +193,9 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
  public:
   template <typename T>
   explicit scalar_seq_view(T&& c) :
-    c_(math::apply([](auto&&... args) {
-        return std::make_tuple(
-          scalar_seq_view<std::decay_t<decltype(args)>>(args)...
-        );
-      }, std::forward<decltype(c)>(c)))
-  {
+    c_(math::apply([](auto&&... args) { return std::make_tuple(
+          scalar_seq_view<std::decay_t<decltype(args)>>(args)...); },
+          std::forward<decltype(c)>(c))) {
     std::vector<size_t> sizes_;
     math::for_each([&sizes_](auto&& elem) { sizes_.push_back(elem.size()); },
                     std::forward<decltype(c_)>(c_));
