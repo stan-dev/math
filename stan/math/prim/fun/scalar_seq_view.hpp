@@ -44,9 +44,11 @@ inline decltype(auto) seq_index(size_t i, T&& x) {
 
 template <typename T, math::require_tuple_t<T>* = nullptr>
 inline decltype(auto) seq_index(size_t i, T&& x) {
-  std::vector<size_t> sizes = math::apply([](auto&&... args){
-    return std::vector<size_t>{math::num_elements(args)...};
-  }, std::forward<decltype(x)>(x));
+  std::vector<size_t> sizes = math::apply(
+      [](auto&&... args) {
+        return std::vector<size_t>{math::num_elements(args)...};
+      },
+      std::forward<decltype(x)>(x));
 
   size_t inner_idx = i;
   size_t elem = 0;
@@ -219,11 +221,13 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
   }
 
   inline auto size() const noexcept {
-    std::vector<size_t> sizes = math::apply([](auto&&... args){
-      return std::vector<size_t>{math::num_elements(args)...};
-    }, c_);
+    std::vector<size_t> sizes = math::apply(
+        [](auto&&... args) {
+          return std::vector<size_t>{math::num_elements(args)...};
+        },
+        c_);
     return math::sum(sizes);
-   }
+  }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
