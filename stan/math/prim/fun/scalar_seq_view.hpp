@@ -5,32 +5,62 @@
 #include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/cumulative_sum.hpp>
+#include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/apply_at.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 
 namespace stan {
 namespace internal {
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline decltype(auto) seq_index(size_t i, T&& x) {
+  return std::forward<T>(x);
+}
 
-/**
- * Utility function to help with indexing nested containers. Given an index
- * and a vector containing the cumulative sum of the container sizes, returns
- * the index of the desired container and the index of the desired value
- * within that container.
- *
- * @param idx The index passed to operator[]
- * @param cumulative_sizes The cumulative sum of container sizes
- * @return Two-element array containing index of container and index of value
- *            within container
- */
-inline std::array<size_t, 2> lookup_index(
-    size_t idx, const std::vector<size_t>& cumulative_sizes) {
-  size_t element
-      = std::find_if(cumulative_sizes.cbegin(), cumulative_sizes.cend(),
-                     [idx](size_t i) { return (idx + 1) <= i; })
-        - cumulative_sizes.cbegin();
-  size_t offset = element == 0 ? 0 : cumulative_sizes[element - 1];
-  return {element, idx - offset};
+template <typename T, require_std_vector_vt<is_stan_scalar, T>* = nullptr>
+inline decltype(auto) seq_index(size_t i, T&& x) {
+  return x[i];
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline decltype(auto) seq_index(size_t i, T&& x) {
+  return x.coeffRef(i);
+}
+
+template <typename T, require_std_vector_vt<is_container, T>* = nullptr>
+inline decltype(auto) seq_index(size_t i, T&& x) {
+  size_t inner_idx = i;
+  size_t elem = 0;
+  for (auto&& x_val : x) {
+    size_t num_elems = math::num_elements(x_val);
+    if (inner_idx <= (num_elems - 1)) {
+      break;
+    }
+    elem++;
+    inner_idx -= num_elems;
+  }
+  return seq_index(inner_idx, std::forward<decltype((x[elem]))>(x[elem]));
+}
+
+template <typename T, math::require_tuple_t<T>* = nullptr>
+inline decltype(auto) seq_index(size_t i, T&& x) {
+  std::vector<size_t> sizes = math::apply([](auto&&... args){
+    return std::vector<size_t>{math::num_elements(args)...};
+  }, std::forward<decltype(x)>(x));
+
+  size_t inner_idx = i;
+  size_t elem = 0;
+  for (auto&& num_elems : sizes) {
+    if (inner_idx <= (num_elems - 1)) {
+      break;
+    }
+    elem++;
+    inner_idx -= num_elems;
+  }
+  auto index_func = [inner_idx](auto&& tuple_elem) -> decltype(auto) {
+    return seq_index(inner_idx, std::forward<decltype(tuple_elem)>(tuple_elem));
+  };
+  return math::apply_at(index_func, elem, std::forward<decltype(x)>(x));
 }
 }  // namespace internal
 
@@ -145,30 +175,17 @@ class scalar_seq_view<C, require_std_vector_vt<is_stan_scalar, C>> {
 template <typename C>
 class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
  public:
-  template <typename T,
-            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
-  explicit scalar_seq_view(T&& c) {
-    std::vector<size_t> sizes_;
-    sizes_.reserve(c.size());
-    c_.reserve(c.size());
+  template <typename T>
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
-    for (auto&& c_val : c) {
-      c_.push_back(scalar_seq_view<value_type_t<C>>(c_val));
-      sizes_.push_back(c_.back().size());
-    }
-    cumulative_sizes_ = math::cumulative_sum(sizes_);
-  }
-
-  inline auto size() const noexcept { return cumulative_sizes_.back(); }
+  inline auto size() const noexcept { return math::num_elements(c_); }
 
   inline auto operator[](size_t i) const {
-    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
-    return c_[idxs[0]][idxs[1]];
+    return internal::seq_index(i, std::forward<decltype(c_)>(c_));
   }
 
   inline auto& operator[](size_t i) {
-    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
-    return c_[idxs[0]][idxs[1]];
+    return internal::seq_index(i, std::forward<decltype(c_)>(c_));
   }
 
   inline const auto* data() const noexcept { return c_.data(); }
@@ -184,42 +201,29 @@ class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
   }
 
  private:
-  math::modify_nested_value_type_t<scalar_seq_view, C> c_;
-  std::vector<size_t> cumulative_sizes_;
+  std::decay_t<C> c_;
 };
 
 template <typename C>
 class scalar_seq_view<C, math::require_tuple_t<C>> {
  public:
   template <typename T>
-  explicit scalar_seq_view(T&& c)
-      : c_(math::apply(
-          [](auto&&... args) {
-            return std::make_tuple(
-                scalar_seq_view<std::decay_t<decltype(args)>>(args)...);
-          },
-          std::forward<decltype(c)>(c))) {
-    std::vector<size_t> sizes_;
-    math::for_each([&sizes_](auto&& elem) { sizes_.push_back(elem.size()); },
-                   std::forward<decltype(c_)>(c_));
-    cumulative_sizes_ = math::cumulative_sum(sizes_);
-  }
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   inline const auto operator[](size_t i) const {
-    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
-    auto index_func = [idxs](auto&& tuple_elem) { return tuple_elem[idxs[1]]; };
-    return math::apply_at(index_func, idxs[0], std::forward<decltype(c_)>(c_));
+    return internal::seq_index(i, std::forward<decltype(c_)>(c_));
   }
 
   inline auto& operator[](size_t i) {
-    std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
-    auto index_func = [idxs](auto&& tuple_elem) -> decltype(auto) {
-      return tuple_elem[idxs[1]];
-    };
-    return math::apply_at(index_func, idxs[0], std::forward<decltype(c_)>(c_));
+    return internal::seq_index(i, std::forward<decltype(c_)>(c_));
   }
 
-  inline auto size() const noexcept { return cumulative_sizes_.back(); }
+  inline auto size() const noexcept {
+    std::vector<size_t> sizes = math::apply([](auto&&... args){
+      return std::vector<size_t>{math::num_elements(args)...};
+    }, c_);
+    return math::sum(sizes);
+   }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
@@ -232,8 +236,7 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
   }
 
  private:
-  math::modify_nested_value_type_t<scalar_seq_view, C> c_;
-  std::vector<size_t> cumulative_sizes_;
+  std::decay_t<C> c_;
 };
 
 template <typename C>
