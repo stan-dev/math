@@ -119,7 +119,7 @@ class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
  public:
   template <typename T>
   explicit scalar_seq_view(T&& c)
-    : c_(std::forward<T>(c)), size_(math::num_elements(c_)) {}
+      : c_(std::forward<T>(c)), size_(math::num_elements(c_)) {}
 
   inline auto size() const noexcept { return size_; }
 
@@ -153,7 +153,7 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
  public:
   template <typename T>
   explicit scalar_seq_view(T&& c)
-    : c_(std::forward<T>(c)), size_(math::num_elements(c_)) {}
+      : c_(std::forward<T>(c)), size_(math::num_elements(c_)) {}
 
   inline const auto operator[](size_t i) const {
     return math::sequential_index(i, std::forward<decltype(c_)>(c_));
@@ -163,9 +163,7 @@ class scalar_seq_view<C, math::require_tuple_t<C>> {
     return math::sequential_index(i, std::forward<decltype(c_)>(c_));
   }
 
-  inline auto size() const noexcept {
-    return size_;
-  }
+  inline auto size() const noexcept { return size_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
