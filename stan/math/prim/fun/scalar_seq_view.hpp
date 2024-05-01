@@ -23,15 +23,15 @@ namespace internal {
  * @return Two-element array containing index of container and index of value
  *            within container
  */
-  std::array<size_t, 2>
-  lookup_index(size_t idx, const std::vector<size_t>& cumulative_sizes) {
-    size_t element = std::find_if(cumulative_sizes.cbegin(),
-                                  cumulative_sizes.cend(),
-                                  [idx](size_t i){ return (idx + 1) <= i; })
-            - cumulative_sizes.cbegin();
-    size_t offset = element == 0 ? 0 : cumulative_sizes[element - 1];
-    return { element, idx - offset };
-  }
+std::array<size_t, 2> lookup_index(
+    size_t idx, const std::vector<size_t>& cumulative_sizes) {
+  size_t element
+      = std::find_if(cumulative_sizes.cbegin(), cumulative_sizes.cend(),
+                     [idx](size_t i) { return (idx + 1) <= i; })
+        - cumulative_sizes.cbegin();
+  size_t offset = element == 0 ? 0 : cumulative_sizes[element - 1];
+  return {element, idx - offset};
+}
 }  // namespace internal
 
 /**
@@ -192,21 +192,22 @@ template <typename C>
 class scalar_seq_view<C, math::require_tuple_t<C>> {
  public:
   template <typename T>
-  explicit scalar_seq_view(T&& c) :
-    c_(math::apply([](auto&&... args) { return std::make_tuple(
-          scalar_seq_view<std::decay_t<decltype(args)>>(args)...); },
+  explicit scalar_seq_view(T&& c)
+      : c_(math::apply(
+          [](auto&&... args) {
+            return std::make_tuple(
+                scalar_seq_view<std::decay_t<decltype(args)>>(args)...);
+          },
           std::forward<decltype(c)>(c))) {
     std::vector<size_t> sizes_;
     math::for_each([&sizes_](auto&& elem) { sizes_.push_back(elem.size()); },
-                    std::forward<decltype(c_)>(c_));
+                   std::forward<decltype(c_)>(c_));
     cumulative_sizes_ = math::cumulative_sum(sizes_);
   }
 
   inline const auto operator[](size_t i) const {
     std::array<size_t, 2> idxs = internal::lookup_index(i, cumulative_sizes_);
-    auto index_func = [idxs](auto&& tuple_elem) {
-      return tuple_elem[idxs[1]];
-    };
+    auto index_func = [idxs](auto&& tuple_elem) { return tuple_elem[idxs[1]]; };
     return math::apply_at(index_func, idxs[0], std::forward<decltype(c_)>(c_));
   }
 
