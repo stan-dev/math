@@ -6,6 +6,13 @@
 #include <stan/math/prim/fun/sequential_index.hpp>
 
 namespace stan {
+namespace internal {
+template <typename T>
+using require_nested_t = require_t<
+  math::disjunction<math::is_tuple<T>,
+                    math::conjunction<is_std_vector<T>,
+                                      is_container<value_type_t<T>>>>>;
+}
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
  * scalar or a sequence of scalars.
@@ -63,7 +70,6 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_.coeff(i); }
-
   inline const auto* data() const noexcept { return c_.vi_; }
   inline auto* data() noexcept { return c_.vi_; }
 
@@ -115,7 +121,7 @@ class scalar_seq_view<C, require_std_vector_vt<is_stan_scalar, C>> {
 };
 
 template <typename C>
-class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
+class scalar_seq_view<C, internal::require_nested_t<C>> {
  public:
   template <typename T>
   explicit scalar_seq_view(T&& c)
@@ -132,38 +138,6 @@ class scalar_seq_view<C, require_std_vector_vt<is_container, C>> {
   }
 
   inline const auto* data() const noexcept { return c_.data(); }
-
-  template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline decltype(auto) val(size_t i) const {
-    return this[i];
-  }
-
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline decltype(auto) val(size_t i) const {
-    return this[i].val();
-  }
-
- private:
-  std::decay_t<C> c_;
-  size_t size_;
-};
-
-template <typename C>
-class scalar_seq_view<C, math::require_tuple_t<C>> {
- public:
-  template <typename T>
-  explicit scalar_seq_view(T&& c)
-      : c_(std::forward<T>(c)), size_(math::num_elements(c_)) {}
-
-  inline const auto operator[](size_t i) const {
-    return math::sequential_index(i, std::forward<decltype(c_)>(c_));
-  }
-
-  inline auto& operator[](size_t i) {
-    return math::sequential_index(i, std::forward<decltype(c_)>(c_));
-  }
-
-  inline auto size() const noexcept { return size_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
