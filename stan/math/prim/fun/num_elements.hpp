@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -55,9 +56,8 @@ inline size_t num_elements(const std::vector<T>& v) {
 template <typename T, require_container_t<T>* = nullptr>
 inline size_t num_elements(const std::vector<T>& v) {
   size_t size = 0;
-  for (auto&& v_val : v) {
-    size += num_elements(v_val);
-  }
+  std::for_each(v.cbegin(), v.cend(),
+                [&size](auto&& x){ size += num_elements(x); });
   return size;
 }
 
@@ -71,12 +71,9 @@ inline size_t num_elements(const std::vector<T>& v) {
 template <typename T, require_tuple_t<T>* = nullptr>
 inline size_t num_elements(const T& v) {
   size_t size = 0;
-  math::apply(
-      [&size](const auto&... args) {
-        static_cast<void>(
-            std::initializer_list<int>{(size += num_elements(args), 0)...});
-      },
-      v);
+  math::apply([&size](auto&&... args) {
+      static_cast<void>(
+        std::initializer_list<int>{(size += num_elements(args), 0)...}); }, v);
   return size;
 }
 

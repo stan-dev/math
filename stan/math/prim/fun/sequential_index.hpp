@@ -79,8 +79,7 @@ inline decltype(auto) sequential_index(size_t i, T&& x) {
     elem++;
     inner_idx -= num_elems;
   }
-  return sequential_index(inner_idx,
-                          std::forward<decltype((x[elem]))>(x[elem]));
+  return sequential_index(inner_idx, std::forward<decltype(x[elem])>(x[elem]));
 }
 
 /**
@@ -109,9 +108,8 @@ inline decltype(auto) sequential_index(size_t i, T&& x) {
     inner_idx -= num_elems;
   }
 
-  auto index_func = [inner_idx](auto&& tuple_elem) -> decltype(auto) {
-    return sequential_index(inner_idx,
-                            std::forward<decltype(tuple_elem)>(tuple_elem));
+  auto index_func = [inner_idx](auto&& t_elem) -> decltype(auto) {
+    return sequential_index(inner_idx, std::forward<decltype(t_elem)>(t_elem));
   };
   return math::apply_at(index_func, elem, std::forward<T>(x));
 }

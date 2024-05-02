@@ -9,20 +9,17 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename F, typename T, typename... TArgs>
-struct require_same_result_type_impl {
-  using type
-      = require_all_same_t<decltype(std::declval<F>()(std::declval<T>())),
-                           decltype(
-                               std::declval<F>()(std::declval<TArgs>()))...>;
-};
+template <typename F, typename T>
+using invoke_t = decltype(std::declval<F>()(std::declval<T>()));
 
 template <typename F, typename T, typename... TArgs>
-struct require_same_result_type_impl<F, std::tuple<T, TArgs...>> {
-  using type
-      = require_all_same_t<decltype(std::declval<F>()(std::declval<T>())),
-                           decltype(
-                               std::declval<F>()(std::declval<TArgs>()))...>;
+struct require_same_result_type_impl {
+  using type = require_all_same_t<invoke_t<F, T>, invoke_t<F, TArgs>...>;
+};
+
+template <typename F, typename... TArgs>
+struct require_same_result_type_impl<F, std::tuple<TArgs...>> {
+  using type = typename require_same_result_type_impl<F, TArgs...>::type;
 };
 
 template <typename F, typename T>
