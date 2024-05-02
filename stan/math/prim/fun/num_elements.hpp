@@ -57,7 +57,7 @@ template <typename T, require_container_t<T>* = nullptr>
 inline size_t num_elements(const std::vector<T>& v) {
   size_t size = 0;
   std::for_each(v.cbegin(), v.cend(),
-                [&size](auto&& x){ size += num_elements(x); });
+                [&size](auto&& x) { size += num_elements(x); });
   return size;
 }
 
@@ -71,9 +71,12 @@ inline size_t num_elements(const std::vector<T>& v) {
 template <typename T, require_tuple_t<T>* = nullptr>
 inline size_t num_elements(const T& v) {
   size_t size = 0;
-  math::apply([&size](auto&&... args) {
-      static_cast<void>(
-        std::initializer_list<int>{(size += num_elements(args), 0)...}); }, v);
+  math::apply(
+      [&size](auto&&... args) {
+        static_cast<void>(
+            std::initializer_list<int>{(size += num_elements(args), 0)...});
+      },
+      v);
   return size;
 }
 
