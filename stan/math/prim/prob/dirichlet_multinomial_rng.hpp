@@ -41,7 +41,7 @@ inline std::vector<int> dirichlet_multinomial_rng(
   check_positive_finite(function, "prior size variable", alpha_ref);
   check_nonnegative(function, "number of trials variables", N);
 
-  // special case N = 0 would lead to an exception thrown by multinomial_rng
+  // special case N = 0
   if (N == 0) {
     return std::vector<int>(alpha.size(), 0);
   }
