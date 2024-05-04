@@ -1991,7 +1991,7 @@ void expect_common_unary_vectorized(const F& f) {
   for (double x1 : args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   auto int_args = internal::common_int_args();
-  for (int x1 : args)
+  for (int x1 : int_args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
@@ -2022,7 +2022,7 @@ void expect_common_unary_vectorized(const F& f) {
   for (double x1 : args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   auto int_args = internal::common_int_args();
-  for (int x1 : args)
+  for (int x1 : int_args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
