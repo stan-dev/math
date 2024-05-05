@@ -17,16 +17,18 @@ endif
 
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
-  WINARM64 := $(shell echo | $(CXX) -E -dM -  | findstr __aarch64__)
   LIBRARY_SUFFIX ?= .dll
+  STR_SEARCH ?= findstr
 endif
 
 ifeq ($(OS),Darwin)
   LIBRARY_SUFFIX ?= .dylib
+  STR_SEARCH ?= grep
 endif
 
 ifeq ($(OS),Linux)
   LIBRARY_SUFFIX ?= .so
+  STR_SEARCH ?= grep
 endif
 
 ## Set default compiler
@@ -40,6 +42,11 @@ ifeq (default,$(origin CXX))
   ifeq ($(OS),Windows_NT)
     CXX := g++
   endif
+endif
+
+ARM64_CHECK := $(shell echo | $(CXX) -E -dM -  | $(STR_SEARCH) __aarch64__)
+ifneq ($(ARM64_CHECK),)
+  ARM64 = true
 endif
 
 # Detect compiler type
@@ -164,7 +171,7 @@ ifeq ($(OS),Windows_NT)
 
   make/ucrt:
     pound := \#
-    UCRT_STRING := $(shell echo '$(pound)include <windows.h>' | $(CXX) -E -dM -  | findstr _UCRT)
+    UCRT_STRING := $(shell echo '$(pound)include <windows.h>' | $(CXX) -E -dM -  | $(STR_SEARCH) _UCRT)
     ifneq (,$(UCRT_STRING))
       IS_UCRT ?= true
     else
@@ -210,6 +217,10 @@ endif
 
 ## makes reentrant version lgamma_r available from cmath
 CXXFLAGS_OS += -D_REENTRANT
+
+ifeq ($(ARM64), true)
+  CXXFLAGS_OS += -ffp-contract=off
+endif
 
 ## silence warnings occuring due to the TBB and Eigen libraries
 CXXFLAGS_WARNINGS += -Wno-ignored-attributes
@@ -275,7 +286,7 @@ endif
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,--disable-new-dtags
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
-ifeq ($(WINARM64),)
+ifneq ($(OS), Windows_NT)
   LDFLAGS_TBB += -Wl,-rpath,"$(TBB_LIB)"
 endif
 
@@ -299,7 +310,7 @@ CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
-ifeq ($(WINARM64),)
+ifneq ($(OS), Windows_NT)
   LDFLAGS_TBB += -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
 endif
 LDLIBS_TBB ?= -ltbb

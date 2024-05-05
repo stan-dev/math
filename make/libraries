@@ -141,10 +141,11 @@ ifeq (Windows_NT, $(OS))
     TBB_CXXFLAGS += -D_UCRT
   endif
   # TBB does not have assembly code for Windows ARM64, so we need to use GCC builtins
-  ifneq ($(WINARM64),)
-	TBB_CXXFLAGS += -DTBB_USE_GCC_BUILTINS
-	CXXFLAGS_TBB += -DTBB_USE_GCC_BUILTINS
-  endif
+	ifeq ($(ARM64),true)
+		TBB_CXXFLAGS += -DTBB_USE_GCC_BUILTINS
+		CXXFLAGS_TBB += -DTBB_USE_GCC_BUILTINS
+		WINARM64 = true
+	endif
 	SH_CHECK := $(shell command -v sh 2>/dev/null)
 	ifdef SH_CHECK
 		WINDOWS_HAS_SH ?= true
