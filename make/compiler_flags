@@ -123,8 +123,12 @@ CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_F
 #CPPFLAGS_GTEST ?=
 
 
-## setup compiler flags
-CXXFLAGS_LANG ?= -std=c++1y
+ifeq ($(STAN_USE_CPP14),)
+  CXXFLAGS_LANG ?= -std=c++17
+else
+  $(warning "Because STAN_USE_CPP14 is set C++14 standard is requested. This will not be possible in the next release!")
+  CXXFLAGS_LANG ?= -std=c++1y
+endif
 #CXXFLAGS_BOOST ?=
 CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
