@@ -103,8 +103,10 @@ TEST(AgradFwdNumericLimits, All_Fvar) {
   EXPECT_FALSE(std::numeric_limits<fvar<double> >::traps);
   EXPECT_FALSE(std::numeric_limits<fvar<fvar<double> > >::traps);
 
-  EXPECT_FALSE(std::numeric_limits<fvar<double> >::tinyness_before);
-  EXPECT_FALSE(std::numeric_limits<fvar<fvar<double> > >::tinyness_before);
+  EXPECT_EQ(std::numeric_limits<fvar<double> >::tinyness_before,
+            std::numeric_limits<double>::tinyness_before);
+  EXPECT_EQ(std::numeric_limits<fvar<fvar<double> > >::tinyness_before,
+            std::numeric_limits<double>::tinyness_before);
 
   EXPECT_TRUE(std::numeric_limits<fvar<double> >::round_style);
   EXPECT_TRUE(std::numeric_limits<fvar<fvar<double> > >::round_style);
