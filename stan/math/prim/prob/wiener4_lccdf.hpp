@@ -20,8 +20,7 @@ namespace internal {
  * @return log probability to reach the upper bound
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob(const T_a& a, const T_v& v_value,
-                        const T_w& w_value) {
+inline auto wiener_prob(const T_a& a, const T_v& v_value, const T_w& w_value) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
@@ -96,7 +95,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
       ans = exp(ans);
     }
   } else {
-	  return ret_t(-w);
+    return ret_t(-w);
   }
   if (fabs(ans) < INFTY) {
     return ans;
@@ -151,7 +150,7 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   // derivative of the wiener probability w.r.t. 'a' (on log-scale)
   auto prob_grad_a = -1 * wiener_prob_derivative_term(a, v, w) * v;
   if (fabs(prob_grad_a) == INFTY) {
-	prob_grad_a = ret_t(NEGATIVE_INFTY);
+    prob_grad_a = ret_t(NEGATIVE_INFTY);
   }
 
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
@@ -178,7 +177,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
   const auto prob
       = wiener_prob(a, v, w);  // maybe hand over to this function, but then
                                // wiener7_integrate_cdf has problems
-  
+
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_v = -1 * wiener_prob_derivative_term(a, v, w) * a;
   if (fabs(prob_grad_v) == INFTY) {
@@ -209,13 +208,13 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto prob
       = wiener_prob(a, v, w);  // maybe hand over to this function, but then
                                // wiener7_integrate_cdf has problems
-  
+
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_w = 1 / w;
   if (v > 0) {
     const auto exponent = -2.0 * v * a * w;
-    prob_grad_w = exp(LOG_TWO + exponent + log(fabs(v)) + log(a)
-               - log1m_exp(exponent));
+    prob_grad_w
+        = exp(LOG_TWO + exponent + log(fabs(v)) + log(a) - log1m_exp(exponent));
   } else if (v < 0) {
     const auto exponent = 2.0 * v * a * w;
     prob_grad_w = exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent));

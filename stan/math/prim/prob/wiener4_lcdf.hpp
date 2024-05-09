@@ -668,24 +668,24 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = rexp(log_probability_distribution(a, v, w));	
-	
-	// Calculate the probability term 'P' on log scale
-  auto dav = -1 / (1.0 - w);
-  if (v != 0) {
-	  auto nearly_one = ret_t(1.0 - 1.0e-6);
-	  const auto sign_v = (v < 0) ? 1 : -1;
-	  const auto sign_two_va_one_minus_w = sign_v * (2.0 * v * a * (1.0 - w));
-	  const auto exp_arg = exp(sign_two_va_one_minus_w);
-	  if (exp_arg >= nearly_one) {
-		dav = -1 / (1.0 - w);
-	  } else {
-		  auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1p(-exp_arg);
-		  prob = (v < 0) ? prob + sign_two_va_one_minus_w : prob;
-		  dav = -exp(prob);
-	  }
-  }
-  
+    const auto prob = rexp(log_probability_distribution(a, v, w));
+
+    // Calculate the probability term 'P' on log scale
+    auto dav = -1 / (1.0 - w);
+    if (v != 0) {
+      auto nearly_one = ret_t(1.0 - 1.0e-6);
+      const auto sign_v = (v < 0) ? 1 : -1;
+      const auto sign_two_va_one_minus_w = sign_v * (2.0 * v * a * (1.0 - w));
+      const auto exp_arg = exp(sign_two_va_one_minus_w);
+      if (exp_arg >= nearly_one) {
+        dav = -1 / (1.0 - w);
+      } else {
+        auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1p(-exp_arg);
+        prob = (v < 0) ? prob + sign_two_va_one_minus_w : prob;
+        dav = -exp(prob);
+      }
+    }
+
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv = dav;
     prob_deriv *= prob;
