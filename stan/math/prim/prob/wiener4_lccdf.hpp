@@ -204,12 +204,13 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
 inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob
       = wiener_prob(a, v, w);  // maybe hand over to this function, but then
                                // wiener7_integrate_cdf has problems
 
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
-  auto prob_grad_w = 1 / w;
+  auto prob_grad_w = ret_t(1 / w);
   if (v > 0) {
     const auto exponent = -2.0 * v * a * w;
     prob_grad_w

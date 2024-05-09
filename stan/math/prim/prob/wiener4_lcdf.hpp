@@ -671,7 +671,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     const auto prob = rexp(log_probability_distribution(a, v, w));
 
     // Calculate the probability term 'P' on log scale
-    auto dav = -1 / (1.0 - w);
+    auto dav = ret_t(-1 / (1.0 - w));
     if (v != 0) {
       auto nearly_one = ret_t(1.0 - 1.0e-6);
       const auto sign_v = (v < 0) ? 1 : -1;
