@@ -246,33 +246,6 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
 }
 
 /**
- * Calculate the probability term 'P' on log scale
- *
- * @param a The boundary separation
- * @param v The drift rate
- * @param w The relative starting point
- * @return 'P' term
- */
-template <typename T_a, typename T_w, typename T_v>
-inline auto log_probability_GradW(const T_a& a, const T_v& v,
-                                  const T_w& w) noexcept {
-  using ret_t = return_type_t<T_a, T_w, T_v>;
-  auto nearly_one = ret_t(1.0 - 1.0e-6);
-  if (fabs(v) == 0.0) {
-    return ret_t(-1 / (1.0 - w));
-  }
-  const auto sign_v = (v < 0) ? 1 : -1;
-  const auto sign_two_va_one_minus_w = sign_v * (2.0 * v * a * (1.0 - w));
-  const auto exp_arg = exp(sign_two_va_one_minus_w);
-  if (exp_arg >= nearly_one) {
-    return ret_t(-1 / (1.0 - w));
-  }
-  auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1p(-exp_arg);
-  prob = (v < 0) ? prob + sign_two_va_one_minus_w : prob;
-  return -exp(prob);
-}
-
-/**
  * Calculate the wiener4 distribution
  *
  * @tparam NaturalScale Whether to return the distribution on natural or
@@ -695,8 +668,24 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = rexp(log_probability_distribution(a, v, w));
-    const auto dav = log_probability_GradW(a, v, w);
+    const auto prob = rexp(log_probability_distribution(a, v, w));	
+	
+	// Calculate the probability term 'P' on log scale
+  auto dav = -1 / (1.0 - w);
+  if (v != 0) {
+	  auto nearly_one = ret_t(1.0 - 1.0e-6);
+	  const auto sign_v = (v < 0) ? 1 : -1;
+	  const auto sign_two_va_one_minus_w = sign_v * (2.0 * v * a * (1.0 - w));
+	  const auto exp_arg = exp(sign_two_va_one_minus_w);
+	  if (exp_arg >= nearly_one) {
+		dav = -1 / (1.0 - w);
+	  } else {
+		  auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1p(-exp_arg);
+		  prob = (v < 0) ? prob + sign_two_va_one_minus_w : prob;
+		  dav = -exp(prob);
+	  }
+  }
+  
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv = dav;
     prob_deriv *= prob;

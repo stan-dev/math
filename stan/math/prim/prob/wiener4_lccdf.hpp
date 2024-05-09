@@ -21,7 +21,7 @@ namespace internal {
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob(const T_a& a, const T_v& v_value,
-                        const T_w& w_value) noexcept {
+                        const T_w& w_value) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto v = -v_value;
   const auto w = 1 - w_value;
@@ -59,9 +59,6 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
   const auto v = -v_value;
   const auto w = 1 - w_value;
 
-  if (fabs(v) == 0.0) {
-    return ret_t(-w);
-  }
   if (v < 0) {
     const auto exponent_with_1mw = 2.0 * v * a * (1.0 - w);
     const auto exponent_with_w = 2 * a * v * w;
@@ -81,7 +78,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
       ans += log_diff_exp(diff_term, log_w);
       ans = -exp(ans);
     }
-  } else {
+  } else if (v > 0) {
     const auto exponent_with_1mw = -2.0 * v * a * (1.0 - w);
     const auto exponent = (-2 * a * v);
     if ((exponent_with_1mw >= exponent_m1) || (exponent >= exponent_m1)) {
@@ -98,6 +95,8 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
       ans += log_diff_exp(diff_term, log_w);
       ans = exp(ans);
     }
+  } else {
+	  return ret_t(-w);
   }
   if (fabs(ans) < INFTY) {
     return ans;
@@ -105,93 +104,6 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
     return ret_t(NEGATIVE_INFTY);
   }
   return ans;
-}
-
-/**
- * Calculate the derivative of the wiener probability w.r.t. 'a' (on log-scale)
- *
- * @tparam T_a type of boundary
- * @tparam T_w type of relative starting point
- * @tparam T_v type of drift rate
- *
- * @param a The boundary separation
- * @param w The relative starting point
- * @param v The drift rate
- * @return Gradient w.r.t. a
- */
-template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob_grad_a(const T_a& a, const T_v& v,
-                               const T_w& w) noexcept {
-  using ret_t = return_type_t<T_a, T_w, T_v>;
-  if (fabs(v) == 0.0) {
-    return ret_t(0.0);
-  }
-  const auto deriv_term = wiener_prob_derivative_term(a, v, w);
-  const auto ans = -deriv_term * v;
-  if (fabs(ans) < INFTY) {
-    return ans;
-  } else {
-    return (ret_t(NEGATIVE_INFTY));
-  }
-  return ans;
-}
-
-/**
- * Calculate the derivative of the wiener probability w.r.t. 'v' (on log-scale)
- *
- * @tparam T_a type of boundary
- * @tparam T_w type of relative starting point
- * @tparam T_v type of drift rate
- *
- * @param a The boundary separation
- * @param w The relative starting point
- * @param v The drift rate
- * @return Gradient w.r.t. v
- */
-template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob_grad_v(const T_a& a, const T_v& v,
-                               const T_w& w) noexcept {
-  using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto deriv_term = wiener_prob_derivative_term(a, v, w);
-  const auto ans = -1 * deriv_term * a;
-  if (fabs(ans) < INFTY) {
-    return (ans);
-  } else {
-    return (ret_t(NEGATIVE_INFTY));
-  }
-  return ans;
-}
-
-/**
- * Calculate the derivative of the wiener probability w.r.t. 'w' (on log-scale)
- *
- * @tparam T_a type of boundary
- * @tparam T_w type of relative starting point
- * @tparam T_v type of drift rate
- *
- * @param a The boundary separation
- * @param w_value The relative starting point
- * @param v_value The drift rate
- * @return Gradient w.r.t. w
- */
-template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob_grad_w(const T_a& a, const T_v& v_value,
-                               const T_w& w_value) noexcept {
-  using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto v = -v_value;
-  const auto w = 1 - w_value;
-  if (fabs(v) == 0.0) {
-    return ret_t(1 / (1.0 - w));
-  }
-
-  if (v < 0) {
-    const auto exponent = 2.0 * v * a * (1.0 - w);
-    return exp(LOG_TWO + exponent + log(fabs(v)) + log(a)
-               - log1m_exp(exponent));
-  } else {
-    const auto exponent = -2.0 * v * a * (1.0 - w);
-    return exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent));
-  }
 }
 
 /**
@@ -233,8 +145,15 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
 inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob = wiener_prob(a, v, w);
-  const auto prob_grad_a = wiener_prob_grad_a(a, v, w);
+
+  // derivative of the wiener probability w.r.t. 'a' (on log-scale)
+  auto prob_grad_a = -1 * wiener_prob_derivative_term(a, v, w) * v;
+  if (fabs(prob_grad_a) == INFTY) {
+	prob_grad_a = ret_t(NEGATIVE_INFTY);
+  }
+
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
   return prob_grad_a * exp(prob) - cdf_grad_a;
 }
@@ -255,10 +174,17 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
 inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob
       = wiener_prob(a, v, w);  // maybe hand over to this function, but then
                                // wiener7_integrate_cdf has problems
-  const auto prob_grad_v = wiener_prob_grad_v(a, v, w);
+  
+  // derivative of the wiener probability w.r.t. 'v' (on log-scale)
+  auto prob_grad_v = -1 * wiener_prob_derivative_term(a, v, w) * a;
+  if (fabs(prob_grad_v) == INFTY) {
+    prob_grad_v = ret_t(NEGATIVE_INFTY);
+  }
+
   const auto cdf_grad_v = wiener4_cdf_grad_v(y, a, v, w, cdf, err);
   return prob_grad_v * exp(prob) - cdf_grad_v;
 }
@@ -279,10 +205,22 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
 inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
+  using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob
       = wiener_prob(a, v, w);  // maybe hand over to this function, but then
                                // wiener7_integrate_cdf has problems
-  const auto prob_grad_w = wiener_prob_grad_w(a, v, w);
+  
+  // derivative of the wiener probability w.r.t. 'v' (on log-scale)
+  auto prob_grad_w = 1 / w;
+  if (v > 0) {
+    const auto exponent = -2.0 * v * a * w;
+    prob_grad_w = exp(LOG_TWO + exponent + log(fabs(v)) + log(a)
+               - log1m_exp(exponent));
+  } else if (v < 0) {
+    const auto exponent = 2.0 * v * a * w;
+    prob_grad_w = exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent));
+  }
+
   const auto cdf_grad_w = wiener4_cdf_grad_w(y, a, v, w, cdf, err);
   return prob_grad_w * exp(prob) - cdf_grad_w;
 }
