@@ -108,8 +108,10 @@ TEST(AgradMixNumericLimits, All_Fvar) {
   EXPECT_FALSE(std::numeric_limits<fvar<var> >::traps);
   EXPECT_FALSE(std::numeric_limits<fvar<fvar<var> > >::traps);
 
-  EXPECT_FALSE(std::numeric_limits<fvar<var> >::tinyness_before);
-  EXPECT_FALSE(std::numeric_limits<fvar<fvar<var> > >::tinyness_before);
+  EXPECT_EQ(std::numeric_limits<fvar<var> >::tinyness_before,
+            std::numeric_limits<double>::tinyness_before);
+  EXPECT_EQ(std::numeric_limits<fvar<fvar<var> > >::tinyness_before,
+            std::numeric_limits<double>::tinyness_before);
 
   EXPECT_TRUE(std::numeric_limits<fvar<var> >::round_style);
   EXPECT_TRUE(std::numeric_limits<fvar<fvar<var> > >::round_style);

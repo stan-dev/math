@@ -183,6 +183,7 @@
 #include <stan/math/rev/fun/tgamma.hpp>
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/rev/fun/to_var_value.hpp>
 #include <stan/math/rev/fun/to_vector.hpp>
 #include <stan/math/rev/fun/trace.hpp>

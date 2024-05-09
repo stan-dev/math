@@ -2,26 +2,21 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(RevMath, grad_2F2) {
+TEST(PrimMath, grad_2F2) {
   using stan::math::grad_pFq;
-  using stan::math::var;
+  using stan::math::hypergeometric_pFq;
   using stan::math::vector_d;
-  using stan::math::vector_v;
 
-  vector_v a_v(2);
   vector_d a_d(2);
-  a_v << 4, 2;
   a_d << 4, 2;
 
-  vector_v b_v(2);
   vector_d b_d(2);
-  b_v << 6, 3;
   b_d << 6, 3;
 
-  var z_v = 4;
   double z_d = 4;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq<true, true, true>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
@@ -31,51 +26,53 @@ TEST(RevMath, grad_2F2) {
 
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_v, b_d, z_d);
+  grad_tuple = grad_pFq<true, false, false>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_d, b_v, z_d);
+  grad_tuple = grad_pFq<false, true, false>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_d, b_d, z_v);
+  grad_tuple = grad_pFq<false, false, true>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_v, b_v, z_d);
+  grad_tuple = grad_pFq<true, true, false>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
 
-  grad_tuple = grad_pFq(a_v, b_d, z_v);
+  grad_tuple = grad_pFq<true, false, true>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(3.924636646666071, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(6.897245961898751, std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 
-  grad_tuple = grad_pFq(a_d, b_v, z_v);
+  grad_tuple = grad_pFq<false, true, true>(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(-2.775051002566842, std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
 }
-TEST(RevMath, grad_2F3) {
+
+TEST(PrimMath, grad_2F3) {
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 2, 3;
-  vector_v b_v(3);
-  b_v << 2, 4, 5;
-  var z_v = 1;
+  vector_d a_d(2);
+  a_d << 2, 3;
+  vector_d b_d(3);
+  b_d << 2, 4, 5;
+  double z_d = 1;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(0.08377717301140296, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(0.05615450733193106, std::get<0>(grad_tuple)[1]);
@@ -87,18 +84,19 @@ TEST(RevMath, grad_2F3) {
   EXPECT_FLOAT_EQ(0.1712340452215524, std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_4F3) {
+TEST(PrimMath, grad_4F3) {
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(4);
-  a_v << 1, 2, 3, 4;
-  vector_v b_v(3);
-  b_v << 5, 6, 7;
-  var z_v = 1;
+  vector_d a_d(4);
+  a_d << 1, 2, 3, 4;
+  vector_d b_d(3);
+  b_d << 5, 6, 7;
+  double z_d = 1;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(0.1587098625610631, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(0.08249338029396848, std::get<0>(grad_tuple)[1]);
@@ -112,20 +110,21 @@ TEST(RevMath, grad_4F3) {
   EXPECT_FLOAT_EQ(0.1800529055890911, std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_2F1_derivs_match) {
+TEST(PrimMath, grad_2F1_derivs_match) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 1, 1;
-  vector_v b_v(1);
-  b_v << 1;
-  var z_v = 0.6;
+  vector_d a_d(2);
+  a_d << 1, 1;
+  vector_d b_d(1);
+  b_d << 1;
+  double z_d = 0.6;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -133,20 +132,21 @@ TEST(RevMath, grad_2F1_derivs_match) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_2) {
+TEST(PrimMath, grad2F1_2) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 1, 31;
-  vector_v b_v(1);
-  b_v << 41;
-  var z_v = 1;
+  vector_d a_d(2);
+  a_d << 1, 31;
+  vector_d b_d(1);
+  b_d << 41;
+  double z_d = 1;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -154,20 +154,21 @@ TEST(RevMath, grad2F1_2) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_3) {
+TEST(PrimMath, grad2F1_3) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 1.0, -2.1;
-  vector_v b_v(1);
-  b_v << 41.0;
-  var z_v = 1.0;
+  vector_d a_d(2);
+  a_d << 1.0, -2.1;
+  vector_d b_d(1);
+  b_d << 41.0;
+  double z_d = 1.0;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -175,20 +176,21 @@ TEST(RevMath, grad2F1_3) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_6) {
+TEST(PrimMath, grad2F1_6) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 1, -0.5;
-  vector_v b_v(1);
-  b_v << 10.6;
-  var z_v = 0.3;
+  vector_d a_d(2);
+  a_d << 1, -0.5;
+  vector_d b_d(1);
+  b_d << 10.6;
+  double z_d = 0.3;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -196,20 +198,21 @@ TEST(RevMath, grad2F1_6) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_7) {
+TEST(PrimMath, grad2F1_7) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 1, -0.5;
-  vector_v b_v(1);
-  b_v << 10;
-  var z_v = 0.3;
+  vector_d a_d(2);
+  a_d << 1, -0.5;
+  vector_d b_d(1);
+  b_d << 10;
+  double z_d = 0.3;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -217,20 +220,21 @@ TEST(RevMath, grad2F1_7) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_8) {
+TEST(PrimMath, grad2F1_8) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << -0.5, -4.5;
-  vector_v b_v(1);
-  b_v << 11;
-  var z_v = 0.3;
+  vector_d a_d(2);
+  a_d << -0.5, -4.5;
+  vector_d b_d(1);
+  b_d << 11;
+  double z_d = 0.3;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -238,20 +242,21 @@ TEST(RevMath, grad2F1_8) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_9) {
+TEST(PrimMath, grad2F1_9) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << -0.5, -4.5;
-  vector_v b_v(1);
-  b_v << -3.2;
-  var z_v = 0.9;
+  vector_d a_d(2);
+  a_d << -0.5, -4.5;
+  vector_d b_d(1);
+  b_d << -3.2;
+  double z_d = 0.9;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
@@ -259,65 +264,67 @@ TEST(RevMath, grad2F1_9) {
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad2F1_10) {
+TEST(PrimMath, grad2F1_10) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 2, 1;
-  vector_v b_v(1);
-  b_v << 2;
-  var z_v = 0.4;
+  vector_d a_d(2);
+  a_d << 2, 1;
+  vector_d b_d(1);
+  b_d << 2;
+  double z_d = 0.4;
 
-  auto grad_2F1_tuple = grad_2F1(a_v[0], a_v[1], b_v[0], z_v);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
 }
-/*
-TEST(RevMath, grad2F1_11) {
+
+TEST(PrimMath, grad2F1_11) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 3.70975, 1;
-  vector_v b_v(1);
-  b_v << 2.70975;
-  var z_v = 0.999696;
+  vector_d a_d(2);
+  a_d << 3.70975, 1;
+  vector_d b_d(1);
+  b_d << 2.70975;
+  double z_d = 0.999696;
 
-  double std::get<0>(grad_2F1_tuple);
-  double std::get<2>(grad_2F1_tuple);
-
-  grad_2F1(std::get<0>(grad_2F1_tuple), std::get<2>(grad_2F1_tuple), a_v[0],
-a_v[1], b_v[0], z_v); auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto grad_2F1_tuple = grad_2F1<true>(a_d[0], a_d[1], b_d[0], z_d);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(std::get<0>(grad_2F1_tuple), std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(std::get<1>(grad_2F1_tuple), std::get<0>(grad_tuple)[1]);
   EXPECT_FLOAT_EQ(std::get<2>(grad_2F1_tuple), std::get<1>(grad_tuple)[0]);
-}*/
+  EXPECT_FLOAT_EQ(std::get<3>(grad_2F1_tuple), std::get<2>(grad_tuple));
+}
 
-TEST(RevMath, F32_converges_by_z) {
+TEST(PrimMath, F32_converges_by_z) {
   using stan::math::grad_F32;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(3);
-  a_v << 1.0, 1.0, 1.0;
-  vector_v b_v(2);
-  b_v << 1.0, 1.0;
-  var z_v = 0.6;
+  vector_d a_d(3);
+  a_d << 1.0, 1.0, 1.0;
+  vector_d b_d(2);
+  b_d << 1.0, 1.0;
+  double z_d = 0.6;
 
   double g_calc[6];
 
   grad_F32(g_calc, 1.0, 1.0, 1.0, 1.0, 1.0, 0.6, 1e-10);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(g_calc[0], std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(g_calc[1], std::get<0>(grad_tuple)[1]);
@@ -327,22 +334,23 @@ TEST(RevMath, F32_converges_by_z) {
   EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_F32_double_sign_flip_1) {
+TEST(PrimMath, grad_F32_double_sign_flip_1) {
   using stan::math::grad_F32;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(3);
-  a_v << 1.0, -0.5, -2.5;
-  vector_v b_v(2);
-  b_v << 10.0, 1.0;
-  var z_v = 0.3;
+  vector_d a_d(3);
+  a_d << 1.0, -0.5, -2.5;
+  vector_d b_d(2);
+  b_d << 10.0, 1.0;
+  double z_d = 0.3;
 
   double g_calc[6];
 
   grad_F32(g_calc, 1.0, -.5, -2.5, 10.0, 1.0, 0.3, 1e-10);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(g_calc[0], std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(g_calc[1], std::get<0>(grad_tuple)[1]);
@@ -352,22 +360,23 @@ TEST(RevMath, grad_F32_double_sign_flip_1) {
   EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_F32_double_sign_flip_2) {
+TEST(PrimMath, grad_F32_double_sign_flip_2) {
   using stan::math::grad_F32;
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(3);
-  a_v << 1.0, -0.5, -4.5;
-  vector_v b_v(2);
-  b_v << 10.0, 1.0;
-  var z_v = 0.3;
+  vector_d a_d(3);
+  a_d << 1.0, -0.5, -4.5;
+  vector_d b_d(2);
+  b_d << 10.0, 1.0;
+  double z_d = 0.3;
 
   double g_calc[6];
 
   grad_F32(g_calc, 1.0, -.5, -4.5, 10.0, 1.0, 0.3, 1e-10);
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(g_calc[0], std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(g_calc[1], std::get<0>(grad_tuple)[1]);
@@ -377,18 +386,19 @@ TEST(RevMath, grad_F32_double_sign_flip_2) {
   EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_2F1_negative_z) {
+TEST(PrimMath, grad_2F1_negative_z) {
   using stan::math::grad_pFq;
-  using stan::math::var;
-  using stan::math::vector_v;
+  using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
 
-  vector_v a_v(2);
-  a_v << 3.70975, 1.0;
-  vector_v b_v(1);
-  b_v << 2.70975;
-  var z_v = -0.2;
+  vector_d a_d(2);
+  a_d << 3.70975, 1.0;
+  vector_d b_d(1);
+  b_d << 2.70975;
+  double z_d = -0.2;
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
   EXPECT_FLOAT_EQ(-0.0488658806159776, std::get<0>(grad_tuple)[0]);
   EXPECT_FLOAT_EQ(-0.193844936204681, std::get<0>(grad_tuple)[1]);
@@ -396,31 +406,27 @@ TEST(RevMath, grad_2F1_negative_z) {
   EXPECT_FLOAT_EQ(0.865295247272367, std::get<2>(grad_tuple));
 }
 
-TEST(RevMath, grad_3F2_cross_zero) {
-  using stan::math::grad_F32;
+TEST(PrimMath, grad_3F2_cross_zero) {
   using stan::math::grad_pFq;
-  using stan::math::hypergeometric_3F2;
-  using stan::math::var;
+  using stan::math::hypergeometric_pFq;
   using stan::math::vector_d;
-  using stan::math::vector_v;
 
-  vector_v a_v(3);
-  a_v << 1, 1, -1;
+  vector_d a_d(3);
+  a_d << 1, 1, -1;
 
-  vector_v b_v(2);
-  b_v << 2, 2;
+  vector_d b_d(2);
+  b_d << 2, 2;
 
-  var z_v = 0.292893;
+  double z_d = 0.292893;
 
-  double g_calc[6];
-  grad_F32(g_calc, 1.0, 1.0, -1.0, 2.0, 2.0, 0.292893);
+  auto pfq_val = hypergeometric_pFq(a_d, b_d, z_d);
+  auto grad_tuple = grad_pFq(pfq_val, a_d, b_d, z_d);
 
-  auto grad_tuple = grad_pFq(a_v, b_v, z_v);
-
-  EXPECT_FLOAT_EQ(g_calc[0], std::get<0>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_calc[1], std::get<0>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_calc[2], std::get<0>(grad_tuple)[2]);
-  EXPECT_FLOAT_EQ(g_calc[3], std::get<1>(grad_tuple)[0]);
-  EXPECT_FLOAT_EQ(g_calc[4], std::get<1>(grad_tuple)[1]);
-  EXPECT_FLOAT_EQ(g_calc[5], std::get<2>(grad_tuple));
+  // Values from Mathematica
+  EXPECT_FLOAT_EQ(-0.0732232500000000, std::get<0>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(-0.0732232500000000, std::get<0>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(0.0681675749282880, std::get<0>(grad_tuple)[2]);
+  EXPECT_FLOAT_EQ(0.0366116250000000, std::get<1>(grad_tuple)[0]);
+  EXPECT_FLOAT_EQ(0.0366116250000000, std::get<1>(grad_tuple)[1]);
+  EXPECT_FLOAT_EQ(-0.250000000000000, std::get<2>(grad_tuple));
 }
