@@ -116,24 +116,24 @@ class profile_info {
 
 using profile_key = std::pair<std::string, std::thread::id>;
 
-
 namespace internal {
-  struct hash_profile_key {
-    std::size_t operator()(const profile_key& key) const {
-      return std::hash<std::string>()(key.first)
-             ^ std::hash<std::thread::id>()(key.second);
-    }
-  };
-  struct equal_profile_key {
-    bool operator()(const profile_key& lhs, const profile_key& rhs) const {
-      return lhs.first == rhs.first && lhs.second == rhs.second;
-    }
-  };
+struct hash_profile_key {
+  std::size_t operator()(const profile_key& key) const {
+    return std::hash<std::string>()(key.first)
+           ^ std::hash<std::thread::id>()(key.second);
+  }
+};
+struct equal_profile_key {
+  bool operator()(const profile_key& lhs, const profile_key& rhs) const {
+    return lhs.first == rhs.first && lhs.second == rhs.second;
+  }
+};
 
-}
+}  // namespace internal
 
-using profile_map = tbb::concurrent_unordered_map<profile_key,
-  profile_info, internal::hash_profile_key, internal::equal_profile_key>;
+using profile_map = tbb::concurrent_unordered_map<profile_key, profile_info,
+                                                  internal::hash_profile_key,
+                                                  internal::equal_profile_key>;
 
 /**
  * Profiles C++ lines where the object is in scope.
