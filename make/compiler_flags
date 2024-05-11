@@ -161,6 +161,7 @@ ifeq ($(OS),Windows_NT)
   CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
+  CPPFLAGS_OS += -D_GLIBCXX11_USE_C99_COMPLEX
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
