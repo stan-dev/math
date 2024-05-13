@@ -3,9 +3,10 @@
 #include <stan/math/rev/fun/eigenvectors_sym.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, eigenvectorsSym) {
+TEST_F(AgradRev, eigenvectorsSym) {
   Eigen::MatrixXd a(4, 4);
   // Random symmetric matrix
   a << 1.8904, 0.7204, -0.1599, 1.2028, 0.7204, 7.3394, 2.0895, -0.6151,

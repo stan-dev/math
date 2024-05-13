@@ -14,7 +14,7 @@ namespace unit {
  *
  * @param[in] a Matrix to test.
  */
-void expect_symmetric(const Eigen::MatrixXd& a) {
+inline void expect_symmetric(const Eigen::MatrixXd& a) {
   for (int j = 1; j < a.cols(); ++j)
     for (int i = 0; i < j; ++i)
       EXPECT_EQ(a(i, j), a(j, i)) << "failed symmetry at " << i << ", " << j;
@@ -31,7 +31,7 @@ void expect_symmetric(const Eigen::MatrixXd& a) {
  * @return Random k x k symmetric, positive-definite matrix.
  */
 template <typename RNG>
-Eigen::MatrixXd spd_rng(int k, RNG& rng) {
+inline Eigen::MatrixXd spd_rng(int k, RNG& rng) {
   using Eigen::MatrixXd;
   using stan::math::normal_rng;
   MatrixXd sigma = MatrixXd::Zero(k, k);

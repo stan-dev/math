@@ -147,7 +147,7 @@ struct grouped_count_lpdf {
 };
 
 template <typename T1, typename T2, typename... Args>
-void test_slices(T1 result, T2&& vec_value, Args&&... args) {
+inline void test_slices(T1 result, T2&& vec_value, Args&&... args) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 

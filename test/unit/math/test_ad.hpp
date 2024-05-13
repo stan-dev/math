@@ -34,7 +34,7 @@ namespace internal {
  * @return value
  */
 template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-auto eval(T x) {
+inline auto eval(T x) {
   return x;
 }
 
@@ -47,7 +47,7 @@ auto eval(T x) {
  * @return value
  */
 template <typename T>
-auto eval(const std::complex<T>& x) {
+inline auto eval(const std::complex<T>& x) {
   return x;
 }
 
@@ -58,7 +58,7 @@ auto eval(const std::complex<T>& x) {
  * @param[in] x value
  * @return value
  */
-auto eval(const stan::math::var& x) { return x; }
+inline auto eval(const stan::math::var& x) { return x; }
 
 /**
  * Evaluates all matrix expression templates, which is a no-op for
@@ -69,7 +69,7 @@ auto eval(const stan::math::var& x) { return x; }
  * @return value
  */
 template <typename T>
-auto eval(const stan::math::fvar<T>& x) {
+inline auto eval(const stan::math::fvar<T>& x) {
   return x;
 }
 
@@ -82,7 +82,7 @@ auto eval(const stan::math::fvar<T>& x) {
  * @return evaluated expression
  */
 template <typename Derived>
-auto eval(const Eigen::EigenBase<Derived>& x) {
+inline auto eval(const Eigen::EigenBase<Derived>& x) {
   return x.derived().eval();
 }
 
@@ -94,7 +94,7 @@ auto eval(const Eigen::EigenBase<Derived>& x) {
  * @return vector of evaluated expressions
  */
 template <typename T>
-auto eval(const std::vector<T>& x) {
+inline auto eval(const std::vector<T>& x) {
   using T_res = decltype(eval(std::declval<T>()));
   std::vector<T_res> res;
   for (auto& i : x) {
@@ -122,7 +122,7 @@ auto eval(const std::vector<T>& x) {
  * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
-void test_gradient(const ad_tolerances& tols, const F& f,
+inline void test_gradient(const ad_tolerances& tols, const F& f,
                    const Eigen::VectorXd& x, double fx,
                    bool test_derivs = true) {
   Eigen::VectorXd grad_ad;
@@ -164,7 +164,7 @@ void test_gradient(const ad_tolerances& tols, const F& f,
  * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
-void test_gradient_fvar(const ad_tolerances& tols, const F& f,
+inline void test_gradient_fvar(const ad_tolerances& tols, const F& f,
                         const Eigen::VectorXd& x, double fx,
                         bool test_derivs = true) {
   Eigen::VectorXd grad_ad;
@@ -205,7 +205,7 @@ void test_gradient_fvar(const ad_tolerances& tols, const F& f,
  * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
-void test_hessian_fvar(const ad_tolerances& tols, const F& f,
+inline void test_hessian_fvar(const ad_tolerances& tols, const F& f,
                        const Eigen::VectorXd& x, double fx,
                        bool test_derivs = true) {
   double fx_ad;
@@ -251,7 +251,7 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
  * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
-void test_hessian(const ad_tolerances& tols, const F& f,
+inline void test_hessian(const ad_tolerances& tols, const F& f,
                   const Eigen::VectorXd& x, double fx,
                   bool test_derivs = true) {
   double fx_ad;
@@ -296,7 +296,7 @@ void test_hessian(const ad_tolerances& tols, const F& f,
  * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
-void test_grad_hessian(const ad_tolerances& tols, const F& f,
+inline void test_grad_hessian(const ad_tolerances& tols, const F& f,
                        const Eigen::VectorXd& x, double fx,
                        bool test_derivs = true) {
   double fx_ad;
@@ -339,7 +339,7 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
  * @param x argument to test
  */
 template <typename G>
-void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
+inline void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
                            const Eigen::VectorXd& x) {
   double gx = g(x);
   test_gradient(tols, g, x, gx);
@@ -364,7 +364,7 @@ void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
  * @param name_of_T name of type of exception expected
  */
 template <typename T, typename F>
-void expect_throw(const F& f, const Eigen::VectorXd& x,
+inline void expect_throw(const F& f, const Eigen::VectorXd& x,
                   const std::string& name_of_T) {
   Eigen::Matrix<T, -1, 1> x_t(x.rows());
   for (int i = 0; i < x.rows(); ++i)
@@ -387,7 +387,7 @@ void expect_throw(const F& f, const Eigen::VectorXd& x,
  * @param x argument to test
  */
 template <typename F>
-void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
+inline void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_throw<double>(f, x, "double");
@@ -409,7 +409,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  * @param x argument to evaluate
  */
 template <typename F>
-void expect_all_throw(const F& f, double x1) {
+inline void expect_all_throw(const F& f, double x1) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
@@ -427,7 +427,7 @@ void expect_all_throw(const F& f, double x1) {
  * @param x2 second argument
  */
 template <typename F>
-void expect_all_throw(const F& f, double x1, double x2) {
+inline void expect_all_throw(const F& f, double x1, double x2) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
@@ -446,7 +446,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
  * @param x3 third argument
  */
 template <typename F>
-void expect_all_throw(const F& f, double x1, double x2, double x3) {
+inline void expect_all_throw(const F& f, double x1, double x2, double x3) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
@@ -476,7 +476,7 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
  * @param xs sequence of arguments with double-based scalars
  */
 template <typename F, typename G, typename... Ts>
-void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
+inline void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
                       const Eigen::VectorXd& x, Ts... xs) {
   using stan::math::serialize;
   auto h
@@ -509,7 +509,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  * @param x argument to test
  */
 template <typename F, typename T>
-void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
+inline void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
   using stan::math::to_deserializer;
@@ -538,7 +538,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
  * @param x argument to test
  */
 template <typename F>
-void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
+inline void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   double x_dbl = static_cast<double>(x);
 
   // if f throws on int, must throw everywhere with double
@@ -572,7 +572,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
  * @param x2 second argument
  */
 template <typename F, typename T1, typename T2>
-void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
@@ -604,7 +604,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
 }
 
 template <typename F, typename T2>
-void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -626,7 +626,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
 }
 
 template <typename F, typename T1>
-void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -648,7 +648,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
 }
 
 template <typename F>
-void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
@@ -687,7 +687,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
  * @param x3 third argument
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, const T3& x3) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
@@ -756,7 +756,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 }
 
 template <typename F, typename T3>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
@@ -785,7 +785,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
 }
 
 template <typename F, typename T2, typename T3>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
@@ -809,7 +809,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 }
 
 template <typename F, typename T1, typename T3>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
@@ -833,7 +833,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
 }
 
 template <typename F, typename T1, typename T2>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
@@ -857,7 +857,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 }
 
 template <typename F, typename T2>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
   try {
     f(x1, x2, x3);
@@ -886,7 +886,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 }
 
 template <typename F, typename T1>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
   try {
     f(x1, x2, x3);
@@ -915,7 +915,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
 }
 
 template <typename F>
-void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    int x3) {
   // test exception behavior; other exception cases tested recursively
   try {
@@ -956,7 +956,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
  *
  * @return non-zero arguments
  */
-const std::vector<double>& common_nonzero_args() {
+inline const std::vector<double>& common_nonzero_args() {
   static const std::vector<double> common_nz_args{
       -1.3,
       0.49,
@@ -974,18 +974,18 @@ const std::vector<double>& common_nonzero_args() {
  *
  * @return sequence of common scalar arguments to test
  */
-std::vector<double> common_args() {
+inline std::vector<double> common_args() {
   auto result = common_nonzero_args();
   result.push_back(0);
   return result;
 }
 
-std::vector<int> common_nonzero_int_args() {
+inline std::vector<int> common_nonzero_int_args() {
   static const std::vector<int> args{-1, 1};
   return args;
 }
 
-std::vector<int> common_int_args() {
+inline std::vector<int> common_int_args() {
   std::vector<int> args = common_nonzero_int_args();
   args.push_back(0);
   return args;
@@ -1015,7 +1015,7 @@ std::vector<int> common_int_args() {
  * @param x2 second value being tested
  */
 template <typename F, typename T1, typename T2>
-void expect_comparison(const F& f, const T1& x1, const T2& x2) {
+inline void expect_comparison(const F& f, const T1& x1, const T2& x2) {
   using stan::math::fvar;
   using stan::math::var;
   typedef var v;
@@ -1049,17 +1049,17 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 }  // namespace internal
 
 template <typename F>
-void expect_all_throw(const F& f, double x) {
+inline void expect_all_throw(const F& f, double x) {
   internal::expect_all_throw(f, x);
 }
 
 template <typename F>
-void expect_all_throw(const F& f, double x1, double x2) {
+inline void expect_all_throw(const F& f, double x1, double x2) {
   internal::expect_all_throw(f, x1, x2);
 }
 
 template <typename F>
-void expect_all_throw(const F& f, double x1, double x2, double x3) {
+inline void expect_all_throw(const F& f, double x1, double x2, double x3) {
   internal::expect_all_throw(f, x1, x2, x3);
 }
 
@@ -1075,7 +1075,7 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
  * @param x value to test
  */
 template <typename F, typename T>
-void expect_value(const F& f, const T& x) {
+inline void expect_value(const F& f, const T& x) {
   using stan::math::fvar;
   using stan::math::var;
   typedef var v;
@@ -1106,7 +1106,7 @@ void expect_value(const F& f, const T& x) {
  * @param x1 second argument to test
  */
 template <typename F, typename T1, typename T2>
-void expect_value(const F& f, const T1& x1, const T2& x2) {
+inline void expect_value(const F& f, const T1& x1, const T2& x2) {
   using stan::math::fvar;
   using stan::math::var;
   typedef var v;
@@ -1151,7 +1151,7 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
  * @param x argument to test
  */
 template <typename F, typename T>
-void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
+inline void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
   internal::expect_ad_v(tols, f, x);
 }
 
@@ -1167,7 +1167,7 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
  * @param x argument to test
  */
 template <typename F, typename T>
-void expect_ad(const F& f, const T& x) {
+inline void expect_ad(const F& f, const T& x) {
   ad_tolerances tols;
   expect_ad(tols, f, x);
 }
@@ -1187,7 +1187,7 @@ void expect_ad(const F& f, const T& x) {
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
-void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
+inline void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2) {
   internal::expect_ad_vv(tols, f, x1, x2);
 }
@@ -1205,7 +1205,7 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
-void expect_ad(const F& f, const T1& x1, const T2& x2) {
+inline void expect_ad(const F& f, const T1& x1, const T2& x2) {
   ad_tolerances tols;
   expect_ad(tols, f, x1, x2);
 }
@@ -1227,7 +1227,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  * @param x3 third argument to test
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
+inline void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2, const T3& x3) {
   internal::expect_ad_vvv(tols, f, x1, x2, x3);
 }
@@ -1247,7 +1247,7 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
  * @param x3 third argument to test
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
+inline void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
   ad_tolerances tols;
   expect_ad(tols, f, x1, x2, x3);
 }
@@ -1279,7 +1279,7 @@ template <
     ScalarSupport ComplexSupport = ScalarSupport::Real, typename F, typename T1,
     stan::require_t<
         stan::bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
-void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
+inline void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
   using vector_t = Eigen::Matrix<Scalar, -1, 1>;
@@ -1331,7 +1331,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
 template <ScalarSupport ComplexSupport, typename F, typename T1,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::RealAndComplex>>* = nullptr>
-void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
+inline void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
   using vector_t = Eigen::Matrix<Scalar, -1, 1>;
@@ -1416,7 +1416,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
 template <ScalarSupport ComplexSupport, typename F, typename T1,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
-void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
+inline void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using complex_t = std::complex<double>;
   using complex_matrix_t = Eigen::Matrix<complex_t, -1, -1>;
@@ -1478,7 +1478,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  */
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           typename T>
-void expect_ad_vectorized(const F& f, const T& x) {
+inline void expect_ad_vectorized(const F& f, const T& x) {
   ad_tolerances tols;
   expect_ad_vectorized<ComplexSupport>(tols, f, x);
 }
@@ -1497,7 +1497,7 @@ void expect_ad_vectorized(const F& f, const T& x) {
  */
 template <typename F, typename T1, typename T2,
           require_all_not_st_integral<T1, T2>* = nullptr>
-void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
   std::vector<T1> nest_x{x, x};
   std::vector<T2> nest_y{y, y};
@@ -1530,7 +1530,7 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
  * @param z argument to test
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad_vectorized_ternary_impl(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_ternary_impl(const ad_tolerances& tols, const F& f,
                                        const T1& x, const T2& y, const T3& z) {
   std::vector<T1> nest_x{x};
   std::vector<T2> nest_y{y};
@@ -1564,7 +1564,7 @@ void expect_ad_vectorized_ternary_impl(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2,
           require_st_integral<T1>* = nullptr>
-void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
   auto f_bind
       = [&](const auto& x) { return [=](const auto& y) { return f(x, y); }; };
@@ -1593,7 +1593,7 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2,
           require_st_integral<T2>* = nullptr>
-void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
   auto f_bind
       = [&](const auto& y) { return [=](const auto& x) { return f(x, y); }; };
@@ -1622,7 +1622,7 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2,
           require_all_eigen_col_vector_t<T1, T2>* = nullptr>
-void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
                                  const T1& x, const T2& y) {
   expect_ad_vectorized_binary_impl(tols, f, x, y);
   expect_ad_vectorized_binary_impl(tols, f, math::to_array_1d(x),
@@ -1647,7 +1647,7 @@ void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_eigen_col_vector_t<T1, T2, T3>* = nullptr>
-void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
                                   const T1& x, const T2& y, const T3& z) {
   expect_ad_vectorized_ternary_impl(tols, f, x, y, z);
   expect_ad_vectorized_ternary_impl(tols, f, math::to_array_1d(x),
@@ -1670,7 +1670,7 @@ void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2,
           require_any_std_vector_t<T1, T2>* = nullptr>
-void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
                                  const T1& x, const T2& y) {
   expect_ad_vectorized_binary_impl(tols, f, x, y);
 }
@@ -1693,7 +1693,7 @@ void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_any_std_vector_t<T1, T2, T3>* = nullptr>
-void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
+inline void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
                                   const T1& x, const T2& y, const T3& z) {
   expect_ad_vectorized_ternary_impl(tols, f, x, y, z);
 }
@@ -1711,7 +1711,7 @@ void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
  * @param y argument to test
  */
 template <typename F, typename T1, typename T2>
-void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
+inline void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   ad_tolerances tols;
   expect_ad_vectorized_binary(tols, f, x, y);
 }
@@ -1731,7 +1731,7 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
  * @param z argument to test
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
+inline void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
                                   const T3& z) {
   ad_tolerances tols;
   expect_ad_vectorized_ternary(tols, f, x, y, z);
@@ -1748,7 +1748,7 @@ void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
  * @param f unary functor to test
  */
 template <typename F>
-void expect_common_unary(const F& f) {
+inline void expect_common_unary(const F& f) {
   auto args = internal::common_args();
   for (double x1 : args)
     expect_ad(f, x1);
@@ -1768,7 +1768,7 @@ void expect_common_unary(const F& f) {
  * @param f functor to test
  */
 template <typename F>
-void expect_common_nonzero_unary(const F& f) {
+inline void expect_common_nonzero_unary(const F& f) {
   auto args = internal::common_nonzero_args();
   for (double x1 : args)
     expect_ad(f, x1);
@@ -1797,7 +1797,7 @@ void expect_common_nonzero_unary(const F& f) {
  * for second argments
  */
 template <typename F>
-void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
+inline void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
   auto args = internal::common_nonzero_args();
   auto int_args = internal::common_nonzero_int_args();
   for (double x1 : args)
@@ -1841,7 +1841,7 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
  * for second argments
  */
 template <typename F>
-void expect_common_binary(const F& f, bool disable_lhs_int = false) {
+inline void expect_common_binary(const F& f, bool disable_lhs_int = false) {
   auto args = internal::common_args();
   auto int_args = internal::common_int_args();
   for (double x1 : args)
@@ -1864,15 +1864,15 @@ void expect_common_binary(const F& f, bool disable_lhs_int = false) {
     }
 }
 
-std::vector<double> common_complex_parts_re() {
+inline std::vector<double> common_complex_parts_re() {
   return {-4, -2.5, -1.5, -0.3, -0.1, 0.1, 1.3, 2.1, 3.9};
 }
 
-std::vector<double> common_complex_parts_im() {
+inline std::vector<double> common_complex_parts_im() {
   return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
 }
 
-std::vector<std::complex<double>> common_complex() {
+inline std::vector<std::complex<double>> common_complex() {
   std::vector<std::complex<double>> zs;
   auto complex_re = common_complex_parts_re();
   auto complex_im = common_complex_parts_im();
@@ -1883,7 +1883,7 @@ std::vector<std::complex<double>> common_complex() {
 }
 
 template <typename F>
-void expect_complex_common(const F& f) {
+inline void expect_complex_common(const F& f) {
   auto zs = common_complex();
   for (auto z : zs) {
     expect_ad(f, z);
@@ -1891,7 +1891,7 @@ void expect_complex_common(const F& f) {
 }
 
 template <typename F>
-void expect_complex_common_binary(const F& f) {
+inline void expect_complex_common_binary(const F& f) {
   auto xs = common_complex_parts_re();
   auto zs = common_complex();
   // complex, complex
@@ -1915,7 +1915,7 @@ void expect_complex_common_binary(const F& f) {
 }
 
 template <typename T, typename F>
-void expect_complex_compare(const F& f, const std::complex<double>& z1,
+inline void expect_complex_compare(const F& f, const std::complex<double>& z1,
                             const std::complex<double>& z2) {
   using c_t = std::complex<T>;
   c_t cz1{z1};
@@ -1935,7 +1935,7 @@ void expect_complex_compare(const F& f, const std::complex<double>& z1,
 }
 
 template <typename F>
-void expect_complex_comparison(const F& f, const std::complex<double>& z1,
+inline void expect_complex_comparison(const F& f, const std::complex<double>& z1,
                                const std::complex<double>& z2) {
   using stan::math::fvar;
   using stan::math::var;
@@ -1956,7 +1956,7 @@ void expect_complex_comparison(const F& f, const std::complex<double>& z1,
  * @param f function to test
  */
 template <typename F>
-void expect_complex_common_comparison(const F& f) {
+inline void expect_complex_common_comparison(const F& f) {
   for (auto z1 : common_complex()) {
     for (auto z2 : common_complex()) {
       expect_complex_comparison(f, z1, z2);
@@ -1985,7 +1985,7 @@ void expect_complex_common_comparison(const F& f) {
 template <
     ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
     require_t<bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
-void expect_common_unary_vectorized(const F& f) {
+inline void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
@@ -2016,7 +2016,7 @@ void expect_common_unary_vectorized(const F& f) {
 template <ScalarSupport ComplexSupport, typename F,
           require_t<bool_constant<ComplexSupport
                                   == ScalarSupport::RealAndComplex>>* = nullptr>
-void expect_common_unary_vectorized(const F& f) {
+inline void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
@@ -2049,14 +2049,14 @@ void expect_common_unary_vectorized(const F& f) {
 template <ScalarSupport ComplexSupport, typename F,
           require_t<bool_constant<ComplexSupport
                                   == ScalarSupport::ComplexOnly>>* = nullptr>
-void expect_common_unary_vectorized(const F& f) {
+inline void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
+inline void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
 
 /**
  * Test that the specified vectorized unary function has value and
@@ -2074,7 +2074,7 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
  */
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           typename T, typename... Ts>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
+inline void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
                              Ts... xs) {
   expect_ad_vectorized<ComplexSupport>(tols, f, x);
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
@@ -2094,7 +2094,7 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
  */
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           require_not_same_t<F, ad_tolerances>* = nullptr, typename... Ts>
-void expect_unary_vectorized(const F& f, Ts... xs) {
+inline void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
@@ -2115,7 +2115,7 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::Real>>* = nullptr>
-void expect_common_nonzero_unary_vectorized(const F& f) {
+inline void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
@@ -2139,7 +2139,7 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
 template <ScalarSupport ComplexSupport, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::RealAndComplex>>* = nullptr>
-void expect_common_nonzero_unary_vectorized(const F& f) {
+inline void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
@@ -2165,7 +2165,7 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
 template <ScalarSupport ComplexSupport, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
-void expect_common_nonzero_unary_vectorized(const F& f) {
+inline void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
@@ -2180,7 +2180,7 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * @param f functor to test
  */
 template <typename F>
-void expect_common_comparison(const F& f) {
+inline void expect_common_comparison(const F& f) {
   auto args = internal::common_args();
   auto int_args = internal::common_int_args();
   for (double x1 : args)
@@ -2210,7 +2210,7 @@ void expect_common_comparison(const F& f) {
  * @param x argument to test
  */
 template <typename F1, typename F2, typename T>
-void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
+inline void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
   try {
     auto y1 = f1(x);
     try {
@@ -2243,7 +2243,7 @@ void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
  * @param f2 second function to test
  */
 template <typename F1, typename F2>
-void expect_common_prim(const F1& f1, const F2& f2) {
+inline void expect_common_prim(const F1& f1, const F2& f2) {
   for (double x : internal::common_args())
     expect_match_prim(f1, f2, x);
   for (int x : internal::common_int_args())
@@ -2262,7 +2262,7 @@ void expect_common_prim(const F1& f1, const F2& f2) {
  * @return sequence of covariance matrices between specified sizes
  * with specified autocorrelation
  */
-std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
+inline std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
                                                   double rho) {
   std::vector<Eigen::MatrixXd> ys;
   for (int n = N_min; n <= N_max; ++n) {
@@ -2286,7 +2286,7 @@ std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
  * @param x standard vector input
  * @return copy as Eigen vector
  */
-Eigen::VectorXd to_vector(const std::vector<double>& x) {
+inline Eigen::VectorXd to_vector(const std::vector<double>& x) {
   Eigen::VectorXd y(x.size());
   for (size_t i = 0; i < x.size(); ++i)
     y(i) = x[i];
@@ -2303,7 +2303,7 @@ Eigen::VectorXd to_vector(const std::vector<double>& x) {
  * @return copy as vector
  */
 template <int R, int C>
-Eigen::VectorXd to_vector(const Eigen::Matrix<double, R, C>& x) {
+inline Eigen::VectorXd to_vector(const Eigen::Matrix<double, R, C>& x) {
   Eigen::VectorXd y(x.size());
   for (int i = 0; i < x.size(); ++i)
     y(i) = x(i);
@@ -2317,7 +2317,7 @@ Eigen::VectorXd to_vector(const Eigen::Matrix<double, R, C>& x) {
  * @param x standard vector input
  * @return copy as Eigen row vector
  */
-Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
+inline Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
   Eigen::RowVectorXd y(x.size());
   for (size_t i = 0; i < x.size(); ++i)
     y(i) = x[i];
@@ -2334,7 +2334,7 @@ Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
  * @return copy as row vector
  */
 template <int R, int C>
-Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
+inline Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
   Eigen::RowVectorXd y(x.size());
   for (int i = 0; i < x.size(); ++i)
     y(i) = x(i);
@@ -2349,7 +2349,7 @@ Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
  * @param max maximum matrix dimensionality to include
  * @return square matrices within given dimensionality range (inclusive)
  */
-std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
+inline std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
   std::vector<Eigen::MatrixXd> xs;
   Eigen::MatrixXd a00(0, 0);
   if (0 >= low && 0 <= high)

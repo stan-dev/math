@@ -49,7 +49,7 @@ inline stan::return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_test_wrapper(
  *  0: normal(mu, sigma)
  *  1: normal(-mu, sigma)
  */
-double state_lpdf(double y, double abs_mu, double sigma, int state) {
+inline double state_lpdf(double y, double abs_mu, double sigma, int state) {
   int x = state == 0 ? 1 : -1;
   double chi = (y - x * abs_mu) / sigma;
   return -0.5 * chi * chi - 0.5 * std::log(2 * M_PI) - std::log(sigma);
