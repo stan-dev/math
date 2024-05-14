@@ -2034,7 +2034,7 @@ void expect_common_unary_vectorized(const F& f) {
 >>>>>>> origin/develop
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   }
-}
+}  // namespace test
 
 /**
  * Test that the specified vectorized unary function produces the same
