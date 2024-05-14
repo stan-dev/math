@@ -2027,11 +2027,7 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   }
   auto int_args = internal::common_int_args();
-<<<<<<< HEAD
   for (int x1 : int_args) {
-=======
-  for (int x1 : int_args)
->>>>>>> origin/develop
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   }
 }  // namespace test
