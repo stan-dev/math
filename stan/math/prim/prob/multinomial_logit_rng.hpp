@@ -13,14 +13,16 @@ namespace math {
 
 /** \ingroup multivar_dists
  * Return a draw from a Multinomial distribution given a
- * a vector of unnormalized log probabilities and a pseudo-random
- * number generator.
+ * vector of unnormalized log probabilities, a total count,
+ * and a pseudo-random number generator.
  *
  * @tparam RNG Type of pseudo-random number generator.
  * @param beta Vector of unnormalized log probabilities.
- * @param N Total count
+ * @param N Total count.
  * @param rng Pseudo-random number generator.
- * @return Multinomial random variate
+ * @return Multinomial random variate.
+ * @throw std::domain_error if any element of beta is not finite.
+ * @throw std::domain_error is N is less than 0.
  */
 template <class RNG, typename T_beta,
           require_eigen_col_vector_t<T_beta>* = nullptr>
@@ -29,7 +31,7 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
   static constexpr const char* function = "multinomial_logit_rng";
   const auto& beta_ref = to_ref(beta);
   check_finite(function, "Log-probabilities parameter", beta_ref);
-  check_positive(function, "number of trials variables", N);
+  check_nonnegative(function, "number of trials variables", N);
 
   plain_type_t<T_beta> theta = softmax(beta_ref);
   std::vector<int> result(theta.size(), 0);

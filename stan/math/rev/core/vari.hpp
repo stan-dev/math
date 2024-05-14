@@ -822,15 +822,14 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
   static constexpr int ColsAtCompileTime = T::ColsAtCompileTime;
 
   /**
+   * The value of this variable.
+   */
+  arena_matrix<PlainObject> val_;
+  /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
   arena_matrix<PlainObject> adj_;
-
-  /**
-   * The value of this variable.
-   */
-  arena_matrix<PlainObject> val_;
 
   /**
    * Construct a variable implementation from a value. The
@@ -847,10 +846,21 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(S&& x) : adj_(x), val_(std::forward<S>(x)) {
-    this->set_zero_adjoint();
+  explicit vari_value(S&& x)
+      : val_(std::forward<S>(x)),
+        adj_(val_.rows(), val_.cols(), val_.nonZeros(), val_.outerIndexPtr(),
+             val_.innerIndexPtr(),
+             arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
+             val_.innerNonZeroPtr()) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
+
+  vari_value(const arena_matrix<PlainObject>& val,
+             const arena_matrix<PlainObject>& adj)
+      : val_(val), adj_(adj) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
   /**
    * Construct an sparse Eigen variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
@@ -869,8 +879,12 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S&& x, bool stacked) : adj_(x), val_(std::forward<S>(x)) {
-    this->set_zero_adjoint();
+  vari_value(S&& x, bool stacked)
+      : val_(std::forward<S>(x)),
+        adj_(val_.rows(), val_.cols(), val_.nonZeros(), val_.outerIndexPtr(),
+             val_.innerIndexPtr(),
+             arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
+             val_.innerNonZeroPtr()) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {

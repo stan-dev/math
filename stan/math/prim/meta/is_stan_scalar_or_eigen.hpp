@@ -21,10 +21,17 @@ using is_stan_scalar_or_eigen
     = bool_constant<is_stan_scalar<std::decay_t<T>>::value
                     || is_eigen<std::decay_t<T>>::value>;
 
-STAN_ADD_REQUIRE_UNARY(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
-                       require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
-                             require_stan_scalar_real);
+/*! \ingroup require_stan_scalar_real */
+/*! \defgroup stan_scalar_or_eigen_types stan_scalar_or_eigen  */
+/*! \addtogroup stan_scalar_or_eigen_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_stan_scalar_or_eigen */
+/*! @tparam T the type to check */
+template <typename T>
+using require_stan_scalar_or_eigen_t
+    = require_t<is_stan_scalar_or_eigen<std::decay_t<T>>>;
+/*! @} */
 
 }  // namespace stan
 #endif
