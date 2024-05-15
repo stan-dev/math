@@ -41,41 +41,37 @@ cholesky_decompose(const EigMat& m) {
   return llt.matrixL();
 }
 
-
 /**
  * Return the sparse lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified sparse square, symmetric matrix.  The return
  * value \f$L\f$ will be a sparse lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = P^TL  L^TP\f$,
- * where \f$P\f$ is a permutation matrix that has been computed to minimize 
- * fill-in. 
+ * where \f$P\f$ is a permutation matrix that has been computed to minimize
+ * fill-in.
  *
- * @tparam SpEigMat type of the matrix (must be derived from \c Eigen::SparseMatrixBase)
+ * @tparam SpEigMat type of the matrix (must be derived from \c
+ * Eigen::SparseMatrixBase)
  * @param m Sparse symmetric matrix.
  * @return A Eigen::SimplicialLLT<SpEigMat> object containing
  * the sparse cholesky factor matrix and its associated metadata
  * (most importantly its permutation vector).
  * @note Unlike the dense matrix specialization, this version does
  * *not* return a matrix. The matrix can be accessed through the `matrixL()`
- * member function but remember this is the Cholesky factor of 
+ * member function but remember this is the Cholesky factor of
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename SpEigMat, 
-  require_eigen_sparse_base_t<SpEigMat>* = nullptr,
-  require_not_eigen_vt<is_var, SpEigMat>* = nullptr>
-inline Eigen::SimplicialLLT<SpEigMat>
-cholesky_decompose(const EigMat& m) {
+template <typename SpEigMat, require_eigen_sparse_base_t<SpEigMat>* = nullptr,
+          require_not_eigen_vt<is_var, SpEigMat>* = nullptr>
+inline Eigen::SimplicialLLT<SpEigMat> cholesky_decompose(const EigMat& m) {
   const eval_return_type_t<SpEigMat>& m_eval = m.eval();
   check_symmetric("cholesky_decompose", "m", m_eval);
   check_not_nan("cholesky_decompose", "m", m_eval);
-  Eigen::SimplicialLLT<SpEigMat>
-      llt = m_eval.llt();
+  Eigen::SimplicialLLT<SpEigMat> llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt;
 }
-
 
 }  // namespace math
 }  // namespace stan

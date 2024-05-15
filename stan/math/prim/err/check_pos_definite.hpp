@@ -68,7 +68,6 @@ inline void check_pos_definite(const char* function, const char* name,
   }
 }
 
-
 /**
  * Check if the specified LDLT decomposition of a matrix is positive definite.
  *
