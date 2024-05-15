@@ -1,10 +1,11 @@
 #ifdef STAN_OPENCL
 #include <stan/math/rev/core.hpp>
 #include <stan/math/opencl/rev/vari.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, matrix_cl_vari_block) {
+TEST_F(AgradRev, matrix_cl_vari_block) {
   using stan::math::vari_value;
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(3, 3);
   Eigen::MatrixXd b = Eigen::MatrixXd::Random(3, 3);

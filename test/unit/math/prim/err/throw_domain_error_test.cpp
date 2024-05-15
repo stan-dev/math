@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 
-class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
+class ErrorHandlingScalar_throw_domain_error_prim : public ::testing::Test {
  public:
   const char* function_ = "function";
   const char* y_name_ = "y";
@@ -56,7 +56,7 @@ class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
   }
 };
 
-TEST_F(ErrorHandlingScalar_throw_domain_error, double) {
+TEST_F(ErrorHandlingScalar_throw_domain_error_prim, double) {
   double y = 10;
 
   test_throw<double>(y);

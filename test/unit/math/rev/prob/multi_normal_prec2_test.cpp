@@ -9,7 +9,7 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto_multi_normal_prec_log(T_y y1, T_loc mu1, T_scale sigma1,
+inline void expect_propto_multi_normal_prec_log(T_y y1, T_loc mu1, T_scale sigma1,
                                          T_y y2, T_loc mu2, T_scale sigma2,
                                          std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_prec_log<false>(y1, mu1, sigma1),

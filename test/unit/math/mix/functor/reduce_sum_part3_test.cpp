@@ -15,8 +15,8 @@ TEST(MathMix_reduce_sum, eigen_three_args1) {
   Eigen::RowVectorXd arg2 = Eigen::RowVectorXd::Ones(2);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad(reduce_sum_static_int_sum_lpdf, arg1, arg2, arg3);
-  stan::test::expect_ad(reduce_sum_int_sum_lpdf, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_int_sum_lpdf(args...);}, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_int_sum_lpdf(args...);}, arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args2) {
@@ -26,8 +26,8 @@ TEST(MathMix_reduce_sum, eigen_three_args2) {
   std::vector<double> arg2(2, 1.0);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad(reduce_sum_static_int_sum_lpdf, arg1, arg2, arg3);
-  stan::test::expect_ad(reduce_sum_int_sum_lpdf, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_int_sum_lpdf(args...);}, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_int_sum_lpdf(args...);}, arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args3) {
@@ -37,8 +37,8 @@ TEST(MathMix_reduce_sum, eigen_three_args3) {
   std::vector<std::vector<double>> arg2(2, std::vector<double>(2, 1.0));
   std::vector<Eigen::MatrixXd> arg3(2, Eigen::MatrixXd::Ones(2, 2));
 
-  stan::test::expect_ad(reduce_sum_static_int_sum_lpdf, arg1, arg2, arg3);
-  stan::test::expect_ad(reduce_sum_int_sum_lpdf, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_int_sum_lpdf(args...);}, arg1, arg2, arg3);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_int_sum_lpdf(args...);}, arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args_with_ints1) {

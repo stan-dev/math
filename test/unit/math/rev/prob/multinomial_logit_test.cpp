@@ -6,7 +6,7 @@
 #include <vector>
 
 template <typename T_prob>
-void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1,
+inline void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1,
                                           std::vector<int>& ns2, T_prob beta2,
                                           std::string message) {
   expect_eq_diffs(stan::math::multinomial_logit_lpmf<false>(ns1, beta1),

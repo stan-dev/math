@@ -20,10 +20,10 @@ void expect_ad_reduce_sum_lpdf(T1&& data, T2&& arg) {
   using stan::math::test::reduce_sum_static_int_sum_lpdf;
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
-  stan::test::expect_ad(reduce_sum_static_int_sum_lpdf, arg);
-  stan::test::expect_ad(reduce_sum_static_sum_lpdf, data, arg);
-  stan::test::expect_ad(reduce_sum_int_sum_lpdf, arg);
-  stan::test::expect_ad(reduce_sum_sum_lpdf, data, arg);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_int_sum_lpdf(args...);}, arg);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data, arg);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_int_sum_lpdf(args...);}, arg);
+  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data, arg);
 }
 
 }  // namespace test

@@ -4,7 +4,7 @@
 #include <string>
 
 template <typename T_prob, typename T_prior_sample_size>
-void expect_propto_dirichlet_log(T_prob theta, T_prior_sample_size alpha,
+inline void expect_propto_dirichlet_log(T_prob theta, T_prior_sample_size alpha,
                                  T_prob theta2, T_prior_sample_size alpha2,
                                  std::string message) {
   expect_eq_diffs(stan::math::dirichlet_log<false>(theta, alpha),

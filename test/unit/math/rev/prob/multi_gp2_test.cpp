@@ -8,7 +8,7 @@
 #include <string>
 
 template <typename T_y, typename T_scale, typename T_w>
-void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
+inline void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
                    T_w w2, std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_log<false>(y1, sigma1, w1),
                   stan::math::multi_gp_log<false>(y2, sigma2, w2),

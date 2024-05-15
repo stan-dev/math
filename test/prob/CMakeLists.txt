@@ -59,4 +59,4 @@ foreach(HEADER_FILE ${HEADER_TEST_FILES})
     )
 endforeach()
 
-add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR} test_ad_pch2)
+add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR} prob test_ad_pch2)

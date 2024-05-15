@@ -8,7 +8,7 @@
 
 namespace integrate_1d_test {
 
-std::ostringstream *msgs = nullptr;
+static std::ostringstream *msgs = nullptr;
 
 struct f1 {
   template <typename T1, typename T2>

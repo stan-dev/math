@@ -3,7 +3,9 @@
 #include <limits>
 #include <vector>
 
-void test_logical_and(double x, double y) {
+
+TEST(AgradMix, logical_and) {
+  auto test_logical_and = [](double x, double y) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -22,9 +24,8 @@ void test_logical_and(double x, double y) {
   EXPECT_EQ(x && y, fvar<fvar<var> >(x) && fvar<fvar<var> >(y));
   EXPECT_EQ(x && y, fvar<fvar<var> >(x) && y);
   EXPECT_EQ(x && y, x && fvar<fvar<var> >(y));
-}
+};
 
-TEST(AgradMix, logical_and) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

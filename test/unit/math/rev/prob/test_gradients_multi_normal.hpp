@@ -7,7 +7,7 @@
 #include <stan/math.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-std::vector<double> finite_diffs_multi_normal(
+inline std::vector<double> finite_diffs_multi_normal(
     const F& fun, const std::vector<T_y>& vec_y,
     const std::vector<T_mu>& vec_mu, const std::vector<T_sigma>& vec_sigma,
     double epsilon = 1e-6) {
@@ -64,7 +64,7 @@ std::vector<double> finite_diffs_multi_normal(
 }
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-std::vector<double> grad_multi_normal(const F& fun,
+inline std::vector<double> grad_multi_normal(const F& fun,
                                       const std::vector<T_y>& vec_y,
                                       const std::vector<T_mu>& vec_mu,
                                       const std::vector<T_sigma>& vec_sigma) {

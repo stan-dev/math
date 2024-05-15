@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/ar1.hpp>
 #include <gtest/gtest.h>
 #include <fstream>
 #include <vector>
@@ -8,14 +9,8 @@ TEST(ProbAutocorrelation, test1) {
   // ar1.csv generated in R with
   //   > x[1] <- rnorm(1, 0, 1)
   //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
-  std::fstream f("test/unit/math/prim/fun/ar1.csv");
-  size_t N = 1000;
-  std::vector<double> y;
-  for (size_t i = 0; i < N; ++i) {
-    double temp;
-    f >> temp;
-    y.push_back(temp);
-  }
+   std::vector<double> y{stan::math::test::ar1_arr.begin(),
+    stan::math::test::ar1_arr.end()};
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
   std::vector<double> ac;
@@ -35,13 +30,10 @@ TEST(ProbAutocorrelation, test2) {
   // ar1.csv generated in R with
   //   > x[1] <- rnorm(1, 0, 1)
   //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
-  std::fstream f("test/unit/math/prim/fun/ar1.csv");
-  size_t N = 1000;
+  static constexpr size_t N = 1000;
   Eigen::VectorXd y(N);
   for (size_t i = 0; i < N; ++i) {
-    double temp;
-    f >> temp;
-    y(i) = temp;
+    y(i) = stan::math::test::ar1_arr[i];
   }
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air

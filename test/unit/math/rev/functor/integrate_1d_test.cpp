@@ -9,7 +9,7 @@
 
 namespace integrate_1d_test {
 
-std::ostringstream *msgs = nullptr;
+static std::ostringstream *msgs = nullptr;
 
 struct f1 {
   template <typename T1, typename T2, typename T3>
@@ -142,7 +142,7 @@ struct f13 {
  * @param v variable
  * @return adjoint of var
  */
-double get_adjoint_if_var(stan::math::var v) { return v.adj(); }
+inline double get_adjoint_if_var(stan::math::var v) { return v.adj(); }
 
 /*
  * If the argument is not a var, return a NaN
@@ -150,7 +150,7 @@ double get_adjoint_if_var(stan::math::var v) { return v.adj(); }
  * @param v variable
  * @return NaN
  */
-double get_adjoint_if_var(double v) {
+inline constexpr double get_adjoint_if_var(double v) {
   return std::numeric_limits<double>::quiet_NaN();
 }
 
@@ -197,7 +197,7 @@ double get_adjoint_if_var(double v) {
  * limit (not used if T_b is not var)
  */
 template <typename T_a, typename T_b, typename T_theta, typename F>
-void test_derivatives(const F &f, double a, double b,
+inline void test_derivatives(const F &f, double a, double b,
                       std::vector<double> thetas,
                       const std::vector<double> &x_r,
                       const std::vector<int> &x_i, double val,
