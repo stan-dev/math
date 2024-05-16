@@ -284,7 +284,12 @@ CXXFLAGS_TBB ?= -I $(TBB_INC)
 else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,--disable-new-dtags
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)"
+
+# MacOS ld does not support --disable-new-dtags
+ifneq ($(OS),Darwin)
+  LDFLAGS_TBB += -Wl,--disable-new-dtags
+endif
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
 ifneq ($(OS), Windows_NT)
