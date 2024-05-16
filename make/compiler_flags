@@ -150,7 +150,7 @@ else
   $(warning "Because STAN_USE_CPP14 is set C++14 standard is requested. This will not be possible in the next release!")
   CXXFLAGS_LANG ?= -std=c++1y
   CXXFLAGS_STANDARD ?= c++1y
-  HAS_CXX17 := true
+  HAS_CXX17 := false
 endif
 
 ifeq ($(HAS_CXX17), false)
