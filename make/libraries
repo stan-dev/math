@@ -176,11 +176,11 @@ endif
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/version_$(notdir $(TBB))
-	tbb_root="$(TBB_RELATIVE_PATH)" WINARM64="$(WINARM64)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" WINARM64="$(WINARM64)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=$(CXXFLAGS_STANDARD)  CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
-	tbb_root="$(TBB_RELATIVE_PATH)" WINARM64="$(WINARM64)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" WINARM64="$(WINARM64)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=$(CXXFLAGS_STANDARD) malloc CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
 $(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def
