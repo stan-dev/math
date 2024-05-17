@@ -3,7 +3,7 @@
 #include <test/unit/math/prim/prob/NegativeBinomial2LogTestRig.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <limits>

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <exception>
 #include <limits>

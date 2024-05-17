@@ -4,7 +4,7 @@
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 boost::random::mixmax rng;

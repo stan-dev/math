@@ -2,7 +2,7 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 

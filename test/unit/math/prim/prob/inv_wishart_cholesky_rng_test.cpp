@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>

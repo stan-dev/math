@@ -1,7 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <vector>
 
 template <typename T_x>

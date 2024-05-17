@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/mix/prob/higher_order_utils.hpp>
 #include <vector>

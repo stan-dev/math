@@ -3,7 +3,7 @@
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>

@@ -1,6 +1,6 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsMultiNormal, fvar_double) {
