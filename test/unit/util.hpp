@@ -214,7 +214,7 @@ namespace test {
 
 auto make_sparse_matrix_random(int rows, int cols) {
   using eigen_triplet = Eigen::Triplet<double>;
-  boost::mt19937 gen;
+  boost::random::mixmax gen;
   boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
   std::vector<eigen_triplet> tripletList;
   for (int i = 0; i < rows; ++i) {
