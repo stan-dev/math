@@ -91,7 +91,7 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
   using stan::math::inv_wishart_cholesky_rng;
   using stan::math::multiply_lower_tri_self_transpose;
 
-  boost::random::mixmax rng(92343U);
+  boost::random::mixmax rng(9234U);
   int N = 1e5;
   double tol = 0.1;
   for (int k = 1; k < 5; k++) {
@@ -123,7 +123,7 @@ TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
   using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::qr_thin_Q;
 
-  boost::random::mixmax rng(92343U);
+  boost::random::mixmax rng(9234U);
   int N = 1e4;
   double tol = 0.05;
   for (int k = 1; k < 4; k++) {
