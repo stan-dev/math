@@ -68,12 +68,12 @@ TEST(ProbDistributionsStdNormal, distributionTest) {
 }
 
 TEST(ProbDistributionsStdNormal, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::std_normal_rng(rng));
 }
 
 TEST(ProbDistributionsStdNormal, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 

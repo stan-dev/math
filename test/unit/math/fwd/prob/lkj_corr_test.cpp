@@ -5,7 +5,7 @@
 
 TEST(ProbDistributionsLkjCorr, fvar_double) {
   using stan::math::fvar;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
@@ -24,7 +24,7 @@ TEST(ProbDistributionsLkjCorr, fvar_double) {
 
 TEST(ProbDistributionsLkjCorrCholesky, fvar_double) {
   using stan::math::fvar;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
@@ -43,7 +43,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_double) {
 
 TEST(ProbDistributionsLkjCorr, fvar_fvar_double) {
   using stan::math::fvar;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K,
                                                                            K);
@@ -63,7 +63,7 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_double) {
 
 TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_double) {
   using stan::math::fvar;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K,
                                                                            K);

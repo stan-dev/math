@@ -36,7 +36,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   MatrixXd FF_sz1 = MatrixXd::Random(4, 3);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF_sz1, GG, V, W, m0, C0, T, rng),
                std::invalid_argument);
@@ -66,7 +66,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesG) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // size
   MatrixXd GG_sz1 = MatrixXd::Random(3, 3);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG_sz1, V, W, m0, C0, T, rng),
@@ -97,7 +97,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesW) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // Not symmetric
   MatrixXd W_asym = W;
   W_asym(0, 1) = 1;
@@ -155,7 +155,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVMatrix) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // Not symmetric
   MatrixXd V_asym = V;
   V_asym(0, 2) = 1;
@@ -198,7 +198,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVVector) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // negative
   MatrixXd V_neg = V_vec;
   V_neg(0) = -1;
@@ -230,7 +230,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, Policiesm0) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // size
   VectorXd m0_sz = VectorXd::Zero(4, 1);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0_sz, C0, T, rng),
@@ -256,7 +256,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesC0) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // size
   MatrixXd C0_sz = MatrixXd::Identity(3, 3);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0, C0_sz, T, rng),
@@ -293,7 +293,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesT) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // Must be positive.
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0, C0, 0, rng),
                std::domain_error);
@@ -305,7 +305,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, chiSquaredGoodnessOfFit) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   // With identity state transition and initial mean 0 and identity
   // covariance matrices:

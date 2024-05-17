@@ -8,7 +8,7 @@
 TEST(ProbDistributionsInvWishart, rng) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd omega(3, 4);
   EXPECT_THROW(inv_wishart_rng(3.0, omega, rng), std::invalid_argument);
@@ -26,7 +26,7 @@ TEST(ProbDistributionsInvWishart, rng_pos_def) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd Sigma(2, 2);
   MatrixXd Sigma_non_pos_def(2, 2);
@@ -46,7 +46,7 @@ TEST(ProbDistributionsInvWishart, rng_symmetry) {
   using stan::test::unit::expect_symmetric;
   using stan::test::unit::spd_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.5; nu < k + 20; ++nu)
       for (int n = 0; n < 10; ++n)
@@ -61,7 +61,7 @@ TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
   using stan::math::inv_wishart_rng;
   using std::log;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   int N = 10000;
@@ -92,7 +92,7 @@ TEST(ProbDistributionsInvWishart, SpecialRNGTest) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
 
-  boost::random::mt19937 rng(1234U);
+  boost::random::mixmax rng(1234U);
   int N = 1e5;
   double tol = 0.1;
   for (int k = 1; k < 5; k++) {

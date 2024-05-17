@@ -40,7 +40,7 @@ TEST(ProbDistributionsBetaBinomial, distributionCheck) {
 }
 
 TEST(ProbDistributionBetaBinomial, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::beta_binomial_rng(4, 0.6, 2.0, rng));
 
   EXPECT_THROW(stan::math::beta_binomial_rng(-4, 0.6, 2, rng),

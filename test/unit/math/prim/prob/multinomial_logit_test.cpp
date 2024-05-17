@@ -9,7 +9,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 TEST(ProbDistributionsMultinomialLogit, RNGZero) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> beta(3);
   beta << 1.3, 0.1, -2.6;
   // bug in 4.8.1: RNG does not allow a zero total count
@@ -22,7 +22,7 @@ TEST(ProbDistributionsMultinomialLogit, RNGZero) {
 }
 
 TEST(ProbDistributionsMultinomialLogit, RNGSize) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> beta(5);
   beta << log(0.3), log(0.1), log(0.2), log(0.2), log(0.2);
   std::vector<int> sample = stan::math::multinomial_logit_rng(beta, 10, rng);
@@ -106,7 +106,7 @@ TEST(ProbDistributionsMultinomialLogit, zeros) {
 }
 
 TEST(ProbDistributionsMultinomialLogit, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int M = 10;
   int trials = 1000;
   int N = M * trials;

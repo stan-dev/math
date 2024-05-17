@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsLkjCov, testIdentity) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
@@ -26,7 +26,7 @@ TEST(ProbDistributionsLkjCov, testIdentity) {
 }
 
 TEST(ProbDistributionsLkjCov, testHalf) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setConstant(0.5);
@@ -49,7 +49,7 @@ TEST(ProbDistributionsLkjCov, testHalf) {
 }
 
 TEST(ProbDistributionsLkjCov, ErrorChecks) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();

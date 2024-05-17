@@ -8,7 +8,7 @@
 
 TEST(ProbDistributionsMultiNormalPrec, vectorized) {
   // Test scalar/vector combinations.
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Eigen::VectorXd mu(3);
   Eigen::RowVectorXd mu_t(3);
@@ -32,7 +32,7 @@ TEST(ProbDistributionsMultiNormalPrec, vectorized) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, policiesSigma) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -79,7 +79,7 @@ TEST(ProbDistributionsMultiNormalPrec, policiesSigma) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, policiesMu) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -108,7 +108,7 @@ TEST(ProbDistributionsMultiNormalPrec, policiesMu) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, SizeMismatch) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Eigen::VectorXd mu(2);
   mu << 1.0, -1.0;
   Eigen::MatrixXd Sigma(3, 3);
@@ -118,7 +118,7 @@ TEST(ProbDistributionsMultiNormalPrec, SizeMismatch) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, marginalOneChiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Eigen::MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -152,7 +152,7 @@ TEST(ProbDistributionsMultiNormalPrec, marginalOneChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, marginalTwoChiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Eigen::MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -186,7 +186,7 @@ TEST(ProbDistributionsMultiNormalPrec, marginalTwoChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, marginalThreeChiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Eigen::MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 16.0;

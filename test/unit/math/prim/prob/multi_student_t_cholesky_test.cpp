@@ -11,7 +11,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, NotVectorized) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -34,7 +34,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, Vectorized) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
@@ -115,7 +115,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, Sigma) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -139,7 +139,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, Mu) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -195,7 +195,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, Nu) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -253,7 +253,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize0) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y_empty(0, 1);
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -293,7 +293,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize2) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -315,7 +315,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize3) {
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -356,7 +356,7 @@ TEST(ProbDistributionsMultiStudentTCholesky,
   using Eigen::Matrix;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, 3.0, 11.0;
 
@@ -401,7 +401,7 @@ TEST(ProbDistributionsMultiStudentTCholesky,
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::multi_student_t_cholesky_rng;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, 3.0, 11.0;
 

@@ -29,7 +29,7 @@ TEST(MathMatrixCL, mdivide_right_tri_low_cl_exception) {
 }
 
 void mdivide_right_tri_low_Ab_test(int size) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < i; j++) {

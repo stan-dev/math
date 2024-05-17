@@ -35,7 +35,7 @@ TEST(ProbDistributionsBernoulli, distributionCheck) {
 }
 
 TEST(ProbDistributionsBernoulli, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::bernoulli_rng(0.6, rng));
 
   EXPECT_THROW(stan::math::bernoulli_rng(1.6, rng), std::domain_error);
@@ -45,7 +45,7 @@ TEST(ProbDistributionsBernoulli, error_check) {
 }
 
 TEST(ProbDistributionsBernoulli, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   std::vector<double> expected;

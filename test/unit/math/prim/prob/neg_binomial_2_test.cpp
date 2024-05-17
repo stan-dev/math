@@ -39,7 +39,7 @@ TEST(ProbDistributionsNegBinomial2, distributionCheck) {
 }
 
 TEST(ProbDistributionsNegBinomial2, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(6, 2, rng));
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(0.5, 1, rng));
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(1e8, 1, rng));
@@ -91,7 +91,7 @@ TEST(ProbDistributionsNegBinomial2, error_check) {
 }
 
 TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(1.1, 1.1 / (1.1 + 2.4));
@@ -128,7 +128,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest2) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(0.6, 0.6 / (0.6 + 2.4));
@@ -165,7 +165,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest2) {
 }
 
 TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest3) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(30, 30 / (30 + 60.4));
@@ -202,7 +202,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest3) {
 }
 
 TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(80, 80 / (80 + 30.4));

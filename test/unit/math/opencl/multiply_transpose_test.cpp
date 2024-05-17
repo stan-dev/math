@@ -7,7 +7,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-boost::random::mt19937 rng;
+boost::random::mixmax rng;
 
 TEST(MathMatrixOpenCL, multiply_transpose_exception_fail_zero) {
   stan::math::row_vector_d rv(0);

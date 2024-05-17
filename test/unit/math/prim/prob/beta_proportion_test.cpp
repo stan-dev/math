@@ -50,7 +50,7 @@ TEST(ProbDistributionsBetaProportion, distributionTest) {
 }
 
 TEST(ProbDistributionsBetaProportion, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::beta_proportion_rng(0.5, 3.0, rng));
   EXPECT_NO_THROW(stan::math::beta_proportion_rng(1e-10, 1e-10, rng));
   EXPECT_THROW(stan::math::beta_proportion_rng(2.0, -1.0, rng),
@@ -68,7 +68,7 @@ TEST(ProbDistributionsBetaProportion, error_check) {
 }
 
 TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
@@ -99,7 +99,7 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest2) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 

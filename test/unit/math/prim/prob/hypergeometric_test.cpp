@@ -5,7 +5,7 @@
 #include <vector>
 
 TEST(ProbDistributionsHypergeometric, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::hypergeometric_rng(10, 10, 15, rng));
 
   EXPECT_THROW(stan::math::hypergeometric_rng(30, 10, 15, rng),
@@ -19,7 +19,7 @@ TEST(ProbDistributionsHypergeometric, error_check) {
 }
 
 TEST(ProbDistributionsHypergeometric, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int num_draws = 10;
   int K = num_draws;

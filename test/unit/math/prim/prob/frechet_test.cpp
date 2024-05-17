@@ -51,7 +51,7 @@ TEST(ProbDistributionsFrechet, distributionTest) {
 }
 
 TEST(ProbDistributionsFrechet, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::frechet_rng(2.0, 3.0, rng));
 
   EXPECT_THROW(stan::math::frechet_rng(-2.0, 3.0, rng), std::domain_error);
@@ -62,7 +62,7 @@ TEST(ProbDistributionsFrechet, error_check) {
 }
 
 TEST(ProbDistributionsFrechet, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 

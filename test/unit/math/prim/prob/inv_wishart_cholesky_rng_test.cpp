@@ -13,7 +13,7 @@ TEST(ProbDistributionsInvWishartCholesky, rng) {
 
   using stan::math::inv_wishart_cholesky_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd omega(3, 4);
   EXPECT_THROW(inv_wishart_cholesky_rng(3.0, omega, rng),
@@ -35,7 +35,7 @@ TEST(ProbDistributionsInvWishartCholesky, rng_pos_def) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_cholesky_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd Sigma(2, 2);
   MatrixXd Sigma_non_pos_def(2, 2);
@@ -58,7 +58,7 @@ TEST(ProbDistributionsInvWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
   using stan::math::inv_wishart_cholesky_rng;
   using std::log;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
 
@@ -91,7 +91,7 @@ TEST(ProbDistributionsInvWishartCholesky, SpecialRNGTest) {
   using stan::math::inv_wishart_cholesky_rng;
   using stan::math::multiply_lower_tri_self_transpose;
 
-  boost::random::mt19937 rng(92343U);
+  boost::random::mixmax rng(92343U);
   int N = 1e5;
   double tol = 0.1;
   for (int k = 1; k < 5; k++) {
@@ -123,7 +123,7 @@ TEST(ProbDistributionsInvWishartCholesky, compareToInvWishart) {
   using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::qr_thin_Q;
 
-  boost::random::mt19937 rng(92343U);
+  boost::random::mixmax rng(92343U);
   int N = 1e4;
   double tol = 0.05;
   for (int k = 1; k < 4; k++) {

@@ -8,7 +8,7 @@
 TEST(ProbDistributionsMultinomial, RNGZero) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> theta(3);
   theta << 0.3, 0.1, 0.6;
   // bug in 4.8.1: RNG does not allow a zero total count
@@ -23,7 +23,7 @@ TEST(ProbDistributionsMultinomial, RNGZero) {
 TEST(ProbDistributionsMultinomial, RNGSize) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> theta(5);
   // error in 2.1.0 due to overflow in binomial call due to division
   theta << 0.3, 0.1, 0.2, 0.2, 0.2;
@@ -124,7 +124,7 @@ TEST(ProbDistributionsMultinomial, zeros) {
 TEST(ProbDistributionsMultinomial, error_check) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Matrix<double, Dynamic, 1> theta(3);
   theta << 0.15, 0.45, 0.40;
@@ -138,7 +138,7 @@ TEST(ProbDistributionsMultinomial, error_check) {
 TEST(ProbDistributionsMultinomial, chiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int M = 10;
   int trials = 1000;
   int N = M * trials;

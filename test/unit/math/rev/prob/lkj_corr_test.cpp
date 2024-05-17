@@ -8,7 +8,7 @@
 
 TEST(ProbDistributionsLkjCorr, var) {
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma_d(K, K);
@@ -29,7 +29,7 @@ TEST(ProbDistributionsLkjCorr, var) {
 
 TEST(ProbDistributionsLkjCorrCholesky, var) {
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();

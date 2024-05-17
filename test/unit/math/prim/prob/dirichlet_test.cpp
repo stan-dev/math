@@ -139,7 +139,7 @@ double chi_square(std::vector<int> bin, std::vector<double> expect) {
 }
 
 void test_dirichlet3_1(Eigen::VectorXd alpha) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
@@ -168,7 +168,7 @@ void test_dirichlet3_2(Eigen::VectorXd alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::beta_distribution<> dist(alpha(1), alpha(0) + alpha(2));
@@ -213,7 +213,7 @@ TEST(ProbDistributionsDirichlet, random) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   VectorXd alpha(3);
   alpha << 2.0, 3.0, 11.0;
   EXPECT_NO_THROW(stan::math::dirichlet_rng(alpha, rng));

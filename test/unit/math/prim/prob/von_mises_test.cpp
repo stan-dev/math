@@ -30,7 +30,7 @@ TEST(ProbDistributionsVonMises, errorCheck) {
  * the distributions manually
  */
 TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   std::vector<double> loc
@@ -75,7 +75,7 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsVonMises, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 2.0, rng));
   EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 0.0, rng));
 
@@ -90,7 +90,7 @@ TEST(ProbDistributionsVonMises, error_check) {
 }
 
 TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest1) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = 80;
   boost::math::chi_squared mydist(K - 1);
@@ -138,7 +138,7 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest1) {
 }
 
 TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest2) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = 80;
   boost::math::chi_squared mydist(K - 1);
@@ -181,7 +181,7 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest2) {
 }
 
 TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest3) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = 80;
   boost::math::chi_squared mydist(K - 1);
@@ -226,7 +226,7 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest3) {
 }
 
 TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest4) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 

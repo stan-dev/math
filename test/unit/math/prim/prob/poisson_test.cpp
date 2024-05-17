@@ -36,7 +36,7 @@ TEST(ProbDistributionsPoisson, distributionCheck) {
 TEST(ProbDistributionsPoisson, error_check) {
   using std::log;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::poisson_rng(6, rng));
 
   EXPECT_THROW(stan::math::poisson_rng(-6, rng), std::domain_error);
@@ -56,7 +56,7 @@ TEST(ProbDistributionsPoisson, error_check) {
 }
 
 TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::poisson_distribution<> dist(5);
@@ -95,7 +95,7 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
 TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
   using std::log;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::poisson_distribution<> dist(5);

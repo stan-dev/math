@@ -37,7 +37,7 @@ TEST(ProbDistributionsNegativeBinomial, distributionCheck) {
 }
 
 TEST(ProbDistributionsNegBinomial, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_rng(6, 2, rng));
   EXPECT_NO_THROW(stan::math::neg_binomial_rng(0.5, 1, rng));
   EXPECT_NO_THROW(stan::math::neg_binomial_rng(1e9, 1, rng));
@@ -82,7 +82,7 @@ void expected_bin_sizes(double* expect, const int K, const int N,
 }
 
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double p = 0.6;
   double alpha = 5;
   double beta = p / (1 - p);
@@ -120,7 +120,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double p = 0.8;
   double alpha = 2.4;
   double beta = p / (1 - p);
@@ -158,7 +158,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
 }
 
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double p = 0.2;
   double alpha = 0.4;
   double beta = p / (1 - p);

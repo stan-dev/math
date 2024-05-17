@@ -140,7 +140,7 @@ TEST(ProbDistributions, ordered_probit) {
 }
 
 TEST(ProbDistributionOrderedProbit, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd c(4);
   c << -2, 2.0, 5, 10;
@@ -155,7 +155,7 @@ TEST(ProbDistributionOrderedProbit, error_check) {
 
 TEST(ProbDistributionOrderedProbit, chiSquareGoodnessFitTest) {
   using stan::math::Phi;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   double eta = 1.0;
   Eigen::VectorXd theta(3);

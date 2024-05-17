@@ -26,7 +26,7 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
   Eigen::MatrixXd log_omegas
       = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   std::vector<double> expected;
@@ -68,7 +68,7 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   Eigen::MatrixXd log_omegas
       = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   std::vector<double> expected_0;

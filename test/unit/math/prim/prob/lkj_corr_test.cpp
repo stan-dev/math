@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsLkjCorr, testIdentity) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
@@ -18,7 +18,7 @@ TEST(ProbDistributionsLkjCorr, testIdentity) {
 }
 
 TEST(ProbDistributionsLkjCorr, testHalf) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setConstant(0.5);
@@ -33,7 +33,7 @@ TEST(ProbDistributionsLkjCorr, testHalf) {
 }
 
 TEST(ProbDistributionsLkjCorr, Sigma) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
@@ -55,7 +55,7 @@ TEST(ProbDistributionsLkjCorr, Sigma) {
 }
 
 TEST(ProbDistributionsLKJCorr, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::lkj_corr_cholesky_rng(5, 1.0, rng));
   EXPECT_NO_THROW(stan::math::lkj_corr_rng(5, 1.0, rng));
 
@@ -65,7 +65,7 @@ TEST(ProbDistributionsLKJCorr, error_check) {
 }
 
 TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::beta_distribution<> dist(2.5, 2.5);
@@ -101,7 +101,7 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsLkjCorrCholesky, testIdentity) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
@@ -115,7 +115,7 @@ TEST(ProbDistributionsLkjCorrCholesky, testIdentity) {
 }
 
 TEST(ProbDistributionsLkjCorrCholesky, testHalf) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
   Sigma.setConstant(0.5);

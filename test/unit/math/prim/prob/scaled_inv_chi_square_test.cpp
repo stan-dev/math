@@ -46,7 +46,7 @@ TEST(ProbDistributionsScaledInvChiSquare, distributionTest) {
 }
 
 TEST(ProbDistributionsScaledInvChiSquare, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng));
 
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0, 1.0, rng),
@@ -62,7 +62,7 @@ TEST(ProbDistributionsScaledInvChiSquare, error_check) {
 }
 
 TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
