@@ -70,7 +70,6 @@ CXX_VERSION :=  $(shell $(CXX) -dumpfullversion -dumpversion 2>&1)
 CXX_MAJOR := $(word 1,$(subst ., ,$(CXX_VERSION)))
 CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
 
-
 ################################################################################
 # Set optional compiler flags for performance
 #
@@ -121,10 +120,32 @@ INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
 CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_FLTO_SUNDIALS)
 #CPPFLAGS_GTEST ?=
+STAN_HAS_CXX17 ?= false
+ifeq ($(CXX_TYPE), gcc)
+  GCC_GE_73 := $(shell [ $(CXX_MAJOR) -gt 7 -o \( $(CXX_MAJOR) -eq 7 -a $(CXX_MINOR) -ge 1 \) ] && echo true)
+  ifeq ($(GCC_GE_73),true)
+    STAN_HAS_CXX17 := true
+  endif
+else ifeq ($(CXX_TYPE), clang)
+  CLANG_GE_5 := $(shell [ $(CXX_MAJOR) -gt 5 -o \( $(CXX_MAJOR) -eq 5 -a $(CXX_MINOR) -ge 0 \) ] && echo true)
+  ifeq ($(CLANG_GE_5),true)
+    STAN_HAS_CXX17 := true
+  endif
+else ifeq ($(CXX_TYPE), mingw32-gcc)
+  MINGW_GE_50 := $(shell [ $(CXX_MAJOR) -gt 5 -o \( $(CXX_MAJOR) -eq 5 -a $(CXX_MINOR) -ge 0 \) ] && echo true)
+  ifeq ($(MINGW_GE_50),true)
+    STAN_HAS_CXX17 := true
+  endif
+endif
 
-
-## setup compiler flags
-CXXFLAGS_LANG ?= -std=c++1y
+ifeq ($(STAN_HAS_CXX17), true)
+  CXXFLAGS_LANG ?= -std=c++17
+  CXXFLAGS_STANDARD ?= c++17
+else
+  $(warning "Stan cannot detect if your compiler has the C++17 standard. If it does, please set STAN_HAS_CXX17=true in your make/local file. C++17 support is mandatory in the next release of Stan. Defaulting to C++14")
+  CXXFLAGS_LANG ?= -std=c++1y
+  CXXFLAGS_STANDARD ?= c++1y
+endif
 #CXXFLAGS_BOOST ?=
 CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
