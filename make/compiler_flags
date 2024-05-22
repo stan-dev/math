@@ -246,6 +246,10 @@ endif
 
 ## silence warnings occuring due to the TBB and Eigen libraries
 CXXFLAGS_WARNINGS += -Wno-ignored-attributes
+## https://github.com/oneapi-src/oneTBB/issues/307
+ifeq ($(CXX_TYPE), gcc)
+  CXXFLAGS_WARNINGS += -Wno-class-memaccess
+endif
 
 ################################################################################
 # Setup OpenCL
