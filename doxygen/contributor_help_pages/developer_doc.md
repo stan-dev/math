@@ -184,7 +184,7 @@ These are the more common make flags that could be set:
 These are the rest of the variables that can be set:
 
 - C++ compiler flags
-    - `CXXFLAGS_LANG`: sets the language. Currently defaults to `-std=c++1y`
+    - `CXXFLAGS_LANG`: sets the language. Currently defaults to `-std=c++17`
     - `CXXFLAGS_WARNINGS`: compiler options to squash compiler warnings
     - `CXXFLAGS_BOOST`: Boost-specific compiler flags
     - `CXXFLAGS_EIGEN`: Eigen-specific compiler flags
