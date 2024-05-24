@@ -1,5 +1,6 @@
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/prob/wiener_full_lpdf.hpp>
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -162,4 +163,23 @@ TEST(StanMath_hcubature_prim, test1) {
   test_integration([](auto&& x, auto&& a) { return hcubature_test::f7(x, a); },
                    std::make_tuple((1 + sqrt(10.0)) / 9.0), dim, a_4, b_4,
                    20000, 0.0, reqRelError_3, 0.999998);
+}
+
+TEST(StanMath_hcubature_prim, test_issue_3075) {
+  // test for regressions against issue
+  // https://github.com/stan-dev/math/issues/3075
+  using stan::math::internal::GradientCalc;
+  using stan::math::internal::wiener5_density;
+  using stan::math::internal::wiener7_integrate;
+
+  auto params_st = std::make_tuple(0.553273, 1, -3.5, 0.55, 0.553161, 1.06423,
+                                   0.0941929, 0.0, -28.3242);
+  Eigen::VectorXd xmin = Eigen::VectorXd::Zero(2);
+  Eigen::VectorXd xmax = Eigen::VectorXd::Ones(2);
+
+  auto f = wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
+      [](auto&&... args) { return wiener5_density<GradientCalc::ON>(args...); },
+      -18.3029, params_st, 1, xmin, xmax, 6000, 0, 4.5e-05);
+
+  ASSERT_FLOAT_EQ(f, 4.97571e-312);
 }

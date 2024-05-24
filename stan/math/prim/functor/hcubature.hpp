@@ -479,8 +479,8 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       std::tie(result_2, err_2, kdivide_2) = internal::integrate_GenzMalik(
           integrand, genz_malik, dim, box.a_, mb, pars);
     }
-    box_t box1(std::move(ma), std::move(box.b_), result_1, kdivide_1);
-    box_t box2(std::move(box.a_), std::move(mb), result_2, kdivide_2);
+    box_t box1(std::move(ma), box.b_, result_1, kdivide_1);
+    box_t box2(box.a_, std::move(mb), result_2, kdivide_2);
     result += result_1 + result_2 - box.I_;
     err += err_1 + err_2 - err_vec[err_idx];
     ms[err_idx].I_ = 0;
