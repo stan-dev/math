@@ -4,11 +4,12 @@ project(
     VERSION 0.0.1
     LANGUAGES C CXX)
 
+include(FetchContent)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_VERBOSE_MAKEFILE YES)
-
+cmake_policy(SET CMP0069 NEW)
 # Configuration Options
 option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
 option(STAN_OPENCL "Enable OpenCL support" OFF)
@@ -29,6 +30,25 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-sign-compare)
 endif()
 
+add_compile_options(
+  -DNO_FPRINTF_OUTPUT
+  -DBOOST_DISABLE_ASSERTS
+  -DTBB_INTERFACE_NEW
+  -D_REENTRANT
+  -Wno-deprecated-declarations
+  -DBOOST_DISABLE_ASSERTS
+  -Wall)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
+
+if(flto_support)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    message(WARNING "IPO/LTO is not supported: ${error}")
+endif()
+
 if(STAN_THREADS)
     add_compile_definitions(STAN_THREADS)
 endif()
@@ -47,102 +67,7 @@ if(STAN_OPENCL)
     link_libraries(${OpenCL_LIBRARIES})
 endif()
 
-add_compile_options(
-  -DNO_FPRINTF_OUTPUT
-  -DBOOST_DISABLE_ASSERTS
-  -DTBB_INTERFACE_NEW
-  -D_REENTRANT
-  -Wno-deprecated-declarations
-  -DBOOST_DISABLE_ASSERTS
-  -Wall)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
-
-if(flto_support)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(WARNING "IPO/LTO is not supported: ${error}")
-endif()
-
-include(FetchContent)
-if (BUILD_TESTING)
-  # Externally provided libraries
-  FetchContent_Declare(googletest
-          GIT_REPOSITORY https://github.com/google/googletest.git
-          GIT_TAG main)
-  FetchContent_Declare(googlebenchmark
-          GIT_REPOSITORY https://github.com/google/benchmark.git
-          GIT_TAG main) # need master for benchmark::benchmark
-
-  FetchContent_MakeAvailable(googletest googlebenchmark)
-endif()
-
-if(STAN_USE_SYSTEM_TBB)
-  find_package(TBB REQUIRED)
-else()
-  FetchContent_Declare(
-    tbb
-    GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
-    GIT_TAG        v2021.7.0  # adjust this to the version you need
-  )
-  FetchContent_MakeAvailable(tbb)
-endif()
-
-if(STAN_USE_SYSTEM_EIGEN)
-  find_package(Eigen3 REQUIRED)
-else()
-  set(EIGEN_BUILD_DOC OFF)
-  # note: To disable eigen tests,
-  # you should put this code in a add_subdirectory to avoid to change
-  # BUILD_TESTING for your own project too since variables are directory
-  # scoped
-  set(BUILD_TESTING OFF)
-  set(EIGEN_BUILD_TESTING OFF)
-  set(EIGEN_BUILD_PKGCONFIG OFF)
-  FetchContent_Declare(
-    Eigen
-    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.0)
-  FetchContent_MakeAvailable(Eigen)
-  #TODO: Need to just put dependency file in subdirectory
-  # since macros are directory scoped
-  set(BUILD_TESTING ON)
-  set(EIGEN_BUILD_TESTING ON)
-endif()
-
-if (STAN_USE_SYSTEM_SUNDIALS)
-  find_package(SUNDIALS REQUIRED)
-else()
-  FetchContent_Declare(
-    sundials
-    GIT_REPOSITORY https://github.com/LLNL/sundials
-    GIT_TAG        v6.1.1
-      # adjust this to the version you need
-  )
-  FetchContent_GetProperties(sundials)
-  if(NOT sundials_POPULATED)
-    FetchContent_Populate(sundials)
-    add_subdirectory(${sundials_SOURCE_DIR} ${sundials_BINARY_DIR})
-  endif()
-endif()
-
-if (STAN_USE_SYSTEM_BOOST)
-  find_package(Boost REQUIRED)
-else()
-  set(Boost_USE_STATIC_LIBS ON)
-  set(Boost_USE_STATIC_RUNTIME ON)
-  set(BOOST_ENABLE_CMAKE ON)
-  FetchContent_Declare(
-    boost
-    URL https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-  )
-  FetchContent_GetProperties(boost)
-  if(NOT boost_POPULATED)
-    FetchContent_Populate(boost)
-    set(boost_INCLUDE_DIR ${boost_SOURCE_DIR})
-  endif()
-endif()
+add_subdirectory(cmake EXCLUDE_FROM_ALL)
 
 # Library target
 add_library(stanmath INTERFACE)  # Assuming you only have headers
