@@ -264,9 +264,8 @@ pipeline {
                         sh "cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE"
                         sh "cd build"
                         sh "make -j${env.PARALLEL} unit_math_subtests"
-                        sh "
-                        ./test/unit/test_unit_math && \
-./test/unit/test_unit_math_fwd && \
+                        sh "./test/unit/test_unit_math && \
+                        ./test/unit/test_unit_math_fwd && \
 ./test/unit/test_unit_math_fwd_core && \
 ./test/unit/test_unit_math_fwd_fun && \
 ./test/unit/test_unit_math_fwd_functor && \
@@ -291,8 +290,7 @@ pipeline {
 ./test/unit/test_unit_math_rev_fun && \
 ./test/unit/test_unit_math_rev_functor && \
 ./test/unit/test_unit_math_rev_meta && \
-./test/unit/test_unit_math_rev_prob
-                        "
+./test/unit/test_unit_math_rev_prob"
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
