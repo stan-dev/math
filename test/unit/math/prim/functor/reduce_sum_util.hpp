@@ -164,24 +164,24 @@ template <typename... Types>
 inline auto reduce_sum_static_int_sum_lpdf(Types&&... args) {
   return stan::math::reduce_sum_static<sum_lpdf>(std::vector<int>(2, 10.0), 1,
                                                  get_new_msg(), args...);
-};
+}
 
 template <typename T, typename... Types>
 inline auto reduce_sum_static_sum_lpdf(T&& data, Types&&... args) {
   return stan::math::reduce_sum_static<sum_lpdf>(data, 1, get_new_msg(),
                                                  args...);
-};
+}
 
 template <typename... Types>
 inline auto reduce_sum_int_sum_lpdf(Types&&... args) {
   return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 1,
                                           get_new_msg(), args...);
-};
+}
 
 template <typename T, typename... Types>
 inline auto reduce_sum_sum_lpdf(T&& data, Types&&... args) {
   return stan::math::reduce_sum<sum_lpdf>(data, 1, get_new_msg(), args...);
-};
+}
 
 template <int grainsize>
 struct static_check_lpdf {

@@ -71,9 +71,9 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         # Configure target properties such as include directories and linked libraries
         target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
          ${boost_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-         target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1)
-         target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
-         target_link_libraries(${TEST_TARGET_NAME}
+        target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1)
+        target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
+        target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
           sundials_idas sundials_nvecserial)

@@ -47,11 +47,25 @@ jobs:
     - name: Run prim and rev unit tests
       shell: powershell
       run: |
-        python.exe runTests.py -j2 test/unit/*_test.cpp
-        python.exe runTests.py -j2 test/unit/math/*_test.cpp
-        python.exe runTests.py -j2 test/unit/math/prim
-        python.exe runTests.py -j2 test/unit/math/rev
-        python.exe runTests.py -j2 test/unit/math/memory
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
+        cd build
+        make -j${env.PARALLEL} unit_math_prim_subtests
+        ./test/unit/math/prim/unit_math_prim_core
+        ./test/unit/math/prim/unit_math_prim_err
+        ./test/unit/math/prim/unit_math_prim_fun
+        ./test/unit/math/prim/unit_math_prim_functor
+        ./test/unit/math/prim/unit_math_prim_meta
+        ./test/unit/math/prim/unit_math_prim_prob
+
+        make -j${env.PARALLEL} unit_math_rev_subtests
+        ./test/unit/math/rev/unit_math_rev_core
+        ./test/unit/math/rev/unit_math_rev_err
+        ./test/unit/math/rev/unit_math_rev_fun
+        ./test/unit/math/rev/unit_math_rev_functor
+        ./test/unit/math/rev/unit_math_rev_meta
+        ./test/unit/math/rev/unit_math_rev_prob
+        make -j${env.PARALLEL} test_unit_math_memory
+        ./test/unit/math/memory/test_unit_math_memory
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -91,13 +105,20 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
-        python.exe runTests.py test/unit/math/fwd -j2
-        python.exe runTests.py test/unit/math/mix/core -j2
-        python.exe runTests.py test/unit/math/mix/functor -j2
-        python.exe runTests.py test/unit/math/mix/meta -j2
-        python.exe runTests.py test/unit/math/mix/prob -j2
-        python.exe runTests.py test/unit/math/mix/*_test.cpp -j2
-
+        make -j${env.PARALLEL} unit_math_fwd_subtests
+        ./test/unit/math/fwd/unit_math_fwd_core
+        ./test/unit/math/fwd/unit_math_fwd_err
+        ./test/unit/math/fwd/unit_math_fwd_fun
+        ./test/unit/math/fwd/unit_math_fwd_functor
+        ./test/unit/math/fwd/unit_math_fwd_meta
+        ./test/unit/math/fwd/unit_math_fwd_prob
+        make -j${env.PARALLEL} unit_math_mix_subtests
+        ./test/unit/math/mix/unit_math_mix_core
+        ./test/unit/math/mix/unit_math_mix_err
+        ./test/unit/math/mix/unit_math_mix_fun
+        ./test/unit/math/mix/unit_math_mix_functor
+        ./test/unit/math/mix/unit_math_mix_meta
+        ./test/unit/math/mix/unit_math_mix_prob
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
       if: failure()

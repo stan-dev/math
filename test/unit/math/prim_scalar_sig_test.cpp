@@ -694,8 +694,9 @@ TEST(PrimScalarSigTests, pow) {
   EXPECT_EQ(result_6, std::pow(int_1, complex_2));
   EXPECT_EQ(result_7, std::pow(complex_1, int_2));
   EXPECT_EQ(result_8, std::pow(complex_1, real_2));
-  //TODO: Why does this give a wrong answer??
-  //EXPECT_EQ(result_9, std::pow(complex_1, complex_2));
+  /* Why does this give a wrong answer??
+   * EXPECT_EQ(result_9, std::pow(complex_1, complex_2));
+   */
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
