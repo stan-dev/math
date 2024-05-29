@@ -4,14 +4,13 @@
 #include <vector>
 #include <limits>
 
-
 TEST_F(AgradRev, logical_and) {
   auto test_logical_and = [](double x, double y) {
-  using stan::math::var;
-  EXPECT_EQ(x && y, var(x) && var(y));
-  EXPECT_EQ(x && y, x && var(y));
-  EXPECT_EQ(x && y, var(x) && y);
-};
+    using stan::math::var;
+    EXPECT_EQ(x && y, var(x) && var(y));
+    EXPECT_EQ(x && y, x && var(y));
+    EXPECT_EQ(x && y, var(x) && y);
+  };
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

@@ -6,10 +6,10 @@
 
 TEST_F(AgradRev, logical_or) {
   auto test_logical_or = [](double x, double y) {
-  stan::math::var x_v = x;
-  stan::math::var y_v = y;
-  EXPECT_EQ(x || y, x_v || y_v);
-};
+    stan::math::var x_v = x;
+    stan::math::var y_v = y;
+    EXPECT_EQ(x || y, x_v || y_v);
+  };
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

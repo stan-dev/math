@@ -66,7 +66,8 @@ inline void check_varis_on_stack(const std::vector<stan::math::var>& x) {
 }
 
 template <int R, int C>
-inline void check_varis_on_stack(const Eigen::Matrix<stan::math::var, R, C>& x) {
+inline void check_varis_on_stack(
+    const Eigen::Matrix<stan::math::var, R, C>& x) {
   for (int j = 0; j < x.cols(); ++j)
     for (int i = 0; i < x.rows(); ++i)
       EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(

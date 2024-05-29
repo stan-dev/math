@@ -3,13 +3,11 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-
-
 TEST_F(AgradRev, unaryNot) {
   auto test_unary_not = [](double x) {
-  stan::math::var x_v = x;
-  EXPECT_EQ(!x, !x_v);
-};
+    stan::math::var x_v = x;
+    EXPECT_EQ(!x, !x_v);
+  };
   test_unary_not(6.1);
   test_unary_not(0);
   test_unary_not(-13.2);

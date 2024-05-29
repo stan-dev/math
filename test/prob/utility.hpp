@@ -65,13 +65,14 @@ inline T get_param(const vector<double>& params, const size_t n) {
 }
 
 template <>
-inline empty get_param<empty>(const vector<double>& /*params*/, const size_t /*n*/) {
+inline empty get_param<empty>(const vector<double>& /*params*/,
+                              const size_t /*n*/) {
   return empty();
 }
 
 template <>
 inline fvar<double> get_param<fvar<double>>(const vector<double>& params,
-                                     const size_t n) {
+                                            const size_t n) {
   fvar<double> param = 0;
   if (n < params.size()) {
     param = params[n];
@@ -80,7 +81,8 @@ inline fvar<double> get_param<fvar<double>>(const vector<double>& params,
   return param;
 }
 template <>
-inline fvar<var> get_param<fvar<var>>(const vector<double>& params, const size_t n) {
+inline fvar<var> get_param<fvar<var>>(const vector<double>& params,
+                                      const size_t n) {
   fvar<var> param = 0;
   if (n < params.size()) {
     param = params[n];
@@ -89,8 +91,8 @@ inline fvar<var> get_param<fvar<var>>(const vector<double>& params, const size_t
   return param;
 }
 template <>
-inline fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& params,
-                                                 const size_t n) {
+inline fvar<fvar<double>> get_param<fvar<fvar<double>>>(
+    const vector<double>& params, const size_t n) {
   fvar<fvar<double>> param = 0;
   if (n < params.size()) {
     param = params[n];
@@ -100,7 +102,7 @@ inline fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& pa
 }
 template <>
 inline fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
-                                           const size_t n) {
+                                                  const size_t n) {
   fvar<fvar<var>> param = 0;
   if (n < params.size()) {
     param = params[n];
@@ -134,28 +136,29 @@ inline T get_params(const vector<vector<double>>& parameters, const size_t p) {
 // handle empty
 template <>
 inline empty get_params<empty>(const vector<vector<double>>& /*parameters*/,
-                        const size_t /*p*/) {
+                               const size_t /*p*/) {
   return empty();
 }
 // handle scalars
 template <>
 inline double get_params<double>(const vector<vector<double>>& parameters,
-                          const size_t p) {
+                                 const size_t p) {
   double param(0);
   if (p < parameters[0].size())
     param = parameters[0][p];
   return param;
 }
 template <>
-inline var get_params<var>(const vector<vector<double>>& parameters, const size_t p) {
+inline var get_params<var>(const vector<vector<double>>& parameters,
+                           const size_t p) {
   var param(0);
   if (p < parameters[0].size())
     param = parameters[0][p];
   return param;
 }
 template <>
-inline fvar<double> get_params<fvar<double>>(const vector<vector<double>>& parameters,
-                                      const size_t p) {
+inline fvar<double> get_params<fvar<double>>(
+    const vector<vector<double>>& parameters, const size_t p) {
   fvar<double> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
@@ -165,7 +168,7 @@ inline fvar<double> get_params<fvar<double>>(const vector<vector<double>>& param
 }
 template <>
 inline fvar<var> get_params<fvar<var>>(const vector<vector<double>>& parameters,
-                                const size_t p) {
+                                       const size_t p) {
   fvar<var> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
@@ -194,7 +197,8 @@ inline fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   return param;
 }
 template <>
-inline int get_params<int>(const vector<vector<double>>& parameters, const size_t p) {
+inline int get_params<int>(const vector<vector<double>>& parameters,
+                           const size_t p) {
   int param(0);
   if (p < parameters[0].size())
     param = (int)parameters[0][p];
@@ -202,8 +206,8 @@ inline int get_params<int>(const vector<vector<double>>& parameters, const size_
 }
 // handle vectors
 template <>
-inline vector<int> get_params<vector<int>>(const vector<vector<double>>& parameters,
-                                    const size_t p) {
+inline vector<int> get_params<vector<int>>(
+    const vector<vector<double>>& parameters, const size_t p) {
   vector<int> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size())
@@ -220,8 +224,8 @@ inline vector<double> get_params<vector<double>>(
   return param;
 }
 template <>
-inline vector<var> get_params<vector<var>>(const vector<vector<double>>& parameters,
-                                    const size_t p) {
+inline vector<var> get_params<vector<var>>(
+    const vector<vector<double>>& parameters, const size_t p) {
   vector<var> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size())
@@ -277,8 +281,8 @@ inline vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
 
 // default template handles Eigen::Matrix
 template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
-inline T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
-             const size_t p) {
+inline T get_params(const vector<vector<double>>& parameters,
+                    const size_t /*n*/, const size_t p) {
   T param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -288,8 +292,8 @@ inline T get_params(const vector<vector<double>>& parameters, const size_t /*n*/
 
 // handle `var_value<T>` where T is an Eigen type
 template <typename T, stan::require_var_matrix_t<T>* = nullptr>
-inline T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
-             const size_t p) {
+inline T get_params(const vector<vector<double>>& parameters,
+                    const size_t /*n*/, const size_t p) {
   typename T::value_type param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -300,29 +304,29 @@ inline T get_params(const vector<vector<double>>& parameters, const size_t /*n*/
 // handle empty
 template <>
 inline empty get_params<empty>(const vector<vector<double>>& /*parameters*/,
-                        const size_t /*n*/, const size_t /*p*/) {
+                               const size_t /*n*/, const size_t /*p*/) {
   return empty();
 }
 // handle scalars
 template <>
 inline double get_params<double>(const vector<vector<double>>& parameters,
-                          const size_t n, const size_t p) {
+                                 const size_t n, const size_t p) {
   double param(0);
   if (p < parameters[0].size())
     param = parameters[n][p];
   return param;
 }
 template <>
-inline var get_params<var>(const vector<vector<double>>& parameters, const size_t n,
-                    const size_t p) {
+inline var get_params<var>(const vector<vector<double>>& parameters,
+                           const size_t n, const size_t p) {
   var param(0);
   if (p < parameters[0].size())
     param = parameters[n][p];
   return param;
 }
 template <>
-inline fvar<double> get_params<fvar<double>>(const vector<vector<double>>& parameters,
-                                      const size_t n, const size_t p) {
+inline fvar<double> get_params<fvar<double>>(
+    const vector<vector<double>>& parameters, const size_t n, const size_t p) {
   fvar<double> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
@@ -332,7 +336,7 @@ inline fvar<double> get_params<fvar<double>>(const vector<vector<double>>& param
 }
 template <>
 inline fvar<var> get_params<fvar<var>>(const vector<vector<double>>& parameters,
-                                const size_t n, const size_t p) {
+                                       const size_t n, const size_t p) {
   fvar<var> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
@@ -361,8 +365,8 @@ inline fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   return param;
 }
 template <>
-inline int get_params<int>(const vector<vector<double>>& parameters, const size_t n,
-                    const size_t p) {
+inline int get_params<int>(const vector<vector<double>>& parameters,
+                           const size_t n, const size_t p) {
   int param(0);
   if (p < parameters[0].size())
     param = (int)parameters[n][p];
@@ -370,8 +374,9 @@ inline int get_params<int>(const vector<vector<double>>& parameters, const size_
 }
 // handle vectors
 template <>
-inline vector<int> get_params<vector<int>>(const vector<vector<double>>& parameters,
-                                    const size_t /*n*/, const size_t p) {
+inline vector<int> get_params<vector<int>>(
+    const vector<vector<double>>& parameters, const size_t /*n*/,
+    const size_t p) {
   vector<int> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -389,8 +394,9 @@ inline vector<double> get_params<vector<double>>(
   return param;
 }
 template <>
-inline vector<var> get_params<vector<var>>(const vector<vector<double>>& parameters,
-                                    const size_t /*n*/, const size_t p) {
+inline vector<var> get_params<vector<var>>(
+    const vector<vector<double>>& parameters, const size_t /*n*/,
+    const size_t p) {
   vector<var> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -450,7 +456,7 @@ inline vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
 // default template handles Eigen::Matrix
 template <typename T, stan::require_eigen_t<T>* = nullptr>
 inline T get_repeated_params(const vector<double>& parameters, const size_t p,
-                      const size_t N_REPEAT) {
+                             const size_t N_REPEAT) {
   T params(N_REPEAT);
   stan::value_type_t<T> param;
 
@@ -469,7 +475,7 @@ inline T get_repeated_params(const vector<double>& parameters, const size_t p,
 // handle `var_value<T>` where T is an Eigen type
 template <typename T, stan::require_var_matrix_t<T>* = nullptr>
 inline T get_repeated_params(const vector<double>& parameters, const size_t p,
-                      const size_t N_REPEAT) {
+                             const size_t N_REPEAT) {
   typename T::value_type params(N_REPEAT);
   double param;
 
@@ -488,7 +494,7 @@ inline T get_repeated_params(const vector<double>& parameters, const size_t p,
 // handle `std::vector`
 template <typename T, stan::require_std_vector_t<T>* = nullptr>
 inline T get_repeated_params(const vector<double>& parameters, const size_t p,
-                      const size_t N_REPEAT) {
+                             const size_t N_REPEAT) {
   T params(N_REPEAT);
   stan::value_type_t<T> param;
 
@@ -507,14 +513,15 @@ inline T get_repeated_params(const vector<double>& parameters, const size_t p,
 // handle empty
 template <typename T,
           std::enable_if_t<std::is_same<T, empty>::value>* = nullptr>
-inline T get_repeated_params(const vector<double>&, const size_t, const size_t) {
+inline T get_repeated_params(const vector<double>&, const size_t,
+                             const size_t) {
   return T();
 }
 
 // handle scalars
 template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
 inline T get_repeated_params(const vector<double>& parameters, const size_t p,
-                      const size_t /*N_REPEAT*/) {
+                             const size_t /*N_REPEAT*/) {
   if (p < parameters.size())
     return get_param<T>(parameters, p);
   else
@@ -537,8 +544,9 @@ inline typename scalar_type<T>::type select_var_param(
 }
 
 template <>
-inline empty select_var_param<empty>(const vector<vector<double>>& /*parameters*/,
-                              const size_t /*n*/, const size_t /*p*/) {
+inline empty select_var_param<empty>(
+    const vector<vector<double>>& /*parameters*/, const size_t /*n*/,
+    const size_t /*p*/) {
   return empty();
 }
 
@@ -634,7 +642,8 @@ inline void add_adjoints<fvar<var>>(vector<double>& x, fvar<var>& p) {
 }
 
 template <>
-inline void add_adjoints<vector<fvar<var>>>(vector<double>& x, vector<fvar<var>>& p) {
+inline void add_adjoints<vector<fvar<var>>>(vector<double>& x,
+                                            vector<fvar<var>>& p) {
   for (size_t n = 0; n < p.size(); n++)
     x.push_back(p[n].val_.adj());
 }
@@ -654,13 +663,14 @@ inline void add_adjoints<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>(
 }
 
 template <>
-inline void add_adjoints<fvar<fvar<var>>>(vector<double>& x, fvar<fvar<var>>& p) {
+inline void add_adjoints<fvar<fvar<var>>>(vector<double>& x,
+                                          fvar<fvar<var>>& p) {
   x.push_back(p.val_.val_.adj());
 }
 
 template <>
 inline void add_adjoints<vector<fvar<fvar<var>>>>(vector<double>& x,
-                                           vector<fvar<fvar<var>>>& p) {
+                                                  vector<fvar<fvar<var>>>& p) {
   for (size_t n = 0; n < p.size(); n++)
     x.push_back(p[n].val_.val_.adj());
 }
@@ -681,8 +691,8 @@ inline void add_adjoints<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>(
 
 template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
-inline void add_adjoints(vector<double>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4,
-                  T5& p5) {
+inline void add_adjoints(vector<double>& x, T0& p0, T1& p1, T2& p2, T3& p3,
+                         T4& p4, T5& p5) {
   if (!is_constant_all<T0>::value)
     add_adjoints(x, p0);
   if (!is_constant_all<T1>::value)

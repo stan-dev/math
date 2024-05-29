@@ -63,8 +63,10 @@ TEST(MathMix_reduce_sum, std_vector_zero_length) {
 
   std::vector<double> data(0);
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_double_slice) {
@@ -73,8 +75,10 @@ TEST(MathMix_reduce_sum, std_vector_double_slice) {
 
   std::vector<double> data(5, 10.0);
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_double_slice) {
@@ -83,8 +87,10 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_double_slice) {
 
   std::vector<std::vector<double>> data(3, std::vector<double>(2, 10.0));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_eigen_vector_double_slice) {
@@ -93,8 +99,10 @@ TEST(MathMix_reduce_sum, std_vector_eigen_vector_double_slice) {
 
   std::vector<Eigen::VectorXd> data(3, Eigen::VectorXd::Ones(2));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_eigen_row_vector_double_slice) {
@@ -103,8 +111,10 @@ TEST(MathMix_reduce_sum, std_vector_eigen_row_vector_double_slice) {
 
   std::vector<Eigen::RowVectorXd> data(3, Eigen::RowVectorXd::Ones(2));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_eigen_matrix_double_slice) {
@@ -113,8 +123,10 @@ TEST(MathMix_reduce_sum, std_vector_eigen_matrix_double_slice) {
 
   std::vector<Eigen::MatrixXd> data(3, Eigen::MatrixXd::Ones(2, 4));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_slice) {
@@ -124,8 +136,10 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_slice) {
   std::vector<std::vector<std::vector<double>>> data(
       3, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_double_slice) {
@@ -135,8 +149,10 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_double_slice) {
   std::vector<std::vector<Eigen::VectorXd>> data(
       3, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_double_slice) {
@@ -146,8 +162,10 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_double_slice) {
   std::vector<std::vector<Eigen::RowVectorXd>> data(
       3, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_matrix_double_slice) {
@@ -157,8 +175,10 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_matrix_double_slice) {
   std::vector<std::vector<Eigen::MatrixXd>> data(
       3, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 4)));
 
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_static_sum_lpdf(args...);}, data);
-  stan::test::expect_ad([](auto&&... args) {return reduce_sum_sum_lpdf(args...);}, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_static_sum_lpdf(args...); }, data);
+  stan::test::expect_ad(
+      [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
 TEST(StanMath_reduce_sum_static, start_end_slice) {

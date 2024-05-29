@@ -9,8 +9,8 @@ TEST(ProbAutocovariance, test1) {
   // ar1.csv generated in R with
   //   > x[1] <- rnorm(1, 0, 1)
   //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
-   std::vector<double> y{stan::math::test::ar1_arr.begin(),
-    stan::math::test::ar1_arr.end()};
+  std::vector<double> y{stan::math::test::ar1_arr.begin(),
+                        stan::math::test::ar1_arr.end()};
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
   std::vector<double> ac;
