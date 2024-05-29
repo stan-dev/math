@@ -5,6 +5,7 @@ import org.stan.Utils
 def runTests(String testPath, boolean jumbo = false) {
     try {
         sh "cat make/local"
+        sh "make print-compiler-flags"
         if (jumbo && !params.disableJumbo) {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
