@@ -253,13 +253,14 @@ pipeline {
                             !skipRemainingStages
                         }
                     }
+
+                    steps {
+                        unstash 'MathSetup'
                         script {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
                         }
-                    steps {
-                        unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         sh "cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE"
                         sh "cd build"
