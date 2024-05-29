@@ -56,17 +56,15 @@ namespace math {
  * @return Owen's T function applied to the arguments.
  */
 inline double owens_t(double h, double a) {
+  using boost::math::policies::domain_error;
+  using boost::math::policies::evaluation_error;
+  using boost::math::policies::ignore_error;
+  using boost::math::policies::overflow_error;
+  using boost::math::policies::pole_error;
   using boost::math::policies::policy;
-using boost::math::policies::evaluation_error;
-using boost::math::policies::overflow_error;
-using boost::math::policies::domain_error;
-using boost::math::policies::pole_error;
-using boost::math::policies::ignore_error;
-  using owen_policy = policy<
-  domain_error<ignore_error>,
-  pole_error<ignore_error>,
-  overflow_error<ignore_error>,
-  evaluation_error<ignore_error>>;
+  using owen_policy
+      = policy<domain_error<ignore_error>, pole_error<ignore_error>,
+               overflow_error<ignore_error>, evaluation_error<ignore_error>>;
   return boost::math::owens_t(h, a, owen_policy());
 }
 

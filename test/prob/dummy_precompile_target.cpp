@@ -45,4 +45,3 @@
 #include <test/prob/args/arg_generated_v_real_real_real_real_real_pch.hpp>
 #include <test/prob/args/arg_generated_ffv_real_real_real_real_real_pch.hpp>
 #include <test/prob/args/arg_generated_vv_real_real_real_real_real_pch.hpp>
-

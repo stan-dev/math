@@ -11,9 +11,9 @@
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 inline void expect_propto_multi_student_t_log(T_y y1, T_dof nu1, T_loc mu1,
-                                       T_scale sigma1, T_y y2, T_dof nu2,
-                                       T_loc mu2, T_scale sigma2,
-                                       std::string message = "") {
+                                              T_scale sigma1, T_y y2, T_dof nu2,
+                                              T_loc mu2, T_scale sigma2,
+                                              std::string message = "") {
   expect_eq_diffs(stan::math::multi_student_t_log<false>(y1, nu1, mu1, sigma1),
                   stan::math::multi_student_t_log<false>(y2, nu2, mu2, sigma2),
                   stan::math::multi_student_t_log<true>(y1, nu1, mu1, sigma1),

@@ -198,11 +198,11 @@ inline constexpr double get_adjoint_if_var(double v) {
  */
 template <typename T_a, typename T_b, typename T_theta, typename F>
 inline void test_derivatives(const F &f, double a, double b,
-                      std::vector<double> thetas,
-                      const std::vector<double> &x_r,
-                      const std::vector<int> &x_i, double val,
-                      std::vector<double> grad, double d_a = 0.0,
-                      double d_b = 0.0) {
+                             std::vector<double> thetas,
+                             const std::vector<double> &x_r,
+                             const std::vector<int> &x_i, double val,
+                             std::vector<double> grad, double d_a = 0.0,
+                             double d_b = 0.0) {
   using stan::math::value_of;
   using stan::math::var;
 

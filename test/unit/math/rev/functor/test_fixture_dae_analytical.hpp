@@ -83,7 +83,8 @@ struct analytical_dae_dv_functor : public analytical_dae_base<T> {
   analytical_dae_dv_functor() : analytical_dae_base<T>() {}
 
   template <typename Tx>
-  inline Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+  inline Eigen::Matrix<Tx, -1, 1> operator()(
+      Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     auto ys
         = sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr, x(0));
@@ -96,7 +97,8 @@ struct analytical_dae_vd_functor : public analytical_dae_base<T> {
   analytical_dae_vd_functor() : analytical_dae_base<T>() {}
 
   template <typename Tx>
-  inline Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+  inline Eigen::Matrix<Tx, -1, 1> operator()(
+      Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     Eigen::Matrix<Tx, -1, 1> yy0_tx = x;
     auto ys = sol(this->f, yy0_tx, this->yp0, this->t0, this->ts, nullptr,

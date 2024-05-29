@@ -40,7 +40,7 @@ using ArgumentTypes
  */
 template <typename T_param>
 inline void assign_parameter_values(T_param& params,
-                             const std::vector<double>& values) {
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -59,7 +59,7 @@ inline void assign_parameter_values(T_param& params,
  * @param params Values to copy into params
  */
 inline void assign_parameter_values(std::vector<double>& params,
-                             const std::vector<double>& values) {
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -78,7 +78,7 @@ inline void assign_parameter_values(std::vector<double>& params,
  * @param params Values to copy into params
  */
 inline void assign_parameter_values(std::vector<int>& params,
-                             const std::vector<int>& values) {
+                                    const std::vector<int>& values) {
   if (values.size() == 0)
     return;
 
@@ -93,7 +93,8 @@ inline void assign_parameter_values(std::vector<int>& params,
  * @param param Output parameter to write value to
  * @param params Vector with value to copy into param
  */
-inline void assign_parameter_values(double& param, const std::vector<double>& values) {
+inline void assign_parameter_values(double& param,
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -106,7 +107,8 @@ inline void assign_parameter_values(double& param, const std::vector<double>& va
  * @param param Output parameter to write value to
  * @param params Vector with value to copy into param
  */
-inline void assign_parameter_values(int& param, const std::vector<int>& values) {
+inline void assign_parameter_values(int& param,
+                                    const std::vector<int>& values) {
   if (values.size() == 0)
     return;
 

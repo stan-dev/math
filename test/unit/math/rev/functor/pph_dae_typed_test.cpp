@@ -74,4 +74,4 @@ TYPED_TEST_P(pph_dae_test, param_finite_diff) {
 REGISTER_TYPED_TEST_SUITE_P(pph_dae_test, param_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, pph_dae_test, pph_test_types);
 */
-}
+}  // namespace pph_dae_param_finite_diff_test

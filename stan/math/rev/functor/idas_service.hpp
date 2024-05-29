@@ -66,12 +66,13 @@ struct idas_service {
     CHECK_IDAS_CALL(IDASetUserData(mem, static_cast<void*>(&dae)));
     CHECK_IDAS_CALL(IDASetLinearSolver(mem, LS, A));
 
-  if (dae_type::use_fwd_sens) {
-    std::cout << "Forward sensitivities enabled. Initializing sensitivities." << std::endl;
-    idas_sens_init(nv_yys, nv_yps, ns_, n);
-  } else {
-    std::cout << "Forward sensitivities not enabled." << std::endl;
-  }
+    if (dae_type::use_fwd_sens) {
+      std::cout << "Forward sensitivities enabled. Initializing sensitivities."
+                << std::endl;
+      idas_sens_init(nv_yys, nv_yps, ns_, n);
+    } else {
+      std::cout << "Forward sensitivities not enabled." << std::endl;
+    }
   }
 
   ~idas_service() {
@@ -96,17 +97,20 @@ struct idas_service {
     yys = N_VCloneVectorArray(ns, nv_yy);
     yps = N_VCloneVectorArray(ns, nv_yp);
     if (yys == nullptr) {
-      throw std::runtime_error("Failed to allocate yys N_Vectors for sensitivities.");
+      throw std::runtime_error(
+          "Failed to allocate yys N_Vectors for sensitivities.");
     }
     if (yps == nullptr) {
-      throw std::runtime_error("Failed to allocate yps N_Vectors for sensitivities.");
+      throw std::runtime_error(
+          "Failed to allocate yps N_Vectors for sensitivities.");
     }
     for (size_t is = 0; is < ns; ++is) {
       N_VConst(RCONST(0.0), yys[is]);
       N_VConst(RCONST(0.0), yps[is]);
     }
     set_init_sens(yys, yps, n);
-      std::cout << "Calling IDASensInit with ns=" << ns << " inner ns: " << ns_ << std::endl;
+    std::cout << "Calling IDASensInit with ns=" << ns << " inner ns: " << ns_
+              << std::endl;
     CHECK_IDAS_CALL(
         IDASensInit(mem, ns, IDA_STAGGERED, dae_type::idas_sens_res, yys, yps));
   }

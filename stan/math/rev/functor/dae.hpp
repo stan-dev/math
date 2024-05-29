@@ -49,7 +49,8 @@ namespace math {
  */
 template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
-inline std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
+inline std::vector<
+    Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
 dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
              double t0, const std::vector<double>& ts, double rtol, double atol,
              int64_t max_num_steps, std::ostream* msgs, const T_Args&... args) {
@@ -121,7 +122,8 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
  */
 template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
-inline std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
+inline std::vector<
+    Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
 dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
         const std::vector<double>& ts, double rtol, double atol,
         int64_t max_num_steps, std::ostream* msgs, const T_Args&... args) {
@@ -163,8 +165,9 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
  */
 template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
-inline std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
- dae(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
+inline std::vector<
+    Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
+dae(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
     const std::vector<double>& ts, std::ostream* msgs, const T_Args&... args) {
   return dae_tol_impl("dae", f, yy0, yp0, t0, ts, 1.e-10, 1.e-10, 1e8, msgs,
                       args...);
