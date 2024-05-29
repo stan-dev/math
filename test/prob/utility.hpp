@@ -2,6 +2,7 @@
 #define TEST_PROB_UTILITY_HPP
 
 #include <stan/math/mix.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 
 using stan::is_constant_all;
 using stan::is_vector;

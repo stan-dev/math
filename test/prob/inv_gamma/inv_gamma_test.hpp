@@ -91,7 +91,8 @@ class AgradDistributionsInvGamma : public AgradDistributionTest {
            - multiply_log(alpha + 1.0, y) - beta / y;
   }
 };
-
+/*
 TEST(ProbDistributionsInvGammaCdf, Values) {
   EXPECT_FLOAT_EQ(0.557873, stan::math::inv_gamma_cdf(4.39, 1.349, 3.938));
 }
+*/

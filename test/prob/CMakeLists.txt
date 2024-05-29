@@ -1,12 +1,70 @@
+# Compile one test manually so that we can reuse precompile headers
+add_executable(prob_pch
+  ${CMAKE_CURRENT_SOURCE_DIR}/dummy_precompile_target.cpp)
+target_compile_options(prob_pch PRIVATE -O1)
+target_include_directories(prob_pch PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+target_precompile_headers(prob_pch PRIVATE
+    "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
+    "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<stan/math/mix.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<stan/math/rev.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/test_fixture_ccdf_log.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/test_fixture_cdf_log.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/test_fixture_cdf.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/test_fixture_distr.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/utility.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<stdexcept$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<tuple$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<type_traits$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_int_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_int_int_int_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_real_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_real_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_real_int_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_v_real_real_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_ffv_real_real_real_real_real_pch.hpp$<ANGLE-R>>"
+"$<$<COMPILE_LANGUAGE:CXX>:<test/prob/args/arg_generated_vv_real_real_real_real_real_pch.hpp$<ANGLE-R>>"
+)
 
-add_library(test_ad_pch2 INTERFACE)
-target_precompile_headers(test_ad_pch2 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/../unit/math/test_ad.hpp)
-target_include_directories(test_ad_pch2 INTERFACE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
-target_link_libraries(test_ad_pch2 INTERFACE benchmark::benchmark TBB::tbb Eigen3::Eigen sundials_kinsol sundials_cvodes)
+target_link_libraries(prob_pch
+  gtest_main benchmark::benchmark TBB::tbb
+  Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
+  sundials_idas sundials_nvecserial)
+
+
 
 # Prob tests
 # Define the test generator executable
-add_executable(generate_tests prob/generate_tests.cpp)
+add_executable(generate_tests generate_tests.cpp)
 
 
 # Linking libraries, adjust according to actual dependencies required
@@ -14,10 +72,10 @@ target_include_directories(generate_tests PRIVATE ${boost_SOURCE_DIR})
 # Add a custom target to run the test generator
 # Define a custom command that always runs and uses the TIMESTAMP to force a re-run
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild1
     COMMAND ${CMAKE_COMMAND} -E echo "Running generate_tests to produce distribution tests"
-    COMMAND generate_tests
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild
+    COMMAND generate_tests ${CMAKE_CURRENT_SOURCE_DIR} 300
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild1
     DEPENDS generate_tests
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating distribution tests"
@@ -26,7 +84,7 @@ add_custom_command(
 
 # Custom target that always builds when the project is built
 add_custom_target(run_generate_tests ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/always_rebuild1
     COMMENT "Running distribution test generator"
 )
 
@@ -34,29 +92,4 @@ add_custom_target(run_generate_tests ALL
 add_dependencies(run_generate_tests generate_tests)
 
 
-# Discover all .hpp files that define tests and generate corresponding .cpp test files
-file(GLOB_RECURSE HEADER_TEST_FILES "${CMAKE_CURRENT_SOURCE_DIR}/prob/*.hpp")
-foreach(HEADER_FILE ${HEADER_TEST_FILES})
-    # Replace slashes in the header file path to create a valid target name
-    string(REPLACE "/" "_" SAFE_HEADER_NAME ${HEADER_FILE})
-    string(REGEX REPLACE "/" "_" GENERATED_TEST_FILE ${SAFE_HEADER_NAME})
-
-    # Generate each test file with a custom command
-    add_custom_command(
-        OUTPUT ${GENERATED_TEST_FILE}
-        COMMAND ${CMAKE_COMMAND} -E echo "Generating test for ${HEADER_FILE}"
-        COMMAND generate_tests ${HEADER_FILE} ${N_TESTS}
-        DEPENDS generate_tests ${HEADER_FILE}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating ${GENERATED_TEST_FILE} from ${HEADER_FILE}"
-        VERBATIM
-    )
-
-    # Define a custom target for each generated test file, using the safe name
-    add_custom_target("${GENERATED_TEST_FILE}_target" ALL
-        DEPENDS ${GENERATED_TEST_FILE}
-        COMMENT "Generating test target for ${GENERATED_TEST_FILE}"
-    )
-endforeach()
-
-add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR} prob test_ad_pch2)
+add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR} prob_math prob_pch)

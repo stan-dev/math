@@ -1,8 +1,9 @@
 #ifndef TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
 #define TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
 
-#include <stan/math/rev.hpp>
 #include <test/prob/utility.hpp>
+#include <stan/math/rev.hpp>
+#include <gtest/gtest.h>
 #include <type_traits>
 #include <tuple>
 
@@ -41,7 +42,7 @@ class AgradCcdfLogTest {
   }
 
   // also include 2 templated functions:
-  /*
+
     template <typename T_y, typename T_loc, typename T_scale,
     typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8,
@@ -60,9 +61,9 @@ class AgradCcdfLogTest {
     cdf_log_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&)
     { using stan::math::erf; return (0.5 + 0.5 * erf((y - mu) / (sigma *
-    SQRT_TWO)));
+    stan::math::SQRT_TWO)));
     }
-  */
+
 };
 
 template <class T>

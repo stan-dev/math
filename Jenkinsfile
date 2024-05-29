@@ -142,8 +142,8 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues( 
-                        enabledForFailure: true, 
+                    recordIssues(
+                        enabledForFailure: true,
                         tools: [cppLint(),groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
                     )
                     deleteDir()
@@ -240,7 +240,7 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('Rev/Fwd Unit Tests') {
+                stage('All Unit Tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
@@ -253,71 +253,46 @@ pipeline {
                             !skipRemainingStages
                         }
                     }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-
                         script {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
-
-                            runTests("test/unit/math/rev")
-                            runTests("test/unit/math/fwd")
                         }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mix Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
                     steps {
                         unstash 'MathSetup'
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=1 >> make/local"
-                            }
-                            runTests("test/unit/math/mix", true)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Prim Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=0 >> make/local"
-                            }
-                            runTests("test/unit/*_test.cpp", false)
-                            runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
-                            runTests("test/unit/math/memory", false)
-                        }
+                        sh "cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE"
+                        sh "cd build"
+                        sh "make -j${env.PARALLEL} unit_math_subtests"
+                        sh "
+                        ./test/unit/test_unit_math && \
+./test/unit/test_unit_math_fwd && \
+./test/unit/test_unit_math_fwd_core && \
+./test/unit/test_unit_math_fwd_fun && \
+./test/unit/test_unit_math_fwd_functor && \
+./test/unit/test_unit_math_fwd_meta && \
+./test/unit/test_unit_math_fwd_prob && \
+./test/unit/test_unit_math_memory && \
+./test/unit/test_unit_math_mix && \
+./test/unit/test_unit_math_mix_core && \
+./test/unit/test_unit_math_mix_fun && \
+./test/unit/test_unit_math_mix_functor && \
+./test/unit/test_unit_math_mix_meta && \
+./test/unit/test_unit_math_mix_prob && \
+./test/unit/test_unit_math_prim_core && \
+./test/unit/test_unit_math_prim_err && \
+./test/unit/test_unit_math_prim_fun && \
+./test/unit/test_unit_math_prim_functor && \
+./test/unit/test_unit_math_prim_meta && \
+./test/unit/test_unit_math_prim_prob && \
+./test/unit/test_unit_math_rev && \
+./test/unit/test_unit_math_rev_core && \
+./test/unit/test_unit_math_rev_err && \
+./test/unit/test_unit_math_rev_fun && \
+./test/unit/test_unit_math_rev_functor && \
+./test/unit/test_unit_math_rev_meta && \
+./test/unit/test_unit_math_rev_prob
+                        "
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -575,7 +550,7 @@ pipeline {
         always {
             node("linux") {
                 recordIssues(
-                    enabledForFailure: false, 
+                    enabledForFailure: false,
                     tool: clang()
                 )
             }
