@@ -63,19 +63,3 @@ else()
   endif()
 endif()
 
-if (STAN_USE_SYSTEM_BOOST)
-  find_package(Boost REQUIRED)
-else()
-  set(Boost_USE_STATIC_LIBS ON)
-  set(Boost_USE_STATIC_RUNTIME ON)
-  set(BOOST_ENABLE_CMAKE ON)
-  FetchContent_Declare(
-    boost
-    URL https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-  )
-  FetchContent_GetProperties(boost)
-  if(NOT boost_POPULATED)
-    FetchContent_Populate(boost)
-    set(boost_INCLUDE_DIR ${boost_SOURCE_DIR})
-  endif()
-endif()
