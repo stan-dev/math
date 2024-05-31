@@ -16,7 +16,7 @@ T vectorize_softmax(const T& y) {
 }
 }  // namespace dirichlet_test
 
-TEST(ProbDistributions, dirichlet) {
+TEST_F(AgradRev, ProbDistributions_dirichlet) {
   auto f = [](const auto& y, const auto& alpha) {
     auto y_simplex = dirichlet_test::vectorize_softmax(y);
     auto lp = stan::math::dirichlet_lpdf(y_simplex, alpha);
@@ -36,7 +36,7 @@ TEST(ProbDistributions, dirichlet) {
   stan::test::expect_ad(f, vs, vs);
 }
 
-TEST(ProbDistributions, fvar_var) {
+TEST_F(AgradRev, ProbDistributions_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -71,7 +71,7 @@ TEST(ProbDistributions, fvar_var) {
                   stan::math::dirichlet_lpdf(theta2, alpha2).d_.val());
 }
 
-TEST(ProbDistributions, fvar_varVectorized) {
+TEST_F(AgradRev, ProbDistributions_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_lpdf;
@@ -127,7 +127,7 @@ TEST(ProbDistributions, fvar_varVectorized) {
   EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
 }
 
-TEST(ProbDistributions, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributions_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -162,7 +162,7 @@ TEST(ProbDistributions, fvar_fvar_var) {
                   stan::math::dirichlet_lpdf(theta2, alpha2).d_.val_.val());
 }
 
-TEST(ProbDistributions, fvar_fvar_varVectorized) {
+TEST_F(AgradRev, ProbDistributions_fvar_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dirichlet_lpdf;

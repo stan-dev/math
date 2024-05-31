@@ -18,7 +18,8 @@ namespace math {
  * @param a matrix to convert
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-var_value<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
+inline var_value<
+    Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
 to_var_value(const T& a) {
   arena_matrix<plain_type_t<T>> a_arena = a;
   var_value<promote_scalar_t<double, T>> res(a_arena.val());
@@ -34,7 +35,7 @@ to_var_value(const T& a) {
  * @param a matrix to convert
  */
 template <typename T, require_var_t<T>* = nullptr>
-T to_var_value(T&& a) {
+inline T to_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
@@ -46,7 +47,7 @@ T to_var_value(T&& a) {
  * @param a std::vector of elements to convert
  */
 template <typename T>
-auto to_var_value(const std::vector<T>& a) {
+inline auto to_var_value(const std::vector<T>& a) {
   std::vector<decltype(to_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
   for (size_t i = 0; i < a.size(); ++i) {

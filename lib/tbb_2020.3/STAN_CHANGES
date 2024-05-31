@@ -6,3 +6,10 @@ This file documents changes done for the stan-math project
 - build/windows.inc patches for RTools make:
   - L15 changed setting to use '?=', allowing override
   - L25,L113,L114 added additional '/' to each cmd flag
+
+- Support for Windows ARM64 with RTools:
+  - build/Makefile.tbb
+    - L94 Wrapped the use of `--version-script` export in conditional on non-WINARM64
+  - build/windows.gcc.ino
+    - L84 Wrapped the use of `-flifetime-dse` flag in conditional on non-WINARM64
+    

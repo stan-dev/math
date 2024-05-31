@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(ProbDistributionsCategoricalLogit, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogit_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -28,7 +29,7 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var) {
                   stan::math::categorical_logit_lpmf(3, theta).d_.val());
 }
 
-TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogit_fvar_var_vectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -58,7 +59,7 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
                   stan::math::categorical_logit_lpmf(ms, theta).d_.val());
 }
 
-TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogit_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -83,7 +84,7 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
                   stan::math::categorical_logit_lpmf(3, theta).d_.val_.val());
 }
 
-TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var_vectorized) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogit_fvar_fvar_var_vectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

@@ -44,8 +44,8 @@ inline var sum(const std::vector<var, Alloc>& m) {
  * @return Sum of coefficients of matrix.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline var sum(const T& x) {
-  arena_t<T> x_arena = x;
+inline var sum(T&& x) {
+  arena_t<T> x_arena(std::forward<T>(x));
   return make_callback_var(sum(x_arena.val()), [x_arena](auto& vi) mutable {
     x_arena.adj().array() += vi.adj();
   });

@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -6,7 +7,7 @@
 #include <test/unit/math/mix/prob/higher_order_utils.hpp>
 #include <vector>
 
-TEST(ProbDistributionsLkjCorr, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorr_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
   boost::random::mt19937 rng;
@@ -28,7 +29,7 @@ TEST(ProbDistributionsLkjCorr, fvar_var) {
   EXPECT_FLOAT_EQ(f.d_.val(), stan::math::lkj_corr_lpdf(Sigma, eta).d_.val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
   boost::random::mt19937 rng;
@@ -51,7 +52,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
   EXPECT_FLOAT_EQ(3, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val());
 }
 
-TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorr_fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
   boost::random::mt19937 rng;
@@ -75,7 +76,7 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
                   stan::math::lkj_corr_lpdf(Sigma, eta).d_.val_.val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
   boost::random::mt19937 rng;
@@ -101,7 +102,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_var) {
                   stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val_.val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, hessian) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_hessian) {
   int dim_mat = 3;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(dim_mat);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x2(1);
@@ -162,7 +163,7 @@ TEST(ProbDistributionsLkjCorrCholesky, hessian) {
   EXPECT_FLOAT_EQ(fx_hess_1, fx_hess_ad_1);
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, grad_hessian) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_grad_hessian) {
   int dim_mat = 3;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(dim_mat);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x2(1);
