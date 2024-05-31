@@ -47,23 +47,23 @@ jobs:
     - name: Run prim and rev unit tests
       shell: powershell
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE &&
-        cd build &&
-        make -j${env.PARALLEL} unit_math_prim_subtests &&
-        ./test/unit/test_unit_math_prim_core &&
-        ./test/unit/test_unit_math_prim_err &&
-        ./test/unit/test_unit_math_prim_fun &&
-        ./test/unit/test_unit_math_prim_functor &&
-        ./test/unit/test_unit_math_prim_meta &&
-        ./test/unit/test_unit_math_prim_prob  &&
-        make -j${env.PARALLEL} unit_math_rev_subtests &&
-        ./test/unit/test_unit_math_rev_core &&
-        ./test/unit/test_unit_math_rev_err &&
-        ./test/unit/test_unit_math_rev_fun &&
-        ./test/unit/test_unit_math_rev_functor &&
-        ./test/unit/test_unit_math_rev_meta &&
-        ./test/unit/test_unit_math_rev_prob &&
-        make -j${env.PARALLEL} test_unit_math_memory &&
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
+        cd build
+        make -j${env.PARALLEL} unit_math_prim_subtests
+        ./test/unit/test_unit_math_prim_core
+        ./test/unit/test_unit_math_prim_err
+        ./test/unit/test_unit_math_prim_fun
+        ./test/unit/test_unit_math_prim_functor
+        ./test/unit/test_unit_math_prim_meta
+        ./test/unit/test_unit_math_prim_prob
+        make -j${env.PARALLEL} unit_math_rev_subtests
+        ./test/unit/test_unit_math_rev_core
+        ./test/unit/test_unit_math_rev_err
+        ./test/unit/test_unit_math_rev_fun
+        ./test/unit/test_unit_math_rev_functor
+        ./test/unit/test_unit_math_rev_meta
+        ./test/unit/test_unit_math_rev_prob
+        make -j${env.PARALLEL} test_unit_math_memory
         ./test/unit/math/memory/test_unit_math_memory
 
     - name: Upload gtest_output xml
@@ -104,23 +104,23 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE &&
-        cd build &&
-        make -j${env.PARALLEL} unit_math_fwd_subtests  &&
-        ./test/unit/test_unit_math_fwd_core &&
-        ./test/unit/test_unit_math_fwd_err &&
-        ./test/unit/test_unit_math_fwd_fun &&
-        ./test/unit/test_unit_math_fwd_functor &&
-        ./test/unit/test_unit_math_fwd_meta &&
-        ./test/unit/test_unit_math_fwd_prob &&
-        make -j${env.PARALLEL} unit_math_mix_subtests &&
-        ./test/unit/test_unit_math_mix_core &&
-        ./test/unit/test_unit_math_mix_err &&
-        ./test/unit/test_unit_math_mix_fun &&
-        ./test/unit/test_unit_math_mix_functor &&
-        ./test/unit/test_unit_math_mix_meta &&
-        ./test/unit/test_unit_math_mix_prob 
-    - name: Upload gtest_output xml 
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
+        cd build
+        make -j${env.PARALLEL} unit_math_fwd_subtests
+        ./test/unit/test_unit_math_fwd_core
+        ./test/unit/test_unit_math_fwd_err
+        ./test/unit/test_unit_math_fwd_fun
+        ./test/unit/test_unit_math_fwd_functor
+        ./test/unit/test_unit_math_fwd_meta
+        ./test/unit/test_unit_math_fwd_prob
+        make -j${env.PARALLEL} unit_math_mix_subtests
+        ./test/unit/test_unit_math_mix_core
+        ./test/unit/test_unit_math_mix_err
+        ./test/unit/test_unit_math_mix_fun
+        ./test/unit/test_unit_math_mix_functor
+        ./test/unit/test_unit_math_mix_meta
+        ./test/unit/test_unit_math_mix_prob
+    - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
       if: failure()
       with:
