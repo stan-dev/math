@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <stan/math/rev/functor/idas_integrator.hpp>
+#include <stan/math/rev/functor/dae_system.hpp>
 #include <nvector/nvector_serial.h>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -12,6 +12,8 @@
 #include <fstream>
 #include <vector>
 #include <limits>
+
+namespace idas_system_test {
 
 static sundials::Context sundials_context;
 
@@ -80,7 +82,7 @@ struct StanIntegrateDAETest : public ::testing::Test {
   }
 };
 
-TEST_F(StanIntegrateDAETest, dae_system) {
+TEST_F(StanIntegrateDAETest, dae_system_test) {
   using stan::math::dae_system;
 
   Eigen::Matrix<stan::math::var, -1, 1> yy0_var = stan::math::to_var(yy0);
@@ -90,34 +92,47 @@ TEST_F(StanIntegrateDAETest, dae_system) {
   std::vector<int> x_i;
   std::ostream* msgs = nullptr;
 
-  {
-    dae_system<chemical_kinetics, Eigen::VectorXd, Eigen::VectorXd,
-               std::vector<double>, std::vector<double>, std::vector<int>>
-        dae(f, yy0, yp0, msgs, theta, x_r, x_i);
-    EXPECT_FALSE(dae.is_var_yy0);
-    EXPECT_FALSE(dae.is_var_yp0);
-    EXPECT_FALSE(dae.is_var_par);
-    EXPECT_FALSE(dae.use_fwd_sens);
-  }
+  dae_system<chemical_kinetics, Eigen::VectorXd, Eigen::VectorXd,
+             std::vector<double>, std::vector<double>, std::vector<int>>
+      dae1(f, yy0, yp0, msgs, theta, x_r, x_i);
 
-  {
-    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
-               Eigen::Matrix<stan::math::var, -1, 1>, std::vector<double>>
-        dae(f, yy0_var, yp0_var, msgs, theta);
-    EXPECT_TRUE(dae.is_var_yy0);
-    EXPECT_TRUE(dae.is_var_yp0);
-    EXPECT_FALSE(dae.is_var_par);
-    EXPECT_TRUE(dae.use_fwd_sens);
-  }
+  // auxiliary variables required due to static member restriction on
+  // addressing: "You can take the address of a static member if (and only if)
+  // it has an out-of-class definition"
+  // For some reason _not_ doing this still works at O3, but not O0.
+  auto d1_yy0 = dae1.is_var_yy0;
+  EXPECT_FALSE(d1_yy0);
+  auto d1_yp0 = dae1.is_var_yp0;
+  EXPECT_FALSE(d1_yp0);
+  auto d1_par = dae1.is_var_par;
+  EXPECT_FALSE(d1_par);
+  auto d1_fwd = dae1.use_fwd_sens;
+  EXPECT_FALSE(d1_fwd);
 
-  {
-    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
-               Eigen::Matrix<stan::math::var, -1, 1>,
-               std::vector<stan::math::var>>
-        dae(f, yy0_var, yp0_var, msgs, theta_var);
-    EXPECT_TRUE(dae.is_var_yy0);
-    EXPECT_TRUE(dae.is_var_yp0);
-    EXPECT_TRUE(dae.is_var_par);
-    EXPECT_TRUE(dae.use_fwd_sens);
-  }
+  dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
+             Eigen::Matrix<stan::math::var, -1, 1>, std::vector<double>>
+      dae2(f, yy0_var, yp0_var, msgs, theta);
+  auto d2_yy0 = dae2.is_var_yy0;
+  EXPECT_TRUE(d2_yy0);
+  auto d2_yp0 = dae2.is_var_yp0;
+  EXPECT_TRUE(d2_yp0);
+  auto d2_par = dae2.is_var_par;
+  EXPECT_FALSE(d2_par);
+  auto d2_fwd = dae2.use_fwd_sens;
+  EXPECT_TRUE(d2_fwd);
+
+  dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
+             Eigen::Matrix<stan::math::var, -1, 1>,
+             std::vector<stan::math::var>>
+      dae3(f, yy0_var, yp0_var, msgs, theta_var);
+
+  auto d3_yy0 = dae3.is_var_yy0;
+  EXPECT_TRUE(d3_yy0);
+  auto d3_yp0 = dae3.is_var_yp0;
+  EXPECT_TRUE(d3_yp0);
+  auto d3_par = dae3.is_var_par;
+  EXPECT_TRUE(d3_par);
+  auto d3_fwd = dae3.use_fwd_sens;
+  EXPECT_TRUE(d3_fwd);
 }
+}  // namespace idas_system_test

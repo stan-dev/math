@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/ternary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -40,7 +41,7 @@ TEST(MathFunctions, inc_beta_a_boundary) {
   const double inf = std::numeric_limits<double>::infinity();
 
   EXPECT_NO_THROW(stan::math::inc_beta(0.0, b, x));
-  EXPECT_NO_THROW(stan::math::inc_beta(inf, b, x));
+  EXPECT_THROW(stan::math::inc_beta(inf, b, x), std::domain_error);
   EXPECT_THROW(stan::math::inc_beta(-0.01, b, x), std::domain_error);
 }
 
@@ -51,7 +52,7 @@ TEST(MathFunctions, inc_beta_b_boundary) {
   const double inf = std::numeric_limits<double>::infinity();
 
   EXPECT_NO_THROW(stan::math::inc_beta(a, 0.0, x));
-  EXPECT_NO_THROW(stan::math::inc_beta(inf, 1.0, x));
+  EXPECT_THROW(stan::math::inc_beta(inf, 1.0, x), std::domain_error);
   EXPECT_THROW(stan::math::inc_beta(a, -0.01, x), std::domain_error);
 }
 
@@ -81,4 +82,17 @@ TEST(MathFunctions, inc_beta_nan) {
   EXPECT_THROW(stan::math::inc_beta(nan, 0.0, nan), std::domain_error);
   EXPECT_THROW(stan::math::inc_beta(nan, nan, 0.0), std::domain_error);
   EXPECT_THROW(stan::math::inc_beta(nan, nan, nan), std::domain_error);
+}
+
+TEST(MathFunctions, inc_beta_vec) {
+  auto f = [](const auto& x1, const auto& x2, const auto& x3) {
+    return stan::math::inc_beta(x1, x2, x3);
+  };
+
+  Eigen::VectorXd in1 = Eigen::VectorXd::Random(6).array().abs().matrix();
+  Eigen::VectorXd in2 = Eigen::VectorXd::Random(6).array().abs().matrix();
+  Eigen::VectorXd in3(6);
+  in3 << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6;
+
+  stan::test::ternary_scalar_tester(f, in1, in2, in3);
 }

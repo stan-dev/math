@@ -41,7 +41,6 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
   using stan::math::var;
 
   Matrix<var, Dynamic, Dynamic> y;
-  double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::check_pos_semidefinite;
 
   y.resize(3, 3);

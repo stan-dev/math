@@ -1,5 +1,6 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/pareto_type_2_cdf.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

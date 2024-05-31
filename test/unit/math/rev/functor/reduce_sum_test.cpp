@@ -202,7 +202,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
 
-  double lambda_d = 10.0;
   const std::size_t groups = 10;
   const std::size_t elems_per_group = 1000;
   const std::size_t elems = groups * elems_per_group;
@@ -263,7 +262,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
 
-  double lambda_d = 10.0;
   const std::size_t groups = 10;
   const std::size_t elems_per_group = 1000;
   const std::size_t elems = groups * elems_per_group;
@@ -326,7 +324,6 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
 
-  double lambda_d = 10.0;
   const std::size_t groups = 10;
   const std::size_t elems_per_group = 1000;
   const std::size_t elems = groups * elems_per_group;

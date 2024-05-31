@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,10 +47,10 @@ template <bool propto, typename T_y, typename T_low, typename T_high,
 return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_low>::value, T_low>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_high>::value, T_high>;
-  static const char* function = "uniform_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_high>;
+  static constexpr const char* function = "uniform_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
@@ -85,8 +85,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     logp -= sum(log(beta_val - alpha_val)) * N / max_size(alpha, beta);
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_low, T_high>::value) {
     auto inv_beta_minus_alpha = to_ref_if<(!is_constant_all<T_high>::value
@@ -95,17 +94,17 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     if (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha * size(y);
+        partials<2>(ops_partials) = -inv_beta_minus_alpha * math::size(y);
       } else {
-        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha;
+        partials<2>(ops_partials) = -inv_beta_minus_alpha;
       }
     }
     if (!is_constant_all<T_low>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        ops_partials.edge2_.partials_ = inv_beta_minus_alpha * size(y);
+        partials<1>(ops_partials) = inv_beta_minus_alpha * math::size(y);
       } else {
-        ops_partials.edge2_.partials_ = std::move(inv_beta_minus_alpha);
+        partials<1>(ops_partials) = std::move(inv_beta_minus_alpha);
       }
     }
   }

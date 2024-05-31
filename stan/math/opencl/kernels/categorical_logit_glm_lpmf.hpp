@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string categorical_logit_glm_kernel_code = STRINGIFY(
+static constexpr const char* categorical_logit_glm_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU implementation of Generalized Linear Model (GLM)

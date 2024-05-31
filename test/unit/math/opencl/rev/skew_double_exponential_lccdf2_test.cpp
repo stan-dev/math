@@ -5,6 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace skew_double_exponential_lccdf2_test {
+
 auto skew_double_exponential_lccdf_functor
     = [](const auto& y, const auto& mu, const auto& sigma, const auto& tau) {
         return stan::math::skew_double_exponential_lccdf(y, mu, sigma, tau);
@@ -45,5 +47,6 @@ TEST(ProbDistributionsSkewDoubleExponentialLccdf, opencl_broadcast_tau) {
       skew_double_exponential_lccdf_functor, y.transpose().eval(), mu,
       sigma.transpose().eval(), tau_scal);
 }
+}  // namespace skew_double_exponential_lccdf2_test
 
 #endif

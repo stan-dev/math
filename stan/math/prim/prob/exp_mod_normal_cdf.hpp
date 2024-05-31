@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,12 +31,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_lambda_ref
-      = ref_type_if_t<!is_constant<T_inv_scale>::value, T_inv_scale>;
-  static const char* function = "exp_mod_normal_cdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_lambda_ref = ref_type_if_not_constant_t<T_inv_scale>;
+  static constexpr const char* function = "exp_mod_normal_cdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
@@ -60,8 +59,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
   if (is_vector<T_y>::value) {
@@ -120,14 +119,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
         if (!is_constant_all<T_y>::value) {
-          ops_partials.edge1_.partials_ = deriv;
+          partials<0>(ops_partials) = deriv;
         }
         if (!is_constant_all<T_loc>::value) {
-          ops_partials.edge2_.partials_ = -deriv;
+          partials<1>(ops_partials) = -deriv;
         }
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = -cdf
               * ((deriv_1 - deriv_2) * v
                  + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
@@ -135,7 +134,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       }
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_
+      edge<3>(ops_partials).partials_
           = cdf * exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2
                - (v * sigma_val - diff) * erf_calc)

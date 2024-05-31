@@ -20,9 +20,10 @@ namespace math {
 template <typename T>
 const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
     const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
-  Eigen::Matrix<T, Eigen::Dynamic, 1> w(A.nonZeros());
-  w.setZero();
-  for (int nze = 0; nze < A.nonZeros(); ++nze) {
+  auto a_nonzeros = A.nonZeros();
+  Eigen::Matrix<T, Eigen::Dynamic, 1> w
+      = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(a_nonzeros);
+  for (int nze = 0; nze < a_nonzeros; ++nze) {
     w[nze] = *(A.valuePtr() + nze);
   }
   return w;

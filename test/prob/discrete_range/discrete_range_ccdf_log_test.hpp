@@ -1,5 +1,6 @@
 // Arguments: Ints, Ints, Ints
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/discrete_range_lccdf.hpp>
+#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::vector;

@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -40,11 +40,10 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
                                                  const T_shape& alpha,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using std::pow;
-  static const char* function = "weibull_cdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "weibull_cdf";
 
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
@@ -62,36 +61,37 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, sigma_ref);
+  if (any(value_of_rec(y_val) == 0)) {
+    return ops_partials.build(0.0);
+  }
 
   constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
-  const auto& pow_n = to_ref_if<any_derivs>(pow(y_val / sigma_val, alpha_val));
-  const auto& exp_n = to_ref_if<any_derivs>(exp(-pow_n));
-  const auto& cdf_n = to_ref_if<any_derivs>(1 - exp_n);
+  const auto& log_y = to_ref_if<any_derivs>(log(y_val));
+  const auto& log_sigma = to_ref_if<any_derivs>(log(sigma_val));
+  const auto& log_y_div_sigma = to_ref_if<any_derivs>(log_y - log_sigma);
+  const auto& log_pow_n = to_ref_if<any_derivs>(alpha_val * log_y_div_sigma);
+  const auto& pow_n = to_ref_if<any_derivs>(exp(log_pow_n));
+  const auto& log_cdf_n = to_ref_if<any_derivs>(log1m_exp(-pow_n));
 
-  T_partials_return cdf = prod(cdf_n);
+  T_partials_return log_cdf = sum(log_cdf_n);
 
   if (any_derivs) {
-    const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
-                                       && !is_constant_all<T_shape>::value)>(
-        exp_n * pow_n * cdf / cdf_n);
+    const auto& log_rep_deriv = to_ref(log_pow_n + log_cdf - log_cdf_n - pow_n);
     if (!is_constant_all<T_y, T_scale>::value) {
-      const auto& deriv_y_sigma = to_ref_if<(
-          !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
-          rep_deriv * alpha_val);
+      const auto& log_deriv_y_sigma = to_ref(log_rep_deriv + log(alpha_val));
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = deriv_y_sigma / y_val;
+        partials<0>(ops_partials) = exp(log_deriv_y_sigma - log_y);
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_ = -deriv_y_sigma / sigma_val;
+        partials<2>(ops_partials) = -exp(log_deriv_y_sigma - log_sigma);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_ = rep_deriv * log(y_val / sigma_val);
+      partials<1>(ops_partials) = exp(log_rep_deriv) * log_y_div_sigma;
     }
   }
-  return ops_partials.build(cdf);
+  return ops_partials.build(exp(log_cdf));
 }
 
 }  // namespace math

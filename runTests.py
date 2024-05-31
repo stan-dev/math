@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """
 Replacement for runtest target in Makefile.
@@ -33,26 +33,26 @@ allowed_paths_with_jumbo = [
 ]
 
 jumbo_folders = [
-    #"test/unit/math/prim/core",
+    "test/unit/math/prim/core",
     "test/unit/math/prim/err",
     "test/unit/math/prim/fun",
     "test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
     "test/unit/math/prim/prob",
-    # "test/unit/math/rev/core",
+    "test/unit/math/rev/core",
     "test/unit/math/rev/err",
     "test/unit/math/rev/fun",
-    # "test/unit/math/rev/functor",
+    "test/unit/math/rev/functor",
     "test/unit/math/rev/meta",
     "test/unit/math/rev/prob",
-    # "test/unit/math/fwd/core",
+    "test/unit/math/fwd/core",
     "test/unit/math/fwd/fun",
-    # "test/unit/math/fwd/functor",
+    "test/unit/math/fwd/functor",
     "test/unit/math/fwd/meta",
     "test/unit/math/fwd/prob",
-    # "test/unit/math/mix/core",
+    "test/unit/math/mix/core",
     "test/unit/math/mix/fun",
-    # "test/unit/math/mix/functor",
+    "test/unit/math/mix/functor",
     "test/unit/math/mix/meta",
     "test/unit/math/mix/prob",
     "test/unit/math/opencl/device_functions",
@@ -87,13 +87,13 @@ def processCLIArgs():
         default=-1,
         help="number of files to split expressions tests in",
     )
-    tests_help_msg = "The path(s) to the test case(s) to run.\n"
-    tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
-    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
-    parser.add_argument("tests", nargs="+", type=str, help=tests_help_msg)
     f_help_msg = "Only tests with file names matching these will be executed.\n"
     f_help_msg += "Example: '-f chol', '-f opencl', '-f prim'"
     parser.add_argument("-f", type=str, default=[], action="append", help=f_help_msg)
+    changed_help = (
+        "Use git to determine which tests may have changed, and run only those"
+    )
+    parser.add_argument("--changed", action="store_true", help=changed_help)
     parser.add_argument(
         "-d",
         "--debug",
@@ -127,6 +127,11 @@ def processCLIArgs():
         action="store_true",
         help="Build/run jumbo tests.",
     )
+
+    tests_help_msg = "The path(s) to the test case(s) to run.\n"
+    tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
+    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
+    parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
     # And parse the command line against those rules
     return parser.parse_args()
 
@@ -145,7 +150,9 @@ def isWin():
 
 
 batchSize = 20 if isWin() else 200
-jumboSize = 5 if isWin() else 15
+jumboSize = 5 if isWin() else 12
+maxChangedTests = 20
+
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -170,10 +177,7 @@ def doCommand(command, exit_on_failure=True):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    if isWin():
-        doCommand("mingw32-make -j%d generate-tests -s" % (j or 1))
-    else:
-        doCommand("make -j%d generate-tests -s" % (j or 1))
+    doCommand("make -j%d generate-tests -s" % (j or 1))
 
 
 def divide_chunks(l, n):
@@ -181,8 +185,9 @@ def divide_chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i : i + n]
 
+include_pattern = re.compile(r'^\s*#include\s+<.*>$')
 
-def generateJumboTests(paths):
+def generateJumboTests(paths, debug=False):
     jumbo_files_to_create = []
     jumbo_files = []
     for p in paths:
@@ -193,17 +198,32 @@ def generateJumboTests(paths):
         else:
             stopErr("The --jumbo flag is only allowed with top level folders.", 10)
     for jf in jumbo_files_to_create:
-        tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
-        chunked_tests = divide_chunks(tests_in_subfolder, jumboSize)
-        i = 0
-        for tests in chunked_tests:
-            i = i + 1
+        tests_in_subfolder = sorted(os.path.join(jf, x) for x in os.listdir(jf) if x.endswith(testsfx))
+        for i, tests in enumerate(divide_chunks(tests_in_subfolder, jumboSize)):
+
+            includes = []
+            jumbo_contents = []
+            for t in tests:
+                with open(t, "r") as test_file:
+                    contents_raw = test_file.read()
+
+                test_contents = []
+                for l in contents_raw.splitlines():
+                    if include_pattern.fullmatch(l.strip()):
+                        includes.append(l.strip())
+                        continue
+                    test_contents.append(l)
+
+                jumbo_contents.append('\n'.join(test_contents))
+
             jumbo_file_path = jf + "_" + str(i) + testsfx
             jumbo_files.append(jumbo_file_path)
-            f = open(jumbo_file_path, "w")
-            for t in tests:
-                f.write("#include <" + jf + "/" + t + ">\n")
-            f.close()
+            if debug:
+                print("Generating jumbo test file '{}' with tests: {}".format( jumbo_file_path, ', '.join(tests)))
+            with open(jumbo_file_path, "w") as jumbo_file:
+                jumbo_file.write('\n'.join(list(dict.fromkeys(includes))))
+                jumbo_file.write('\n')
+                jumbo_file.write('\n'.join(jumbo_contents))
     return jumbo_files
 
 
@@ -215,10 +235,7 @@ def cleanupJumboTests(paths):
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    if isWin():
-        doCommand("mingw32-make -j%d %s" % (j or 1, name))
-    else:
-        doCommand("make -j%d %s" % (j or 1, name))
+    doCommand("make -j%d %s" % (j or 1, name))
 
 
 def commandExists(command):
@@ -236,8 +253,7 @@ def runTest(name, run_all=False, mpi=False, j=1):
     if mpi:
         if not commandExists("mpirun"):
             stopErr(
-                "Error: need to have mpi (and mpirun) installed to run mpi tests"
-                + "\nCheck https://github.com/stan-dev/stan/wiki/Parallelism-using-MPI-in-Stan for more details.",
+                "Error: need to have mpi (and mpirun) installed to run mpi tests",
                 -1,
             )
         if "mpi_" in name:
@@ -291,6 +307,39 @@ def findTests(base_path, filter_names, do_jumbo=False):
     return tests
 
 
+def findChangedTests(debug):
+    import subprocess
+
+    changed_files = subprocess.run(
+        ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
+        text=True, capture_output=True
+    ).stdout.splitlines()
+    if debug:
+        print("Changed files:", changed_files)
+
+    # changes in prim should also test other non-prim signatures
+    test_deps = {"prim/": ["prim/", "rev/", "mix/", "fwd/"], "rev/": ["rev/", "mix/"], "fwd/": ["fwd/", "mix/"]}
+
+    changed_tests = set()
+    for f in changed_files:
+        if 'stan/' in f and f.endswith('.hpp') and 'opencl' not in f: # changed fn
+            maybe_test = f.replace('stan/', 'test/unit/').replace('.hpp', testsfx)
+            for (path, replacements) in test_deps.items():
+                if path in maybe_test:
+                    for rep in replacements:
+                        maybe_test = maybe_test.replace(path, rep)
+                        if os.path.exists(maybe_test):
+                            changed_tests.add(maybe_test)
+
+        if f.endswith(testsfx) and 'opencl' not in f:
+            changed_tests.add(f)
+
+    if len(changed_tests) > maxChangedTests:
+        stopErr("Number of changed tests excluded maximum, not running priority tests", 0)
+
+    return list(map(mungeName, changed_tests))
+
+
 def batched(tests):
     return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
 
@@ -320,7 +369,7 @@ def handleExpressionTests(tests, only_functions, n_test_files):
 def checkToolchainPathWindows():
     if isWin():
         p1 = subprocess.Popen(
-            "where.exe mingw32-make",
+            "where.exe make",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
@@ -342,41 +391,54 @@ def main():
             stan_mpi = "STAN_MPI" in f.read()
     except IOError:
         stan_mpi = False
-    # pass 0: generate all auto-generated tests
-    if any(["test/prob" in arg for arg in inputs.tests]):
-        generateTests(inputs.j)
-    tests = inputs.tests
 
     jumboFiles = []
-    if inputs.do_jumbo:
-        jumboFiles = generateJumboTests(tests)
-    if inputs.e == -1:
-        if inputs.j == 1:
-            num_expr_test_files = 1
-        else:
-            num_expr_test_files = inputs.j * 4
-    else:
-        num_expr_test_files = inputs.e
-    handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
 
-    tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
+    if inputs.changed:
+        tests = findChangedTests(inputs.debug)
+    else:
+        # pass 0: generate all auto-generated tests
+        if any("test/prob" in arg for arg in inputs.tests):
+            generateTests(inputs.j)
+
+        if inputs.do_jumbo:
+            jumboFiles = generateJumboTests(inputs.tests)
+        if inputs.e == -1:
+            if inputs.j == 1:
+                num_expr_test_files = 1
+            else:
+                num_expr_test_files = inputs.j * 4
+        else:
+            num_expr_test_files = inputs.e
+        handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
+
+        tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
     if not tests:
-        stopErr("No matching tests found.", -1)
-    if inputs.debug:
-        print("Collected the following tests:\n", tests)
-    # pass 1: make test executables
-    for batch in batched(tests):
-        if inputs.debug:
-            print("Test batch: ", batch)
-        makeTest(" ".join(batch), inputs.j)
-    if not inputs.make_only:
-        # pass 2: run test targets
-        for t in tests:
+        if inputs.changed:
+            stopErr("No changed tests were found!", 0)
+        stopErr(
+            "No matching tests found. Check the path passed on the command line", -1
+        )
+
+    try:
+        # pass 1: make test executables
+        for batch in batched(tests):
             if inputs.debug:
-                print("run single test: %s" % testname)
-            runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
-    cleanupJumboTests(jumboFiles)
+                print("Test batch: ", batch)
+            makeTest(" ".join(batch), inputs.j)
+        if not inputs.make_only:
+            # pass 2: run test targets
+            for t in tests:
+                if inputs.debug:
+                    print("run single test: %s" % t)
+                runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
+    except BaseException as e:
+       print(e, file=sys.stderr)
+       sys.exit(1)
+    finally:
+        cleanupJumboTests(jumboFiles)
+        pass
 
 
 if __name__ == "__main__":

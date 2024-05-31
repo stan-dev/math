@@ -9,12 +9,13 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,10 +28,10 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "logistic_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "logistic_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
@@ -53,8 +54,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
@@ -64,9 +64,9 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 
   size_t N = max_size(y, mu, sigma);
   T_partials_return logp = -sum(y_minus_mu_div_sigma)
-                           - 2.0 * sum(log1p(exp(-y_minus_mu_div_sigma)));
+                           - 2.0 * sum(log1p_exp(-y_minus_mu_div_sigma));
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
   if (!is_constant_all<T_y, T_scale>::value) {
@@ -75,15 +75,15 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
                                      && !is_constant_all<T_y>::value)>(
         (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = y_deriv;
+      partials<0>(ops_partials) = y_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
+      partials<2>(ops_partials) = (-y_deriv * y_minus_mu - 1) * inv_sigma;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
-    ops_partials.edge2_.partials_
+    edge<1>(ops_partials).partials_
         = (1
            - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
           * inv_sigma;

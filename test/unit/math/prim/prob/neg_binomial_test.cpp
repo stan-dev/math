@@ -189,8 +189,11 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
 
   double chi = 0;
 
-  for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+  for (int j = 0; j < K; j++) {
+    if (expect[j] != 0) {
+      chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    }
+  }
 
   EXPECT_LT(chi, boost::math::quantile(boost::math::complement(mydist, 1e-6)));
 }

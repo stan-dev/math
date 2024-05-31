@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -25,12 +25,12 @@ template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
 return_type_t<T_y_cl> std_normal_lccdf(const T_y_cl& y) {
-  static const char* function = "std_normal_lccdf(OpenCL)";
+  static constexpr const char* function = "std_normal_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
   using std::isnan;
 
-  const size_t N = size(y);
+  const size_t N = math::size(y);
   if (N == 0) {
     return 1.0;
   }
@@ -61,10 +61,10 @@ return_type_t<T_y_cl> std_normal_lccdf(const T_y_cl& y) {
 
   T_partials_return lccdf = from_matrix_cl(lccdf_cl).sum() + LOG_HALF * N;
 
-  operands_and_partials<decltype(y_col)> ops_partials(y_col);
+  auto ops_partials = make_partials_propagator(y_col);
 
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   return ops_partials.build(lccdf);
 }

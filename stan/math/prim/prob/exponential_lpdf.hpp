@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,10 +53,9 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_beta_ref
-      = ref_type_if_t<!is_constant<T_inv_scale>::value, T_inv_scale>;
-  static const char* function = "exponential_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
+  static constexpr const char* function = "exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
   T_y_ref y_ref = y;
@@ -72,11 +71,11 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_beta_ref> ops_partials(y_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, beta_ref);
 
   T_partials_return logp(0.0);
   if (include_summand<propto, T_inv_scale>::value) {
-    logp = sum(log(beta_val)) * max_size(y, beta) / size(beta);
+    logp = sum(log(beta_val)) * max_size(y, beta) / math::size(beta);
   }
   if (include_summand<propto, T_y, T_inv_scale>::value) {
     logp -= sum(beta_val * y_val);
@@ -86,18 +85,18 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     using beta_val_scalar = scalar_type_t<decltype(beta_val)>;
     using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_ = T_partials_array::Constant(
-          size(y), -forward_as<beta_val_scalar>(beta_val));
+      partials<0>(ops_partials) = T_partials_array::Constant(
+          math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if (is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val);
+      partials<0>(ops_partials) = -forward_as<beta_val_array>(beta_val);
     } else {
       forward_as<internal::broadcast_array<T_partials_return>>(
-          ops_partials.edge1_.partials_)
+          partials<0>(ops_partials))
           = -forward_as<beta_val_scalar>(beta_val);
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    ops_partials.edge2_.partials_ = inv(beta_val) - y_val;
+    partials<1>(ops_partials) = inv(beta_val) - y_val;
   }
   return ops_partials.build(logp);
 }

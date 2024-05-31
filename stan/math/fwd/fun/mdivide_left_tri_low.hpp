@@ -56,7 +56,6 @@ inline Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left_tri_low(const T1& A, const T2& b) {
   constexpr int S1 = T1::RowsAtCompileTime;
-  constexpr int C2 = T2::ColsAtCompileTime;
 
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);

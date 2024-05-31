@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,9 +26,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
                                                   T_scale const& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_kappa_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_kappa_ref = ref_type_if_not_constant_t<T_scale>;
   static char const* const function = "von_mises_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
@@ -51,8 +51,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
-      y_ref, mu_ref, kappa_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, kappa_ref);
 
   const auto& cos_mu_minus_y
       = to_ref_if<!is_constant_all<T_scale>::value>(cos(mu_val - y_val));
@@ -63,7 +62,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     logp -= LOG_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N / size(kappa);
+    logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N
+            / math::size(kappa);
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {
@@ -72,17 +72,17 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -kappa_sin;
+      partials<0>(ops_partials) = -kappa_sin;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = std::move(kappa_sin);
+      partials<1>(ops_partials) = std::move(kappa_sin);
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_
+    edge<2>(ops_partials).partials_
         = cos_mu_minus_y
-          - modified_bessel_first_kind(-1, kappa_val)
-                / modified_bessel_first_kind(0, kappa_val);
+          - exp(log_modified_bessel_first_kind(1, kappa_val)
+                - log_modified_bessel_first_kind(0, kappa_val));
   }
 
   return ops_partials.build(logp);

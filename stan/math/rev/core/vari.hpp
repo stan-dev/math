@@ -807,11 +807,11 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
-                                                      chainable_alloc {
+class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
   using value_type = PlainObject;       // vari's adj_ and val_ member type
+  using InnerIterator = typename arena_matrix<PlainObject>::InnerIterator;
   /**
    * Rows at compile time
    */
@@ -822,15 +822,14 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   static constexpr int ColsAtCompileTime = T::ColsAtCompileTime;
 
   /**
+   * The value of this variable.
+   */
+  arena_matrix<PlainObject> val_;
+  /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  PlainObject adj_;
-
-  /**
-   * The value of this variable.
-   */
-  const PlainObject val_;
+  arena_matrix<PlainObject> adj_;
 
   /**
    * Construct a variable implementation from a value. The
@@ -848,10 +847,20 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(S&& x)
-      : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
-    this->set_zero_adjoint();
+      : val_(std::forward<S>(x)),
+        adj_(val_.rows(), val_.cols(), val_.nonZeros(), val_.outerIndexPtr(),
+             val_.innerIndexPtr(),
+             arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
+             val_.innerNonZeroPtr()) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
+
+  vari_value(const arena_matrix<PlainObject>& val,
+             const arena_matrix<PlainObject>& adj)
+      : val_(val), adj_(adj) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
   /**
    * Construct an sparse Eigen variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
@@ -871,8 +880,11 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S&& x, bool stacked)
-      : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
-    this->set_zero_adjoint();
+      : val_(std::forward<S>(x)),
+        adj_(val_.rows(), val_.cols(), val_.nonZeros(), val_.outerIndexPtr(),
+             val_.innerIndexPtr(),
+             arena_matrix<Eigen::VectorXd>(val_.nonZeros()).setZero().data(),
+             val_.innerNonZeroPtr()) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -921,11 +933,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * result with respect to itself to be 1.
    */
   inline void init_dependent() {
-    for (int k = 0; k < adj_.outerSize(); ++k) {
-      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
-        it.valueRef() = 1.0;
-      }
-    }
+    std::fill(adj_.valuePtr(), adj_.valuePtr() + adj_.nonZeros(), 1.0);
   }
 
   /**
@@ -934,11 +942,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * example in a Jacobian calculation).
    */
   inline void set_zero_adjoint() noexcept final {
-    for (int k = 0; k < adj_.outerSize(); ++k) {
-      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
-        it.valueRef() = 0.0;
-      }
-    }
+    std::fill(adj_.valuePtr(), adj_.valuePtr() + adj_.nonZeros(), 0.0);
   }
 
   /**

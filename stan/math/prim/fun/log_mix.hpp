@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 #include <cmath>
 
@@ -76,14 +76,12 @@ template <typename T_theta, typename T_lam,
           require_any_vector_t<T_theta, T_lam>* = nullptr>
 return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                       const T_lam& lambda) {
-  static const char* function = "log_mix";
+  static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, T_lam>;
   using T_partials_vec =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using T_theta_ref = ref_type_t<T_theta>;
   using T_lam_ref = ref_type_t<T_lam>;
-
-  const int N = stan::math::size(theta);
 
   check_consistent_sizes(function, "theta", theta, "lambda", lambda);
   T_theta_ref theta_ref = theta;
@@ -98,15 +96,14 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
-  operands_and_partials<T_theta_ref, T_lam_ref> ops_partials(theta_ref,
-                                                             lambda_ref);
+  auto ops_partials = make_partials_propagator(theta_ref, lambda_ref);
   if (!is_constant_all<T_lam, T_theta>::value) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
     if (!is_constant_all<T_lam>::value) {
-      ops_partials.edge2_.partials_ = theta_deriv.cwiseProduct(theta_dbl);
+      partials<1>(ops_partials) = theta_deriv.cwiseProduct(theta_dbl);
     }
     if (!is_constant_all<T_theta>::value) {
-      ops_partials.edge1_.partials_ = std::move(theta_deriv);
+      partials<0>(ops_partials) = std::move(theta_deriv);
     }
   }
   return ops_partials.build(logp);
@@ -146,13 +143,12 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 template <typename T_theta, typename T_lam, require_vector_t<T_lam>* = nullptr>
 return_type_t<T_theta, std::vector<T_lam>> log_mix(
     const T_theta& theta, const std::vector<T_lam>& lambda) {
-  static const char* function = "log_mix";
+  static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, std::vector<T_lam>>;
   using T_partials_vec =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using T_partials_mat =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
-  using T_lamvec_type = typename std::vector<T_lam>;
   using T_theta_ref = ref_type_t<T_theta>;
 
   const int N = stan::math::size(lambda);
@@ -180,16 +176,15 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     logp[n] = log_sum_exp(logp_tmp.col(n));
   }
 
-  operands_and_partials<T_theta_ref, T_lamvec_type> ops_partials(theta_ref,
-                                                                 lambda);
+  auto ops_partials = make_partials_propagator(theta_ref, lambda);
   if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum();
+      partials<0>(ops_partials) = derivs.rowwise().sum();
     }
     if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n) {
-        as_column_vector_or_scalar(ops_partials.edge2_.partials_vec_[n])
+        as_column_vector_or_scalar(partials_vec<1>(ops_partials)[n])
             = derivs.col(n).cwiseProduct(theta_dbl);
       }
     }

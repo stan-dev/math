@@ -87,7 +87,7 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
   mu << 1.0, -1.0, 3.0;
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-10.213695,
+  EXPECT_FLOAT_EQ(-10.2136949646,
                   stan::math::multi_student_t_log(y, nu, mu, Sigma).val());
 
   stan::math::recover_memory();

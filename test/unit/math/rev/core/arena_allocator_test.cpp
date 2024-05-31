@@ -138,6 +138,6 @@ void arena_allocator_test() {
   }
 }
 
-TEST(AgradRev, arena_allocator_test) {
+TEST(AgradRevArena, arena_allocator_test) {
   EXPECT_NO_THROW(arena_allocator_test());
 }

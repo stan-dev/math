@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,17 +45,16 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
                                || is_vector<T_scale>::value,
                            T_partials_array, T_partials_return>;
   using std::exp;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "double_exponential_cdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "double_exponential_cdf";
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
   T_partials_return cdf(1.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -74,7 +73,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
       (y_val - mu_val) * inv_sigma);
   const auto& exp_scaled_diff = to_ref(exp(scaled_diff));
 
-  size_t N = max_size(y, mu, sigma);
   T_rep_deriv rep_deriv;
   if (is_vector<T_y>::value || is_vector<T_loc>::value) {
     using array_bool = Eigen::Array<bool, Eigen::Dynamic, 1>;
@@ -106,13 +104,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   }
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = rep_deriv;
+    partials<0>(ops_partials) = rep_deriv;
   }
   if (!is_constant_all<T_loc>::value) {
-    ops_partials.edge2_.partials_ = -rep_deriv;
+    partials<1>(ops_partials) = -rep_deriv;
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = -rep_deriv * scaled_diff;
+    partials<2>(ops_partials) = -rep_deriv * scaled_diff;
   }
   return ops_partials.build(cdf);
 }

@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,10 +53,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_kappa_ref = ref_type_if_t<!is_constant<T_prec>::value, T_prec>;
-  static const char* function = "beta_proportion_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_kappa_ref = ref_type_if_not_constant_t<T_prec>;
+  static constexpr const char* function = "beta_proportion_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
   if (size_zero(y, mu, kappa)) {
@@ -89,7 +89,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   size_t N = max_size(y, mu, kappa);
   T_partials_return logp(0);
   if (include_summand<propto, T_prec>::value) {
-    logp += sum(lgamma(kappa_val)) * N / size(kappa);
+    logp += sum(lgamma(kappa_val)) * N / math::size(kappa);
   }
   if (include_summand<propto, T_loc, T_prec>::value) {
     logp -= sum(lgamma(mukappa) + lgamma(kappa_val - mukappa)) * N
@@ -97,10 +97,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
   logp += sum((mukappa - 1) * log_y + (kappa_val - mukappa - 1) * log1m_y);
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
-      y_ref, mu_ref, kappa_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
   if (!is_constant_all<T_loc, T_prec>::value) {
@@ -111,12 +110,12 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
         !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
         digamma(kappa_val - mukappa));
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = kappa_val
             * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
     if (!is_constant_all<T_prec>::value) {
-      ops_partials.edge3_.partials_
+      edge<2>(ops_partials).partials_
           = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
             + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);
     }

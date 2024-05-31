@@ -55,7 +55,7 @@ namespace math {
 inline double gamma_q(double x, double a) { return boost::math::gamma_q(x, a); }
 
 /**
- * Enables the vectorised application of the gamma_q function,
+ * Enables the vectorized application of the gamma_q function,
  * when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

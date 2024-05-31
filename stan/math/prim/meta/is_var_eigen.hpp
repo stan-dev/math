@@ -18,9 +18,6 @@ struct is_var_eigen
     : bool_constant<
           math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_eigen, is_var_eigen, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(var_eigen, is_var_eigen, require_eigens_types);
-
 }  // namespace stan
 
 #endif

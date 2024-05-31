@@ -5,6 +5,12 @@
 #include <stan/math/mix/fun.hpp>
 #include <stan/math/mix/functor.hpp>
 
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun.hpp>
+#include <stan/math/fwd/functor.hpp>
+#include <stan/math/fwd/prob.hpp>
+
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
 #endif
@@ -13,11 +19,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/functor.hpp>
-
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/fun.hpp>
-#include <stan/math/fwd/functor.hpp>
+#include <stan/math/rev/prob.hpp>
 
 #include <stan/math/prim.hpp>
 

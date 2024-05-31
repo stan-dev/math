@@ -12,13 +12,13 @@ namespace math {
  *
  * @param K size of the array
  * @param k position of the 1 (indexing from 1)
- * @return An integer array of size K with all elements initialised to zero
+ * @return An integer array of size K with all elements initialized to zero
  * and a 1 in the k-th position.
  * @throw std::domain_error if K is not positive, or if k is less than 1 or
  * greater than K.
  */
 inline std::vector<int> one_hot_int_array(int K, int k) {
-  static const char* function = "one_hot_int_array";
+  static constexpr const char* function = "one_hot_int_array";
   check_positive(function, "size", K);
   check_bounded(function, "k", k, 1, K);
 

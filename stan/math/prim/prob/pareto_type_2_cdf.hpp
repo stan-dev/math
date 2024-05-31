@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -25,12 +25,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_lambda_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_lambda_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   using std::pow;
-  static const char* function = "pareto_type_2_cdf";
+  static constexpr const char* function = "pareto_type_2_cdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", lambda, "Shape parameter",
                          alpha);
@@ -64,8 +64,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
           pow(temp, -alpha_val));
   T_partials_return P = prod(1.0 - p1_pow_alpha);
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_lambda_ref, T_alpha_ref>
-      ops_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& P_div_Pn
@@ -79,18 +79,18 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
                           + !is_constant_all<T_y>::value
                       >= 2>(p1_pow_alpha / summed * alpha_val * P_div_Pn);
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = -grad_1_2;
+        partials<1>(ops_partials) = -grad_1_2;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = (mu_val - y_val) / lambda_val * grad_1_2;
       }
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = std::move(grad_1_2);
+        partials<0>(ops_partials) = std::move(grad_1_2);
       }
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_ = log(temp) * p1_pow_alpha * P_div_Pn;
+      partials<3>(ops_partials) = log(temp) * p1_pow_alpha * P_div_Pn;
     }
   }
   return ops_partials.build(P);

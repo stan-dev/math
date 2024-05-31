@@ -24,7 +24,7 @@ namespace math {
 template <typename T>
 class accumulator<T, require_var_t<T>> {
  private:
-  static const int max_size_ = 128;
+  static constexpr int max_size_ = 128;
   std::vector<var, arena_allocator<var>> buf_;
 
   /**
@@ -77,7 +77,7 @@ class accumulator<T, require_var_t<T>> {
    * Add each entry in the specified std vector of values to the buffer.
    *
    * @tparam S type of the matrix
-   * @param m Matrix of values to add
+   * @param xs std vector of values to add
    */
   template <typename S, require_std_vector_vt<is_stan_scalar, S>* = nullptr>
   inline void add(const S& xs) {
@@ -105,7 +105,7 @@ class accumulator<T, require_var_t<T>> {
   /**
    * Sum each entry and then push to the buffer.
    * @tparam S A Type inheriting from `matrix_cl_base`
-   * @param x An OpenCL matrix
+   * @param xs An OpenCL matrix
    */
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
@@ -117,7 +117,7 @@ class accumulator<T, require_var_t<T>> {
   /**
    * Sum each entry and then push to the buffer.
    * @tparam S A Type inheriting from `matrix_cl_base`
-   * @param x An OpenCL matrix
+   * @param xs An OpenCL matrix
    */
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>

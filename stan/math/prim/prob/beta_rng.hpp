@@ -40,7 +40,7 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   using boost::random::uniform_real_distribution;
   using T_alpha_ref = ref_type_t<T_shape1>;
   using T_beta_ref = ref_type_t<T_shape2>;
-  static const char *function = "beta_rng";
+  static constexpr const char *function = "beta_rng";
   check_consistent_sizes(function, "First shape parameter", alpha,
                          "Second shape Parameter", beta);
   T_alpha_ref alpha_ref = alpha;

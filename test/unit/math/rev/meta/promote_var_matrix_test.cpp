@@ -8,7 +8,6 @@ TEST(MathFunctions, PromoteVarMatrix) {
   using std::is_same;
   using var_matrix = var_value<Eigen::MatrixXd>;
   using var_vector = var_value<Eigen::VectorXd>;
-  using var_row_vector = var_value<Eigen::RowVectorXd>;
   using matrix_var = Eigen::Matrix<var, -1, -1>;
   using vector_var = Eigen::Matrix<var, -1, 1>;
   using row_vector_var = Eigen::Matrix<var, 1, -1>;

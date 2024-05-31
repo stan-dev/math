@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Specialisation for use with `var_value<T>` types where T inherits from
+ * Specialization for use with `var_value<T>` types where T inherits from
  * EigenBase. Inputs are passed through unmodified.
  */
 template <typename T>

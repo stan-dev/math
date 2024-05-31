@@ -37,7 +37,6 @@ cholesky_factor_constrain(const T& x, int M, int N) {
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
-  T_scalar zero(0);
   int pos = 0;
 
   const auto& x_ref = to_ref(x);

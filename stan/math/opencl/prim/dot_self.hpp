@@ -19,7 +19,6 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline auto dot_self(const T& a) {
-  const char* function = "dot_self(OpenCL)";
   return sum(elt_multiply(a, a));
 }
 

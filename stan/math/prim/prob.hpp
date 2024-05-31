@@ -46,6 +46,7 @@
 #include <stan/math/prim/prob/binomial_log.hpp>
 #include <stan/math/prim/prob/binomial_logit_log.hpp>
 #include <stan/math/prim/prob/binomial_logit_lpmf.hpp>
+#include <stan/math/prim/prob/binomial_logit_glm_lpmf.hpp>
 #include <stan/math/prim/prob/binomial_lpmf.hpp>
 #include <stan/math/prim/prob/binomial_rng.hpp>
 #include <stan/math/prim/prob/categorical_log.hpp>
@@ -75,6 +76,8 @@
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/prob/dirichlet_rng.hpp>
+#include <stan/math/prim/prob/dirichlet_multinomial_lpmf.hpp>
+#include <stan/math/prim/prob/dirichlet_multinomial_rng.hpp>
 #include <stan/math/prim/prob/discrete_range_ccdf_log.hpp>
 #include <stan/math/prim/prob/discrete_range_cdf.hpp>
 #include <stan/math/prim/prob/discrete_range_cdf_log.hpp>
@@ -156,6 +159,8 @@
 #include <stan/math/prim/prob/inv_gamma_log.hpp>
 #include <stan/math/prim/prob/inv_gamma_lpdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_rng.hpp>
+#include <stan/math/prim/prob/inv_wishart_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/inv_wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_log.hpp>
 #include <stan/math/prim/prob/inv_wishart_lpdf.hpp>
 #include <stan/math/prim/prob/inv_wishart_rng.hpp>
@@ -203,6 +208,8 @@
 #include <stan/math/prim/prob/multi_normal_prec_lpdf.hpp>
 #include <stan/math/prim/prob/multi_normal_prec_rng.hpp>
 #include <stan/math/prim/prob/multi_normal_rng.hpp>
+#include <stan/math/prim/prob/multi_student_t_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/multi_student_t_cholesky_rng.hpp>
 #include <stan/math/prim/prob/multi_student_t_log.hpp>
 #include <stan/math/prim/prob/multi_student_t_lpdf.hpp>
 #include <stan/math/prim/prob/multi_student_t_rng.hpp>
@@ -327,6 +334,7 @@
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
 #include <stan/math/prim/prob/std_normal_lccdf.hpp>
 #include <stan/math/prim/prob/std_normal_log.hpp>
+#include <stan/math/prim/prob/std_normal_log_qf.hpp>
 #include <stan/math/prim/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/prob/std_normal_rng.hpp>
 #include <stan/math/prim/prob/student_t_ccdf_log.hpp>
@@ -361,8 +369,12 @@
 #include <stan/math/prim/prob/weibull_log.hpp>
 #include <stan/math/prim/prob/weibull_lpdf.hpp>
 #include <stan/math/prim/prob/weibull_rng.hpp>
-#include <stan/math/prim/prob/wiener_log.hpp>
+#include <stan/math/prim/prob/wiener5_lpdf.hpp>
 #include <stan/math/prim/prob/wiener_lpdf.hpp>
+#include <stan/math/prim/prob/wiener_log.hpp>
+#include <stan/math/prim/prob/wiener_full_lpdf.hpp>
+#include <stan/math/prim/prob/wishart_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/wishart_log.hpp>
 #include <stan/math/prim/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>

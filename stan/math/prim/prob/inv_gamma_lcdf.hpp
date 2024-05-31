@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,7 +32,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
   using std::exp;
   using std::log;
   using std::pow;
-  static const char* function = "inv_gamma_lcdf";
+  static constexpr const char* function = "inv_gamma_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale Parameter", beta);
 
@@ -49,8 +49,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -66,9 +65,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(size(alpha));
+      gamma_vec(math::size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(size(alpha));
+      digamma_vec(math::size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {
@@ -95,22 +94,21 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += beta_dbl * y_inv_dbl * y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
-             * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)
-             / Pn;
+      partials<0>(ops_partials)[n] += beta_dbl * y_inv_dbl * y_inv_dbl
+                                      * exp(-beta_dbl * y_inv_dbl)
+                                      * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1)
+                                      / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
+      partials<1>(ops_partials)[n]
           += grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_inv_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += -y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
-             * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)
-             / Pn;
+      partials<2>(ops_partials)[n] += -y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
+                                      * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1)
+                                      / tgamma(alpha_dbl) / Pn;
     }
   }
   return ops_partials.build(P);

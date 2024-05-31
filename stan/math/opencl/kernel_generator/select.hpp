@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -148,22 +149,6 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
   return {as_operation_cl(std::forward<T_condition>(condition)),
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
-}
-
-/**
- * Scalar overload of the selection operation.
- * @tparam T_then type of then scalar
- * @tparam T_else type of else scalar
- * @param condition condition
- * @param then then result
- * @param els else result
- * @return `condition ? then : els`
- */
-template <typename T_then, typename T_else,
-          require_all_arithmetic_t<T_then, T_else>* = nullptr>
-inline std::common_type_t<T_then, T_else> select(bool condition, T_then then,
-                                                 T_else els) {
-  return condition ? then : els;
 }
 
 /** @}*/

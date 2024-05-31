@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
-  static const char* function = "chi_square_lpdf";
+  static constexpr const char* function = "chi_square_lpdf";
   using T_y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   check_consistent_sizes(function, "Random variable", y,
@@ -74,24 +74,24 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   T_partials_return logp(0);
   if (include_summand<propto, T_dof>::value) {
-    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / size(nu);
+    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / math::size(nu);
   }
   logp += sum((half_nu - 1.0) * log_y);
 
   if (include_summand<propto, T_y>::value) {
-    logp -= 0.5 * sum(y_val) * N / size(y);
+    logp -= 0.5 * sum(y_val) * N / math::size(y);
   }
 
-  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = (half_nu - 1.0) / y_val - 0.5;
+    partials<0>(ops_partials) = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {
-      ops_partials.edge2_.partials_ = forward_as<T_partials_array>(
+      partials<1>(ops_partials) = forward_as<T_partials_array>(
           (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
     } else {
-      ops_partials.edge2_.partials_[0]
+      partials<1>(ops_partials)[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;
     }
   }

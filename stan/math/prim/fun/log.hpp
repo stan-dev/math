@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/isinf.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
@@ -27,7 +28,7 @@ struct log_fun {
    * @return Natural log of x.
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::log;
     return log(x);
   }
@@ -76,11 +77,9 @@ namespace internal {
  */
 template <typename V>
 inline std::complex<V> complex_log(const std::complex<V>& z) {
-  static const double inf = std::numeric_limits<double>::infinity();
-  static const double nan = std::numeric_limits<double>::quiet_NaN();
   if ((is_nan(z.real()) && is_inf(z.imag()))
       || (is_inf(z.real()) && is_nan(z.imag()))) {
-    return {inf, nan};
+    return {INFTY, NOT_A_NUMBER};
   }
   V r = sqrt(norm(z));
   V theta = arg(z);

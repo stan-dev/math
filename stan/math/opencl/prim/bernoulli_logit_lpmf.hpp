@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -28,15 +28,14 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
                                               const T_prob_cl& theta) {
-  static const char* function = "bernoulli_logit_lpmf(OpenCL)";
+  static constexpr const char* function = "bernoulli_logit_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  const size_t N = is_n_vector ? size(n) : size(theta);
+  const size_t N = is_n_vector ? math::size(n) : math::size(theta);
   if (N == 0) {
     return 0.0;
   }
@@ -57,7 +56,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   auto signs_expr = 2 * n - 1.0;  // subtracting 1.0 converts int to double
   auto ntheta_expr = elt_multiply(signs_expr, theta_val);
   auto exp_m_ntheta_expr = exp(-ntheta_expr);
-  static const double cutoff = 20.0;
+  static constexpr double cutoff = 20.0;
   auto condition1_expr = ntheta_expr > cutoff;
   auto condition2_expr = ntheta_expr < -cutoff;
   auto logp_expr = colwise_sum(
@@ -78,10 +77,10 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
                     n_bounded_expr, theta_not_nan_expr);
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
+  auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
-    ops_partials.edge1_.partials_ = deriv_cl;
+    partials<0>(ops_partials) = deriv_cl;
   }
 
   return ops_partials.build(logp);

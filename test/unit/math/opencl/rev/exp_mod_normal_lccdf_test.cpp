@@ -5,6 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
+namespace exp_mod_normal_lccdf_test {
+
 TEST(ProbDistributionsDoubleExpModNormalLccdf, error_checking) {
   int N = 3;
 
@@ -183,5 +185,6 @@ TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_big) {
       exp_mod_normal_lccdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval(), lambda.transpose().eval());
 }
+}  // namespace exp_mod_normal_lccdf_test
 
 #endif

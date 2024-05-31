@@ -145,7 +145,6 @@ struct ODETestFixture : public ::testing::Test {
   void test_analytical(F_ode const& ode_sol, F_sol const& analy_sol, double tol,
                        Eigen::VectorXd const& x, double t,
                        const T_args&... args) {
-    ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
     auto sol = ode_sol(x);
     int n = sol.size();
     auto sol_0 = analy_sol(t, args...);
@@ -185,8 +184,6 @@ struct ODETestFixture : public ::testing::Test {
                        F_grad_sol const& analy_grad_sol, double tol,
                        Eigen::VectorXd const& x, double t,
                        const T_args&... args) {
-    ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
-
     stan::math::nested_rev_autodiff nested;
 
     auto sol_0 = analy_sol(t, args...);

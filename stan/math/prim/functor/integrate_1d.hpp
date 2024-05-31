@@ -171,7 +171,7 @@ inline double integrate(const F& f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F, typename... Args,
-          require_all_not_st_var<Args...>* = nullptr>
+          require_all_st_arithmetic<Args...>* = nullptr>
 inline double integrate_1d_impl(const F& f, double a, double b,
                                 double relative_tolerance, std::ostream* msgs,
                                 const Args&... args) {

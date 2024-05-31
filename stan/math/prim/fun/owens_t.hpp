@@ -58,7 +58,7 @@ namespace math {
 inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
 
 /**
- * Enables the vectorised application of the owens_t
+ * Enables the vectorized application of the owens_t
  * function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input
@@ -67,10 +67,11 @@ inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
  * @param b Second input
  * @return owens_t function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_var_and_matrix_types<T1, T2>* = nullptr>
 inline auto owens_t(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) { return owens_t(c, d); });
+      a, b, [](const auto& c, const auto& d) { return owens_t(c, d); });
 }
 
 }  // namespace math
