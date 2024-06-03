@@ -23,7 +23,8 @@ TEST(MathPrimMat, vec_double_gp_periodic_cov1) {
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * (x[i] - x[j]) / p), 2) / (l * l)),
+              * exp(-2.0 * pow(sin(stan::math::pi() * (x[i] - x[j]) / p), 2)
+                    / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 
@@ -52,7 +53,8 @@ TEST(MathPrimMat, vec_eigen_gp_periodic_cov1) {
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x[i], x[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x[i], x[j]) / p), 2)
                     / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -77,7 +79,8 @@ TEST(MathPrimMat, rvec_eigen_gp_periodic_cov1) {
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x[i], x[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x[i], x[j]) / p), 2)
                     / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -107,7 +110,8 @@ TEST(MathPrimMat, vec_double_gp_periodic_cov2) {
     for (int j = 0; j < 4; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * (x1[i] - x2[j]) / p), 2) / (l * l)),
+              * exp(-2.0 * pow(sin(stan::math::pi() * (x1[i] - x2[j]) / p), 2)
+                    / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
@@ -139,7 +143,8 @@ TEST(MathPrimMat, vec_eigen_rvec_gp_periodic_cov2) {
     for (int j = 0; j < 4; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x1[i], x2[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x1[i], x2[j]) / p), 2)
                     / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -152,7 +157,8 @@ TEST(MathPrimMat, vec_eigen_rvec_gp_periodic_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x2[i], x1[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x2[i], x1[j]) / p), 2)
                     / (l * l)),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -187,7 +193,8 @@ TEST(MathPrimMat, vec_eigen_vec_gp_periodic_cov2) {
     for (int j = 0; j < 4; j++)
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x1[i], x2[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x1[i], x2[j]) / p), 2)
                     / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -200,7 +207,8 @@ TEST(MathPrimMat, vec_eigen_vec_gp_periodic_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * distance(x2[i], x1[j]) / p), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * distance(x2[i], x1[j]) / p), 2)
                     / (l * l)),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -250,7 +258,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x1_rvec[i], x2_vec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x1_rvec[i], x2_vec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -265,7 +275,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x2_vec[i], x1_rvec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x2_vec[i], x1_rvec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov7(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -282,7 +294,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x1_vec[i], x2_rvec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x1_vec[i], x2_rvec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -297,7 +311,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x2_rvec[i], x1_vec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x2_rvec[i], x1_vec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov8(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -314,7 +330,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x2_vec[i], x2_rvec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x2_vec[i], x2_rvec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov3(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -329,7 +347,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x2_rvec[i], x2_vec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x2_rvec[i], x2_vec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov4(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -346,7 +366,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x1_rvec[i], x1_vec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x1_rvec[i], x1_vec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov5(i, j))
           << "index: (" << i << ", " << j << ")";
@@ -361,7 +383,9 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_periodic_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * distance(x1_vec[i], x1_rvec[j]) / p), 2)
+                    * pow(sin(stan::math::pi() * distance(x1_vec[i], x1_rvec[j])
+                              / p),
+                          2)
                     / (l * l)),
           cov6(i, j))
           << "index: (" << i << ", " << j << ")";

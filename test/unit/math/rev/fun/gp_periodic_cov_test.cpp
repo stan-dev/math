@@ -31,7 +31,9 @@ TEST(RevMath, gp_periodic_cov_vvvv) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * pow(sin(stan::math::pi() * (x[i].val() - x[j].val()) / p.val()), 2)
+                    * pow(sin(stan::math::pi() * (x[i].val() - x[j].val())
+                              / p.val()),
+                          2)
                     / (l.val() * l.val())),
           cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -49,8 +51,8 @@ TEST(RevMath, gp_periodic_cov_vvvv) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -63,7 +65,8 @@ TEST(RevMath, gp_periodic_cov_vvvv) {
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[2])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -4.0 * sin_cos_val
@@ -108,7 +111,8 @@ TEST(RevMath, gp_periodic_cov_vvvd) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -162,8 +166,8 @@ TEST(RevMath, gp_periodic_cov_vvdv) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -172,7 +176,8 @@ TEST(RevMath, gp_periodic_cov_vvdv) {
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -4.0 * sin_cos_val
@@ -216,8 +221,8 @@ TEST(RevMath, gp_periodic_cov_vdvv) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -226,17 +231,18 @@ TEST(RevMath, gp_periodic_cov_vdvv) {
           sigma * sigma * exp_val * 4.0 * sin_val_sq / (sq_l * l.val()),
           grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * -4.0 * sin_cos_val * stan::math::pi() / p.val() / sq_l,
-          grad[2])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -4.0 * sin_cos_val
+                          * stan::math::pi() / p.val() / sq_l,
+                      grad[2])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi() / p.val() / sq_l,
-          grad[3])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() / p.val() / sq_l,
+                      grad[3])
           << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -271,7 +277,8 @@ TEST(RevMath, gp_periodic_cov_vvdd) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -319,7 +326,8 @@ TEST(RevMath, gp_periodic_cov_vdvd) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -328,13 +336,13 @@ TEST(RevMath, gp_periodic_cov_vdvd) {
           sigma * sigma * exp_val * 4.0 * sin_val_sq / (sq_l * l.val()),
           grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * -4.0 * sin_cos_val * stan::math::pi() / p / sq_l,
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -4.0 * sin_cos_val
+                          * stan::math::pi() / p / sq_l,
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi() / p / sq_l,
-          grad[2])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() / p / sq_l,
+                      grad[2])
           << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -368,23 +376,24 @@ TEST(RevMath, gp_periodic_cov_vddv) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * -4.0 * sin_cos_val * stan::math::pi() / p.val() / sq_l,
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -4.0 * sin_cos_val
+                          * stan::math::pi() / p.val() / sq_l,
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi() / p.val() / sq_l,
-          grad[2])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() / p.val() / sq_l,
+                      grad[2])
           << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -417,18 +426,19 @@ TEST(RevMath, gp_periodic_cov_vddd) {
       double distance = x[i].val() - x[j].val();
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * -4.0 * sin_cos_val * stan::math::pi() / p / sq_l,
-          grad[0])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -4.0 * sin_cos_val
+                          * stan::math::pi() / p / sq_l,
+                      grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi() / p / sq_l,
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() / p / sq_l,
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -462,8 +472,8 @@ TEST(RevMath, gp_periodic_cov_dvvv) {
       double distance = x[i] - x[j];
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -476,7 +486,8 @@ TEST(RevMath, gp_periodic_cov_dvvv) {
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[2])
           << "index: (" << i << ", " << j << ")";
 
@@ -552,8 +563,8 @@ TEST(RevMath, gp_periodic_cov_dvdv) {
       double distance = x[i] - x[j];
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -562,7 +573,8 @@ TEST(RevMath, gp_periodic_cov_dvdv) {
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
 
@@ -595,7 +607,8 @@ TEST(RevMath, gp_periodic_cov_ddvv) {
       // Check values
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * exp(-2.0 * pow(sin(stan::math::pi() * (x[i] - x[j]) / p.val()), 2)
+              * exp(-2.0
+                    * pow(sin(stan::math::pi() * (x[i] - x[j]) / p.val()), 2)
                     / (l.val() * l.val())),
           cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -611,8 +624,8 @@ TEST(RevMath, gp_periodic_cov_ddvv) {
       double distance = x[i] - x[j];
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -621,8 +634,9 @@ TEST(RevMath, gp_periodic_cov_ddvv) {
           sigma * sigma * exp_val * 4.0 * sin_val_sq / (sq_l * l.val()),
           grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
 
@@ -693,14 +707,15 @@ TEST(RevMath, gp_periodic_cov_dddv) {
       double distance = x[i] - x[j];
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[0])
           << "index: (" << i << ", " << j << ")";
 
@@ -787,8 +802,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvvv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -801,7 +816,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvvv) {
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[2])
           << "index: (" << i << ", " << j << ")";
       if (i == j) {
@@ -877,7 +893,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvvd) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -961,8 +978,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvdv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -971,7 +988,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvdv) {
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       if (i == j) {
@@ -1046,8 +1064,8 @@ TEST(RevMath, gp_periodic_cov_vector_vdvv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -1056,8 +1074,9 @@ TEST(RevMath, gp_periodic_cov_vector_vdvv) {
           sigma * sigma * exp_val * 4.0 * sin_val_sq / (sq_l * l.val()),
           grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       if (i == j) {
@@ -1131,7 +1150,8 @@ TEST(RevMath, gp_periodic_cov_vector_vvdd) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -1210,7 +1230,8 @@ TEST(RevMath, gp_periodic_cov_vector_vdvd) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -1290,14 +1311,15 @@ TEST(RevMath, gp_periodic_cov_vector_vddv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[0])
           << "index: (" << i << ", " << j << ")";
       if (i == j) {
@@ -1369,7 +1391,8 @@ TEST(RevMath, gp_periodic_cov_vector_vddd) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p);
-      double sin_cos_val = sin(stan::math::pi() * distance / p) * cos(stan::math::pi() * distance / p);
+      double sin_cos_val = sin(stan::math::pi() * distance / p)
+                           * cos(stan::math::pi() * distance / p);
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -1443,8 +1466,8 @@ TEST(RevMath, gp_periodic_cov_vector_dvvv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -1457,7 +1480,8 @@ TEST(RevMath, gp_periodic_cov_vector_dvvv) {
                       grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[2])
           << "index: (" << i << ", " << j << ")";
 
@@ -1555,8 +1579,8 @@ TEST(RevMath, gp_periodic_cov_vector_dvdv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
@@ -1565,7 +1589,8 @@ TEST(RevMath, gp_periodic_cov_vector_dvdv) {
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * 4.0 * sin_cos_val
-                          * stan::math::pi() * distance / p.val() / p.val() / sq_l,
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
 
@@ -1610,8 +1635,8 @@ TEST(RevMath, gp_periodic_cov_vector_ddvv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l.val());
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
@@ -1620,8 +1645,9 @@ TEST(RevMath, gp_periodic_cov_vector_ddvv) {
           sigma * sigma * exp_val * 4.0 * sin_val_sq / (sq_l * l.val()),
           grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[1])
           << "index: (" << i << ", " << j << ")";
 
@@ -1763,14 +1789,15 @@ TEST(RevMath, gp_periodic_cov_vector_dddv) {
                                              stan::math::value_of(x[j]));
       double sq_l = stan::math::square(l);
       double sin_val = sin(stan::math::pi() * distance / p.val());
-      double sin_cos_val
-          = sin(stan::math::pi() * distance / p.val()) * cos(stan::math::pi() * distance / p.val());
+      double sin_cos_val = sin(stan::math::pi() * distance / p.val())
+                           * cos(stan::math::pi() * distance / p.val());
       double sin_val_sq = stan::math::square(sin_val);
       double exp_val = exp(-2.0 * sin_val_sq / sq_l);
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val * stan::math::pi()
-                          * distance / p.val() / p.val() / sq_l,
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * 4.0 * sin_cos_val
+                          * stan::math::pi() * distance / p.val() / p.val()
+                          / sq_l,
                       grad[0])
           << "index: (" << i << ", " << j << ")";
 
@@ -1911,9 +1938,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x1_rvec[i], x2_vec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x1_rvec[i], x2_vec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1928,9 +1956,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x2_vec[i], x1_rvec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x2_vec[i], x1_rvec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov7(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1947,9 +1976,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x1_vec[i], x2_rvec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x1_vec[i], x2_rvec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov2(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1964,9 +1994,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x2_rvec[i], x1_vec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x2_rvec[i], x1_vec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov8(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1983,9 +2014,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x2_vec[i], x2_rvec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x2_vec[i], x2_rvec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov3(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2000,9 +2032,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x2_rvec[i], x2_vec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x2_rvec[i], x2_vec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov4(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2019,9 +2052,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x1_rvec[i], x1_vec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x1_rvec[i], x1_vec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov5(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2036,9 +2070,10 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
       EXPECT_FLOAT_EQ(
           sigma.val() * sigma.val()
               * exp(-2.0
-                    * stan::math::square(sin(
-                        stan::math::pi() * stan::math::distance(x1_vec[i], x1_rvec[j]).val()
-                        / p.val()))
+                    * stan::math::square(
+                        sin(stan::math::pi()
+                            * stan::math::distance(x1_vec[i], x1_rvec[j]).val()
+                            / p.val()))
                     / l.val() / l.val()),
           cov6(i, j).val())
           << "index: (" << i << ", " << j << ")";
