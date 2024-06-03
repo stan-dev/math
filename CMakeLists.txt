@@ -19,6 +19,9 @@ option(STAN_MPI "Enable MPI support" OFF)
 if(STAN_NO_RANGE_CHECKS)
     add_compile_definitions(STAN_NO_RANGE_CHECKS)
 endif()
+if(POLICY CMP0069)
+  cmake_policy(SET CMP0069 NEW)
+endif()
 
 # Set compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")

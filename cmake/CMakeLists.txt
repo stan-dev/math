@@ -20,11 +20,13 @@ else()
     tbb
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
     GIT_TAG        v2021.7.0  # adjust this to the version you need
-    CMAKE_ARGS -DCMAKE_CXX_FLAGS=-Wno-unused-value
+    CMAKE_ARGS -DTBB_STRICT=OFF
   )
   FetchContent_MakeAvailable(tbb)
 endif()
-
+if(POLICY CMP0069)
+  cmake_policy(SET CMP0069 NEW)
+endif()
 if(STAN_USE_SYSTEM_EIGEN)
   find_package(Eigen3 REQUIRED)
 else()
