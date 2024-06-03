@@ -81,7 +81,13 @@ else()
     CMAKE_ARGS -DTBB_STRICT=OFF -DTBB_TEST=OFF
     CMAKE_CACHE_ARGS -DTBB_STRICT:BOOL=OFF -DTBB_TEST:BOOL=OFF
   )
-  FetchContent_MakeAvailable(tbb)
+  FetchContent_GetProperties(tbb)
+    if(NOT tbb_POPULATED)
+    FetchContent_Populate(tbb)
+    # Add the fetched content to your build
+    set(TBB_STRICT OFF CACHE BOOL "Treat compiler warnings as errors")
+    add_subdirectory(${tbb_SOURCE_DIR} ${tbb_BINARY_DIR})
+    endif()
 endif()
 # For tbb
 add_compile_options(-Wno-error -Wno-unused-value)
