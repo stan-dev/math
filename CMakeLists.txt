@@ -40,7 +40,7 @@ add_compile_options(
   -D_REENTRANT
   -Wno-deprecated-declarations
   -DBOOST_DISABLE_ASSERTS
-  -Wall -Wno-error)
+  -Wall )
 
 if(STAN_THREADS)
     add_compile_definitions(STAN_THREADS)
@@ -80,8 +80,16 @@ else()
     GIT_TAG        v2021.7.0  # adjust this to the version you need
     CMAKE_ARGS -DTBB_STRICT=OFF -DTBB_TEST=OFF
   )
-  FetchContent_MakeAvailable(tbb)
+  FetchContent_GetProperties(tbb)
+    if(NOT tbb_POPULATED)
+    FetchContent_Populate(tbb)
+    # Add the fetched content to your build
+    set(TBB_STRICT OFF CACHE BOOL "Treat compiler warnings as errors")
+    add_subdirectory(${tbb_SOURCE_DIR} ${tbb_BINARY_DIR})
+    endif()
 endif()
+# For tbb
+add_compile_options(-Wno-error -Wno-unused-value)
 if(POLICY CMP0069)
   cmake_policy(SET CMP0069 NEW)
 endif()
