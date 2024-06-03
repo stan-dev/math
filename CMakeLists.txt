@@ -40,17 +40,7 @@ add_compile_options(
   -D_REENTRANT
   -Wno-deprecated-declarations
   -DBOOST_DISABLE_ASSERTS
-  -Wall)
-
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
-
-if(flto_support)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(WARNING "IPO/LTO is not supported: ${error}")
-endif()
+  -Wall -Wno-error)
 
 if(STAN_THREADS)
     add_compile_definitions(STAN_THREADS)
@@ -182,5 +172,14 @@ install(FILES "stanmathConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/stanmathConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/stanmath)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
 
+if(flto_support)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    message(WARNING "IPO/LTO is not supported: ${error}")
+endif()
+        
 add_subdirectory(test)
