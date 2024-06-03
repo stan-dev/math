@@ -20,6 +20,7 @@ else()
     tbb
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
     GIT_TAG        v2021.7.0  # adjust this to the version you need
+    CMAKE_ARGS -DCMAKE_CXX_FLAGS=-Wno-unused-value
   )
   FetchContent_MakeAvailable(tbb)
 endif()
