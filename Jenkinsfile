@@ -265,7 +265,7 @@ pipeline {
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         sh "cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE"
                         sh "cd build"
-                        sh "make -j${env.PARALLEL} unit_math_subtests"
+                        sh "make -j${PARALLEL} unit_math_subtests"
                         sh "./test/unit/test_unit_math && \
                         ./test/unit/test_unit_math_fwd && \
 ./test/unit/test_unit_math_fwd_core && \
