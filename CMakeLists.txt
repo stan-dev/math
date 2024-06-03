@@ -79,6 +79,7 @@ else()
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
     GIT_TAG        v2021.7.0  # adjust this to the version you need
     CMAKE_ARGS -DTBB_STRICT=OFF -DTBB_TEST=OFF
+    CMAKE_CACHE_ARGS -DTBB_STRICT:BOOL=OFF -DTBB_TEST:BOOL=OFF
   )
   FetchContent_GetProperties(tbb)
     if(NOT tbb_POPULATED)
