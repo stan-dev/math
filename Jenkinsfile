@@ -5,6 +5,7 @@ import org.stan.Utils
 def runTests(String testPath, boolean jumbo = false) {
     try {
         sh "cat make/local"
+        sh "make print-compiler-flags"
         if (jumbo && !params.disableJumbo) {
             sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
         } else {
@@ -142,8 +143,8 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues( 
-                        enabledForFailure: true, 
+                    recordIssues(
+                        enabledForFailure: true,
                         tools: [cppLint(),groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
                     )
                     deleteDir()
@@ -575,7 +576,7 @@ pipeline {
         always {
             node("linux") {
                 recordIssues(
-                    enabledForFailure: false, 
+                    enabledForFailure: false,
                     tool: clang()
                 )
             }
