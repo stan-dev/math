@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -16,7 +18,7 @@ namespace math {
  * @return 1
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline int num_elements(const T& x) {
+inline size_t num_elements(const T& x) {
   return 1;
 }
 
@@ -29,25 +31,53 @@ inline int num_elements(const T& x) {
  * @return size of matrix
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int num_elements(const T& m) {
+inline size_t num_elements(const T& m) {
   return m.size();
 }
 
 /**
  * Returns the number of elements in the specified vector.
- * This assumes it is not ragged and that each of its contained
- * elements has the same number of elements.
+ * @tparam T type of elements in the vector
+ * @param v argument vector
+ * @return number of contained arguments
+ */
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline size_t num_elements(const std::vector<T>& v) {
+  return v.size();
+}
+
+/**
+ * Returns the number of elements in the specified vector
  *
  * @tparam T type of elements in the vector
  * @param v argument vector
  * @return number of contained arguments
  */
-template <typename T>
-inline int num_elements(const std::vector<T>& v) {
-  if (v.size() == 0) {
-    return 0;
-  }
-  return v.size() * num_elements(v[0]);
+template <typename T, require_container_t<T>* = nullptr>
+inline size_t num_elements(const std::vector<T>& v) {
+  size_t size = 0;
+  std::for_each(v.cbegin(), v.cend(),
+                [&size](auto&& x) { size += num_elements(x); });
+  return size;
+}
+
+/**
+ * Returns the number of elements in the specified tuple
+ *
+ * @tparam T type of tuple
+ * @param v tuple
+ * @return number of contained arguments
+ */
+template <typename T, require_tuple_t<T>* = nullptr>
+inline size_t num_elements(const T& v) {
+  size_t size = 0;
+  math::apply(
+      [&size](auto&&... args) {
+        static_cast<void>(
+            std::initializer_list<int>{(size += num_elements(args), 0)...});
+      },
+      v);
+  return size;
 }
 
 }  // namespace math
