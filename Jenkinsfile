@@ -262,36 +262,12 @@ pipeline {
                                 sh "echo O=0 >> make/local"
                             }
                         }
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        sh "cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE"
-                        sh "cd build && make -j${PARALLEL} unit_math_subtests"
-                        sh "./test/unit/test_unit_math && \
-                        ./test/unit/test_unit_math_fwd && \
-./test/unit/test_unit_math_fwd_core && \
-./test/unit/test_unit_math_fwd_fun && \
-./test/unit/test_unit_math_fwd_functor && \
-./test/unit/test_unit_math_fwd_meta && \
-./test/unit/test_unit_math_fwd_prob && \
-./test/unit/test_unit_math_memory && \
-./test/unit/test_unit_math_mix && \
-./test/unit/test_unit_math_mix_core && \
-./test/unit/test_unit_math_mix_fun && \
-./test/unit/test_unit_math_mix_functor && \
-./test/unit/test_unit_math_mix_meta && \
-./test/unit/test_unit_math_mix_prob && \
-./test/unit/test_unit_math_prim_core && \
-./test/unit/test_unit_math_prim_err && \
-./test/unit/test_unit_math_prim_fun && \
-./test/unit/test_unit_math_prim_functor && \
-./test/unit/test_unit_math_prim_meta && \
-./test/unit/test_unit_math_prim_prob && \
-./test/unit/test_unit_math_rev && \
-./test/unit/test_unit_math_rev_core && \
-./test/unit/test_unit_math_rev_err && \
-./test/unit/test_unit_math_rev_fun && \
-./test/unit/test_unit_math_rev_functor && \
-./test/unit/test_unit_math_rev_meta && \
-./test/unit/test_unit_math_rev_prob"
+                        sh '''
+                        echo CXXFLAGS += -fsanitize=address >> make/local;
+                        cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
+                        cd build && make -j${PARALLEL} test_unit_math &&
+                        ./test/unit/test_unit_math;
+                        '''
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }

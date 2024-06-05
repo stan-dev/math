@@ -185,10 +185,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
 
-if(flto_support)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(WARNING "IPO/LTO is not supported: ${error}")
-endif()
-        
+# Becuase of bug with mingw
+# lto1.exe: error: two or more sections for .gnu.lto__ZN4stan...
+IF (NOT WIN32)
+    if(flto_support)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    else()
+        message(WARNING "IPO/LTO is not supported: ${error}")
+    endif()
+endif()        
 add_subdirectory(test)
