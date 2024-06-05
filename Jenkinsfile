@@ -308,17 +308,13 @@ pipeline {
                     steps {
                         script {
                             unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=1 >> make/local"
                             }
-                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
-                            runTests("test/unit/multiple_translation_units_test.cpp")
+                            sh'''
+                                CXX=${CLANG_CXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU};
+                                cd build && make -j${PARALLEL} test_unit_math_opencl && ./test/unit/test_unit_math_opencl
+                            '''
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }

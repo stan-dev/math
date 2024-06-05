@@ -2,7 +2,7 @@
 
 # Compile one test manually so that we can reuse precompile headers
 add_executable(dae_test ${CMAKE_CURRENT_SOURCE_DIR}/unit/math/rev/functor/pph_dae_typed_test.cpp)
-target_include_directories(dae_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+target_include_directories(dae_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
 target_precompile_headers(dae_test PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
     "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
@@ -16,7 +16,7 @@ target_precompile_headers(dae_test PRIVATE
 target_link_libraries(dae_test
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial)
+  sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
 
 
 # Function to add a test target for each directory containing C++ source files
@@ -57,12 +57,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
           add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
           target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
-            ${boost_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+            ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
           target_link_libraries(${SUB_TEST_TARGET_NAME}
             gtest_main benchmark::benchmark TBB::tbb
             Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-            sundials_idas sundials_nvecserial)
+            sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
         endforeach()
@@ -70,13 +70,13 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         add_executable(${TEST_TARGET_NAME} ${CPP_FILES_IN_DIR})
         # Configure target properties such as include directories and linked libraries
         target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
-         ${boost_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+         ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
         target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1)
         target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
         target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial)
+          sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
           # Register the test with CTest
         add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
         list(APPEND ALL_TEST_TARGETS ${TEST_TARGET_NAME})
@@ -91,12 +91,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     message(STATUS "Adding single test target for all tests in: ${test_directory} as ${folder_test_name}_test")
     add_executable(${folder_test_name}_test ${ALL_TEST_FILES})
     target_compile_options(${folder_test_name}_test PUBLIC -O1)
-    target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+    target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
     target_precompile_headers(${folder_test_name}_test REUSE_FROM ${target_pch})
     target_link_libraries(${folder_test_name}_test
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial)
+          sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
     # Register the combined test with CTest
     add_test(${test_directory}_test ${SINGLE_TARGET_HPP} COMMAND ${folder_test_name}_test)
   endif()

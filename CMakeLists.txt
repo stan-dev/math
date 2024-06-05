@@ -14,10 +14,12 @@ cmake_policy(SET CMP0069 NEW)
 option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
 option(STAN_MPI "Enable MPI support" OFF)
 option(STAN_OPENCL "Enable OpenCL support" OFF)
-option(STAN_OPENCL_DEVICE_ID "Set the OpenCL Device ID at compile time" 0)
-option(STAN_OPENCL_PLATFORM_ID "Set the OpenCL Platform ID at compile time" 0)
+set(STAN_OPENCL_DEVICE_ID "0" CACHE STRING "Set the OpenCL Device ID at compile time" FORCE)
+set(STAN_OPENCL_PLATFORM_ID "0" CACHE STRING "Set the OpenCL Platform ID at compile time" FORCE)
+set(STAN_INTEGRATED_OPENCL "0" CACHE STRING "Whether the platform and device can use integrated opencl features" FORCE)
+message(STATUS "OpenCL Platform: " ${STAN_OPENCL_PLATFORM_ID})
+message(STATUS "OpenCL Device: " ${STAN_OPENCL_DEVICE_ID})
 option(STAN_THREADS "Enable multi-threading support" OFF)
-
 if(STAN_NO_RANGE_CHECKS)
     add_compile_definitions(STAN_NO_RANGE_CHECKS)
 endif()
@@ -56,15 +58,19 @@ endif()
 # Handle OpenCL if necessary
 if(STAN_OPENCL)
     # Externally provided libraries
-    FetchContent_Declare(opencl_headers
+    FetchContent_Declare(OpenCLHeaders
             GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-CLHPP
             GIT_TAG v2.0.15)
+    FetchContent_MakeAvailable(OpenCLHeaders)
+    message(STATUS "OpenCL Enabled: ${OpenCLHeaders_INCLUDE_DIR}")
+    message(STATUS "OpenCL Enabled: ${OpenCLHeaders_SOURCE_DIR}")
+    message(STATUS "OpenCL Enabled: ${CLCPP_SOURCE_DIR}")
     find_package(OpenCL REQUIRED)
+    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID} 
+      OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID} CL_HPP_TARGET_OPENCL_VERSION=120 
+      CL_HPP_MINIMUM_OPENCL_VERSION=120 CL_HPP_ENABLE_EXCEPTIONS INTEGRATED_OPENCL=${STAN_INTEGRATED_OPENCL})
+    add_compile_options(-Wno-ignored-attributes)
     
-    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID} OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID})
-    # TODO: Make these per target
-    include_directories(${OpenCL_INCLUDE_DIRS})
-    link_libraries(${OpenCL_LIBRARIES})
 endif()
 
 # Externally provided libraries
