@@ -16,7 +16,10 @@ target_precompile_headers(dae_test PRIVATE
 target_link_libraries(dae_test
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
+  sundials_idas sundials_nvecserial)
+if (STAN_OPENCL)
+  target_link_libraries(OpenCL::OpenCL)
+endif()
 
 
 # Function to add a test target for each directory containing C++ source files
@@ -62,7 +65,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           target_link_libraries(${SUB_TEST_TARGET_NAME}
             gtest_main benchmark::benchmark TBB::tbb
             Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-            sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
+            sundials_idas sundials_nvecserial)
+          if (STAN_OPENCL)
+            target_link_libraries(OpenCL::OpenCL)
+          endif()
+          
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
         endforeach()
@@ -76,7 +83,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
+          sundials_idas sundials_nvecserial)
+        if (STAN_OPENCL)
+          target_link_libraries(OpenCL::OpenCL)
+        endif()
+        
           # Register the test with CTest
         add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
         list(APPEND ALL_TEST_TARGETS ${TEST_TARGET_NAME})
@@ -96,7 +107,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     target_link_libraries(${folder_test_name}_test
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial $<$<BOOL:STAN_OPENCL>:OpenCL::OpenCL>)
+          sundials_idas sundials_nvecserial)
+    if (STAN_OPENCL)
+      target_link_libraries(OpenCL::OpenCL)
+    endif()
+        
     # Register the combined test with CTest
     add_test(${test_directory}_test ${SINGLE_TARGET_HPP} COMMAND ${folder_test_name}_test)
   endif()
