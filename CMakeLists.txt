@@ -12,9 +12,11 @@ set(CMAKE_VERBOSE_MAKEFILE YES)
 cmake_policy(SET CMP0069 NEW)
 # Configuration Options
 option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
-option(STAN_OPENCL "Enable OpenCL support" OFF)
-option(STAN_THREADS "Enable multi-threading support" OFF)
 option(STAN_MPI "Enable MPI support" OFF)
+option(STAN_OPENCL "Enable OpenCL support" OFF)
+option(STAN_OPENCL_DEVICE_ID "Set the OpenCL Device ID at compile time" 0)
+option(STAN_OPENCL_PLATFORM_ID "Set the OpenCL Platform ID at compile time" 0)
+option(STAN_THREADS "Enable multi-threading support" OFF)
 
 if(STAN_NO_RANGE_CHECKS)
     add_compile_definitions(STAN_NO_RANGE_CHECKS)
@@ -53,8 +55,13 @@ endif()
 
 # Handle OpenCL if necessary
 if(STAN_OPENCL)
+    # Externally provided libraries
+    FetchContent_Declare(opencl_headers
+            GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-CLHPP
+            GIT_TAG v2.0.15)
     find_package(OpenCL REQUIRED)
-    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=0 OPENCL_PLATFORM_ID=0)
+    
+    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID} OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID})
     # TODO: Make these per target
     include_directories(${OpenCL_INCLUDE_DIRS})
     link_libraries(${OpenCL_LIBRARIES})

@@ -15,8 +15,8 @@ TEST(MathMatrixRevMat, matrix_exp_action_diag) {
     m1 << 2, 0, 0, 2;
     b << 1, 1;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), M_E, 1.e-8);
-    EXPECT_NEAR(res(1), M_E, 1.e-8);
+    EXPECT_NEAR(res(0), stan::math::e(), 1.e-8);
+    EXPECT_NEAR(res(1), stan::math::e(), 1.e-8);
   }
 
   {
@@ -25,8 +25,8 @@ TEST(MathMatrixRevMat, matrix_exp_action_diag) {
     VectorXd b = VectorXd::Random(2);
     m1 << 1, 0, 0, 2;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), b(0) * M_E, 1.e-8);
-    EXPECT_NEAR(res(1), b(1) * M_E * M_E, 1.e-8);
+    EXPECT_NEAR(res(0), b(0) * stan::math::e(), 1.e-8);
+    EXPECT_NEAR(res(1), b(1) * stan::math::e() * stan::math::e(), 1.e-8);
   }
 
   {
@@ -36,8 +36,8 @@ TEST(MathMatrixRevMat, matrix_exp_action_diag) {
     VectorXd b = VectorXd::Random(2);
     m1 << -4.0, 0, 0, -5.0;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), b(0) / (M_E * M_E * M_E * M_E), 1.e-8);
-    EXPECT_NEAR(res(1), b(1) / (M_E * M_E * M_E * M_E * M_E), 1.e-8);
+    EXPECT_NEAR(res(0), b(0) / (stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e()), 1.e-8);
+    EXPECT_NEAR(res(1), b(1) / (stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e()), 1.e-8);
   }
 
   {
