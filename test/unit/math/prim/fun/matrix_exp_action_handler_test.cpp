@@ -36,8 +36,16 @@ TEST(MathMatrixRevMat, matrix_exp_action_diag) {
     VectorXd b = VectorXd::Random(2);
     m1 << -4.0, 0, 0, -5.0;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), b(0) / (stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e()), 1.e-8);
-    EXPECT_NEAR(res(1), b(1) / (stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e() * stan::math::e()), 1.e-8);
+    EXPECT_NEAR(res(0),
+                b(0)
+                    / (stan::math::e() * stan::math::e() * stan::math::e()
+                       * stan::math::e()),
+                1.e-8);
+    EXPECT_NEAR(res(1),
+                b(1)
+                    / (stan::math::e() * stan::math::e() * stan::math::e()
+                       * stan::math::e() * stan::math::e()),
+                1.e-8);
   }
 
   {
