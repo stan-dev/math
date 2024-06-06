@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -40,7 +40,7 @@ TEST(ProbDistributionsBetaBinomial, distributionCheck) {
 }
 
 TEST(ProbDistributionBetaBinomial, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::beta_binomial_rng(4, 0.6, 2.0, rng));
 
   EXPECT_THROW(stan::math::beta_binomial_rng(-4, 0.6, 2, rng),

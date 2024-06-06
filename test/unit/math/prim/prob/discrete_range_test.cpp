@@ -1,12 +1,12 @@
 #include <stan/math/prim.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 TEST(ProbDistributionsDiscreteRange, error_check) {
   using stan::math::discrete_range_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   std::vector<int> lower{5, 11, -15};
   std::vector<int> upper{7, 15, -10};
@@ -22,7 +22,7 @@ TEST(ProbDistributionsDiscreteRange, error_check) {
 
 TEST(ProbDistributionsDiscreteRange, boundary_values) {
   using stan::math::discrete_range_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   std::vector<int> lower{-5, 11, 17};
   EXPECT_EQ(lower, discrete_range_rng(lower, lower, rng));
@@ -37,7 +37,7 @@ TEST(ProbDistributionsDiscreteRange, boundary_values) {
 }
 
 TEST(ProbDistributionsDiscreteRange, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   int N = 10000;
   int lower = -3;

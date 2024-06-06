@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrimMat, chol2inv_exception) {
@@ -25,7 +25,7 @@ TEST(MathMatrixPrimMat, chol2inv) {
   using stan::math::matrix_d;
   using stan::math::wishart_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   matrix_d I(3, 3);
   I.setZero();
   I.diagonal().setOnes();

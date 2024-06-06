@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
@@ -90,7 +90,7 @@ TEST(ProbDistributionsDirichletMultinomial, zeros) {
 TEST(ProbDistributionsDirichletMultinomial, rng) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Matrix<double, Dynamic, 1> theta(3);
   theta << 0.5, 5.5, 12.0;
@@ -113,7 +113,7 @@ TEST(ProbDistributionsDirichletMultinomial, rng) {
 TEST(ProbDistributionsDirichletMultinomial, rngError) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Matrix<double, Dynamic, 1> theta(3);
   theta << 0.5, 1.5, 4.0;
@@ -135,7 +135,7 @@ TEST(ProbDistributionsDirichletMultinomial, rngError) {
 TEST(ProbDistributionsDirichletMultinomial, chiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int M = 100;
   int trials = 100;
   int N = M * trials;
@@ -171,7 +171,7 @@ TEST(ProbDistributionsDirichletMultinomial, equivBetaBinomial) {
   using Eigen::Matrix;
   using stan::math::beta_binomial_lpmf;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   std::vector<int> ns;
   Matrix<double, Dynamic, 1> theta(2, 1);
   double alpha = 4.0;

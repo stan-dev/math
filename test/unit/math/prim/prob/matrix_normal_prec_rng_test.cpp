@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <exception>
@@ -10,7 +10,7 @@
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
   double ninf = -std::numeric_limits<double>::infinity();
@@ -58,7 +58,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
   double ninf = -std::numeric_limits<double>::infinity();
@@ -106,7 +106,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd Mu = MatrixXd::Zero(3, 5);
 
@@ -170,7 +170,7 @@ std::vector<double> extract_sum_of_entries(
 TEST(ProbDistributionsMatrixNormalPrecRng, marginalChiSquareGoodnessFitTest) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd Mu(2, 3);
   Mu << 1, 2, 3, 4, 5, 6;

@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/meta/apply_template_permutations.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
@@ -165,7 +165,7 @@ struct check_dist_throws {
   template <typename T_param1, typename T_param2, typename T_param3,
             typename T_rig>
   void operator()(const T_rig& rig) const {
-    boost::random::mt19937 rng;
+    boost::random::mixmax rng;
 
     T_param1 p1;
     T_param2 p2;
@@ -371,7 +371,7 @@ struct check_quantiles {
   template <typename T_param1, typename T_param2, typename T_param3,
             typename T_rig>
   void operator()(const T_rig& rig) const {
-    boost::random::mt19937 rng;
+    boost::random::mixmax rng;
     T_param1 p1;
     T_param2 p2;
     T_param3 p3;
@@ -531,7 +531,7 @@ struct check_counts {
   template <typename T_param1, typename T_param2, typename T_param3,
             typename T_rig>
   void operator()(const T_rig& rig) const {
-    boost::random::mt19937 rng;
+    boost::random::mixmax rng;
     T_param1 p1;
     T_param2 p2;
     T_param3 p3;

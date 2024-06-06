@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <limits>
 #include <vector>
@@ -9,7 +9,7 @@
 TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
   using stan::math::bernoulli_logit_glm_rng;
   //  Test scalar/vector combinations.
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Eigen::MatrixXd x(2, 3);
   x << 3.5, -1.5, 0.0, 2.0, 1.0, 3.0;
@@ -70,7 +70,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
 TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
   using stan::math::bernoulli_logit_glm_rng;
   // Check errors for nonfinite and wrong sizes.
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   int N = 3;
   int M = 2;
@@ -107,7 +107,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
 TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   using stan::math::bernoulli_logit_glm_rng;
   // Check distribution of result.
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Eigen::MatrixXd x(2, 2);
   x << 3.5, -1.5, 2.0, -1.2;
   std::vector<double> alpha{2.0, 1.0};

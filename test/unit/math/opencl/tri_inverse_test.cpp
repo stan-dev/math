@@ -2,7 +2,7 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
@@ -25,7 +25,7 @@ TEST(MathMatrixCL, inverse_cl_exception) {
 }
 
 void lower_inverse_test(int size) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < i; j++) {
@@ -56,7 +56,7 @@ void lower_inverse_test(int size) {
 }
 
 void upper_inverse_test(int size) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < i; j++) {

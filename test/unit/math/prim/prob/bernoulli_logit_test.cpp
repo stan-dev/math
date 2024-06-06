@@ -3,7 +3,7 @@
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -35,7 +35,7 @@ TEST(ProbDistributionsBernoulliLogit, distributionCheck) {
 }
 
 TEST(ProbDistributionsBernoulliLogit, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   EXPECT_NO_THROW(stan::math::bernoulli_logit_rng(-3.5, rng));
   EXPECT_THROW(
@@ -44,7 +44,7 @@ TEST(ProbDistributionsBernoulliLogit, error_check) {
 }
 
 TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   // number of samples
   int N = 10000;
 

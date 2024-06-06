@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <vector>
 
@@ -8,7 +8,7 @@ TEST(ProbDistributionsMultiNormalCholesky, NotVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -23,7 +23,7 @@ TEST(ProbDistributionsMultiNormalCholesky, Vectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
@@ -89,7 +89,7 @@ TEST(ProbDistributionsMultiNormalCholesky, MultiNormalOneRow) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, 1, Dynamic> y(3);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3);
@@ -105,7 +105,7 @@ TEST(ProbDistributionsMultiNormalCholesky, error_check) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, -2.0, 11.0;
 
@@ -124,7 +124,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
@@ -173,7 +173,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
@@ -222,7 +222,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 16.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();

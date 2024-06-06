@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -30,7 +30,7 @@ TEST(ProbDistributionsExpModNormal, errorCheck) {
  * the distributions manually
  */
 TEST(ProbDistributionsExpModNormal, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   double mu = 2.0;
@@ -93,7 +93,7 @@ TEST(ProbDistributionsExpModNormal, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsExpModNormal, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::exp_mod_normal_rng(10.0, 2.0, 1.0, rng));
 
   EXPECT_THROW(stan::math::exp_mod_normal_rng(10.0, 2.0, -1.0, rng),

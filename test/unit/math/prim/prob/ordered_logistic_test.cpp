@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
@@ -168,7 +168,7 @@ TEST(ProbDistributions, ordered_logistic) {
 }
 
 TEST(ProbDistributionOrderedLogistic, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd c(4);
   c << -2, 2.0, 5, 10;
@@ -188,7 +188,7 @@ TEST(ProbDistributionOrderedLogistic, error_check) {
 
 TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
   using stan::math::inv_logit;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   double eta = 1.0;
   Eigen::VectorXd theta(3);

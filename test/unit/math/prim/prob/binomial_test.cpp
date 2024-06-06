@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -39,7 +39,7 @@ TEST(ProbDistributionsBinomial, distributionCheck) {
 }
 
 TEST(ProbDistributionBinomiali, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::binomial_rng(4, 0.6, rng));
   EXPECT_THROW(stan::math::binomial_rng(-4, 0.6, rng), std::domain_error);
   EXPECT_THROW(stan::math::binomial_rng(4, -0.6, rng), std::domain_error);
@@ -50,7 +50,7 @@ TEST(ProbDistributionBinomiali, error_check) {
 }
 
 TEST(ProbDistributionsBinomial, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::binomial_distribution<> dist(100, 0.6);

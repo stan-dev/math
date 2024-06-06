@@ -1,7 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <vector>
 
 template <typename T_x>
@@ -184,7 +184,7 @@ void test_gradients_simple(int size, double prec) {
 
   stan::math::welford_covar_estimator estimator(size);
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   for (int i = 0; i < 1000; ++i) {
     Eigen::VectorXd q(size);
     for (int j = 0; j < size; ++j)
@@ -228,7 +228,7 @@ void test_gp_grad(int mat_size, double prec) {
   test_vals[1] = 1.5;
   test_vals[2] = 10;
 
-  boost::random::mt19937 rng(2);
+  boost::random::mixmax rng(2);
 
   for (int i = 0; i < mat_size; ++i) {
     test_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
@@ -266,7 +266,7 @@ void test_chol_mult(int mat_size, double prec) {
   Eigen::VectorXd test_vec(mat_size);
   Eigen::VectorXd test_vals(vec_size);
 
-  boost::random::mt19937 rng(2);
+  boost::random::mixmax rng(2);
 
   for (int i = 0; i < test_vals.size(); ++i) {
     if (i < test_vec.size()) {
@@ -292,7 +292,7 @@ void test_chol_mult(int mat_size, double prec) {
 
 void test_simple_vec_mult(int size, double prec) {
   Eigen::VectorXd test_vec(size);
-  boost::random::mt19937 rng(2);
+  boost::random::mixmax rng(2);
 
   for (int i = 0; i < test_vec.size(); ++i)
     test_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);

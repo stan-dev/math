@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
@@ -10,7 +10,7 @@ TEST(ProbDistributionsWishart, rng) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd omega(3, 4);
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
@@ -28,7 +28,7 @@ TEST(ProbDistributionsWishart, rng_pos_def) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   MatrixXd Sigma(2, 2);
   MatrixXd Sigma_non_pos_def(2, 2);
@@ -48,7 +48,7 @@ TEST(ProbDistributionsWishart, rng_symmetry) {
   using stan::test::unit::expect_symmetric;
   using stan::test::unit::spd_rng;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.9; nu < k + 10; ++nu)
       for (int n = 0; n < 10; ++n)
@@ -63,7 +63,7 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   using stan::math::wishart_rng;
   using std::log;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
   int N = 10000;
@@ -94,7 +94,7 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   using Eigen::VectorXd;
   using stan::math::wishart_rng;
 
-  boost::random::mt19937 rng(1234);
+  boost::random::mixmax rng(1234);
 
   MatrixXd sigma(3, 3);
 

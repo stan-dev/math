@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
@@ -188,7 +188,7 @@ TEST(ProbDistributionsPoissonBinomial,
 TEST(ProbDistributionsPoissonBinomial, chiSquareGoodnessFitTest) {
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::binomial_distribution<> dist(100, 0.6);

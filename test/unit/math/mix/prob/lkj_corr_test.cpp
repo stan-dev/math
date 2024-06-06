@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/mix/prob/higher_order_utils.hpp>
 #include <vector>
@@ -9,7 +9,7 @@
 TEST(ProbDistributionsLkjCorr, fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
@@ -31,7 +31,7 @@ TEST(ProbDistributionsLkjCorr, fvar_var) {
 TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
@@ -54,7 +54,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
 TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
@@ -78,7 +78,7 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
 TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int K = 4;
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();

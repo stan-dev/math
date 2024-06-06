@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <vector>
 #include <limits>
@@ -88,7 +88,7 @@ TEST(ProbDistributionsCategorical, error_check) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::categorical_log;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   Matrix<double, Dynamic, Dynamic> theta(3, 1);
   theta << 0.15, 0.45, 0.50;
@@ -100,7 +100,7 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::categorical_log;
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
 
   int N = 10000;
   Matrix<double, Dynamic, Dynamic> theta(3, 1);

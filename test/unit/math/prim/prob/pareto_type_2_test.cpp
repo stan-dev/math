@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <vector>
@@ -31,7 +31,7 @@ TEST(ProbDistributionsParetoType2, errorCheck) {
  * the distributions manually
  */
 TEST(ProbDistributionsParetoType2Mat, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
 
   double mu = 3.0;
@@ -108,7 +108,7 @@ TEST(ProbDistributionsParetoType2Mat, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsParetoType2Prim, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::chi_squared mydist(K - 1);

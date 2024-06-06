@@ -3,7 +3,7 @@
 #include <test/unit/math/prim/prob/util.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <limits>
 #include <vector>
 
@@ -63,7 +63,7 @@ TEST(ProbDistributionsUniform, distributionTest) {
 }
 
 TEST(ProbDistributionsUniform, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::uniform_rng(1.0, 2.0, rng));
 
   EXPECT_THROW(
@@ -75,7 +75,7 @@ TEST(ProbDistributionsUniform, error_check) {
 }
 
 TEST(ProbDistributionsUniform, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 

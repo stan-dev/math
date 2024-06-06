@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/mixmax.hpp>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -46,7 +46,7 @@ TEST(ProbDistributionsBeta, distributionTest) {
 }
 
 TEST(ProbDistributionsBeta, error_check) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   EXPECT_NO_THROW(stan::math::beta_rng(2.0, 1.0, rng));
   EXPECT_NO_THROW(stan::math::beta_rng(1e-10, 1e-10, rng));
 
@@ -60,7 +60,7 @@ TEST(ProbDistributionsBeta, error_check) {
 }
 
 TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
@@ -83,7 +83,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsBeta, chiSquareGoodnessFitTestSmallParameters) {
-  boost::random::mt19937 rng;
+  boost::random::mixmax rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
