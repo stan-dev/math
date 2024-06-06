@@ -51,15 +51,7 @@ jobs:
         cd build
         make -j2 test_unit_math_prim_core
         # Navigate to the directory containing the executable
-        cd test\unit
-
-        # Check if the executable exists
-        if (Test-Path ".\test_unit_math_prim_core.exe") {
-            # Execute the file
-            .\test_unit_math_prim_core.exe
-        } else {
-            Write-Error "Executable not found: .\test\unit\test_unit_math_prim_core.exe"
-        }
+        & "D:/a/math/math/build/test/unit/test_unit_math_prim_core.exe"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
