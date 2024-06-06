@@ -53,6 +53,7 @@ endif()
 if(STAN_MPI)
     find_package(MPI REQUIRED)
     add_compile_definitions(STAN_MPI)
+    add_compile_options(-Wno-delete-non-virtual-dtor)
 endif()
 
 # Handle OpenCL if necessary
@@ -66,11 +67,11 @@ if(STAN_OPENCL)
     message(STATUS "OpenCL Enabled: ${OpenCLHeaders_SOURCE_DIR}")
     message(STATUS "OpenCL Enabled: ${CLCPP_SOURCE_DIR}")
     find_package(OpenCL REQUIRED)
-    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID} 
-      OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID} CL_HPP_TARGET_OPENCL_VERSION=120 
+    add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID}
+      OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID} CL_HPP_TARGET_OPENCL_VERSION=120
       CL_HPP_MINIMUM_OPENCL_VERSION=120 CL_HPP_ENABLE_EXCEPTIONS INTEGRATED_OPENCL=${STAN_INTEGRATED_OPENCL})
     add_compile_options(-Wno-ignored-attributes)
-    
+
 endif()
 
 # Externally provided libraries
@@ -206,5 +207,5 @@ IF (NOT WIN32)
     else()
         message(WARNING "IPO/LTO is not supported: ${error}")
     endif()
-endif()        
+endif()
 add_subdirectory(test)

@@ -18,7 +18,10 @@ target_link_libraries(dae_test
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
   sundials_idas sundials_nvecserial)
 if (STAN_OPENCL)
-  target_link_libraries(OpenCL::OpenCL)
+  target_link_libraries(dae_test OpenCL::OpenCL)
+endif()
+if (STAN_MPI)
+  target_link_libraries(dae_test Boost::mpi)
 endif()
 
 
@@ -67,9 +70,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
             Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
             sundials_idas sundials_nvecserial)
           if (STAN_OPENCL)
-            target_link_libraries(OpenCL::OpenCL)
+            target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
           endif()
-          
+          if (STAN_MPI)
+            target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi)
+          endif()
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
         endforeach()
@@ -85,9 +90,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
           sundials_idas sundials_nvecserial)
         if (STAN_OPENCL)
-          target_link_libraries(OpenCL::OpenCL)
+          target_link_libraries(${TEST_TARGET_NAME} OpenCL::OpenCL)
         endif()
-        
+        if (STAN_MPI)
+          target_link_libraries(${TEST_TARGET_NAME} Boost::mpi)
+        endif()
+
           # Register the test with CTest
         add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
         list(APPEND ALL_TEST_TARGETS ${TEST_TARGET_NAME})
@@ -109,9 +117,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
           sundials_idas sundials_nvecserial)
     if (STAN_OPENCL)
-      target_link_libraries(OpenCL::OpenCL)
+      target_link_libraries(${folder_test_name}_test OpenCL::OpenCL)
     endif()
-        
+    if (STAN_MPI)
+      target_link_libraries(${folder_test_name}_test Boost::mpi)
+    endif()
+
     # Register the combined test with CTest
     add_test(${test_directory}_test ${SINGLE_TARGET_HPP} COMMAND ${folder_test_name}_test)
   endif()
