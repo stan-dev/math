@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, log10) {
+TEST_F(mathMix, log10) {
   auto f = [](const auto& x1) {
     using stan::math::log10;
     return log10(x1);
@@ -26,7 +27,7 @@ TEST(mathMixMatFun, log10) {
   // (negative real and zero imaginary illegal)
 }
 
-TEST(mathMixMatFun, log10_varmat) {
+TEST_F(mathMix, log10_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

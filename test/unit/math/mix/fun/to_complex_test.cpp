@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 
-TEST(mathMixMatFun, to_complex) {
+TEST_F(mathMix, to_complex) {
   auto f0 = []() { return stan::math::to_complex(); };
   auto f1 = [](const auto& x) { return stan::math::to_complex(x); };
   auto f2 = [](const auto& x, const auto& y) {
@@ -13,7 +14,7 @@ TEST(mathMixMatFun, to_complex) {
   stan::test::expect_common_binary(f2);
 }
 
-TEST(mathMixMatFun, to_complex_vectorized) {
+TEST_F(mathMix, to_complex_vectorized) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::to_complex(x, y);
   };

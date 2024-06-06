@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, floor) {
+TEST_F(mathMix, floor) {
   auto f = [](const auto& x1) { return stan::math::floor(x1); };
   // can't autodiff floor through integers
   for (auto x : stan::test::internal::common_nonzero_args())
@@ -9,7 +10,7 @@ TEST(mathMixMatFun, floor) {
                                       179.2);
 }
 
-TEST(mathMixMatFun, floormatvar) {
+TEST_F(mathMix, floormatvar) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

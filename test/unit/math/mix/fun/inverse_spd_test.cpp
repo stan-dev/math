@@ -1,10 +1,14 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, inverseSpd) {
+TEST_F(mathMix, inverseSpd) {
   auto f = [](const auto& x) {
     if (x.rows() != x.cols())
       return stan::math::inverse_spd(x);
-    auto y = ((x + x.transpose()) * 0.5).eval();  // symmetry for finite diffs
+
+    auto x_ref = stan::math::to_ref(x);
+    auto y = ((x_ref + x_ref.transpose()) * 0.5)
+                 .eval();  // symmetry for finite diffs
     return stan::math::inverse_spd(y);
   };
 

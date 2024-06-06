@@ -2,12 +2,12 @@
 
 namespace stochastic_row_constrain_test {
 template <typename T>
-T g1(const T& x) {
+stan::plain_type_t<T> g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::stochastic_row_constrain<false>(x, lp);
 }
 template <typename T>
-T g2(const T& x) {
+stan::plain_type_t<T> g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::stochastic_row_constrain<true>(x, lp);
 }

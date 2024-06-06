@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, cosh) {
+TEST_F(mathMix, cosh) {
   auto f = [](const auto& x1) {
     using stan::math::cosh;
     return cosh(x1);
@@ -12,7 +13,7 @@ TEST(mathMixMatFun, cosh) {
   stan::test::expect_complex_common(f);
 }
 
-TEST(mathMixMatFun, cosh_varmat) {
+TEST_F(mathMix, cosh_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

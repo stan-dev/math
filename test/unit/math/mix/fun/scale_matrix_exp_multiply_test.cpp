@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, scaleMatrixExpMultiply) {
+TEST_F(mathMix, scaleMatrixExpMultiply) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& t, const auto& a, const auto& b) {
     return stan::math::scale_matrix_exp_multiply(t, a, b);

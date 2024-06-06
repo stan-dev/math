@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, invPhi) {
+TEST_F(mathMix, invPhi) {
   auto f = [](const auto& x1) { return stan::math::inv_Phi(x1); };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, 0.02425, 0.97575);  // breakpoints
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, invPhi) {
                                       2.0);
 }
 
-TEST(mathMixMatFun, invPhi_varmat) {
+TEST_F(mathMix, invPhi_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

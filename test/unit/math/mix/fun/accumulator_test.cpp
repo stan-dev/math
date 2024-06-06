@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -8,7 +9,7 @@ void test_sum(stan::math::accumulator<T>& a, int n) {
   EXPECT_TRUE((n * (n + 1)) / 2 == a.sum());
 }
 
-TEST(AgradMixMatrixAccumulate, fvar_var) {
+TEST_F(mathMix, accumulator_fvar_var) {
   using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::var;
@@ -24,7 +25,7 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
   test_sum(a, 1000);
 }
 
-TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
+TEST_F(mathMix, accumulator_collection_fvar_var) {
   using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::matrix_fv;
@@ -84,7 +85,7 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   test_sum(a, pos - 1);
 }
 
-TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
+TEST_F(mathMix, accumulator_fvar_fvar_var) {
   using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::var;
@@ -100,7 +101,7 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
   test_sum(a, 1000);
 }
 
-TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
+TEST_F(mathMix, accumulator_collection_fvar_fvar_var) {
   using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::matrix_ffv;
@@ -160,7 +161,7 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   test_sum(a, pos - 1);
 }
 
-TEST(AgradMixMatrixAccumulate, var_matrix) {
+TEST_F(mathMix, accumulator_var_matrix) {
   auto f = [](const auto& x) {
     using x_t = decltype(x);
     stan::math::accumulator<stan::scalar_type_t<x_t>> acc;

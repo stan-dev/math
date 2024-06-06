@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixCore, operatorDivision) {
+TEST_F(mathMix, operatorDivision) {
   auto f = [](const auto& x1, const auto& x2) { return x1 / x2; };
   bool disable_lhs_int = true;
   stan::test::expect_common_binary(f, disable_lhs_int);
@@ -54,7 +55,7 @@ struct operator_divide_tester {
 }  // namespace test
 }  // namespace stan
 
-TEST(mathMixCore, operatorDivisionVarMat) {
+TEST_F(mathMix, operatorDivisionVarMat) {
   Eigen::MatrixXd mat1(2, 2);
   mat1 << -2, -1, 0.5, 2.8;
   Eigen::MatrixXd mat2 = mat1.reverse();

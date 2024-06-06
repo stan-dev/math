@@ -1,13 +1,15 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, eigendecomposeSym) {
+TEST_F(mathMix, eigendecomposeSym) {
   auto g = [](const auto& y) {
     // eigenvectors
     // maintain symmetry for finite diffs; ignore if not square
     if (y.rows() != y.cols()) {
       return std::get<0>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<0>(stan::math::eigendecompose_sym(a));
   };
 
@@ -16,7 +18,8 @@ TEST(MathMixMatFun, eigendecomposeSym) {
     if (y.rows() != y.cols()) {
       return std::get<1>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<1>(stan::math::eigendecompose_sym(a));
   };
 
@@ -46,14 +49,15 @@ TEST(MathMixMatFun, eigendecomposeSym) {
   stan::test::expect_ad(g, a33);
 }
 
-TEST(MathMixMatFun, eigendecomposeSym_varmat) {
+TEST_F(mathMix, eigendecomposeSym_varmat) {
   auto g = [](const auto& y) {
     // eigenvectors
     // maintain symmetry for finite diffs; ignore if not square
     if (y.rows() != y.cols()) {
       return std::get<0>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<0>(stan::math::eigendecompose_sym(a));
   };
 
@@ -62,7 +66,8 @@ TEST(MathMixMatFun, eigendecomposeSym_varmat) {
     if (y.rows() != y.cols()) {
       return std::get<1>(stan::math::eigendecompose_sym(y));
     }
-    auto a = ((y + y.transpose()) * 0.5).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto a = ((y_ref + y_ref.transpose()) * 0.5).eval();
     return std::get<1>(stan::math::eigendecompose_sym(a));
   };
 

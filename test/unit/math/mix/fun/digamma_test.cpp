@@ -1,13 +1,14 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, digamma) {
+TEST_F(mathMix, digamma) {
   auto f = [](const auto& x1) { return stan::math::digamma(x1); };
   stan::test::expect_common_nonzero_unary_vectorized<
       stan::test::ScalarSupport::Real>(f);
   stan::test::expect_unary_vectorized(f, -25, -10.2, -1.2, -1, 2.3, 5.7);
 }
 
-TEST(mathMixMatFun, digamma_varmat) {
+TEST_F(mathMix, digamma_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

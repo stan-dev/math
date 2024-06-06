@@ -32,9 +32,9 @@ namespace math {
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k) {
+cov_matrix_constrain_lkj(T&& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
                          positive_constrain(x_ref.tail(k)));
 }
@@ -56,9 +56,9 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+cov_matrix_constrain_lkj(T&& x, size_t k, return_type_t<T>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  const auto& x_ref = x;
+  auto&& x_ref = to_ref(std::forward<T>(x));
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
                          positive_constrain(x_ref.tail(k)), lp);
 }

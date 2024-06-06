@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 
-TEST(MathMixMatFun, addDiag) {
+TEST_F(mathMix, addDiag) {
   using stan::test::relative_tolerance;
   auto f
       = [](const auto& x, const auto& y) { return stan::math::add_diag(x, y); };

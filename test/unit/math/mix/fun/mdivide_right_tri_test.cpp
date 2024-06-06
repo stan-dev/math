@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, mdivideRightTri) {
+TEST_F(mathMix, mdivideRightTri) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::mdivide_right_tri<Eigen::Lower>(x, y);
   };

@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 auto f_idx(int i, int j) {
   return [=](const auto& x, const auto& y) {
@@ -15,7 +16,7 @@ void expect_matrix_exp_multiply(int m, int n) {
   stan::test::expect_ad(f, a, b);
 }
 
-TEST(MathMixMatFun, matrixExpMultiply) {
+TEST_F(mathMix, matrixExpMultiply) {
   auto f = [](const auto& x, auto& y) {
     return stan::math::matrix_exp_multiply(x, y);
   };

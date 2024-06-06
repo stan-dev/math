@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <vector>
 
-TEST(mathMixMatFun, atan) {
+TEST_F(mathMix, atan) {
   auto f = [](const auto& x) {
     using stan::math::atan;
     return atan(x);
@@ -18,7 +19,7 @@ TEST(mathMixMatFun, atan) {
   }
 }
 
-TEST(mathMixMatFun, atan_varmat) {
+TEST_F(mathMix, atan_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

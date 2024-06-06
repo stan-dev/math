@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, hypot) {
+TEST_F(mathMix, hypot) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::hypot(x1, x2);
   };
@@ -12,7 +13,7 @@ TEST(mathMixScalFun, hypot) {
   stan::test::expect_ad(f, 3.0, 6.0);
 }
 
-TEST(mathMixScalFun, hypot_vec) {
+TEST_F(mathMix, hypot_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::hypot;
     return hypot(x1, x2);

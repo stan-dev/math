@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 template <typename T>
@@ -13,7 +14,7 @@ void expect_tail(const T& x, int n) {
   stan::test::expect_ad(f(n), rv);
 }
 
-TEST(MathMixMatFun, tail) {
+TEST_F(mathMix, tail) {
   std::vector<double> a{};
   expect_tail(a, 0);
   expect_tail(a, 1);
@@ -29,7 +30,7 @@ TEST(MathMixMatFun, tail) {
   }
 }
 
-TEST(MathMixMatFun, tailEig) {
+TEST_F(mathMix, tailEig) {
   Eigen::VectorXd a(0);
   expect_tail(a, 0);
   expect_tail(a, 1);

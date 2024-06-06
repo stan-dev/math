@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 template <typename T>
@@ -14,7 +15,7 @@ void expect_prod(const T& m) {
   stan::test::expect_ad(f, m);
 }
 
-TEST(mathMixMatFun, prod) {
+TEST_F(mathMix, prod) {
   Eigen::MatrixXd m00(0, 0);
   Eigen::MatrixXd m11(1, 1);
   m11 << 2;

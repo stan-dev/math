@@ -1,9 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, logDeterminantLdlt) {
+TEST_F(mathMix, logDeterminantLdlt) {
   auto f = [](const auto& x) {
-    auto x_sym = stan::math::multiply(0.5, x + x.transpose());
+    auto&& x_ref = stan::math::to_ref(x);
+    auto x_sym = stan::math::multiply(0.5, x_ref + x_ref.transpose());
     auto y = stan::math::make_ldlt_factor(x_sym);
     return stan::math::log_determinant_ldlt(y);
   };

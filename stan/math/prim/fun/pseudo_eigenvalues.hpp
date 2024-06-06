@@ -7,12 +7,13 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-Eigen::Matrix<T, -1, -1> pseudo_eigenvalues(const Eigen::Matrix<T, -1, -1>& m) {
+template <typename EigMat, require_eigen_matrix_base_t<EigMat>* = nullptr>
+inline Eigen::Matrix<scalar_type_t<EigMat>, -1, -1> pseudo_eigenvalues(
+    EigMat&& m) {
   check_nonzero_size("pseudo_eigenvalues", "m", m);
   check_square("pseudo_eigenvalues", "m", m);
-
-  Eigen::EigenSolver<Eigen::Matrix<T, -1, -1>> solver(m);
+  Eigen::EigenSolver<Eigen::Matrix<scalar_type_t<EigMat>, -1, -1>> solver(
+      to_ref(std::forward<EigMat>(m)));
   return solver.pseudoEigenvalueMatrix();
 }
 

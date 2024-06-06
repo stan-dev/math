@@ -1,8 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(ProbDistributionsMultiNormalPrec, matvar) {
+TEST_F(mathMix, ProbDistributionsMultiNormalPrec_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
-    auto inv_sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    auto&& sigma_ref = stan::math::to_ref(sigma);
+    auto inv_sigma_sym
+        = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     return stan::math::multi_normal_prec_lpdf(y, mu, inv_sigma_sym);
   };
 
@@ -37,7 +40,7 @@ TEST(ProbDistributionsMultiNormalPrec, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, InvSigma00);
 }
 
-TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiNormalPrec_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -67,7 +70,7 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiNormalPrec, fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiNormalPrec_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

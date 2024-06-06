@@ -1,13 +1,14 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace positive_ordered_constrain_test {
 template <typename T>
-T g1(const T& x) {
+auto g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::positive_ordered_constrain<false>(x, lp);
 }
 template <typename T>
-T g2(const T& x) {
+auto g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::positive_ordered_constrain<true>(x, lp);
 }
@@ -32,7 +33,7 @@ void expect_positive_ordered_transform(const T& x) {
 }
 }  // namespace positive_ordered_constrain_test
 
-TEST(MathMixMatFun, positiveOrderedTransform) {
+TEST_F(mathMix, positiveOrderedTransform) {
   Eigen::VectorXd v0(0);
   positive_ordered_constrain_test::expect_positive_ordered_transform(v0);
 

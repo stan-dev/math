@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 void expect_transpose(const Eigen::MatrixXd& m) {
   auto f = [](const auto& x) { return stan::math::transpose(x); };
@@ -9,7 +10,7 @@ void expect_transpose(const Eigen::MatrixXd& m) {
   stan::test::expect_ad(f, rv);
 }
 
-TEST(MathMixMatFun, transpose) {
+TEST_F(mathMix, transpose) {
   Eigen::MatrixXd a(0, 0);
   expect_transpose(a);
 

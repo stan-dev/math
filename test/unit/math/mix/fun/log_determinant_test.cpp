@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, logDeterminant) {
+TEST_F(mathMix, logDeterminant) {
   auto f = [](const auto& x) { return stan::math::log_determinant(x); };
 
   Eigen::MatrixXd m00(0, 0);

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, corr_constrain) {
+TEST_F(mathMix, corr_constrain) {
   auto f = [](const auto& x1) {
     stan::scalar_type_t<decltype(x1)> lp = 0.0;
     return stan::math::corr_constrain<false>(x1, lp);
@@ -29,7 +30,7 @@ TEST(mathMixMatFun, corr_constrain) {
   stan::test::expect_ad_matvar(f, x6);
 }
 
-TEST(mathMixMatFun, corr_constrain_lp) {
+TEST_F(mathMix, corr_constrain_lp) {
   auto f1 = [](const auto& x1) {
     stan::scalar_type_t<decltype(x1)> lp = 0.0;
     return stan::math::corr_constrain<true>(x1, lp);

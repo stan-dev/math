@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -21,7 +22,7 @@ void expect_signbit() {
   EXPECT_TRUE(signbit(T(-1.0)));
 }
 
-TEST(mixFun, signbit) {
+TEST_F(mathMix, signbit) {
   using stan::math::fvar;
   using stan::math::var;
   expect_signbit<double>();

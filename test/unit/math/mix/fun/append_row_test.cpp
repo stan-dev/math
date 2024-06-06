@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, appendRow) {
+TEST_F(mathMix, appendRow) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::append_row(x, y);
   };

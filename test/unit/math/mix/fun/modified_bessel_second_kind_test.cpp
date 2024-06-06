@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, modifiedBesselSecondKind) {
+TEST_F(mathMix, modifiedBesselSecondKind) {
   auto f = [](const int x1) {
     return [=](const auto& x2) {
       return stan::math::modified_bessel_second_kind(x1, x2);
@@ -15,7 +16,7 @@ TEST(mathMixScalFun, modifiedBesselSecondKind) {
   stan::test::expect_ad(f(1), std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST(mathMixScalFun, modifiedBesselSecondKind_vec) {
+TEST_F(mathMix, modifiedBesselSecondKind_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::modified_bessel_second_kind;
     return modified_bessel_second_kind(x1, x2);

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST(mathMixFun, pseudoEigenvectors) {
+TEST_F(mathMix, pseudoEigenvectors) {
   auto f = [](const auto& x) {
     using stan::math::pseudo_eigenvectors;
     return pseudo_eigenvectors(x);
@@ -36,7 +37,7 @@ void test_pseudo_eigendecomposition() {
   }
 }
 
-TEST(mathMixFun, pseudoEigenVectors) {
+TEST_F(mathMix, pseudoEigenVectors) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<d_t>;

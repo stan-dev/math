@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 template <typename T>
 void expect_sd(const T& m, const stan::test::ad_tolerances& tols
@@ -36,7 +37,7 @@ void expect_sd(const T& m, const stan::test::ad_tolerances& tols
   stan::test::expect_ad_matvar(tols, f, stm);
 }
 
-TEST(MathMixMatFun, sd) {
+TEST_F(mathMix, sd) {
   Eigen::MatrixXd a(0, 0);
   expect_sd(a);
 

@@ -1,13 +1,17 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, acosh) {
+TEST_F(mathMix, acosh) {
   auto f = [](const auto& x1) {
     using stan::math::acosh;
     return acosh(x1);
   };
-  for (double x : stan::test::internal::common_args())
+  for (double x :
+       stan::test::internal::common_args([](auto val) { return val > 1.0; })) {
     stan::test::expect_unary_vectorized(f, x);
+  }
+
   stan::test::expect_unary_vectorized<
       stan::test::ScalarSupport::RealAndComplex>(f, 1.5, 3.2, 5, 10, 12.9);
   // avoid pole at complex zero that can't be autodiffed
@@ -18,7 +22,7 @@ TEST(mathMixMatFun, acosh) {
   }
 }
 
-TEST(mathMixMatFun, acosh_varmat) {
+TEST_F(mathMix, acosh_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

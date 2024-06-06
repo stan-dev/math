@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradMixMatrixCols, vector_fv) {
+TEST_F(mathMix, cols_vector_fv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::row_vector_fv;
@@ -21,7 +22,7 @@ TEST(AgradMixMatrixCols, vector_fv) {
   v.resize(0);
   EXPECT_EQ(1U, cols(v));
 }
-TEST(AgradMixMatrixCols, rowvector_fv) {
+TEST_F(mathMix, cols_rowvector_fv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::row_vector_fv;
@@ -40,7 +41,7 @@ TEST(AgradMixMatrixCols, rowvector_fv) {
   rv.resize(0);
   EXPECT_EQ(0U, cols(rv));
 }
-TEST(AgradMixMatrixCols, matrix_fv) {
+TEST_F(mathMix, cols_matrix_fv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::matrix_fv;
@@ -59,7 +60,7 @@ TEST(AgradMixMatrixCols, matrix_fv) {
   m.resize(5, 0);
   EXPECT_EQ(0U, cols(m));
 }
-TEST(AgradMixFvarFvarMatrix, vector_ffv) {
+TEST_F(mathMix, cols_vector_ffv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::row_vector_ffv;
@@ -89,7 +90,7 @@ TEST(AgradMixFvarFvarMatrix, vector_ffv) {
   v.resize(0);
   EXPECT_EQ(1U, cols(v));
 }
-TEST(AgradMixMatrixCols, rowvector_ffv) {
+TEST_F(mathMix, cols_rowvector_ffv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::row_vector_ffv;
@@ -118,7 +119,7 @@ TEST(AgradMixMatrixCols, rowvector_ffv) {
   rv.resize(0);
   EXPECT_EQ(0U, cols(rv));
 }
-TEST(AgradMixMatrixCols, matrix_ffv) {
+TEST_F(mathMix, cols_matrix_ffv) {
   using stan::math::cols;
   using stan::math::fvar;
   using stan::math::matrix_ffv;

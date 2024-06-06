@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, beta_varmat_vectorized) {
+TEST_F(mathMix, beta_varmat_vectorized) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::beta;
     return beta(x1, x2);

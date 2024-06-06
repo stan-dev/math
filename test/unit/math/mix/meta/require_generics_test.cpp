@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
