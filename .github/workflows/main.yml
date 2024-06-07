@@ -51,7 +51,7 @@ jobs:
         cd build
         make -j2 test_unit_math_prim_core
         Write-Host "RUNNING CORE TESTS"
-        $exePath = “D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
+        $exePath = "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
         Start-Process -FilePAth $exePath
 
     - name: Upload gtest_output xml
