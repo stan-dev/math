@@ -50,9 +50,7 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
         make -j2 test_unit_math_prim_core
-        Write-Host "RUNNING CORE TESTS"
-        $exePath = "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
-        Start-Process -FilePAth $exePath
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
