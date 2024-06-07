@@ -141,8 +141,7 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 test_unit_math_mix_fun
-        ./test/unit/test_unit_math_mix_fun.exe
+        make -j2 test_unit_math_mix_fun -and ./test/unit/test_unit_math_mix_fun.exe
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4

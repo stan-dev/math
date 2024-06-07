@@ -312,7 +312,7 @@ pipeline {
                                 sh "echo O=1 >> make/local"
                             }
                             sh'''
-                                CXX=${CLANG_CXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU};
+                                CXX=${CLANG_CXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
                                 cd build && make -j${PARALLEL} test_unit_math_opencl && ./test/unit/test_unit_math_opencl
                             '''
                         }
