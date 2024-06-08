@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop, master ]
+    branches: [ develop, master, header-wall ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -69,3 +69,14 @@ jobs:
       run: |
         echo "STAN_NO_RANGE_CHECKS=true" > make/local
         ./runTests.py -j2 ./test/unit/math/prim/err/
+
+  macos:
+    name: MacOS
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run header tests
+      run: |
+        make -j2 test-headers

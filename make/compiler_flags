@@ -179,7 +179,7 @@ CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 # Update compiler flags with operating system specific modifications
 ##
 ifeq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
+#  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
   CPPFLAGS_OS += -D_GLIBCXX11_USE_C99_COMPLEX
@@ -217,13 +217,13 @@ endif
 
 ifeq ($(OS),Darwin)
   ifeq (clang,$(CXX_TYPE))
-    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
+#    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
   endif
 endif
 
 ifeq ($(OS),Linux)
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_WARNINGS ?= -Wno-sign-compare
+#  CXXFLAGS_WARNINGS ?= -Wno-sign-compare
   ifeq (gcc,$(CXX_TYPE))
     CXXFLAGS_OS ?= -pthread
   endif
@@ -245,10 +245,13 @@ ifeq ($(ARM64), true)
 endif
 
 ## silence warnings occuring due to the TBB and Eigen libraries
-CXXFLAGS_WARNINGS += -Wno-ignored-attributes
+#CXXFLAGS_WARNINGS += -Wno-ignored-attributes
 ## https://github.com/oneapi-src/oneTBB/issues/307
 ifeq ($(CXX_TYPE), gcc)
-  CXXFLAGS_WARNINGS += -Wno-class-memaccess
+# Handle platforms where 'gcc' is a shim for clang
+  ifeq ($(shell echo | $(CXX) -dM -E - | grep -i __clang__),)
+    CXXFLAGS_WARNINGS += -Wno-class-memaccess
+  endif
 endif
 
 ################################################################################
