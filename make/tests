@@ -109,7 +109,7 @@ else
 endif
 
 %.hpp-test : %.hpp test/dummy.cpp
-	$(COMPILE.cpp) $(CXXFLAGS) -O0 -include $^ $(UCRT_NULL_FLAG) -o $(DEV_NULL) -Wunused-local-typedefs
+	$(COMPILE.cpp) $(CXXFLAGS) -O0 -include $^ $(UCRT_NULL_FLAG) -o $(DEV_NULL) -Wall -Werror
 
 test/dummy.cpp:
 	@mkdir -p test

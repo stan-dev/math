@@ -18,12 +18,14 @@
 #else
 #define EIGEN_ARRAYBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
 #endif
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
+#pragma GCC diagnostic pop
 
     namespace Eigen {
 

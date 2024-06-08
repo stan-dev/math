@@ -30,7 +30,7 @@ namespace math {
 template <typename Ta, typename Tz, require_all_arithmetic_t<Ta, Tz>* = nullptr>
 return_type_t<Ta, Tz> hypergeometric_1f0(const Ta& a, const Tz& z) {
   constexpr const char* function = "hypergeometric_1f0";
-  check_less("hypergeometric_1f0", "abs(z)", std::fabs(z), 1.0);
+  check_less(function, "abs(z)", std::fabs(z), 1.0);
 
   return boost::math::hypergeometric_1F0(a, z, boost_policy_t<>());
 }
