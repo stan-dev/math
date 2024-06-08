@@ -49,8 +49,20 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 test_unit_math_prim_core
+        make -j2 make -j2 unit_math_prim_subtests
         Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_err.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_fun.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_functor.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_meta.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_prob.exe"
+        make -j2 unit_math_rev_subtests
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_err.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_fun.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_functor.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_meta.exe"
+        Start-Process -FilePAth "D:\a\math\math\build\test\unit\test_unit_math_prim_prob.exe"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -93,16 +105,16 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
         make -j2 unit_math_fwd_subtests
-        ./test/unit/test_unit_math_fwd_core.exe
-        ./test/unit/test_unit_math_fwd_fun.exe
-        ./test/unit/test_unit_math_fwd_functor.exe
-        ./test/unit/test_unit_math_fwd_meta.exe
-        ./test/unit/test_unit_math_fwd_prob.exe
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_core.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_fun.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_functor.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_meta.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_prob.exe"
         make -j2 unit_math_mix_subtests
-        ./test/unit/test_unit_math_mix_core.exe
-        ./test/unit/test_unit_math_mix_functor.exe
-        ./test/unit/test_unit_math_mix_meta.exe
-        ./test/unit/test_unit_math_mix_prob.exe
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_core.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_functor.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_meta.exe"
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_prob.exe"
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
       if: failure()
@@ -141,7 +153,7 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
         make -j2 test_unit_math_mix_fun
-        ./test/unit/test_unit_math_mix_fun.exe
+        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_fun.exe"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
