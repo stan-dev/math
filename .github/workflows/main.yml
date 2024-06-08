@@ -49,7 +49,7 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 make -j2 unit_math_prim_subtests unit_math_rev_subtests
+        make -j2 unit_math_prim_subtests unit_math_rev_subtests
         Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
         Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_err.exe"
         Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_fun.exe"
