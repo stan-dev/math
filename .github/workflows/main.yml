@@ -40,7 +40,7 @@ jobs:
     - name: Build Math libs
       shell: powershell
       run: |
-        make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j4
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -49,19 +49,9 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 unit_math_prim_subtests unit_math_rev_subtests
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_err.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_fun.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_functor.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_meta.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_prob.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_core.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_err.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_fun.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_functor.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_meta.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_prim_prob.exe"
+        make -j4 unit_math_prim_rev_subtests
+        cd test
+        ctest -R "unit_math_prim_rev"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -91,7 +81,7 @@ jobs:
     - name: Build Math libs
       shell: powershell
       run: |
-        make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j4
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -103,17 +93,10 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 unit_math_fwd_subtests
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_core.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_fun.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_functor.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_meta.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_fwd_prob.exe"
-        make -j2 unit_math_mix_subtests
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_core.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_functor.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_meta.exe"
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_prob.exe"
+        make -j4 unit_math_fwd_nonfun_mix_subtests
+        cd test
+        ctest -R "unit_math_fwd_nonfun_mix"
+
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
       if: failure()
@@ -142,7 +125,7 @@ jobs:
     - name: Build Math libs
       shell: powershell
       run: |
-        make -f make/standalone math-libs -j2
+        make -f make/standalone math-libs -j4
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -151,8 +134,9 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j2 test_unit_math_mix_fun
-        Start-Process -FilePath "D:\a\math\math\build\test\unit\test_unit_math_mix_fun.exe"
+        make -j4 test_unit_math_mix_fun
+        cd test
+        ctest -R "unit_math_mix_fun"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4

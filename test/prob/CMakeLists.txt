@@ -60,7 +60,10 @@ target_link_libraries(prob_pch
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
   sundials_idas sundials_nvecserial)
 
-
+if (STAN_OPENCL)
+  target_link_libraries(prob_pch OpenCL::OpenCL)
+  target_include_directories(prob_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
+endif()
 
 # Prob tests
 # Define the test generator executable
