@@ -24,7 +24,7 @@ if (STAN_OPENCL)
   target_link_libraries(unit_pch OpenCL::OpenCL)
   target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
 endif()
-
+target_compile_options(unit_pch PRIVATE -O1)
 add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR}/math unit_math unit_pch)
 
 message("Adding unit_math_opencl_subtests")
