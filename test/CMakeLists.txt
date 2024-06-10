@@ -228,11 +228,12 @@ foreach(HEADER ${HEADER_FILES})
     target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi)
   endif()
 
-  target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -O0 -Wunused-local-typedefs)
   add_custom_command(
     TARGET ${SUB_TEST_TARGET_NAME}
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "Testing header ${HEADER}" > ${DEV_NULL}
+    COMMAND ${CMAKE_COMMAND} -E echo "Testing header ${HEADER}"
+    COMMAND ${CMAKE_COMMAND} -E rm -f $<TARGET_FILE:${SUB_TEST_TARGET_NAME}>
+    COMMENT "Deleting target output for ${SUB_TEST_TARGET_NAME}"
   )
 
   add_dependencies(test-headers ${SUB_TEST_TARGET_NAME})

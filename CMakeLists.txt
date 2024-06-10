@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_VERBOSE_MAKEFILE YES)
 cmake_policy(SET CMP0069 NEW)
 # Configuration Options
+option(STAN_BUILD_DOCS "Build the Stan Math library documentation" OFF)
 option(STAN_TEST_HEADERS "Build the targets for the header checks" OFF)
 option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
 option(STAN_MPI "Enable MPI support" OFF)
@@ -196,6 +197,22 @@ install(FILES "stanmathConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/stanmathConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/stanmath)
 
+# add docs
+if (STAN_BUILD_DOCS)
+find_package(Doxygen REQUIRED)
+
+add_custom_target(
+  doxygen ALL
+  COMMAND mkdir -p doc/api
+  COMMAND
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen.cfg
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/pretty_stuff/eigen_navtree_hacks.js ${CMAKE_CURRENT_SOURCE_DIR}/doc/api/html/eigen_navtree_hacks.js
+  COMMENT "Generating API documentation with Doxygen"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  VERBATIM
+)
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT flto_support OUTPUT error LANGUAGES CXX)
@@ -210,3 +227,5 @@ IF (NOT WIN32)
     endif()
 endif()
 add_subdirectory(test)
+
+
