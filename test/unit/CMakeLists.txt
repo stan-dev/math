@@ -27,6 +27,23 @@ endif()
 
 add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR}/math unit_math unit_pch)
 
+message("Adding unit_math_opencl_subtests")
+add_custom_target(unit_math_opencl_subtests)
+add_dependencies(unit_math_opencl_subtests
+test_unit_math_opencl test_unit_math_opencl_device_functions
+test_unit_math_opencl_kernel_generator
+test_unit_math_opencl_prim test_unit_math_opencl_rev)
+set_property(TEST test_unit_math_opencl
+  PROPERTY LABELS "unit_math_opencl")
+set_property(TEST test_unit_math_opencl_device_functions
+  PROPERTY LABELS "unit_math_opencl")
+set_property(TEST test_unit_math_opencl_kernel_generator
+  PROPERTY LABELS "unit_math_opencl")
+set_property(TEST test_unit_math_opencl_prim
+  PROPERTY LABELS "unit_math_opencl")
+set_property(TEST test_unit_math_opencl_rev
+  PROPERTY LABELS "unit_math_opencl")
+
 message("Adding unit_math_mix_subtests")
 add_custom_target(unit_math_mix_subtests)
 add_dependencies(unit_math_mix_subtests test_unit_math_mix_core

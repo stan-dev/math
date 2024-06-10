@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_VERBOSE_MAKEFILE YES)
 cmake_policy(SET CMP0069 NEW)
 # Configuration Options
+option(STAN_TEST_HEADERS "Build the targets for the header checks" OFF)
 option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
 option(STAN_MPI "Enable MPI support" OFF)
 option(STAN_OPENCL "Enable OpenCL support" OFF)

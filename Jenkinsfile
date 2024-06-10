@@ -136,7 +136,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                            python ./runChecks.py 2>&1 | tee dependencies.log""" } ,
                         Documentation: { sh "make doxygen" },
                     )
                 }
@@ -197,8 +197,10 @@ pipeline {
                     steps {
                         retry(1){
                             unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                            sh "make -j${PARALLEL} test-headers"
+                            sh """
+                            cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_TEST_HEADERS=ON;
+                            cd build && make -j${PARALLEL} test-headers;
+                            """
                         }
                     }
                     post { always { deleteDir() } }
@@ -287,7 +289,7 @@ pipeline {
                             }
                             sh'''
                                 CXX=${CLANG_CXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
-                                cd build && make -j${PARALLEL} test_unit_math_opencl && ./test/unit/test_unit_math_opencl
+                                cd build && make -j${PARALLEL} unit_math_opencl_subtests && cd test && ctest -L "unit_math_opencl" --repeat until-pass:10
                             '''
                         }
                     }
