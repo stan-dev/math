@@ -26,7 +26,14 @@ if (STAN_MPI)
 endif()
 
 
-# Function to add a test target for each directory containing C++ source files
+# Adds a test target for
+# 1. Each directory under the specified test directory
+# 2. A single target for each test in the test directory
+# 3. A single target for all tests in the test directory
+# The test target is named after the directory path, with / replaced by _
+# @param test_directory The directory containing the tests
+# @param folder_test_name The name of the test for the whole folder, will have _test appended to it
+# @param target_pch The precompiled header target to reuse
 function(add_gtest_grouped_test test_directory folder_test_name target_pch)
   # Recursively find all directories under the specified test directory
   file(GLOB_RECURSE ALL_CPP_FILES "${test_directory}/*.cpp")
