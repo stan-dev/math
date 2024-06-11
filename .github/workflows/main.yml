@@ -136,7 +136,7 @@ jobs:
         cd build
         make -j4 test_unit_math_mix_fun
         cd test
-        ctest -R "unit_math_mix_fun"
+        ctest -L "unit_math_mix_fun"
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4

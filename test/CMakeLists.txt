@@ -212,7 +212,7 @@ foreach(HEADER ${HEADER_FILES})
     EXCLUDE_FROM_ALL TRUE
     EXCLUDE_FROM_DEFAULT_BUILD TRUE
   )
-
+  target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -O0 -Wunused-local-typedefs)
   target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
     ${boost_SOURCE_DIR})
   target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM dae_header_pch)
@@ -232,7 +232,7 @@ foreach(HEADER ${HEADER_FILES})
     TARGET ${SUB_TEST_TARGET_NAME}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Testing header ${HEADER}"
-    COMMAND ${CMAKE_COMMAND} -E rm -f $<TARGET_FILE:${SUB_TEST_TARGET_NAME}>
+    COMMAND rm -f $<TARGET_FILE:${SUB_TEST_TARGET_NAME}>
     COMMENT "Deleting target output for ${SUB_TEST_TARGET_NAME}"
   )
 
