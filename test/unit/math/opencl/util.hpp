@@ -73,7 +73,7 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg) {
 }
 template <typename T>
 inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
-               const char* msg) {
+                      const char* msg) {
   EXPECT_EQ(a.size(), b.size());
   for (int i = 0; i < a.size(); i++) {
     expect_eq(a[i], b[i], msg);
@@ -119,7 +119,7 @@ inline void expect_adj_near(const T1& a, const T2& b, const char* msg) {
 }
 template <typename T>
 inline void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
-                     const char* msg) {
+                            const char* msg) {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_near(a[i], b[i], msg);
@@ -132,7 +132,7 @@ inline void prim_rev_argument_combinations(Functor f) {
 }
 template <typename Functor, typename Arg0, typename... Args>
 inline void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
-                                    const Args&... args) {
+                                           const Args&... args) {
   prim_rev_argument_combinations(
       [&f, &arg0](const auto& args1, const auto& args2) {
         constexpr size_t Size
@@ -157,8 +157,8 @@ inline void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
 
 template <typename Functor, std::size_t... Is, typename... Args>
 inline void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
-                                      std::index_sequence<Is...>,
-                                      const Args&... args) {
+                                             std::index_sequence<Is...>,
+                                             const Args&... args) {
   prim_rev_argument_combinations(
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
         std::string signature = type_name<decltype(args_for_cpu)>().data();
@@ -193,9 +193,9 @@ inline void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
 template <typename FunctorCPU, typename FunctorCL, std::size_t... Is,
           typename... Args>
 inline void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
-                                      const FunctorCL& functorCL,
-                                      std::index_sequence<Is...>,
-                                      const Args&... args) {
+                                             const FunctorCL& functorCL,
+                                             std::index_sequence<Is...>,
+                                             const Args&... args) {
   prim_rev_argument_combinations(
       [&functorCPU, &functorCL](const auto& args_for_cpu,
                                 const auto& args_for_opencl) {
@@ -243,8 +243,8 @@ inline int rows(const T& x) {
 
 template <std::size_t I, typename Functor, std::size_t... Is, typename... Args>
 inline void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
-                                            std::index_sequence<Is...>,
-                                            const Args&... args) {
+                                                   std::index_sequence<Is...>,
+                                                   const Args&... args) {
   prim_rev_argument_combinations(
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
@@ -304,7 +304,8 @@ inline void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
  * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <typename Functor, typename... Args>
-inline void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
+inline void compare_cpu_opencl_prim(const Functor& functor,
+                                    const Args&... args) {
   auto res_cpu = eval(functor(args...));
   auto res_opencl = eval(functor(internal::opencl_argument(args)...));
   internal::expect_eq(res_cpu, res_opencl,
@@ -328,7 +329,8 @@ inline void compare_cpu_opencl_prim(const Functor& functor, const Args&... args)
  * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <typename Functor, typename... Args>
-inline void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
+inline void compare_cpu_opencl_prim_rev(const Functor& functor,
+                                        const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
   recover_memory();
@@ -353,8 +355,8 @@ inline void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... a
  */
 template <typename FunctorCPU, typename FunctorCL, typename... Args>
 inline void compare_cpu_opencl_prim_rev_separate(const FunctorCPU& functorCPU,
-                                          const FunctorCL& fucntorCL,
-                                          const Args&... args) {
+                                                 const FunctorCL& fucntorCL,
+                                                 const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functorCPU, fucntorCL, std::make_index_sequence<sizeof...(args)>{},
       args...);
@@ -385,7 +387,7 @@ template <std::size_t I, typename Functor, typename... Args,
           require_stan_scalar_t<
               std::tuple_element_t<I, std::tuple<Args...>>>* = nullptr>
 inline void test_opencl_broadcasting_prim_rev(const Functor& functor,
-                                       const Args&... args) {
+                                              const Args&... args) {
   internal::test_opencl_broadcasting_prim_rev_impl<I>(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
   recover_memory();
