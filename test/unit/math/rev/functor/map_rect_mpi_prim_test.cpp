@@ -311,8 +311,8 @@ TEST_F(MpiJobMapRectMpi, always_faulty_functor_dv) {
 struct map_rect_prim : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
-  std::vector<std::vector<double> > x_r;
-  std::vector<std::vector<int> > x_i;
+  std::vector<std::vector<double>> x_r;
+  std::vector<std::vector<int>> x_i;
   const std::size_t N = 10;
 
   virtual void SetUp() {
@@ -325,8 +325,8 @@ struct map_rect_prim : public ::testing::Test {
       job_params_d.push_back(job_d);
     }
 
-    x_r = std::vector<std::vector<double> >(N, std::vector<double>(1, 1.0));
-    x_i = std::vector<std::vector<int> >(N, std::vector<int>(1, 0));
+    x_r = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+    x_i = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
   }
 };
 

@@ -84,7 +84,6 @@ TEST_F(map_rect_con_prim, concurrent_eval_ok_dd) {
 #include <iostream>
 #include <vector>
 
-
 struct map_rect_con : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
@@ -252,11 +251,10 @@ TEST_F(map_rect_con, concurrent_eval_ok_vv) {
 #include <vector>
 #include <string>
 
-
 inline void setup_job(int N, Eigen::VectorXd& shared_params_d,
-               std::vector<Eigen::VectorXd>& job_params_d,
-               std::vector<std::vector<double> >& x_r,
-               std::vector<std::vector<int> >& x_i) {
+                      std::vector<Eigen::VectorXd>& job_params_d,
+                      std::vector<std::vector<double> >& x_r,
+                      std::vector<std::vector<int> >& x_i) {
   shared_params_d.resize(2);
   shared_params_d << 2, 0;
 
@@ -350,7 +348,6 @@ TEST_F(map_rect_con_threads, concurrent_varying_num_threads_eval_ok_dd) {
 }
 #endif
 #endif
-
 
 #ifndef STAN_MPI
 
