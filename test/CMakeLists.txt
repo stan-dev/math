@@ -22,7 +22,7 @@ if (STAN_OPENCL)
   target_include_directories(dae_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
 endif()
 if (STAN_MPI)
-  target_link_libraries(dae_test Boost::mpi)
+  target_link_libraries(dae_test Boost::mpi MPI::MPI_CXX)
 endif()
 
 
@@ -81,7 +81,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
             target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
           endif()
           if (STAN_MPI)
-            target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi)
+            target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
           endif()
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
@@ -101,7 +101,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
         endif()
         if (STAN_MPI)
-          target_link_libraries(${TEST_TARGET_NAME} Boost::mpi)
+          target_link_libraries(${TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
         endif()
 
           # Register the test with CTest
@@ -129,7 +129,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
       target_include_directories(${folder_test_name}_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
     endif()
     if (STAN_MPI)
-      target_link_libraries(${folder_test_name}_test Boost::mpi)
+      target_link_libraries(${folder_test_name}_test Boost::mpi MPI::MPI_CXX)
     endif()
 
     # Register the combined test with CTest
@@ -186,7 +186,7 @@ if (STAN_OPENCL)
   target_include_directories(dae_header_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
 endif()
 if (STAN_MPI)
-  target_link_libraries(dae_header_pch Boost::mpi)
+  target_link_libraries(dae_header_pch Boost::mpi MPI::MPI_CXX)
 endif()
 target_compile_options(dae_header_pch PUBLIC -O0 -Wunused-local-typedefs)
 
@@ -229,7 +229,7 @@ foreach(HEADER ${HEADER_FILES})
     target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
   endif()
   if (STAN_MPI)
-    target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi)
+    target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
   endif()
 
   add_custom_command(

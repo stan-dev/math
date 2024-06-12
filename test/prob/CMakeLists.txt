@@ -65,7 +65,7 @@ if (STAN_OPENCL)
   target_include_directories(prob_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
 endif()
 if (STAN_MPI)
-  target_link_libraries(prob_pch Boost::mpi)
+  target_link_libraries(prob_pch Boost::mpi MPI::MPI_CXX)
 endif()
 target_compile_options(prob_pch PRIVATE -O1)
 

@@ -162,13 +162,9 @@ else()
   set(BOOST_ENABLE_PYTHON OFF)
   set(BOOST_BUILD_TESTS OFF)
   set(CMAKE_BUILD_TYPE Release)
+  set(BOOST_ENABLE_MPI ON)
 
-  set(BOOST_INCLUDE_LIBRARIES math numeric/odeint lexical_cast optional random)
-  if (STAN_MPI)
-    set(BOOST_ENABLE_MPI ON)
-    set(BOOST_MPI ON)
-    set(BOOST_INCLUDE_LIBRARIES ${BOOST_INCLUDE_LIBRARIES} mpi serialization)
-  endif()
+  set(BOOST_INCLUDE_LIBRARIES math numeric/odeint lexical_cast optional random mpi serialization)
   FetchContent_Declare(
     Boost
     DOWNLOAD_EXTRACT_TIMESTAMP ON
