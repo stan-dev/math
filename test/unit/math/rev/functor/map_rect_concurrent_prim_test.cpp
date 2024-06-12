@@ -390,7 +390,7 @@ TEST_F(map_rect_prim, nompi_wrong_size_job_params_dd) {
                std::invalid_argument);
 }
 
-TEST_F(map_rect_prim,nompi_wrong_size_real_data_dd) {
+TEST_F(map_rect_prim, nompi_wrong_size_real_data_dd) {
   x_r[1] = std::vector<double>(5, 1);
 
   EXPECT_THROW((stan::math::map_rect<4, hard_work>(shared_params_d,
