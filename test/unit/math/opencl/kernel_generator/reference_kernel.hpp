@@ -32,7 +32,7 @@ inline std::string load_reference_kernel(const std::string& filename) {
  * @throw ios_base::failure File could not be opened or written.
  */
 inline void store_reference_kernel_if_needed(const std::string& filename,
-                                      const std::string& kernel) {
+                                             const std::string& kernel) {
 #ifdef STAN_TEST_KERNEL_GENERATOR_STORE_REFERENCE_KERNELS
   std::string path
       = "test/unit/math/opencl/kernel_generator/reference_kernels/" + filename;
