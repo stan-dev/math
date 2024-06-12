@@ -73,7 +73,6 @@ TEST_F(map_rect_con_prim, concurrent_eval_ok_dd) {
 // the tests here check that map_rect_concurrent works correct as such
 // we enforce that STAN_MPI is NOT defined
 
-
 struct map_rect_con : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
@@ -221,7 +220,6 @@ TEST_F(map_rect_con, concurrent_eval_ok_vv) {
     }
   }
 }
-
 
 // the tests here check that map_rect_concurrent works correct as such we
 // enforce that STAN_MPI is NOT defined and these tests only run if
