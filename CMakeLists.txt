@@ -74,9 +74,11 @@ endif()
 
 # Externally provided libraries
 FetchContent_Declare(googletest
+        DOWNLOAD_EXTRACT_TIMESTAMP ON
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG main)
 FetchContent_Declare(googlebenchmark
+        DOWNLOAD_EXTRACT_TIMESTAMP ON
         GIT_REPOSITORY https://github.com/google/benchmark.git
         GIT_TAG main) # need master for benchmark::benchmark
 
@@ -88,6 +90,7 @@ if(STAN_USE_SYSTEM_TBB)
 else()
   FetchContent_Declare(
     tbb
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
     GIT_TAG        v2021.7.0  # adjust this to the version you need
     CMAKE_ARGS -DTBB_STRICT=OFF -DTBB_TEST=OFF
@@ -120,6 +123,7 @@ else()
   set(EIGEN_LEAVE_TEST_IN_ALL_TARGET OFF)
   FetchContent_Declare(
     Eigen
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
     GIT_TAG 3.4.0)
   FetchContent_MakeAvailable(Eigen)
@@ -134,6 +138,7 @@ if (STAN_USE_SYSTEM_SUNDIALS)
 else()
   FetchContent_Declare(
     sundials
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
     GIT_REPOSITORY https://github.com/LLNL/sundials
     GIT_TAG        v6.1.1
       # adjust this to the version you need
@@ -152,19 +157,22 @@ else()
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_USE_STATIC_RUNTIME ON)
   set(BOOST_ENABLE_CMAKE ON)
-  set(BOOST_MPI ON)
   set(BUILD_SHARED_LIBS OFF)
   set(BOOST_DETAILED_CONFIGURE ON)
-  set(BOOST_ENABLE_MPI ON)
   set(BOOST_ENABLE_PYTHON OFF)
   set(BOOST_BUILD_TESTS OFF)
   set(CMAKE_BUILD_TYPE Release)
 
-  set(BOOST_INCLUDE_LIBRARIES mpi math numeric/odeint lexical_cast optional serialization random)
+  set(BOOST_INCLUDE_LIBRARIES math numeric/odeint lexical_cast optional random)
+  if (STAN_MPI)
+    set(BOOST_ENABLE_MPI ON)
+    set(BOOST_MPI ON)
+    set(BOOST_INCLUDE_LIBRARIES ${BOOST_INCLUDE_LIBRARIES} mpi serialization)
+  endif()
   FetchContent_Declare(
     Boost
-    URL https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
     DOWNLOAD_EXTRACT_TIMESTAMP ON
+    URL https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
   )
   FetchContent_MakeAvailable(Boost)
 endif()
