@@ -6,7 +6,7 @@
 struct hard_work {
   hard_work() {}
   template <typename T1, typename T2>
-  Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> operator()(
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta,
       const std::vector<double>& x_r, const std::vector<int>& x_i,

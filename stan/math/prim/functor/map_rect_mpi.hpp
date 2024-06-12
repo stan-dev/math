@@ -17,7 +17,7 @@ namespace internal {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
-Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
+inline Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
 map_rect_mpi(const T_shared_param& shared_params,
              const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
                  job_params,
@@ -49,20 +49,20 @@ map_rect_mpi(const T_shared_param& shared_params,
   namespace stan {                                                             \
   namespace math {                                                             \
   namespace internal {                                                         \
-  typedef FUNCTOR mpi_mr_##CALLID##_##SHARED##_##JOB##_;                       \
-  typedef map_rect_reduce<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB>  \
-      mpi_mr_##CALLID##_##SHARED##_##JOB##_red_;                               \
-  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_,              \
+  typedef FUNCTOR mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_;                       \
+  typedef map_rect_reduce<mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_, SHARED, JOB>  \
+      mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_red_;                               \
+  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_,              \
                            Eigen::Matrix<SHARED, Eigen::Dynamic, 1>, JOB>      \
-      mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_;                              \
-  typedef mpi_parallel_call<CALLID, mpi_mr_##CALLID##_##SHARED##_##JOB##_red_, \
-                            mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_>        \
-      mpi_mr_##CALLID##_##SHARED##_##JOB##_pcall_;                             \
+      mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_comb_;                              \
+  typedef mpi_parallel_call<CALLID, mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_red_, \
+                            mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_comb_>        \
+      mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_pcall_;                             \
   }                                                                            \
   }                                                                            \
   }                                                                            \
   STAN_REGISTER_MPI_DISTRIBUTED_APPLY(                                         \
-      stan::math::internal::mpi_mr_##CALLID##_##SHARED##_##JOB##_pcall_)
+      stan::math::internal::mpi_mr_##CALLID##_##SHARED##_##JOB##_##FUNCTOR##_pcall_)
 
 #define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR) \
   STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)

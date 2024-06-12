@@ -318,6 +318,9 @@ pipeline {
                             echo CXX=${MPICXX} > make/local
                             echo CXX_TYPE=gcc >> make/local
                             echo STAN_MPI=true >> make/local
+                            CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
+                            cd build && make -j${PARALLEL} unit_math_mpi_subtests && cd test && ctest -L "unit_math_mpi_subtest"
+
                         """
                         runTests("test/unit/math/prim/functor")
                         runTests("test/unit/math/rev/functor")

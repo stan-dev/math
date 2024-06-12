@@ -2,7 +2,7 @@
 # Compile one test manually so that we can reuse precompile headers
 add_executable(unit_pch
   ${CMAKE_CURRENT_SOURCE_DIR}/unit_pch.cpp)
-target_include_directories(unit_pch PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+target_include_directories(unit_pch PRIVATE ${CMAKE_SOURCE_DIR})
 target_precompile_headers(unit_pch PRIVATE
 "$<$<COMPILE_LANGUAGE:CXX>:<test/unit/math/test_ad.hpp$<ANGLE-R>>"
 "$<$<COMPILE_LANGUAGE:CXX>:<test/unit/math/test_ad_matvar.hpp$<ANGLE-R>>"
@@ -18,12 +18,16 @@ target_precompile_headers(unit_pch PRIVATE
 target_link_libraries(unit_pch
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial)
+  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 
 if (STAN_OPENCL)
-  target_link_libraries(unit_pch OpenCL::OpenCL)
-  target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
+target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
+target_link_libraries(unit_pch OpenCL::OpenCL)
 endif()
+if (STAN_MPI)
+  target_link_libraries(unit_pch Boost::mpi MPI::MPI_CXX)
+endif()
+
 target_compile_options(unit_pch PRIVATE -O1)
 add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR}/math unit_math unit_pch)
 
@@ -191,31 +195,38 @@ set_property(TEST test_unit_math_rev_meta
 set_property(TEST test_unit_math_rev_prob
   PROPERTY LABELS "unit_math_prim_rev")
 
+message("Adding unit_math_prim_subtests")
+add_custom_target(unit_math_mpi_subtests)
+add_dependencies(unit_math_mpi_subtests
+  test_unit_math_prim_functor test_unit_math_rev_functor)  
+set_property(TEST test_unit_math_prim_functor PROPERTY LABELS "unit_math_mpi_subtest")
+set_property(TEST test_unit_math_rev_functor PROPERTY LABELS "unit_math_mpi_subtest")
 
-  set_property(TEST test_unit_math PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd_core PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd_fun PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd_functor PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd_meta PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_fwd_prob PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_memory PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix_core PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix_fun PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix_functor PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix_meta PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_mix_prob PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_core PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_err PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_fun PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_functor PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_meta PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_prim_prob PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_core PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_err PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_fun PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_functor PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_meta PROPERTY LABELS "unit_math_subtest")
-  set_property(TEST test_unit_math_rev_prob PROPERTY LABELS "unit_math_subtest")
+
+set_property(TEST test_unit_math PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd_core PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd_fun PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd_functor PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd_meta PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_fwd_prob PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_memory PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix_core PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix_fun PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix_functor PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix_meta PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_mix_prob PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_core PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_err PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_fun PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_functor PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_meta PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_prim_prob PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_core PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_err PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_fun PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_functor PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_meta PROPERTY LABELS "unit_math_subtest")
+set_property(TEST test_unit_math_rev_prob PROPERTY LABELS "unit_math_subtest")

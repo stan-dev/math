@@ -2,7 +2,7 @@
 
 # Compile one test manually so that we can reuse precompile headers
 add_executable(dae_test ${CMAKE_CURRENT_SOURCE_DIR}/unit/math/rev/functor/pph_dae_typed_test.cpp)
-target_include_directories(dae_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
+target_include_directories(dae_test PRIVATE ${CMAKE_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
 target_precompile_headers(dae_test PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
     "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
@@ -16,7 +16,7 @@ target_precompile_headers(dae_test PRIVATE
 target_link_libraries(dae_test
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial)
+  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 if (STAN_OPENCL)
   target_link_libraries(dae_test OpenCL::OpenCL)
   target_include_directories(dae_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -70,13 +70,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           string(REPLACE "/" "_" TMP_TEST_TARGET_NAME ${RELATIVE_FILE})
           string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
           add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
-          target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
-            ${boost_SOURCE_DIR})
+          target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
           target_link_libraries(${SUB_TEST_TARGET_NAME}
             gtest_main benchmark::benchmark TBB::tbb
             Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-            sundials_idas sundials_nvecserial)
+            sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
           if (STAN_OPENCL)
             target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
             target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -90,14 +89,13 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         message(STATUS "Adding grouped test ${TEST_TARGET_NAME} for ${dir}")
         add_executable(${TEST_TARGET_NAME} ${CPP_FILES_IN_DIR})
         # Configure target properties such as include directories and linked libraries
-        target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
-         ${boost_SOURCE_DIR})
+        target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
         target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1)
         target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
         target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial)
+          sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
         if (STAN_OPENCL)
           target_link_libraries(${TEST_TARGET_NAME} OpenCL::OpenCL)
           target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -120,12 +118,12 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     message(STATUS "Adding single test target for all tests ${folder_test_name}_test for ${test_directory}")
     add_executable(${folder_test_name}_test ${ALL_TEST_FILES})
     target_compile_options(${folder_test_name}_test PUBLIC -O1)
-    target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+    target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR})
     target_precompile_headers(${folder_test_name}_test REUSE_FROM ${target_pch})
     target_link_libraries(${folder_test_name}_test
           gtest_main benchmark::benchmark TBB::tbb
           Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial)
+          sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
     if (STAN_OPENCL)
       target_link_libraries(${folder_test_name}_test OpenCL::OpenCL)
       target_include_directories(${folder_test_name}_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -168,7 +166,7 @@ endif()
 
 # Compile one test manually so that we can reuse precompile headers
 add_executable(dae_header_pch ${CMAKE_CURRENT_SOURCE_DIR}/unit/math/rev/functor/pph_dae_typed_test.cpp)
-target_include_directories(dae_header_pch PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
+target_include_directories(dae_header_pch PRIVATE ${CMAKE_SOURCE_DIR} ${CLCPP_SOURCE_DIR}/include)
 target_precompile_headers(dae_header_pch PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
     "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
@@ -182,7 +180,7 @@ target_precompile_headers(dae_header_pch PRIVATE
 target_link_libraries(dae_header_pch
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial)
+  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 if (STAN_OPENCL)
   target_link_libraries(dae_header_pch OpenCL::OpenCL)
   target_include_directories(dae_header_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -220,13 +218,12 @@ foreach(HEADER ${HEADER_FILES})
     EXCLUDE_FROM_DEFAULT_BUILD TRUE
   )
   target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -O0 -Wunused-local-typedefs)
-  target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}
-    ${boost_SOURCE_DIR})
+  target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
   target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM dae_header_pch)
   target_link_libraries(${SUB_TEST_TARGET_NAME}
     gtest_main benchmark::benchmark TBB::tbb
     Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-    sundials_idas sundials_nvecserial)
+    sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
   if (STAN_OPENCL)
     target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
     target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)

@@ -45,7 +45,6 @@ add_compile_options(
   -DTBB_INTERFACE_NEW
   -D_REENTRANT
   -Wno-deprecated-declarations
-  -DBOOST_DISABLE_ASSERTS
   -Wall )
 
 if(STAN_THREADS)
@@ -65,9 +64,6 @@ if(STAN_OPENCL)
             GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-CLHPP
             GIT_TAG v2.0.15)
     FetchContent_MakeAvailable(OpenCLHeaders)
-    message(STATUS "OpenCL Enabled: ${OpenCLHeaders_INCLUDE_DIR}")
-    message(STATUS "OpenCL Enabled: ${OpenCLHeaders_SOURCE_DIR}")
-    message(STATUS "OpenCL Enabled: ${CLCPP_SOURCE_DIR}")
     find_package(OpenCL REQUIRED)
     add_compile_definitions(STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID}
       OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID} CL_HPP_TARGET_OPENCL_VERSION=120
@@ -156,17 +152,22 @@ else()
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_USE_STATIC_RUNTIME ON)
   set(BOOST_ENABLE_CMAKE ON)
-  FetchContent_Declare(
-    boost
-    URL https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-  )
-  FetchContent_GetProperties(boost)
-  if(NOT boost_POPULATED)
-    FetchContent_Populate(boost)
-    set(boost_INCLUDE_DIR ${boost_SOURCE_DIR})
-  endif()
-endif()
+  set(BOOST_MPI ON)
+  set(BUILD_SHARED_LIBS OFF)
+  set(BOOST_DETAILED_CONFIGURE ON)
+  set(BOOST_ENABLE_MPI ON)
+  set(BOOST_ENABLE_PYTHON OFF)
+  set(BOOST_BUILD_TESTS OFF)
+  set(CMAKE_BUILD_TYPE Release)
 
+  set(BOOST_INCLUDE_LIBRARIES mpi math numeric/odeint lexical_cast optional serialization random)
+  FetchContent_Declare(
+    Boost
+    URL https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
+  )
+  FetchContent_MakeAvailable(Boost)
+endif()
 # Library target
 add_library(stanmath INTERFACE)  # Assuming you only have headers
 target_include_directories(stanmath INTERFACE

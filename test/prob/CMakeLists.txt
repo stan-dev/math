@@ -2,7 +2,7 @@
 add_executable(prob_pch
   ${CMAKE_CURRENT_SOURCE_DIR}/dummy_precompile_target.cpp)
 target_compile_options(prob_pch PRIVATE -O1)
-target_include_directories(prob_pch PRIVATE ${CMAKE_SOURCE_DIR} ${boost_SOURCE_DIR})
+target_include_directories(prob_pch PRIVATE ${CMAKE_SOURCE_DIR})
 target_precompile_headers(prob_pch PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
     "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
@@ -58,11 +58,14 @@ target_precompile_headers(prob_pch PRIVATE
 target_link_libraries(prob_pch
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial)
+  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 
 if (STAN_OPENCL)
   target_link_libraries(prob_pch OpenCL::OpenCL)
   target_include_directories(prob_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
+endif()
+if (STAN_MPI)
+  target_link_libraries(prob_pch Boost::mpi)
 endif()
 target_compile_options(prob_pch PRIVATE -O1)
 
