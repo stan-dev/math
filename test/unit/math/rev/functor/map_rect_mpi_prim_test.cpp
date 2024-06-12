@@ -123,20 +123,8 @@ TEST_F(MpiJobMapRectMpiPrim, always_faulty_functor) {
                    std::domain_error, "MPI error on first evaluation.");
 }
 
-#endif
 // these tests can only be compiled and executed with availability of
 // MPI
-#ifdef STAN_MPI
-
-#include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/util.hpp>
-
-#include <test/unit/math/prim/functor/hard_work.hpp>
-#include <test/unit/math/prim/functor/faulty_functor.hpp>
-
-#include <iostream>
-#include <vector>
 
 struct MpiJobMapRectMpi : public ::testing::Test {
   stan::math::vector_d shared_params_d;
@@ -294,16 +282,6 @@ TEST_F(MpiJobMapRectMpi, always_faulty_functor_dv) {
                         shared_params_d, job_params_v, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
 }
-
-#endif
-#ifdef STAN_MPI
-#include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-
-#include <test/unit/math/prim/functor/hard_work.hpp>
-
-#include <iostream>
-#include <vector>
 
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not

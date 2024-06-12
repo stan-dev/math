@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
@@ -68,21 +69,10 @@ TEST_F(map_rect_con_prim, concurrent_eval_ok_dd) {
                         + 2 * shared_params_d(0) + shared_params_d(1));
   }
 }
-#endif
 
 // the tests here check that map_rect_concurrent works correct as such
 // we enforce that STAN_MPI is NOT defined
 
-#ifndef STAN_MPI
-
-#include <gtest/gtest.h>
-#include <stan/math/rev.hpp>
-
-#include <test/unit/math/prim/functor/hard_work.hpp>
-#include <test/unit/math/prim/functor/utils_threads.hpp>
-
-#include <iostream>
-#include <vector>
 
 struct map_rect_con : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
@@ -231,25 +221,13 @@ TEST_F(map_rect_con, concurrent_eval_ok_vv) {
     }
   }
 }
-#endif
+
 
 // the tests here check that map_rect_concurrent works correct as such we
 // enforce that STAN_MPI is NOT defined and these tests only run if
 // STAN_THREADS is defined
 
 #ifdef STAN_THREADS
-
-#ifndef STAN_MPI
-
-#include <gtest/gtest.h>
-#include <stan/math/rev.hpp>
-
-#include <test/unit/math/prim/functor/hard_work.hpp>
-#include <test/unit/math/prim/functor/utils_threads.hpp>
-
-#include <iostream>
-#include <vector>
-#include <string>
 
 inline void setup_job(int N, Eigen::VectorXd& shared_params_d,
                       std::vector<Eigen::VectorXd>& job_params_d,
@@ -347,17 +325,6 @@ TEST_F(map_rect_con_threads, concurrent_varying_num_threads_eval_ok_dd) {
   }
 }
 #endif
-#endif
-
-#ifndef STAN_MPI
-
-#include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-
-#include <test/unit/math/prim/functor/hard_work.hpp>
-
-#include <iostream>
-#include <vector>
 
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not
