@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <cstdint>
 #include <vector>
 
 namespace stan {
@@ -13,7 +14,7 @@ namespace math {
  * that are always of length 1.
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline long int size(const T& /*x*/) {
+inline int64_t size(const T& /*x*/) {
   return 1;
 }
 
@@ -24,12 +25,12 @@ inline long int size(const T& /*x*/) {
  * @tparam T type of m
  */
 template <typename T, require_container_t<T>* = nullptr>
-inline long int size(const T& m) {
+inline int64_t size(const T& m) {
   return m.size();
 }
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline long int size(const T& m) {
+inline int64_t size(const T& m) {
   return m.size();
 }
 
