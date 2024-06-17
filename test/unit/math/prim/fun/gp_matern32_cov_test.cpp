@@ -549,5 +549,6 @@ TEST(MathPrimMat, check_indexing_vector_vector_gp_matern32_cov) {
   int num_nodes = 10;
   std::vector<Eigen::Matrix<double, -1, 1>> x(num_nodes,
                                               stan::math::zeros_vector(p));
-  EXPECT_NO_THROW(stan::math::gp_matern32_cov(x, 1.3, std::vector<double>{0.7}));
+  EXPECT_NO_THROW(
+      stan::math::gp_matern32_cov(x, 1.3, std::vector<double>{0.7}));
 }
