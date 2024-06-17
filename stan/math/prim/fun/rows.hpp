@@ -16,7 +16,7 @@ namespace math {
  * @return Number of rows.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int rows(const T& m) {
+inline long int rows(const T& m) {
   return m.rows();
 }
 
