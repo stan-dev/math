@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <algorithm>
+#include <cstdint>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
  * matrix or std::vector of Eigen matrices
  */
 template <typename T1, typename... Ts>
-inline size_t max_size_mvt(const T1& x1, const Ts&... xs) {
+inline int64_t max_size_mvt(const T1& x1, const Ts&... xs) {
   return std::max({stan::math::size_mvt(x1), stan::math::size_mvt(xs)...});
 }
 
