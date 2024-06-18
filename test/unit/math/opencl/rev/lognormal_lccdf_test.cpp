@@ -129,8 +129,7 @@ TEST_F(OpenCLRevTests, probdistributionsLognormalLccdf_opencl_broadcast_mu) {
       lognormal_lccdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsLognormalLccdf_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistributionsLognormalLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -145,8 +144,7 @@ TEST_F(OpenCLRevTests,
       lognormal_lccdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsLognormalLccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsLognormalLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

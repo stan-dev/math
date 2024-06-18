@@ -187,8 +187,7 @@ TEST_F(OpenCLRevTests,
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsPoissonLogGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsPoissonLogGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

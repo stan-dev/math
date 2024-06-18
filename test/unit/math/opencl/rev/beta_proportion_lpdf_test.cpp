@@ -123,8 +123,7 @@ TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_mu) {
       kappa.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBetaProportion_opencl_broadcast_kappa) {
+TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_kappa) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -144,8 +143,7 @@ TEST_F(OpenCLRevTests,
       kappa_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBetaProportion_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

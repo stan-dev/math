@@ -43,8 +43,7 @@ auto bernoulli_cdf_functor = [](const auto& n, const auto& theta) {
   return stan::math::bernoulli_cdf(n, theta);
 };
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliCdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

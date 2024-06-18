@@ -61,8 +61,7 @@ auto uniform_lcdf_functor
         return stan::math::uniform_lcdf(y, alpha, beta);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistributionsUniformLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsUniformLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

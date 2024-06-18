@@ -78,8 +78,7 @@ TEST_F(OpenCLRevTests, probdistributionsBernoulliLogit_opencl_broadcast_n) {
       bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliLogit_opencl_broadcast_theta) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLogit_opencl_broadcast_theta) {
   int N = 3;
 
   std::vector<int> n{0, 1, 0};
@@ -91,8 +90,7 @@ TEST_F(OpenCLRevTests,
       bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliLogit_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLogit_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);

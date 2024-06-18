@@ -73,8 +73,7 @@ TEST_F(OpenCLRevTests, probdistributionsExponentialLcdf_opencl_broadcast_y) {
       exponential_lcdf_functor, y_scal, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsExponentialLcdf_opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, probdistributionsExponentialLcdf_opencl_broadcast_beta) {
   int N = 3;
 
   Eigen::VectorXd y(N);

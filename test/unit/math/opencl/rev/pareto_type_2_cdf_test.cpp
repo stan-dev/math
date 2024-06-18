@@ -160,8 +160,7 @@ TEST_F(OpenCLRevTests,
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsParetoType2Cdf_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -179,8 +178,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval(), alpha_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsParetoType2Cdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu

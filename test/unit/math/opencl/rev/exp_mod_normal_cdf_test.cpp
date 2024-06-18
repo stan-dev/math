@@ -7,8 +7,7 @@
 
 namespace exp_mod_normal_cdf_test {
 
-TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalCdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsDoubleExpModNormalCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);

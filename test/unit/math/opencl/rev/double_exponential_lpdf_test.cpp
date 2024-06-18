@@ -86,8 +86,7 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = -2.3;
@@ -107,8 +106,7 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -171,8 +169,7 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_y_mu_scalar) {
+TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_y_mu_scalar) {
   int N = 3;
 
   double y = -0.3;

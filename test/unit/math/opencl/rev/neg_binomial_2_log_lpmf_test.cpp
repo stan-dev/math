@@ -109,8 +109,7 @@ TEST_F(OpenCLRevTests, probdistributionsNegBinomial2Log_opencl_broadcast_n) {
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsNegBinomial2Log_opencl_broadcast_eta) {
+TEST_F(OpenCLRevTests, probdistributionsNegBinomial2Log_opencl_broadcast_eta) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -128,8 +127,7 @@ TEST_F(OpenCLRevTests,
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsNegBinomial2Log_opencl_broadcast_phi) {
+TEST_F(OpenCLRevTests, probdistributionsNegBinomial2Log_opencl_broadcast_phi) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};

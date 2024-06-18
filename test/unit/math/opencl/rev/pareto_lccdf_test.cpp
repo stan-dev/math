@@ -61,8 +61,7 @@ auto pareto_lccdf_functor
         return stan::math::pareto_lccdf(y, y_min, alpha);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistributionsParetoLccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

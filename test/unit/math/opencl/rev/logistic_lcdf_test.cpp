@@ -61,8 +61,7 @@ auto logistic_lcdf_functor
         return stan::math::logistic_lcdf(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistributionsLogisticLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsLogisticLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

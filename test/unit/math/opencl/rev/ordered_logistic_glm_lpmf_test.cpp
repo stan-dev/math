@@ -142,9 +142,8 @@ TEST_F(OpenCLRevTests,
       ordered_logistic_glm_lpmf_functor_propto, y_scal, x, beta, cuts);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsOrderedLogisitcGLM_opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       probdistributionsOrderedLogisitcGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 5;
@@ -167,9 +166,8 @@ TEST_F(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsOrderedLogisitcGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       probdistributionsOrderedLogisitcGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 5;

@@ -118,8 +118,7 @@ TEST_F(OpenCLRevTests,
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliLogitGLM_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLogitGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -153,9 +152,8 @@ TEST_F(OpenCLRevTests,
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsBernoulliLogitGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       probdistributionsBernoulliLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 

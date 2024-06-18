@@ -99,8 +99,7 @@ TEST_F(OpenCLRevTests, probdistributionsBernoulliLccdf_opencl_broadcast_n) {
       bernoulli_lccdf_functor, n_scal, theta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliLccdf_opencl_broadcast_theta) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLccdf_opencl_broadcast_theta) {
   int N = 3;
 
   std::vector<int> n{0, 0, 0};
@@ -110,8 +109,7 @@ TEST_F(OpenCLRevTests,
       bernoulli_lccdf_functor, n, theta_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsBernoulliLccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);

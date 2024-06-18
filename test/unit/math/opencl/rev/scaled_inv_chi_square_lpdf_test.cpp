@@ -116,8 +116,7 @@ TEST_F(
       scaled_inv_chi_square_lpdf_functor_propto, y, nu, s);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsScaledInvChiSquare_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsScaledInvChiSquare_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -158,8 +157,7 @@ TEST_F(OpenCLRevTests,
       s.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsScaledInvChiSquare_opencl_broadcast_s) {
+TEST_F(OpenCLRevTests, probdistributionsScaledInvChiSquare_opencl_broadcast_s) {
   int N = 3;
 
   Eigen::VectorXd y(N);

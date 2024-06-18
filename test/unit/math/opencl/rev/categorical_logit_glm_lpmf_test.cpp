@@ -143,9 +143,8 @@ TEST_F(OpenCLRevTests,
       categorical_logit_glm_lpmf_functor_propto, y_scal, x, alpha, beta);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsCategoricalLogitGLM_opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       probdistributionsCategoricalLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 3;

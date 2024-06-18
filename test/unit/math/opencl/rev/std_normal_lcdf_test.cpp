@@ -37,8 +37,7 @@ TEST_F(OpenCLRevTests,
                                                 y.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsStdNormalLcdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsStdNormalLcdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

@@ -83,8 +83,7 @@ TEST_F(OpenCLRevTests, probdistributionsRayleighLccdf_opencl_broadcast_mu) {
                                                          y, mu_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsRayleighLccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsRayleighLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

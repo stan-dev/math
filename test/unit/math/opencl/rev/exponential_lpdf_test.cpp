@@ -55,8 +55,7 @@ auto exponential_lpdf_functor_propto = [](const auto& y, const auto& beta) {
   return stan::math::exponential_lpdf<true>(y, beta);
 };
 
-TEST_F(OpenCLRevTests,
-       probdistributionsExponential_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

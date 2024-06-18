@@ -146,8 +146,7 @@ TEST_F(OpenCLRevTests,
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsNegBinomial2LogGLM_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsNegBinomial2LogGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -165,9 +164,8 @@ TEST_F(OpenCLRevTests,
       neg_binomial_2_log_glm_lpmf_functor_propto, y_scal, x, alpha, beta, phi);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -184,9 +182,8 @@ TEST_F(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 

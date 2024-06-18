@@ -123,8 +123,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoType2Lccdf_opencl_broadcast_y) {
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsParetoType2Lccdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistributionsParetoType2Lccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);

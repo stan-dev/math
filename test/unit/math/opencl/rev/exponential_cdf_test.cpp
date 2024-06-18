@@ -73,8 +73,7 @@ TEST_F(OpenCLRevTests, probdistributionsExponentialCdf_opencl_broadcast_y) {
       exponential_cdf_functor, y_scal, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsExponentialCdf_opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, probdistributionsExponentialCdf_opencl_broadcast_beta) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -85,8 +84,7 @@ TEST_F(OpenCLRevTests,
       exponential_cdf_functor, y, beta_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistributionsExponentialCdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsExponentialCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
