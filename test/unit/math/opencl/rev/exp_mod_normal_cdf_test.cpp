@@ -7,7 +7,7 @@
 
 namespace exp_mod_normal_cdf_test {
 
-TEST_F(OpenCLRevTests, probdistributionsDoubleExpModNormalCdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistDoubleExpModNormalCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -87,7 +87,7 @@ auto exp_mod_normal_cdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalCdf_opencl_matches_cpu_small) {
+       probdistDoubleExpModNormalCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -109,7 +109,7 @@ TEST_F(OpenCLRevTests,
 
 TEST_F(
     OpenCLRevTests,
-    probdistributionsDoubleExpModNormalCdf_opencl_matches_cpu_small_y_neg_inf) {
+    probdistDoubleExpModNormalCdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 
@@ -130,7 +130,7 @@ TEST_F(
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalCdf_opencl_broadcast_y) {
+       probdistDoubleExpModNormalCdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -149,7 +149,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalCdf_opencl_broadcast_mu) {
+       probdistDoubleExpModNormalCdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -168,7 +168,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalCdf_opencl_matches_cpu_big) {
+       probdistDoubleExpModNormalCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

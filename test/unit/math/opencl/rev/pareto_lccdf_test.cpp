@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto pareto_lccdf_functor
         return stan::math::pareto_lccdf(y, y_min, alpha);
       };
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -81,7 +81,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_matches_cpu_small) {
 
 TEST_F(
     OpenCLRevTests,
-    probdistributionsParetoLccdf_opencl_matches_cpu_small_y_lower_than_y_min) {
+    probdistParetoLccdf_opencl_matches_cpu_small_y_lower_than_y_min) {
   int N = 3;
   int M = 2;
 
@@ -99,7 +99,7 @@ TEST_F(
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -114,7 +114,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_y) {
       pareto_lccdf_functor, y_scal, y_min.transpose().eval(), alpha);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_y_min) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_opencl_broadcast_y_min) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -129,7 +129,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_y_min) {
       pareto_lccdf_functor, y.transpose().eval(), y_min_scal, alpha);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -144,7 +144,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_broadcast_alpha) {
       pareto_lccdf_functor, y.transpose().eval(), y_min, alpha_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoLccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistParetoLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y_min

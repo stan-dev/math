@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsBetaProportion_error_checking) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -64,7 +64,7 @@ auto beta_proportion_lpdf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBetaProportion_opencl_matches_cpu_small) {
+       probdistBetaProportion_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -83,7 +83,7 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), kappa.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 0.7;
@@ -103,7 +103,7 @@ TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_y) {
       kappa.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -123,7 +123,7 @@ TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_mu) {
       kappa.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_kappa) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_opencl_broadcast_kappa) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -143,7 +143,7 @@ TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_broadcast_kappa) {
       kappa_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBetaProportion_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

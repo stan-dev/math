@@ -174,7 +174,7 @@ TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_opencl_matches_cpu_big) {
       phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsNegBinomial2_opencl_scalar_n_mu) {
+TEST_F(OpenCLRevTests, probdistNegBinomial2_opencl_scalar_n_mu) {
   int N = 3;
   int M = 2;
 

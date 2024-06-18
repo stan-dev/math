@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_error_checking) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_error_checking) {
   int N = 3;
 
   std::vector<int> n{1, 0, 4};
@@ -60,7 +60,7 @@ auto binomial_logit_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBinomialLogit_opencl_matches_cpu_small) {
+       probdistBinomialLogit_opencl_matches_cpu_small) {
   int N = 3;
 
   std::vector<int> n{0, 1, 3};
@@ -78,7 +78,7 @@ TEST_F(OpenCLRevTests,
       binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_broadcast_n) {
   int N = 3;
 
   int n = 1;
@@ -96,7 +96,7 @@ TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_n) {
       binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_N) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_broadcast_N) {
   int N = 3;
 
   std::vector<int> n{0, 1, 12};
@@ -114,7 +114,7 @@ TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_N) {
       binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_broadcast_alpha) {
   int N = 3;
 
   std::vector<int> n{0, 1, 12};
@@ -127,7 +127,7 @@ TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_broadcast_alpha) {
       binomial_logit_lpmf_functor_propto, n, m, alpha_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);
@@ -150,7 +150,7 @@ TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_matches_cpu_big) {
       binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogit_opencl_n_N_scalar) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_n_N_scalar) {
   int N = 3;
 
   int n = 1;

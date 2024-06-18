@@ -13,7 +13,7 @@ auto exp_mod_normal_lccdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExpModNormalLccdf_opencl_broadcast_lambda) {
+       probdistDoubleExpModNormalLccdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);

@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_error_checking) {
+TEST_F(OpenCLRevTests, probdistFrechet_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -83,7 +83,7 @@ auto frechet_lpdf_functor_propto
         return stan::math::frechet_lpdf<true>(y, alpha, sigma);
       };
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistFrechet_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -105,7 +105,7 @@ TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_matches_cpu_small) {
       alpha.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistFrechet_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -124,7 +124,7 @@ TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_y) {
       frechet_lpdf_functor_propto, y, alpha, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistFrechet_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -143,7 +143,7 @@ TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_alpha) {
       frechet_lpdf_functor_propto, y, alpha, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistFrechet_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -164,7 +164,7 @@ TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_broadcast_sigma) {
       frechet_lpdf_functor_propto, y, alpha.transpose().eval(), sigma);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsFrechet_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistFrechet_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

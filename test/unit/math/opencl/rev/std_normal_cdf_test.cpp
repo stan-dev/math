@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsStdNormalCdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistStdNormalCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -24,7 +24,7 @@ TEST_F(OpenCLRevTests, probdistributionsStdNormalCdf_error_checking) {
 auto std_normal_cdf_functor
     = [](const auto& y) { return stan::math::std_normal_cdf(y); };
 
-TEST_F(OpenCLRevTests, probdistributionsStdNormalCdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistStdNormalCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -36,7 +36,7 @@ TEST_F(OpenCLRevTests, probdistributionsStdNormalCdf_opencl_matches_cpu_small) {
                                                 y.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsStdNormalCdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistStdNormalCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

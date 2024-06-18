@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_error_checking) {
+TEST_F(OpenCLRevTests, probdistCauchy_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -65,7 +65,7 @@ auto cauchy_lpdf_functor_propto
         return stan::math::cauchy_lpdf<true>(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistCauchy_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -88,7 +88,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistCauchy_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -107,7 +107,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_y) {
       cauchy_lpdf_functor_propto, y_scal, mu, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistCauchy_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -126,7 +126,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_mu) {
       cauchy_lpdf_functor_propto, y, mu_scal, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistCauchy_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -145,7 +145,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_broadcast_sigma) {
       cauchy_lpdf_functor_propto, y, mu.transpose().eval(), sigma_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchy_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistCauchy_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -60,7 +60,7 @@ auto cauchy_cdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
   return stan::math::cauchy_cdf(y, mu, sigma);
 };
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -78,7 +78,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_matches_cpu_small) {
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsCauchyCdf_opencl_matches_cpu_small_y_neg_inf) {
+       probdistCauchyCdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -95,7 +95,7 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -110,7 +110,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_y) {
       cauchy_cdf_functor, y_scal, mu.transpose().eval(), sigma);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -125,7 +125,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_mu) {
       cauchy_cdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -140,7 +140,7 @@ TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_broadcast_sigma) {
       cauchy_cdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsCauchyCdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

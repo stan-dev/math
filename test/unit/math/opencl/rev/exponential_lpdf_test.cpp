@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsExponential_error_checking) {
+TEST_F(OpenCLRevTests, probdistExponential_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -55,7 +55,7 @@ auto exponential_lpdf_functor_propto = [](const auto& y, const auto& beta) {
   return stan::math::exponential_lpdf<true>(y, beta);
 };
 
-TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistExponential_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -74,7 +74,7 @@ TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_matches_cpu_small) {
                                                 y, beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.5;
@@ -87,7 +87,7 @@ TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_broadcast_y) {
       exponential_lpdf_functor_propto, y, beta);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, probdistExponential_opencl_broadcast_beta) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -100,7 +100,7 @@ TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_broadcast_beta) {
       exponential_lpdf_functor_propto, y, beta);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsExponential_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistExponential_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

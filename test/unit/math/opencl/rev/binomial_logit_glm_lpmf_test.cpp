@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogitGLM_error_checking) {
+TEST_F(OpenCLRevTests, probdistBinomialLogitGLM_error_checking) {
   using stan::math::binomial_logit_glm_lpmf;
   using stan::math::matrix_cl;
 
@@ -110,7 +110,7 @@ auto binomial_logit_glm_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBinomialLogitGLM_opencl_matches_cpu_small_simple) {
+       probdistBinomialLogitGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -128,7 +128,7 @@ TEST_F(OpenCLRevTests,
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsBinomialLogitGLM_opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, probdistBinomialLogitGLM_opencl_broadcast_n) {
   int N = 3;
   int M = 2;
 
@@ -147,7 +147,7 @@ TEST_F(OpenCLRevTests, probdistributionsBinomialLogitGLM_opencl_broadcast_n) {
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBinomialLogitGLM_opencl_matches_cpu_zero_instances) {
+       probdistBinomialLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -165,7 +165,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBinomialLogitGLM_opencl_matches_cpu_zero_attributes) {
+       probdistBinomialLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -183,7 +183,7 @@ TEST_F(OpenCLRevTests,
 
 TEST_F(
     OpenCLRevTests,
-    probdistributionsBinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
+    probdistBinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -203,7 +203,7 @@ TEST_F(
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsBinomialLogitGLM_opencl_matches_cpu_big) {
+       probdistBinomialLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

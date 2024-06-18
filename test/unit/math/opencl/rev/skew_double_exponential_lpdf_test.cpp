@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsSkewDoubleExponential_error_checking) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponential_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -104,7 +104,7 @@ auto skew_double_exponential_lpdf_functor_propto =
     };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_matches_cpu_small) {
+       probdistSkewDoubleExponential_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -129,7 +129,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_broadcast_y) {
+       probdistSkewDoubleExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -153,7 +153,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_broadcast_mu) {
+       probdistSkewDoubleExponential_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -177,7 +177,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_broadcast_sigma) {
+       probdistSkewDoubleExponential_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -201,7 +201,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_broadcast_tau) {
+       probdistSkewDoubleExponential_opencl_broadcast_tau) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -225,7 +225,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsSkewDoubleExponential_opencl_matches_cpu_big) {
+       probdistSkewDoubleExponential_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

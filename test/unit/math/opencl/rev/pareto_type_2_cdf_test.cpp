@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -85,7 +85,7 @@ auto pareto_type_2_cdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsParetoType2Cdf_opencl_matches_cpu_small) {
+       probdistParetoType2Cdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -105,7 +105,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval(), alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -123,7 +123,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_y) {
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -142,7 +142,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_mu) {
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsParetoType2Cdf_opencl_broadcast_lambda) {
+       probdistParetoType2Cdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -160,7 +160,7 @@ TEST_F(OpenCLRevTests,
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -178,7 +178,7 @@ TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_broadcast_alpha) {
       lambda.transpose().eval(), alpha_scal);
 }
 
-TEST_F(OpenCLRevTests, probdistributionsParetoType2Cdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu

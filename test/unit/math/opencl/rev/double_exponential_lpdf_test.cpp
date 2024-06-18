@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_error_checking) {
+TEST_F(OpenCLRevTests, probdistDoubleExponential_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -64,7 +64,7 @@ auto double_exponential_lpdf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_matches_cpu_small) {
+       probdistDoubleExponential_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -86,7 +86,7 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistDoubleExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = -2.3;
@@ -106,7 +106,7 @@ TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_y) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistDoubleExponential_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -126,7 +126,7 @@ TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_broadcast_mu) {
       sigma.transpose().eval());
 }
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_broadcast_sigma) {
+       probdistDoubleExponential_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -147,7 +147,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       probdistributionsDoubleExponential_opencl_matches_cpu_big) {
+       probdistDoubleExponential_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
@@ -169,7 +169,7 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, probdistributionsDoubleExponential_opencl_y_mu_scalar) {
+TEST_F(OpenCLRevTests, probdistDoubleExponential_opencl_y_mu_scalar) {
   int N = 3;
 
   double y = -0.3;
