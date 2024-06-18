@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsWeibullLccdf, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto weibull_lccdf_functor
         return stan::math::weibull_lccdf(y, alpha, sigma);
       };
 
-TEST(ProbDistributionsWeibullLccdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +79,7 @@ TEST(ProbDistributionsWeibullLccdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -94,7 +94,7 @@ TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_y) {
       weibull_lccdf_functor, y_scal, alpha.transpose().eval(), sigma);
 }
 
-TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -109,7 +109,7 @@ TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_alpha) {
       weibull_lccdf_functor, y.transpose().eval(), alpha_scal, sigma);
 }
 
-TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -124,7 +124,7 @@ TEST(ProbDistributionsWeibullLccdf, opencl_broadcast_sigma) {
       weibull_lccdf_functor, y.transpose().eval(), alpha, sigma_scal);
 }
 
-TEST(ProbDistributionsWeibullLccdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_WeibullLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

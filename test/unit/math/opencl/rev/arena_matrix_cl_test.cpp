@@ -2,6 +2,7 @@
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, arena_matrix_cl_shallow_copies) {

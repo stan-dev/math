@@ -6,7 +6,7 @@
 
 auto to_vector_functor = [](const auto& a) { return stan::math::to_vector(a); };
 
-TEST(OpenCLToVector, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, ToVector_prim_rev_values_small) {
   Eigen::VectorXd a(6);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3;
   Eigen::RowVectorXd b = a;
@@ -19,7 +19,7 @@ TEST(OpenCLToVector, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_vector_functor, d);
 }
 
-TEST(OpenCLToVector, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, ToVector_prim_rev_size_0) {
   Eigen::VectorXd a(0);
   Eigen::RowVectorXd b = a;
   Eigen::MatrixXd c(0, 0);
@@ -30,7 +30,7 @@ TEST(OpenCLToVector, prim_rev_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_vector_functor, d);
 }
 
-TEST(OpenCLToVector, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, ToVector_prim_rev_values_large) {
   int N = 71;
   int M = 87;
 

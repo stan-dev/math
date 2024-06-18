@@ -16,22 +16,22 @@ auto rep_matrix_functorCL = [](const auto& a, int n, int m) {
 auto rep_matrix_functor
     = [](const auto& a, int m) { return stan::math::rep_matrix(a, m); };
 
-TEST(OpenCLRepMatrix, scalar_prim_rev_values_small) {
+TEST_F(OpenCLRevTests, RepMatrix_scalar_prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_matrix_functorCPU, rep_matrix_functorCL, 6.7, 7, 3);
 }
 
-TEST(OpenCLRepMatrix, scalar_prim_rev_size_0) {
+TEST_F(OpenCLRevTests, RepMatrix_scalar_prim_rev_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_matrix_functorCPU, rep_matrix_functorCL, 6.7, 0, 0);
 }
 
-TEST(OpenCLRepMatrix, scalar_prim_rev_values_large) {
+TEST_F(OpenCLRevTests, RepMatrix_scalar_prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_matrix_functorCPU, rep_matrix_functorCL, 6.7, 79, 83);
 }
 
-TEST(OpenCLRepMatrix, vector_prim_rev_values_small) {
+TEST_F(OpenCLRevTests, RepMatrix_vector_prim_rev_values_small) {
   Eigen::VectorXd a(8);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
   Eigen::RowVectorXd b = a;
@@ -39,14 +39,14 @@ TEST(OpenCLRepMatrix, vector_prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, 3);
 }
 
-TEST(OpenCLRepMatrix, vector_prim_rev_size_0) {
+TEST_F(OpenCLRevTests, RepMatrix_vector_prim_rev_size_0) {
   Eigen::VectorXd a(0);
   Eigen::RowVectorXd b = a;
   stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, a, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, 0);
 }
 
-TEST(OpenCLRepMatrix, vector_prim_rev_values_large) {
+TEST_F(OpenCLRevTests, RepMatrix_vector_prim_rev_values_large) {
   int N = 79;
   int M = 85;
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);
@@ -55,7 +55,7 @@ TEST(OpenCLRepMatrix, vector_prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, M);
 }
 
-TEST(OpenCLRepMatrix, vector_triangular_adj) {
+TEST_F(OpenCLRevTests, RepMatrix_vector_triangular_adj) {
   using stan::math::matrix_cl;
   using stan::math::var_value;
   Eigen::VectorXd a(8);

@@ -10,6 +10,17 @@
 #include <string>
 #include <tuple>
 
+struct OpenCLRevTests : public testing::Test {
+  inline void SetUp() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+  inline void TearDown() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+};
+
 namespace stan {
 namespace math {
 namespace test {

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixTailCL, tail_size) {
+TEST_F(OpenCLRevTests, MathMatrixTailCL_tail_size) {
   using stan::math::matrix_cl;
   using stan::math::tail;
   using stan::math::var_value;
@@ -32,14 +32,14 @@ TEST(MathMatrixTailCL, tail_size) {
 
 auto tail_functor = [](const auto& a) { return stan::math::tail(a, 5); };
 
-TEST(MathMatrixTailCL, tail_value_check_vector) {
+TEST_F(OpenCLRevTests, MathMatrixTailCL_tail_value_check_vector) {
   stan::math::vector_d m1(9);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   stan::math::test::compare_cpu_opencl_prim_rev(tail_functor, m1);
 }
 
-TEST(MathMatrixTailCL, tail_value_check_row_vector) {
+TEST_F(OpenCLRevTests, MathMatrixTailCL_tail_value_check_row_vector) {
   stan::math::row_vector_d m1(9);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

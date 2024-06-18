@@ -12,7 +12,7 @@ using stan::math::matrix_cl;
 using stan::math::var;
 using std::vector;
 
-TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_error_checking) {
   int N = 3;
   int M = 2;
   int C = 3;
@@ -103,7 +103,7 @@ auto categorical_logit_glm_lpmf_functor_propto
         return stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta);
       };
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
   int C = 3;
@@ -122,7 +122,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_small_simple) {
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
   int C = 3;
@@ -141,7 +141,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_broadcast_y) {
       categorical_logit_glm_lpmf_functor_propto, y_scal, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 3;
@@ -159,7 +159,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_instances) {
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 3;
@@ -176,7 +176,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_attributes) {
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_single_class) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_single_class) {
   int N = 3;
   int M = 2;
   int C = 1;
@@ -195,7 +195,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_single_class) {
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_all_vars) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_all_vars) {
   int N = 5;
   int M = 3;
   int C = 2;
@@ -216,7 +216,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_all_vars) {
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_CategoricalLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;

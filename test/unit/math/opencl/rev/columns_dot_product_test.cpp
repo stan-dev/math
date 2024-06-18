@@ -8,7 +8,7 @@ auto columns_dot_product_functor = [](const auto& a, const auto& b) {
   return stan::math::columns_dot_product(a, b);
 };
 
-TEST(OpenCLColumnsDotProduct, errors) {
+TEST_F(OpenCLRevTests, ColumnsDotProduct_errors) {
   Eigen::MatrixXd a(3, 3);
   Eigen::MatrixXd b(8, 3);
   stan::math::matrix_cl<double> a_cl(a);
@@ -19,7 +19,7 @@ TEST(OpenCLColumnsDotProduct, errors) {
                std::invalid_argument);
 }
 
-TEST(OpenCLColumnsDotProduct, prim_rev_small_vector) {
+TEST_F(OpenCLRevTests, ColumnsDotProduct_prim_rev_small_vector) {
   Eigen::MatrixXd a(2, 4);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
   Eigen::MatrixXd b(2, 4);
@@ -28,13 +28,13 @@ TEST(OpenCLColumnsDotProduct, prim_rev_small_vector) {
                                                 b);
 }
 
-TEST(OpenCLColumnsDotProduct, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, ColumnsDotProduct_prim_rev_size_0) {
   Eigen::MatrixXd a(0, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(columns_dot_product_functor, a,
                                                 a);
 }
 
-TEST(OpenCLColumnsDotProduct, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, ColumnsDotProduct_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 

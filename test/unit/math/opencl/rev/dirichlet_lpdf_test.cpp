@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsDirichlet, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_Dirichlet_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -74,7 +74,7 @@ auto dirichlet_lpdf_functor_propto = [](const auto& theta, const auto& alpha) {
   return stan::math::dirichlet_lpdf<true>(theta, alpha);
 };
 
-TEST(ProbDistributionsDirichlet, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, prob_distributions_Dirichlet_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd theta1(N);
@@ -130,7 +130,7 @@ TEST(ProbDistributionsDirichlet, opencl_matches_cpu_small) {
                                                 theta4, alpha4);
 }
 
-TEST(ProbDistributionsDirichlet, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_Dirichlet_opencl_matches_cpu_big) {
   int N = 153;
   int M = 11;
   Eigen::VectorXd theta1;

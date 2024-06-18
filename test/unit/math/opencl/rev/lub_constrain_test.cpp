@@ -22,7 +22,7 @@ auto lub_constrain_functor3 = [](const auto& a, const auto& b, const auto& c) {
   return lp;
 };
 
-TEST(OpenCLLubConstrain, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, LubConstrain_prim_rev_values_small) {
   Eigen::VectorXd a(7);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4;
   Eigen::VectorXd b(7);
@@ -57,7 +57,7 @@ TEST(OpenCLLubConstrain, prim_rev_values_small) {
                                                 b_scal, c_scal);
 }
 
-TEST(OpenCLLubConstrain, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, LubConstrain_prim_rev_size_0) {
   int N = 0;
 
   Eigen::RowVectorXd a(N);
@@ -91,7 +91,7 @@ TEST(OpenCLLubConstrain, prim_rev_size_0) {
                                                 b_scal, c_scal);
 }
 
-TEST(OpenCLLubConstrain, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, LubConstrain_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);

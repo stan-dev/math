@@ -5,7 +5,7 @@
 
 auto minus_functor = [](const auto& a) { return stan::math::minus(a); };
 
-TEST(OpenCLMinus, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Minus_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 

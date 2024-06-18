@@ -8,7 +8,7 @@
 auto lbeta_functor
     = [](const auto& a, const auto& b) { return stan::math::lbeta(a, b); };
 
-TEST(OpenCL_lbeta, value_small) {
+TEST_F(OpenCLRevTests, _lbeta_value_small) {
   Eigen::VectorXd in1(4);
   in1 << 0.5, 3.4, 5.2, 7.5;
   Eigen::VectorXd in2(4);
@@ -16,13 +16,13 @@ TEST(OpenCL_lbeta, value_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, in1, in2);
 }
 
-TEST(OpenCL_lbeta, zero) {
+TEST_F(OpenCLRevTests, _lbeta_zero) {
   Eigen::VectorXd in1;
   Eigen::VectorXd in2;
   stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, in1, in2);
 }
 
-TEST(OpenCL_lbeta, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, _lbeta_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a
@@ -32,7 +32,7 @@ TEST(OpenCL_lbeta, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, a, b);
 }
 
-TEST(OpenCL_lbeta, prim_rev_scalar_values_large) {
+TEST_F(OpenCLRevTests, _lbeta_prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;
 

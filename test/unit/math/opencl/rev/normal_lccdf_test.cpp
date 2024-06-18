@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsNormalLccdf, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto normal_lccdf_functor
         return stan::math::normal_lccdf(y, mu, sigma);
       };
 
-TEST(ProbDistributionsNormalLccdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +79,7 @@ TEST(ProbDistributionsNormalLccdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsNormalLccdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -94,7 +94,7 @@ TEST(ProbDistributionsNormalLccdf, opencl_broadcast_y) {
       normal_lccdf_functor, y_scal, mu.transpose().eval(), sigma);
 }
 
-TEST(ProbDistributionsNormalLccdf, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -109,7 +109,7 @@ TEST(ProbDistributionsNormalLccdf, opencl_broadcast_mu) {
       normal_lccdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
 
-TEST(ProbDistributionsNormalLccdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -124,7 +124,7 @@ TEST(ProbDistributionsNormalLccdf, opencl_broadcast_sigma) {
       normal_lccdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
 
-TEST(ProbDistributionsNormalLccdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_NormalLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

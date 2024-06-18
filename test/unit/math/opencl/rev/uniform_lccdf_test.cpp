@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsUniformLccdf, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto uniform_lccdf_functor
         return stan::math::uniform_lccdf(y, alpha, beta);
       };
 
-TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +79,7 @@ TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_small) {
       beta.transpose().eval());
 }
 
-TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_small_y_neg_inf) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 
@@ -97,7 +97,7 @@ TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_small_y_neg_inf) {
       beta.transpose().eval());
 }
 
-TEST(ProbDistributionsUniformLccdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -112,7 +112,7 @@ TEST(ProbDistributionsUniformLccdf, opencl_broadcast_y) {
       uniform_lccdf_functor, y_scal, alpha.transpose().eval(), beta);
 }
 
-TEST(ProbDistributionsUniformLccdf, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -127,7 +127,7 @@ TEST(ProbDistributionsUniformLccdf, opencl_broadcast_alpha) {
       uniform_lccdf_functor, y.transpose().eval(), alpha_scal, beta);
 }
 
-TEST(ProbDistributionsUniformLccdf, opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_broadcast_beta) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -142,7 +142,7 @@ TEST(ProbDistributionsUniformLccdf, opencl_broadcast_beta) {
       uniform_lccdf_functor, y.transpose().eval(), alpha, beta_scal);
 }
 
-TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_UniformLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

@@ -1,9 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, rows_rev) {
+TEST_F(OpenCLRevTests, math_matrix_cl_rows_rev) {
   using stan::math::matrix_cl;
   using stan::math::rows;
   using stan::math::to_matrix_cl;

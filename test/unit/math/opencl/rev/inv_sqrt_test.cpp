@@ -6,20 +6,20 @@
 
 auto inv_sqrt_functor = [](const auto& a) { return stan::math::inv_sqrt(a); };
 
-TEST(OpenCLinv_sqrt, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, inv_sqrt_prim_rev_values_small) {
   Eigen::VectorXd a(14);
   a << -15.2, -10, -0.5, 0.5, 1, 1.0, 1.3, 5, 10, -2.6, -2, -0.2, 1.3, 3;
   stan::math::test::compare_cpu_opencl_prim_rev(inv_sqrt_functor, a);
 }
 
-TEST(OpenCLinv_sqrt, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, inv_sqrt_prim_rev_size_0) {
   int N = 0;
 
   Eigen::MatrixXd a(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(inv_sqrt_functor, a);
 }
 
-TEST(OpenCLinv_sqrt, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, inv_sqrt_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a

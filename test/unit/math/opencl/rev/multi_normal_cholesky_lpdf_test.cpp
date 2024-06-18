@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsMultiNormalCholesky, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -88,7 +88,7 @@ auto multi_normal_cholesky_lpdf_functor_propto
         return stan::math::multi_normal_cholesky_lpdf<true>(y, mu, L);
       };
 
-TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -147,7 +147,7 @@ TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_small) {
       multi_normal_cholesky_lpdf_functor_propto, y4, mu4, L);
 }
 
-// TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_big) {
+// TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_opencl_matches_cpu_big) {
 //   int N = 73;
 //   int M = 11;
 //   Eigen::VectorXd y1;

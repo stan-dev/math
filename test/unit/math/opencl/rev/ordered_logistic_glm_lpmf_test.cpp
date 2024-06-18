@@ -12,7 +12,7 @@ using stan::math::matrix_cl;
 using stan::math::var;
 using std::vector;
 
-TEST(ProbDistributionsOrderedLogisitcGLM, error_checking) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_error_checking) {
   int N = 3;
   int M = 2;
   int C = 5;
@@ -102,7 +102,7 @@ auto ordered_logistic_glm_lpmf_functor_propto
         return stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts);
       };
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
   int C = 5;
@@ -121,7 +121,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_broadcast_y) {
   int N = 3;
   int M = 2;
   int C = 3;
@@ -140,7 +140,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
       ordered_logistic_glm_lpmf_functor_propto, y_scal, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 5;
@@ -163,7 +163,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 5;
@@ -180,7 +180,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_attributes) {
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_single_class) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_single_class) {
   int N = 3;
   int M = 2;
   int C = 1;
@@ -198,7 +198,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_single_class) {
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitcGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;

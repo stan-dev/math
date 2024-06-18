@@ -8,7 +8,7 @@
 auto add_diag_functor
     = [](const auto& a, const auto& b) { return stan::math::add_diag(a, b); };
 
-TEST(OpenCLPrim, add_diag_small) {
+TEST_F(OpenCLRevTests, Prim_add_diag_small) {
   stan::math::matrix_d d1(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   stan::math::vector_d d2(3);
@@ -22,13 +22,13 @@ TEST(OpenCLPrim, add_diag_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_diag_functor, d3, d2);
 }
 
-TEST(OpenCLPrim, add_diag_zero) {
+TEST_F(OpenCLRevTests, Prim_add_diag_zero) {
   stan::math::matrix_d d1(0, 0);
   stan::math::vector_d d2(0);
   stan::math::test::compare_cpu_opencl_prim_rev(add_diag_functor, d1, d2);
 }
 
-TEST(OpenCLPrim, add_diag_exception) {
+TEST_F(OpenCLRevTests, Prim_add_diag_exception) {
   using stan::math::add_diag;
   using stan::math::matrix_cl;
   using stan::math::to_matrix_cl;
@@ -48,6 +48,7 @@ TEST(OpenCLPrim, add_diag_exception) {
 
   EXPECT_THROW(add_diag(m1_cl, m3_cl), std::invalid_argument);
   EXPECT_THROW(add_diag(m2_cl, m4_cl), std::invalid_argument);
+  stan::math::recover_memory();
 }
 
 #endif
