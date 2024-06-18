@@ -86,7 +86,8 @@ auto beta_binomial_lpmf_functor_propto
         return stan::math::beta_binomial_lpmf<true>(n, N, alpha, beta);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BetaBinomial_opencl_matches_cpu_small) {
   int N_ = 3;
 
   std::vector<int> n{2, 0, 12};

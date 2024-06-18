@@ -59,7 +59,8 @@ auto binomial_logit_lpmf_functor_propto
         return stan::math::binomial_logit_lpmf<true>(n, N, alpha);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogit_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogit_opencl_matches_cpu_small) {
   int N = 3;
 
   std::vector<int> n{0, 1, 3};
@@ -113,7 +114,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogit_opencl_broadcast_N) {
       binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogit_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogit_opencl_broadcast_alpha) {
   int N = 3;
 
   std::vector<int> n{0, 1, 12};
@@ -126,7 +128,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogit_opencl_broadcast_alpha) 
       binomial_logit_lpmf_functor_propto, n, m, alpha_scal);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogit_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogit_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);

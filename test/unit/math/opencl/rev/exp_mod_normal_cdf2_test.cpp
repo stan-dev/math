@@ -12,7 +12,8 @@ auto exp_mod_normal_cdf_functor
         return stan::math::exp_mod_normal_cdf(y, mu, sigma, lambda);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExpModNormalCdf_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExpModNormalCdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -30,7 +31,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExpModNormalCdf_opencl_broadcast
       lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExpModNormalCdf_opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExpModNormalCdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);

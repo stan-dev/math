@@ -67,7 +67,8 @@ auto neg_binomial_2_log_lpmf_functor_propto
         return stan::math::neg_binomial_2_log_lpmf<true>(n, eta, phi);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NegBinomial2Log_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -108,7 +109,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_broadcast_n) {
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_broadcast_eta) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NegBinomial2Log_opencl_broadcast_eta) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -126,7 +128,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_broadcast_eta) 
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_broadcast_phi) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NegBinomial2Log_opencl_broadcast_phi) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -144,7 +147,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_broadcast_phi) 
       neg_binomial_2_log_lpmf_functor_propto, n, eta.transpose().eval(), phi);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NegBinomial2Log_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);
@@ -168,7 +172,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_matches_cpu_big
       phi.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2Log_opencl_matches_cpu_eta_phi_scalar) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NegBinomial2Log_opencl_matches_cpu_eta_phi_scalar) {
   int N = 3;
   int M = 2;
 

@@ -92,7 +92,8 @@ TEST_F(OpenCLRevTests, prob_distributions_Uniform_opencl_matches_cpu_small) {
       alpha.transpose().eval(), beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Uniform_opencl_matches_cpu_small_y_out_of_bounds) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_Uniform_opencl_matches_cpu_small_y_out_of_bounds) {
   int N = 3;
   int M = 2;
 

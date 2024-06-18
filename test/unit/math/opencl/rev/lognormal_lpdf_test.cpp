@@ -105,7 +105,8 @@ TEST_F(OpenCLRevTests, prob_distributions_Lognormal_opencl_matches_cpu_small) {
       lognormal_lpdf_functor_propto, y.transpose().eval(),
       mu.transpose().eval(), sigma.transpose().eval());
 }
-TEST_F(OpenCLRevTests, prob_distributions_Lognormal_opencl_matches_cpu_small_zero_y) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_Lognormal_opencl_matches_cpu_small_zero_y) {
   int N = 3;
   int M = 2;
 

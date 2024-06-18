@@ -54,7 +54,8 @@ auto inv_chi_square_lpdf_functor_propto = [](const auto& y, const auto& nu) {
   return stan::math::inv_chi_square_lpdf<true>(y, nu);
 };
 
-TEST_F(OpenCLRevTests, prob_distributions_InvChiSquare_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_InvChiSquare_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -72,7 +73,8 @@ TEST_F(OpenCLRevTests, prob_distributions_InvChiSquare_opencl_matches_cpu_small)
       inv_chi_square_lpdf_functor_propto, y, nu.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_InvChiSquare_opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_InvChiSquare_opencl_matches_cpu_small_y_zero) {
   int N = 3;
 
   Eigen::VectorXd y(N);

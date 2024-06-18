@@ -61,7 +61,8 @@ auto uniform_lcdf_functor
         return stan::math::uniform_lcdf(y, alpha, beta);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_UniformLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_UniformLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +80,8 @@ TEST_F(OpenCLRevTests, prob_distributions_UniformLcdf_opencl_matches_cpu_small) 
       beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_UniformLcdf_opencl_matches_cpu_small_y_neg_inf) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_UniformLcdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 

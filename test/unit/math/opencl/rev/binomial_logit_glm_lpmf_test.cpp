@@ -109,7 +109,8 @@ auto binomial_logit_glm_lpmf_functor_propto
                                                          beta);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogitGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -145,7 +146,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_broadcast_n) {
       binomial_logit_glm_lpmf_functor_propto, n_scal, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -162,7 +164,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_ze
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -178,7 +181,9 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_ze
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
+TEST_F(
+    OpenCLRevTests,
+    prob_distributions_BinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -197,7 +202,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_sm
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BinomialLogitGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BinomialLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

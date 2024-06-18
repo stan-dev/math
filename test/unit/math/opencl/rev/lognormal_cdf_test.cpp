@@ -61,7 +61,8 @@ auto lognormal_cdf_functor
         return stan::math::lognormal_cdf(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_LognormalCdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_LognormalCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +80,8 @@ TEST_F(OpenCLRevTests, prob_distributions_LognormalCdf_opencl_matches_cpu_small)
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_LognormalCdf_opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_LognormalCdf_opencl_matches_cpu_small_y_zero) {
   int N = 3;
   int M = 2;
 

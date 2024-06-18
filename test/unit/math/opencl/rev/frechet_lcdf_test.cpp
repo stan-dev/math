@@ -61,7 +61,8 @@ auto frechet_lcdf_functor
         return stan::math::frechet_lcdf(y, alpha, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_FrechetLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_FrechetLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

@@ -103,7 +103,8 @@ auto pareto_type_2_lpdf_functor_propto
         return stan::math::pareto_type_2_lpdf<true>(y, mu, lambda, alpha);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_ParetoType2_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_ParetoType2_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);

@@ -79,7 +79,9 @@ TEST_F(OpenCLRevTests, prob_distributions_ParetoCdf_opencl_matches_cpu_small) {
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ParetoCdf_opencl_matches_cpu_small_y_lower_than_y_min) {
+TEST_F(
+    OpenCLRevTests,
+    prob_distributions_ParetoCdf_opencl_matches_cpu_small_y_lower_than_y_min) {
   int N = 3;
   int M = 2;
 

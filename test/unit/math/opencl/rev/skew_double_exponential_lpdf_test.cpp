@@ -5,7 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_error_checking) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -103,7 +104,8 @@ auto skew_double_exponential_lpdf_functor_propto =
       return stan::math::skew_double_exponential_lpdf<true>(y, mu, sigma, tau);
     };
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -127,7 +129,8 @@ TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_matches_c
       mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -150,7 +153,8 @@ TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast
       sigma.transpose().eval(), tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -173,7 +177,8 @@ TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast
       sigma, tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -196,7 +201,8 @@ TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast
       mu.transpose().eval(), sigma, tau);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast_tau) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_broadcast_tau) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -219,7 +225,8 @@ TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_broadcast
       sigma.transpose().eval(), tau);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_SkewDoubleExponential_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_SkewDoubleExponential_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

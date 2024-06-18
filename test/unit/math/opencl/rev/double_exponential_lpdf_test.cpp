@@ -63,7 +63,8 @@ auto double_exponential_lpdf_functor_propto
         return stan::math::double_exponential_lpdf<true>(n, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -85,7 +86,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_matches_cpu_s
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = -2.3;
@@ -105,7 +107,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_y) 
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -124,7 +127,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_mu)
       double_exponential_lpdf_functor_propto, y, mu_scal,
       sigma.transpose().eval());
 }
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -144,7 +148,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_broadcast_sig
       sigma_scal);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
@@ -166,7 +171,8 @@ TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_matches_cpu_b
       mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_DoubleExponential_opencl_y_mu_scalar) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_DoubleExponential_opencl_y_mu_scalar) {
   int N = 3;
 
   double y = -0.3;

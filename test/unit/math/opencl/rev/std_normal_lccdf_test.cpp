@@ -24,7 +24,8 @@ TEST_F(OpenCLRevTests, prob_distributions_StdNormalLccdf_error_checking) {
 auto std_normal_lccdf_functor
     = [](const auto& y) { return stan::math::std_normal_lccdf(y); };
 
-TEST_F(OpenCLRevTests, prob_distributions_StdNormalLccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_StdNormalLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -36,7 +37,8 @@ TEST_F(OpenCLRevTests, prob_distributions_StdNormalLccdf_opencl_matches_cpu_smal
                                                 y.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_StdNormalLccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_StdNormalLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

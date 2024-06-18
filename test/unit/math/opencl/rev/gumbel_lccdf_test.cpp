@@ -61,7 +61,8 @@ auto gumbel_lccdf_functor
         return stan::math::gumbel_lccdf(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_GumbelLccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_GumbelLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

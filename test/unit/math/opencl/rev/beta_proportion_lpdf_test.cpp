@@ -63,7 +63,8 @@ auto beta_proportion_lpdf_functor_propto
         return stan::math::beta_proportion_lpdf<true>(y, mu, kappa);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaProportion_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BetaProportion_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -122,7 +123,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaProportion_opencl_broadcast_mu) {
       kappa.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaProportion_opencl_broadcast_kappa) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BetaProportion_opencl_broadcast_kappa) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -142,7 +144,8 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaProportion_opencl_broadcast_kappa)
       kappa_scal);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaProportion_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_BetaProportion_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

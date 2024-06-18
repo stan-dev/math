@@ -115,7 +115,8 @@ auto normal_id_glm_lpdf_functor_propto
         return stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NormalIdGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -152,7 +153,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_broadcast_y) {
       normal_id_glm_lpdf_functor_propto, y_scal, x, alpha, beta, sigma);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -169,7 +171,8 @@ TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_in
       normal_id_glm_lpdf_functor_propto, y, x, alpha, beta, sigma);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -186,7 +189,9 @@ TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_zero_at
       normal_id_glm_lpdf_functor_propto, y, x, alpha, beta, sigma);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_NormalIdGLM_opencl_matches_cpu_small_vector_alpha_sigma) {
+TEST_F(
+    OpenCLRevTests,
+    prob_distributions_NormalIdGLM_opencl_matches_cpu_small_vector_alpha_sigma) {
   int N = 3;
   int M = 2;
 

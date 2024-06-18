@@ -72,7 +72,8 @@ auto neg_binomial_lpmf_functor_propto
         return stan::math::neg_binomial_lpmf<true>(n, alpha, beta);
       };
 
-TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       muProbDistributionsNegBinomial_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

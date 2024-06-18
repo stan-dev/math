@@ -18,7 +18,8 @@ TEST_F(OpenCLRevTests, _diag_post_multiply_diag_post_multiply_small_vector) {
                                                 in2);
 }
 
-TEST_F(OpenCLRevTests, _diag_post_multiply_diag_post_multiply_small_row_vector) {
+TEST_F(OpenCLRevTests,
+       _diag_post_multiply_diag_post_multiply_small_row_vector) {
   Eigen::MatrixXd in1(4, 2);
   in1 << 3.3, 0.9, 6.7, 1.8, 1, 2, 3, 4;
   Eigen::RowVectorXd in2(2);

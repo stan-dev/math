@@ -88,7 +88,8 @@ auto multi_normal_cholesky_lpdf_functor_propto
         return stan::math::multi_normal_cholesky_lpdf<true>(y, mu, L);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       prob_distributions_MultiNormalCholesky_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -147,7 +148,8 @@ TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_opencl_matches_cpu
       multi_normal_cholesky_lpdf_functor_propto, y4, mu4, L);
 }
 
-// TEST_F(OpenCLRevTests, prob_distributions_MultiNormalCholesky_opencl_matches_cpu_big) {
+// TEST_F(OpenCLRevTests,
+// prob_distributions_MultiNormalCholesky_opencl_matches_cpu_big) {
 //   int N = 73;
 //   int M = 11;
 //   Eigen::VectorXd y1;
