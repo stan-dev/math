@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_ScaledInvChiSquare_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsScaledInvChiSquare_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -76,7 +76,7 @@ auto scaled_inv_chi_square_lpdf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ScaledInvChiSquare_opencl_matches_cpu_small) {
+       probdistributionsScaledInvChiSquare_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -100,7 +100,7 @@ TEST_F(OpenCLRevTests,
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_ScaledInvChiSquare_opencl_matches_cpu_small_y_negative) {
+    probdistributionsScaledInvChiSquare_opencl_matches_cpu_small_y_negative) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -117,7 +117,7 @@ TEST_F(
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ScaledInvChiSquare_opencl_broadcast_y) {
+       probdistributionsScaledInvChiSquare_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -138,7 +138,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ScaledInvChiSquare_opencl_broadcast_nu) {
+       probdistributionsScaledInvChiSquare_opencl_broadcast_nu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -159,7 +159,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ScaledInvChiSquare_opencl_broadcast_s) {
+       probdistributionsScaledInvChiSquare_opencl_broadcast_s) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -180,7 +180,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ScaledInvChiSquare_opencl_matches_cpu_big) {
+       probdistributionsScaledInvChiSquare_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

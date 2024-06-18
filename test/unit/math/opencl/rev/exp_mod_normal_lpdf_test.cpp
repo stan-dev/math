@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsExpModNormal_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -104,7 +104,7 @@ auto exp_mod_normal_lpdf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ExpModNormal_opencl_matches_cpu_small) {
+       probdistributionsExpModNormal_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -129,7 +129,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsExpModNormal_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -152,7 +152,7 @@ TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_y) {
       lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistributionsExpModNormal_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -175,7 +175,7 @@ TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_mu) {
       lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistributionsExpModNormal_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -199,7 +199,7 @@ TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_broadcast_sigma) {
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ExpModNormal_opencl_broadcast_lambda) {
+       probdistributionsExpModNormal_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -222,7 +222,7 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval(), lambda);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ExpModNormal_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsExpModNormal_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

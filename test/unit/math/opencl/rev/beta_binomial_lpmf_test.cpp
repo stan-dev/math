@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_error_checking) {
   int N = 3;
 
   std::vector<int> n{2, 0, 12};
@@ -87,7 +87,7 @@ auto beta_binomial_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_BetaBinomial_opencl_matches_cpu_small) {
+       probdistributionsBetaBinomial_opencl_matches_cpu_small) {
   int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
@@ -109,7 +109,7 @@ TEST_F(OpenCLRevTests,
       beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_opencl_broadcast_n) {
   int N_ = 3;
 
   int n = 1;
@@ -131,7 +131,7 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_n) {
       beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_N) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_opencl_broadcast_N) {
   int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
@@ -153,7 +153,7 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_N) {
       beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_opencl_broadcast_alpha) {
   int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
@@ -172,7 +172,7 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_alpha) {
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_opencl_broadcast_beta) {
   int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
@@ -190,7 +190,7 @@ TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_broadcast_beta) {
       beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(), beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_BetaBinomial_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsBetaBinomial_opencl_matches_cpu_big) {
   int N_ = 153;
 
   std::vector<int> n(N_);

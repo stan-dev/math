@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_error_checking) {
   int N = 3;
 
   std::vector<int> n{1, 0, 4};
@@ -64,7 +64,7 @@ auto binomial_lpmf_functor_propto
         return stan::math::binomial_lpmf<true>(n, N, theta);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_matches_cpu_small) {
   int N = 3;
 
   std::vector<int> n{0, 1, 3};
@@ -82,7 +82,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_matches_cpu_small) {
                                                 m, theta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_broadcast_n) {
   int N = 3;
 
   int n = 1;
@@ -100,7 +100,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_n) {
       binomial_lpmf_functor_propto, n, m, theta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_N) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_broadcast_N) {
   int N = 3;
 
   std::vector<int> n{0, 1, 12};
@@ -118,7 +118,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_N) {
       binomial_lpmf_functor_propto, n, m, theta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_theta) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_broadcast_theta) {
   int N = 3;
 
   std::vector<int> n{0, 1, 12};
@@ -131,7 +131,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_broadcast_theta) {
       binomial_lpmf_functor_propto, n, m, theta_scal);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);
@@ -154,7 +154,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_matches_cpu_big) {
                                                 m, theta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Binomial_opencl_n_N_scalar) {
+TEST_F(OpenCLRevTests, probdistributionsBinomial_opencl_n_N_scalar) {
   int N = 3;
 
   int n = 1;

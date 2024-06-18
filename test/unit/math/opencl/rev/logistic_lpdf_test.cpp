@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -77,7 +77,7 @@ auto logistic_lpdf_functor_propto
         return stan::math::logistic_lpdf<true>(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -100,7 +100,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -119,7 +119,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_y) {
       logistic_lpdf_functor_propto, y, mu, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -138,7 +138,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_mu) {
       logistic_lpdf_functor_propto, y, mu, sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -157,7 +157,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_broadcast_sigma) {
       logistic_lpdf_functor_propto, y, mu.transpose().eval(), sigma);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
@@ -179,7 +179,7 @@ TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_matches_cpu_big) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_Logistic_opencl_sigma_mu_scalar) {
+TEST_F(OpenCLRevTests, probdistributionsLogistic_opencl_sigma_mu_scalar) {
   int N = 3;
   int M = 2;
 

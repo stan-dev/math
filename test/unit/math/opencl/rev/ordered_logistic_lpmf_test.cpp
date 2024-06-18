@@ -12,7 +12,7 @@ using stan::math::matrix_cl;
 using stan::math::var;
 using std::vector;
 
-TEST_F(OpenCLRevTests, prob_distributions_OrderedLogisitc_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsOrderedLogisitc_error_checking) {
   int N = 3;
   int C = 5;
 
@@ -83,7 +83,7 @@ auto ordered_logistic_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_OrderedLogisitc_opencl_matches_cpu_small_simple) {
+       probdistributionsOrderedLogisitc_opencl_matches_cpu_small_simple) {
   int N = 3;
   int C = 5;
 
@@ -107,7 +107,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_OrderedLogisitc_opencl_matches_cpu_zero_instances) {
+       probdistributionsOrderedLogisitc_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int C = 5;
 
@@ -128,7 +128,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_OrderedLogisitc_opencl_matches_cpu_single_class) {
+       probdistributionsOrderedLogisitc_opencl_matches_cpu_single_class) {
   int N = 3;
   int C = 1;
 
@@ -149,7 +149,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_OrderedLogisitc_opencl_matches_cpu_big) {
+       probdistributionsOrderedLogisitc_opencl_matches_cpu_big) {
   int N = 153;
   int C = 43;
 

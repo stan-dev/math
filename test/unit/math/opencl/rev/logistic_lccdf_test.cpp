@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_LogisticLccdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsLogisticLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -62,7 +62,7 @@ auto logistic_lccdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_LogisticLccdf_opencl_matches_cpu_small) {
+       probdistributionsLogisticLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -81,7 +81,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_LogisticLccdf_opencl_matches_cpu_small_y_neg_inf) {
+       probdistributionsLogisticLccdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 
@@ -99,7 +99,7 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_LogisticLccdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsLogisticLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -114,7 +114,7 @@ TEST_F(OpenCLRevTests, prob_distributions_LogisticLccdf_opencl_broadcast_y) {
       logistic_lccdf_functor, y_scal, mu.transpose().eval(), sigma);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_LogisticLccdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistributionsLogisticLccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -130,7 +130,7 @@ TEST_F(OpenCLRevTests, prob_distributions_LogisticLccdf_opencl_broadcast_mu) {
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_LogisticLccdf_opencl_broadcast_sigma) {
+       probdistributionsLogisticLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -146,7 +146,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_LogisticLccdf_opencl_matches_cpu_big) {
+       probdistributionsLogisticLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

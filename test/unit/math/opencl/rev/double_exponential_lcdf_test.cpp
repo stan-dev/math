@@ -6,7 +6,7 @@
 #include <vector>
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_error_checking) {
+       probdistributionsDoubleExponentialLcdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -63,7 +63,7 @@ auto double_exponential_lcdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_opencl_matches_cpu_small) {
+       probdistributionsDoubleExponentialLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -82,7 +82,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_opencl_broadcast_y) {
+       probdistributionsDoubleExponentialLcdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -98,7 +98,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_opencl_broadcast_mu) {
+       probdistributionsDoubleExponentialLcdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -114,7 +114,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_opencl_broadcast_sigma) {
+       probdistributionsDoubleExponentialLcdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -130,7 +130,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_DoubleExponentialLcdf_opencl_matches_cpu_big) {
+       probdistributionsDoubleExponentialLcdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

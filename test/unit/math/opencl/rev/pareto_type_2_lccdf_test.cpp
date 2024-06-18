@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_ParetoType2Lccdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsParetoType2Lccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -85,7 +85,7 @@ auto pareto_type_2_lccdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ParetoType2Lccdf_opencl_matches_cpu_small) {
+       probdistributionsParetoType2Lccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -105,7 +105,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval(), alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_ParetoType2Lccdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsParetoType2Lccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -124,7 +124,7 @@ TEST_F(OpenCLRevTests, prob_distributions_ParetoType2Lccdf_opencl_broadcast_y) {
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ParetoType2Lccdf_opencl_broadcast_mu) {
+       probdistributionsParetoType2Lccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -143,7 +143,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ParetoType2Lccdf_opencl_broadcast_lambda) {
+       probdistributionsParetoType2Lccdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -162,7 +162,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ParetoType2Lccdf_opencl_broadcast_alpha) {
+       probdistributionsParetoType2Lccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -181,7 +181,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_ParetoType2Lccdf_opencl_matches_cpu_big) {
+       probdistributionsParetoType2Lccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu

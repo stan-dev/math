@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST_F(OpenCLRevTests, prob_distributions_StudentT_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsStudentT_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -89,7 +89,7 @@ auto student_t_lpdf_functor_propto
         return stan::math::student_t_lpdf<true>(y, nu, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests, prob_distributions_StudentT_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistributionsStudentT_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -113,7 +113,7 @@ TEST_F(OpenCLRevTests, prob_distributions_StudentT_opencl_matches_cpu_small) {
       nu.transpose().eval(), mu.transpose().eval(), sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_StudentT_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsStudentT_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -136,7 +136,7 @@ TEST_F(OpenCLRevTests, prob_distributions_StudentT_opencl_broadcast_y) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_StudentT_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistributionsStudentT_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

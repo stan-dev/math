@@ -13,7 +13,7 @@ using stan::math::var;
 using stan::test::expect_near_rel;
 using std::vector;
 
-TEST_F(OpenCLRevTests, prob_distributions_BernoulliLogitGLM_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsBernoulliLogitGLM_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -101,7 +101,7 @@ auto bernoulli_logit_glm_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_BernoulliLogitGLM_opencl_matches_cpu_small_simple) {
+       probdistributionsBernoulliLogitGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -119,7 +119,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_BernoulliLogitGLM_opencl_broadcast_y) {
+       probdistributionsBernoulliLogitGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -137,7 +137,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_BernoulliLogitGLM_opencl_matches_cpu_zero_instances) {
+       probdistributionsBernoulliLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -155,7 +155,7 @@ TEST_F(OpenCLRevTests,
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_BernoulliLogitGLM_opencl_matches_cpu_zero_attributes) {
+    probdistributionsBernoulliLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -172,7 +172,7 @@ TEST_F(
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_BernoulliLogitGLM_opencl_matches_cpu_small_vector_alpha) {
+    probdistributionsBernoulliLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -191,7 +191,7 @@ TEST_F(
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_BernoulliLogitGLM_opencl_matches_cpu_big) {
+       probdistributionsBernoulliLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

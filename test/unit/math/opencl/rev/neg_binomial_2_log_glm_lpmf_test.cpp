@@ -13,7 +13,7 @@ using stan::math::var;
 using stan::test::expect_near_rel;
 using std::vector;
 
-TEST_F(OpenCLRevTests, prob_distributions_NegBinomial2LogGLM_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsNegBinomial2LogGLM_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -128,7 +128,7 @@ auto neg_binomial_2_log_glm_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_NegBinomial2LogGLM_opencl_matches_cpu_small_simple) {
+       probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -147,7 +147,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_NegBinomial2LogGLM_opencl_broadcast_y) {
+       probdistributionsNegBinomial2LogGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -167,7 +167,7 @@ TEST_F(OpenCLRevTests,
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_NegBinomial2LogGLM_opencl_matches_cpu_zero_instances) {
+    probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -186,7 +186,7 @@ TEST_F(
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_NegBinomial2LogGLM_opencl_matches_cpu_zero_attributes) {
+    probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -204,7 +204,7 @@ TEST_F(
 
 TEST_F(
     OpenCLRevTests,
-    prob_distributions_NegBinomial2LogGLM_opencl_matches_cpu_small_vector_alpha_phi) {
+    probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_small_vector_alpha_phi) {
   int N = 3;
   int M = 2;
 
@@ -225,7 +225,7 @@ TEST_F(
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_NegBinomial2LogGLM_opencl_matches_cpu_big) {
+       probdistributionsNegBinomial2LogGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

@@ -13,7 +13,7 @@ auto skew_double_exponential_lccdf_functor
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_SkewDoubleExponentialLccdf_opencl_broadcast_sigma) {
+       probdistributionsSkewDoubleExponentialLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -32,7 +32,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_SkewDoubleExponentialLccdf_opencl_broadcast_tau) {
+       probdistributionsSkewDoubleExponentialLccdf_opencl_broadcast_tau) {
   int N = 3;
 
   Eigen::VectorXd y(N);

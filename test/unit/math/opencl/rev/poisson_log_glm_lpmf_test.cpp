@@ -13,7 +13,7 @@ using stan::math::var;
 using stan::test::expect_near_rel;
 using std::vector;
 
-TEST_F(OpenCLRevTests, prob_distributions_PoissonLogGLM_error_checking) {
+TEST_F(OpenCLRevTests, probdistributionsPoissonLogGLM_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -101,7 +101,7 @@ auto poisson_log_glm_lpmf_functor_propto
       };
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_PoissonLogGLM_opencl_matches_cpu_small_simple) {
+       probdistributionsPoissonLogGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -118,7 +118,7 @@ TEST_F(OpenCLRevTests,
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests, prob_distributions_PoissonLogGLM_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistributionsPoissonLogGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -136,7 +136,7 @@ TEST_F(OpenCLRevTests, prob_distributions_PoissonLogGLM_opencl_broadcast_y) {
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_PoissonLogGLM_opencl_matches_cpu_zero_instances) {
+       probdistributionsPoissonLogGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -153,7 +153,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_PoissonLogGLM_opencl_matches_cpu_zero_attributes) {
+       probdistributionsPoissonLogGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -169,7 +169,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_PoissonLogGLM_opencl_matches_cpu_small_vector_alpha) {
+       probdistributionsPoissonLogGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -188,7 +188,7 @@ TEST_F(OpenCLRevTests,
 }
 
 TEST_F(OpenCLRevTests,
-       prob_distributions_PoissonLogGLM_opencl_matches_cpu_big) {
+       probdistributionsPoissonLogGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 
