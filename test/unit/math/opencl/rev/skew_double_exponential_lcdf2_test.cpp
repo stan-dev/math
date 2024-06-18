@@ -31,8 +31,7 @@ TEST_F(OpenCLRevTests,
       sigma_scal, tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistSkewDoubleExponentialLcdf_opencl_broadcast_tau) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponentialLcdf_opencl_broadcast_tau) {
   int N = 3;
 
   Eigen::VectorXd y(N);

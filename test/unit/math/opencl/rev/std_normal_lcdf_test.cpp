@@ -24,8 +24,7 @@ TEST_F(OpenCLRevTests, probdistStdNormalLcdf_error_checking) {
 auto std_normal_lcdf_functor
     = [](const auto& y) { return stan::math::std_normal_lcdf(y); };
 
-TEST_F(OpenCLRevTests,
-       probdistStdNormalLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistStdNormalLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

@@ -77,8 +77,7 @@ TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistCauchyCdf_opencl_matches_cpu_small_y_neg_inf) {
+TEST_F(OpenCLRevTests, probdistCauchyCdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
 
   Eigen::VectorXd y(N);

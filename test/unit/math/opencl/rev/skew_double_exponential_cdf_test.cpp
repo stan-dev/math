@@ -7,8 +7,7 @@
 
 namespace skew_double_exponential_cdf_test {
 
-TEST_F(OpenCLRevTests,
-       probdistSkewDoubleExponentialCdf_error_checking) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponentialCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -108,9 +107,8 @@ TEST_F(OpenCLRevTests,
       mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistSkewDoubleExponentialCdf_opencl_matches_cpu_small_y_neg_inf) {
+TEST_F(OpenCLRevTests,
+       probdistSkewDoubleExponentialCdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 
@@ -130,8 +128,7 @@ TEST_F(
       mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistSkewDoubleExponentialCdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponentialCdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -149,8 +146,7 @@ TEST_F(OpenCLRevTests,
       tau.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistSkewDoubleExponentialCdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponentialCdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);

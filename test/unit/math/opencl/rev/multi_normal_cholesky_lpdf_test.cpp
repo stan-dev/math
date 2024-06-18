@@ -88,8 +88,7 @@ auto multi_normal_cholesky_lpdf_functor_propto
         return stan::math::multi_normal_cholesky_lpdf<true>(y, mu, L);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistMultiNormalCholesky_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistMultiNormalCholesky_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

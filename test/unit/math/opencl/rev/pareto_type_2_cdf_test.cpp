@@ -84,8 +84,7 @@ auto pareto_type_2_cdf_functor
         return stan::math::pareto_type_2_cdf(y, mu, lambda, alpha);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Cdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -141,8 +140,7 @@ TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_broadcast_mu) {
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Cdf_opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests, probdistParetoType2Cdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);

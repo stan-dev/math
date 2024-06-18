@@ -72,8 +72,7 @@ TEST_F(OpenCLRevTests, probdistInvChiSquare_opencl_matches_cpu_small) {
       inv_chi_square_lpdf_functor_propto, y, nu.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistInvChiSquare_opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests, probdistInvChiSquare_opencl_matches_cpu_small_y_zero) {
   int N = 3;
 
   Eigen::VectorXd y(N);

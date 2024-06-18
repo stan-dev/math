@@ -59,8 +59,7 @@ auto binomial_logit_lpmf_functor_propto
         return stan::math::binomial_logit_lpmf<true>(n, N, alpha);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistBinomialLogit_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistBinomialLogit_opencl_matches_cpu_small) {
   int N = 3;
 
   std::vector<int> n{0, 1, 3};

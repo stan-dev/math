@@ -46,8 +46,7 @@ auto rayleigh_lccdf_functor = [](const auto& y, const auto& mu) {
   return stan::math::rayleigh_lccdf(y, mu);
 };
 
-TEST_F(OpenCLRevTests,
-       probdistRayleighLccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistRayleighLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

@@ -12,8 +12,7 @@ auto exp_mod_normal_lccdf_functor
         return stan::math::exp_mod_normal_lccdf(y, mu, sigma, lambda);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistDoubleExpModNormalLccdf_opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistDoubleExpModNormalLccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);

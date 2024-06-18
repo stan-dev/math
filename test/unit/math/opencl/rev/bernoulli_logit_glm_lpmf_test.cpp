@@ -168,9 +168,8 @@ TEST_F(OpenCLRevTests,
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistBernoulliLogitGLM_opencl_matches_cpu_small_vector_alpha) {
+TEST_F(OpenCLRevTests,
+       probdistBernoulliLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -188,8 +187,7 @@ TEST_F(
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistBernoulliLogitGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistBernoulliLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

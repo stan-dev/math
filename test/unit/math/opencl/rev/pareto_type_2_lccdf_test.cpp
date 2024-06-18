@@ -84,8 +84,7 @@ auto pareto_type_2_lccdf_functor
         return stan::math::pareto_type_2_lccdf(y, mu, lambda, alpha);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Lccdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -141,8 +140,7 @@ TEST_F(OpenCLRevTests, probdistParetoType2Lccdf_opencl_broadcast_mu) {
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Lccdf_opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lccdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -160,8 +158,7 @@ TEST_F(OpenCLRevTests,
       alpha.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Lccdf_opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -179,8 +176,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval(), alpha_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistParetoType2Lccdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu

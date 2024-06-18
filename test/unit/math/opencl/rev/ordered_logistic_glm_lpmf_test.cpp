@@ -203,8 +203,7 @@ TEST_F(OpenCLRevTests,
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistOrderedLogisitcGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistOrderedLogisitcGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;

@@ -199,9 +199,8 @@ TEST_F(OpenCLRevTests,
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistNegBinomial2LogGLM_opencl_matches_cpu_small_vector_alpha_phi) {
+TEST_F(OpenCLRevTests,
+       probdistNegBinomial2LogGLM_opencl_matches_cpu_small_vector_alpha_phi) {
   int N = 3;
   int M = 2;
 
@@ -221,8 +220,7 @@ TEST_F(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistNegBinomial2LogGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistNegBinomial2LogGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 
