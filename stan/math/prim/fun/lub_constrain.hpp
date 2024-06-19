@@ -400,6 +400,33 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   }
 }
 
+/**
+ * Wrapper for tuple of bounds, simply delegates to the appropriate overload
+ */
+template <typename T, typename L, typename U>
+inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds) {
+  return lub_constrain(x, std::get<0>(bounds), std::get<1>(bounds));
+}
+
+/**
+ * Wrapper for tuple of bounds, simply delegates to the appropriate overload
+ */
+template <typename T, typename L, typename U>
+inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds,
+                          return_type_t<T, L, U>& lp) {
+  return lub_constrain(x, std::get<0>(bounds), std::get<1>(bounds), lp);
+}
+
+/**
+ * Wrapper for tuple of bounds, simply delegates to the appropriate overload
+ */
+template <bool Jacobian, typename T, typename L, typename U>
+inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds,
+                          return_type_t<T, L, U>& lp) {
+  return lub_constrain<Jacobian>(x, std::get<0>(bounds), std::get<1>(bounds),
+                                 lp);
+}
+
 }  // namespace math
 }  // namespace stan
 
