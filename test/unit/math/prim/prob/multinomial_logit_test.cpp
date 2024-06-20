@@ -8,6 +8,19 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
+TEST(ProbDistributionsMultinomialLogit, RNGZero) {
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> beta(3);
+  beta << 1.3, 0.1, -2.6;
+  // bug in 4.8.1: RNG does not allow a zero total count
+  EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 0, rng));
+  // when the total count is zero, the sample should be a zero array
+  std::vector<int> sample = stan::math::multinomial_logit_rng(beta, 0, rng);
+  for (int k : sample) {
+    EXPECT_EQ(0, k);
+  }
+}
+
 TEST(ProbDistributionsMultinomialLogit, RNGSize) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> beta(5);

@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <cstdint>
 
 namespace stan {
 namespace math {
@@ -18,7 +19,7 @@ namespace math {
 
 template <typename T_x,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr>
-inline int rows(const T_x& x) {
+inline int64_t rows(const T_x& x) {
   return x.rows();
 }
 

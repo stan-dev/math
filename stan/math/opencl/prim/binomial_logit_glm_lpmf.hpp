@@ -20,6 +20,7 @@
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
 #include <cmath>
+#include <cstdint>
 
 namespace stan {
 namespace math {
@@ -37,7 +38,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
 
   const size_t N_instances
-      = max(max_size(n, N, alpha), static_cast<size_t>(x.rows()));
+      = max(max_size(n, N, alpha), static_cast<int64_t>(x.rows()));
   const size_t N_attributes = x.cols();
 
   check_consistent_sizes(function, "Successes variable", n,

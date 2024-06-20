@@ -193,7 +193,7 @@ TEST(prob_transform, offset_multiplier_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::offset_multiplier_constrain(
                                      x(i), offsetd, sigma(i), lp1));
     }
-    EXPECT_EQ(lp0, lp1);
+    EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::offset_multiplier_free(result, offsetd, sigma);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
@@ -211,7 +211,7 @@ TEST(prob_transform, offset_multiplier_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::offset_multiplier_constrain(
                                      x(i), offset(i), sigma(i), lp1));
     }
-    EXPECT_EQ(lp0, lp1);
+    EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::offset_multiplier_free(result, offset, sigma);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));

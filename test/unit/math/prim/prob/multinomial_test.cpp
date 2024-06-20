@@ -5,6 +5,21 @@
 #include <limits>
 #include <vector>
 
+TEST(ProbDistributionsMultinomial, RNGZero) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> theta(3);
+  theta << 0.3, 0.1, 0.6;
+  // bug in 4.8.1: RNG does not allow a zero total count
+  EXPECT_NO_THROW(stan::math::multinomial_rng(theta, 0, rng));
+  // when the total count is zero, the sample should be a zero array
+  std::vector<int> sample = stan::math::multinomial_rng(theta, 0, rng);
+  for (int k : sample) {
+    EXPECT_EQ(0, k);
+  }
+}
+
 TEST(ProbDistributionsMultinomial, RNGSize) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

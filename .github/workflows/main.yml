@@ -1,4 +1,4 @@
-name: Windows Rtools40
+name: Windows Rtools44
 
 on:
   pull_request:
@@ -30,16 +30,16 @@ jobs:
         python-version: '3.x'
     - uses: r-lib/actions/setup-r@v2
       with:
-        r-version: 4.1.3
+        r-version: 'release'
+        rtools-version: '44'
 
-    - name: Set path for Rtools40
+    - name: Set path for Rtools44
       if: runner.os == 'Windows'
-      run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
@@ -71,16 +71,16 @@ jobs:
         python-version: '3.x'
     - uses: r-lib/actions/setup-r@v2
       with:
-        r-version: 4.1.3
+        r-version: 'release'
+        rtools-version: '44'
 
-    - name: Set path for Rtools40
+    - name: Set path for Rtools44
       if: runner.os == 'Windows'
-      run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
@@ -116,16 +116,16 @@ jobs:
         python-version: '3.x'
     - uses: r-lib/actions/setup-r@v2
       with:
-        r-version: 4.1.3
+        r-version: 'release'
+        rtools-version: '44'
 
-    - name: Set path for Rtools40
+    - name: Set path for Rtools44
       if: runner.os == 'Windows'
-      run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: powershell
       run: |
-        Add-Content make\local "O=1`n"
         make -f make/standalone math-libs -j2
     - name: Add TBB to PATH
       shell: powershell
@@ -156,11 +156,12 @@ jobs:
         python-version: '3.x'
     - uses: r-lib/actions/setup-r@v2
       with:
-        r-version: 4.1.3
+        r-version: 'release'
+        rtools-version: '44'
 
-    - name: Set path for Rtools40
+    - name: Set path for Rtools44
       if: runner.os == 'Windows'
-      run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: powershell
