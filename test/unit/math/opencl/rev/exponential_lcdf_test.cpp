@@ -46,8 +46,7 @@ auto exponential_lcdf_functor = [](const auto& y, const auto& beta) {
   return stan::math::exponential_lcdf(y, beta);
 };
 
-TEST_F(OpenCLRevTests,
-       probdistExponentialLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistExponentialLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -84,8 +83,7 @@ TEST_F(OpenCLRevTests, probdistExponentialLcdf_opencl_broadcast_beta) {
       exponential_lcdf_functor, y, beta_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistExponentialLcdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistExponentialLcdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

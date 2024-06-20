@@ -61,8 +61,7 @@ auto lognormal_lcdf_functor
         return stan::math::lognormal_lcdf(y, mu, sigma);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistLognormalLcdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistLognormalLcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -80,8 +79,7 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistLognormalLcdf_opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests, probdistLognormalLcdf_opencl_matches_cpu_small_y_zero) {
   int N = 3;
   int M = 2;
 

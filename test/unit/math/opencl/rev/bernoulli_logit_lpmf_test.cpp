@@ -46,8 +46,7 @@ auto bernoulli_logit_lpmf_functor_propto
         return stan::math::bernoulli_logit_lpmf<true>(n, theta);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistBernoulliLogit_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistBernoulliLogit_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

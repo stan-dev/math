@@ -100,8 +100,7 @@ TEST_F(OpenCLRevTests, probdistInvGamma_opencl_matches_cpu_small) {
       alpha.transpose().eval(), beta.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistInvGamma_opencl_matches_cpu_small_zero_y) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_matches_cpu_small_zero_y) {
   int N = 3;
   int M = 2;
 

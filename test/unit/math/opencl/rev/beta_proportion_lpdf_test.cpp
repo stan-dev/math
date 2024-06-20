@@ -63,8 +63,7 @@ auto beta_proportion_lpdf_functor_propto
         return stan::math::beta_proportion_lpdf<true>(y, mu, kappa);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistBetaProportion_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistBetaProportion_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

@@ -106,9 +106,8 @@ TEST_F(OpenCLRevTests,
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistDoubleExpModNormalLcdf_opencl_matches_cpu_small_y_pos_inf) {
+TEST_F(OpenCLRevTests,
+       probdistDoubleExpModNormalLcdf_opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -127,9 +126,8 @@ TEST_F(
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistDoubleExpModNormalLcdf_opencl_matches_cpu_small_y_neg_inf) {
+TEST_F(OpenCLRevTests,
+       probdistDoubleExpModNormalLcdf_opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -148,8 +146,7 @@ TEST_F(
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistDoubleExpModNormalLcdf_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistDoubleExpModNormalLcdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -167,8 +164,7 @@ TEST_F(OpenCLRevTests,
       lambda.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistDoubleExpModNormalLcdf_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistDoubleExpModNormalLcdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

@@ -46,8 +46,7 @@ auto exponential_cdf_functor = [](const auto& y, const auto& beta) {
   return stan::math::exponential_cdf(y, beta);
 };
 
-TEST_F(OpenCLRevTests,
-       probdistExponentialCdf_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistExponentialCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 

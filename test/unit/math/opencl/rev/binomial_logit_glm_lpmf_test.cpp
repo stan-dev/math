@@ -181,9 +181,8 @@ TEST_F(OpenCLRevTests,
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistBinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
+TEST_F(OpenCLRevTests,
+       probdistBinomialLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -202,8 +201,7 @@ TEST_F(
       binomial_logit_glm_lpmf_functor_propto, n, trials, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistBinomialLogitGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistBinomialLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

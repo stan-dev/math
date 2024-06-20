@@ -123,8 +123,7 @@ TEST_F(OpenCLRevTests,
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistCategoricalLogitGLM_opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistCategoricalLogitGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
   int C = 3;
@@ -162,9 +161,8 @@ TEST_F(OpenCLRevTests,
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistCategoricalLogitGLM_opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       probdistCategoricalLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 3;
@@ -223,8 +221,7 @@ TEST_F(OpenCLRevTests,
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistCategoricalLogitGLM_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistCategoricalLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;

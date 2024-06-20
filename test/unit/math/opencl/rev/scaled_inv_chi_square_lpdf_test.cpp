@@ -75,8 +75,7 @@ auto scaled_inv_chi_square_lpdf_functor_propto
         return stan::math::scaled_inv_chi_square_lpdf<true>(y, nu, s);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistScaledInvChiSquare_opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistScaledInvChiSquare_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -98,9 +97,8 @@ TEST_F(OpenCLRevTests,
       nu.transpose().eval(), s.transpose().eval());
 }
 
-TEST_F(
-    OpenCLRevTests,
-    probdistScaledInvChiSquare_opencl_matches_cpu_small_y_negative) {
+TEST_F(OpenCLRevTests,
+       probdistScaledInvChiSquare_opencl_matches_cpu_small_y_negative) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -136,8 +134,7 @@ TEST_F(OpenCLRevTests, probdistScaledInvChiSquare_opencl_broadcast_y) {
       s.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistScaledInvChiSquare_opencl_broadcast_nu) {
+TEST_F(OpenCLRevTests, probdistScaledInvChiSquare_opencl_broadcast_nu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -177,8 +174,7 @@ TEST_F(OpenCLRevTests, probdistScaledInvChiSquare_opencl_broadcast_s) {
       s_scal);
 }
 
-TEST_F(OpenCLRevTests,
-       probdistScaledInvChiSquare_opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistScaledInvChiSquare_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

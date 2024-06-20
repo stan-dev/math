@@ -100,8 +100,7 @@ auto poisson_log_glm_lpmf_functor_propto
         return stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta);
       };
 
-TEST_F(OpenCLRevTests,
-       probdistPoissonLogGLM_opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests, probdistPoissonLogGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 

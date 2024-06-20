@@ -52,6 +52,7 @@ pipeline {
     environment {
         STAN_NUM_THREADS = 4
         CLANG_CXX = 'clang++-7'
+        CLANG_CC='clang-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
         N_TESTS = 100
@@ -268,7 +269,7 @@ pipeline {
                         echo CXXFLAGS += -fsanitize=address >> make/local;
                         cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
                         cd build && make -j${PARALLEL} unit_math_subtests &&
-                        cd test && ctest -L "unit_math_subtest";
+                        cd test && ctest --output-on-failure -L "unit_math_subtest";
                         '''
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -288,8 +289,8 @@ pipeline {
                                 sh "echo O=1 >> make/local"
                             }
                             sh'''
-                                CXX=${CLANG_CXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
-                                cd build && make -j${PARALLEL} unit_math_opencl_subtests && cd test && ctest -L "unit_math_opencl" --repeat until-pass:10
+                                CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
+                                cd build && make -j${PARALLEL} unit_math_opencl_subtests && cd test && ctest --output-on-failure -L "unit_math_opencl" --repeat until-pass:10
                             '''
                         }
                     }
@@ -319,7 +320,7 @@ pipeline {
                             echo CXX_TYPE=gcc >> make/local
                             echo STAN_MPI=true >> make/local
                             CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
-                            cd build && make -j${PARALLEL} unit_math_mpi_subtests && cd test && ctest -L "unit_math_mpi_subtest"
+                            cd build && make -j${PARALLEL} unit_math_mpi_subtests && cd test && ctest --output-on-failure -L "unit_math_mpi_subtest"
 
                         """
                         runTests("test/unit/math/prim/functor")

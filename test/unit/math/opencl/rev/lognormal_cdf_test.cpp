@@ -79,8 +79,7 @@ TEST_F(OpenCLRevTests, probdistLognormalCdf_opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST_F(OpenCLRevTests,
-       probdistLognormalCdf_opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests, probdistLognormalCdf_opencl_matches_cpu_small_y_zero) {
   int N = 3;
   int M = 2;
 
