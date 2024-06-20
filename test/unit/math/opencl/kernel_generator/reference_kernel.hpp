@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 namespace stan {
 namespace test {
@@ -15,9 +16,13 @@ namespace test {
  * @return file content
  */
 inline std::string load_reference_kernel(const std::string& filename) {
-  std::string path
-      = "test/unit/math/opencl/kernel_generator/reference_kernels/" + filename;
-  std::ifstream input(path);
+  // check if we are in top level or test directory
+  auto pwd = std::filesystem::current_path();
+  while (pwd.stem() != "math" && pwd.has_parent_path()) {
+    pwd = pwd.parent_path();
+  }
+  pwd /= "test/unit/math/opencl/kernel_generator/reference_kernels/" + filename;
+  std::ifstream input(pwd);
   std::stringstream stream;
   stream << input.rdbuf();
   return stream.str();
@@ -34,8 +39,12 @@ inline std::string load_reference_kernel(const std::string& filename) {
 inline void store_reference_kernel_if_needed(const std::string& filename,
                                              const std::string& kernel) {
 #ifdef STAN_TEST_KERNEL_GENERATOR_STORE_REFERENCE_KERNELS
-  std::string path
-      = "test/unit/math/opencl/kernel_generator/reference_kernels/" + filename;
+  // check if we are in top level or test directory
+  auto pwd = std::filesystem::current_path();
+  while (pwd.stem() != "math" && pwd.has_parent_path()) {
+    pwd = pwd.parent_path();
+  }
+  pwd /= "test/unit/math/opencl/kernel_generator/reference_kernels/" + filename;
   std::ofstream output;
   output.exceptions(~std::ofstream::goodbit);
   output.open(path);
