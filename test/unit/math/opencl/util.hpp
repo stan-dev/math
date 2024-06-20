@@ -244,11 +244,11 @@ inline T to_vector_if(const T& x, std::size_t N) {
 
 using stan::math::rows;
 template <typename T, require_not_container_t<T>* = nullptr>
-inline int rows(const T&) {
+inline int64_t rows(const T&) {
   return 1;
 }
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline int rows(const T& x) {
+inline int64_t rows(const T& x) {
   return x.size();
 }
 

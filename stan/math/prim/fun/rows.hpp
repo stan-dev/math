@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <cstdint>
 
 namespace stan {
 namespace math {
@@ -16,7 +17,7 @@ namespace math {
  * @return Number of rows.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int rows(const T& m) {
+inline int64_t rows(const T& m) {
   return m.rows();
 }
 
