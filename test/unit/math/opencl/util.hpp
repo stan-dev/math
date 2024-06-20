@@ -62,12 +62,14 @@ template <typename T, require_arithmetic_t<T>* = nullptr>
 inline void expect_eq(T a, T b, const char* msg, double tol = 0.25) {
   stan::test::expect_near_rel(msg, a, b, tol);
 }
-inline void expect_eq(math::var a, math::var b, const char* msg, double tol = 0.25) {
+inline void expect_eq(math::var a, math::var b, const char* msg,
+                      double tol = 0.25) {
   stan::test::expect_near_rel(msg, a.val(), b.val(), tol);
 }
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_all_not_st_var<T1, T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg, double tol = 0.25) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      double tol = 0.25) {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -79,7 +81,8 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg, double tol = 0.
   }
 }
 template <typename T1, typename T2, require_all_rev_matrix_t<T1, T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg, double tol = 0.25) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      double tol = 0.25) {
   expect_eq(a.val(), b.val(), msg, tol);
 }
 template <typename T>
@@ -92,12 +95,14 @@ inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg, double tol = 0.25) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      double tol = 0.25) {
   expect_eq(from_matrix_cl<plain_type_t<T2>>(a), b, msg, tol);
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg, double tol = 0.25) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      double tol = 0.25) {
   expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg, tol);
 }
 
