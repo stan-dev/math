@@ -180,6 +180,14 @@ inline auto lub_free(const std::vector<T> y, const std::vector<L>& lb,
   }
   return ret;
 }
+
+/**
+ * Wrapper for tuple of bounds, simply delegates to the appropriate overload
+ */
+template <typename T, typename L, typename U>
+inline auto lub_free(T&& y, const std::tuple<L, U>& bounds) {
+  return lub_free(std::forward<T>(y), std::get<0>(bounds), std::get<1>(bounds));
+}
 ///@}
 
 }  // namespace math
