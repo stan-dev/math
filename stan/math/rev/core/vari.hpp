@@ -678,11 +678,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Construct a dense Eigen variable implementation from a value. The
    * adjoint is initialized to zero.
    *
-   * All constructed variables are added to the stack. Variables
+   * All constructed variables are added to the no chain stack. Variables
    * should be constructed before variables on which they depend
-   * to insure proper partial derivative propagation.  During
-   * derivative propagation, the chain() method of each variable
-   * will be called in the reverse order of construction.
+   * to insure proper partial derivative propagation.
    *
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
@@ -699,7 +697,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
                  ? x.rows()
                  : x.cols()) {
     adj_.setZero();
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -734,6 +732,24 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
+  }
+
+  /**
+   * Construct a dense Eigen variable implementation from a
+   *  preconstructed values and adjoints.
+   *
+   * All constructed variables are not added to the stack. Variables
+   * should be constructed before variables on which they depend
+   * to insure proper partial derivative propagation.
+   * @tparam S A dense Eigen type that is convertible to `value_type`
+   * @tparam K A dense Eigen type that is convertible to `value_type`
+   * @param val Matrix of values
+   * @param adj Matrix of adjoints
+   */
+  template <typename S, typename K, require_assignable_t<T, S>* = nullptr,
+            require_assignable_t<T, K>* = nullptr>
+  explicit vari_value(const S& val, const K& adj) : val_(val), adj_(adj) {
+    ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
 
  protected:
