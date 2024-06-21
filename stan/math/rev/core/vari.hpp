@@ -746,9 +746,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param val Matrix of values
    * @param adj Matrix of adjoints
    */
-  template <typename S, typename K,
-    require_assignable_t<T, S>* = nullptr,
-    require_assignable_t<T, K>* = nullptr>
+  template <typename S, typename K, require_assignable_t<T, S>* = nullptr,
+            require_assignable_t<T, K>* = nullptr>
   explicit vari_value(const S& val, const K& adj) : val_(val), adj_(adj) {
     ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }

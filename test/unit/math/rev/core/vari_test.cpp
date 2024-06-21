@@ -82,7 +82,6 @@ TEST(AgradRevVari, arena_matrix_matrix_vari) {
   EXPECT_EQ((*F).val().data(), (*F).adj().data());
 }
 
-
 TEST(AgradRevVari, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
