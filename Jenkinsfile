@@ -290,7 +290,7 @@ pipeline {
                             }
                             sh'''
                                 CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
-                                cd build && make -j${PARALLEL} unit_math_opencl_subtests && cd test && ctest --output-on-failure -L "unit_math_opencl" --repeat until-pass:10
+                                cd build && make -j${PARALLEL} unit_math_opencl_subtests && cd test && ctest --output-on-failure -L "unit_math_opencl"
                             '''
                         }
                     }
