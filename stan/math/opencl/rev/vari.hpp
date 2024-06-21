@@ -273,8 +273,9 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
    */
   template <typename S, typename K, require_convertible_t<T, S>* = nullptr,
             require_convertible_t<T, K>* = nullptr>
-  explicit vari_value(S&& val, K&& adj) : chainable_alloc(),
-    vari_cl_base<T>(std::forward<S>(val), std::forward<K>(adj)) {
+  explicit vari_value(S&& val, K&& adj)
+      : chainable_alloc(),
+        vari_cl_base<T>(std::forward<S>(val), std::forward<K>(adj)) {
     ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
 
