@@ -125,8 +125,7 @@ export TBB_LIB="$TBB/lib/intel64/gcc4.8"
 
 - Set `Stan` local compiler flags to use the new TBB interface:
 ```bash
-mkdir -p ~/.config/stan
-echo TBB_INTERFACE_NEW=true>> ~/.config/stan/make.local
+echo TBB_INTERFACE_NEW=true>> ./make/local
 ```
 
 Compilers
