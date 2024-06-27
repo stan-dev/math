@@ -5,7 +5,7 @@
 
 auto mean_functor = [](const auto& a) { return stan::math::mean(a); };
 
-TEST(OpenCLMean, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Mean_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -18,7 +18,7 @@ TEST(OpenCLMean, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(mean_functor, b);
 }
 
-TEST(OpenCLMean, exceptions) {
+TEST_F(OpenCLRevTests, Mean_exceptions) {
   using stan::math::matrix_cl;
   using stan::math::var_value;
   Eigen::Matrix<double, -1, -1> m0(0, 0);

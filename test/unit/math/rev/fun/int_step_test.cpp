@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(AgradRev, int_step) {
+TEST_F(AgradRev, int_step) {
   using stan::math::int_step;
 
   stan::math::var a(5.0);

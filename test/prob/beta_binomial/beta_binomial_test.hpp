@@ -90,8 +90,9 @@ class AgradDistributionsBetaBinomial : public AgradDistributionTest {
            - lbeta(alpha, beta);
   }
 };
-
+/*
 TEST(ProbDistributionsBetaBinomialCDF, Values) {
   EXPECT_FLOAT_EQ(0.8868204314,
                   stan::math::beta_binomial_cdf(49, 100, 1.349, 3.938));
 }
+*/

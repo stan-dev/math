@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(OpenCLGradTest, exceptions) {
+TEST_F(OpenCLRevTests, GradTest_exceptions) {
   using stan::math::matrix_cl;
   using stan::math::to_matrix_cl;
   using stan::math::var;

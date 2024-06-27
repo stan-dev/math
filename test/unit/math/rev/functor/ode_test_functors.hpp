@@ -14,8 +14,8 @@
                                                                                \
     template <typename F, typename T_y0, typename T_t0, typename T_ts,         \
               typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr> \
-    std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,  \
-                              Eigen::Dynamic, 1>>                              \
+    inline std::vector<Eigen::Matrix<                                          \
+        stan::return_type_t<T_y0, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>    \
     operator()(const F& f, const T_y0& y0, const T_t0& t0,                     \
                const std::vector<T_ts>& ts, std::ostream* msgs,                \
                const Args&... args) {                                          \
@@ -39,7 +39,8 @@
   struct solver_name##_functor {                                               \
     template <typename F, typename T_y0, typename T_param, typename T_t0,      \
               typename T_ts>                                                   \
-    std::vector<std::vector<stan::return_type_t<T_y0, T_param, T_t0, T_ts>>>   \
+    inline std::vector<                                                        \
+        std::vector<stan::return_type_t<T_y0, T_param, T_t0, T_ts>>>           \
     operator()(const F& f, const std::vector<T_y0>& y0, const T_t0& t0,        \
                const std::vector<T_ts>& ts, const std::vector<T_param>& theta, \
                const std::vector<double>& x, const std::vector<int>& x_int,    \
@@ -67,8 +68,8 @@ struct ode_adjoint_functor {
 
   template <typename F, typename T_y0, typename T_t0, typename T_ts,
             typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
-  std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
-                            Eigen::Dynamic, 1>>
+  inline std::vector<Eigen::Matrix<
+      stan::return_type_t<T_y0, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
   operator()(const F& f, const T_y0& y0, const T_t0& t0,
              const std::vector<T_ts>& ts, std::ostream* msgs,
              const Args&... args) {
@@ -77,8 +78,8 @@ struct ode_adjoint_functor {
 
   template <typename F, typename T_y0, typename T_t0, typename T_ts,
             typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
-  std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
-                            Eigen::Dynamic, 1>>
+  inline std::vector<Eigen::Matrix<
+      stan::return_type_t<T_y0, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
   operator()(const F& f, const T_y0& y0_arg, const T_t0& t0,
              const std::vector<T_ts>& ts, double relative_tolerance,
              double absolute_tolerance, size_t max_num_steps,
@@ -109,8 +110,8 @@ struct ode_adjoint_functor {
   template <typename F, typename T_y0, typename T_t0, typename T_ts,
             typename... T_Args,
             stan::require_eigen_col_vector_t<T_y0>* = nullptr>
-  std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                            Eigen::Dynamic, 1>>
+  inline std::vector<Eigen::Matrix<
+      stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>, Eigen::Dynamic, 1>>
   operator()(const F& f, const T_y0& y0, const T_t0& t0,
              const std::vector<T_ts>& ts, double relative_tolerance_forward,
              const Eigen::VectorXd& absolute_tolerance_forward,

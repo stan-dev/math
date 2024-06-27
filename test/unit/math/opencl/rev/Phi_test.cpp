@@ -6,20 +6,20 @@
 
 auto Phi_functor = [](const auto& a) { return stan::math::Phi(a); };
 
-TEST(OpenCL_Phi, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, _Phi_prim_rev_values_small) {
   Eigen::VectorXd a(8);
   a << -0.22, -0.8, 0.5, 1, 0.15, 0.3, 0.34, -0.04;
   stan::math::test::compare_cpu_opencl_prim_rev(Phi_functor, a);
 }
 
-TEST(OpenCL_Phi, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, _Phi_prim_rev_size_0) {
   int N = 0;
 
   Eigen::MatrixXd a(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(Phi_functor, a);
 }
 
-TEST(OpenCL_Phi, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, _Phi_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);

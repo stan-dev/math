@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsParetoType2Lcdf, error_checking) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -84,7 +84,7 @@ auto pareto_type_2_lcdf_functor
         return stan::math::pareto_type_2_lcdf(y, mu, lambda, alpha);
       };
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -104,7 +104,7 @@ TEST(ProbDistributionsParetoType2Lcdf, opencl_matches_cpu_small) {
       lambda.transpose().eval(), alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -122,7 +122,7 @@ TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_y) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -140,7 +140,7 @@ TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_mu) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -158,7 +158,7 @@ TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_lambda) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -176,7 +176,7 @@ TEST(ProbDistributionsParetoType2Lcdf, opencl_broadcast_alpha) {
       lambda.transpose().eval(), alpha_scal);
 }
 
-TEST(ProbDistributionsParetoType2Lcdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistParetoType2Lcdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu

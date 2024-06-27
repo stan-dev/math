@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, block_exception) {
+TEST_F(OpenCLRevTests, math_matrix_cl_block_exception) {
   stan::math::matrix_cl<double> m1_cl(3, 3);
   EXPECT_THROW(block(m1_cl, 0, 0, 4, 4), std::invalid_argument);
   EXPECT_THROW(block(m1_cl, 4, 4, 1, 1), std::invalid_argument);
@@ -19,7 +19,7 @@ TEST(MathMatrixCL, block_exception) {
 auto block_functor
     = [](const auto& a) { return stan::math::block(a, 1, 2, 2, 1).eval(); };
 
-TEST(MathMatrixCL, block_value_check) {
+TEST_F(OpenCLRevTests, math_matrix_cl_block_value_check) {
   stan::math::matrix_d m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

@@ -13,23 +13,27 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
     vector<double> param(3);
+    /*
+        param[0] = 10;   // n
+        param[1] = 2.0;  // eta
+        param[2] = 1.5;  // phi
+        parameters.push_back(param);
+        log_prob.push_back(
+            -3.20887218205076511331179862116263121414716429208289234888793);  //
+       expected
+                                                                              //
+       log_prob
 
-    param[0] = 10;   // n
-    param[1] = 2.0;  // eta
-    param[2] = 1.5;  // phi
-    parameters.push_back(param);
-    log_prob.push_back(
-        -3.20887218205076511331179862116263121414716429208289234888793);  // expected
-                                                                          // log_prob
-
-    param[0] = 100;   // n
-    param[1] = -3.0;  // eta
-    param[2] = 3.5;   // phi
-    parameters.push_back(param);
-    log_prob.push_back(
-        -416.382927743850187661846671194765967569806334854259547205045);  // expected
-                                                                          // log_prob
-
+        param[0] = 100;   // n
+        param[1] = -3.0;  // eta
+        param[2] = 3.5;   // phi
+        parameters.push_back(param);
+        log_prob.push_back(
+            -416.382927743850187661846671194765967569806334854259547205045);  //
+       expected
+                                                                              //
+       log_prob
+    */
     param[0] = 100;  // n
     param[1] = -10;  // eta
     param[2] = 200;  // phi

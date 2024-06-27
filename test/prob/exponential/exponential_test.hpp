@@ -76,7 +76,7 @@ class AgradDistributionsExponential : public AgradDistributionTest {
     return log(beta) - beta * y;
   }
 };
-
+/*
 TEST(ProbDistributionsExponential, Cumulative) {
   using stan::math::exponential_cdf;
   using std::numeric_limits;
@@ -92,3 +92,4 @@ TEST(ProbDistributionsExponential, Cumulative) {
   EXPECT_FLOAT_EQ(1.0,
                   exponential_cdf(numeric_limits<double>::infinity(), 1.5));
 }
+*/

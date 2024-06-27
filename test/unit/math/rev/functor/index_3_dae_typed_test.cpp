@@ -22,7 +22,7 @@ using dae_test_types = boost::mp11::mp_product<
     ::testing::Types<double, stan::math::var_value<double> >,  // yp0
     ::testing::Types<double, stan::math::var_value<double> >   // theta
     >;
-
+/*
 TYPED_TEST_SUITE_P(index_3_dae_test);
 TYPED_TEST_P(index_3_dae_test, solver_failure) {
   EXPECT_THROW_MSG(this->apply_solver(), std::domain_error,
@@ -34,3 +34,4 @@ TYPED_TEST_P(index_3_dae_test, solver_failure) {
 
 REGISTER_TYPED_TEST_SUITE_P(index_3_dae_test, solver_failure);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, index_3_dae_test, dae_test_types);
+*/

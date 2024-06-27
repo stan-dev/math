@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, col_exception) {
+TEST_F(OpenCLRevTests, math_matrix_cl_col_exception) {
   stan::math::matrix_cl<double> m1_cl(3, 3);
   EXPECT_THROW(col(m1_cl, 0), std::invalid_argument);
   EXPECT_THROW(col(m1_cl, 4), std::invalid_argument);
@@ -18,7 +18,7 @@ TEST(MathMatrixCL, col_exception) {
 
 auto col_functor = [](const auto& a) { return stan::math::col(a, 2); };
 
-TEST(MathMatrixCL, col_value_check) {
+TEST_F(OpenCLRevTests, math_matrix_cl_col_value_check) {
   stan::math::matrix_d m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

@@ -8,7 +8,7 @@ auto log_inv_logit_diff_functor = [](const auto& a, const auto& b) {
   return stan::math::log_inv_logit_diff(a, b);
 };
 
-TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_log_inv_logit_diff_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -20,7 +20,7 @@ TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_small) {
                                                 b);
 }
 
-TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, Matrix_log_inv_logit_diff_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -35,7 +35,7 @@ TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_M_0) {
                                                 d);
 }
 
-TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Matrix_log_inv_logit_diff_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 
@@ -45,7 +45,7 @@ TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_large) {
                                                 b);
 }
 
-TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_scalar_values_large) {
+TEST_F(OpenCLRevTests, Matrix_log_inv_logit_diff_prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;
 

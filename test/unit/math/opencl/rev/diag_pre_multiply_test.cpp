@@ -9,7 +9,7 @@ auto diag_pre_multiply_functor = [](const auto& a, const auto& b) {
   return stan::math::diag_pre_multiply(a, b);
 };
 
-TEST(OpenCL_diag_pre_multiply, diag_pre_multiply_small_vector) {
+TEST_F(OpenCLRevTests, _diag_pre_multiply_diag_pre_multiply_small_vector) {
   Eigen::VectorXd in1(4);
   in1 << 0.5, 3.4, 5.2, 7.5;
   Eigen::MatrixXd in2(4, 2);
@@ -18,7 +18,7 @@ TEST(OpenCL_diag_pre_multiply, diag_pre_multiply_small_vector) {
                                                 in2);
 }
 
-TEST(OpenCL_diag_pre_multiply, diag_pre_multiply_small_row_vector) {
+TEST_F(OpenCLRevTests, _diag_pre_multiply_diag_pre_multiply_small_row_vector) {
   Eigen::RowVectorXd in1(4);
   in1 << 0.5, 3.4, 5.2, 7.5;
   Eigen::MatrixXd in2(4, 2);
@@ -27,14 +27,14 @@ TEST(OpenCL_diag_pre_multiply, diag_pre_multiply_small_row_vector) {
                                                 in2);
 }
 
-TEST(OpenCL_diag_pre_multiply, zero) {
+TEST_F(OpenCLRevTests, _diag_pre_multiply_zero) {
   Eigen::VectorXd in1;
   Eigen::MatrixXd in2;
   stan::math::test::compare_cpu_opencl_prim_rev(diag_pre_multiply_functor, in1,
                                                 in2);
 }
 
-TEST(OpenCL_diag_pre_multiply, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, _diag_pre_multiply_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);

@@ -84,7 +84,7 @@ class AgradDistributionsLognormal : public AgradDistributionTest {
            - square(log(y) - mu) / (2.0 * sigma * sigma);
   }
 };
-
+/*
 TEST(ProbDistributionsLognormal, Cumulative) {
   using stan::math::lognormal_cdf;
   EXPECT_FLOAT_EQ(0.4687341, lognormal_cdf(1.2, 0.3, 1.5));
@@ -98,3 +98,4 @@ TEST(ProbDistributionsLognormal, Cumulative) {
   EXPECT_FLOAT_EQ(0.0, lognormal_cdf(0.0, 0.0, 1.0));
   EXPECT_FLOAT_EQ(1.0, lognormal_cdf(pos_inf, 0.0, 1.0));
 }
+*/

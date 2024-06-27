@@ -13,7 +13,7 @@ namespace test {
  * @param x value to test
  * @return true if value is finite
  */
-bool is_finite(double x) {
+inline bool is_finite(double x) {
   return !stan::math::is_inf(x) && !stan::math::is_nan(x);
 }
 
@@ -27,7 +27,7 @@ bool is_finite(double x) {
  * @return true if all container values are finite
  */
 template <typename T, int R, int C>
-bool is_finite(const Eigen::Matrix<T, R, C>& x) {
+inline bool is_finite(const Eigen::Matrix<T, R, C>& x) {
   for (int i = 0; i < x.size(); ++i)
     if (!is_finite(x(i)))
       return false;
@@ -42,7 +42,7 @@ bool is_finite(const Eigen::Matrix<T, R, C>& x) {
  * @return true if all container values are finite
  */
 template <typename T>
-bool is_finite(const std::vector<T>& x) {
+inline bool is_finite(const std::vector<T>& x) {
   for (size_t i = 0; i < x.size(); ++i)
     if (!is_finite(x[i]))
       return false;

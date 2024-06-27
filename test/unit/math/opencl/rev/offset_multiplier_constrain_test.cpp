@@ -25,7 +25,7 @@ auto offset_multiplier_constrain_functor3
         return lp;
       };
 
-TEST(OpenCLOffsetMultiplierConstrain, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, OffsetMultiplierConstrain_prim_rev_values_small) {
   Eigen::VectorXd a(8);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
   Eigen::VectorXd b(8);
@@ -57,7 +57,7 @@ TEST(OpenCLOffsetMultiplierConstrain, prim_rev_values_small) {
       offset_multiplier_constrain_functor3, a, b, c_scal);
 }
 
-TEST(OpenCLOffsetMultiplierConstrain, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, OffsetMultiplierConstrain_prim_rev_size_0) {
   int N = 0;
 
   Eigen::VectorXd a(N);
@@ -88,7 +88,7 @@ TEST(OpenCLOffsetMultiplierConstrain, prim_rev_size_0) {
       offset_multiplier_constrain_functor3, a, b, c_scal);
 }
 
-TEST(OpenCLOffsetMultiplierConstrain, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, OffsetMultiplierConstrain_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);

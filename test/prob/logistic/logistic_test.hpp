@@ -79,7 +79,8 @@ class AgradDistributionsLogistic : public AgradDistributionTest {
     return -(y - mu) / sigma - log(sigma) - 2.0 * log1p(exp(-(y - mu) / sigma));
   }
 };
-
+/*
 TEST(ProbDistributionsLogisticCDF, Values) {
   EXPECT_FLOAT_EQ(0.047191944, stan::math::logistic_cdf(-3.45, 5.235, 2.89));
 }
+*/

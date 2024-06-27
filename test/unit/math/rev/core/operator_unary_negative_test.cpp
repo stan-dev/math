@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(AgradRev, varmat_unary_negative) {
+TEST_F(AgradRev, varmat_unary_negative) {
   stan::math::var_value<Eigen::MatrixXd> x = Eigen::MatrixXd::Random(2, 3);
 
   stan::math::var_value<Eigen::MatrixXd> y = -x;

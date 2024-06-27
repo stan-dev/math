@@ -7,7 +7,7 @@
 auto matrix_multiply_functor
     = [](const auto& a, const auto& b) { return stan::math::multiply(a, b); };
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_values_small) {
   int N = 2;
   int M = 3;
   int K = 4;
@@ -19,7 +19,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_values_N_0) {
   int N = 0;
   int M = 3;
   int K = 4;
@@ -30,7 +30,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
   int K = 4;
@@ -40,7 +40,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_K_0) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_values_K_0) {
   int N = 2;
   int M = 3;
   int K = 0;
@@ -51,7 +51,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_K_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_values_large) {
   int N = 71;
   int M = 83;
   int K = 97;
@@ -61,7 +61,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_scalar_mat_zero) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_scalar_mat_zero) {
   int M = 0;
   int K = 0;
 
@@ -71,7 +71,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_scalar_mat_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, b, a);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_scalar_mat_values) {
+TEST_F(OpenCLRevTests, MatrixMultiply_prim_rev_scalar_mat_values) {
   int N = 71;
   int M = 83;
 

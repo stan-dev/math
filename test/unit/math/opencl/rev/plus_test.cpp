@@ -5,7 +5,7 @@
 
 auto plus_functor = [](const auto& a) { return stan::math::plus(a); };
 
-TEST(OpenCLPlus, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Plus_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 

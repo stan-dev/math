@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(muProbDistributionsNegBinomial2, error_checking) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_error_checking) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -72,7 +72,8 @@ auto neg_binomial_2_lpmf_functor_propto
         return stan::math::neg_binomial_2_lpmf<true>(n, mu, phi);
       };
 
-TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       muProbDistributionsNegBinomial2_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -94,7 +95,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_small) {
       phi.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial2, opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_opencl_broadcast_n) {
   int N = 3;
 
   int n = 2;
@@ -113,7 +114,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_broadcast_n) {
       neg_binomial_2_lpmf_functor_propto, n, mu, phi.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial2, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_opencl_broadcast_mu) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -131,7 +132,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_broadcast_mu) {
       neg_binomial_2_lpmf_functor_propto, n, mu, phi.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial2, opencl_broadcast_phi) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_opencl_broadcast_phi) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -149,7 +150,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_broadcast_phi) {
       neg_binomial_2_lpmf_functor_propto, n, mu.transpose().eval(), phi);
 }
 
-TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial2_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);
@@ -173,7 +174,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_big) {
       phi.transpose().eval());
 }
 
-TEST(ProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
+TEST_F(OpenCLRevTests, probdistNegBinomial2_opencl_scalar_n_mu) {
   int N = 3;
   int M = 2;
 

@@ -14,7 +14,7 @@ auto student_t_lpdf2_functor_propto
         return stan::math::student_t_lpdf<true>(y, nu, mu, sigma);
       };
 
-TEST(ProbDistributionsStudentT, opencl_broadcast_nu) {
+TEST_F(OpenCLRevTests, probdistStudentT_opencl_broadcast_nu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -37,7 +37,7 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_nu) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsStudentT, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistStudentT_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -60,7 +60,7 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_mu) {
       nu.transpose().eval(), mu_scal, sigma);
 }
 
-TEST(ProbDistributionsStudentT, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistStudentT_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);

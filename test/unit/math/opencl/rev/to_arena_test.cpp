@@ -1,9 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, to_arena_matrix_cl_test) {
+TEST_F(AgradRev, to_arena_matrix_cl_test) {
   Eigen::MatrixXd m(3, 2);
   m << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_cl<double> a(m);
@@ -22,7 +23,7 @@ TEST(AgradRev, to_arena_matrix_cl_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, to_arena_kg_expression_test) {
+TEST_F(AgradRev, to_arena_kg_expression_test) {
   Eigen::MatrixXd m(3, 2);
   m << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_cl<double> a(m);
@@ -40,7 +41,7 @@ TEST(AgradRev, to_arena_kg_expression_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, to_arena_var_value_matrix_cl_test) {
+TEST_F(AgradRev, to_arena_var_value_matrix_cl_test) {
   Eigen::MatrixXd val(3, 2);
   val << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd adj(3, 2);

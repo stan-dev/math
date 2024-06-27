@@ -13,10 +13,10 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
                   log(boost::math::cyl_bessel_i(sqrt(3), sqrt(2))));
 
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(0.5, 10),
-                  log(sqrt(2 / (M_PI * 10)) * std::sinh(10)));
+                  log(sqrt(2 / (stan::math::pi() * 10)) * std::sinh(10)));
 
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(-0.5, 10),
-                  log(sqrt(2 / (M_PI * 10)) * std::cosh(10)));
+                  log(sqrt(2 / (stan::math::pi() * 10)) * std::cosh(10)));
 
   // code branches for z > 100 and v sufficiently small
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(.1, 100),

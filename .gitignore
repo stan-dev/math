@@ -36,6 +36,8 @@ benchmarks/*.csv
 *.exe
 *.a
 
+#build directory
+/build/**
 # Intel template building blocks (TBB)
 lib/tbb
 

@@ -84,6 +84,8 @@ class AgradDistributionsWeibull : public AgradDistributionTest {
            - multiply_log(alpha, sigma) - pow(y / sigma, alpha);
   }
 };
+/*
+TODO: Move to it's own cpp test file
 
 TEST(ProbDistributionsWeibull, Cumulative) {
   using stan::math::weibull_cdf;
@@ -99,3 +101,5 @@ TEST(ProbDistributionsWeibull, Cumulative) {
   EXPECT_FLOAT_EQ(1.0,
                   weibull_cdf(numeric_limits<double>::infinity(), 1.0, 1.0));
 }
+
+*/

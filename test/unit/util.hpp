@@ -167,7 +167,7 @@
  * @param s string to match count occurrences
  * @return number of found occurrences of target in s
  */
-int count_matches(const std::string& target, const std::string& s) {
+inline int count_matches(const std::string& target, const std::string& s) {
   if (target.size() == 0)
     return -1;  // error
   int count = 0;
@@ -212,7 +212,7 @@ int count_matches(const std::string& target, const std::string& s) {
 namespace stan {
 namespace test {
 
-auto make_sparse_matrix_random(int rows, int cols) {
+inline auto make_sparse_matrix_random(int rows, int cols) {
   using eigen_triplet = Eigen::Triplet<double>;
   boost::mt19937 gen;
   boost::random::uniform_real_distribution<double> dist(0.0, 1.0);

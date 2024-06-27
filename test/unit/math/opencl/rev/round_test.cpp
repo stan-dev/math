@@ -6,7 +6,7 @@
 
 auto round_functor = [](const auto& a) { return stan::math::round(a); };
 
-TEST(OpenCL_round, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, _round_prim_rev_values_small) {
   Eigen::VectorXd a(9);
   a << -8, 2.7, 0, 8, -2.6, -2, 1, 1.3, 3;
   stan::math::test::compare_cpu_opencl_prim_rev(round_functor, a);
@@ -17,14 +17,14 @@ TEST(OpenCL_round, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(round_functor, b_nan);
 }
 
-TEST(OpenCL_round, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, _round_prim_rev_size_0) {
   int N = 0;
 
   Eigen::MatrixXd a(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(round_functor, a);
 }
 
-TEST(OpenCL_round, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, _round_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);

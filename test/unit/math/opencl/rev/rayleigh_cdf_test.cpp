@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsRayleighCdf, error_checking) {
+TEST_F(OpenCLRevTests, probdistRayleighCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -44,7 +44,7 @@ auto rayleigh_cdf_functor = [](const auto& y, const auto& mu) {
   return stan::math::rayleigh_cdf(y, mu);
 };
 
-TEST(ProbDistributionsRayleighCdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistRayleighCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -58,7 +58,7 @@ TEST(ProbDistributionsRayleighCdf, opencl_matches_cpu_small) {
       rayleigh_cdf_functor, y.transpose().eval(), mu.transpose().eval());
 }
 
-TEST(ProbDistributionsRayleighCdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistRayleighCdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -69,7 +69,7 @@ TEST(ProbDistributionsRayleighCdf, opencl_broadcast_y) {
                                                          y_scal, mu);
 }
 
-TEST(ProbDistributionsRayleighCdf, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistRayleighCdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -80,7 +80,7 @@ TEST(ProbDistributionsRayleighCdf, opencl_broadcast_mu) {
                                                          y, mu_scal);
 }
 
-TEST(ProbDistributionsRayleighCdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistRayleighCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

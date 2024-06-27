@@ -66,7 +66,8 @@ struct pph_dae_base {
   int max_num_step;
 
   pph_dae_base()
-      : theta(0.25),
+      : f(),
+        theta(0.25),
         yy0(3),
         yp0(3),
         t0(0),

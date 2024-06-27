@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixHeadCL, Head_size) {
+TEST_F(OpenCLRevTests, MathMatrixHeadCL_Head_size) {
   using stan::math::head;
   using stan::math::matrix_cl;
   using stan::math::var_value;
@@ -30,7 +30,7 @@ TEST(MathMatrixHeadCL, Head_size) {
   EXPECT_THROW(head(rv_var, 4), std::out_of_range);
 }
 
-TEST(MathMatrixHeadCL, HeadVector4) {
+TEST_F(OpenCLRevTests, MathMatrixHeadCL_HeadVector4) {
   using stan::math::head;
   Eigen::VectorXd v(3);
   v << 1, 2, 3;
@@ -43,14 +43,14 @@ TEST(MathMatrixHeadCL, HeadVector4) {
 
 auto head_functor = [](const auto& a) { return stan::math::head(a, 5); };
 
-TEST(MathMatrixCL, head_value_check_vector) {
+TEST_F(OpenCLRevTests, math_matrix_cl_head_value_check_vector) {
   stan::math::vector_d m1(9);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   stan::math::test::compare_cpu_opencl_prim_rev(head_functor, m1);
 }
 
-TEST(MathMatrixCL, head_value_check_row_vector) {
+TEST_F(OpenCLRevTests, math_matrix_cl_head_value_check_row_vector) {
   stan::math::row_vector_d m1(9);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

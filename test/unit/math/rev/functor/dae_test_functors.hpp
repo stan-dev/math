@@ -5,7 +5,8 @@
 
 struct dae_functor {
   template <typename F, typename T_yy, typename T_yp, typename... T_Args>
-  std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
+  inline std::vector<
+      Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
   operator()(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
              const std::vector<double>& ts, std::ostream* msgs,
              const T_Args&... args) {
@@ -13,7 +14,8 @@ struct dae_functor {
   }
 
   template <typename F, typename T_yy, typename T_yp, typename... T_Args>
-  std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
+  inline std::vector<
+      Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
   operator()(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
              const std::vector<double>& ts, double rtol, double atol,
              int64_t max_num_steps, std::ostream* msgs, const T_Args&... args) {

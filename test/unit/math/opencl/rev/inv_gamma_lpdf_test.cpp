@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsInvGamma, error_checking) {
+TEST_F(OpenCLRevTests, probdistInvGamma_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -77,7 +77,7 @@ auto inv_gamma_lpdf_functor_propto
         return stan::math::inv_gamma_lpdf<true>(y, alpha, beta);
       };
 
-TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -100,7 +100,7 @@ TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small) {
       alpha.transpose().eval(), beta.transpose().eval());
 }
 
-TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small_zero_y) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_matches_cpu_small_zero_y) {
   int N = 3;
   int M = 2;
 
@@ -117,7 +117,7 @@ TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small_zero_y) {
                                                 y, alpha, beta);
 }
 
-TEST(ProbDistributionsInvGamma, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -136,7 +136,7 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_y) {
       inv_gamma_lpdf_functor_propto, y, alpha, beta.transpose().eval());
 }
 
-TEST(ProbDistributionsInvGamma, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -155,7 +155,7 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_alpha) {
       inv_gamma_lpdf_functor_propto, y, alpha, beta.transpose().eval());
 }
 
-TEST(ProbDistributionsInvGamma, opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_broadcast_beta) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -174,7 +174,7 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_beta) {
       inv_gamma_lpdf_functor_propto, y, alpha.transpose().eval(), beta);
 }
 
-TEST(ProbDistributionsInvGamma, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistInvGamma_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

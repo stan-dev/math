@@ -20,4 +20,5 @@ TEST(AgradRevZeroNested, set_zero_all_adjoints_nested_outside) {
   EXPECT_FLOAT_EQ(non_chaining.adj(), 2.0);
   stan::math::set_zero_all_adjoints_nested();
   EXPECT_FLOAT_EQ(non_chaining.adj(), 2.0);
+  stan::math::recover_memory_nested();
 }

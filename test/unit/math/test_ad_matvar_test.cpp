@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/util.hpp>
 #include <gtest/gtest.h>
 #include <gtest/gtest-spi.h>
 #include <limits>
@@ -16,7 +17,7 @@ auto one_arg_bad_vals(const stan::math::var_value<T>& x) {
       x.val() * 0, [x](const auto& vi) mutable { x.adj() += vi.adj(); });
 }
 
-TEST(test_unit_math_test_ad_matvar, one_arg_bad_vals) {
+TEST_F(TestUnitMathTestAd, matvar_one_arg_bad_vals) {
   auto f = [](const auto& u) { return one_arg_bad_vals(u); };
 
   Eigen::VectorXd x = Eigen::VectorXd::Ones(2);
@@ -43,7 +44,7 @@ auto one_arg_bad_grads(const stan::math::var_value<T>& x) {
       x.val(), [x](const auto& vi) mutable { x.adj() -= vi.adj(); });
 }
 
-TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads) {
+TEST_F(TestUnitMathTestAd, matvar_one_arg_bad_grads) {
   auto f = [](const auto& u) { return one_arg_bad_grads(u); };
 
   Eigen::VectorXd x = Eigen::VectorXd::Ones(2);
@@ -96,7 +97,7 @@ auto two_arg_bad_vals(const stan::math::var_value<T2>& x2, const T1& x1) {
   return ret_type(ret);
 }
 
-TEST(test_unit_math_test_ad_matvar, two_arg_bad_vals) {
+TEST_F(TestUnitMathTestAd, matvar_two_arg_bad_vals) {
   auto f
       = [](const auto& x1, const auto& x2) { return two_arg_bad_vals(x1, x2); };
 
@@ -157,7 +158,7 @@ auto two_arg_bad_grads(const stan::math::var_value<T2>& x2, const T1& x1) {
   return ret_type(ret);
 }
 
-TEST(test_unit_math_test_ad_matvar, two_arg_bad_grads) {
+TEST_F(TestUnitMathTestAd, matvar_two_arg_bad_grads) {
   auto f = [](const auto& x1, const auto& x2) {
     return two_arg_bad_grads(x1, x2);
   };
@@ -247,7 +248,7 @@ auto three_arg_bad_vals(const stan::math::var_value<T3>& x3, const T1& x1,
   return ret_type(ret);
 }
 
-TEST(test_unit_math_test_ad_matvar, three_arg_bad_vals) {
+TEST_F(TestUnitMathTestAd, matvar_three_arg_bad_vals) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return three_arg_bad_vals(x1, x2, x3);
   };
@@ -353,7 +354,7 @@ auto three_arg_bad_grads(const stan::math::var_value<T3>& x3, const T1& x1,
   return ret_type(ret);
 }
 
-TEST(test_unit_math_test_ad_matvar, three_arg_bad_grads) {
+TEST_F(TestUnitMathTestAd, matvar_three_arg_bad_grads) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return three_arg_bad_grads(x1, x2, x3);
   };
@@ -419,7 +420,7 @@ auto one_arg_bad_vals_std_vector(
   return out_heap;
 }
 
-TEST(test_unit_math_test_ad_matvar, one_arg_bad_vals_std_vector) {
+TEST_F(TestUnitMathTestAd, matvar_one_arg_bad_vals_std_vector) {
   auto f = [](const auto& u) { return one_arg_bad_vals_std_vector(u); };
 
   std::vector<Eigen::VectorXd> x = {Eigen::VectorXd::Ones(2)};
@@ -457,7 +458,7 @@ auto one_arg_bad_grads_std_vector(
   return out_heap;
 }
 
-TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads_std_vector) {
+TEST_F(TestUnitMathTestAd, matvar_one_arg_bad_grads_std_vector) {
   auto f = [](const auto& u) { return one_arg_bad_grads_std_vector(u); };
 
   std::vector<Eigen::VectorXd> x = {Eigen::VectorXd::Ones(2)};
@@ -512,7 +513,7 @@ auto two_args_bad_vals_std_vector(
   return out_heap;
 }
 
-TEST(test_unit_math_test_ad_matvar, two_args_bad_vals_std_vector) {
+TEST_F(TestUnitMathTestAd, matvar_two_args_bad_vals_std_vector) {
   auto f = [](const auto& x1, const auto& x2) {
     return two_args_bad_vals_std_vector(x1, x2);
   };
@@ -571,7 +572,7 @@ auto two_args_bad_grads_std_vector(
   return out_heap;
 }
 
-TEST(test_unit_math_test_ad_matvar, two_args_bad_grads_std_vector) {
+TEST_F(TestUnitMathTestAd, matvar_two_args_bad_grads_std_vector) {
   auto f = [](const auto& x1, const auto& x2) {
     return two_args_bad_grads_std_vector(x1, x2);
   };
@@ -601,7 +602,7 @@ auto bad_return_type(const stan::math::var_value<T>& x) {
   return ret_type(out);
 }
 
-TEST(test_unit_math_test_ad_matvar, bad_return_type) {
+TEST_F(TestUnitMathTestAd, matvar_bad_return_type) {
   EXPECT_FATAL_FAILURE(
       {
         auto f = [](const auto& x) { return bad_return_type(x); };
@@ -630,7 +631,7 @@ auto bad_return_type_std_vector(
   return out;
 }
 
-TEST(test_unit_math_test_ad_matvar, bad_return_type_std_vector) {
+TEST_F(TestUnitMathTestAd, matvar_bad_return_type_std_vector) {
   EXPECT_FATAL_FAILURE(
       {
         auto f = [](const auto& x) { return bad_return_type_std_vector(x); };
@@ -653,7 +654,7 @@ auto bad_throws1(const stan::math::var_value<T>& x) {
   return x;
 }
 
-TEST(test_unit_math_test_ad_matvar, bad_throws1) {
+TEST_F(TestUnitMathTestAd, matvar_bad_throws1) {
   EXPECT_FATAL_FAILURE(
       {
         auto f = [](const auto& x) { return bad_throws1(x); };
@@ -676,7 +677,7 @@ auto bad_throws2(const stan::math::var_value<T>& x) {
   return x;
 }
 
-TEST(test_unit_math_test_ad_matvar, bad_throws2) {
+TEST_F(TestUnitMathTestAd, matvar_bad_throws2) {
   EXPECT_FATAL_FAILURE(
       {
         auto f = [](const auto& x) { return bad_throws2(x); };

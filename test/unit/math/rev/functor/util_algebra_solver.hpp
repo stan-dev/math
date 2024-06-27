@@ -180,7 +180,7 @@ class variadic_test : public ::testing::Test {
 
 /* wrapper function that either calls the Newton or the Powell solver. */
 template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
+inline Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     bool is_newton, bool use_tol, const F& f,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
@@ -213,7 +213,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
  * using deprecated signatures.
  */
 template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver_non_varia(
+inline Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver_non_varia(
     bool is_newton, bool use_tol, const F& f,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
@@ -342,7 +342,7 @@ struct variadic_eq_functor {
 /* template code for running tests in the prim and rev regime */
 
 template <typename F, typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     bool is_newton = false, bool tuning = false, double scale_step = 1e-3,
     double rel_tol = 1e-10, double fun_tol = 1e-6, int32_t max_steps = 1e+3) {
@@ -363,7 +363,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
 }
 
 template <typename F, typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_non_varia_test(
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_non_varia_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     bool is_newton = false, bool tuning = false, double scale_step = 1e-3,
     double rel_tol = 1e-10, double fun_tol = 1e-6, int32_t max_steps = 1e+3) {
@@ -384,7 +384,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_non_varia_test(
 }
 
 template <typename F, typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     int solver_type = 0, bool use_tol = false) {
   int n_x = 3;
@@ -517,7 +517,7 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       std::domain_error);
 }
 
-Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
+inline Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
     const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
     const stan::math::var& y_1, const stan::math::var& y_2,
     const stan::math::var& y_3, const int i, bool is_newton = false,

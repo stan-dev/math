@@ -7,7 +7,7 @@
 auto cholesky_decompose_functor
     = [](const auto& a) { return stan::math::cholesky_decompose(a); };
 
-TEST(OpenCLCholeskyDecompose, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, CholeskyDecompose_prim_rev_values_small) {
   int N = 3;
 
   Eigen::MatrixXd a(N, N);
@@ -15,7 +15,7 @@ TEST(OpenCLCholeskyDecompose, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
 }
 
-TEST(OpenCLCholeskyDecompose, prim_rev_size_1) {
+TEST_F(OpenCLRevTests, CholeskyDecompose_prim_rev_size_1) {
   int N = 1;
 
   Eigen::MatrixXd a(N, N);
@@ -23,14 +23,14 @@ TEST(OpenCLCholeskyDecompose, prim_rev_size_1) {
   stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
 }
 
-TEST(OpenCLCholeskyDecompose, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, CholeskyDecompose_prim_rev_size_0) {
   int N = 0;
 
   Eigen::MatrixXd a(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
 }
 
-TEST(OpenCLCholeskyDecompose, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, CholeskyDecompose_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);

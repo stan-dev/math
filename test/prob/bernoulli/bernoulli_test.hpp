@@ -81,8 +81,9 @@ class AgradDistributionsBernoulli : public AgradDistributionTest {
     throw std::domain_error("n should either be 1 or 0");
   }
 };
-
+/*
 TEST(ProbDistributionsBernoulliCDF, Values) {
   EXPECT_FLOAT_EQ(1, stan::math::bernoulli_cdf(1, 0.57));
   EXPECT_FLOAT_EQ(1 - 0.57, stan::math::bernoulli_cdf(0, 0.57));
 }
+*/

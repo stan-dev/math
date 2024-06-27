@@ -7,7 +7,7 @@
 auto hypot_functor
     = [](const auto& a, const auto& b) { return stan::math::hypot(a, b); };
 
-TEST(OpenCLMatrix_hypot, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_hypot_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -18,7 +18,7 @@ TEST(OpenCLMatrix_hypot, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(hypot_functor, a, b);
 }
 
-TEST(OpenCLMatrixhypot, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, Matrixhypot_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -31,7 +31,7 @@ TEST(OpenCLMatrixhypot, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(hypot_functor, c, d);
 }
 
-TEST(OpenCLMatrixhypot, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Matrixhypot_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 
@@ -40,7 +40,7 @@ TEST(OpenCLMatrixhypot, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(hypot_functor, a, b);
 }
 
-TEST(OpenCLMatrixhypot, prim_rev_scalar_values_large) {
+TEST_F(OpenCLRevTests, Matrixhypot_prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;
 

@@ -7,7 +7,7 @@
 auto distance_functor
     = [](const auto& a, const auto& b) { return stan::math::distance(a, b); };
 
-TEST(OpenCLMatrix_distance, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_distance_prim_rev_values_small) {
   int N = 6;
 
   Eigen::VectorXd a(N);
@@ -17,7 +17,7 @@ TEST(OpenCLMatrix_distance, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(distance_functor, a, b);
 }
 
-TEST(OpenCLMatrix_distance, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, Matrix_distance_prim_rev_values_M_0) {
   int N = 0;
 
   Eigen::VectorXd a(N);
@@ -25,7 +25,7 @@ TEST(OpenCLMatrix_distance, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(distance_functor, a, b);
 }
 
-TEST(OpenCLMatrix_distance, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Matrix_distance_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);

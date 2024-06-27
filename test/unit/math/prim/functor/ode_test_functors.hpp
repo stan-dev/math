@@ -7,17 +7,17 @@ namespace stan {
 namespace test {
 
 template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
-T sum_(T arg) {
+inline T sum_(T arg) {
   return arg;
 }
 
 template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
-auto sum_(EigMat&& arg) {
+inline auto sum_(EigMat&& arg) {
   return stan::math::sum(arg);
 }
 
 template <typename Vec, stan::require_std_vector_t<Vec>* = nullptr>
-auto sum_(Vec&& arg) {
+inline auto sum_(Vec&& arg) {
   stan::scalar_type_t<Vec> sum = 0;
   for (size_t i = 0; i < arg.size(); ++i) {
     sum += sum_(arg[i]);
