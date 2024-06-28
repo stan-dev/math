@@ -491,27 +491,27 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;
 
-	// computation of derivatives and precision checks
+    // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
-		const T_partials_return deriv_t_7
-			= internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
-				  [](auto&&... args) {
-					return internal::wiener5_grad_t<GradientCalc::ON>(args...);
-				  },
-				  hcubature_err, params, dim, xmin, xmax,
-				  maximal_evaluations_hcubature, absolute_error_hcubature,
-				  relative_error_hcubature / 2)
-			  / density;
-		if (!is_constant_all<T_y>::value) {
-		  partials<0>(ops_partials)[i] = deriv_t_7;
-		}
-		if (!is_constant_all<T_t0>::value) {
-		  partials<2>(ops_partials)[i] = -deriv_t_7;
-		}
-	}
-	T_partials_return derivative;
+    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+      const T_partials_return deriv_t_7
+          = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
+                [](auto&&... args) {
+                  return internal::wiener5_grad_t<GradientCalc::ON>(args...);
+                },
+                hcubature_err, params, dim, xmin, xmax,
+                maximal_evaluations_hcubature, absolute_error_hcubature,
+                relative_error_hcubature / 2)
+            / density;
+      if (!is_constant_all<T_y>::value) {
+        partials<0>(ops_partials)[i] = deriv_t_7;
+      }
+      if (!is_constant_all<T_t0>::value) {
+        partials<2>(ops_partials)[i] = -deriv_t_7;
+      }
+    }
+    T_partials_return derivative;
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(

@@ -61,11 +61,9 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
   const auto exponent_with_1mw = sign_v * 2.0 * v * a * (1.0 - w);
   const auto exponent = (sign_v * 2 * a * v);
   const auto exponent_with_w = 2 * a * v * w;
-  if (unlikely(
-  (exponent_with_1mw >= exponent_m1) 
-	  || ((exponent_with_w >= exponent_m1) && (sign_v == 1))
-      || (exponent >= exponent_m1) 
-	  || v == 0)) {
+  if (unlikely((exponent_with_1mw >= exponent_m1)
+               || ((exponent_with_w >= exponent_m1) && (sign_v == 1))
+               || (exponent >= exponent_m1) || v == 0)) {
     return ret_t(-w);
   }
   ret_t diff_term;
@@ -75,8 +73,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
     diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
   } else if (v > 0) {
     ans = LOG_TWO - log1m_exp(exponent_with_1mw);
-    diff_term
-        = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
+    diff_term = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
   }
   if (log_w > diff_term) {
     ans += log_diff_exp(log_w, diff_term);
@@ -329,8 +326,8 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     lccdf += log(ccdf);
 
     const auto new_est_err = log(ccdf) + log_error_derivative - LOG_FOUR;
-	
-	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+
+    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       const auto deriv_y = internal::estimate_with_err_check<5, 0>(
           [](auto&&... args) {
             return internal::wiener5_density<GradientCalc::ON>(args...);
@@ -353,7 +350,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                 new_est_err, y_value - t0_value, a_value, v_value, w_value, cdf,
                 log_error_absolute)
             / ccdf;
-    }	
+    }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(
