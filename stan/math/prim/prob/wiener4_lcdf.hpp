@@ -19,109 +19,6 @@ inline auto rexp(T_x&& x) noexcept {
 }
 
 /**
- * Helper function for Mill's ratio. This is dnorm on log-scale.
- *
- * @param x A scalar
- * @return dnorm on log-scale
- */
-template <typename T_x>
-inline auto lognormal(T_x&& x) noexcept {
-  return -0.5 * x * x - LOG_SQRT_PI - 0.5 * LOG_TWO;
-}
-
-/**
- * Helper function for Mill's ratio. This is pnorm on log-scale.
- *
- * @param z A scalar
- * @return pnorm on log-scale
- *
- * The original function lnnorm was written by ...
- *     Jean Marie Linhart
- *     StataCorp LP
- *     jlinhart@stata.com
- *     January 4, 2008
- * and later modified and adapted to Stan
- */
-template <typename T_z>
-inline auto lnnorm(T_z&& z) noexcept {
-  using ret_t = return_type_t<T_z>;
-  static const double LNNORM_MAX_X = 38.0;
-  static const double LNNORM_MIN_X = -1e9;
-  int lower;
-
-  auto t = ret_t(0.0);
-  auto z_ = z;
-  auto s = z_;
-
-  if (z_ == 0.0) {
-    return ret_t(log(0.5));
-  }
-  if (z_ > LNNORM_MAX_X) {
-    return ret_t(0.0);
-  }
-  if (z_ <= LNNORM_MIN_X) {
-    return ret_t(-0.5 * z_ * z_);
-  }
-  if (z_ < 0.0) {
-    z_ = -z_;
-    lower = 1;
-  } else {
-    lower = 0;
-  }
-
-  const auto z2 = square(z_);
-  const auto y = exp(-0.5 * z2) / SQRT_TWO_PI;
-  auto n = y / z_;
-
-  if (!(z_ > 2.0)) {
-    z_ *= y;
-    s = z_;
-    for (n = 3; s != t; n += 2) {
-      t = s;
-      z_ *= (z2 / n);
-      s += z_;
-    }
-    if (lower) {
-      return ret_t(log(0.5 - s));
-    }
-    return ret_t(log(0.5 + s));
-  }
-
-  auto a1 = ret_t(2.0);
-  auto a2 = ret_t(0.0);
-  n = z2 + 3;
-  auto p1 = ret_t(1.0);
-  auto q1 = z_;
-  auto p2 = (n - 1);
-  auto q2 = n * z_;
-  auto m = p1 / q1;
-  t = p2 / q2;
-  s = m;
-
-  for (n += 4; m != t && s != t; n += 4) {
-    a1 -= 8.0;
-    a2 += a1;
-    s = a2 * p1 + n * p2;
-    p1 = p2;
-    p2 = s;
-    s = a2 * q1 + n * q2;
-    q1 = q2;
-    q2 = s;
-    s = m;
-    m = t;
-    if (q2 > 1.0e30) {
-      p1 /= 1.0e30;
-      p2 /= 1.0e30;
-      q1 /= 1.0e30;
-      q2 /= 1.0e30;
-    }
-    t = p2 / q2;
-  }
-  t = lower ? log(t) - 0.5 * z2 - log(SQRT_TWO_PI) : log1p(-y * t);
-  return ret_t(t);
-}
-
-/**
  * Helper function. Log of Mill's ratio for the normal distribution
  *
  * @param x A scalar
@@ -132,12 +29,12 @@ inline auto logMill(T_x&& x) noexcept {
   if (x > 1.0e5) {
     return -log(x);
   }
-  const auto m = lnnorm(-x) - lognormal(x);
+  const auto m = std_normal_lcdf(-x) - std_normal_log(x);
   return m;
 }
 
 /**
- * Calculate the probability term 'P' on log scale
+ * Calculate the probability term 'P' on log scale for distribution
  *
  * @param a The boundary separation
  * @param v The drift rate
@@ -177,7 +74,7 @@ inline auto log_probability_distribution(const T_a& a, const T_v& v,
 }
 
 /**
- * Calculate the probability term 'P' on log scale
+ * Calculate the probability term 'P' on log scale for grad_a and grad_v
  *
  * @param a The boundary separation
  * @param v The drift rate
@@ -301,12 +198,12 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     ret_t fminus = NEGATIVE_INFTY;
     for (auto k = K_small_value; k >= 0; k--) {
       auto rj = a * (2 * k + w);
-      auto dj = lognormal(rj / sqrt_y);
+      auto dj = std_normal_log(rj / sqrt_y);
       auto pos1 = dj + logMill((rj - vy) / sqrt_y);
       auto pos2 = dj + logMill((rj + vy) / sqrt_y);
       fplus = log_sum_exp(fplus, log_sum_exp(pos1, pos2));
       rj = a * (2 * k + 2 - w);
-      dj = lognormal(rj / sqrt_y);
+      dj = std_normal_log(rj / sqrt_y);
       auto neg1 = dj + logMill((rj - vy) / sqrt_y);
       auto neg2 = dj + logMill((rj + vy) / sqrt_y);
       fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
@@ -406,7 +303,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = lognormal(r_k / sqrt_y);
+      auto d_k = std_normal_log(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
@@ -421,7 +318,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = lognormal(r_k / sqrt_y);
+      d_k = std_normal_log(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = rexp(d_k + logMill(xsqrt_y));
@@ -517,7 +414,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = lognormal(r_k / sqrt_y);
+      auto d_k = std_normal_log(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
@@ -529,7 +426,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       temp = rexp(d_k + logMill(xsqrt_y));
       const auto t2 = temp * x;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = lognormal(r_k / sqrt_y);
+      d_k = std_normal_log(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = rexp(d_k + logMill(xsqrt_y));
@@ -621,7 +518,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = lognormal(r_k / sqrt_y);
+      auto d_k = std_normal_log(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = rexp(d_k + logMill(xsqrt_y));
@@ -636,7 +533,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = lognormal(r_k / sqrt_y);
+      d_k = std_normal_log(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = rexp(d_k + logMill(xsqrt_y));
@@ -812,18 +709,23 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     const auto new_est_err = log_cdf + log_error_derivative - LOG_FOUR;
 
-    const auto deriv_y
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
-                                            GradientCalc::ON>(
-            [](auto&&... args) {
-              return internal::wiener5_density<GradientCalc::ON>(args...);
-            },
-            new_est_err, y_value - t0_value, a_value, v_value, w_value, 0,
-            log_error_absolute);
+	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+		const auto deriv_y
+			= internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+												GradientCalc::ON>(
+				[](auto&&... args) {
+				  return internal::wiener5_density<GradientCalc::ON>(args...);
+				},
+				new_est_err, y_value - t0_value, a_value, v_value, w_value, 0,
+				log_error_absolute);
 
-    if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[i] = deriv_y / cdf;
-    }
+		if (!is_constant_all<T_y>::value) {
+		  partials<0>(ops_partials)[i] = deriv_y / cdf;
+		}
+		if (!is_constant_all<T_t0>::value) {
+		  partials<2>(ops_partials)[i] = -deriv_y / cdf;
+		}
+	}
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
@@ -834,9 +736,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                 new_est_err, y_value - t0_value, a_value, v_value, w_value, cdf,
                 log_error_absolute)
             / cdf;
-    }
-    if (!is_constant_all<T_t0>::value) {
-      partials<2>(ops_partials)[i] = -deriv_y / cdf;
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]

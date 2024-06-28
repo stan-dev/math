@@ -269,23 +269,27 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto params_dt7 = std::make_tuple(
         y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
         st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
-    const T_partials_return deriv_t_7
-        = -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
-                                           GradientCalc::OFF, GradientCalc::OFF,
-                                           GradientCalc::ON>(
-              [&](auto&&... args) {
-                return internal::wiener5_density<GradientCalc::ON>(args...);
-              },
-              hcubature_err, params, dim, xmin, xmax,
-              maximal_evaluations_hcubature, absolute_error_hcubature,
-              relative_error_hcubature / 2)
-          / ccdf;
-
-    // computation of derivatives and precision checks
-    T_partials_return deriv;
-    if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[i] = deriv_t_7;
-    }
+	// computation of derivatives and precision checks
+	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+		const T_partials_return deriv_t_7
+			= -internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
+											   GradientCalc::OFF, GradientCalc::OFF,
+											   GradientCalc::ON>(
+				  [&](auto&&... args) {
+					return internal::wiener5_density<GradientCalc::ON>(args...);
+				  },
+				  hcubature_err, params, dim, xmin, xmax,
+				  maximal_evaluations_hcubature, absolute_error_hcubature,
+				  relative_error_hcubature / 2)
+			  / ccdf;
+		if (!is_constant_all<T_y>::value) {
+		  partials<0>(ops_partials)[i] = deriv_t_7;
+		}
+		if (!is_constant_all<T_t0>::value) {
+		  partials<2>(ops_partials)[i] = -deriv_t_7;
+		}
+	}
+	T_partials_return deriv;
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
@@ -296,9 +300,6 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
             / ccdf;
-    }
-    if (!is_constant_all<T_t0>::value) {
-      partials<2>(ops_partials)[i] = -deriv_t_7;
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]

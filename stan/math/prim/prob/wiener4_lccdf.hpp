@@ -57,49 +57,35 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
   ret_t ans;
   const auto v = -v_value;
   const auto w = 1 - w_value;
-
-  if (v < 0) {
-    const auto exponent_with_1mw = 2.0 * v * a * (1.0 - w);
-    const auto exponent_with_w = 2 * a * v * w;
-    const auto exponent = 2 * a * v;
-
-    if (((exponent_with_1mw >= exponent_m1) || (exponent_with_w >= exponent_m1))
-        || (exponent >= exponent_m1)) {
-      return ret_t(-w);
-    }
-    ans = LOG_TWO + exponent_with_1mw - log1m_exp(exponent_with_1mw);
-    const auto diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
-    const auto log_w = log(w);
-    if (log_w > diff_term) {
-      ans += log_diff_exp(log_w, diff_term);
-      ans = exp(ans);
-    } else {
-      ans += log_diff_exp(diff_term, log_w);
-      ans = -exp(ans);
-    }
-  } else if (v > 0) {
-    const auto exponent_with_1mw = -2.0 * v * a * (1.0 - w);
-    const auto exponent = (-2 * a * v);
-    if ((exponent_with_1mw >= exponent_m1) || (exponent >= exponent_m1)) {
-      return ret_t(-w);
-    }
-    ans = LOG_TWO - log1m_exp(exponent_with_1mw);
-    const auto diff_term
-        = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
-    const auto log_w = log(w);
-    if (log_w > diff_term) {
-      ans += log_diff_exp(log_w, diff_term);
-      ans = -exp(ans);
-    } else {
-      ans += log_diff_exp(diff_term, log_w);
-      ans = exp(ans);
-    }
-  } else {
+  int sign_v = v < 0 ? 1 : -1;
+  const auto exponent_with_1mw = sign_v * 2.0 * v * a * (1.0 - w);
+  const auto exponent = (sign_v * 2 * a * v);
+  const auto exponent_with_w = 2 * a * v * w;
+  if (unlikely(
+  (exponent_with_1mw >= exponent_m1) 
+	  || ((exponent_with_w >= exponent_m1) && (sign_v == 1))
+      || (exponent >= exponent_m1) 
+	  || v == 0)) {
     return ret_t(-w);
   }
-  if (fabs(ans) < INFTY) {
-    return ans;
+  ret_t diff_term;
+  const auto log_w = log(w);
+  if (v < 0) {
+    ans = LOG_TWO + exponent_with_1mw - log1m_exp(exponent_with_1mw);
+    diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
+  } else if (v > 0) {
+    ans = LOG_TWO - log1m_exp(exponent_with_1mw);
+    diff_term
+        = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
+  }
+  if (log_w > diff_term) {
+    ans += log_diff_exp(log_w, diff_term);
+    ans = sign_v * exp(ans);
   } else {
+    ans += log_diff_exp(diff_term, log_w);
+    ans = -sign_v * exp(ans);
+  }
+  if (unlikely(!is_scal_finite(ans))) {
     return ret_t(NEGATIVE_INFTY);
   }
   return ans;
@@ -149,7 +135,7 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
 
   // derivative of the wiener probability w.r.t. 'a' (on log-scale)
   auto prob_grad_a = -1 * wiener_prob_derivative_term(a, v, w) * v;
-  if (fabs(prob_grad_a) == INFTY) {
+  if (!is_scal_finite(prob_grad_a)) {
     prob_grad_a = ret_t(NEGATIVE_INFTY);
   }
 
@@ -343,16 +329,20 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     lccdf += log(ccdf);
 
     const auto new_est_err = log(ccdf) + log_error_derivative - LOG_FOUR;
-
-    const auto deriv_y = internal::estimate_with_err_check<5, 0>(
-        [](auto&&... args) {
-          return internal::wiener5_density<GradientCalc::ON>(args...);
-        },
-        new_est_err, y_value - t0_value, a_value, v_value, w_value, 0.0,
-        log_error_absolute);
-
-    if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[i] = -deriv_y / ccdf;
+	
+	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+      const auto deriv_y = internal::estimate_with_err_check<5, 0>(
+          [](auto&&... args) {
+            return internal::wiener5_density<GradientCalc::ON>(args...);
+          },
+          new_est_err, y_value - t0_value, a_value, v_value, w_value, 0.0,
+          log_error_absolute);
+      if (!is_constant_all<T_y>::value) {
+        partials<0>(ops_partials)[i] = -deriv_y / ccdf;
+      }
+      if (!is_constant_all<T_t0>::value) {
+        partials<2>(ops_partials)[i] = deriv_y / ccdf;
+      }
     }
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
@@ -363,10 +353,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                 new_est_err, y_value - t0_value, a_value, v_value, w_value, cdf,
                 log_error_absolute)
             / ccdf;
-    }
-    if (!is_constant_all<T_t0>::value) {
-      partials<2>(ops_partials)[i] = deriv_y / ccdf;
-    }
+    }	
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(

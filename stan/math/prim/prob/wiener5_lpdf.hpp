@@ -777,21 +777,25 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     const auto new_est_err = l_density + log_error_derivative - LOG_FOUR;
 
+	// computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
-    const auto deriv_y
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
-                                            GradientCalc::ON>(
-            [](auto&&... args) {
-              return internal::wiener5_grad_t<GradientCalc::OFF>(args...);
-            },
-            new_est_err, y_value - t0_value, a_value, v_value, w_value,
-            sv_value, log_error_absolute);
-
-    // computation of derivatives and precision checks
-    if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[i] = deriv_y;
-    }
+	if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+		const auto deriv_y
+			= internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+												GradientCalc::ON>(
+				[](auto&&... args) {
+				  return internal::wiener5_grad_t<GradientCalc::OFF>(args...);
+				},
+				new_est_err, y_value - t0_value, a_value, v_value, w_value,
+				sv_value, log_error_absolute);
+		if (!is_constant_all<T_y>::value) {
+		  partials<0>(ops_partials)[i] = deriv_y;
+		}
+		if (!is_constant_all<T_t0>::value) {
+		  partials<2>(ops_partials)[i] = -deriv_y;
+		}
+	}
     if (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
@@ -801,9 +805,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               },
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
-    }
-    if (!is_constant_all<T_t0>::value) {
-      partials<2>(ops_partials)[i] = -deriv_y;
     }
     if (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
