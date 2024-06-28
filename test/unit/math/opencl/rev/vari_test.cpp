@@ -20,6 +20,11 @@ TEST(AgradRev, matrix_cl_vari_block) {
                    stan::math::from_matrix_cl(B.block(0, 1, 2, 2).val_));
   EXPECT_MATRIX_EQ(b.block(0, 1, 2, 2),
                    stan::math::from_matrix_cl(B.block(0, 1, 2, 2).adj_));
+  vari_value<stan::math::matrix_cl<double>> C(a_cl, a_cl);
+  EXPECT_MATRIX_EQ(a.block(0, 1, 2, 2),
+                   stan::math::from_matrix_cl(C.block(0, 1, 2, 2).val_));
+  EXPECT_MATRIX_EQ(a.block(0, 1, 2, 2),
+                   stan::math::from_matrix_cl(C.block(0, 1, 2, 2).adj_));
 }
 
 #endif

@@ -118,7 +118,6 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
     return cov;
   }
   const char *function = "gp_matern32_cov";
-  size_t l_size = length_scale.size();
   for (size_t n = 0; n < x_size; ++n) {
     check_not_nan(function, "x", x[n]);
   }
@@ -126,7 +125,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   check_positive_finite(function, "magnitude", sigma);
   check_positive_finite(function, "length scale", length_scale);
 
-  for (size_t n = 0; n < x_size; ++n) {
+  size_t l_size = length_scale.size();
+  for (size_t n = 0; n < l_size; ++n) {
     check_not_nan(function, "length scale", length_scale[n]);
   }
 

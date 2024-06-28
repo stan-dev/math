@@ -22,11 +22,21 @@ void expect(const T1& x, const T2& lb, const T3& ub) {
     auto xx = stan::math::lub_constrain<true>(x, lb, ub, lp);
     return stan::math::add(lp, stan::math::sum(xx));
   };
+  auto f5 = [](const auto& x, const auto& lb, const auto& ub) {
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain<false>(x, std::make_tuple(lb, ub), lp);
+  };
+  auto f6 = [](const auto& x, const auto& lb, const auto& ub) {
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain<true>(x, std::make_tuple(lb, ub), lp);
+  };
 
   stan::test::expect_ad(f1, x, lb, ub);
   stan::test::expect_ad(f2, x, lb, ub);
   stan::test::expect_ad(f3, x, lb, ub);
   stan::test::expect_ad(f4, x, lb, ub);
+  stan::test::expect_ad(f5, x, lb, ub);
+  stan::test::expect_ad(f6, x, lb, ub);
 }
 template <typename T1, typename T2, typename T3>
 void expect_vec(const T1& x, const T2& lb, const T3& ub) {
@@ -52,11 +62,21 @@ void expect_vec(const T1& x, const T2& lb, const T3& ub) {
     }
     return stan::math::add(lp, xx_acc);
   };
+  auto f5 = [](const auto& x, const auto& lb, const auto& ub) {
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain<false>(x, std::make_tuple(lb, ub), lp);
+  };
+  auto f6 = [](const auto& x, const auto& lb, const auto& ub) {
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain<true>(x, std::make_tuple(lb, ub), lp);
+  };
 
   stan::test::expect_ad(f1, x, lb, ub);
   stan::test::expect_ad(f2, x, lb, ub);
   stan::test::expect_ad(f3, x, lb, ub);
   stan::test::expect_ad(f4, x, lb, ub);
+  stan::test::expect_ad(f5, x, lb, ub);
+  stan::test::expect_ad(f6, x, lb, ub);
 }
 }  // namespace lub_constrain_tests
 

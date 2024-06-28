@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <cstdint>
 #include <vector>
 
 namespace stan {
@@ -16,7 +17,7 @@ namespace math {
  * @return 1
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline int num_elements(const T& x) {
+inline int64_t num_elements(const T& x) {
   return 1;
 }
 
@@ -29,7 +30,7 @@ inline int num_elements(const T& x) {
  * @return size of matrix
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int num_elements(const T& m) {
+inline int64_t num_elements(const T& m) {
   return m.size();
 }
 
@@ -43,7 +44,7 @@ inline int num_elements(const T& m) {
  * @return number of contained arguments
  */
 template <typename T>
-inline int num_elements(const std::vector<T>& v) {
+inline int64_t num_elements(const std::vector<T>& v) {
   if (v.size() == 0) {
     return 0;
   }
