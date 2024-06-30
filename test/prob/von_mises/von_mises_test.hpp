@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/von_mises_log.hpp>
+#include <stan/math/prim/prob/von_mises_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
@@ -72,7 +72,7 @@ class AgradDistributionVonMises : public AgradDistributionTest {
                                                     const T_scale& kappa,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::von_mises_log(y, mu, kappa);
+    return stan::math::von_mises_lpdf(y, mu, kappa);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -82,7 +82,7 @@ class AgradDistributionVonMises : public AgradDistributionTest {
                                                     const T_scale& kappa,
                                                     const T3&, const T4&,
                                                     const T5&) {
-    return stan::math::von_mises_log<propto>(y, mu, kappa);
+    return stan::math::von_mises_lpdf<propto>(y, mu, kappa);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,

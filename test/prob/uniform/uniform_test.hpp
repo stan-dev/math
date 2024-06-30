@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/uniform_log.hpp>
+#include <stan/math/prim/prob/uniform_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 
@@ -47,7 +47,7 @@ class AgradDistributionsUniform : public AgradDistributionTest {
                                                    const T_high& beta,
                                                    const T3&, const T4&,
                                                    const T5&) {
-    return stan::math::uniform_log(y, alpha, beta);
+    return stan::math::uniform_lpdf(y, alpha, beta);
   }
 
   template <bool propto, class T_y, class T_low, class T_high, typename T3,
@@ -57,7 +57,7 @@ class AgradDistributionsUniform : public AgradDistributionTest {
                                                    const T_high& beta,
                                                    const T3&, const T4&,
                                                    const T5&) {
-    return stan::math::uniform_log<propto>(y, alpha, beta);
+    return stan::math::uniform_lpdf<propto>(y, alpha, beta);
   }
 
   template <class T_y, class T_low, class T_high, typename T3, typename T4,

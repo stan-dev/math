@@ -7,7 +7,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_double) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
-  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_lpdf;
   using std::vector;
   Matrix<fvar<double>, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -24,7 +24,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_double) {
       Sigma(i, j).d_ = 1.0;
   }
 
-  fvar<double> lp = multi_student_t_log(y, nu, mu, Sigma);
+  fvar<double> lp = multi_student_t_lpdf(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_, 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_, 0.0001);
 }
@@ -33,7 +33,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_double) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
-  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_lpdf;
   using std::vector;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -50,7 +50,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_double) {
       Sigma(i, j).d_.val_ = 1.0;
   }
 
-  fvar<fvar<double> > lp = multi_student_t_log(y, nu, mu, Sigma);
+  fvar<fvar<double> > lp = multi_student_t_lpdf(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val_, 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val_, 0.0001);
 }

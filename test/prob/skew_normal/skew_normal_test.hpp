@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/skew_normal_log.hpp>
+#include <stan/math/prim/prob/skew_normal_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
@@ -76,7 +76,7 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
-    return stan::math::skew_normal_log(y, mu, sigma, alpha);
+    return stan::math::skew_normal_lpdf(y, mu, sigma, alpha);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -84,7 +84,7 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
-    return stan::math::skew_normal_log<propto>(y, mu, sigma, alpha);
+    return stan::math::skew_normal_lpdf<propto>(y, mu, sigma, alpha);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,

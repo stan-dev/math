@@ -41,7 +41,7 @@ TEST(ProbDistributionsMultinomial, Multinomial) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_log(ns, theta));
+  EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_lpmf(ns, theta));
 }
 TEST(ProbDistributionsMultinomial, Propto) {
   using Eigen::Dynamic;
@@ -52,10 +52,10 @@ TEST(ProbDistributionsMultinomial, Propto) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  EXPECT_FLOAT_EQ(0.0, stan::math::multinomial_log<true>(ns, theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::multinomial_lpmf<true>(ns, theta));
 }
 
-using stan::math::multinomial_log;
+using stan::math::multinomial_lpmf;
 
 TEST(ProbDistributionsMultinomial, error) {
   using Eigen::Dynamic;
@@ -70,32 +70,32 @@ TEST(ProbDistributionsMultinomial, error) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
 
-  EXPECT_NO_THROW(multinomial_log(ns, theta));
+  EXPECT_NO_THROW(multinomial_lpmf(ns, theta));
 
   ns[1] = 0;
-  EXPECT_NO_THROW(multinomial_log(ns, theta));
+  EXPECT_NO_THROW(multinomial_lpmf(ns, theta));
   ns[1] = -1;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   ns[1] = 1;
 
   theta(0) = 0.0;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = nan;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = inf;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = -inf;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = -1;
   theta(1) = 1.5;
   theta(2) = 0.5;
-  EXPECT_THROW(multinomial_log(ns, theta), std::domain_error);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::domain_error);
   theta(0) = 0.2;
   theta(1) = 0.3;
   theta(2) = 0.5;
 
   ns.resize(2);
-  EXPECT_THROW(multinomial_log(ns, theta), std::invalid_argument);
+  EXPECT_THROW(multinomial_lpmf(ns, theta), std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultinomial, zeros) {
@@ -109,7 +109,7 @@ TEST(ProbDistributionsMultinomial, zeros) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
 
-  result = multinomial_log(ns, theta);
+  result = multinomial_lpmf(ns, theta);
   EXPECT_FALSE(std::isnan(result));
 
   std::vector<int> ns2;
@@ -117,7 +117,7 @@ TEST(ProbDistributionsMultinomial, zeros) {
   ns2.push_back(0);
   ns2.push_back(0);
 
-  double result2 = multinomial_log(ns2, theta);
+  double result2 = multinomial_lpmf(ns2, theta);
   EXPECT_FLOAT_EQ(0.0, result2);
 }
 

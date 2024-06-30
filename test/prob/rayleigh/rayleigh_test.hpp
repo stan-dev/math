@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim/prob/rayleigh_log.hpp>
+#include <stan/math/prim/prob/rayleigh_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
@@ -56,7 +56,7 @@ class AgradDistributionRayleigh : public AgradDistributionTest {
   stan::return_type_t<T_y, T_scale> log_prob(const T_y& y, const T_scale& sigma,
                                              const T2&, const T3&, const T4&,
                                              const T5&) {
-    return stan::math::rayleigh_log(y, sigma);
+    return stan::math::rayleigh_lpdf(y, sigma);
   }
 
   template <bool propto, typename T_y, typename T_scale, typename T2,
@@ -64,7 +64,7 @@ class AgradDistributionRayleigh : public AgradDistributionTest {
   stan::return_type_t<T_y, T_scale> log_prob(const T_y& y, const T_scale& sigma,
                                              const T2&, const T3&, const T4&,
                                              const T5&) {
-    return stan::math::rayleigh_log<propto>(y, sigma);
+    return stan::math::rayleigh_lpdf<propto>(y, sigma);
   }
 
   template <typename T_y, typename T_scale, typename T2, typename T3,

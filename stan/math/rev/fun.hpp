@@ -28,18 +28,13 @@
 #include <stan/math/rev/fun/cbrt.hpp>
 #include <stan/math/rev/fun/ceil.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
-#include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
-#include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
 #include <stan/math/rev/fun/cumulative_sum.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
-#include <stan/math/rev/fun/corr_matrix_constrain.hpp>
-#include <stan/math/rev/fun/cov_matrix_constrain.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
-#include <stan/math/rev/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/rev/fun/csr_matrix_times_vector.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/diag_pre_multiply.hpp>
@@ -80,8 +75,6 @@
 #include <stan/math/rev/fun/hypergeometric_2F1.hpp>
 #include <stan/math/rev/fun/hypergeometric_pFq.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
-#include <stan/math/rev/fun/identity_constrain.hpp>
-#include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
 #include <stan/math/rev/fun/inv_inc_beta.hpp>
@@ -99,7 +92,6 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>
 #include <stan/math/rev/fun/lambert_w.hpp>
-#include <stan/math/rev/fun/lb_constrain.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
@@ -125,7 +117,6 @@
 #include <stan/math/rev/fun/log_softmax.hpp>
 #include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/logit.hpp>
-#include <stan/math/rev/fun/lub_constrain.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
 #include <stan/math/rev/fun/mdivide_left.hpp>
@@ -140,10 +131,8 @@
 #include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/norm1.hpp>
 #include <stan/math/rev/fun/norm2.hpp>
-#include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
 #include <stan/math/rev/fun/polar.hpp>
-#include <stan/math/rev/fun/positive_ordered_constrain.hpp>
 #include <stan/math/rev/fun/pow.hpp>
 #include <stan/math/rev/fun/primitive_value.hpp>
 #include <stan/math/rev/fun/proj.hpp>
@@ -161,11 +150,8 @@
 #include <stan/math/rev/fun/rows_dot_product.hpp>
 #include <stan/math/rev/fun/rows_dot_self.hpp>
 #include <stan/math/rev/fun/sd.hpp>
-#include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
-#include <stan/math/rev/fun/stochastic_column_constrain.hpp>
-#include <stan/math/rev/fun/stochastic_row_constrain.hpp>
 #include <stan/math/rev/fun/svd.hpp>
 #include <stan/math/rev/fun/svd_U.hpp>
 #include <stan/math/rev/fun/svd_V.hpp>
@@ -193,12 +179,11 @@
 #include <stan/math/rev/fun/trace_quad_form.hpp>
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
-#include <stan/math/rev/fun/unit_vector_constrain.hpp>
-#include <stan/math/rev/fun/ub_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
 
+#include <stan/math/prim/constraint.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor.hpp>
