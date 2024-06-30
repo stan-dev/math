@@ -1,0 +1,17 @@
+var struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4 =
+[
+    [ "XprType", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a1cb015a083d883e5c82434c0348f41ed.html#a1cb015a083d883e5c82434c0348f41ed", null ],
+    [ "ArgTypeNestedCleaned", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a72249daff672843db6e3bb73c29c6c2c.html#a72249daff672843db6e3bb73c29c6c2c", null ],
+    [ "CoeffReturnType", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_ae3c9c2219ae89143616d76f126ec9381.html#ae3c9c2219ae89143616d76f126ec9381", null ],
+    [ "Scalar", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a94dc2eb217ee2be2ec46ccd3737ff9a3.html#a94dc2eb217ee2be2ec46ccd3737ff9a3", null ],
+    [ "evaluator", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_af2dbdebef7c602efa10c276b30848b57.html#af2dbdebef7c602efa10c276b30848b57", null ],
+    [ "coeff", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a685b62ca228a0e59773b35de586c45b3.html#a685b62ca228a0e59773b35de586c45b3", null ],
+    [ "coeff", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a61c06a83bc89dee2655869ae58f25bfe.html#a61c06a83bc89dee2655869ae58f25bfe", null ],
+    [ "coeffRef", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_acfbffdc24116ec613b18fdb8baf5cc59.html#acfbffdc24116ec613b18fdb8baf5cc59", null ],
+    [ "coeffRef", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a4ac349abb820bde34ed606adf9c0bd31.html#a4ac349abb820bde34ed606adf9c0bd31", null ],
+    [ "packet", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aca1e4d97f6570869e1e893be9ebec24d.html#aca1e4d97f6570869e1e893be9ebec24d", null ],
+    [ "packet", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aa6dc27e83bdb3b8a827537fb7a450de2.html#aa6dc27e83bdb3b8a827537fb7a450de2", null ],
+    [ "writePacket", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a3bcde79d75592a78315007c36c56f393.html#a3bcde79d75592a78315007c36c56f393", null ],
+    [ "writePacket", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a43dde659e257361c41be442ee9372f7a.html#a43dde659e257361c41be442ee9372f7a", null ],
+    [ "m_argImpl", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a1523fd4b5e90cdcc42266dbfe12e906a.html#a1523fd4b5e90cdcc42266dbfe12e906a", null ]
+];

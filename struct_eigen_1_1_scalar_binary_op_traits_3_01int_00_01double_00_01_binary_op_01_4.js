@@ -1,0 +1,4 @@
+var struct_eigen_1_1_scalar_binary_op_traits_3_01int_00_01double_00_01_binary_op_01_4 =
+[
+    [ "ReturnType", "struct_eigen_1_1_scalar_binary_op_traits_3_01int_00_01double_00_01_binary_op_01_4_ad00d9371cf02c11ee88cbf132b763eb3.html#ad00d9371cf02c11ee88cbf132b763eb3", null ]
+];
