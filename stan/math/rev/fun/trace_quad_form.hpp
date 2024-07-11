@@ -115,22 +115,22 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
-inline var trace_quad_form(const Mat1& A, const Mat2& B) {
+inline var trace_quad_form(Mat1&& A, Mat2&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
   var res;
 
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
-    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
+  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+    arena_t<Mat1> arena_A = std::forward<Mat1>(A);
+    arena_t<Mat2> arena_B = std::forward<Mat2>(B);
 
     res = (value_of(arena_B).transpose() * value_of(arena_A)
            * value_of(arena_B))
               .trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias()
             += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
       } else {
@@ -138,7 +138,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
             += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
       }
 
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += res.adj() * (value_of(arena_A) + value_of(arena_A).transpose())
                * value_of(arena_B);
@@ -148,16 +148,16 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
                          * value_of(arena_B);
       }
     });
-  } else if (!is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<double, Mat1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
+  } else if constexpr (!is_constant_v<Mat2>) {
+    arena_t<Mat1> arena_A = value_of(std::forward<Mat1>(A));
+    arena_t<Mat2> arena_B = std::forward<Mat2>(B);
 
     res = (value_of(arena_B).transpose() * value_of(arena_A)
            * value_of(arena_B))
               .trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
       } else {
@@ -166,13 +166,13 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
       }
     });
   } else {
-    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
-    arena_t<promote_scalar_t<double, Mat2>> arena_B = value_of(B);
+    arena_t<Mat1> arena_A = A;
+    arena_t<Mat2> arena_B = value_of(B);
 
     res = (arena_B.transpose() * value_of(arena_A) * arena_B).trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += res.adj() * arena_B * arena_B.transpose();
       } else {
         arena_A.adj() += res.adj() * arena_B * arena_B.transpose();

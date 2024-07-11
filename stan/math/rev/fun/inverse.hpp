@@ -25,7 +25,7 @@ inline auto inverse(const T& m) {
 
   using ret_type = return_var_matrix_t<T>;
   if (unlikely(m.size() == 0)) {
-    return ret_type(m);
+    return arena_t<ret_type>(m);
   }
 
   arena_t<T> arena_m = m;
@@ -36,7 +36,7 @@ inline auto inverse(const T& m) {
     arena_m.adj() -= res_val.transpose() * res.adj_op() * res_val.transpose();
   });
 
-  return ret_type(res);
+  return res;
 }
 
 }  // namespace math

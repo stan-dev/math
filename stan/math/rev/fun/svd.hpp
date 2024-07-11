@@ -24,18 +24,18 @@ namespace math {
  * singular values (in decreasing order), and V an orthogonal matrix
  */
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
-inline auto svd(const EigMat& m) {
+inline auto svd(EigMat&& m) {
   using mat_ret_type = return_var_matrix_t<Eigen::MatrixXd, EigMat>;
   using vec_ret_type = return_var_matrix_t<Eigen::VectorXd, EigMat>;
 
   if (unlikely(m.size() == 0)) {
-    return std::make_tuple(mat_ret_type(Eigen::MatrixXd(0, 0)),
-                           vec_ret_type(Eigen::VectorXd(0, 1)),
-                           mat_ret_type(Eigen::MatrixXd(0, 0)));
+    return std::make_tuple(arena_t<mat_ret_type>(Eigen::MatrixXd(0, 0)),
+                           arena_t<vec_ret_type>(Eigen::VectorXd(0, 1)),
+                           arena_t<mat_ret_type>(Eigen::MatrixXd(0, 0)));
   }
 
   const int M = std::min(m.rows(), m.cols());
-  auto arena_m = to_arena(m);
+  auto arena_m = to_arena(std::forward<EigMat>(m));
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
       arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -63,7 +63,7 @@ inline auto svd(const EigMat& m) {
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V, arena_Fp,
                          arena_Fm]() mutable {
     // SVD-U reverse mode
-    Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
+    arena_t<Eigen::MatrixXd> UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
     auto u_adj
         = .5 * arena_U.val_op()
               * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
@@ -78,7 +78,7 @@ inline auto svd(const EigMat& m) {
     auto d_adj = arena_U.val_op() * singular_values.adj().asDiagonal()
                  * arena_V.val_op().transpose();
     // SVD-V reverse mode
-    Eigen::MatrixXd VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
+    arena_t<Eigen::MatrixXd> VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
     auto v_adj
         = 0.5 * arena_U.val_op()
               * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())
@@ -92,8 +92,7 @@ inline auto svd(const EigMat& m) {
     arena_m.adj() += u_adj + d_adj + v_adj;
   });
 
-  return std::make_tuple(mat_ret_type(arena_U), vec_ret_type(singular_values),
-                         mat_ret_type(arena_V));
+  return std::make_tuple(arena_U, singular_values, arena_V);
 }
 
 }  // namespace math

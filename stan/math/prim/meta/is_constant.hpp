@@ -62,5 +62,9 @@ template <typename T>
 struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
+template <typename T>
+inline constexpr bool is_constant_v = is_constant<T>::value;
+
+
 }  // namespace stan
 #endif

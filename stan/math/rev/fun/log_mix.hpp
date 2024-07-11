@@ -106,15 +106,15 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
     one_m_t_prod_exp_lam2_m_lam1 = 1.0 - value_of(theta);
   }
 
-  if (!is_constant_all<T_theta>::value) {
+  if constexpr (!is_constant_all<T_theta>::value) {
     partials<0>(ops_partials)[0]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
-  if (!is_constant_all<T_lambda1>::value) {
+  if constexpr (!is_constant_all<T_lambda1>::value) {
     partials<1>(ops_partials)[0]
         = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
-  if (!is_constant_all<T_lambda2>::value) {
+  if constexpr (!is_constant_all<T_lambda2>::value) {
     partials<2>(ops_partials)[0] = one_m_t_prod_exp_lam2_m_lam1
                                    * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }

@@ -33,24 +33,24 @@ template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto append_row(const T1& A, const T2& B) {
   check_size_match("append_row", "columns of A", A.cols(), "columns of B",
                    B.cols());
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+    arena_t<T1> arena_A = A;
+    arena_t<T2> arena_B = B;
     return make_callback_var(
         append_row(value_of(arena_A), value_of(arena_B)),
         [arena_A, arena_B](auto& vi) mutable {
           arena_A.adj() += vi.adj().topRows(arena_A.rows());
           arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+  } else if constexpr (!is_constant_v<T1>) {
+    arena_t<T1> arena_A = A;
     return make_callback_var(append_row(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
                                arena_A.adj()
                                    += vi.adj().topRows(arena_A.rows());
                              });
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<T2> arena_B = B;
     return make_callback_var(append_row(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj()
@@ -76,21 +76,21 @@ template <typename Scal, typename ColVec,
           require_stan_scalar_t<Scal>* = nullptr,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr>
 inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
-  if (!is_constant<Scal>::value && !is_constant<ColVec>::value) {
+  if constexpr (!is_constant_v<Scal> && !is_constant_v<ColVec>) {
     var arena_A = A;
-    arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
+    arena_t<ColVec> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
                                arena_A.adj() += vi.adj().coeff(0);
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
-  } else if (!is_constant<Scal>::value) {
+  } else if constexpr (!is_constant_v<Scal>) {
     var arena_A = A;
     return make_callback_var(
         append_row(value_of(arena_A), value_of(B)),
         [arena_A](auto& vi) mutable { arena_A.adj() += vi.adj().coeff(0); });
   } else {
-    arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
+    arena_t<ColVec> arena_B = B;
     return make_callback_var(append_row(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj() += vi.adj().tail(arena_B.size());
@@ -115,8 +115,8 @@ template <typename ColVec, typename Scal,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr>
 inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
-  if (!is_constant<ColVec>::value && !is_constant<Scal>::value) {
-    arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
+  if constexpr (!is_constant_v<ColVec> && !is_constant_v<Scal>) {
+    arena_t<ColVec> arena_A = A;
     var arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
@@ -124,14 +124,14 @@ inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
                                arena_B.adj()
                                    += vi.adj().coeff(vi.adj().size() - 1);
                              });
-  } else if (!is_constant<ColVec>::value) {
-    arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
+  } else if constexpr (!is_constant_v<ColVec>) {
+    arena_t<ColVec> arena_A = A;
     return make_callback_var(append_row(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
                                arena_A.adj() += vi.adj().head(arena_A.size());
                              });
   } else {
-    arena_t<promote_scalar_t<var, Scal>> arena_B = B;
+    arena_t<Scal> arena_B = B;
     return make_callback_var(append_row(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj()

@@ -188,178 +188,95 @@ inline var fma(Ta&& x, const var& y, const var& z) {
 }
 
 namespace internal {
-/**
- * Overload for matrix, matrix, matrix
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_all_matrix_t<T1, T2, T3>* = nullptr>
+template <typename T1, typename T2, typename T3, typename T4>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
   return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<plain_type_t<promote_scalar_t<var, T1>>>;
-    using T2_var = arena_t<plain_type_t<promote_scalar_t<var, T2>>>;
-    using T3_var = arena_t<plain_type_t<promote_scalar_t<var, T3>>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj().array()
-          += ret.adj().array() * value_of(arena_y).array();
+    if constexpr (is_matrix_v<T1> && is_matrix_v<T2> && is_matrix_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj().array()
+            += ret.adj().array() * value_of(arena_y).array();          
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj().array()
+            += ret.adj().array() * value_of(arena_x).array();
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj().array() += ret.adj().array();
+      }
+    } else if constexpr (is_stan_scalar_v<T1> && is_matrix_v<T2> && is_matrix_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj()
+            += (ret.adj().array() * value_of(arena_y).array()).sum();
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj().array()
+            += ret.adj().array() * value_of(arena_x);
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj().array() += ret.adj().array();
+      }
+    } else if constexpr (is_matrix_v<T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj().array()
+            += ret.adj().array() * value_of(arena_y);
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj()
+            += (ret.adj().array() * value_of(arena_x).array()).sum();
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj().array() += ret.adj().array();
+      }
+    } else if constexpr (is_stan_scalar_v<T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj()
+            += (ret.adj().array() * value_of(arena_y)).sum();
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj()
+            += (ret.adj().array() * value_of(arena_x)).sum();
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj().array() += ret.adj().array();
+      }
+    } else if constexpr (is_matrix_v<T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj().array()
+            += ret.adj().array() * value_of(arena_y).array();
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj().array()
+            += ret.adj().array() * value_of(arena_x).array();
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj() += ret.adj().sum();
+      }
+    } else if constexpr (is_stan_scalar_v<T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj()
+            += (ret.adj().array() * value_of(arena_y).array()).sum();
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj().array()
+            += ret.adj().array() * value_of(arena_x);
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj() += ret.adj().sum();
+      }
+    } else if constexpr (is_matrix_v<T1> && is_stan_scalar_v<T2> && is_stan_scalar_v<T3>) {
+      if constexpr (!is_constant_v<T1>) {
+        arena_x.adj().array()
+            += ret.adj().array() * value_of(arena_y);
+      }
+      if constexpr (!is_constant_v<T2>) {
+        arena_y.adj()
+            += (ret.adj().array() * value_of(arena_x).array()).sum();
+      }
+      if constexpr (!is_constant_v<T3>) {
+        arena_z.adj() += ret.adj().sum();
+      }
     }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj().array()
-          += ret.adj().array() * value_of(arena_x).array();
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
-    }
-  };
-}
-
-/**
- * Overload for scalar, matrix, matrix
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_all_matrix_t<T2, T3>* = nullptr,
-          require_stan_scalar_t<T1>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj()
-          += (ret.adj().array() * value_of(arena_y).array()).sum();
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj().array()
-          += ret.adj().array() * value_of(arena_x);
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
-    }
-  };
-}
-
-/**
- * Overload for matrix, scalar, matrix
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_all_matrix_t<T1, T3>* = nullptr,
-          require_stan_scalar_t<T2>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj().array()
-          += ret.adj().array() * value_of(arena_y);
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj()
-          += (ret.adj().array() * value_of(arena_x).array()).sum();
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
-    }
-  };
-}
-
-/**
- * Overload for scalar, scalar, matrix
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_matrix_t<T3>* = nullptr,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj()
-          += (ret.adj().array() * value_of(arena_y)).sum();
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj()
-          += (ret.adj().array() * value_of(arena_x)).sum();
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
-    }
-  };
-}
-
-/**
- * Overload for matrix, matrix, scalar
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_all_matrix_t<T1, T2>* = nullptr,
-          require_stan_scalar_t<T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj().array()
-          += ret.adj().array() * value_of(arena_y).array();
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj().array()
-          += ret.adj().array() * value_of(arena_x).array();
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
-    }
-  };
-}
-
-/**
- * Overload for scalar, matrix, scalar
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_matrix_t<T2>* = nullptr,
-          require_all_stan_scalar_t<T1, T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj()
-          += (ret.adj().array() * value_of(arena_y).array()).sum();
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj().array()
-          += ret.adj().array() * value_of(arena_x);
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
-    }
-  };
-}
-
-/**
- * Overload for matrix, scalar, scalar
- */
-template <typename T1, typename T2, typename T3, typename T4,
-          require_matrix_t<T1>* = nullptr,
-          require_all_stan_scalar_t<T2, T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [arena_x, arena_y, arena_z, ret]() mutable {
-    using T1_var = arena_t<promote_scalar_t<var, T1>>;
-    using T2_var = arena_t<promote_scalar_t<var, T2>>;
-    using T3_var = arena_t<promote_scalar_t<var, T3>>;
-    if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_x).adj().array()
-          += ret.adj().array() * value_of(arena_y);
-    }
-    if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_y).adj()
-          += (ret.adj().array() * value_of(arena_x).array()).sum();
-    }
-    if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
-    }
-  };
+};
 }
 
 }  // namespace internal
@@ -385,17 +302,17 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
 template <typename T1, typename T2, typename T3,
           require_any_matrix_t<T1, T2, T3>* = nullptr,
           require_var_t<return_type_t<T1, T2, T3>>* = nullptr>
-inline auto fma(const T1& x, const T2& y, const T3& z) {
-  arena_t<T1> arena_x = x;
-  arena_t<T2> arena_y = y;
-  arena_t<T3> arena_z = z;
-  if (is_matrix<T1>::value && is_matrix<T2>::value) {
+inline auto fma(T1&& x, T2&& y, T3&& z) {
+  arena_t<T1> arena_x = std::forward<T1>(x);
+  arena_t<T2> arena_y = std::forward<T2>(y);
+  arena_t<T3> arena_z = std::forward<T3>(z);
+  if constexpr (is_matrix_v<T1> && is_matrix_v<T2>) {
     check_matching_dims("fma", "x", arena_x, "y", arena_y);
   }
-  if (is_matrix<T1>::value && is_matrix<T3>::value) {
+  if constexpr (is_matrix_v<T1> && is_matrix_v<T3>) {
     check_matching_dims("fma", "x", arena_x, "z", arena_z);
   }
-  if (is_matrix<T2>::value && is_matrix<T3>::value) {
+  if constexpr (is_matrix_v<T2> && is_matrix_v<T3>) {
     check_matching_dims("fma", "y", arena_y, "z", arena_z);
   }
   using inner_ret_type
@@ -405,7 +322,7 @@ inline auto fma(const T1& x, const T2& y, const T3& z) {
       = fma(value_of(arena_x), value_of(arena_y), value_of(arena_z));
   reverse_pass_callback(
       internal::fma_reverse_pass(arena_x, arena_y, arena_z, ret));
-  return ret_type(ret);
+  return ret;
 }
 
 }  // namespace math

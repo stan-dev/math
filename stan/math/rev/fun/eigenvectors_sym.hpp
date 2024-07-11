@@ -47,7 +47,7 @@ inline auto eigenvectors_sym(const T& m) {
            * eigenvecs.val_op().transpose();
   });
 
-  return return_t(eigenvecs);
+  return eigenvecs;
 }
 
 }  // namespace math

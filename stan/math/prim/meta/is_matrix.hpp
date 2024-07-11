@@ -17,6 +17,9 @@ template <typename T>
 struct is_matrix
     : bool_constant<math::disjunction<is_rev_matrix<T>, is_eigen<T>>::value> {};
 
+template <typename T>
+inline constexpr bool is_matrix_v = is_matrix<T>::value;
+
 /*! \ingroup require_eigens_types */
 /*! \defgroup matrix_types matrix  */
 /*! \addtogroup matrix_types */

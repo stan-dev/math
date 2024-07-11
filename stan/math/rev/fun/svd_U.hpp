@@ -22,14 +22,14 @@ namespace math {
  * @return Orthogonal matrix U
  */
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
-inline auto svd_U(const EigMat& m) {
+inline auto svd_U(EigMat&& m) {
   using ret_type = return_var_matrix_t<Eigen::MatrixXd, EigMat>;
   if (unlikely(m.size() == 0)) {
-    return ret_type(Eigen::MatrixXd(0, 0));
+    return arena_t<ret_type>(Eigen::MatrixXd(0, 0));
   }
 
   const int M = std::min(m.rows(), m.cols());
-  auto arena_m = to_arena(m);
+  auto arena_m = to_arena(std::forward<EigMat>(m));
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
       arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -66,7 +66,7 @@ inline auto svd_U(const EigMat& m) {
                  * arena_V.transpose();
   });
 
-  return ret_type(arena_U);
+  return arena_U;
 }
 
 }  // namespace math

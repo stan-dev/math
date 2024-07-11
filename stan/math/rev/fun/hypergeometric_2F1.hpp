@@ -43,17 +43,17 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
       [a1, a2, b, z](auto& vi) mutable {
         auto grad_tuple = grad_2F1(a1, a2, b, z);
 
-        if (!is_constant<Ta1>::value) {
-          forward_as<var>(a1).adj() += vi.adj() * std::get<0>(grad_tuple);
+        if constexpr (!is_constant_v<Ta1>) {
+          a1.adj() += vi.adj() * std::get<0>(grad_tuple);
         }
-        if (!is_constant<Ta2>::value) {
-          forward_as<var>(a2).adj() += vi.adj() * std::get<1>(grad_tuple);
+        if constexpr (!is_constant_v<Ta2>) {
+          a2.adj() += vi.adj() * std::get<1>(grad_tuple);
         }
-        if (!is_constant<Tb>::value) {
-          forward_as<var>(b).adj() += vi.adj() * std::get<2>(grad_tuple);
+        if constexpr (!is_constant_v<Tb>) {
+          b.adj() += vi.adj() * std::get<2>(grad_tuple);
         }
-        if (!is_constant<Tz>::value) {
-          forward_as<var>(z).adj() += vi.adj() * std::get<3>(grad_tuple);
+        if constexpr (!is_constant_v<Tz>) {
+          z.adj() += vi.adj() * std::get<3>(grad_tuple);
         }
       });
 }

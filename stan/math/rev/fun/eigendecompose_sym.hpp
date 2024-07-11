@@ -30,15 +30,15 @@ inline auto eigendecompose_sym(const T& m) {
   using eigvec_return_t = return_var_matrix_t<T>;
 
   if (unlikely(m.size() == 0)) {
-    return std::make_tuple(eigvec_return_t(Eigen::MatrixXd(0, 0)),
-                           eigval_return_t(Eigen::VectorXd(0)));
+    return std::make_tuple(arena_t<eigvec_return_t>(Eigen::MatrixXd(0, 0)),
+                           arena_t<eigval_return_t>(Eigen::VectorXd(0)));
   }
   check_symmetric("eigendecompose_sym", "m", m);
 
   auto arena_m = to_arena(m);
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(arena_m.val());
-  arena_t<eigval_return_t> eigenvals = solver.eigenvalues();
-  arena_t<eigvec_return_t> eigenvecs = solver.eigenvectors();
+  arena_t<eigval_return_t> eigenvals = std::move(solver.eigenvalues());
+  arena_t<eigvec_return_t> eigenvecs = std::move(solver.eigenvectors());
 
   reverse_pass_callback([eigenvals, arena_m, eigenvecs]() mutable {
     // eigenvalue reverse calculation
@@ -60,8 +60,8 @@ inline auto eigendecompose_sym(const T& m) {
     arena_m.adj() += value_adj + vector_adj;
   });
 
-  return std::make_tuple(std::move(eigvec_return_t(eigenvecs)),
-                         std::move(eigval_return_t(eigenvals)));
+  return std::make_tuple(std::move(eigenvecs),
+                         std::move(eigenvals));
 }
 
 }  // namespace math

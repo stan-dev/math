@@ -29,15 +29,15 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
+inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, T2&& B) {
   check_multiplicable("trace_quad_form", "A", A.matrix(), "B", B);
 
   if (A.matrix().size() == 0)
     return 0.0;
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+    arena_t<T1> arena_A = A.matrix();
+    arena_t<T2> arena_B = std::forward<T2>(B);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
     var res = (arena_B.val_op().transpose() * AsolveB).trace();
@@ -48,8 +48,8 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
     });
 
     return res;
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
+  } else if constexpr (!is_constant_v<T1>) {
+    arena_t<T1> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
 
     auto AsolveB = to_arena(A.ldlt().solve(value_of(B_ref)));
@@ -62,7 +62,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
 
     return res;
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<T2> arena_B = std::forward<T2>(B);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
     var res = (arena_B.val_op().transpose() * AsolveB).trace();

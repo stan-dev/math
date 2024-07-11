@@ -92,12 +92,12 @@ inline var pow(const Scal1& base, const Scal2& exponent) {
         }
         const double vi_mul = vi.adj() * vi.val();
 
-        if (!is_constant<Scal1>::value) {
-          forward_as<var>(base).adj()
+        if constexpr (!is_constant_v<Scal1>) {
+          base.adj()
               += vi_mul * value_of(exponent) / value_of(base);
         }
-        if (!is_constant<Scal2>::value) {
-          forward_as<var>(exponent).adj() += vi_mul * std::log(value_of(base));
+        if constexpr (!is_constant_v<Scal2>) {
+          exponent.adj() += vi_mul * std::log(value_of(base));
         }
       });
 }
@@ -119,7 +119,7 @@ template <typename Mat1, typename Mat2,
           require_all_st_var_or_arithmetic<Mat1, Mat2>* = nullptr,
           require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr,
           require_all_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
-inline auto pow(const Mat1& base, const Mat2& exponent) {
+inline auto pow(Mat1&& base, Mat2&& exponent) {
   check_consistent_sizes("pow", "base", base, "exponent", exponent);
   using expr_type = decltype(as_array_or_scalar(value_of(base))
                                  .pow(as_array_or_scalar(value_of(exponent))));
@@ -133,29 +133,29 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
   using base_arena_t = arena_t<base_t>;
   using exp_arena_t = arena_t<exp_t>;
 
-  base_arena_t arena_base = as_array_or_scalar(base);
-  exp_arena_t arena_exponent = as_array_or_scalar(exponent);
+  base_arena_t arena_base = as_array_or_scalar(std::forward<Mat1>(base));
+  exp_arena_t arena_exponent = as_array_or_scalar(std::forward<Mat2>(exponent));
   arena_t<ret_type> ret
       = value_of(arena_base).pow(value_of(arena_exponent)).matrix();
 
   reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base) != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Mat1>::value) {
-      using base_var_arena_t = arena_t<promote_scalar_t<var, base_arena_t>>;
-      forward_as<base_var_arena_t>(arena_base).adj()
+    if constexpr (!is_constant_v<Mat1>) {
+      using base_var_arena_t = arena_t<base_arena_t>;
+      arena_base.adj()
           += (are_vals_zero)
                  .select(
                      ret_mul * value_of(arena_exponent) / value_of(arena_base),
                      0);
     }
-    if (!is_constant<Mat2>::value) {
-      using exp_var_arena_t = arena_t<promote_scalar_t<var, exp_arena_t>>;
-      forward_as<exp_var_arena_t>(arena_exponent).adj()
+    if constexpr (!is_constant_v<Mat2>) {
+      using exp_var_arena_t = arena_t<exp_arena_t>;
+      arena_exponent.adj()
           += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
     }
   });
-  return ret_type(ret);
+  return ret;
 }
 
 /**
@@ -172,43 +172,39 @@ template <typename Mat1, typename Scal1,
           require_all_st_var_or_arithmetic<Mat1, Scal1>* = nullptr,
           require_all_matrix_st<is_var, Mat1>* = nullptr,
           require_stan_scalar_t<Scal1>* = nullptr>
-inline auto pow(const Mat1& base, const Scal1& exponent) {
+inline auto pow(Mat1&& base, const Scal1& exponent) {
   using ret_type = promote_scalar_t<var, plain_type_t<Mat1>>;
 
   if (is_constant<Scal1>::value) {
     if (exponent == 0.5) {
-      return ret_type(sqrt(base));
+      return ret_type(sqrt(std::forward<Mat1>(base)));
     } else if (exponent == 1.0) {
-      return ret_type(base);
+      return ret_type(std::forward<Mat1>(base));
     } else if (exponent == 2.0) {
-      return ret_type(square(base));
+      return ret_type(square(std::forward<Mat1>(base)));
     } else if (exponent == -2.0) {
-      return ret_type(inv_square(base));
+      return ret_type(inv_square(std::forward<Mat1>(base)));
     } else if (exponent == -1.0) {
-      return ret_type(inv(base));
+      return ret_type(inv(std::forward<Mat1>(base)));
     } else if (exponent == -0.5) {
-      return ret_type(inv_sqrt(base));
+      return ret_type(inv_sqrt(std::forward<Mat1>(base)));
     }
   }
 
-  arena_t<plain_type_t<Mat1>> arena_base = base;
+  arena_t<plain_type_t<Mat1>> arena_base = std::forward<Mat1>(base);
   arena_t<ret_type> ret
       = value_of(arena_base).array().pow(value_of(exponent)).matrix();
 
   reverse_pass_callback([arena_base, exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base).array() != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Mat1>::value) {
-      forward_as<ret_type>(arena_base).adj().array()
-          += (are_vals_zero)
-                 .select(ret_mul * value_of(exponent)
+    if constexpr (!is_constant_v<Mat1>) {
+      arena_base.adj().array() += (are_vals_zero).select(ret_mul * value_of(exponent)
                              / value_of(arena_base).array(),
                          0);
     }
-    if (!is_constant<Scal1>::value) {
-      forward_as<var>(exponent).adj()
-          += (are_vals_zero)
-                 .select(ret_mul * value_of(arena_base).array().log(), 0)
+    if constexpr (!is_constant_v<Scal1>) {
+      exponent.adj() += (are_vals_zero).select(ret_mul * value_of(arena_base).array().log(), 0)
                  .sum();
     }
   });
@@ -237,9 +233,9 @@ template <typename Scal1, typename Mat1,
           require_all_st_var_or_arithmetic<Scal1, Mat1>* = nullptr,
           require_stan_scalar_t<Scal1>* = nullptr,
           require_all_matrix_st<is_var, Mat1>* = nullptr>
-inline auto pow(Scal1 base, const Mat1& exponent) {
+inline auto pow(Scal1 base, Mat1&& exponent) {
   using ret_type = promote_scalar_t<var, plain_type_t<Mat1>>;
-  arena_t<Mat1> arena_exponent = exponent;
+  arena_t<Mat1> arena_exponent = std::forward<Mat1>(exponent);
   arena_t<ret_type> ret
       = Eigen::pow(value_of(base), value_of(arena_exponent).array());
 
@@ -248,17 +244,15 @@ inline auto pow(Scal1 base, const Mat1& exponent) {
       return;  // partials zero, avoids 0 & log(0)
     }
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Scal1>::value) {
-      forward_as<var>(base).adj()
-          += (ret_mul * value_of(arena_exponent).array() / value_of(base))
+    if constexpr (!is_constant_v<Scal1>) {
+      base.adj() += (ret_mul * value_of(arena_exponent).array() / value_of(base))
                  .sum();
     }
-    if (!is_constant<Mat1>::value) {
-      forward_as<ret_type>(arena_exponent).adj().array()
-          += ret_mul * std::log(value_of(base));
+    if constexpr (!is_constant_v<Mat1>) {
+      arena_exponent.adj().array() += ret_mul * std::log(value_of(base));
     }
   });
-  return ret_type(ret);
+  return ret;
 }
 
 // must uniquely match all pairs of { complex<var>, complex<T>, var, T }

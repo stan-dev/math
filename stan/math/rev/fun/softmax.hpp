@@ -25,13 +25,13 @@ namespace math {
  * @throw std::domain_error If the input vector is size 0.
  */
 template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
-inline auto softmax(const Mat& alpha) {
+inline auto softmax(Mat&& alpha) {
   using mat_plain = plain_type_t<Mat>;
   using ret_type = return_var_matrix_t<Mat>;
   if (alpha.size() == 0) {
-    return ret_type(alpha);
+    return arena_t<ret_type>(alpha);
   }
-  arena_t<mat_plain> alpha_arena = alpha;
+  arena_t<mat_plain> alpha_arena = std::forward<Mat>(alpha);
   arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
   arena_t<ret_type> res = res_val;
 
@@ -41,7 +41,7 @@ inline auto softmax(const Mat& alpha) {
         += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
-  return ret_type(res);
+  return arena_t<ret_type>(res);
 }
 
 }  // namespace math

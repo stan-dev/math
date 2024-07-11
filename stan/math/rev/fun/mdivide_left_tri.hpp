@@ -347,15 +347,15 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   using ret_type = var_value<ret_val_type>;
 
   if (A.size() == 0) {
-    return ret_type(ret_val_type(0, B.cols()));
+    return arena_t<ret_type>(ret_val_type(0, B.cols()));
   }
 
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+    arena_t<T1> arena_A = A;
+    arena_t<T2> arena_B = B;
     auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res
@@ -371,13 +371,13 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
                            .template triangularView<TriView>();
     });
 
-    return ret_type(res);
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    return res;
+  } else if constexpr (!is_constant_v<T1>) {
+    arena_t<T1> arena_A = A;
     auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res
-        = arena_A_val.template triangularView<TriView>().solve(value_of(B));
+        = arena_A_val.template triangularView<TriView>().solve(B);
 
     reverse_pass_callback([arena_A, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB
@@ -388,10 +388,10 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
                            .template triangularView<TriView>();
     });
 
-    return ret_type(res);
+    return res;
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<T1> arena_A = A;
+    arena_t<T2> arena_B = B;
 
     arena_t<ret_type> res
         = arena_A.template triangularView<TriView>().solve(arena_B.val());
@@ -404,7 +404,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
       arena_B.adj() += adjB;
     });
 
-    return ret_type(res);
+    return res;
   }
 }
 
