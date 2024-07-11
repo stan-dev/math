@@ -25,7 +25,7 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvectors_sym(const T& m) {
   using return_t = return_var_matrix_t<T>;
   if (unlikely(m.size() == 0)) {
-    return return_t(Eigen::MatrixXd(0, 0));
+    return arena_t<return_t>(Eigen::MatrixXd(0, 0));
   }
   check_symmetric("eigenvectors_sym", "m", m);
 
@@ -36,7 +36,7 @@ inline auto eigenvectors_sym(const T& m) {
 
   reverse_pass_callback([arena_m, eigenvals, eigenvecs]() mutable {
     const auto p = arena_m.val().cols();
-    Eigen::MatrixXd f = (1
+    arena_t<Eigen::MatrixXd> f = (1
                          / (eigenvals.rowwise().replicate(p).transpose()
                             - eigenvals.rowwise().replicate(p))
                                .array());
