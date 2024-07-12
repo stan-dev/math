@@ -126,12 +126,11 @@ inline auto quad_form_impl(Mat1&& A, Mat2&& B, bool symmetric) {
   arena_t<Mat1> arena_A = std::forward<Mat1>(A);
   arena_t<Mat2> arena_B = std::forward<Mat2>(B);
   if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
-
     check_not_nan("multiply", "A", arena_A.val());
     check_not_nan("multiply", "B", arena_B.val());
 
     auto res_vals = to_arena(arena_B.val_op().transpose() * arena_A.val_op()
-                              * arena_B.val_op());
+                             * arena_B.val_op());
 
     if (symmetric) {
       res_vals += res_vals.transpose().eval();
@@ -187,8 +186,7 @@ inline auto quad_form_impl(Mat1&& A, Mat2&& B, bool symmetric) {
     check_not_nan("multiply", "A", arena_A.val());
     check_not_nan("multiply", "B", arena_B);
 
-    auto res_vals
-        = to_arena(arena_B.transpose() * arena_A.val() * arena_B);
+    auto res_vals = to_arena(arena_B.transpose() * arena_A.val() * arena_B);
 
     if (symmetric) {
       res_vals += res_vals.transpose().eval();
@@ -297,7 +295,8 @@ template <typename Mat1, typename Mat2,
           require_not_col_vector_t<Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto quad_form(Mat1&& A, Mat2&& B, bool symmetric = false) {
-  return internal::quad_form_impl(std::forward<Mat1>(A), std::forward<Mat2>(B), symmetric);
+  return internal::quad_form_impl(std::forward<Mat1>(A), std::forward<Mat2>(B),
+                                  symmetric);
 }
 
 /**
@@ -322,7 +321,8 @@ template <typename Mat, typename Vec, require_matrix_t<Mat>* = nullptr,
           require_col_vector_t<Vec>* = nullptr,
           require_any_var_matrix_t<Mat, Vec>* = nullptr>
 inline var quad_form(Mat&& A, Vec&& B, bool symmetric = false) {
-  return internal::quad_form_impl(std::forward<Mat>(A), std::forward<Vec>(B), symmetric)(0, 0);
+  return internal::quad_form_impl(std::forward<Mat>(A), std::forward<Vec>(B),
+                                  symmetric)(0, 0);
 }
 
 }  // namespace math

@@ -79,7 +79,7 @@ template <typename Scal, typename RowVec,
           require_stan_scalar_t<Scal>* = nullptr,
           require_t<is_eigen_row_vector<RowVec>>* = nullptr>
 inline auto append_col(const Scal& A, const var_value<RowVec>& B) {
-  if constexpr(!is_constant_v<Scal> && !is_constant_v<RowVec>) {
+  if constexpr (!is_constant_v<Scal> && !is_constant_v<RowVec>) {
     var arena_A = A;
     arena_t<RowVec> arena_B = B;
     return make_callback_var(append_col(value_of(arena_A), value_of(arena_B)),

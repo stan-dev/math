@@ -36,10 +36,11 @@ inline auto eigenvectors_sym(const T& m) {
 
   reverse_pass_callback([arena_m, eigenvals, eigenvecs]() mutable {
     const auto p = arena_m.val().cols();
-    arena_t<Eigen::MatrixXd> f = (1
-                         / (eigenvals.rowwise().replicate(p).transpose()
-                            - eigenvals.rowwise().replicate(p))
-                               .array());
+    arena_t<Eigen::MatrixXd> f
+        = (1
+           / (eigenvals.rowwise().replicate(p).transpose()
+              - eigenvals.rowwise().replicate(p))
+                 .array());
     f.diagonal().setZero();
     arena_m.adj()
         += eigenvecs.val_op()

@@ -258,7 +258,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>
-inline auto mdivide_left_spd(T1&& A, T2&& B) {
+inline auto mdivide_left_spd(T1 &&A, T2 &&B) {
   using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
   using ret_type = var_value<ret_val_type>;
 
@@ -284,7 +284,9 @@ inline auto mdivide_left_spd(T1&& A, T2&& B) {
 
     reverse_pass_callback([arena_A, arena_B, arena_A_llt, res]() mutable {
       using T2_t = std::decay_t<T2>;
-      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime, T2_t::ColsAtCompileTime>> adjB = res.adj().eval();
+      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime,
+                            T2_t::ColsAtCompileTime>>
+          adjB = res.adj().eval();
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()
@@ -311,7 +313,9 @@ inline auto mdivide_left_spd(T1&& A, T2&& B) {
 
     reverse_pass_callback([arena_A, arena_A_llt, res]() mutable {
       using T2_t = std::decay_t<T2>;
-      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime, T2_t::ColsAtCompileTime>> adjB = res.adj().eval();
+      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime,
+                            T2_t::ColsAtCompileTime>>
+          adjB = res.adj().eval();
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()
@@ -338,7 +342,9 @@ inline auto mdivide_left_spd(T1&& A, T2&& B) {
 
     reverse_pass_callback([arena_B, arena_A_llt, res]() mutable {
       using T2_t = std::decay_t<T2>;
-      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime, T2_t::ColsAtCompileTime>> adjB =res.adj().eval();
+      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime,
+                            T2_t::ColsAtCompileTime>>
+          adjB = res.adj().eval();
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()

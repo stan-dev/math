@@ -105,7 +105,6 @@ inline auto multiply_log(const T1& a, const T2& b) {
   arena_t<T1> arena_a = a;
   arena_t<T2> arena_b = b;
   if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
-
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -156,11 +155,10 @@ inline auto multiply_log(const T1& a, const T2& b) {
                            / arena_b.val();
         });
   } else if constexpr (!is_constant_v<T1>) {
-    return make_callback_var(multiply_log(arena_a.val(), b),
-                             [arena_a, b](const auto& res) mutable {
-                               arena_a.adj().array()
-                                   += res.adj().array() * log(b);
-                             });
+    return make_callback_var(
+        multiply_log(arena_a.val(), b), [arena_a, b](const auto& res) mutable {
+          arena_a.adj().array() += res.adj().array() * log(b);
+        });
   } else {
     return make_callback_var(
         multiply_log(arena_a, arena_b.val()),

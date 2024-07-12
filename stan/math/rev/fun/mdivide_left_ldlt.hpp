@@ -25,8 +25,8 @@ namespace math {
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
 inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, T2&& B) {
-  using ret_val_type
-      = Eigen::Matrix<double, Eigen::Dynamic, std::decay_t<T2>::ColsAtCompileTime>;
+  using ret_val_type = Eigen::Matrix<double, Eigen::Dynamic,
+                                     std::decay_t<T2>::ColsAtCompileTime>;
   using ret_type = promote_var_matrix_t<ret_val_type, T1, T2>;
 
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix().val(), "B", B);

@@ -22,8 +22,7 @@ namespace math {
  * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          bool grad_a = !is_constant_v<Ta>,
-          bool grad_b = !is_constant_v<Tb>,
+          bool grad_a = !is_constant_v<Ta>, bool grad_b = !is_constant_v<Tb>,
           bool grad_z = !is_constant_v<Tz>,
           require_all_matrix_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>

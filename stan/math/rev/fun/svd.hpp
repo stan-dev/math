@@ -63,7 +63,8 @@ inline auto svd(EigMat&& m) {
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V, arena_Fp,
                          arena_Fm]() mutable {
     // SVD-U reverse mode
-    arena_t<Eigen::MatrixXd> UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
+    arena_t<Eigen::MatrixXd> UUadjT
+        = arena_U.val_op().transpose() * arena_U.adj_op();
     auto u_adj
         = .5 * arena_U.val_op()
               * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
@@ -78,7 +79,8 @@ inline auto svd(EigMat&& m) {
     auto d_adj = arena_U.val_op() * singular_values.adj().asDiagonal()
                  * arena_V.val_op().transpose();
     // SVD-V reverse mode
-    arena_t<Eigen::MatrixXd> VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
+    arena_t<Eigen::MatrixXd> VTVadj
+        = arena_V.val_op().transpose() * arena_V.adj_op();
     auto v_adj
         = 0.5 * arena_U.val_op()
               * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())

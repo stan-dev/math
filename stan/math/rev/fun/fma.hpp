@@ -193,90 +193,82 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
   return [arena_x, arena_y, arena_z, ret]() mutable {
     if constexpr (is_matrix_v<T1> && is_matrix_v<T2> && is_matrix_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj().array()
-            += ret.adj().array() * value_of(arena_y).array();          
+        arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj().array()
-            += ret.adj().array() * value_of(arena_x).array();
+        arena_y.adj().array() += ret.adj().array() * value_of(arena_x).array();
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj().array() += ret.adj().array();
       }
-    } else if constexpr (is_stan_scalar_v<T1> && is_matrix_v<T2> && is_matrix_v<T3>) {
+    } else if constexpr (is_stan_scalar_v<
+                             T1> && is_matrix_v<T2> && is_matrix_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj()
-            += (ret.adj().array() * value_of(arena_y).array()).sum();
+        arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj().array()
-            += ret.adj().array() * value_of(arena_x);
+        arena_y.adj().array() += ret.adj().array() * value_of(arena_x);
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj().array() += ret.adj().array();
       }
-    } else if constexpr (is_matrix_v<T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
+    } else if constexpr (is_matrix_v<
+                             T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj().array()
-            += ret.adj().array() * value_of(arena_y);
+        arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj()
-            += (ret.adj().array() * value_of(arena_x).array()).sum();
+        arena_y.adj() += (ret.adj().array() * value_of(arena_x).array()).sum();
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj().array() += ret.adj().array();
       }
-    } else if constexpr (is_stan_scalar_v<T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
+    } else if constexpr (is_stan_scalar_v<
+                             T1> && is_stan_scalar_v<T2> && is_matrix_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj()
-            += (ret.adj().array() * value_of(arena_y)).sum();
+        arena_x.adj() += (ret.adj().array() * value_of(arena_y)).sum();
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj()
-            += (ret.adj().array() * value_of(arena_x)).sum();
+        arena_y.adj() += (ret.adj().array() * value_of(arena_x)).sum();
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj().array() += ret.adj().array();
       }
-    } else if constexpr (is_matrix_v<T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
+    } else if constexpr (is_matrix_v<
+                             T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj().array()
-            += ret.adj().array() * value_of(arena_y).array();
+        arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj().array()
-            += ret.adj().array() * value_of(arena_x).array();
+        arena_y.adj().array() += ret.adj().array() * value_of(arena_x).array();
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj() += ret.adj().sum();
       }
-    } else if constexpr (is_stan_scalar_v<T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
+    } else if constexpr (is_stan_scalar_v<
+                             T1> && is_matrix_v<T2> && is_stan_scalar_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj()
-            += (ret.adj().array() * value_of(arena_y).array()).sum();
+        arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj().array()
-            += ret.adj().array() * value_of(arena_x);
+        arena_y.adj().array() += ret.adj().array() * value_of(arena_x);
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj() += ret.adj().sum();
       }
-    } else if constexpr (is_matrix_v<T1> && is_stan_scalar_v<T2> && is_stan_scalar_v<T3>) {
+    } else if constexpr (
+        is_matrix_v<T1> && is_stan_scalar_v<T2> && is_stan_scalar_v<T3>) {
       if constexpr (!is_constant_v<T1>) {
-        arena_x.adj().array()
-            += ret.adj().array() * value_of(arena_y);
+        arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
       }
       if constexpr (!is_constant_v<T2>) {
-        arena_y.adj()
-            += (ret.adj().array() * value_of(arena_x).array()).sum();
+        arena_y.adj() += (ret.adj().array() * value_of(arena_x).array()).sum();
       }
       if constexpr (!is_constant_v<T3>) {
         arena_z.adj() += ret.adj().sum();
       }
     }
-};
+  };
 }
 
 }  // namespace internal

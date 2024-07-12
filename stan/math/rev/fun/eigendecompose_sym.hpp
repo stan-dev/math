@@ -60,8 +60,7 @@ inline auto eigendecompose_sym(const T& m) {
     arena_m.adj() += value_adj + vector_adj;
   });
 
-  return std::make_tuple(std::move(eigenvecs),
-                         std::move(eigenvals));
+  return std::make_tuple(std::move(eigenvecs), std::move(eigenvals));
 }
 
 }  // namespace math

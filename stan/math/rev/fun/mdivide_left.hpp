@@ -46,12 +46,13 @@ inline auto mdivide_left(T1&& A, T2&& B) {
     arena_t<ret_type> res = hqr_A_ptr->solve(arena_B.val());
     reverse_pass_callback([arena_A, arena_B, hqr_A_ptr, res]() mutable {
       using T2_t = std::decay_t<T2>;
-      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime, T2_t::ColsAtCompileTime>> adjB
-          = hqr_A_ptr->householderQ()
-            * hqr_A_ptr->matrixQR()
-                  .template triangularView<Eigen::Upper>()
-                  .transpose()
-                  .solve(res.adj());
+      arena_t<Eigen::Matrix<double, T2_t::RowsAtCompileTime,
+                            T2_t::ColsAtCompileTime>>
+          adjB = hqr_A_ptr->householderQ()
+                 * hqr_A_ptr->matrixQR()
+                       .template triangularView<Eigen::Upper>()
+                       .transpose()
+                       .solve(res.adj());
       arena_A.adj() -= adjB * res.val_op().transpose();
       arena_B.adj() += adjB;
     });

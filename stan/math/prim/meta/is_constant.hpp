@@ -65,6 +65,5 @@ struct is_constant<T, require_eigen_t<T>>
 template <typename T>
 inline constexpr bool is_constant_v = is_constant<T>::value;
 
-
 }  // namespace stan
 #endif

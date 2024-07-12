@@ -96,8 +96,7 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
     }
 
     if constexpr (!is_constant_all<T3>::value) {
-      p.adj()
-          += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
+      p.adj() += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
     }
   });
 }

@@ -74,7 +74,8 @@ inline auto elt_divide(Mat1&& m1, Mat2&& m2) {
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_var_matrix_t<Mat>* = nullptr>
 inline auto elt_divide(Scal s, Mat&& m) {
-  arena_t<plain_type_t<Mat>> res = value_of(s) / std::forward<Mat>(m).val().array();
+  arena_t<plain_type_t<Mat>> res
+      = value_of(s) / std::forward<Mat>(m).val().array();
 
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();
