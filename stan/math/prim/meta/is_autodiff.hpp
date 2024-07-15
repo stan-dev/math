@@ -20,10 +20,12 @@ struct is_autodiff
                                       is_fvar<std::decay_t<T>>>::value> {};
 
 template <typename... Types>
-inline constexpr bool is_autodiff_v = math::conjunction<is_autodiff<Types>...>::value;
+inline constexpr bool is_autodiff_v
+    = math::conjunction<is_autodiff<Types>...>::value;
 
 template <typename... Types>
-inline constexpr bool is_autodiffable_v = math::conjunction<is_autodiff<scalar_type_t<Types>>...>::value;
+inline constexpr bool is_autodiffable_v
+    = math::conjunction<is_autodiff<scalar_type_t<Types>>...>::value;
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup autodiff_types autodiff  */
