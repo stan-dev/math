@@ -158,11 +158,12 @@ inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
   if (unlikely(A.size() == 0)) {
     return var(0.0);
-  } else if constexpr (is_autodiffable_v<T1, T2>) {
-    arena_t<T1> arena_A = A;
-    arena_t<T2> arena_B = B;
-    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
-    double res_val = 0.0;
+  } 
+  arena_t<T1> arena_A = A;
+  arena_t<T2> arena_B = B;
+  arena_t<Eigen::VectorXd> res_diff(arena_A.size());
+  double res_val = 0.0;
+  if constexpr (is_autodiffable_v<T1, T2>) {
     for (size_t i = 0; i < arena_A.size(); ++i) {
       const double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
       res_diff.coeffRef(i) = diff;
@@ -178,10 +179,6 @@ inline var squared_distance(const T1& A, const T2& B) {
           }
         }));
   } else if constexpr (is_autodiffable_v<T1>) {
-    arena_t<T1> arena_A = A;
-    arena_t<T2> arena_B = value_of(B);
-    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
-    double res_val = 0.0;
     for (size_t i = 0; i < arena_A.size(); ++i) {
       const double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
       res_diff.coeffRef(i) = diff;
@@ -192,10 +189,6 @@ inline var squared_distance(const T1& A, const T2& B) {
           arena_A.adj() += 2.0 * res.adj() * res_diff;
         }));
   } else {
-    arena_t<T1> arena_A = value_of(A);
-    arena_t<T2> arena_B = B;
-    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
-    double res_val = 0.0;
     for (size_t i = 0; i < arena_A.size(); ++i) {
       const double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
       res_diff.coeffRef(i) = diff;

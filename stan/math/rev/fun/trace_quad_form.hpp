@@ -119,58 +119,47 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  var res;
-
+  arena_t<Mat1> arena_A = std::forward<Mat1>(A);
+  arena_t<Mat2> arena_B = std::forward<Mat2>(B);
   if constexpr (is_autodiffable_v<Mat1, Mat2>) {
-    arena_t<Mat1> arena_A = std::forward<Mat1>(A);
-    arena_t<Mat2> arena_B = std::forward<Mat2>(B);
-
-    res = (value_of(arena_B).transpose() * value_of(arena_A)
-           * value_of(arena_B))
+    var res = (arena_B.val_op().transpose() * arena_A.val_op()
+           * arena_B.val_op())
               .trace();
-
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias()
-            += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
+            += res.adj() * arena_B.val_op() * arena_B.val_op().transpose();
       } else {
         arena_A.adj()
-            += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
+            += res.adj() * arena_B.val_op() * arena_B.val_op().transpose();
       }
-
       if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
-            += res.adj() * (value_of(arena_A) + value_of(arena_A).transpose())
-               * value_of(arena_B);
+            += res.adj() * (arena_A.val_op() + arena_A.val_op().transpose())
+               * arena_B.val_op();
       } else {
         arena_B.adj() += res.adj()
-                         * (value_of(arena_A) + value_of(arena_A).transpose())
-                         * value_of(arena_B);
+                         * (arena_A.val_op() + arena_A.val_op().transpose())
+                         * arena_B.val_op();
       }
     });
+    return res;
   } else if constexpr (is_autodiffable_v<Mat2>) {
-    arena_t<Mat1> arena_A = value_of(std::forward<Mat1>(A));
-    arena_t<Mat2> arena_B = std::forward<Mat2>(B);
-
-    res = (value_of(arena_B).transpose() * value_of(arena_A)
-           * value_of(arena_B))
+    var res = (arena_B.val_op().transpose() * arena_A
+           * arena_B.val_op())
               .trace();
-
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
-            += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
+            += res.adj() * (arena_A + arena_A.transpose()) * arena_B.val_op();
       } else {
         arena_B.adj()
-            += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
+            += res.adj() * (arena_A + arena_A.transpose()) * arena_B.val_op();
       }
     });
+    return res;
   } else {
-    arena_t<Mat1> arena_A = A;
-    arena_t<Mat2> arena_B = value_of(B);
-
-    res = (arena_B.transpose() * value_of(arena_A) * arena_B).trace();
-
+    var res = (arena_B.transpose() * arena_A.val_op() * arena_B).trace();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += res.adj() * arena_B * arena_B.transpose();
@@ -178,9 +167,8 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
         arena_A.adj() += res.adj() * arena_B * arena_B.transpose();
       }
     });
+    return res;
   }
-
-  return res;
 }
 
 }  // namespace math

@@ -40,10 +40,10 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     return 0;
   }
 
+  arena_t<Ta> arena_A = A.matrix();
+  arena_t<Tb> arena_B = B;
+  arena_t<Td> arena_D = D;
   if constexpr (is_autodiffable_v<Ta, Tb, Td>) {
-    arena_t<Ta> arena_A = A.matrix();
-    arena_t<Tb> arena_B = B;
-    arena_t<Td> arena_D = D;
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
     auto BTAsolveB = to_arena(arena_B.val_op().transpose() * AsolveB);
 
