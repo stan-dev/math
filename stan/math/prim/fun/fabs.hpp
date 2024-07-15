@@ -17,7 +17,7 @@ inline auto fabs(T x) {
 
 template <typename T, require_complex_t<T>* = nullptr>
 inline auto fabs(T x) {
-  return hypot(x.real(), x.imag());
+  return std::hypot(x.real(), x.imag());
 }
 
 /**
