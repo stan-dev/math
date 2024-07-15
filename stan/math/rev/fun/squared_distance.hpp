@@ -158,7 +158,7 @@ inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
   if (unlikely(A.size() == 0)) {
     return var(0.0);
-  } 
+  }
   arena_t<T1> arena_A = A;
   arena_t<T2> arena_B = B;
   arena_t<Eigen::VectorXd> res_diff(arena_A.size());

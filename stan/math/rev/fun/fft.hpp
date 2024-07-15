@@ -45,7 +45,8 @@ inline auto fft(const V& x) {
   }
 
   arena_t<V> arena_v = x;
-  arena_t<plain_type_t<V>> res = fft(to_complex(arena_v.real().val(), arena_v.imag().val()));
+  arena_t<plain_type_t<V>> res
+      = fft(to_complex(arena_v.real().val(), arena_v.imag().val()));
 
   reverse_pass_callback([arena_v, res]() mutable {
     auto adj_inv_fft = inv_fft(to_complex(res.real().adj(), res.imag().adj()));

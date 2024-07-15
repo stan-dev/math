@@ -122,8 +122,8 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
   arena_t<Mat1> arena_A = std::forward<Mat1>(A);
   arena_t<Mat2> arena_B = std::forward<Mat2>(B);
   if constexpr (is_autodiffable_v<Mat1, Mat2>) {
-    var res = (arena_B.val_op().transpose() * arena_A.val_op()
-           * arena_B.val_op())
+    var res
+        = (arena_B.val_op().transpose() * arena_A.val_op() * arena_B.val_op())
               .trace();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       if constexpr (is_var_matrix<Mat1>::value) {
@@ -145,9 +145,8 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
     });
     return res;
   } else if constexpr (is_autodiffable_v<Mat2>) {
-    var res = (arena_B.val_op().transpose() * arena_A
-           * arena_B.val_op())
-              .trace();
+    var res
+        = (arena_B.val_op().transpose() * arena_A * arena_B.val_op()).trace();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
