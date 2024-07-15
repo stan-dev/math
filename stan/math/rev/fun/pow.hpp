@@ -141,14 +141,12 @@ inline auto pow(Mat1&& base, Mat2&& exponent) {
     const auto& are_vals_zero = to_ref(value_of(arena_base) != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
     if constexpr (is_autodiffable_v<Mat1>) {
-      using base_var_arena_t = arena_t<base_arena_t>;
       arena_base.adj() += (are_vals_zero)
                               .select(ret_mul * value_of(arena_exponent)
                                           / value_of(arena_base),
                                       0);
     }
     if constexpr (is_autodiffable_v<Mat2>) {
-      using exp_var_arena_t = arena_t<exp_arena_t>;
       arena_exponent.adj()
           += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
     }
