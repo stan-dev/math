@@ -121,7 +121,7 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
 
   var res;
 
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     arena_t<Mat1> arena_A = std::forward<Mat1>(A);
     arena_t<Mat2> arena_B = std::forward<Mat2>(B);
 
@@ -148,7 +148,7 @@ inline var trace_quad_form(Mat1&& A, Mat2&& B) {
                          * value_of(arena_B);
       }
     });
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     arena_t<Mat1> arena_A = value_of(std::forward<Mat1>(A));
     arena_t<Mat2> arena_B = std::forward<Mat2>(B);
 

@@ -31,7 +31,7 @@ inline auto elt_divide(Mat1&& m1, Mat2&& m2) {
   using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;
   arena_t<Mat1> arena_m1 = std::forward<Mat1>(m1);
   arena_t<Mat2> arena_m2 = std::forward<Mat2>(m2);
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     arena_t<ret_type> ret(arena_m1.val().array() / arena_m2.val().array());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       for (Eigen::Index j = 0; j < arena_m2.cols(); ++j) {
@@ -44,13 +44,13 @@ inline auto elt_divide(Mat1&& m1, Mat2&& m2) {
       }
     });
     return ret;
-  } else if constexpr (!is_constant_v<Mat1>) {
+  } else if constexpr (is_autodiffable_v<Mat1>) {
     arena_t<ret_type> ret(arena_m1.val().array() / arena_m2.array());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m1.adj().array() += ret.adj().array() / arena_m2.array();
     });
     return ret;
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     arena_t<ret_type> ret(arena_m1.array() / arena_m2.val().array());
     reverse_pass_callback([ret, arena_m2, arena_m1]() mutable {
       arena_m2.adj().array()
@@ -79,7 +79,7 @@ inline auto elt_divide(Scal s, Mat&& m) {
 
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();
-    if constexpr (!is_constant_v<Scal>) {
+    if constexpr (is_autodiffable_v<Scal>) {
       s.adj() += (res.adj().array() / m.val().array()).sum();
     }
   });

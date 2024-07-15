@@ -30,20 +30,20 @@ inline auto diag_pre_multiply(T1&& m1, T2&& m2) {
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2>;
   arena_t<T1> arena_m1 = std::forward<T1>(m1);
   arena_t<T2> arena_m2 = std::forward<T2>(m2);
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
       arena_m2.adj() += arena_m1.val().asDiagonal() * ret.adj();
     });
     return ret;
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
     });
     return ret;
-  } else if constexpr (!is_constant_v<T2>) {
+  } else if constexpr (is_autodiffable_v<T2>) {
     arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m2.adj() += arena_m1.val().asDiagonal() * ret.adj();

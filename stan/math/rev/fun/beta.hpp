@@ -103,7 +103,7 @@ template <typename Mat1, typename Mat2,
 inline auto beta(const Mat1& a, const Mat2& b) {
   arena_t<Mat1> arena_a = a;
   arena_t<Mat2> arena_b = b;
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     auto beta_val = beta(arena_a.val(), arena_b.val());
     auto digamma_ab
         = to_arena(digamma(arena_a.val().array() + arena_b.val().array()));
@@ -116,7 +116,7 @@ inline auto beta(const Mat1& a, const Mat2& b) {
           arena_b.adj().array()
               += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
         });
-  } else if constexpr (!is_constant_v<Mat1>) {
+  } else if constexpr (is_autodiffable_v<Mat1>) {
     auto digamma_ab
         = to_arena(digamma(arena_a.val()).array()
                    - digamma(arena_a.val().array() + arena_b.array()));
@@ -126,7 +126,7 @@ inline auto beta(const Mat1& a, const Mat2& b) {
                                                         * digamma_ab
                                                         * vi.val().array();
                              });
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     auto beta_val = beta(arena_a, arena_b.val());
     auto digamma_ab
         = to_arena((digamma(arena_b.val()).array()
@@ -145,7 +145,7 @@ template <typename Scalar, typename VarMat,
 inline auto beta(const Scalar& a, const VarMat& b) {
   auto arena_a = a;
   arena_t<VarMat> arena_b = b;
-  if constexpr (!is_constant_v<Scalar> && !is_constant_v<VarMat>) {
+  if constexpr (is_autodiffable_v<Scalar, VarMat>) {
     auto beta_val = beta(arena_a.val(), arena_b.val());
     auto digamma_ab = to_arena(digamma(arena_a.val() + arena_b.val().array()));
     return make_callback_var(
@@ -157,7 +157,7 @@ inline auto beta(const Scalar& a, const VarMat& b) {
           arena_b.adj().array()
               += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
         });
-  } else if constexpr (!is_constant_v<Scalar>) {
+  } else if constexpr (is_autodiffable_v<Scalar>) {
     auto digamma_ab = to_arena(digamma(arena_a.val())
                                - digamma(arena_a.val() + arena_b.array()));
     return make_callback_var(
@@ -166,7 +166,7 @@ inline auto beta(const Scalar& a, const VarMat& b) {
           arena_a.adj()
               += (vi.adj().array() * digamma_ab * vi.val().array()).sum();
         });
-  } else if constexpr (!is_constant_v<VarMat>) {
+  } else if constexpr (is_autodiffable_v<VarMat>) {
     auto beta_val = beta(arena_a, arena_b.val());
     auto digamma_ab = to_arena((digamma(arena_b.val()).array()
                                 - digamma(arena_a + arena_b.val().array()))
@@ -183,7 +183,7 @@ template <typename VarMat, typename Scalar,
 inline auto beta(const VarMat& a, const Scalar& b) {
   arena_t<VarMat> arena_a = a;
   auto arena_b = b;
-  if constexpr (!is_constant_v<VarMat> && !is_constant_v<Scalar>) {
+  if constexpr (is_autodiffable_v<VarMat, Scalar>) {
     auto beta_val = beta(arena_a.val(), arena_b.val());
     auto digamma_ab = to_arena(digamma(arena_a.val().array() + arena_b.val()));
     return make_callback_var(
@@ -195,7 +195,7 @@ inline auto beta(const VarMat& a, const Scalar& b) {
           arena_b.adj()
               += (adj_val * (digamma(arena_b.val()) - digamma_ab)).sum();
         });
-  } else if constexpr (!is_constant_v<VarMat>) {
+  } else if constexpr (is_autodiffable_v<VarMat>) {
     auto digamma_ab = to_arena(digamma(arena_a.val()).array()
                                - digamma(arena_a.val().array() + arena_b));
     return make_callback_var(
@@ -203,7 +203,7 @@ inline auto beta(const VarMat& a, const Scalar& b) {
           arena_a.adj().array()
               += vi.adj().array() * digamma_ab * vi.val().array();
         });
-  } else if constexpr (!is_constant_v<Scalar>) {
+  } else if constexpr (is_autodiffable_v<Scalar>) {
     auto beta_val = beta(arena_a, arena_b.val());
     auto digamma_ab = to_arena(
         (digamma(arena_b.val()) - digamma(arena_a.array() + arena_b.val()))

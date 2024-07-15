@@ -43,7 +43,7 @@ inline var dot_product(T1&& v1, T2&& v2) {
   }
   arena_t<T1> v1_arena = std::forward<T1>(v1);
   arena_t<T2> v2_arena = std::forward<T2>(v2);
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         v1_arena.val().dot(v2_arena.val()),
         [v1_arena, v2_arena](const auto& vi) mutable {
@@ -53,7 +53,7 @@ inline var dot_product(T1&& v1, T2&& v2) {
             v2_arena.adj().coeffRef(i) += res_adj * v1_arena.val().coeff(i);
           }
         });
-  } else if constexpr (!is_constant_v<T2>) {
+  } else if constexpr (is_autodiffable_v<T2>) {
     return make_callback_var(v1_arena.dot(v2_arena.val()),
                              [v1_arena, v2_arena](const auto& vi) mutable {
                                v2_arena.adj().array()

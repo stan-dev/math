@@ -35,7 +35,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, T2&& B) {
     return arena_t<ret_type>(ret_val_type(0, B.cols()));
   }
 
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     arena_t<T2> arena_B = std::forward<T2>(B);
     arena_t<T1> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
@@ -49,7 +49,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, T2&& B) {
     });
 
     return res;
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     arena_t<T1> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(std::forward<T2>(B));
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());

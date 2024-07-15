@@ -68,7 +68,7 @@ inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
 
   arena_t<Mat1> arena_v1 = std::forward<Mat1>(v1);
   arena_t<Mat2> arena_v2 = std::forward<Mat2>(v2);
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     return_t res
         = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
@@ -84,7 +84,7 @@ inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
       }
     });
     return res;
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     return_t res = (arena_v1.array() * arena_v2.val().array()).colwise().sum();
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
       if constexpr (is_var_matrix<Mat2>::value) {

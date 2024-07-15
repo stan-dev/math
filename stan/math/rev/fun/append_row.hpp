@@ -33,7 +33,7 @@ template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto append_row(const T1& A, const T2& B) {
   check_size_match("append_row", "columns of A", A.cols(), "columns of B",
                    B.cols());
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     arena_t<T1> arena_A = A;
     arena_t<T2> arena_B = B;
     return make_callback_var(
@@ -42,7 +42,7 @@ inline auto append_row(const T1& A, const T2& B) {
           arena_A.adj() += vi.adj().topRows(arena_A.rows());
           arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
         });
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     arena_t<T1> arena_A = A;
     return make_callback_var(append_row(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
@@ -76,7 +76,7 @@ template <typename Scal, typename ColVec,
           require_stan_scalar_t<Scal>* = nullptr,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr>
 inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
-  if constexpr (!is_constant_v<Scal> && !is_constant_v<ColVec>) {
+  if constexpr (is_autodiffable_v<Scal, ColVec>) {
     var arena_A = A;
     arena_t<ColVec> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
@@ -84,7 +84,7 @@ inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
                                arena_A.adj() += vi.adj().coeff(0);
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
-  } else if constexpr (!is_constant_v<Scal>) {
+  } else if constexpr (is_autodiffable_v<Scal>) {
     var arena_A = A;
     return make_callback_var(
         append_row(value_of(arena_A), value_of(B)),
@@ -115,7 +115,7 @@ template <typename ColVec, typename Scal,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr>
 inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
-  if constexpr (!is_constant_v<ColVec> && !is_constant_v<Scal>) {
+  if constexpr (is_autodiffable_v<ColVec, Scal>) {
     arena_t<ColVec> arena_A = A;
     var arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
@@ -124,7 +124,7 @@ inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
                                arena_B.adj()
                                    += vi.adj().coeff(vi.adj().size() - 1);
                              });
-  } else if constexpr (!is_constant_v<ColVec>) {
+  } else if constexpr (is_autodiffable_v<ColVec>) {
     arena_t<ColVec> arena_A = A;
     return make_callback_var(append_row(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {

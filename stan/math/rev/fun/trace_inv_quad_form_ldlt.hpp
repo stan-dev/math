@@ -35,7 +35,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, T2&& B) {
   if (A.matrix().size() == 0)
     return 0.0;
 
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     arena_t<T1> arena_A = A.matrix();
     arena_t<T2> arena_B = std::forward<T2>(B);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -48,7 +48,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, T2&& B) {
     });
 
     return res;
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     arena_t<T1> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
 

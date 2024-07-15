@@ -125,7 +125,7 @@ inline auto quad_form_impl(Mat1&& A, Mat2&& B, bool symmetric) {
 
   arena_t<Mat1> arena_A = std::forward<Mat1>(A);
   arena_t<Mat2> arena_B = std::forward<Mat2>(B);
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     check_not_nan("multiply", "A", arena_A.val());
     check_not_nan("multiply", "B", arena_B.val());
 
@@ -157,7 +157,7 @@ inline auto quad_form_impl(Mat1&& A, Mat2&& B, bool symmetric) {
     });
 
     return res;
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     check_not_nan("multiply", "A", arena_A);
     check_not_nan("multiply", "B", arena_B.val());
 
@@ -182,7 +182,7 @@ inline auto quad_form_impl(Mat1&& A, Mat2&& B, bool symmetric) {
     });
 
     return res;
-  } else if constexpr (!is_constant_v<Mat1>) {
+  } else if constexpr (is_autodiffable_v<Mat1>) {
     check_not_nan("multiply", "A", arena_A.val());
     check_not_nan("multiply", "B", arena_B);
 

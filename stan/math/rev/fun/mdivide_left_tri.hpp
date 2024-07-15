@@ -353,7 +353,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
 
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     arena_t<T1> arena_A = A;
     arena_t<T2> arena_B = B;
     auto arena_A_val = to_arena(arena_A.val());
@@ -372,7 +372,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     });
 
     return res;
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     arena_t<T1> arena_A = A;
     auto arena_A_val = to_arena(arena_A.val());
 

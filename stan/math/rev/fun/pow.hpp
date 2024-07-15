@@ -92,10 +92,10 @@ inline var pow(const Scal1& base, const Scal2& exponent) {
         }
         const double vi_mul = vi.adj() * vi.val();
 
-        if constexpr (!is_constant_v<Scal1>) {
+        if constexpr (is_autodiffable_v<Scal1>) {
           base.adj() += vi_mul * value_of(exponent) / value_of(base);
         }
-        if constexpr (!is_constant_v<Scal2>) {
+        if constexpr (is_autodiffable_v<Scal2>) {
           exponent.adj() += vi_mul * std::log(value_of(base));
         }
       });
@@ -140,14 +140,14 @@ inline auto pow(Mat1&& base, Mat2&& exponent) {
   reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base) != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if constexpr (!is_constant_v<Mat1>) {
+    if constexpr (is_autodiffable_v<Mat1>) {
       using base_var_arena_t = arena_t<base_arena_t>;
       arena_base.adj() += (are_vals_zero)
                               .select(ret_mul * value_of(arena_exponent)
                                           / value_of(arena_base),
                                       0);
     }
-    if constexpr (!is_constant_v<Mat2>) {
+    if constexpr (is_autodiffable_v<Mat2>) {
       using exp_var_arena_t = arena_t<exp_arena_t>;
       arena_exponent.adj()
           += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
@@ -196,14 +196,14 @@ inline auto pow(Mat1&& base, const Scal1& exponent) {
   reverse_pass_callback([arena_base, exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base).array() != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if constexpr (!is_constant_v<Mat1>) {
+    if constexpr (is_autodiffable_v<Mat1>) {
       arena_base.adj().array()
           += (are_vals_zero)
                  .select(ret_mul * value_of(exponent)
                              / value_of(arena_base).array(),
                          0);
     }
-    if constexpr (!is_constant_v<Scal1>) {
+    if constexpr (is_autodiffable_v<Scal1>) {
       exponent.adj()
           += (are_vals_zero)
                  .select(ret_mul * value_of(arena_base).array().log(), 0)
@@ -246,12 +246,12 @@ inline auto pow(Scal1 base, Mat1&& exponent) {
       return;  // partials zero, avoids 0 & log(0)
     }
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if constexpr (!is_constant_v<Scal1>) {
+    if constexpr (is_autodiffable_v<Scal1>) {
       base.adj()
           += (ret_mul * value_of(arena_exponent).array() / value_of(base))
                  .sum();
     }
-    if constexpr (!is_constant_v<Mat1>) {
+    if constexpr (is_autodiffable_v<Mat1>) {
       arena_exponent.adj().array() += ret_mul * std::log(value_of(base));
     }
   });

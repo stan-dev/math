@@ -104,7 +104,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
   check_matching_dims("multiply_log", "a", a, "b", b);
   arena_t<T1> arena_a = a;
   arena_t<T2> arena_b = b;
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -113,7 +113,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj().array() += res.adj().array() * arena_a.val().array()
                                    / arena_b.val().array();
         });
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(multiply_log(arena_a.val(), arena_b),
                              [arena_a, arena_b](const auto& res) mutable {
                                arena_a.adj().array()
@@ -146,7 +146,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
 
   arena_t<T1> arena_a = a;
   auto arena_b = b;
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -154,7 +154,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj() += (res.adj().array() * arena_a.val().array()).sum()
                            / arena_b.val();
         });
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(
         multiply_log(arena_a.val(), b), [arena_a, b](const auto& res) mutable {
           arena_a.adj().array() += res.adj().array() * log(b);
@@ -183,7 +183,7 @@ template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
 inline auto multiply_log(const T1& a, const T2& b) {
   auto arena_a = a;
   arena_t<T2> arena_b = b;
-  if constexpr (!is_constant_v<T1> && !is_constant_v<T2>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -192,7 +192,7 @@ inline auto multiply_log(const T1& a, const T2& b) {
           arena_b.adj().array()
               += arena_a.val() * res.adj().array() / arena_b.val().array();
         });
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b),
         [arena_a, arena_b](const auto& res) mutable {

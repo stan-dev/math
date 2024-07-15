@@ -30,7 +30,7 @@ inline auto multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   arena_t<T1> arena_A(std::forward<T1>(A));
   arena_t<T2> arena_B(std::forward<T2>(B));
-  if constexpr (!is_constant_v<T2> && !is_constant_v<T1>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     auto arena_A_val = to_arena(arena_A.val());
     auto arena_B_val = to_arena(arena_B.val());
     using return_t
@@ -48,7 +48,7 @@ inline auto multiply(T1&& A, T2&& B) {
           }
         });
     return res;
-  } else if constexpr (!is_constant_v<T2>) {
+  } else if constexpr (is_autodiffable_v<T2>) {
     using return_t
         = return_var_matrix_t<decltype(arena_A * value_of(B).eval()), T1, T2>;
     arena_t<return_t> res = arena_A * arena_B.val_op();
@@ -86,7 +86,7 @@ inline var multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   arena_t<T1> arena_A = std::forward<T1>(A);
   arena_t<T2> arena_B = std::forward<T2>(B);
-  if constexpr (!is_constant_v<T2> && !is_constant_v<T1>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     auto arena_A_val = to_arena(value_of(arena_A));
     auto arena_B_val = to_arena(value_of(arena_B));
     var res = arena_A_val.dot(arena_B_val);
@@ -97,7 +97,7 @@ inline var multiply(T1&& A, T2&& B) {
           arena_B.adj().array() += arena_A_val.transpose().array() * res_adj;
         });
     return res;
-  } else if constexpr (!is_constant_v<T2>) {
+  } else if constexpr (is_autodiffable_v<T2>) {
     var res = arena_A.dot(value_of(arena_B));
     reverse_pass_callback([arena_B, arena_A, res]() mutable {
       arena_B.adj().array() += arena_A.transpose().array() * res.adj();
@@ -129,7 +129,7 @@ template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& a, T2&& B) {
   arena_t<T2> arena_B(std::forward<T2>(B));
-  if constexpr (!is_constant_v<T2> && !is_constant_v<T1>) {
+  if constexpr (is_autodiffable_v<T1, T2>) {
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = a.val() * arena_B.val().array();
     reverse_pass_callback([a, arena_B, res]() mutable {
@@ -142,14 +142,14 @@ inline auto multiply(const T1& a, T2&& B) {
       }
     });
     return res;
-  } else if constexpr (!is_constant_v<T2>) {
+  } else if constexpr (is_autodiffable_v<T2>) {
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = a * arena_B.val().array();
     reverse_pass_callback([a, arena_B, res]() mutable {
       arena_B.adj().array() += a * res.adj().array();
     });
     return res;
-  } else if constexpr (!is_constant_v<T1>) {
+  } else if constexpr (is_autodiffable_v<T1>) {
     using return_t = return_var_matrix_t<T2, T1, T2>;
     arena_t<return_t> res = a.val() * arena_B.array();
     reverse_pass_callback([a, arena_B, res]() mutable {

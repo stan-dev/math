@@ -103,7 +103,7 @@ template <typename Mat1, typename Mat2,
 inline auto atan2(const Mat1& a, const Mat2& b) {
   arena_t<Mat1> arena_a = a;
   arena_t<Mat2> arena_b = b;
-  if constexpr (!is_constant_v<Mat1> && !is_constant_v<Mat2>) {
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
     auto atan2_val = atan2(arena_a.val(), arena_b.val());
     auto a_sq_plus_b_sq
         = to_arena((arena_a.val().array() * arena_a.val().array())
@@ -116,7 +116,7 @@ inline auto atan2(const Mat1& a, const Mat2& b) {
           arena_b.adj().array()
               += -vi.adj().array() * arena_a.val().array() / a_sq_plus_b_sq;
         });
-  } else if constexpr (!is_constant_v<Mat1>) {
+  } else if constexpr (is_autodiffable_v<Mat1>) {
     auto a_sq_plus_b_sq
         = to_arena((arena_a.val().array() * arena_a.val().array())
                    + (arena_b.array() * arena_b.array()));
@@ -127,7 +127,7 @@ inline auto atan2(const Mat1& a, const Mat2& b) {
           arena_a.adj().array()
               += vi.adj().array() * arena_b.array() / a_sq_plus_b_sq;
         });
-  } else if constexpr (!is_constant_v<Mat2>) {
+  } else if constexpr (is_autodiffable_v<Mat2>) {
     auto a_sq_plus_b_sq
         = to_arena((arena_a.array() * arena_a.array())
                    + (arena_b.val().array() * arena_b.val().array()));
@@ -146,7 +146,7 @@ template <typename Scalar, typename VarMat,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto atan2(const Scalar& a, const VarMat& b) {
   arena_t<VarMat> arena_b = b;
-  if constexpr (!is_constant_v<Scalar> && !is_constant_v<VarMat>) {
+  if constexpr (is_autodiffable_v<Scalar, VarMat> && is_autodiffable_v<VarMat>) {
     auto atan2_val = atan2(a.val(), arena_b.val());
     auto a_sq_plus_b_sq = to_arena(
         (a.val() * a.val()) + (arena_b.val().array() * arena_b.val().array()));
@@ -157,7 +157,7 @@ inline auto atan2(const Scalar& a, const VarMat& b) {
                          .sum();
           arena_b.adj().array() += -vi.adj().array() * a.val() / a_sq_plus_b_sq;
         });
-  } else if constexpr (!is_constant_v<Scalar>) {
+  } else if constexpr (is_autodiffable_v<Scalar>) {
     auto a_sq_plus_b_sq
         = to_arena((a.val() * a.val()) + (arena_b.array() * arena_b.array()));
     return make_callback_var(
@@ -166,7 +166,7 @@ inline auto atan2(const Scalar& a, const VarMat& b) {
           a.adj()
               += (vi.adj().array() * arena_b.array() / a_sq_plus_b_sq).sum();
         });
-  } else if constexpr (!is_constant_v<VarMat>) {
+  } else if constexpr (is_autodiffable_v<VarMat>) {
     auto a_sq_plus_b_sq
         = to_arena((a * a) + (arena_b.val().array() * arena_b.val().array()));
     return make_callback_var(atan2(a, arena_b.val()),
@@ -182,7 +182,7 @@ template <typename VarMat, typename Scalar,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto atan2(const VarMat& a, const Scalar& b) {
   arena_t<VarMat> arena_a = a;
-  if constexpr (!is_constant_v<VarMat> && !is_constant_v<Scalar>) {
+  if constexpr (is_autodiffable_v<VarMat, Scalar>) {
     auto atan2_val = atan2(arena_a.val(), b.val());
     auto a_sq_plus_b_sq = to_arena(
         (arena_a.val().array() * arena_a.val().array()) + (b.val() * b.val()));
@@ -194,7 +194,7 @@ inline auto atan2(const VarMat& a, const Scalar& b) {
               += -(vi.adj().array() * arena_a.val().array() / a_sq_plus_b_sq)
                       .sum();
         });
-  } else if constexpr (!is_constant_v<VarMat>) {
+  } else if constexpr (is_autodiffable_v<VarMat>) {
     auto a_sq_plus_b_sq
         = to_arena((arena_a.val().array() * arena_a.val().array()) + (b * b));
     return make_callback_var(atan2(arena_a.val(), b),
@@ -202,7 +202,7 @@ inline auto atan2(const VarMat& a, const Scalar& b) {
                                arena_a.adj().array()
                                    += vi.adj().array() * b / a_sq_plus_b_sq;
                              });
-  } else if constexpr (!is_constant_v<Scalar>) {
+  } else if constexpr (is_autodiffable_v<Scalar>) {
     auto a_sq_plus_b_sq
         = to_arena((arena_a.array() * arena_a.array()) + (b.val() * b.val()));
     return make_callback_var(
