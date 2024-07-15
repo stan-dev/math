@@ -146,7 +146,8 @@ template <typename Scalar, typename VarMat,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto atan2(const Scalar& a, const VarMat& b) {
   arena_t<VarMat> arena_b = b;
-  if constexpr (is_autodiffable_v<Scalar, VarMat> && is_autodiffable_v<VarMat>) {
+  if constexpr (is_autodiffable_v<Scalar,
+                                  VarMat> && is_autodiffable_v<VarMat>) {
     auto atan2_val = atan2(a.val(), arena_b.val());
     auto a_sq_plus_b_sq = to_arena(
         (a.val() * a.val()) + (arena_b.val().array() * arena_b.val().array()));

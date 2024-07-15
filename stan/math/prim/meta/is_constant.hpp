@@ -66,7 +66,8 @@ template <typename... Types>
 inline constexpr bool is_constant_all_v = is_constant_all<Types...>::value;
 
 template <typename... Types>
-inline constexpr bool is_constant_v = std::conjunction<is_constant<Types>...>::value;
+inline constexpr bool is_constant_v
+    = std::conjunction<is_constant<Types>...>::value;
 
 }  // namespace stan
 #endif
