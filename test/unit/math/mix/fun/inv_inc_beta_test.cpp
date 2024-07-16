@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbInternalMath, inv_inc_beta_fv1) {
+TEST_F(StanAutoDiff, inv_inc_beta_fv1) {
   using stan::math::fvar;
   using stan::math::inv_inc_beta;
   using stan::math::var;
@@ -57,7 +57,7 @@ TEST(ProbInternalMath, inv_inc_beta_fv1) {
   EXPECT_FLOAT_EQ(b_v.val_.adj(), -0.122532267934);
 }
 
-TEST(ProbInternalMath, inv_inc_beta_fv2) {
+TEST_F(StanAutoDiff, inv_inc_beta_fv2) {
   using stan::math::fvar;
   using stan::math::inv_inc_beta;
   using stan::math::var;
@@ -76,7 +76,7 @@ TEST(ProbInternalMath, inv_inc_beta_fv2) {
   EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.530989359806);
 }
 
-TEST(mathMixScalFun, inv_inc_beta_vec) {
+TEST_F(StanAutoDiff, inv_inc_beta_vec) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::inc_beta(x1, x2, x3);
   };

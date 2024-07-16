@@ -1,13 +1,13 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixCore, operatorSubtraction) {
+TEST_F(StanAutoDiff, operatorSubtraction) {
   auto f = [](const auto& x1, const auto& x2) { return x1 - x2; };
   bool disable_lhs_int = true;
   stan::test::expect_common_binary(f, disable_lhs_int);
   stan::test::expect_complex_common_binary(f);
 }
 
-TEST(mathMixCore, operatorSubtractionMatrixSmall) {
+TEST_F(StanAutoDiff, operatorSubtractionMatrixSmall) {
   // This calls operator- under the hood
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::subtract(x1, x2);
@@ -47,7 +47,7 @@ TEST(mathMixCore, operatorSubtractionMatrixSmall) {
   stan::test::expect_ad_matvar(tols, f, matrix_m11, matrix_m11);
 }
 
-TEST(mathMixCore, operatorSubtractionMatrixZeroSize) {
+TEST_F(StanAutoDiff, operatorSubtractionMatrixZeroSize) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::subtract(x1, x2);
   };
@@ -80,7 +80,7 @@ TEST(mathMixCore, operatorSubtractionMatrixZeroSize) {
   stan::test::expect_ad_matvar(f, matrix_m00, vector_v0);
 }
 
-TEST(mathMixCore, operatorSubtractionMatrixNormal) {
+TEST_F(StanAutoDiff, operatorSubtractionMatrixNormal) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::subtract(x1, x2);
   };
@@ -116,7 +116,7 @@ TEST(mathMixCore, operatorSubtractionMatrixNormal) {
   stan::test::expect_ad_matvar(tols, f, rowvector_rv, matrix_m);
 }
 
-TEST(mathMixCore, operatorSubtractionMatrixFailures) {
+TEST_F(StanAutoDiff, operatorSubtractionMatrixFailures) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::subtract(x1, x2);
   };
@@ -144,7 +144,7 @@ TEST(mathMixCore, operatorSubtractionMatrixFailures) {
   stan::test::expect_ad_matvar(tols, f, rvv, u);
 }
 
-TEST(mathMixCore, operatorSubtractionMatrixLinearAccess) {
+TEST_F(StanAutoDiff, operatorSubtractionMatrixLinearAccess) {
   Eigen::MatrixXd matrix_m11(3, 3);
   for (Eigen::Index i = 0; i < matrix_m11.size(); ++i) {
     matrix_m11(i) = i;

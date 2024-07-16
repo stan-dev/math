@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_fv) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -55,7 +55,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv) {
   EXPECT_FLOAT_EQ(c_ffv[2].d_.val_.adj(), 0.0);
 }
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_d) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -123,7 +123,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d) {
   EXPECT_FLOAT_EQ(c_ffv[2].d_.val_.adj(), 0.0);
 }
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv_vec) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_fv_vec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -188,7 +188,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv_vec) {
   EXPECT_FLOAT_EQ(c_ffv[2].d_.val_.adj(), 0.557132795804491);
 }
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d_vec) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_d_vec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -271,7 +271,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d_vec) {
   EXPECT_FLOAT_EQ(c_ffv[2].d_.val_.adj(), 1.20737912023631);
 }
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv_stvec) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_fv_stvec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -399,7 +399,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_fv_stvec) {
   EXPECT_FLOAT_EQ(std_c_ffv[3][2].d_.val_.adj(), -0.497500020833125);
 }
 
-TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d_stvec) {
+TEST_F(StanAutoDiff, ProbDistributionsOrdLog_fv_d_stvec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
