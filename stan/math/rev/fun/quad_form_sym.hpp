@@ -34,8 +34,8 @@ inline auto quad_form_sym(EigMat1&& A, EigMat2&& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   auto&& A_ref = to_ref(std::forward<EigMat1>(A));
   check_symmetric("quad_form_sym", "A", A_ref);
-  return quad_form(std::forward<decltype(A_ref)>(A_ref), std::forward<EigMat2>(B),
-                   true);
+  return quad_form(std::forward<decltype(A_ref)>(A_ref),
+                   std::forward<EigMat2>(B), true);
 }
 
 }  // namespace math
