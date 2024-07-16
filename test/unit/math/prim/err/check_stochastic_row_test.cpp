@@ -6,12 +6,14 @@
 
 TEST(ErrorHandlingMatrix, checkStochasticRow) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_vec(2, 2);
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{y_vec, y_vec, y_vec};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{
+      y_vec, y_vec, y_vec};
   for (auto& y_i : y) {
     y_i << 0.5, 0.5, 0.5, 0.5;
   }
 
-  EXPECT_NO_THROW(stan::math::check_stochastic_row("checkStochasticRow", "y", y));
+  EXPECT_NO_THROW(
+      stan::math::check_stochastic_row("checkStochasticRow", "y", y));
 
   for (auto& y_i : y) {
     y_i(1, 0) = 0.55;
@@ -24,7 +26,8 @@ TEST(ErrorHandlingMatrix, checkStochasticRow_message_negative_value) {
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_vec(3, 3);
   y_vec.setZero();
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{y_vec, y_vec, y_vec};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{
+      y_vec, y_vec, y_vec};
   for (auto& y_i : y) {
     y_i(0, 0) = -0.1;
     y_i(0, 1) = 1.1;
@@ -41,10 +44,12 @@ TEST(ErrorHandlingMatrix, checkStochasticRow_message_negative_value) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_TRUE(std::string::npos != message.find(" y[1] is not a valid row stochastic matrix"))
+  EXPECT_TRUE(std::string::npos
+              != message.find(" y[1] is not a valid row stochastic matrix"))
       << "Found: " << message;
 
-  EXPECT_TRUE(std::string::npos != message.find("y[1][1, 1] = -0.1")) << "Found: " << message;
+  EXPECT_TRUE(std::string::npos != message.find("y[1][1, 1] = -0.1"))
+      << "Found: " << message;
 
   for (auto& y_i : y) {
     y_i.setZero();
@@ -61,17 +66,20 @@ TEST(ErrorHandlingMatrix, checkStochasticRow_message_negative_value) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_TRUE(std::string::npos != message.find(" y[1] is not a valid row stochastic matrix"))
-      << "Found: " <<  message;
+  EXPECT_TRUE(std::string::npos
+              != message.find(" y[1] is not a valid row stochastic matrix"))
+      << "Found: " << message;
 
-  EXPECT_TRUE(std::string::npos != message.find("sum(y[1][1,:]) = 1.2")) << "Found: " <<  message;
+  EXPECT_TRUE(std::string::npos != message.find("sum(y[1][1,:]) = 1.2"))
+      << "Found: " << message;
 }
 
 TEST(ErrorHandlingMatrix, checkStochasticRow_message_sum) {
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_vec(10, 10);
   y_vec.setZero();
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{y_vec, y_vec, y_vec};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{
+      y_vec, y_vec, y_vec};
   for (auto& y_i : y) {
     y_i(0, 3) = 0.9;
   }
@@ -85,25 +93,30 @@ TEST(ErrorHandlingMatrix, checkStochasticRow_message_sum) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_TRUE(std::string::npos != message.find(" y[1] is not a valid row stochastic matrix"))
+  EXPECT_TRUE(std::string::npos
+              != message.find(" y[1] is not a valid row stochastic matrix"))
       << message;
 
-  EXPECT_TRUE(std::string::npos != message.find("sum(y[1][1,:]) = 0.9")) << message;
+  EXPECT_TRUE(std::string::npos != message.find("sum(y[1][1,:]) = 0.9"))
+      << message;
 }
 
 TEST(ErrorHandlingMatrix, checkStochasticRow_message_length) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_vec(0, 0);
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{y_vec, y_vec, y_vec};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{
+      y_vec, y_vec, y_vec};
 
   using stan::math::check_stochastic_row;
 
-  EXPECT_THROW_MSG(check_stochastic_row("checkStochasticRow", "y", y), std::invalid_argument,
+  EXPECT_THROW_MSG(check_stochastic_row("checkStochasticRow", "y", y),
+                   std::invalid_argument,
                    "y[1] has size 0, but must have a non-zero size");
 }
 
 TEST(ErrorHandlingMatrix, checkStochasticRow_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_vec(2, 2);
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{y_vec, y_vec, y_vec};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y{
+      y_vec, y_vec, y_vec};
   constexpr double nan = std::numeric_limits<double>::quiet_NaN();
   for (auto& y_i : y) {
     y_i << nan, nan, 0.5, 0.5;
@@ -131,4 +144,3 @@ TEST(ErrorHandlingMatrix, checkStochasticRow_nan) {
   EXPECT_THROW(stan::math::check_stochastic_row("checkStochasticRow", "y", y),
                std::domain_error);
 }
-
