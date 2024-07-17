@@ -188,79 +188,30 @@ inline var fma(Ta&& x, const var& y, const var& z) {
 }
 
 namespace internal {
+
+template <bool DoSum, typename T>
+inline auto conditional_sum(T&& x) {
+  if constexpr (DoSum) {
+    return x.sum();
+  } else {
+    return std::forward<T>(x);
+  }
+}
+
 template <typename T1, typename T2, typename T3, typename T4>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
   return [arena_x, arena_y, arena_z, ret]() mutable {
-    if constexpr (is_matrix_v<T1, T2, T3>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj().array() += ret.adj().array() * value_of(arena_x).array();
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj().array() += ret.adj().array();
-      }
-    } else if constexpr (is_stan_scalar_v<T1> && is_matrix_v<T2, T3>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj().array() += ret.adj().array() * value_of(arena_x);
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj().array() += ret.adj().array();
-      }
-    } else if constexpr (is_matrix_v<T1, T3> && is_stan_scalar_v<T2>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj() += (ret.adj().array() * value_of(arena_x).array()).sum();
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj().array() += ret.adj().array();
-      }
-    } else if constexpr (is_stan_scalar_v<T1, T2> && is_matrix_v<T3>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj() += (ret.adj().array() * value_of(arena_y)).sum();
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj() += (ret.adj().array() * value_of(arena_x)).sum();
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj().array() += ret.adj().array();
-      }
-    } else if constexpr (is_matrix_v<T1, T2> && is_stan_scalar_v<T3>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj().array() += ret.adj().array() * value_of(arena_x).array();
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj() += ret.adj().sum();
-      }
-    } else if constexpr (is_stan_scalar_v<T1, T3> && is_matrix_v<T2>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj().array() += ret.adj().array() * value_of(arena_x);
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj() += ret.adj().sum();
-      }
-    } else if constexpr (is_matrix_v<T1> && is_stan_scalar_v<T2, T3>) {
-      if constexpr (is_autodiffable_v<T1>) {
-        arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
-      }
-      if constexpr (is_autodiffable_v<T2>) {
-        arena_y.adj() += (ret.adj().array() * value_of(arena_x).array()).sum();
-      }
-      if constexpr (is_autodiffable_v<T3>) {
-        arena_z.adj() += ret.adj().sum();
-      }
+    auto&& x_arr = as_array_or_scalar(arena_x);
+    auto&& y_arr = as_array_or_scalar(arena_y);
+    auto&& z_arr = as_array_or_scalar(arena_z);
+    if constexpr (!is_constant_v<T1>) {
+      x_arr.adj() += conditional_sum<is_stan_scalar_v<T1>>(ret.adj().array() * value_of(y_arr));
+    }
+    if constexpr (!is_constant_v<T2>) {
+      y_arr.adj() += conditional_sum<is_stan_scalar_v<T2>>(ret.adj().array() * value_of(x_arr));
+    }
+    if constexpr (!is_constant_v<T3>) {
+      z_arr.adj() += conditional_sum<is_stan_scalar_v<T3>>(ret.adj().array());
     }
   };
 }
@@ -292,13 +243,13 @@ inline auto fma(T1&& x, T2&& y, T3&& z) {
   arena_t<T1> arena_x = std::forward<T1>(x);
   arena_t<T2> arena_y = std::forward<T2>(y);
   arena_t<T3> arena_z = std::forward<T3>(z);
-  if constexpr (is_matrix_v<T1> && is_matrix_v<T2>) {
+  if constexpr (is_matrix_v<T1, T2>) {
     check_matching_dims("fma", "x", arena_x, "y", arena_y);
   }
-  if constexpr (is_matrix_v<T1> && is_matrix_v<T3>) {
+  if constexpr (is_matrix_v<T1, T3>) {
     check_matching_dims("fma", "x", arena_x, "z", arena_z);
   }
-  if constexpr (is_matrix_v<T2> && is_matrix_v<T3>) {
+  if constexpr (is_matrix_v<T2, T3>) {
     check_matching_dims("fma", "y", arena_y, "z", arena_z);
   }
   using inner_ret_type
