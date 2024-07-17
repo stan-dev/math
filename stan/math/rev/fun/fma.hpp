@@ -205,10 +205,12 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     auto&& y_arr = as_array_or_scalar(arena_y);
     auto&& z_arr = as_array_or_scalar(arena_z);
     if constexpr (!is_constant_v<T1>) {
-      x_arr.adj() += conditional_sum<is_stan_scalar_v<T1>>(ret.adj().array() * value_of(y_arr));
+      x_arr.adj() += conditional_sum<is_stan_scalar_v<T1>>(ret.adj().array()
+                                                           * value_of(y_arr));
     }
     if constexpr (!is_constant_v<T2>) {
-      y_arr.adj() += conditional_sum<is_stan_scalar_v<T2>>(ret.adj().array() * value_of(x_arr));
+      y_arr.adj() += conditional_sum<is_stan_scalar_v<T2>>(ret.adj().array()
+                                                           * value_of(x_arr));
     }
     if constexpr (!is_constant_v<T3>) {
       z_arr.adj() += conditional_sum<is_stan_scalar_v<T3>>(ret.adj().array());

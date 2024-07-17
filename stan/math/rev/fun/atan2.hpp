@@ -103,21 +103,20 @@ template <typename Mat1, typename Mat2,
 inline auto atan2(Mat1&& a, Mat2&& b) {
   arena_t<Mat1> arena_a = std::forward<Mat1>(a);
   arena_t<Mat2> arena_b = std::forward<Mat2>(b);
-    auto a_sq_plus_b_sq
-        = to_arena(value_of(arena_a).array().square()
-                   + value_of(arena_b).array().square());
-    return make_callback_var(
-        atan2(arena_a.val(), arena_b.val()),
-        [arena_a, arena_b, a_sq_plus_b_sq](auto& vi) mutable {
-          if constexpr (is_autodiffable_v<Mat1>) {
-            arena_a.adj().array()
-                += vi.adj().array() * value_of(arena_b).array() / a_sq_plus_b_sq;
-          }
-          if constexpr (is_autodiffable_v<Mat2>) {
-            arena_b.adj().array()
-                += -vi.adj().array() * value_of(arena_a).array() / a_sq_plus_b_sq;
-          }
-        });
+  auto a_sq_plus_b_sq = to_arena(value_of(arena_a).array().square()
+                                 + value_of(arena_b).array().square());
+  return make_callback_var(
+      atan2(arena_a.val(), arena_b.val()),
+      [arena_a, arena_b, a_sq_plus_b_sq](auto& vi) mutable {
+        if constexpr (is_autodiffable_v<Mat1>) {
+          arena_a.adj().array()
+              += vi.adj().array() * value_of(arena_b).array() / a_sq_plus_b_sq;
+        }
+        if constexpr (is_autodiffable_v<Mat2>) {
+          arena_b.adj().array()
+              += -vi.adj().array() * value_of(arena_a).array() / a_sq_plus_b_sq;
+        }
+      });
 }
 
 template <typename Scalar, typename VarMat,
@@ -125,19 +124,21 @@ template <typename Scalar, typename VarMat,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto atan2(Scalar a, VarMat&& b) {
   arena_t<VarMat> arena_b = std::forward<VarMat>(b);
-  auto a_sq_plus_b_sq = to_arena(
-      square(value_of(a)) + (value_of(arena_b).array().square()));
-    return make_callback_var(
-        atan2(value_of(a), value_of(arena_b)),
-        [a, arena_b, a_sq_plus_b_sq](auto& vi) mutable {
-          if constexpr (is_autodiffable_v<Scalar>) {
-            a.adj() += (vi.adj().array() * value_of(arena_b).array() / a_sq_plus_b_sq)
-                          .sum();
-          }
-          if constexpr (is_autodiffable_v<VarMat>) {
-            arena_b.adj().array() += -vi.adj().array() * value_of(a) / a_sq_plus_b_sq;
-          }
-        });
+  auto a_sq_plus_b_sq
+      = to_arena(square(value_of(a)) + (value_of(arena_b).array().square()));
+  return make_callback_var(
+      atan2(value_of(a), value_of(arena_b)),
+      [a, arena_b, a_sq_plus_b_sq](auto& vi) mutable {
+        if constexpr (is_autodiffable_v<Scalar>) {
+          a.adj()
+              += (vi.adj().array() * value_of(arena_b).array() / a_sq_plus_b_sq)
+                     .sum();
+        }
+        if constexpr (is_autodiffable_v<VarMat>) {
+          arena_b.adj().array()
+              += -vi.adj().array() * value_of(a) / a_sq_plus_b_sq;
+        }
+      });
 }
 
 template <typename VarMat, typename Scalar,
@@ -145,19 +146,21 @@ template <typename VarMat, typename Scalar,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto atan2(VarMat&& a, Scalar b) {
   arena_t<VarMat> arena_a = std::forward<VarMat>(a);
-  auto a_sq_plus_b_sq = to_arena(value_of(arena_a).array().square() + square(value_of(b)));
-    return make_callback_var(
-        atan2(value_of(arena_a), value_of(b)),
-        [arena_a, b, a_sq_plus_b_sq](auto& vi) mutable {
+  auto a_sq_plus_b_sq
+      = to_arena(value_of(arena_a).array().square() + square(value_of(b)));
+  return make_callback_var(
+      atan2(value_of(arena_a), value_of(b)),
+      [arena_a, b, a_sq_plus_b_sq](auto& vi) mutable {
         if constexpr (is_autodiffable_v<VarMat>) {
-          arena_a.adj().array() += vi.adj().array() * value_of(b) / a_sq_plus_b_sq;
+          arena_a.adj().array()
+              += vi.adj().array() * value_of(b) / a_sq_plus_b_sq;
         }
         if constexpr (is_autodiffable_v<Scalar>) {
-          b.adj()
-              += -(vi.adj().array() * value_of(arena_a).array() / a_sq_plus_b_sq)
-                      .sum();
+          b.adj() += -(vi.adj().array() * value_of(arena_a).array()
+                       / a_sq_plus_b_sq)
+                          .sum();
         }
-        });
+      });
 }
 
 }  // namespace math

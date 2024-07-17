@@ -36,7 +36,9 @@ inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   arena_t<Mat1> arena_v1 = std::forward<Mat1>(v1);
   arena_t<Mat2> arena_v2 = std::forward<Mat2>(v2);
   arena_t<return_t> res
-        = (value_of(arena_v1).array() * value_of(arena_v2).array()).colwise().sum();
+      = (value_of(arena_v1).array() * value_of(arena_v2).array())
+            .colwise()
+            .sum();
   reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
     if constexpr (is_autodiffable_v<Mat1>) {
       if constexpr (is_var_matrix<Mat1>::value) {

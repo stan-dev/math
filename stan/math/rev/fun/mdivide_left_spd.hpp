@@ -26,9 +26,9 @@ namespace math {
  * @throws std::domain_error if A is not square or B does not have
  * as many rows as A has columns.
  */
-template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
-  require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_spd(T1 &&A, T2 &&B) {
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+          require_any_st_var<T1, T2>* = nullptr>
+inline auto mdivide_left_spd(T1&& A, T2&& B) {
   using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
   using ret_type = return_var_matrix_t<ret_val_type, T1, T2>;
   if (A.size() == 0) {

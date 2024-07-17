@@ -27,7 +27,7 @@ namespace math {
  * as many rows as A has columns.
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_all_matrix_t<T1, T2> * = nullptr,
+          require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
 inline auto mdivide_left_tri(T1&& A, T2&& B) {
   using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
@@ -59,9 +59,11 @@ inline auto mdivide_left_tri(T1&& A, T2&& B) {
     arena_t<ret_type> res
         = arena_A_val.template triangularView<TriView>().solve(B);
     reverse_pass_callback([arena_A, arena_A_val, res]() mutable {
-      arena_A.adj() -= (arena_A_val.template triangularView<TriView>().transpose().solve(
-              res.adj()) * res.val().transpose().eval())
-                           .template triangularView<TriView>();
+      arena_A.adj()
+          -= (arena_A_val.template triangularView<TriView>().transpose().solve(
+                  res.adj())
+              * res.val().transpose().eval())
+                 .template triangularView<TriView>();
     });
     return res;
   } else {
@@ -69,7 +71,8 @@ inline auto mdivide_left_tri(T1&& A, T2&& B) {
     arena_t<ret_type> res
         = arena_A.template triangularView<TriView>().solve(arena_B.val());
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      arena_B.adj() += arena_A.template triangularView<TriView>().transpose().solve(
+      arena_B.adj()
+          += arena_A.template triangularView<TriView>().transpose().solve(
               res.adj());
     });
     return res;
