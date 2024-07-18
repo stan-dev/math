@@ -66,4 +66,3 @@ TEST(MathMixMatFun, columnsDotProduct) {
   stan::test::expect_ad_matvar(f, em33, em23);
   stan::test::expect_ad_matvar(f, em23, em33);
 }
-
