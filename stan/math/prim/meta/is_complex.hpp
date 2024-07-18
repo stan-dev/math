@@ -107,6 +107,21 @@ using require_not_vt_complex
 template <typename T>
 using require_not_st_complex
     = require_not_t<is_complex<scalar_type_t<std::decay_t<T>>>>;
+
+/*! \brief Require any of the value types satisfy @ref is_complex */
+/*! @tparam Types The types with a valid overload of @ref value_type available
+ */
+template <typename... Types>
+using require_any_vt_complex
+    = require_any_t<is_complex<value_type_t<std::decay_t<Types>>>...>;
+
+/*! \brief Require none of the value types satisfy @ref is_complex */
+/*! @tparam Types The types with a valid overload of @ref value_type available
+ */
+template <typename... Types>
+using require_not_any_vt_complex
+    = require_any_t<bool_constant<!is_complex<value_type_t<std::decay_t<Types>>>::value>...>;
+
 /*! @} */
 
 /**

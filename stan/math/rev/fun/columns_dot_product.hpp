@@ -31,11 +31,11 @@ namespace math {
 template <
     typename Mat1, typename Mat2, require_all_eigen_t<Mat1, Mat2>* = nullptr,
     require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr,
-    require_vt_complex<Mat1>* = nullptr, require_vt_complex<Mat2>* = nullptr>
+    require_any_vt_complex<Mat1, Mat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
 columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  Eigen::Matrix<var, 1, Mat1::ColsAtCompileTime> ret(1, v1.cols());
+  Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime> ret(1, v1.cols());
   for (size_type j = 0; j < v1.cols(); ++j) {
     ret.coeffRef(j) = dot_product(v1.col(j), v2.col(j));
   }
@@ -56,8 +56,7 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
  */
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
-          require_not_st_complex<Mat1>* = nullptr,
-          require_not_st_complex<Mat2>* = nullptr>
+          require_not_any_vt_complex<Mat1, Mat2>* = nullptr>
 inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
   using inner_return_t = decltype(
