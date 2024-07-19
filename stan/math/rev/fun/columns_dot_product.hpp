@@ -56,7 +56,8 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
  */
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
-          require_not_any_vt_complex<Mat1, Mat2>* = nullptr>
+          require_not_any_vt_complex<Mat1, Mat2>* = nullptr,
+          require_any_st_var<Mat1, Mat2>* = nullptr>
 inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
   using inner_return_t = decltype(
