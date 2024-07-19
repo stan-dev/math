@@ -63,9 +63,9 @@ void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
     ScalarT delta_f = 0;
     for (int j = 0; j < 6; ++j) {
       decltype(auto) x_temp
-        = EigT::NullaryExpr(x.size(), [&x, &i, &h, &j](Eigen::Index k) {
-        return k == i ? x[i] + h * h_scale[j] : x[k];
-      });
+          = EigT::NullaryExpr(x.size(), [&x, &i, &h, &j](Eigen::Index k) {
+              return k == i ? x[i] + h * h_scale[j] : x[k];
+            });
       delta_f += f(std::forward<decltype(x_temp)>(x_temp)) * mults[j];
     }
     return delta_f / (60 * h);
