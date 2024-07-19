@@ -119,8 +119,8 @@ using require_any_vt_complex
 /*! @tparam Types The types with a valid overload of @ref value_type available
  */
 template <typename... Types>
-using require_not_any_vt_complex
-    = require_any_t<bool_constant<!is_complex<value_type_t<std::decay_t<Types>>>::value>...>;
+using require_not_any_vt_complex = require_any_t<
+    bool_constant<!is_complex<value_type_t<std::decay_t<Types>>>::value>...>;
 
 /*! @} */
 
