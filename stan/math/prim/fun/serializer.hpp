@@ -280,9 +280,9 @@ deserializer<T> to_deserializer(const std::vector<T>& vals) {
  * @param vals values to deserialize
  * @return deserializer based on specified values
  */
-template <typename T>
-deserializer<T> to_deserializer(const Eigen::Matrix<T, -1, 1>& vals) {
-  return deserializer<T>(vals);
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+deserializer<scalar_type_t<T>> to_deserializer(const T& vals) {
+  return deserializer<scalar_type_t<T>>(vals);
 }
 
 template <typename T>
