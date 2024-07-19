@@ -28,11 +28,11 @@ namespace math {
  * @return Simplex of dimensionality K
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto simplex_constrain(const T& y) {
+inline auto simplex_constrain(T&& y) {
   using ret_type = plain_type_t<T>;
 
   size_t N = y.size();
-  arena_t<T> arena_y = y;
+  arena_t<T> arena_y = std::forward<T>(y);
   arena_t<Eigen::VectorXd> arena_z(N);
   Eigen::VectorXd x_val(N + 1);
 
@@ -48,7 +48,7 @@ inline auto simplex_constrain(const T& y) {
   arena_t<ret_type> arena_x = x_val;
 
   if (unlikely(N == 0)) {
-    return ret_type(arena_x);
+    return arena_x;
   }
 
   reverse_pass_callback([arena_y, arena_x, arena_z]() mutable {
@@ -65,7 +65,7 @@ inline auto simplex_constrain(const T& y) {
     }
   });
 
-  return ret_type(arena_x);
+  return arena_x;
 }
 
 /**
@@ -82,11 +82,11 @@ inline auto simplex_constrain(const T& y) {
  * @return Simplex of dimensionality N + 1.
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
+auto simplex_constrain(T&& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
 
   size_t N = y.size();
-  arena_t<T> arena_y = y;
+  arena_t<T> arena_y = std::forward<T>(y);
   arena_t<Eigen::VectorXd> arena_z(N);
   Eigen::VectorXd x_val(N + 1);
 
@@ -106,7 +106,7 @@ auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
   arena_t<ret_type> arena_x = x_val;
 
   if (unlikely(N == 0)) {
-    return ret_type(arena_x);
+    return arena_x;
   }
 
   reverse_pass_callback([arena_y, arena_x, arena_z, lp]() mutable {
@@ -128,7 +128,7 @@ auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
     }
   });
 
-  return ret_type(arena_x);
+  return arena_x;
 }
 
 }  // namespace math

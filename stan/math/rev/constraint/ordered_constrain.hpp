@@ -22,18 +22,18 @@ namespace math {
  * @return Increasing ordered vector
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x) {
+inline auto ordered_constrain(T&& x) {
   using ret_type = plain_type_t<T>;
 
   using std::exp;
 
   size_t N = x.size();
   if (unlikely(N == 0)) {
-    return ret_type(x);
+    return arena_t<ret_type>(x);
   }
 
   Eigen::VectorXd y_val(N);
-  arena_t<T> arena_x = x;
+  arena_t<T> arena_x = std::forward<T>(x);
   arena_t<Eigen::VectorXd> exp_x(N - 1);
 
   y_val.coeffRef(0) = arena_x.val().coeff(0);
@@ -54,7 +54,7 @@ inline auto ordered_constrain(const T& x) {
     arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
   });
 
-  return ret_type(y);
+  return y;
 }
 
 /**
@@ -70,11 +70,11 @@ inline auto ordered_constrain(const T& x) {
  * @return Positive, increasing ordered vector.
  */
 template <typename VarVec, require_var_col_vector_t<VarVec>* = nullptr>
-auto ordered_constrain(const VarVec& x, scalar_type_t<VarVec>& lp) {
+auto ordered_constrain(VarVec&& x, scalar_type_t<VarVec>& lp) {
   if (x.size() > 1) {
     lp += sum(x.tail(x.size() - 1));
   }
-  return ordered_constrain(x);
+  return ordered_constrain(std::forward<VarVec>(x));
 }
 
 }  // namespace math

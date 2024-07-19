@@ -44,7 +44,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
+    if constexpr (is_autodiffable_v<T, L>) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(
           exp_x + lb_val,
@@ -52,7 +52,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
             arena_x.adj() += vi.adj() * exp_x;
             arena_lb.adj() += vi.adj();
           });
-    } else if (!is_constant<T>::value) {
+    } else if constexpr (is_autodiffable_v<T>) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(exp_x + lb_val,
                                [arena_x = var(x), exp_x](auto& vi) mutable {
@@ -95,7 +95,7 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
     return identity_constrain(x, lb);
   } else {
     lp += value_of(x);
-    if (!is_constant<T>::value && !is_constant<L>::value) {
+    if constexpr (is_autodiffable_v<T, L>) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(
           exp_x + lb_val,
@@ -103,7 +103,7 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
             arena_x.adj() += vi.adj() * exp_x + lp.adj();
             arena_lb.adj() += vi.adj();
           });
-    } else if (!is_constant<T>::value) {
+    } else if constexpr (is_autodiffable_v<T>) {
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(exp_x + lb_val,
                                [lp, arena_x = var(x), exp_x](auto& vi) mutable {
@@ -132,14 +132,14 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
 template <typename T, typename L, require_matrix_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+inline auto lb_constrain(T&& x, const L& lb) {
   using ret_type = return_var_matrix_t<T, T, L>;
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
-    return ret_type(identity_constrain(x, lb));
+    return arena_t<ret_type>(identity_constrain(x, lb));
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    if constexpr (is_autodiffable_v<T, L>) {
+      arena_t<T> arena_x = std::forward<T>(x);
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       reverse_pass_callback(
@@ -147,21 +147,21 @@ inline auto lb_constrain(const T& x, const L& lb) {
             arena_x.adj().array() += ret.adj().array() * exp_x;
             arena_lb.adj() += ret.adj().sum();
           });
-      return ret_type(ret);
-    } else if (!is_constant<T>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+      return ret;
+    } else if constexpr (is_autodiffable_v<T>) {
+      arena_t<T> arena_x = std::forward<T>(x);
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       reverse_pass_callback([arena_x, ret, exp_x]() mutable {
         arena_x.adj().array() += ret.adj().array() * exp_x;
       });
-      return ret_type(ret);
+      return ret;
     } else {
       arena_t<ret_type> ret = value_of(x).array().exp() + lb_val;
       reverse_pass_callback([ret, arena_lb = var(lb)]() mutable {
         arena_lb.adj() += ret.adj().sum();
       });
-      return ret_type(ret);
+      return ret;
     }
   }
 }
@@ -181,14 +181,14 @@ inline auto lb_constrain(const T& x, const L& lb) {
 template <typename T, typename L, require_matrix_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+inline auto lb_constrain(T&& x, const L& lb, return_type_t<T, L>& lp) {
   using ret_type = return_var_matrix_t<T, T, L>;
   const auto lb_val = value_of(lb);
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
-    return ret_type(identity_constrain(x, lb));
+    return arena_t<ret_type>(identity_constrain(std::forward<T>(x), lb));
   } else {
-    if (!is_constant<T>::value && !is_constant<L>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+    if constexpr (is_autodiffable_v<T, L>) {
+      arena_t<T> arena_x = std::forward<T>(x);
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       lp += arena_x.val().sum();
@@ -197,16 +197,16 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
             arena_x.adj().array() += ret.adj().array() * exp_x + lp.adj();
             arena_lb.adj() += ret.adj().sum();
           });
-      return ret_type(ret);
-    } else if (!is_constant<T>::value) {
-      arena_t<promote_scalar_t<var, T>> arena_x = x;
+      return ret;
+    } else if constexpr (is_autodiffable_v<T>) {
+      arena_t<T> arena_x = std::forward<T>(x);
       auto exp_x = to_arena(arena_x.val().array().exp());
       arena_t<ret_type> ret = exp_x + lb_val;
       lp += arena_x.val().sum();
       reverse_pass_callback([arena_x, ret, exp_x, lp]() mutable {
         arena_x.adj().array() += ret.adj().array() * exp_x + lp.adj();
       });
-      return ret_type(ret);
+      return ret;
     } else {
       const auto& x_ref = to_ref(x);
       lp += sum(x_ref);
@@ -214,7 +214,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
       reverse_pass_callback([ret, arena_lb = var(lb)]() mutable {
         arena_lb.adj() += ret.adj().sum();
       });
-      return ret_type(ret);
+      return ret;
     }
   }
 }
@@ -233,12 +233,12 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  */
 template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+inline auto lb_constrain(T&& x, L&& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   using ret_type = return_var_matrix_t<T, T, L>;
-  if (!is_constant<T>::value && !is_constant<L>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
-    arena_t<promote_scalar_t<var, L>> arena_lb = lb;
+  if constexpr (is_autodiffable_v<T, L>) {
+    arena_t<T> arena_x = std::forward<T>(x);
+    arena_t<L> arena_lb = std::forward<L>(lb);
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     auto precomp_x_exp = to_arena((arena_x.val().array()).exp());
     arena_t<ret_type> ret = (is_not_inf_lb)
@@ -251,9 +251,9 @@ inline auto lb_constrain(const T& x, const L& lb) {
                  .select(ret.adj().array() * precomp_x_exp, ret.adj().array());
       arena_lb.adj().array() += (is_not_inf_lb).select(ret.adj().array(), 0);
     });
-    return ret_type(ret);
-  } else if (!is_constant<T>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+    return ret;
+  } else if constexpr (is_autodiffable_v<T>) {
+    arena_t<T> arena_x = std::forward<T>(x);
     auto lb_ref = to_ref(value_of(lb));
     auto is_not_inf_lb = to_arena((lb_ref.array() != NEGATIVE_INFTY));
     auto precomp_x_exp = to_arena((arena_x.val().array()).exp());
@@ -266,9 +266,9 @@ inline auto lb_constrain(const T& x, const L& lb) {
           += (is_not_inf_lb)
                  .select(ret.adj().array() * precomp_x_exp, ret.adj().array());
     });
-    return ret_type(ret);
+    return ret;
   } else {
-    arena_t<promote_scalar_t<var, L>> arena_lb = lb;
+    arena_t<L> arena_lb = std::forward<L>(lb);
     const auto x_ref = to_ref(value_of(x));
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     arena_t<ret_type> ret
@@ -278,7 +278,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
     reverse_pass_callback([arena_lb, ret, is_not_inf_lb]() mutable {
       arena_lb.adj().array() += (is_not_inf_lb).select(ret.adj().array(), 0);
     });
-    return ret_type(ret);
+    return ret;
   }
 }
 
@@ -297,12 +297,12 @@ inline auto lb_constrain(const T& x, const L& lb) {
  */
 template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   using ret_type = return_var_matrix_t<T, T, L>;
-  if (!is_constant<T>::value && !is_constant<L>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
-    arena_t<promote_scalar_t<var, L>> arena_lb = lb;
+  if constexpr (is_autodiffable_v<T, L>) {
+    arena_t<T> arena_x = std::forward<T>(x);
+    arena_t<L> arena_lb = std::forward<L>(lb);
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     auto exp_x = to_arena(arena_x.val().array().exp());
     arena_t<ret_type> ret
@@ -325,9 +325,9 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
             }
           }
         });
-    return ret_type(ret);
-  } else if (!is_constant<T>::value) {
-    arena_t<promote_scalar_t<var, T>> arena_x = x;
+    return ret;
+  } else if constexpr (is_autodiffable_v<T>) {
+    arena_t<T> arena_x = std::forward<T>(x);
     auto lb_val = value_of(lb).array();
     auto is_not_inf_lb = to_arena((lb_val != NEGATIVE_INFTY));
     auto exp_x = to_arena(arena_x.val().array().exp());
@@ -348,10 +348,10 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
         }
       }
     });
-    return ret_type(ret);
+    return ret;
   } else {
     auto x_val = to_ref(value_of(x)).array();
-    arena_t<promote_scalar_t<var, L>> arena_lb = lb;
+    arena_t<L> arena_lb = std::forward<L>(lb);
     auto is_not_inf_lb = to_arena((arena_lb.val().array() != NEGATIVE_INFTY));
     arena_t<ret_type> ret
         = (is_not_inf_lb).select(x_val.exp() + arena_lb.val().array(), x_val);
@@ -360,8 +360,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
       arena_lb.adj().array()
           += ret.adj().array() * is_not_inf_lb.template cast<double>();
     });
-
-    return ret_type(ret);
+    return ret;
   }
 }
 

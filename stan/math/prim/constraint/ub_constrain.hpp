@@ -159,11 +159,15 @@ inline auto ub_constrain(const T& x, const U& ub,
  * @param[in] ub upper bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
+template <typename T, typename U, require_std_vector_t<T>* = nullptr, require_not_std_vector_t<U>* = nullptr>
+inline auto ub_constrain(T&& x, const U& ub) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub);
+    if constexpr (std::is_rvalue_reference_v<T&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), ub);
+    } else {
+      ret[i] = ub_constrain(x[i], ub);
+    }
   }
   return ret;
 }
@@ -179,12 +183,15 @@ inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const U& ub,
-                         return_type_t<T, U>& lp) {
+template <typename T, typename U, require_std_vector_t<T>* = nullptr, require_not_std_vector_t<U>* = nullptr>
+inline auto ub_constrain(T&& x, const U& ub, return_type_t<T, U>& lp) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub, lp);
+    if constexpr (std::is_rvalue_reference_v<T&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), ub, lp);
+    } else {
+      ret[i] = ub_constrain(x[i], ub, lp);
+    }
   }
   return ret;
 }
@@ -199,12 +206,20 @@ inline auto ub_constrain(const std::vector<T>& x, const U& ub,
  * @param[in] ub upper bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U>
-inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub) {
+template <typename T, typename U, require_all_std_vector_t<T, U>* = nullptr>
+inline auto ub_constrain(T&& x, U&& ub) { 
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub[i]);
+    if constexpr (std::is_rvalue_reference_v<T&&> && std::is_rvalue_reference_v<U&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), std::move(ub[i]));
+    } else if constexpr (std::is_rvalue_reference_v<T&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), ub[i]);
+    } else if constexpr (std::is_rvalue_reference_v<U&&>) {
+      ret[i] = ub_constrain(x[i], std::move(ub[i]));
+    } else {
+      ret[i] = ub_constrain(x[i], ub[i]);
+    }  
   }
   return ret;
 }
@@ -220,13 +235,20 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U>
-inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
-                         return_type_t<T, U>& lp) {
+template <typename T, typename U, require_all_std_vector_t<T, U>* = nullptr>
+inline auto ub_constrain(T&& x, U&& ub, return_type_t<T, U>& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub[i], lp);
+    if constexpr (std::is_rvalue_reference_v<T&&> && std::is_rvalue_reference_v<U&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), std::move(ub[i]), lp);
+    } else if constexpr (std::is_rvalue_reference_v<T&&>) {
+      ret[i] = ub_constrain(std::move(x[i]), ub[i], lp);
+    } else if constexpr (std::is_rvalue_reference_v<U&&>) {
+      ret[i] = ub_constrain(x[i], std::move(ub[i]), lp);
+    } else {
+      ret[i] = ub_constrain(x[i], ub[i], lp);
+    }  
   }
   return ret;
 }
@@ -250,11 +272,11 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  * @return lower-bound constrained value corresponding to inputs
  */
 template <bool Jacobian, typename T, typename U>
-inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
-  if (Jacobian) {
-    return ub_constrain(x, ub, lp);
+inline auto ub_constrain(T&& x, U&& ub, return_type_t<T, U>& lp) {
+  if constexpr (Jacobian) {
+    return ub_constrain(std::forward<T>(x), std::forward<U>(ub), lp);
   } else {
-    return ub_constrain(x, ub);
+    return ub_constrain(std::forward<T>(x), std::forward<U>(ub));
   }
 }
 
