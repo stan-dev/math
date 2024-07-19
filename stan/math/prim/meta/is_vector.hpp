@@ -598,7 +598,8 @@ struct is_std_vector<
     : std::true_type {};
 
 template <typename T>
-struct is_not_std_vector : bool_constant<!is_std_vector<std::decay_t<T>>::value> {};
+struct is_not_std_vector
+    : bool_constant<!is_std_vector<std::decay_t<T>>::value> {};
 
 /** \ingroup type_trait
  * Specialization of scalar_type for vector to recursively return the inner

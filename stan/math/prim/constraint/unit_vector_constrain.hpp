@@ -99,8 +99,9 @@ inline auto unit_vector_constrain(T&& y, return_type_t<T>& lp) {
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(T&& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [&lp](auto&& v) { return unit_vector_constrain<Jacobian>(std::forward<decltype(v)>(v), lp); });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return unit_vector_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 }  // namespace math

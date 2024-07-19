@@ -149,7 +149,8 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_std_vector_t<T>* = nullptr, require_not_std_vector_t<L>* = nullptr>
+template <typename T, typename L, require_std_vector_t<T>* = nullptr,
+          require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -173,7 +174,8 @@ inline auto lb_constrain(T&& x, L&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_std_vector_t<T>* = nullptr, require_not_std_vector_t<L>* = nullptr>
+template <typename T, typename L, require_std_vector_t<T>* = nullptr,
+          require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -201,7 +203,8 @@ inline auto lb_constrain(T&& x, L&& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    if constexpr (std::is_rvalue_reference_v<T&&> && std::is_rvalue_reference_v<L&&>) {
+    if constexpr (std::is_rvalue_reference_v<
+                      T&&> && std::is_rvalue_reference_v<L&&>) {
       ret[i] = lb_constrain(std::move(x[i]), std::move(lb[i]));
     } else if constexpr (std::is_rvalue_reference_v<T&&>) {
       ret[i] = lb_constrain(std::move(x[i]), lb[i]);
@@ -209,7 +212,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
       ret[i] = lb_constrain(x[i], std::move(lb[i]));
     } else {
       ret[i] = lb_constrain(x[i], lb[i]);
-    }  
+    }
   }
   return ret;
 }
@@ -230,7 +233,8 @@ inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    if constexpr (std::is_rvalue_reference_v<T&&> && std::is_rvalue_reference_v<L&&>) {
+    if constexpr (std::is_rvalue_reference_v<
+                      T&&> && std::is_rvalue_reference_v<L&&>) {
       ret[i] = lb_constrain(std::move(x[i]), std::move(lb[i]), lp);
     } else if constexpr (std::is_rvalue_reference_v<T&&>) {
       ret[i] = lb_constrain(std::move(x[i]), lb[i], lp);
@@ -238,7 +242,7 @@ inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
       ret[i] = lb_constrain(x[i], std::move(lb[i]), lp);
     } else {
       ret[i] = lb_constrain(x[i], lb[i], lp);
-    }  
+    }
   }
   return ret;
 }
