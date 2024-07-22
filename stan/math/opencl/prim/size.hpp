@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <cstdint>
 
 namespace stan {
 namespace math {
@@ -15,7 +16,7 @@ namespace math {
  */
 template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-size_t size(const T& m) {
+int64_t size(const T& m) {
   return m.rows() * m.cols();
 }
 

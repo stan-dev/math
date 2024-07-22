@@ -23,10 +23,10 @@ TEST(ProbDistributionsMultiGP, MultiGP) {
   for (size_t i = 0; i < 3; i++) {
     Matrix<double, Dynamic, 1> cy(y.row(i).transpose());
     Matrix<double, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
-    lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
+    lp_ref += stan::math::multi_normal_lpdf(cy, mu, cSigma);
   }
 
-  EXPECT_FLOAT_EQ(lp_ref, stan::math::multi_gp_log(y, Sigma, w));
+  EXPECT_FLOAT_EQ(lp_ref, stan::math::multi_gp_lpdf(y, Sigma, w));
 }
 
 TEST(ProbDistributionsMultiGP, ErrorSigma) {
@@ -45,12 +45,12 @@ TEST(ProbDistributionsMultiGP, ErrorSigma) {
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   Sigma(0, 1) = Sigma(1, 0);
 
   // non-spd
   Sigma(0, 0) = -3.0;
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   Sigma(0, 1) = 9.0;
 }
 
@@ -70,15 +70,15 @@ TEST(ProbDistributionsMultiGP, ErrorW) {
 
   // negative w
   w(0, 0) = -2.5;
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
 
   // non-finite values
   w(0, 0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   w(0, 0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   w(0, 0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
 }
 
 TEST(ProbDistributionsMultiGP, ErrorY) {
@@ -97,9 +97,9 @@ TEST(ProbDistributionsMultiGP, ErrorY) {
 
   // non-finite values
   y(0, 0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   y(0, 0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
   y(0, 0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::multi_gp_log(y, Sigma, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_lpdf(y, Sigma, w), std::domain_error);
 }

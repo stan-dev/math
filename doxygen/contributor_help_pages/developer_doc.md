@@ -165,9 +165,7 @@ Within the Math library, the only build targets are the tests (there are no othe
 
 ## Makefile Variables
 
-To customize how the tests are built in C++, variables can be set in a file called `make/local`. This is the preferred way of customizing the build. You can also set it more permanently by setting variables in `~/.config/stan/make.local`.
-
-Note: variables in `make/local` override variables in `~/.config/stan/make/local`.
+To customize how the tests are built in C++, variables can be set in a file called `make/local`. This is the preferred way of customizing the build.
 
 There are a lot of make variables that can be set. In general, `CXXFLAGS_*` is for C++ compiler flags, `CPPFLAGS_*` is for C preprocessor flags, `LDFLAGS_*` is for linker flags, and `LDLBIS_*` is for libraries that need to be linked in.
 
@@ -310,7 +308,7 @@ If you want to use custom locations for the library locations, set these makefil
 - `GTEST`
 - `CPPLINT` (optional)
 
-Example `~/.config/stan/make.local` file:
+Example `make/local` file:
 ```
 BOOST = ~/boost
 ```

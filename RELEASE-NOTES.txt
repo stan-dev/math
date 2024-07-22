@@ -1,6 +1,42 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.9.0 (3 June 2024)
+======================================================================
+
+ - Stan now detects if your compiler supports C++17 and will issue a warning if it is not available. Support for pre-C++17 compilers may be removed as early as next version. (#3063)
+ - Added a new distribution: `wiener_full_lpdf`. (#2822)
+ - Replaced `static const` objects with `static constexpr` when available. (#2830)
+ - Gradients for the `hypergeometric_pFq` function rewritten for increased speed and stability. (#2961)
+ - Added the Hypergeometric 1F0 function and gradients. (#2962)
+ - Removed macro usage in the definitions of the `require_` templates. (#2965)
+ - Added a sparse matrix implimentation for `arena_matrix`. (#2971)
+ - Added hand-calculated derivatives for the multivariate normal lpdf. (#2980)
+ - Added derivatives for the `multi_student_t_cholesky_lpdf`. (#2990)
+ - Added constrain function for creating matrices holding row or column simplexes. (#2992)
+ - Updated TBB Windows build rules for compatibility with RTools make. (#2999)
+ - Improved efficiency of `von_mises_lpdf` gradient calculation, credit to @venpopov. (#3010)
+ - Fixed a few additional issues in checking the inputs to distributions defined over cholesky matrices. (#3012)
+ - Functions which are wrappers around CVODES and IDAS routines from Sundials now throw `domain_error`, rather than a mix of `domain_error` and `runtime_error`. (#3013)
+ - Fixed the stack_allocator being able to return non-8-byte aligned pointers. (#3014)
+ - Upgrade bundled Boost headers to 1.84. (#3001, #3018, #3019)
+ - Fixed a bug where `linspaced_array` was returning its results truncated to integers. (#3023)
+ - Fixed the return type of `max(int, int)` being a double. (#3024)
+ - Added 'override' to built-in make variables. (#3028)
+ - Maded `sqrt(x)` have a finite gradient at `x=0`. Allows `distance(x,y)` to work for `x=y` too. (#3033)
+ - Improved stability of the `von_mises_lpdf` function to avoid numeric overflow. Now it's no longer necessary to use the normal_lpdf for kappa>100, allowing vectorizing of the likelihood. (#3036)
+ - Updated the `weibull_cdf` and `weibull_lcdf` functions for numerical stability as well as correct handling of `y == 0.0`. (#3037)
+ - Improved speed of `inv_Phi` and `std_normal_qf` functions. (#3046)
+ - Fixed spurious linker issue with `csr_matrix_times_vector`. (#3048, #3053)
+ - Improved error messages when variables dimensions do not match in operations that require it. (#3049)
+ - Added support for Windows ARM64 with RTools ARM64 toolchain. (#3051)
+ - Fixed `clean-all` error when using external SUNDIALS libraries. (#3054)
+ - Fixed several small floating-point accuracy issues with ARM64 platforms. (#3059)
+ - The RNGs for the multinomial and multinomial_logit distributions now accept a zero total count, resulting in a zero integer vector. (#3061)
+ - Fixed a data race in profiling in multiple threads. (#3066)
+ - Backported SUNDIALS bugfix for hashmap integer overflow. (#3072) 
+
+======================================================================
 v4.8.1 (23 January 2024)
 ======================================================================
 

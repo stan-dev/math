@@ -1,7 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, categorical_logit_glm_lpmf) {
+TEST_F(AgradRev, mathMixScalFun_categorical_logit_glm_lpmf) {
   auto f = [](const auto y) {
     return [=](const auto& x, const auto& alpha, const auto& beta) {
       return stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta);

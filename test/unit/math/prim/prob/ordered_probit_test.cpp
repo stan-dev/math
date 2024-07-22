@@ -19,25 +19,25 @@ stan::math::vector_d get_simplex_Phi(double lambda,
 
 TEST(ProbDistributions, ordered_probit_stability) {
   using stan::math::is_inf;
-  using stan::math::ordered_probit_log;
+  using stan::math::ordered_probit_lpmf;
 
   Eigen::VectorXd c(3);
   c << -0.3, 0.1, 1.2;
 
-  EXPECT_FALSE(is_inf(ordered_probit_log(1, 10, c)));
-  EXPECT_FALSE(is_inf(ordered_probit_log(2, 10, c)));
-  EXPECT_NE(ordered_probit_log(4, 10, c), 0);
+  EXPECT_FALSE(is_inf(ordered_probit_lpmf(1, 10, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_lpmf(2, 10, c)));
+  EXPECT_NE(ordered_probit_lpmf(4, 10, c), 0);
 
-  EXPECT_NE(ordered_probit_log(1, -38, c), 0);
-  EXPECT_FALSE(is_inf(ordered_probit_log(2, -38, c)));
-  EXPECT_FALSE(is_inf(ordered_probit_log(4, -38, c)));
+  EXPECT_NE(ordered_probit_lpmf(1, -38, c), 0);
+  EXPECT_FALSE(is_inf(ordered_probit_lpmf(2, -38, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_lpmf(4, -38, c)));
 }
 
 TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::ordered_probit_log;
+  using stan::math::ordered_probit_lpmf;
   using stan::math::Phi;
 
   int K = 5;
@@ -53,17 +53,17 @@ TEST(ProbDistributions, ordered_probit_vals) {
   EXPECT_FLOAT_EQ(1.0, sum);
 
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_probit_log(k + 1, lambda, c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_probit_lpmf(k + 1, lambda, c));
 
-  EXPECT_THROW(ordered_probit_log(0, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_probit_log(6, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(0, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(6, lambda, c), std::domain_error);
 }
 
 TEST(ProbDistributions, ordered_probit_vals_2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::ordered_probit_log;
+  using stan::math::ordered_probit_lpmf;
   using stan::math::Phi;
 
   int K = 3;
@@ -79,64 +79,64 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   EXPECT_FLOAT_EQ(1.0, sum);
 
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_probit_log(k + 1, lambda, c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_probit_lpmf(k + 1, lambda, c));
 
-  EXPECT_THROW(ordered_probit_log(0, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_probit_log(4, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(0, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(4, lambda, c), std::domain_error);
 }
 
 TEST(ProbDistributions, ordered_probit) {
-  using stan::math::ordered_probit_log;
+  using stan::math::ordered_probit_lpmf;
   int K = 4;
   Eigen::Matrix<double, Eigen::Dynamic, 1> c(K - 1);
   c << -0.3, 0.1, 1.2;
   double lambda = 0.5;
-  EXPECT_THROW(ordered_probit_log(-1, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_probit_log(0, lambda, c), std::domain_error);
-  EXPECT_THROW(ordered_probit_log(5, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(-1, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(0, lambda, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(5, lambda, c), std::domain_error);
   for (int k = 1; k <= K; ++k)
-    EXPECT_NO_THROW(ordered_probit_log(k, lambda, c));
+    EXPECT_NO_THROW(ordered_probit_lpmf(k, lambda, c));
 
   // init size zero
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
   EXPECT_EQ(0, c_zero.size());
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::invalid_argument);
+  EXPECT_THROW(ordered_probit_lpmf(1, lambda, c_zero), std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;
-  EXPECT_NO_THROW(ordered_probit_log(1, lambda, c_neg));
+  EXPECT_NO_THROW(ordered_probit_lpmf(1, lambda, c_neg));
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_unord(3);
   c_unord << 1.0, 0.4, 2.0;
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_unord), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, lambda, c_unord), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_unord_2(3);
   c_unord_2 << 1.0, 2.0, 0.4;
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_unord_2), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, lambda, c_unord_2), std::domain_error);
 
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW(ordered_probit_log(1, nan, c), std::domain_error);
-  EXPECT_THROW(ordered_probit_log(1, inf, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, nan, c), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, inf, c), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad(2);
   cbad << 0.2, inf;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad), std::domain_error);
   cbad[1] = nan;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad1(1);
   cbad1 << inf;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad1), std::domain_error);
   cbad1[0] = nan;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad1), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad1), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad3(3);
   cbad3 << 0.5, inf, 1.0;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad3), std::domain_error);
   cbad3[1] = nan;
-  EXPECT_THROW(ordered_probit_log(1, 1.0, cbad3), std::domain_error);
+  EXPECT_THROW(ordered_probit_lpmf(1, 1.0, cbad3), std::domain_error);
 }
 
 TEST(ProbDistributionOrderedProbit, error_check) {

@@ -121,7 +121,7 @@
 #include <stan/math/fwd/fun/trigamma.hpp>
 #include <stan/math/fwd/fun/trunc.hpp>
 #include <stan/math/fwd/fun/typedefs.hpp>
-#include <stan/math/fwd/fun/unit_vector_constrain.hpp>
+#include <stan/math/fwd/constraint/unit_vector_constrain.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/fwd/fun/value_of_rec.hpp>
 
