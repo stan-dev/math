@@ -8,8 +8,8 @@
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
-#include <stan/math/laplace/laplace_pseudo_target.hpp>
-#include <stan/math/laplace/block_matrix_sqrt.hpp>
+#include <stan/math/mix/laplace/laplace_pseudo_target.hpp>
+#include <stan/math/mix/laplace/block_matrix_sqrt.hpp>
 
 #include <Eigen/Sparse>
 #include <Eigen/LU>
@@ -57,7 +57,7 @@ struct laplace_density_estimates {
  * log marginal density. The user controls the tolerance (i.e.
  * threshold under which change is deemed small enough) and
  * maximum number of steps.
- * TO DO: add more robust convergence criterion.
+ * TODO(Charles): add more robust convergence criterion.
  *
  * This algorithm is adapted from Rasmussen and Williams,
  * "Gaussian Processes for Machine Learning", second edition,
@@ -591,22 +591,23 @@ inline auto laplace_marginal_density(
     } else {
       v = LU_solve_covariance * s2;
     }
-
-    arena_matrix<
-        Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>>
-        eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-                        + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
-    return make_callback_var(
-        marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena,
-                               eta_adj_arena](const auto& vi) mutable {
-          stan::math::for_each(
-              [&vi](auto&& arg, auto&& arg_adj) {
-                internal::update_adjoints(arg, arg_adj, vi);
-              },
-              args_arena, arg_adj_arena);
-          internal::update_adjoints(eta_arena, eta_adj_arena, vi);
-        });
-  } else if (is_any_var<Args...>::value) {
+    if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
+      arena_matrix<
+          Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>>
+          eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+                          + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+      return make_callback_var(
+          marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena,
+                                eta_adj_arena](const auto& vi) mutable {
+            stan::math::for_each(
+                [&vi](auto&& arg, auto&& arg_adj) {
+                  internal::update_adjoints(arg, arg_adj, vi);
+                },
+                args_arena, arg_adj_arena);
+            internal::update_adjoints(eta_arena, eta_adj_arena, vi);
+          });
+    }
+  } else if constexpr (is_any_var<Args...>::value) {
     {
       const nested_rev_autodiff nested;
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
@@ -636,6 +637,7 @@ inline auto laplace_marginal_density(
           args_arena, arg_adj_arena);
     });
   } else if (!is_constant<Eta>::value && eta_size_ != 0) {
+    if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
     Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
@@ -653,6 +655,7 @@ inline auto laplace_marginal_density(
                                                        const auto& vi) mutable {
       internal::update_adjoints(eta_arena, eta_adj_arena, vi);
     });
+    }
   }
   return var(0);
 }

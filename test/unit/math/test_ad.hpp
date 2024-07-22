@@ -339,17 +339,19 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
  * @param g polymorphic functor from vectors to scalars
  * @param x argument to test
  */
-template <typename G>
+template <bool ReverseOnly = false, typename G>
 void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
                            const Eigen::VectorXd& x) {
   double gx = g(x);
   test_gradient(tols, g, x, gx);
-#ifndef STAN_MATH_TESTS_REV_ONLY
-  test_gradient_fvar(tols, g, x, gx);
-  test_hessian(tols, g, x, gx);
-  test_hessian_fvar(tols, g, x, gx);
-  test_grad_hessian(tols, g, x, gx);
-#endif
+  if constexpr (!ReverseOnly) {
+  #ifndef STAN_MATH_TESTS_REV_ONLY
+    test_gradient_fvar(tols, g, x, gx);
+    test_hessian(tols, g, x, gx);
+    test_hessian_fvar(tols, g, x, gx);
+    test_grad_hessian(tols, g, x, gx);
+  #endif
+  }
 }
 
 /**
@@ -387,18 +389,20 @@ void expect_throw(const F& f, const Eigen::VectorXd& x,
  * @param f function to test
  * @param x argument to test
  */
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_throw<double>(f, x, "double");
   expect_throw<var>(f, x, "var");
-#ifndef STAN_MATH_TESTS_REV_ONLY
-  expect_throw<fvar<double>>(f, x, "fvar<double>");
-  expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
-  expect_throw<fvar<var>>(f, x, "fvar<var>");
-  expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
-#endif
+  if constexpr (!ReverseOnly) {
+    #ifndef STAN_MATH_TESTS_REV_ONLY
+      expect_throw<fvar<double>>(f, x, "fvar<double>");
+      expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
+      expect_throw<fvar<var>>(f, x, "fvar<var>");
+      expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
+    #endif
+  }
 }
 
 /**
@@ -409,13 +413,13 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  * @param f function to evaluate
  * @param x argument to evaluate
  */
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x1) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
-  expect_all_throw(h, x);
+  expect_all_throw<ReverseOnly>(h, x);
 }
 
 /**
@@ -427,13 +431,13 @@ void expect_all_throw(const F& f, double x1) {
  * @param x1 first argument
  * @param x2 second argument
  */
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
-  expect_all_throw(h, x);
+  expect_all_throw<ReverseOnly>(h, x);
 }
 
 /**
@@ -446,13 +450,13 @@ void expect_all_throw(const F& f, double x1, double x2) {
  * @param x2 second argument
  * @param x3 third argument
  */
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
   using stan::math::serialize_return;
   auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
   x << x1, x2, x3;
-  expect_all_throw(h, x);
+  expect_all_throw<ReverseOnly>(h, x);
 }
 
 /**
@@ -476,7 +480,7 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
  * @param x serialized input
  * @param xs sequence of arguments with double-based scalars
  */
-template <typename F, typename G, typename... Ts>
+template <bool ReverseOnly = false, typename F, typename G, typename... Ts>
 void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
                       const Eigen::VectorXd& x, Ts... xs) {
   using stan::math::serialize;
@@ -490,11 +494,11 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
   } catch (...) {
-    internal::expect_all_throw(h(0), x);
+    internal::expect_all_throw<ReverseOnly>(h(0), x);
     return;
   }
   for (size_t i = 0; i < result_size; ++i) {
-    expect_ad_derivatives(tols, h(i), x);
+    expect_ad_derivatives<ReverseOnly>(tols, h(i), x);
   }
 }
 
@@ -509,7 +513,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  * @param f functor to test
  * @param x argument to test
  */
-template <typename F, typename T>
+template <bool ReverseOnly = false, typename F, typename T>
 void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
@@ -519,7 +523,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
     auto xds = ds.read(x);
     return serialize_return(eval(f(xds)));
   };
-  internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g, serialize_args(x), x);
 }
 
 /**
@@ -538,7 +542,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
  * @param f functor to test
  * @param x argument to test
  */
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   double x_dbl = static_cast<double>(x);
 
@@ -546,7 +550,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   try {
     f(x);
   } catch (...) {
-    expect_all_throw(f, x_dbl);
+    expect_all_throw<ReverseOnly>(f, x_dbl);
     return;
   }
 
@@ -555,7 +559,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
                   f(x_dbl), f(x));
 
   // autodiff should work at double value
-  expect_ad_v(tols, f, x_dbl);
+  expect_ad_v<ReverseOnly>(tols, f, x_dbl);
 }
 
 /**
@@ -572,7 +576,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
  * @param x1 first argument
  * @param x2 second argument
  */
-template <typename F, typename T1, typename T2>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
   using stan::math::serialize_args;
@@ -584,7 +588,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x1ds = ds.read(x1);
     return serialize_return(eval(f(x1ds, x2)));
   };
-  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g1, serialize_args(x1), x1, x2);
 
   // d.x2
   auto g2 = [&](const auto& v) {
@@ -592,7 +596,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x2ds = ds.read(x2);
     return serialize_return(eval(f(x1, x2ds)));
   };
-  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g2, serialize_args(x2), x1, x2);
 
   // d.x1, d.x2
   auto g12 = [&](const auto& v) {
@@ -601,15 +605,15 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x2ds = ds.read(x2);
     return serialize_return(eval(f(x1ds, x2ds)));
   };
-  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g12, serialize_args(x1, x2), x1, x2);
 }
 
-template <typename F, typename T2>
+template <bool ReverseOnly = false, typename F, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   try {
     f(x1, x2);
   } catch (...) {
-    expect_all_throw(f, x1, x2);
+    expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
   }
 
@@ -619,19 +623,19 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
 
   // expect autodiff to work at double value
-  expect_ad_vv(tols, f, x1_dbl, x2);
+  expect_ad_vv<ReverseOnly>(tols, f, x1_dbl, x2);
 
   // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(x1, u); };
-  expect_ad_v(tols, g, x2);
+  expect_ad_v<ReverseOnly>(tols, g, x2);
 }
 
-template <typename F, typename T1>
+template <bool ReverseOnly = false, typename F, typename T1>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   try {
     f(x1, x2);
   } catch (...) {
-    expect_all_throw(f, x1, x2);
+    expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
   }
 
@@ -641,20 +645,20 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
 
   // expect autodiff to work at double value
-  expect_ad_vv(tols, f, x1, x2_dbl);
+  expect_ad_vv<ReverseOnly>(tols, f, x1, x2_dbl);
 
   // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(u, x2); };
-  expect_ad_v(tols, g, x1);
+  expect_ad_v<ReverseOnly>(tols, g, x1);
 }
 
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
   } catch (...) {
-    expect_all_throw(f, x1, x2);
+    expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
   }
 
@@ -667,8 +671,8 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // expect autodiff to work at double values
   // these take care of x1_dbl, x2_dbl case by delegation
   // they also take care of binding int tests
-  expect_ad_vv(tols, f, x1, x2_dbl);
-  expect_ad_vv(tols, f, x1_dbl, x2);
+  expect_ad_vv<ReverseOnly>(tols, f, x1, x2_dbl);
+  expect_ad_vv<ReverseOnly>(tols, f, x1_dbl, x2);
 }
 
 /**
@@ -687,7 +691,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
  * @param x2 second argument
  * @param x3 third argument
  */
-template <typename F, typename T1, typename T2, typename T3>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, const T3& x3) {
   using stan::math::serialize_args;
@@ -699,7 +703,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x1ds = ds.read(x1);
     return serialize_return(eval(f(x1ds, x2, x3)));
   };
-  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g1, serialize_args(x1), x1, x2, x3);
 
   // d.x2
   auto g2 = [&](const auto& v) {
@@ -707,7 +711,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x2ds = ds.read(x2);
     return serialize_return(eval(f(x1, x2ds, x3)));
   };
-  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g2, serialize_args(x2), x1, x2, x3);
 
   // d.x3
   auto g3 = [&](const auto& v) {
@@ -715,7 +719,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x3ds = ds.read(x3);
     return serialize_return(eval(f(x1, x2, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g3, serialize_args(x3), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g3, serialize_args(x3), x1, x2, x3);
 
   // d.x1 d.x2
   auto g12 = [&](const auto& v) {
@@ -724,7 +728,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x2ds = ds.read(x2);
     return serialize_return(eval(f(x1ds, x2ds, x3)));
   };
-  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
 
   // d.x1 d.x3
   auto g13 = [&](const auto& v) {
@@ -733,7 +737,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x3ds = ds.read(x3);
     return serialize_return(eval(f(x1ds, x2, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
 
   // d.x2 d.x3
   auto g23 = [&](const auto& v) {
@@ -742,7 +746,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x3ds = ds.read(x3);
     return serialize_return(eval(f(x1, x2ds, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
 
   // d.x1 d.x2 d.x3
   auto g123 = [&](const auto& v) {
@@ -752,17 +756,17 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x3ds = ds.read(x3);
     return serialize_return(eval(f(x1ds, x2ds, x3ds)));
   };
-  internal::expect_ad_helper(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
+  internal::expect_ad_helper<ReverseOnly>(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
                              x3);
 }
 
-template <typename F, typename T3>
+template <bool ReverseOnly = false, typename F, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
@@ -770,8 +774,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   double x2_dbl = static_cast<double>(x2);
 
   // test all promotion patterns;  includes x1_dbl & x2_dbl recursively
-  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
-  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2_dbl, x3);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -779,26 +783,26 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
-  expect_ad_vv(tols, g23, x2, x3);
+  expect_ad_vv<ReverseOnly>(tols, g23, x2, x3);
 
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
-  expect_ad_vv(tols, g13, x1, x3);
+  expect_ad_vv<ReverseOnly>(tols, g13, x1, x3);
 }
 
-template <typename F, typename T2, typename T3>
+template <bool ReverseOnly = false, typename F, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
   double x1_dbl = static_cast<double>(x1);
 
   // test all promotion patterns
-  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1_dbl, x2, x3);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -806,23 +810,23 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
-  expect_ad_vv(tols, g23, x2, x3);
+  expect_ad_vv<ReverseOnly>(tols, g23, x2, x3);
 }
 
-template <typename F, typename T1, typename T3>
+template <bool ReverseOnly = false, typename F, typename T1, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
   double x2_dbl = static_cast<double>(x2);
 
   // test promotion
-  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2_dbl, x3);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -830,23 +834,23 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
-  expect_ad_vv(tols, g13, x1, x3);
+  expect_ad_vv<ReverseOnly>(tols, g13, x1, x3);
 }
 
-template <typename F, typename T1, typename T2>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
   double x3_dbl = static_cast<double>(x3);
 
   // test promotion
-  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3_dbl);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -854,16 +858,16 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 
   // bind ints and test autodiff
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
-  expect_ad_vv(tols, g12, x1, x2);
+  expect_ad_vv<ReverseOnly>(tols, g12, x1, x2);
 }
 
-template <typename F, typename T2>
+template <bool ReverseOnly = false,typename F, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
@@ -871,8 +875,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   double x3_dbl = static_cast<double>(x3);
 
   // test promotion recursively
-  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
-  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3_dbl);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -880,19 +884,19 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
-  expect_ad_vv(tols, g23, x2, x3);
+  expect_ad_vv<ReverseOnly>(tols, g23, x2, x3);
 
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
-  expect_ad_vv(tols, g12, x1, x2);
+  expect_ad_vv<ReverseOnly>(tols, g12, x1, x2);
 }
 
-template <typename F, typename T1>
+template <bool ReverseOnly = false,typename F, typename T1>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
@@ -900,8 +904,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   double x3_dbl = static_cast<double>(x3);
 
   // test promotion recursively
-  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
-  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3_dbl);
 
   // test value
   expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
@@ -909,20 +913,20 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
-  expect_ad_vv(tols, g13, x1, x3);
+  expect_ad_vv<ReverseOnly>(tols, g13, x1, x3);
 
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
-  expect_ad_vv(tols, g12, x1, x2);
+  expect_ad_vv<ReverseOnly>(tols, g12, x1, x2);
 }
 
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    int x3) {
   // test exception behavior; other exception cases tested recursively
   try {
     f(x1, x2, x3);
   } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
+    expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
   }
 
@@ -935,19 +939,19 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                   f(x1_dbl, x2_dbl, x3_dbl));
 
   // test all promotion patterns;  includes all combos recursively
-  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
-  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
-  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3_dbl);
 
   // bind ints and test recursively
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
-  expect_ad_vv(tols, g12, x1, x2);
+  expect_ad_vv<ReverseOnly>(tols, g12, x1, x2);
 
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
-  expect_ad_vv(tols, g13, x1, x3);
+  expect_ad_vv<ReverseOnly>(tols, g13, x1, x3);
 
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
-  expect_ad_vv(tols, g23, x2, x3);
+  expect_ad_vv<ReverseOnly>(tols, g23, x2, x3);
 }
 
 /**
@@ -1049,19 +1053,19 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 
 }  // namespace internal
 
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x) {
-  internal::expect_all_throw(f, x);
+  internal::expect_all_throw<ReverseOnly>(f, x);
 }
 
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
-  internal::expect_all_throw(f, x1, x2);
+  internal::expect_all_throw<ReverseOnly>(f, x1, x2);
 }
 
-template <typename F>
+template <bool ReverseOnly = false, typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
-  internal::expect_all_throw(f, x1, x2, x3);
+  internal::expect_all_throw<ReverseOnly>(f, x1, x2, x3);
 }
 
 /**
@@ -1151,9 +1155,9 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
  * @param f function to test
  * @param x argument to test
  */
-template <typename F, typename T>
+template <bool ReverseOnly = false, typename F, typename T>
 void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
-  internal::expect_ad_v(tols, f, x);
+  internal::expect_ad_v<ReverseOnly>(tols, f, x);
 }
 
 /**
@@ -1167,10 +1171,10 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
  * @param f function to test
  * @param x argument to test
  */
-template <typename F, typename T>
+template <bool ReverseOnly = false, typename F, typename T>
 void expect_ad(const F& f, const T& x) {
-  ad_tolerances tols;
-  expect_ad(tols, f, x);
+  constexpr ad_tolerances tols;
+  expect_ad<ReverseOnly>(tols, f, x);
 }
 
 /**
@@ -1187,10 +1191,10 @@ void expect_ad(const F& f, const T& x) {
  * @param x1 first argument to test
  * @param x2 second argument to test
  */
-template <typename F, typename T1, typename T2>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2) {
-  internal::expect_ad_vv(tols, f, x1, x2);
+  internal::expect_ad_vv<ReverseOnly>(tols, f, x1, x2);
 }
 
 /**
@@ -1205,10 +1209,10 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
  * @param x1 first argument to test
  * @param x2 second argument to test
  */
-template <typename F, typename T1, typename T2>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
-  ad_tolerances tols;
-  expect_ad(tols, f, x1, x2);
+  constexpr ad_tolerances tols;
+  expect_ad<ReverseOnly>(tols, f, x1, x2);
 }
 
 /**
@@ -1227,10 +1231,10 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  * @param x2 second argument to test
  * @param x3 third argument to test
  */
-template <typename F, typename T1, typename T2, typename T3>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2, typename T3>
 void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
                const T2& x2, const T3& x3) {
-  internal::expect_ad_vvv(tols, f, x1, x2, x3);
+  internal::expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3);
 }
 
 /**
@@ -1247,10 +1251,10 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
  * @param x2 second argument to test
  * @param x3 third argument to test
  */
-template <typename F, typename T1, typename T2, typename T3>
+template <bool ReverseOnly = false, typename F, typename T1, typename T2, typename T3>
 void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
-  ad_tolerances tols;
-  expect_ad(tols, f, x1, x2, x3);
+  constexpr ad_tolerances tols;
+  expect_ad<ReverseOnly>(tols, f, x1, x2, x3);
 }
 
 /**
@@ -1480,7 +1484,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           typename T>
 void expect_ad_vectorized(const F& f, const T& x) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   expect_ad_vectorized<ComplexSupport>(tols, f, x);
 }
 
@@ -1713,7 +1717,7 @@ void expect_ad_vectorized_ternary(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2>
 void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   expect_ad_vectorized_binary(tols, f, x, y);
 }
 
@@ -1734,7 +1738,7 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2, typename T3>
 void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
                                   const T3& z) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   expect_ad_vectorized_ternary(tols, f, x, y, z);
 }
 
@@ -1987,7 +1991,7 @@ template <
     ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
     require_t<bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
@@ -2018,7 +2022,7 @@ template <ScalarSupport ComplexSupport, typename F,
           require_t<bool_constant<ComplexSupport
                                   == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
@@ -2051,7 +2055,7 @@ template <ScalarSupport ComplexSupport, typename F,
           require_t<bool_constant<ComplexSupport
                                   == ScalarSupport::ComplexOnly>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
@@ -2096,7 +2100,7 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
 template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           require_not_same_t<F, ad_tolerances>* = nullptr, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
-  ad_tolerances tols;  // default tolerances
+  constexpr ad_tolerances tols;  // default tolerances
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
 
@@ -2117,7 +2121,7 @@ template <ScalarSupport ComplexSupport = ScalarSupport::Real, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
   for (auto x : internal::common_nonzero_int_args())
@@ -2141,7 +2145,7 @@ template <ScalarSupport ComplexSupport, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
     stan::test::expect_unary_vectorized<ComplexSupport>(tols, f, x);
   for (int x : internal::common_nonzero_int_args())
@@ -2167,7 +2171,7 @@ template <ScalarSupport ComplexSupport, typename F,
           stan::require_t<stan::bool_constant<
               ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }

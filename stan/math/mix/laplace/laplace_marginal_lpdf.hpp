@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_LPDF_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_LPDF_HPP
 
-#include <stan/math/laplace/laplace_marginal.hpp>
-#include <stan/math/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/mix/laplace/laplace_marginal.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_general.hpp>
 
 namespace stan {
 namespace math {

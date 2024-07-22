@@ -104,13 +104,13 @@ struct diff_poisson_log {
    * Return the log density.
    * @tparam T type of the log poisson parameter.
    * @param[in] theta log poisson parameters for each group.
-   * @param[in] eta_dummy additional parameters (use for other likelihoods).
+   * @param[in] eta additional parameters (use for other likelihoods).
    * @return the log density.
    */
   template <typename T1, typename T2>
   inline auto log_likelihood(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
+      const T2& /* eta */) const {
     double factorial_term = 0;
     for (Eigen::Index i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
@@ -129,14 +129,14 @@ struct diff_poisson_log {
    * approximation, and to avoid redundant computation.
    * @tparam T type of the log poisson parameter.
    * @param[in] theta log poisson parameters for each group.
-   * @param[in] eta_dummy additional parameters (use for other likelihoods).
+   * @param[in] eta additional parameters (use for other likelihoods).
    * @param[in, out] gradient
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
   inline Eigen::SparseMatrix<double> diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
+      const T2& /*eta*/,
       Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
       // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
       const Eigen::Index hessian_block_size = 1) const {
@@ -166,7 +166,7 @@ struct diff_poisson_log {
   template <typename T1, typename T2>
   inline Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
+      const T2& /*eta*/) const {
     return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
   }
 };

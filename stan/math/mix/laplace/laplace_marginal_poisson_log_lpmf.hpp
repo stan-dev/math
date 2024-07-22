@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
-#include <stan/math/laplace/laplace_marginal.hpp>
-#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
-#include <stan/math/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/mix/laplace/laplace_marginal.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_poisson_log.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_general.hpp>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,7 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
     const int solver, const int max_steps_line_search, const ThetaVec& theta_0,
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   return laplace_marginal_density(
       diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
                                               to_vector(y), n_samples, msgs),
@@ -56,7 +56,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const int max_steps_line_search, const ThetaVec& theta_0,
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, -1, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
@@ -77,7 +77,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               std::ostream* msgs,
                                               Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
   constexpr int hessian_block_size = 1;
@@ -98,7 +98,7 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
     std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, -1, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;

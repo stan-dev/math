@@ -1,6 +1,6 @@
-#ifndef STAN_TEST_UNIT_MATH_LAPLACE_LAPLACE_UTILITY_HPP
-#define STAN_TEST_UNIT_MATH_LAPLACE_LAPLACE_UTILITY_HPP
-#include <stan/math/laplace/laplace.hpp>
+#ifndef STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
+#define STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
+#include <stan/math/mix/laplace.hpp>
 #include <iostream>
 #include <istream>
 #include <fstream>
@@ -344,7 +344,7 @@ class laplace_disease_map_test : public ::testing::Test {
   void SetUp() override {
     dim_theta = 911;
     n_observations = 911;
-    data_directory = "test/unit/math/laplace/aki_disease_data/";
+    data_directory = "test/unit/math/mix/laplace/aki_disease_data/";
     x1.resize(dim_theta);
     x2.resize(dim_theta);
     y.resize(n_observations);
@@ -375,8 +375,8 @@ class laplace_disease_map_test : public ::testing::Test {
 
     theta_0 = Eigen::VectorXd::Zero(dim_theta);
     dim_phi = 2;
-    phi.resize(dim_phi);
-    phi << 0.3162278, 200;  // variance, length scale
+    phi_dbl.resize(dim_phi);
+    phi_dbl << 0.3162278, 200;  // variance, length scale
 
     delta_lk.resize(2 * n_observations);
     for (int i = 0; i < n_observations; i++)
@@ -399,8 +399,8 @@ class laplace_disease_map_test : public ::testing::Test {
 
   Eigen::VectorXd theta_0;
   int dim_phi;
-  Eigen::Matrix<stan::math::var, -1, 1> phi;
-  Eigen::Matrix<stan::math::var, -1, 1> eta_dummy;
+  Eigen::Matrix<double, -1, 1> phi_dbl;
+  Eigen::Matrix<double, -1, 1> eta_dummy_dbl;
 
   Eigen::VectorXd delta_lk;
   // stan::math::poisson_log_likelihood f;

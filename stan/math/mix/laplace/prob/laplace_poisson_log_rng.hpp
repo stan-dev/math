@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
 
-#include <stan/math/laplace/prob/laplace_base_rng.hpp>
-#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
-#include <stan/math/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/mix/laplace/prob/laplace_base_rng.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_poisson_log.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_general.hpp>
 
 namespace stan {
 namespace math {

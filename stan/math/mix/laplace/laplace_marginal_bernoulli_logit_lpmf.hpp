@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_LPMF_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_LPMF_HPP
 
-#include <stan/math/laplace/laplace_marginal.hpp>
-#include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
+#include <stan/math/mix/laplace/laplace_marginal.hpp>
+#include <stan/math/mix/laplace/laplace_likelihood_bernoulli_logit.hpp>
 
 namespace stan {
 namespace math {
@@ -41,7 +41,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const ThetaMatrix& theta_0, CovarF&& covariance_function,
     std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
@@ -62,7 +62,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, 0, 0> eta_dummy;
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),

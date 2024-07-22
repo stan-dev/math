@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_GENERAL_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_GENERAL_HPP
 
-// #include <stan/math/laplace/hessian_times_vector.hpp>
-#include <stan/math/laplace/hessian_block_diag.hpp>
+// #include <stan/math/mix/laplace/hessian_times_vector.hpp>
+#include <stan/math/mix/laplace/hessian_block_diag.hpp>
 
 #include <Eigen/Sparse>
 

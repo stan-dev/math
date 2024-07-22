@@ -1,6 +1,6 @@
 
 data(mcycle, package="MASS")
-setwd("~/Code/laplace_approximation/math/test/unit/math/laplace")
+setwd("~/Code/laplace_approximation/math/test/unit/math/mix/laplace")
 
 write.table(t(mcycle$times), file = "motorcycle_gp/x_vec.csv",
   row.names = FALSE, col.names = FALSE, quote = FALSE, sep = " ")

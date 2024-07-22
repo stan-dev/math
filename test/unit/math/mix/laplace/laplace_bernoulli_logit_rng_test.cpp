@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace.hpp>
+#include <stan/math/mix/laplace.hpp>
 
 #include <Eigen/Sparse>
 

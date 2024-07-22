@@ -15,7 +15,7 @@
 #include <stan/math/rev/functor.hpp>
 #include <stan/math/rev/prob.hpp>
 
-#include <stan/math/laplace/laplace.hpp>
+#include <stan/math/mix/laplace.hpp>
 #include <stan/math/prim.hpp>
 
 #endif

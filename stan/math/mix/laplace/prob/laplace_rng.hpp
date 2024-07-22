@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_RNG_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_RNG_HPP
 
-#include <stan/math/laplace/prob/laplace_rng.hpp>
+#include <stan/math/mix/laplace/prob/laplace_rng.hpp>
 
 namespace stan {
 namespace math {

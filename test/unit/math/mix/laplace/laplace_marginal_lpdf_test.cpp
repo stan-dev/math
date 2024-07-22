@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace.hpp>
-#include <test/unit/math/laplace/laplace_utility.hpp>
+#include <stan/math/mix/laplace.hpp>
+#include <test/unit/math/mix/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 
@@ -199,7 +199,7 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 
   int dim_theta = 500;
   int n_observations = 500;
-  std::string data_directory = "test/unit/math/laplace/aki_synth_data/";
+  std::string data_directory = "test/unit/math/mix/laplace/aki_synth_data/";
   std::vector<double> x1(dim_theta), x2(dim_theta);
   std::vector<int> y(n_observations);
   stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1,
@@ -359,7 +359,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     if (true) {
       n_obs = 133;
       stan::math::test::read_data(
-          n_obs, "test/unit/math/laplace/motorcycle_gp/", x, y);
+          n_obs, "test/unit/math/mix/laplace/motorcycle_gp/", x, y);
     }
 
     length_scale_f = 0.3;

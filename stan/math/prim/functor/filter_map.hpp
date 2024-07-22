@@ -155,28 +155,6 @@ inline constexpr decltype(auto) filter_map_impl(
 
 }  // namespace internal
 
-namespace internal {
-
-/** \ingroup type_trait
- * This underlying implementation is used when the type is not an std vector.
- */
-template <typename T>
-struct is_tuple_impl : std::false_type {};
-
-/** \ingroup type_trait
- * This specialization implementation has a static member named value when the
- * template type is an std vector.
- */
-template <typename... Args>
-struct is_tuple_impl<std::tuple<Args...>> : std::true_type {};
-
-}  // namespace internal
-
-/** \ingroup type_trait
- * Base implementation for checking if type is std vector
- */
-template <typename T, typename = void>
-struct is_tuple : internal::is_tuple_impl<std::decay_t<T>> {};
 
 template <typename... Types>
 using is_any_tuple = disjunction<is_tuple<Types>...>;

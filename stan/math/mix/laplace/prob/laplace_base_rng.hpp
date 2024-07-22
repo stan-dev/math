@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
-#include <stan/math/laplace/laplace_marginal.hpp>
+#include <stan/math/mix/laplace/laplace_marginal.hpp>
 
 #include <Eigen/Sparse>
 #include <Eigen/LU>

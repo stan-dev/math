@@ -57,7 +57,7 @@ struct diff_neg_binomial_2_log {
       const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
       Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>& gradient,
       const Eigen::Index hessian_block_size = 1) const {
-    typedef return_type_t<T_theta, T_eta> scalar;
+    using scalar_t = return_type_t<T_theta, T_eta>;
     Eigen::VectorXd one = rep_vector(1, theta.size());
     const Eigen::Index theta_size = theta.size();
     T_eta eta_scalar = eta(0);
@@ -65,7 +65,7 @@ struct diff_neg_binomial_2_log {
         = sums_ + eta_scalar * n_samples_;
     Eigen::Matrix<T_theta, Eigen::Dynamic, -1> exp_neg_theta = exp(-theta);
 
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> one_plus_exp
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> one_plus_exp
         = one + eta_scalar * exp_neg_theta;
     gradient = sums_ - elt_divide(sums_plus_n_eta, one_plus_exp);
     Eigen::MatrixXd hessian_val = eta_scalar
@@ -74,8 +74,9 @@ struct diff_neg_binomial_2_log {
     Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
-    for (Eigen::Index i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = -hessian_val(i);
+    }
     /*
         hessian = -eta_scalar
                   * sums_plus_n_eta.cwiseProduct(
@@ -88,12 +89,12 @@ struct diff_neg_binomial_2_log {
   inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
              const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    typedef return_type_t<T_theta, T_eta> scalar;
+    using scalar_t = return_type_t<T_theta, T_eta>;
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_eta, Eigen::Dynamic, 1> eta_vec
         = rep_vector(eta_scalar, theta.size());
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> eta_plus_exp_theta
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> eta_plus_exp_theta
         = eta_vec + exp_theta;
 
     return -((sums_ + eta_scalar * n_samples_) * eta_scalar)
@@ -107,19 +108,19 @@ struct diff_neg_binomial_2_log {
   inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
   diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
            const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    typedef return_type_t<T_theta, T_eta> scalar;
+    using scalar_t = return_type_t<T_theta, T_eta>;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_eta, Eigen::Dynamic, 1> y_plus_eta
         = y_ + rep_vector(eta_scalar, y_.size());
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> exp_theta_plus_eta
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> exp_theta_plus_eta
         = exp_theta + rep_vector(eta_scalar, theta.size());
 
     T_eta y_plus_eta_digamma_sum = 0;
     for (Eigen::Index i = 0; i < y_.size(); i++)
       y_plus_eta_digamma_sum += digamma(y_plus_eta(i));
 
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> gradient_eta(1);
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> gradient_eta(1);
     gradient_eta(0)
         = y_plus_eta_digamma_sum - y_.size() * digamma(eta_scalar)
           - sum(elt_divide(sums_ + n_samples_ * eta_scalar, exp_theta_plus_eta))
@@ -133,10 +134,10 @@ struct diff_neg_binomial_2_log {
   inline auto diff_theta_eta(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    typedef return_type_t<T_theta, T_eta> scalar;
+    using scalar_t = return_type_t<T_theta, T_eta>;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
-    Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
         theta.size(), 1);
     diff_matrix.col(0) = -elt_divide(
         n_samples_ - sums_.cwiseProduct(exp_neg_theta),
@@ -151,13 +152,13 @@ struct diff_neg_binomial_2_log {
                        Eigen::Dynamic>
   diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    typedef return_type_t<T_theta, T_eta> scalar;
+    using scalar_t = return_type_t<T_theta, T_eta>;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> one_plus_eta_exp
         = rep_vector(1, theta.size()) + eta_scalar * exp_neg_theta;
 
-    Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
+    Eigen::Matrix<scalar_t, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
         theta.size(), 1);
 
     diff_matrix.col(0) = -elt_divide(
