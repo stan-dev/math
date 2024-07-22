@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_DAE_HPP
 #define STAN_MATH_REV_FUNCTOR_DAE_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/idas_integrator.hpp>
 #include <stan/math/rev/functor/dae_system.hpp>
@@ -31,15 +32,15 @@ namespace math {
  * @tparam T_yp0 Type of initial state derivatives
  * @tparam T_Args Types of pass-through parameters
  *
- * @param function_name Calling function name (for printing debugging messages)
+ * @param func Calling function name (for printing debugging messages)
  * @param f DAE residual functor
  * @param yy0 Initial state
  * @param yp0 Initial state derivatives
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
@@ -66,14 +67,14 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
   check_positive(func, "max_num_steps", max_num_steps);
 
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-  apply(
+  math::apply(
       [&](auto&&... args) {
         std::vector<int> unused_temp{
             0, (check_finite("dae", "DAE parameters and data", args), 0)...};
       },
       args_ref_tuple);
 
-  return apply(
+  return math::apply(
       [&](const auto&... args_refs) {
         dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...> dae(f, yy0, yp0, msgs,
                                                              args_refs...);
@@ -110,8 +111,8 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
  * @param t0 Initial time
  * @param ts Times at which to solve the DAE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to IDAS
- * @param absolute_tolerance Absolute tolerance passed to IDAS
+ * @param rtol Relative tolerance passed to IDAS
+ * @param atol Absolute tolerance passed to IDAS
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages

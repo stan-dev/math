@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/make_nu.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/prob/lkj_corr_log.hpp>
+#include <stan/math/prim/prob/lkj_corr_lpdf.hpp>
 
 namespace stan {
 namespace math {
@@ -18,10 +18,11 @@ template <bool propto, typename T_covar, typename T_shape>
 return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(const T_covar& L,
                                                        const T_shape& eta) {
   using lp_ret = return_type_t<T_covar, T_shape>;
-  static const char* function = "lkj_corr_cholesky_lpdf";
-  const auto& L_ref = to_ref(L);
+  static constexpr const char* function = "lkj_corr_cholesky_lpdf";
   check_positive(function, "Shape parameter", eta);
-  check_lower_triangular(function, "Random variable", L_ref);
+
+  const auto& L_ref = to_ref(L);
+  check_cholesky_factor(function, "Random variable", L_ref);
 
   const unsigned int K = L.rows();
   if (K == 0) {

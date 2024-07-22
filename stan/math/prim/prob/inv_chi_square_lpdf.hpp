@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -48,9 +48,9 @@ template <bool propto, typename T_y, typename T_dof,
               T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_nu_ref = ref_type_if_t<!is_constant<T_dof>::value, T_dof>;
-  static const char* function = "inv_chi_square_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_nu_ref = ref_type_if_not_constant_t<T_dof>;
+  static constexpr const char* function = "inv_chi_square_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
 
@@ -74,7 +74,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     return LOG_ZERO;
   }
 
-  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
   const auto& log_y = to_ref_if<!is_constant_all<T_dof>::value>(log(y_val));
   const auto& half_nu = to_ref(0.5 * nu_val);
@@ -82,18 +82,19 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   size_t N = max_size(y, nu);
   T_partials_return logp = -sum((half_nu + 1.0) * log_y);
   if (include_summand<propto, T_dof>::value) {
-    logp -= (sum(nu_val) * HALF_LOG_TWO + sum(lgamma(half_nu))) * N / size(nu);
+    logp -= (sum(nu_val) * HALF_LOG_TWO + sum(lgamma(half_nu))) * N
+            / math::size(nu);
   }
   if (include_summand<propto, T_y>::value) {
     const auto& inv_y = to_ref_if<!is_constant_all<T_y>::value>(inv(y_val));
-    logp -= 0.5 * sum(inv_y) * N / size(y);
+    logp -= 0.5 * sum(inv_y) * N / math::size(y);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = (0.5 * inv_y - half_nu - 1.0) * inv_y;
+      partials<0>(ops_partials) = (0.5 * inv_y - half_nu - 1.0) * inv_y;
     }
   }
 
   if (!is_constant_all<T_dof>::value) {
-    ops_partials.edge2_.partials_
+    edge<1>(ops_partials).partials_
         = -HALF_LOG_TWO - (digamma(half_nu) + log_y) * 0.5;
   }
   return ops_partials.build(logp);

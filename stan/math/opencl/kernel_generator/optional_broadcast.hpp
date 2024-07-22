@@ -100,12 +100,13 @@ class optional_broadcast_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::map<const void*, const char*>& generated,
-                       std::map<const void*, const char*>& generated_all,
-                       cl::Kernel& kernel, int& arg_num) const {
+  inline void set_args(
+      std::unordered_map<const void*, const char*>& generated,
+      std::unordered_map<const void*, const char*>& generated_all,
+      cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      std::map<const void*, const char*> generated2;
+      std::unordered_map<const void*, const char*> generated2;
       this->template get_arg<0>().set_args(generated2, generated_all, kernel,
                                            arg_num);
       if (Colwise) {

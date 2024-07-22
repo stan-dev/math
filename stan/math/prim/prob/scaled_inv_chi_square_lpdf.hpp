@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,7 +51,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   using T_y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
   using T_s_ref = ref_type_t<T_scale>;
-  static const char* function = "scaled_inv_chi_square_lpdf";
+  static constexpr const char* function = "scaled_inv_chi_square_lpdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
@@ -70,8 +70,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   }
 
   T_partials_return logp(0);
-  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref,
-                                                                 s_ref);
+  auto ops_partials = make_partials_propagator(y_ref, nu_ref, s_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
@@ -86,7 +85,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_dof>
-      half_nu(size(nu));
+      half_nu(math::size(nu));
   for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       half_nu[i] = 0.5 * nu_vec.val(i);
@@ -95,7 +94,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials_return,
                 T_y>
-      log_y(size(y));
+      log_y(math::size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y>::value) {
       log_y[i] = log(y_vec.val(i));
@@ -104,7 +103,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_y>
-      inv_y(size(y));
+      inv_y(math::size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       inv_y[i] = 1.0 / y_vec.val(i);
@@ -113,7 +112,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
                 T_partials_return, T_scale>
-      log_s(size(s));
+      log_s(math::size(s));
   for (size_t i = 0; i < stan::math::size(s); i++) {
     if (include_summand<propto, T_dof, T_scale>::value) {
       log_s[i] = log(s_vec.val(i));
@@ -121,11 +120,11 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      log_half_nu(size(nu));
+      log_half_nu(math::size(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu(size(nu));
+      lgamma_half_nu(math::size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu_over_two(size(nu));
+      digamma_half_nu_over_two(math::size(nu));
   for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
@@ -155,17 +154,17 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      partials<0>(ops_partials)[n]
           += -(half_nu[n] + 1.0) * inv_y[n]
              + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      partials<1>(ops_partials)[n]
           += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
              - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      partials<2>(ops_partials)[n]
           += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }
   }

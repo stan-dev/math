@@ -18,14 +18,17 @@ endif
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
   LIBRARY_SUFFIX ?= .dll
+  STR_SEARCH ?= findstr
 endif
 
 ifeq ($(OS),Darwin)
   LIBRARY_SUFFIX ?= .dylib
+  STR_SEARCH ?= grep
 endif
 
 ifeq ($(OS),Linux)
   LIBRARY_SUFFIX ?= .so
+  STR_SEARCH ?= grep
 endif
 
 ## Set default compiler
@@ -39,6 +42,11 @@ ifeq (default,$(origin CXX))
   ifeq ($(OS),Windows_NT)
     CXX := g++
   endif
+endif
+
+ARM64_CHECK := $(shell echo | $(CXX) -E -dM -  | $(STR_SEARCH) __aarch64__)
+ifneq ($(ARM64_CHECK),)
+  ARM64 = true
 endif
 
 # Detect compiler type
@@ -58,10 +66,9 @@ ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
 endif
 CXX_TYPE ?= other
-CXX_VERSION :=  $(shell $(CXX) -dumpversion 2>&1)
+CXX_VERSION :=  $(shell $(CXX) -dumpfullversion -dumpversion 2>&1)
 CXX_MAJOR := $(word 1,$(subst ., ,$(CXX_VERSION)))
 CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
-
 
 ################################################################################
 # Set optional compiler flags for performance
@@ -113,10 +120,32 @@ INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
 CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_FLTO_SUNDIALS)
 #CPPFLAGS_GTEST ?=
+STAN_HAS_CXX17 ?= false
+ifeq ($(CXX_TYPE), gcc)
+  GCC_GE_73 := $(shell [ $(CXX_MAJOR) -gt 7 -o \( $(CXX_MAJOR) -eq 7 -a $(CXX_MINOR) -ge 1 \) ] && echo true)
+  ifeq ($(GCC_GE_73),true)
+    STAN_HAS_CXX17 := true
+  endif
+else ifeq ($(CXX_TYPE), clang)
+  CLANG_GE_5 := $(shell [ $(CXX_MAJOR) -gt 5 -o \( $(CXX_MAJOR) -eq 5 -a $(CXX_MINOR) -ge 0 \) ] && echo true)
+  ifeq ($(CLANG_GE_5),true)
+    STAN_HAS_CXX17 := true
+  endif
+else ifeq ($(CXX_TYPE), mingw32-gcc)
+  MINGW_GE_50 := $(shell [ $(CXX_MAJOR) -gt 5 -o \( $(CXX_MAJOR) -eq 5 -a $(CXX_MINOR) -ge 0 \) ] && echo true)
+  ifeq ($(MINGW_GE_50),true)
+    STAN_HAS_CXX17 := true
+  endif
+endif
 
-
-## setup compiler flags
-CXXFLAGS_LANG ?= -std=c++1y
+ifeq ($(STAN_HAS_CXX17), true)
+  CXXFLAGS_LANG ?= -std=c++17
+  CXXFLAGS_STANDARD ?= c++17
+else
+  $(warning "Stan cannot detect if your compiler has the C++17 standard. If it does, please set STAN_HAS_CXX17=true in your make/local file. C++17 support is mandatory in the next release of Stan. Defaulting to C++14")
+  CXXFLAGS_LANG ?= -std=c++1y
+  CXXFLAGS_STANDARD ?= c++1y
+endif
 #CXXFLAGS_BOOST ?=
 CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
@@ -153,12 +182,28 @@ ifeq ($(OS),Windows_NT)
   CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
+  CPPFLAGS_OS += -D_GLIBCXX11_USE_C99_COMPLEX
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
     CXXFLAGS_OS ?= -m32
   else
     CXXFLAGS_OS ?= -m64
+  endif
+
+  make/ucrt:
+    pound := \#
+    UCRT_STRING := $(shell echo '$(pound)include <windows.h>' | $(CXX) -E -dM -  | $(STR_SEARCH) _UCRT)
+    ifneq (,$(UCRT_STRING))
+      IS_UCRT ?= true
+    else
+      IS_UCRT ?= false
+    endif
+    $(shell echo "IS_UCRT ?= $(IS_UCRT)" > $(MATH)make/ucrt)
+
+  include make/ucrt
+  ifeq ($(IS_UCRT),true)
+    CXXFLAGS_OS += -D_UCRT
   endif
 
   ifneq (gcc,$(CXX_TYPE))
@@ -195,8 +240,16 @@ endif
 ## makes reentrant version lgamma_r available from cmath
 CXXFLAGS_OS += -D_REENTRANT
 
+ifeq ($(ARM64), true)
+  CXXFLAGS_OS += -ffp-contract=off
+endif
+
 ## silence warnings occuring due to the TBB and Eigen libraries
 CXXFLAGS_WARNINGS += -Wno-ignored-attributes
+## https://github.com/oneapi-src/oneTBB/issues/307
+ifeq ($(CXX_TYPE), gcc)
+  CXXFLAGS_WARNINGS += -Wno-class-memaccess
+endif
 
 ################################################################################
 # Setup OpenCL
@@ -219,6 +272,12 @@ ifdef STAN_OPENCL
   CPPFLAGS_OPENCL += -DCL_HPP_TARGET_OPENCL_VERSION=120 -DCL_HPP_MINIMUM_OPENCL_VERSION=120
   CPPFLAGS_OPENCL += -DCL_HPP_ENABLE_EXCEPTIONS -Wno-ignored-attributes
   CXXFLAGS_OPENCL ?= -I $(OPENCL)
+
+	ifdef INTEGRATED_OPENCL
+		CPPFLAGS_OPENCL += -DINTEGRATED_OPENCL=1
+	else
+		CPPFLAGS_OPENCL += -DINTEGRATED_OPENCL=0
+	endif
 endif
 
 ################################################################################
@@ -251,8 +310,19 @@ else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
 
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags -ltbb
-LDLIBS_TBB ?= $(LDFLAGS_TBB)
+# MacOS ld does not support --disable-new-dtags
+ifneq ($(OS),Darwin)
+  LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
+endif
+
+# Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
+ifneq ($(OS), Windows_NT)
+  LDFLAGS_TBB_RPATH ?= -Wl,-rpath,"$(TBB_LIB)"
+endif
+
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" $(LDFLAGS_TBB_DTAGS) $(LDFLAGS_TBB_RPATH)
+
+LDLIBS_TBB ?= -ltbb
 
 else
 
@@ -269,8 +339,13 @@ ifeq ($(OS),Linux)
 endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
-LDLIBS_TBB ?= $(LDFLAGS_TBB)
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
+
+# Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
+ifneq ($(OS), Windows_NT)
+  LDFLAGS_TBB += -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
+endif
+LDLIBS_TBB ?= -ltbb
 
 endif
 
@@ -306,10 +381,10 @@ ifdef STAN_MPI
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) $(CXXFLAGS_NO_RANGE_CHECKS) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_TBB) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CPPFLAGS_FLTO) $(CPPFLAGS_OPTIM) $(CXXFLAGS_NO_RANGE_CHECKS)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM)
-LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
+override CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) $(CXXFLAGS_NO_RANGE_CHECKS) -O$(O) $(INC)
+override CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_TBB) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CPPFLAGS_FLTO) $(CPPFLAGS_OPTIM) $(CXXFLAGS_NO_RANGE_CHECKS)
+override LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_EIGEN) $(LDFLAGS_BOOST) $(LDFLAGS_SUNDIALS) $(LDFLAGS_TBB) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM)
+override LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_EIGEN) $(LDLIBS_BOOST) $(LDLIBS_SUNDIALS) $(LDLIBS_TBB) $(LDLIBS_OPENCL) $(LDLIBS_MPI)
 
 .PHONY: print-compiler-flags
 print-compiler-flags:
@@ -348,8 +423,9 @@ print-compiler-flags:
 	@echo '  LDLIBS:'
 	@echo '  - LDLIBS_LANG                 ' $(LDLIBS_LANG)
 	@echo '  - LDLIBS_WARNINGS             ' $(LDLIBS_WARNINGS)
-	@echo '  - LDLIBS_BOOST                ' $(LDLIBS_BOOST)
 	@echo '  - LDLIBS_EIGEN                ' $(LDLIBS_EIGEN)
+	@echo '  - LDLIBS_BOOST                ' $(LDLIBS_BOOST)
+	@echo '  - LDLIBS_SUNDIALS             ' $(LDLIBS_SUNDIALS)
 	@echo '  - LDLIBS_OS                   ' $(LDLIBS_OS)
 	@echo '  - LDLIBS_GTEST                ' $(LDLIBS_GTEST)
 	@echo '  - LDLIBS_OPENCL               ' $(LDLIBS_OPENCL)
@@ -358,8 +434,9 @@ print-compiler-flags:
 	@echo '  LDFLAGS:'
 	@echo '  - LDFLAGS_LANG                ' $(LDFLAGS_LANG)
 	@echo '  - LDFLAGS_WARNINGS            ' $(LDFLAGS_WARNINGS)
-	@echo '  - LDFLAGS_BOOST               ' $(LDFLAGS_BOOST)
 	@echo '  - LDFLAGS_EIGEN               ' $(LDFLAGS_EIGEN)
+	@echo '  - LDFLAGS_BOOST               ' $(LDFLAGS_BOOST)
+	@echo '  - LDFLAGS_SUNDIALS            ' $(LDFLAGS_SUNDIALS)
 	@echo '  - LDFLAGS_OS                  ' $(LDFLAGS_OS)
 	@echo '  - LDFLAGS_GTEST               ' $(LDFLAGS_GTEST)
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)

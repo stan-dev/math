@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -26,10 +26,10 @@ namespace math {
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_lambda_ref = ref_type_if_t<!is_constant<T_rate>::value, T_rate>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;
   using std::pow;
-  static const char* function = "poisson_cdf";
+  static constexpr const char* function = "poisson_cdf";
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
@@ -46,7 +46,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
     return 1.0;
   }
 
-  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
+  auto ops_partials = make_partials_propagator(lambda_ref);
 
   if (sum(promote_scalar<int>(n_val < 0))) {
     return ops_partials.build(0.0);
@@ -58,8 +58,8 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   T_partials_return P = prod(Pi);
 
   if (!is_constant_all<T_rate>::value) {
-    ops_partials.edge1_.partials_ = -exp(-lambda_val) * pow(lambda_val, n_val)
-                                    / (tgamma(n_val + 1.0) * Pi) * P;
+    partials<0>(ops_partials) = -exp(-lambda_val) * pow(lambda_val, n_val)
+                                / (tgamma(n_val + 1.0) * Pi) * P;
   }
 
   return ops_partials.build(P);

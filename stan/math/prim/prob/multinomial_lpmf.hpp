@@ -16,7 +16,7 @@ template <bool propto, typename T_prob,
           require_eigen_col_vector_t<T_prob>* = nullptr>
 return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
                                        const T_prob& theta) {
-  static const char* function = "multinomial_lpmf";
+  static constexpr const char* function = "multinomial_lpmf";
   check_size_match(function, "Size of number of trials variable", ns.size(),
                    "rows of probabilities parameter", theta.rows());
   check_nonnegative(function, "Number of trials variable", ns);

@@ -8,6 +8,19 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
+TEST(ProbDistributionsMultinomialLogit, RNGZero) {
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> beta(3);
+  beta << 1.3, 0.1, -2.6;
+  // bug in 4.8.1: RNG does not allow a zero total count
+  EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 0, rng));
+  // when the total count is zero, the sample should be a zero array
+  std::vector<int> sample = stan::math::multinomial_logit_rng(beta, 0, rng);
+  for (int k : sample) {
+    EXPECT_EQ(0, k);
+  }
+}
+
 TEST(ProbDistributionsMultinomialLogit, RNGSize) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> beta(5);
@@ -23,7 +36,7 @@ TEST(ProbDistributionsMultinomialLogit, MultinomialLogit) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> beta(3, 1);
   beta << log(0.2), log(0.3), log(0.5);
-  EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_logit_log(ns, beta));
+  EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_logit_lpmf(ns, beta));
 }
 TEST(ProbDistributionsMultinomialLogit, Propto) {
   std::vector<int> ns;
@@ -32,10 +45,10 @@ TEST(ProbDistributionsMultinomialLogit, Propto) {
   ns.push_back(3);
   Matrix<double, Dynamic, 1> beta(3, 1);
   beta << log(0.2), log(0.3), log(0.5);
-  EXPECT_FLOAT_EQ(0.0, stan::math::multinomial_logit_log<true>(ns, beta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::multinomial_logit_lpmf<true>(ns, beta));
 }
 
-using stan::math::multinomial_logit_log;
+using stan::math::multinomial_logit_lpmf;
 
 TEST(ProbDistributionsMultinomialLogit, error) {
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -48,27 +61,27 @@ TEST(ProbDistributionsMultinomialLogit, error) {
   Matrix<double, Dynamic, 1> beta(3, 1);
   beta << log(0.2), log(0.3), log(0.5);
 
-  EXPECT_NO_THROW(multinomial_logit_log(ns, beta));
+  EXPECT_NO_THROW(multinomial_logit_lpmf(ns, beta));
 
   ns[1] = 0;
-  EXPECT_NO_THROW(multinomial_logit_log(ns, beta));
+  EXPECT_NO_THROW(multinomial_logit_lpmf(ns, beta));
   ns[1] = -1;
-  EXPECT_THROW(multinomial_logit_log(ns, beta), std::domain_error);
+  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
   ns[1] = 1;
 
   beta(0) = nan;
-  EXPECT_THROW(multinomial_logit_log(ns, beta), std::domain_error);
+  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
   beta(0) = inf;
-  EXPECT_THROW(multinomial_logit_log(ns, beta), std::domain_error);
+  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
   beta(0) = -inf;
-  EXPECT_THROW(multinomial_logit_log(ns, beta), std::domain_error);
+  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
 
   beta(0) = 0.2;
   beta(1) = 0.3;
   beta(2) = 0.5;
 
   ns.resize(2);
-  EXPECT_THROW(multinomial_logit_log(ns, beta), std::invalid_argument);
+  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultinomialLogit, zeros) {
@@ -80,7 +93,7 @@ TEST(ProbDistributionsMultinomialLogit, zeros) {
   Matrix<double, Dynamic, 1> beta(3, 1);
   beta << log(0.2), log(0.3), log(0.5);
 
-  result = multinomial_logit_log(ns, beta);
+  result = multinomial_logit_lpmf(ns, beta);
   EXPECT_FALSE(std::isnan(result));
 
   std::vector<int> ns2;
@@ -88,7 +101,7 @@ TEST(ProbDistributionsMultinomialLogit, zeros) {
   ns2.push_back(0);
   ns2.push_back(0);
 
-  double result2 = multinomial_logit_log(ns2, beta);
+  double result2 = multinomial_logit_lpmf(ns2, beta);
   EXPECT_FLOAT_EQ(0.0, result2);
 }
 

@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,11 +53,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  using T_beta_ref
-      = ref_type_if_t<!is_constant<T_inv_scale>::value, T_inv_scale>;
-  static const char* function = "gamma_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
+  static constexpr const char* function = "gamma_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
   T_y_ref y_ref = y;
@@ -68,7 +67,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
   decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
-  check_not_nan(function, "Random variable", y_val);
+  check_positive_finite(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);
 
@@ -79,8 +78,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0; n < stan::math::size(y); n++) {
@@ -92,7 +90,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   size_t N = max_size(y, alpha, beta);
   T_partials_return logp(0.0);
   if (include_summand<propto, T_shape>::value) {
-    logp = -sum(lgamma(alpha_val)) * N / size(alpha);
+    logp = -sum(lgamma(alpha_val)) * N / math::size(alpha);
   }
   const auto& log_y = to_ref_if<is_constant_all<T_shape>::value>(log(y_val));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
@@ -100,7 +98,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
         = to_ref_if<!is_constant_all<T_shape>::value>(log(beta_val));
     logp += sum(alpha_val * log_beta) * N / max_size(alpha, beta);
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_ = log_beta + log_y - digamma(alpha_val);
+      partials<1>(ops_partials) = log_beta + log_y - digamma(alpha_val);
     }
   }
   if (include_summand<propto, T_y, T_shape>::value) {
@@ -111,10 +109,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = (alpha_val - 1) / y_val - beta_val;
+    partials<0>(ops_partials) = (alpha_val - 1) / y_val - beta_val;
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    ops_partials.edge3_.partials_ = alpha_val / beta_val - y_val;
+    partials<2>(ops_partials) = alpha_val / beta_val - y_val;
   }
   return ops_partials.build(logp);
 }

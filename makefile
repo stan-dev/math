@@ -2,16 +2,11 @@
 # Stan Math Library
 # -----------------
 #
-# To customize your build, set make variables in either:
-#    ~/.config/stan/make.local
-#    make/local
-# Variables in make/local is loaded after ~/.config/stan/make.local
-
+# To customize your build, set make variables in the file make/local.
 
 ## 'help' is the default make target.
 help:
 
--include $(HOME)/.config/stan/make.local  # user-defined variables
 -include make/local                       # user-defined variables
 
 include make/compiler_flags               # CXX, CXXFLAGS, LDFLAGS set by the end of this file
@@ -25,9 +20,7 @@ include make/clang-tidy
 help:
 	@echo '--------------------------------------------------------------------------------'
 	@echo 'Note: testing of Math is typically done with the `runTests.py` python script.'
-	@echo '  See https://github.com/stan-dev/math/wiki/Developer-Doc#building-and-running-tests'
-	@echo '  for more detail on testing.'
-	@echo  ''
+	@echo ''
 	@echo 'Stan Math makefile:'
 	@$(MAKE) print-compiler-flags
 	@echo 'Tests:'
@@ -49,11 +42,7 @@ help:
 	@echo '      * mix -> {rev, fwd, prim}'
 	@echo ''
 	@echo '  Cpplint'
-	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
-	@echo '                    cpplint is called using the CPPLINT variable:'
-	@echo '                      CPPLINT = $(CPPLINT)'
-	@echo '                    To set the version of python 2, set the PYTHON2 variable:'
-	@echo '                      PYTHON2 = $(PYTHON2)'
+	@echo '  - cpplint       : runs cpplint on source files.'
 	@echo ''
 	@echo ' Clang Tidy'
 	@echo ' - clang-tidy     : runs the clang-tidy makefile over the test suite.'
@@ -88,8 +77,9 @@ help:
 .PHONY: doxygen
 doxygen:
 	mkdir -p doc/api
+	doxygen -v
 	doxygen doxygen/doxygen.cfg
-
+	cp ./doxygen/pretty_stuff/eigen_navtree_hacks.js ./doc/api/html
 ##
 # Clean up.
 ##
@@ -126,6 +116,7 @@ clean-deps:
 	@$(RM) $(call findfiles,test,*.d.*)
 	@$(RM) $(call findfiles,lib,*.d.*)
 	@$(RM) $(call findfiles,stan,*.dSYM)
+	@$(RM) $(call findfiles,make,ucrt)
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 

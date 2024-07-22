@@ -1,6 +1,179 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.9.0 (3 June 2024)
+======================================================================
+
+ - Stan now detects if your compiler supports C++17 and will issue a warning if it is not available. Support for pre-C++17 compilers may be removed as early as next version. (#3063)
+ - Added a new distribution: `wiener_full_lpdf`. (#2822)
+ - Replaced `static const` objects with `static constexpr` when available. (#2830)
+ - Gradients for the `hypergeometric_pFq` function rewritten for increased speed and stability. (#2961)
+ - Added the Hypergeometric 1F0 function and gradients. (#2962)
+ - Removed macro usage in the definitions of the `require_` templates. (#2965)
+ - Added a sparse matrix implimentation for `arena_matrix`. (#2971)
+ - Added hand-calculated derivatives for the multivariate normal lpdf. (#2980)
+ - Added derivatives for the `multi_student_t_cholesky_lpdf`. (#2990)
+ - Added constrain function for creating matrices holding row or column simplexes. (#2992)
+ - Updated TBB Windows build rules for compatibility with RTools make. (#2999)
+ - Improved efficiency of `von_mises_lpdf` gradient calculation, credit to @venpopov. (#3010)
+ - Fixed a few additional issues in checking the inputs to distributions defined over cholesky matrices. (#3012)
+ - Functions which are wrappers around CVODES and IDAS routines from Sundials now throw `domain_error`, rather than a mix of `domain_error` and `runtime_error`. (#3013)
+ - Fixed the stack_allocator being able to return non-8-byte aligned pointers. (#3014)
+ - Upgrade bundled Boost headers to 1.84. (#3001, #3018, #3019)
+ - Fixed a bug where `linspaced_array` was returning its results truncated to integers. (#3023)
+ - Fixed the return type of `max(int, int)` being a double. (#3024)
+ - Added 'override' to built-in make variables. (#3028)
+ - Maded `sqrt(x)` have a finite gradient at `x=0`. Allows `distance(x,y)` to work for `x=y` too. (#3033)
+ - Improved stability of the `von_mises_lpdf` function to avoid numeric overflow. Now it's no longer necessary to use the normal_lpdf for kappa>100, allowing vectorizing of the likelihood. (#3036)
+ - Updated the `weibull_cdf` and `weibull_lcdf` functions for numerical stability as well as correct handling of `y == 0.0`. (#3037)
+ - Improved speed of `inv_Phi` and `std_normal_qf` functions. (#3046)
+ - Fixed spurious linker issue with `csr_matrix_times_vector`. (#3048, #3053)
+ - Improved error messages when variables dimensions do not match in operations that require it. (#3049)
+ - Added support for Windows ARM64 with RTools ARM64 toolchain. (#3051)
+ - Fixed `clean-all` error when using external SUNDIALS libraries. (#3054)
+ - Fixed several small floating-point accuracy issues with ARM64 platforms. (#3059)
+ - The RNGs for the multinomial and multinomial_logit distributions now accept a zero total count, resulting in a zero integer vector. (#3061)
+ - Fixed a data race in profiling in multiple threads. (#3066)
+ - Backported SUNDIALS bugfix for hashmap integer overflow. (#3072) 
+
+======================================================================
+v4.8.1 (23 January 2024)
+======================================================================
+
+- The distributions defined over cholesky factors now check that their arguments are in support (#3007)
+- Fixed an issue with the `inv_wishart_cholesky_rng` function (#3007)
+
+======================================================================
+v4.8.0 (16 January 2024)
+======================================================================
+
+ - Updated Boost headers to v1.81 (#2955)
+ - Added the Dirichlet-Multinomial distribution to the Stan Math library (dirichlet_multinomial_lpmf, dirichlet_multinomial_log, and dirichlet_multinomial_rng). (#2979)
+ - `binomial_logit_glm_lpmf` distribution added (#2946)
+ - Improved numerical stability of Bernoulli CDF functions (#2784)
+ - Replaced the `std::vector`s  for read/write events in `matrix_cl` with `tbb::concurrent_vectors` (#2905)
+ - Added framework for generic higher-order autodiff support through finite-differences. (#2929)
+ - Minor cleanup of numerical stability, constants, compound functions in OpenCL kernels (#2934)
+ - Fixes aliasing issue in adjoint acccumulation for OpenCL (#2943)
+ - Improve numerical stability of `binomial_logit` distribution (#2945)
+ - Automatically detect UCRT toolchain use on Windows (#2948)
+ - Update multiple functions to delegate to the compound functions (`log1p_exp`, etc.) where possible (#2950)
+ - Fixed the RPATH to the TBB library being passed twice on the command line (#2952)
+ - Split `eigendecompose` mix tests to fix CI memory issues (#2953)
+ - Fix distribution test failures with row-vector integer inputs to bernoulli CDF functions (#2954)
+ - Simplified usage of ref-type deduction (#2958)
+ - Added OpenCL support for the `binomial_logit_glm` distribution (#2960)
+ - Fixed a build configuration issue where the optional tbbmalloc and tbbmalloc_proxy libraries were built unconditionally. (#2969)
+ - Remove unused meta requires (#2976)
+ - Bugfix for uninitialized `var_value<Matrix>` types and assignment when the rhs of the assignment is an expression (#2978)
+ - Invert the input matrix in-place which reduces the memory requirement for this function. (#2981)
+ - Fixes the rng function for the Inverse Wishart Cholesky distribution. (#2984)
+ - Fixed a compilation issue with the `check_symmetric` function on complex-valued inputs under LLVM 17 (#2991)
+ - Fixed missing include guard for OpenCL rev headers (#2996)
+ - Add helpful context to the failure message for the ad testing framework (#2997)
+
+======================================================================
+v4.7.0 (5 September 2023)
+======================================================================
+
+- Improved accuracy of `matrix_exp_multiply`. (#2619)
+- Added framework for vectorising ternary functions (#2642)
+- Added `select()` function for vectorised ternary operations, as well as the `any()` and `all()` boolean reduction functions (#2853)
+- Added a minimum number of iterations (5) to the `grad_2f1` function to avoid early convergence (#2858)
+- Fixed some spelling errors in documentation (#2908)
+- Added new function in `stan::math::internal`, `finite_diff_hessian_vector_product_auto` (#2914)
+- Fixed an issue with the return type of `eigenvalues` being incorrect (#2915)
+- Delete jquery files from vendored Boost documentation (#2916)
+- Fixed fvar/higher-order autodiff compatibility with GLM distributions (#2917)
+- Fixed a type issue in the tests for inv_wishart_cholesky. (#2920)
+- The constraint tolerance can now be adjusted by defining the `STAN_MATH_CONSTRAINT_TOLERANCE` macro before including Stan headers. The default value remains `1E-8`. (#2921)
+- Use -dumpfullversion if available in makefiles (#2922)
+- Vectorised binary signature for `log_sum_exp` (#2930)
+- Added new functions `qr_thin`, `eigendecompose_sym`, `eigendecompose`, `complex_schur_decompose`, `svd`, and `csr_extract`. Each of these is equivalent to calling several existing functions, but should be more efficient due to sharing work. For example, `svd(m)` is equivalent to `(svd_U(m), singular_values(m), svd_V(m))`. (#2931)
+
+======================================================================
+v4.6.2 (15 May 2023)
+======================================================================
+
+- Fix an issue in Stan, see release notes.
+
+======================================================================
+v4.6.1 (2 May 2023)
+======================================================================
+
+- Fix an issue when compiling with newer versions of LLVM's libc++ (#2892)
+
+======================================================================
+v4.6.0 (20 April 2023)
+======================================================================
+
+- Updated to Eigen 3.4 (#2583)
+- operands_and_partials expanded to accept 8 parameters. (#2833)
+- Added new multidimensional integration routine `hcubature`. (#2838)
+- Added eigenvalues and eigenvectors overloads which accept matrices with complex values. (#2846)
+- Allowed Sundials to be linked to separately installed version. (#2861)
+- Fixed `is_nan` to compile under the Microsoft compiler suite. (#2870)
+- Fixed `csr_to_dense_matrix` to work in case of matrix with empty first row. (#2877)
+- Fixed a bug where `eigenvalues_sym` would return a matrix with a dynamic number of rows equal to 1, rather than a vector. (#2884)
+- Updated `eigenvalues_sym` return type for RcppEigen compatibility. (#2887)
+- Various testing improvements. (#2832, #2864, #2869, #2878, #2880)
+- Fixed an issue with building TBB on gcc 13. (#2890)
+
+======================================================================
+v4.5.0 (21 November 2022)
+======================================================================
+
+ - Added the generalised hypergeometric function. (#2510)
+ - Added var<Matrix> overloads for  `pow()`, `owens_t()`, `log_inv_logit` . (#2546, #2787, #2806)
+ - Add tuple overload and cleanup code for promote_scalar. (#2706)
+ - New gradient function allows evaluated gradient to be stored into an array, enabling memory reuse when stan/math called via a FFI. (#2743)
+ - Added function for casting `double` and `std::vector<double>` types to `int` and `std::vector<int>` types(#2771)
+ - Added `hypergeometric_2F1` function. (#2792)
+ - Fix bug with vectorised `pow()` incorrectly forcing `Eigen::Matrix` return instead of `Eigen::Array`. (#2793)
+ - Exposed the `hypergeometric_3F2` function and improved its numerical stability. (#2797)
+ - Fixed incorrect return from `log_inv_logit_diff` with positive infinity first argument. (#2798)
+ - Added reverse-mode specializations for `fft2` and `inv_fft2`. (#2800)
+ - Removed the cause of the out-of-order initializer compiler warning.(#2808)
+ - Vectorized `atan2()`.(#2812)
+ - Added `complex_schur_decompose_t` and `complex_schur_decompose_u`.(#2814)
+ - Vectroized the `conj()` function. (#2817)
+ - Stan's algebraic solvers now support variadic arguments. (#2820)
+ - Fixed forward mode autodiff for FFT functions. (#2821)
+ - Added `log_sum_exp_signed` function for computing `log_sum_exp` while respecting signs of arguments and tracking the sign of the result. (#2829)
+ - `stan_print` can now print std::tuple types. (#2835)
+ - `stan::math::minus` can now accept `std::vector`. (#2840)
+
+======================================================================
+v4.4.0 (1 July 2022)
+======================================================================
+
+Complex:
+ - Added fast Fourier transform (FFT) implementations of 1D and 2D discrete Fourier transform and their inverses. (#2686, #2750)
+ - Added type traits for detecting whether a type has a value type that is complex. (#2694)
+ - Added vectorized versions of get_real and get_imag. (#2700)
+ - Vectorized complex `abs()`, `to_complex`. (#2737, #2749)
+
+New functions:
+ - Added the incomplete beta function inverse. (#2637)
+ - Added the `wishart_cholesky_lpdf`, which is the Cholesky parameterization of the Wishart distribution of both the input matrix and the scale matrix. (#2710)
+ - Added the  inverse Wishart Cholesky parameterization `lpdf\lupdf` is available along with `inv_wishart_cholesky_rng`. (#2713)
+ - Added the Cholesky parameterization of the multivariate Student's T distribution. (#2715)
+ - Added the quantile function of the standard normal density function with log input. (#2744)
+
+Misc:
+ - Upgraded Sundials to version 6.1.1. (#2692)
+ - Updated Boost to 1.78.0. (#2725)
+ - Added namespace qualifiers to `size` and `apply` calls for C++17 compatibility. (#2693)
+ - Enabled address sanitizer and fix it when running inside Docker in Flatiron CI. (#2702)
+ - Made `arena_allocator` usable for all std containers. (#2708)
+ - Added gradient calculation for the a2 input in stan-math for the `grad_2F1` function and fixes incorrect return values when `z` is between -1 and 0. (#2721)
+ - Updated the signatures of `eigenvalues` and `eigenvectors` to use our pseudo-concept require templates.(#2728)
+ - `norm1` and `norm2` were extended with the `apply_vector_unary` to accept general std::vectors as well as the Eigen vectors previously supported. (#2742)
+ - Cleaned up compiler warnings for unused variables and non-consistent use of class and struct for ops_partials_edge. (#2757)
+ - Fixed the check for `y` in `gamma_lpdf` so that it now errors if y is not a positive finite value. (#2758)
+ - Improved numerical stability of gamma_lcdf gradients (#2767)
+
+======================================================================
 v4.3.2 (25 March 2022)
 ======================================================================
 

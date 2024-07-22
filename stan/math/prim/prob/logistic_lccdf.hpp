@@ -6,13 +6,14 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/prob/logistic_log.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/prob/logistic_lpdf.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,7 +30,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static const char* function = "logistic_lccdf";
+  static constexpr const char* function = "logistic_lccdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   T_y_ref y_ref = y;
@@ -44,8 +45,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -72,22 +72,23 @@ return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
     const T_partials_return sigma_dbl = sigma_vec.val(n);
     const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
 
+    // TODO(Andrew) Further simplify derivatives and log-scale below
     const T_partials_return Pn
-        = 1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
+        = 1.0 - inv_logit((y_dbl - mu_dbl) * sigma_inv_vec);
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+      partials<0>(ops_partials)[n]
+          -= exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
-          -= -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+      partials<1>(ops_partials)[n]
+          -= -exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      partials<2>(ops_partials)[n]
           -= -(y_dbl - mu_dbl) * sigma_inv_vec
-             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+             * exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     }
   }
   return ops_partials.build(P);

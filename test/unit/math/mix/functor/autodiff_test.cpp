@@ -7,7 +7,7 @@
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-
+namespace autodiff_test {
 struct fun0 {
   template <typename T>
   inline T operator()(const T& x) const {
@@ -38,7 +38,7 @@ struct norm_functor {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
+    return stan::math::normal_lpdf(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };
 
@@ -278,3 +278,4 @@ TEST(MixFunctor, GradientHessian) {
                         poly_grad_hess_agrad[i](j, k));
       }
 }
+}  // namespace autodiff_test

@@ -1,5 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/frechet_lpdf.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -55,7 +58,7 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
                                                       const T_scale& sigma,
                                                       const T3&, const T4&,
                                                       const T5&) {
-    return stan::math::frechet_log(y, alpha, sigma);
+    return stan::math::frechet_lpdf(y, alpha, sigma);
   }
 
   template <bool propto, typename T_y, typename T_shape, typename T_scale,
@@ -65,7 +68,7 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
                                                       const T_scale& sigma,
                                                       const T3&, const T4&,
                                                       const T5&) {
-    return stan::math::frechet_log<propto>(y, alpha, sigma);
+    return stan::math::frechet_lpdf<propto>(y, alpha, sigma);
   }
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,

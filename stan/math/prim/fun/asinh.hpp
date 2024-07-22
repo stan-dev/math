@@ -29,7 +29,7 @@ namespace math {
  */
 struct asinh_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::asinh;
     return asinh(x);
   }
@@ -65,7 +65,6 @@ inline std::complex<V> complex_asinh(const std::complex<V>& z) {
   return copysign(y, y_d);
 }
 }  // namespace internal
-
 }  // namespace math
 }  // namespace stan
 

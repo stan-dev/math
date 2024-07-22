@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <cstdint>
 #include <stdexcept>
 #include <vector>
 
@@ -21,17 +22,17 @@ namespace math {
  * @throw std::invalid_argument since the type is a scalar.
  */
 template <typename ScalarT, require_stan_scalar_t<ScalarT>* = nullptr>
-size_t size_mvt(const ScalarT& /* unused */) {
+int64_t size_mvt(const ScalarT& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
 }
 
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
-size_t size_mvt(const MatrixT& /* unused */) {
-  return 1U;
+int64_t size_mvt(const MatrixT& /* unused */) {
+  return 1;
 }
 
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
-size_t size_mvt(const std::vector<MatrixT>& x) {
+int64_t size_mvt(const std::vector<MatrixT>& x) {
   return x.size();
 }
 

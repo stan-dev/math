@@ -96,3 +96,16 @@ TEST(MathMixMatFun, logSumExp) {
       std::vector<double>(x2c.data(), x2c.data() + x2c.size())};
   stan::test::expect_ad(tols, f, ststx);
 }
+
+TEST(mathMixScalFun, logSumExp_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::log_sum_exp;
+    return log_sum_exp(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}

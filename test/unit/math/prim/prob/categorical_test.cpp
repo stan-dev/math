@@ -10,16 +10,16 @@ TEST(ProbDistributionsCategorical, Categorical) {
   using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
-  EXPECT_FLOAT_EQ(-1.203973, stan::math::categorical_log(1, theta));
-  EXPECT_FLOAT_EQ(-0.6931472, stan::math::categorical_log(2, theta));
+  EXPECT_FLOAT_EQ(-1.203973, stan::math::categorical_lpmf(1, theta));
+  EXPECT_FLOAT_EQ(-0.6931472, stan::math::categorical_lpmf(2, theta));
 }
 TEST(ProbDistributionsCategorical, Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log<true>(1, theta));
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log<true>(2, theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_lpmf<true>(1, theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_lpmf<true>(2, theta));
 }
 
 TEST(ProbDistributionsCategorical, VectorInt) {
@@ -28,7 +28,7 @@ TEST(ProbDistributionsCategorical, VectorInt) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   std::vector<int> xs0;
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log(xs0, theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_lpmf(xs0, theta));
 
   std::vector<int> xs(3);
   xs[0] = 1;
@@ -36,13 +36,13 @@ TEST(ProbDistributionsCategorical, VectorInt) {
   xs[2] = 1;
 
   EXPECT_FLOAT_EQ(log(0.3) + log(0.2) + log(0.3),
-                  stan::math::categorical_log(xs, theta));
+                  stan::math::categorical_lpmf(xs, theta));
 }
 
 TEST(ProbDistributionsCategorical, error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::categorical_log;
+  using stan::math::categorical_lpmf;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
@@ -51,43 +51,43 @@ TEST(ProbDistributionsCategorical, error) {
   Matrix<double, Dynamic, 1> theta(N, 1);
   theta << 0.3, 0.5, 0.2;
 
-  EXPECT_NO_THROW(categorical_log(N, theta));
-  EXPECT_NO_THROW(categorical_log(n, theta));
-  EXPECT_NO_THROW(categorical_log(2, theta));
-  EXPECT_THROW(categorical_log(N + 1, theta), std::domain_error);
-  EXPECT_THROW(categorical_log(0, theta), std::domain_error);
+  EXPECT_NO_THROW(categorical_lpmf(N, theta));
+  EXPECT_NO_THROW(categorical_lpmf(n, theta));
+  EXPECT_NO_THROW(categorical_lpmf(2, theta));
+  EXPECT_THROW(categorical_lpmf(N + 1, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(0, theta), std::domain_error);
 
   theta(0) = nan;
-  EXPECT_THROW(categorical_log(n, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(n, theta), std::domain_error);
   theta(0) = inf;
-  EXPECT_THROW(categorical_log(n, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(n, theta), std::domain_error);
   theta(0) = -inf;
-  EXPECT_THROW(categorical_log(n, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(n, theta), std::domain_error);
   theta(0) = -1;
   theta(1) = 1;
   theta(2) = 0;
-  EXPECT_THROW(categorical_log(n, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(n, theta), std::domain_error);
 
   std::vector<int> ns(3);
   ns[0] = 3;
   ns[1] = 2;
   ns[2] = 3;
-  EXPECT_THROW(categorical_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(ns, theta), std::domain_error);
 
   theta << 0.3, 0.5, 0.2;
-  EXPECT_NO_THROW(categorical_log(ns, theta));
+  EXPECT_NO_THROW(categorical_lpmf(ns, theta));
   ns[1] = -1;
-  EXPECT_THROW(categorical_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(ns, theta), std::domain_error);
 
   ns[1] = 1;
   ns[2] = 12;
-  EXPECT_THROW(categorical_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_lpmf(ns, theta), std::domain_error);
 }
 
 TEST(ProbDistributionsCategorical, error_check) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::categorical_log;
+  using stan::math::categorical_lpmf;
   boost::random::mt19937 rng;
 
   Matrix<double, Dynamic, Dynamic> theta(3, 1);
@@ -99,7 +99,7 @@ TEST(ProbDistributionsCategorical, error_check) {
 TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::categorical_log;
+  using stan::math::categorical_lpmf;
   boost::random::mt19937 rng;
 
   int N = 10000;

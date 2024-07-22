@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,9 +24,9 @@ template <bool propto, typename T_y, typename T_scale,
               T_y, T_scale>* = nullptr>
 return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "rayleigh_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "rayleigh_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
@@ -46,7 +46,7 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_sigma_ref> ops_partials(y_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_scale>::value>(inv(sigma_val));
@@ -56,10 +56,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   size_t N = max_size(y, sigma);
   T_partials_return logp = -0.5 * sum(square(y_over_sigma));
   if (include_summand<propto, T_scale>::value) {
-    logp -= 2.0 * sum(log(sigma_val)) * N / size(sigma);
+    logp -= 2.0 * sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_y>::value) {
-    logp += sum(log(y_val)) * N / size(y);
+    logp += sum(log(y_val)) * N / math::size(y);
   }
 
   if (!is_constant_all<T_y, T_scale>::value) {
@@ -67,10 +67,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
                                          && !is_constant_all<T_scale>::value)>(
         inv_sigma * y_over_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = inv(y_val) - scaled_diff;
+      partials<0>(ops_partials) = inv(y_val) - scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = y_over_sigma * scaled_diff - 2.0 * inv_sigma;
     }
   }

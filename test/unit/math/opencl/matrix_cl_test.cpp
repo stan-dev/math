@@ -77,4 +77,18 @@ TEST(MathMatrixCL, assignment) {
   EXPECT_EQ(nullptr, mat1_cl.buffer()());
 }
 
+TEST(MathMatrixCL, setZeroFun) {
+  using stan::math::matrix_cl;
+  Eigen::Matrix<double, 2, 2> mat_1;
+  mat_1 << 1, 2, 3, 4;
+  matrix_cl<double> mat1_cl(mat_1);
+  mat1_cl.setZero();
+  Eigen::Matrix<double, 2, 2> mat_1_fromcl
+      = stan::math::from_matrix_cl(mat1_cl);
+  EXPECT_EQ(mat_1_fromcl(0), 0);
+  EXPECT_EQ(mat_1_fromcl(1), 0);
+  EXPECT_EQ(mat_1_fromcl(2), 0);
+  EXPECT_EQ(mat_1_fromcl(3), 0);
+}
+
 #endif

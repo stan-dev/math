@@ -5,7 +5,7 @@ TEST(MathMixMatFun, svd_V) {
   auto f = [](const auto& x) { return stan::math::svd_V(x); };
 
   Eigen::MatrixXd m00(0, 0);
-  EXPECT_THROW(f(m00), std::invalid_argument);
+  EXPECT_NO_THROW(f(m00));
 
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.1;
@@ -28,6 +28,11 @@ TEST(MathMixMatFun, svd_V) {
   stan::test::expect_ad_matvar(f, m32);
 
   Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 4;
+  stan::test::expect_ad(f, a22);
+  stan::test::expect_ad_matvar(f, a22);
+
+  Eigen::MatrixXcd c22(2, 2);
   a22 << 1, 2, 3, 4;
   stan::test::expect_ad(f, a22);
   stan::test::expect_ad_matvar(f, a22);

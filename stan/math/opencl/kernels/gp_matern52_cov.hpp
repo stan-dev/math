@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string gp_matern52_cov_kernel_code = STRINGIFY(
+static constexpr const char* gp_matern52_cov_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU part of calculation of Matern 5/2 kernel.
@@ -56,7 +56,7 @@ const kernel_cl<in_buffer, out_buffer, double, double, double, int, int>
     gp_matern52_cov("gp_matern52_cov", {gp_matern52_cov_kernel_code});
 
 // \cond
-static const std::string gp_matern52_cov_cross_kernel_code = STRINGIFY(
+static constexpr const char* gp_matern52_cov_cross_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * GPU part of calculation of Matern 5/2 kernel.

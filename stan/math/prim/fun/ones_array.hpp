@@ -11,7 +11,7 @@ namespace math {
  * Return an array of ones.
  *
  * @param K size of the array
- * @return An array of size K with all elements initialised to 1.
+ * @return An array of size K with all elements initialized to 1.
  * @throw std::domain_error if K is negative.
  */
 inline std::vector<double> ones_array(int K) {

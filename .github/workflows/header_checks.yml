@@ -13,22 +13,23 @@ on:
       - 'README.md'
       - 'RELEASE-NOTES.txt'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   windows:
     name: Windows
     runs-on: windows-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '2.x'
+        python-version: '3.x'
 
     - name: Print g++/mingw32-make version and path
       run: |
@@ -40,7 +41,7 @@ jobs:
 
     - name: Build Math libs
       shell: powershell
-      run: mingw32-make -f make/standalone math-libs
+      run: mingw32-make -f make/standalone math-libs -j2
 
     - name: Run header tests
       shell: powershell
@@ -51,13 +52,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Run header tests
       run: |
@@ -68,13 +63,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Run header tests
       run: |

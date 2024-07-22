@@ -74,21 +74,24 @@ class dae_system {
    *                  derivative variables, 0 for algebraic variables).
    * @param[in] yy0 initial condition
    * @param[in] yp0 initial condition for derivatives
+   * @param[in, out] msgs the print stream for warning messages
+   * @param args Extra arguments passed unmodified through to DAE right hand
+   * side
    */
   dae_system(const F& f, const Tyy& yy0, const Typ& yp0, std::ostream* msgs,
              const T_par&... args)
       : f_(f),
+        local_args_tuple_(deep_copy_vars(args)...),
+        dbl_args_tuple_(value_of(args)...),
+        args_tuple_(std::forward_as_tuple(args...)),
+        msgs_(msgs),
         yy(yy0),
         yp(yp0),
         dbl_yy(stan::math::value_of(yy0)),
         dbl_yp(stan::math::value_of(yp0)),
-        local_args_tuple_(deep_copy_vars(args)...),
-        dbl_args_tuple_(value_of(args)...),
-        args_tuple_(std::forward_as_tuple(args...)),
         N(yy0.size()),
         M(count_vars(args...)),
         ns((is_var_yy0 ? N : 0) + (is_var_yp0 ? N : 0) + M),
-        msgs_(msgs),
         varis(ChainableStack::instance_->memalloc_.alloc_array<vari*>(ns)),
         all_vars(ns),
         dbl_rr(N) {
@@ -99,7 +102,7 @@ class dae_system {
   }
 
   void eval_residual(double t) {
-    dbl_rr = apply(
+    dbl_rr = math::apply(
         [&](auto&&... args) { return f_(t, dbl_yy, dbl_yp, msgs_, args...); },
         dbl_args_tuple_);
   }
@@ -144,7 +147,7 @@ class dae_system {
     }
 
     Eigen::VectorXd g(m);
-    Eigen::Matrix<var, -1, 1> fy = apply(
+    Eigen::Matrix<var, -1, 1> fy = math::apply(
         [&](auto&&... args) {
           return dae->f_(t, yy_var, yp_var, dae->msgs_, args...);
         },

@@ -1,5 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/beta_lpdf.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -66,7 +68,7 @@ class AgradDistributionsBeta : public AgradDistributionTest {
                                                         const T_scale2& beta,
                                                         const T3&, const T4&,
                                                         const T5&) {
-    return stan::math::beta_log(y, alpha, beta);
+    return stan::math::beta_lpdf(y, alpha, beta);
   }
 
   template <bool propto, typename T_y, typename T_scale1, typename T_scale2,
@@ -76,7 +78,7 @@ class AgradDistributionsBeta : public AgradDistributionTest {
                                                         const T_scale2& beta,
                                                         const T3&, const T4&,
                                                         const T5&) {
-    return stan::math::beta_log<propto>(y, alpha, beta);
+    return stan::math::beta_lpdf<propto>(y, alpha, beta);
   }
 
   template <typename T_y, typename T_scale1, typename T_scale2, typename T3,

@@ -227,7 +227,7 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
             require_vt_same<T, S>* = nullptr>
   explicit vari_value(const S& x)
       : chainable_alloc(), vari_cl_base<T>(x, constant(0, x.rows(), x.cols())) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -257,6 +257,26 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
+  }
+
+  /**
+   * Construct a dense Eigen variable implementation from a
+   *  preconstructed values and adjoints.
+   *
+   * All constructed variables are not added to the stack. Variables
+   * should be constructed before variables on which they depend
+   * to insure proper partial derivative propagation.
+   * @tparam S A dense Eigen type that is convertible to `value_type`
+   * @tparam K A dense Eigen type that is convertible to `value_type`
+   * @param val Matrix of values
+   * @param adj Matrix of adjoints
+   */
+  template <typename S, typename K, require_convertible_t<T, S>* = nullptr,
+            require_convertible_t<T, K>* = nullptr>
+  explicit vari_value(S&& val, K&& adj)
+      : chainable_alloc(),
+        vari_cl_base<T>(std::forward<S>(val), std::forward<K>(adj)) {
+    ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
 
   /**

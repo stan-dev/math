@@ -3,20 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_inv_logit.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -40,10 +37,10 @@ template <bool propto, typename T_n, typename T_N, typename T_prob,
 return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                                           const T_prob& alpha) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_N_ref = ref_type_if_t<!is_constant<T_N>::value, T_N>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
-  static const char* function = "binomial_logit_lpmf";
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_N_ref = ref_type_if_not_constant_t<T_N>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_prob>;
+  static constexpr const char* function = "binomial_logit_lpmf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", alpha);
@@ -66,32 +63,22 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
-  const auto& inv_logit_alpha
-      = to_ref_if<!is_constant_all<T_prob>::value>(inv_logit(alpha_val));
-  const auto& inv_logit_neg_alpha
-      = to_ref_if<!is_constant_all<T_prob>::value>(inv_logit(-alpha_val));
+  const auto& log_inv_logit_alpha
+      = to_ref_if<!is_constant_all<T_prob>::value>(log_inv_logit(alpha_val));
+  const auto& log1m_inv_logit_alpha
+      = to_ref_if<!is_constant_all<T_prob>::value>(log1m_inv_logit(alpha_val));
 
   size_t maximum_size = max_size(n, N, alpha);
-  const auto& log_inv_logit_alpha = log(inv_logit_alpha);
-  const auto& log_inv_logit_neg_alpha = log(inv_logit_neg_alpha);
   T_partials_return logp = sum(n_val * log_inv_logit_alpha
-                               + (N_val - n_val) * log_inv_logit_neg_alpha);
+                               + (N_val - n_val) * log1m_inv_logit_alpha);
   if (include_summand<propto, T_n, T_N>::value) {
     logp += sum(binomial_coefficient_log(N_val, n_val)) * maximum_size
             / max_size(n, N);
   }
 
-  operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
+  auto ops_partials = make_partials_propagator(alpha_ref);
   if (!is_constant_all<T_prob>::value) {
-    if (is_vector<T_prob>::value) {
-      ops_partials.edge1_.partials_
-          = n_val * inv_logit_neg_alpha - (N_val - n_val) * inv_logit_alpha;
-    } else {
-      T_partials_return sum_n = sum(n_val) * maximum_size / size(n);
-      ops_partials.edge1_.partials_[0] = forward_as<T_partials_return>(
-          sum_n * inv_logit_neg_alpha
-          - (sum(N_val) * maximum_size / size(N) - sum_n) * inv_logit_alpha);
-    }
+    edge<0>(ops_partials).partials_ = n_val - N_val * exp(log_inv_logit_alpha);
   }
 
   return ops_partials.build(logp);

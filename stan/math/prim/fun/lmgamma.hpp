@@ -59,7 +59,7 @@ inline return_type_t<T> lmgamma(int k, T x) {
 }
 
 /**
- * Enables the vectorised application of the natural log of the multivariate
+ * Enables the vectorized application of the natural log of the multivariate
  * gamma function, when the first and/or second arguments are containers.
  *
  * @tparam T1 type of first input

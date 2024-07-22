@@ -17,7 +17,7 @@ namespace math {
  * It is preferred to use the <code>nested_rev_autodiff</code> class for
  * nested autodiff class as it handles recovery of memory automatically.
  */
-static void set_zero_all_adjoints_nested() {
+static inline void set_zero_all_adjoints_nested() {
   if (empty_nested()) {
     throw std::logic_error(
         "empty_nested() must be false before calling"

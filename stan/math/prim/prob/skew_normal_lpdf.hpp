@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,11 +29,11 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  static const char* function = "skew_normal_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  static constexpr const char* function = "skew_normal_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
   T_y_ref y_ref = y;
@@ -58,8 +58,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_alpha_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
@@ -76,7 +76,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     logp -= HALF_LOG_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     logp -= sum(square(y_minus_mu_over_sigma)) * 0.5 * N
@@ -95,21 +95,21 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                                     && !is_constant_all<T_loc>::value)>(
           (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = -deriv_y_loc;
+        partials<0>(ops_partials) = -deriv_y_loc;
       }
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = std::move(deriv_y_loc);
+        partials<1>(ops_partials) = std::move(deriv_y_loc);
       }
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_
+      edge<2>(ops_partials).partials_
           = ((y_minus_mu_over_sigma - deriv_logerf * alpha_val)
                  * y_minus_mu_over_sigma
              - 1)
             * inv_sigma;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_ = deriv_logerf * y_minus_mu_over_sigma;
+      partials<3>(ops_partials) = deriv_logerf * y_minus_mu_over_sigma;
     }
   }
   return ops_partials.build(logp);

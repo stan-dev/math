@@ -78,7 +78,7 @@ ode_ckrk_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
 
   std::tuple<ref_type_t<Args>...> args_ref_tuple(args...);
 
-  apply(
+  math::apply(
       [&](const auto&... args_ref) {
         // Code from https://stackoverflow.com/a/17340003
         std::vector<int> unused_temp{
@@ -101,7 +101,7 @@ ode_ckrk_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
 
   using return_t = return_type_t<T_y0, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  auto&& coupled_system = apply(
+  auto&& coupled_system = math::apply(
       [&](const auto&... args_ref) {
         return coupled_ode_system<F, T_y0_t0, ref_type_t<Args>...>(f, y0, msgs,
                                                                    args_ref...);
@@ -127,7 +127,7 @@ ode_ckrk_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
       observer_initial_recorded = true;
       return;
     }
-    apply(
+    math::apply(
         [&](const auto&... args_ref) {
           y.emplace_back(ode_store_sensitivities(
               f, coupled_state, y0, t0, ts[time_index], msgs, args_ref...));

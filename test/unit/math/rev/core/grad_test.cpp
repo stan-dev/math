@@ -10,7 +10,7 @@ TEST(AgradRev, multiple_grads) {
     stan::math::var b = 3.0 * a;
     stan::math::var c = sin(a) * b;
     // fixes warning regarding unused variable
-    c = c;
+    EXPECT_FLOAT_EQ(c.val(), sin(2) * 6);
 
     stan::math::var nothing;
   }

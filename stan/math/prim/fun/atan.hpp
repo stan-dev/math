@@ -23,7 +23,7 @@ namespace math {
  */
 struct atan_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline auto fun(const T& x) {
     using std::atan;
     return atan(x);
   }

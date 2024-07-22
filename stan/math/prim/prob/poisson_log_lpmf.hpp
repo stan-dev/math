@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,11 +29,10 @@ template <bool propto, typename T_n, typename T_log_rate,
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
   using T_partials_return = partials_return_t<T_n, T_log_rate>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_alpha_ref
-      = ref_type_if_t<!is_constant<T_log_rate>::value, T_log_rate>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_log_rate>;
   using std::isinf;
-  static const char* function = "poisson_log_lpmf";
+  static constexpr const char* function = "poisson_log_lpmf";
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 
@@ -66,21 +65,21 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     }
   }
 
-  operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
+  auto ops_partials = make_partials_propagator(alpha_ref);
 
   const auto& exp_alpha
       = to_ref_if<!is_constant_all<T_log_rate>::value>(exp(alpha_val));
 
   T_partials_return logp = sum(n_val * alpha_val);
   if (include_summand<propto, T_log_rate>::value) {
-    logp -= sum(exp_alpha) * N / size(alpha);
+    logp -= sum(exp_alpha) * N / math::size(alpha);
   }
   if (include_summand<propto>::value) {
-    logp -= sum(lgamma(n_val + 1.0)) * N / size(n);
+    logp -= sum(lgamma(n_val + 1.0)) * N / math::size(n);
   }
 
   if (!is_constant_all<T_log_rate>::value) {
-    ops_partials.edge1_.partials_ = n_val - exp_alpha;
+    partials<0>(ops_partials) = n_val - exp_alpha;
   }
 
   return ops_partials.build(logp);

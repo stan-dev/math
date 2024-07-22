@@ -75,8 +75,8 @@ void expected_bin_sizes(double* expect, const int K, const int N,
                         const double alpha, const double beta) {
   long double p = 0;
   for (int i = 0; i < K; i++) {
-    expect[i] = N * std::exp(stan::math::neg_binomial_log(i, alpha, beta));
-    p += std::exp(stan::math::neg_binomial_log(i, alpha, beta));
+    expect[i] = N * std::exp(stan::math::neg_binomial_lpmf(i, alpha, beta));
+    p += std::exp(stan::math::neg_binomial_lpmf(i, alpha, beta));
   }
   expect[K - 1] = N * static_cast<double>(1.0 - p);
 }
@@ -189,8 +189,11 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
 
   double chi = 0;
 
-  for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+  for (int j = 0; j < K; j++) {
+    if (expect[j] != 0) {
+      chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    }
+  }
 
   EXPECT_LT(chi, boost::math::quantile(boost::math::complement(mydist, 1e-6)));
 }

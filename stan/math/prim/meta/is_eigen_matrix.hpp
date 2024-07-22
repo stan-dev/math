@@ -44,10 +44,45 @@ struct is_eigen_matrix_dynamic
           std::decay_t<T>,
           is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
-                           require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
+/*! \addtogroup eigen_matrix_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_matrix_dynamic */
+/*! @tparam T the type to check */
+template <typename T>
+using require_eigen_matrix_dynamic_t
+    = require_t<is_eigen_matrix_dynamic<std::decay_t<T>>>;
+
+/*! \brief Require all of the types satisfy @ref is_eigen_matrix_dynamic */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_all_eigen_matrix_dynamic_t
+    = require_all_t<is_eigen_matrix_dynamic<std::decay_t<Types>>...>;
+
+/*! \brief Require any of the types satisfy @ref is_eigen_matrix_dynamic */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_eigen_matrix_dynamic_t
+    = require_any_t<is_eigen_matrix_dynamic<std::decay_t<Types>>...>;
+/*! @} */
+
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
+/*! \addtogroup eigen_matrix_dynamic_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_matrix_dynamic */
+/*! and value type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the value type against */
+/*! @tparam Check The type to test @ref is_eigen_matrix_dynamic for and whose
+ * @ref value_type is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class... Check>
+using require_eigen_matrix_dynamic_vt
+    = require_t<container_type_check_base<is_eigen_matrix_dynamic, value_type_t,
+                                          TypeCheck, Check...>>;
+/*! @} */
 
 }  // namespace stan
 

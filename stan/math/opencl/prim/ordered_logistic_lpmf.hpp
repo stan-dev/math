@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 
 namespace stan {
@@ -70,11 +70,11 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_cuts_cl,
 inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     const T_y_cl& y, const T_loc_cl& lambda, const T_cuts_cl& cuts) {
   constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
-  static const char* function = "ordered_logistic_lpmf(OpenCL)";
+  static constexpr const char* function = "ordered_logistic_lpmf(OpenCL)";
 
   if (size(y) != 1) {
-    check_size_match(function, "Size of ", "y", size(y), "Size of", "lambda",
-                     size(lambda));
+    check_size_match(function, "Size of ", "y", math::size(y), "Size of",
+                     "lambda", math::size(lambda));
   }
 
   int N_instances = max_size(y, lambda);
@@ -142,16 +142,16 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
         = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
                       isfinite(lambda_val));
   }
-  operands_and_partials<T_loc_cl, T_cuts_cl> ops_partials(lambda, cuts);
+  auto ops_partials = make_partials_propagator(lambda, cuts);
 
   if (!is_constant_all<T_loc_cl>::value) {
-    ops_partials.edge1_.partials_ = lambda_derivative_cl;
+    partials<0>(ops_partials) = lambda_derivative_cl;
   }
   if (!is_constant_all<T_cuts_cl>::value) {
     if (need_broadcasting) {
-      ops_partials.edge2_.partials_ = rowwise_sum(cuts_derivative_cl);
+      partials<1>(ops_partials) = rowwise_sum(cuts_derivative_cl);
     } else {
-      ops_partials.edge2_.partials_ = std::move(cuts_derivative_cl);
+      partials<1>(ops_partials) = std::move(cuts_derivative_cl);
     }
   }
   return ops_partials.build(logp);

@@ -12,7 +12,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const char *cumulative_sum1_kernel_code = STRINGIFY(
+static constexpr const char *cumulative_sum1_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * First kernel of the cumulative sum implementation. Each thread sums the
@@ -62,7 +62,7 @@ static const char *cumulative_sum1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-static const char *cumulative_sum2_kernel_code = STRINGIFY(
+static constexpr const char *cumulative_sum2_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Second kernel of the cumulative sum implementation. Calculates prefix sum
@@ -116,7 +116,7 @@ static const char *cumulative_sum2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-static const char *cumulative_sum3_kernel_code = STRINGIFY(
+static constexpr const char *cumulative_sum3_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Third kernel of the cumulative sum implementation. Given sums of threads

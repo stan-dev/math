@@ -7,13 +7,51 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-Eigen::Matrix<std::complex<T>, -1, 1> eigenvalues(
-    const Eigen::Matrix<T, -1, -1>& m) {
-  check_nonzero_size("eigenvalues", "m", m);
+/**
+ * Return the eigenvalues of a (real-valued) matrix
+ *
+ * @tparam EigMat type of real matrix argument
+ * @param[in] m matrix to find the eigenvectors of. Must be square and have a
+ * non-zero size.
+ * @return a complex-valued column vector with entries the eigenvectors of `m`
+ */
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+          require_not_vt_complex<EigMat>* = nullptr>
+inline Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, 1> eigenvalues(
+    const EigMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return Eigen::Matrix<complex_return_t<value_type_t<EigMat>>, -1, 1>(0, 1);
+  }
   check_square("eigenvalues", "m", m);
+  using PlainMat = plain_type_t<EigMat>;
+  const PlainMat& m_eval = m;
 
-  Eigen::EigenSolver<Eigen::Matrix<T, -1, -1>> solver(m);
+  Eigen::EigenSolver<PlainMat> solver(m_eval, false);
+  return solver.eigenvalues();
+}
+
+/**
+ * Return the eigenvalues of a (complex-valued) matrix
+ *
+ * @tparam EigCplxMat type of complex matrix argument
+ * @param[in] m matrix to find the eigenvectors of. Must be square and have a
+ * non-zero size.
+ * @return a complex-valued column vector with entries the eigenvectors of `m`
+ */
+template <typename EigCplxMat,
+          require_eigen_matrix_dynamic_vt<is_complex, EigCplxMat>* = nullptr>
+inline Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>
+eigenvalues(const EigCplxMat& m) {
+  if (unlikely(m.size() == 0)) {
+    return Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>(0,
+                                                                            1);
+  }
+  check_square("eigenvalues", "m", m);
+  using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
+  const PlainMat& m_eval = m;
+
+  Eigen::ComplexEigenSolver<PlainMat> solver(m_eval, false);
+
   return solver.eigenvalues();
 }
 

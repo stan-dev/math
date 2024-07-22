@@ -115,3 +115,16 @@ TEST(SparseStuff, csr_to_dense_matrix_v_short) {
   EXPECT_THROW(stan::math::csr_to_dense_matrix(2, 3, X_w, X_v, X_u),
                std::invalid_argument);
 }
+
+// Test that valid sparse matrix with empty first row does not throw (CSR).
+TEST(SparseStuff, csr_to_dense_matrix_empty_row) {
+  stan::math::matrix_d m(3, 2);
+  Eigen::SparseMatrix<double, Eigen::RowMajor> a;
+  m << 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+  a = m.sparseView();
+
+  stan::math::vector_d X_w = stan::math::csr_extract_w(a);
+  std::vector<int> X_v = stan::math::csr_extract_v(a);
+  std::vector<int> X_u = stan::math::csr_extract_u(a);
+  EXPECT_NO_THROW(stan::math::csr_to_dense_matrix(3, 2, X_w, X_v, X_u));
+}

@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/normal_lpdf.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,12 +55,12 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_s_ref = ref_type_if_t<!is_constant<T_s>::value, T_s>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "normal_sufficient_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_s_ref = ref_type_if_not_constant_t<T_s>;
+  using T_n_ref = ref_type_if_not_constant_t<T_n>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "normal_sufficient_lpdf";
   check_consistent_sizes(function, "Location parameter sufficient statistic",
                          y_bar, "Scale parameter sufficient statistic",
                          s_squared, "Number of observations", n_obs,
@@ -107,24 +107,24 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
   T_partials_return logp = -sum(cons_expr / (2 * sigma_squared));
   if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / size(n_obs);
+    logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / math::size(n_obs);
   }
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(n_obs_val * log(sigma_val)) * N / max_size(n_obs, sigma);
   }
 
-  operands_and_partials<T_y_ref, T_s_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, s_squared_ref, mu_ref, sigma_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, s_squared_ref, mu_ref, sigma_ref);
   if (!is_constant_all<T_y, T_loc>::value) {
     auto common_derivative = to_ref_if<(!is_constant_all<T_loc>::value
                                         && !is_constant_all<T_y>::value)>(
         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
         * diff);
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge3_.partials_ = -common_derivative;
+      partials<2>(ops_partials) = -common_derivative;
     }
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = std::move(common_derivative);
+      partials<0>(ops_partials) = std::move(common_derivative);
     }
   }
   if (!is_constant_all<T_s>::value) {
@@ -132,21 +132,21 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     using T_sigma_value_vector
         = Eigen::Array<T_sigma_value_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_scale>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
     } else {
       if (is_vector<T_s>::value) {
-        ops_partials.edge2_.partials_ = T_sigma_value_vector::Constant(
+        partials<1>(ops_partials) = T_sigma_value_vector::Constant(
             N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
-            ops_partials.edge2_.partials_)
-            = -0.5 / sigma_squared * N / size(sigma);
+            partials<1>(ops_partials))
+            = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge4_.partials_
+    edge<3>(ops_partials).partials_
         = (cons_expr / sigma_squared - n_obs_val) / sigma_val;
   }
   return ops_partials.build(logp);

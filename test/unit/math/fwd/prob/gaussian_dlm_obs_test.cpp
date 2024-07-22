@@ -6,7 +6,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU_fvar_double) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::fvar;
-  using stan::math::gaussian_dlm_obs_log;
+  using stan::math::gaussian_dlm_obs_lpdf;
 
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> FF(1, 1);
   FF << fvar<double>(0.585528817843856, 1.0);
@@ -31,7 +31,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU_fvar_double) {
       fvar<double>(1.17332931763075, 1.0);
   double ll_expected = -16.2484978375184;
 
-  fvar<double> lp_ref = gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0);
+  fvar<double> lp_ref = gaussian_dlm_obs_lpdf(y, FF, GG, V, W, m0, C0);
   EXPECT_FLOAT_EQ(ll_expected, lp_ref.val_);
   EXPECT_FLOAT_EQ(-3.8427677, lp_ref.d_);
 }
@@ -41,7 +41,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMM_fvar_double) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::fvar;
-  using stan::math::gaussian_dlm_obs_log;
+  using stan::math::gaussian_dlm_obs_lpdf;
 
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> FF(2, 3);
   FF << fvar<double>(0.585528817843856, 1.0),
@@ -96,7 +96,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMM_fvar_double) {
       fvar<double>(0.746844140961399, 1.0);
   double ll_expected = -85.2615847497409;
 
-  fvar<double> lp_ref = gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0);
+  fvar<double> lp_ref = gaussian_dlm_obs_lpdf(y, FF, GG, V, W, m0, C0);
   // the error adds up in the multivariate version due to the inversion.
   EXPECT_NEAR(ll_expected, lp_ref.val_, 1e-4);
   EXPECT_NEAR(18.89044287309947, lp_ref.d_, 1e-4);
@@ -107,7 +107,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU_fvar_fvar_double) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::fvar;
-  using stan::math::gaussian_dlm_obs_log;
+  using stan::math::gaussian_dlm_obs_lpdf;
 
   Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> FF(1, 1);
   FF << fvar<fvar<double> >(0.585528817843856, 1.0);
@@ -134,7 +134,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU_fvar_fvar_double) {
       fvar<fvar<double> >(1.17332931763075, 1.0);
   double ll_expected = -16.2484978375184;
 
-  fvar<fvar<double> > lp_ref = gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0);
+  fvar<fvar<double> > lp_ref = gaussian_dlm_obs_lpdf(y, FF, GG, V, W, m0, C0);
   EXPECT_FLOAT_EQ(ll_expected, lp_ref.val_.val_);
   EXPECT_FLOAT_EQ(-3.8427677, lp_ref.d_.val_);
 }
@@ -144,7 +144,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMM_fvar_fvar_double) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::fvar;
-  using stan::math::gaussian_dlm_obs_log;
+  using stan::math::gaussian_dlm_obs_lpdf;
 
   Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> FF(2, 3);
   FF << fvar<fvar<double> >(0.585528817843856, 1.0),
@@ -212,7 +212,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMM_fvar_fvar_double) {
       fvar<fvar<double> >(0.746844140961399, 1.0);
   double ll_expected = -85.2615847497409;
 
-  fvar<fvar<double> > lp_ref = gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0);
+  fvar<fvar<double> > lp_ref = gaussian_dlm_obs_lpdf(y, FF, GG, V, W, m0, C0);
   // the error adds up in the multivariate version due to the inversion.
   EXPECT_NEAR(ll_expected, lp_ref.val_.val_, 1e-4);
   EXPECT_NEAR(18.89044287309947, lp_ref.d_.val_, 1e-4);

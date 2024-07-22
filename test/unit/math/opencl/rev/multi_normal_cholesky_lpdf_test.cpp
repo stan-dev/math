@@ -105,7 +105,7 @@ TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_small) {
   std::vector<Eigen::VectorXd> mu3{mu1, mu2};
   std::vector<Eigen::RowVectorXd> mu4{mu2, mu1};
   Eigen::MatrixXd L(N, N);
-  L << 1, 0, 0, 2, 3, 0, -4, 5, -6;
+  L << 4, 0, 0, -1, 1, 0, -4, -2, 3;
 
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor, y1, mu1, L);

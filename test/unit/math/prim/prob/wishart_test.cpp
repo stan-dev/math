@@ -9,7 +9,7 @@ TEST(ProbDistributionsWishart, wishart_symmetry) {
   using Eigen::Matrix;
 
   using Eigen::MatrixXd;
-  using stan::math::wishart_log;
+  using stan::math::wishart_lpdf;
 
   MatrixXd Sigma(4, 4);
   MatrixXd Sigma_non_sym(4, 4);
@@ -34,9 +34,9 @@ TEST(ProbDistributionsWishart, wishart_symmetry) {
 
   unsigned int dof = 5;
 
-  EXPECT_NO_THROW(wishart_log(Y, dof, Sigma));
-  EXPECT_THROW(wishart_log(Y_non_sym, dof, Sigma), std::domain_error);
-  EXPECT_THROW(wishart_log(Y, dof, Sigma_non_sym), std::domain_error);
+  EXPECT_NO_THROW(wishart_lpdf(Y, dof, Sigma));
+  EXPECT_THROW(wishart_lpdf(Y_non_sym, dof, Sigma), std::domain_error);
+  EXPECT_THROW(wishart_lpdf(Y, dof, Sigma_non_sym), std::domain_error);
 }
 
 TEST(ProbDistributionsWishart, wishart_pos_def) {
@@ -44,7 +44,7 @@ TEST(ProbDistributionsWishart, wishart_pos_def) {
   using Eigen::Matrix;
 
   using Eigen::MatrixXd;
-  using stan::math::wishart_log;
+  using stan::math::wishart_lpdf;
 
   MatrixXd Sigma(2, 2);
   MatrixXd Sigma_non_pos_def(2, 2);
@@ -58,9 +58,9 @@ TEST(ProbDistributionsWishart, wishart_pos_def) {
 
   unsigned int dof = 5;
 
-  EXPECT_NO_THROW(wishart_log(Y, dof, Sigma));
-  EXPECT_THROW(wishart_log(Y_non_pos_def, dof, Sigma), std::domain_error);
-  EXPECT_THROW(wishart_log(Y, dof, Sigma_non_pos_def), std::domain_error);
+  EXPECT_NO_THROW(wishart_lpdf(Y, dof, Sigma));
+  EXPECT_THROW(wishart_lpdf(Y_non_pos_def, dof, Sigma), std::domain_error);
+  EXPECT_THROW(wishart_lpdf(Y, dof, Sigma_non_pos_def), std::domain_error);
 }
 
 TEST(ProbDistributionsWishart, 2x2) {
@@ -77,7 +77,7 @@ TEST(ProbDistributionsWishart, 2x2) {
   // computed with MCMCpack in R
   double lp = log(8.658e-07);
 
-  EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma), 0.01);
+  EXPECT_NEAR(lp, stan::math::wishart_lpdf(Y, dof, Sigma), 0.01);
 }
 TEST(ProbDistributionsWishart, 4x4) {
   using Eigen::Dynamic;
@@ -94,11 +94,11 @@ TEST(ProbDistributionsWishart, 4x4) {
 
   double dof = 4;
   double log_p = log(8.034197e-10);
-  EXPECT_NEAR(log_p, stan::math::wishart_log(Y, dof, Sigma), 0.01);
+  EXPECT_NEAR(log_p, stan::math::wishart_lpdf(Y, dof, Sigma), 0.01);
 
   dof = 5;
   log_p = log(1.517951e-10);
-  EXPECT_NEAR(log_p, stan::math::wishart_log(Y, dof, Sigma), 0.01);
+  EXPECT_NEAR(log_p, stan::math::wishart_lpdf(Y, dof, Sigma), 0.01);
 }
 
 TEST(ProbDistributionsWishart, 2x2Propto) {
@@ -112,7 +112,7 @@ TEST(ProbDistributionsWishart, 2x2Propto) {
 
   unsigned int dof = 3;
 
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_log<true>(Y, dof, Sigma));
+  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_lpdf<true>(Y, dof, Sigma));
 }
 
 TEST(ProbDistributionsWishart, 4x4Propto) {
@@ -129,16 +129,16 @@ TEST(ProbDistributionsWishart, 4x4Propto) {
       0.1055911, -3.1129955, -3.5866852, 1.4482736;
 
   double dof = 4;
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_log<true>(Y, dof, Sigma));
+  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_lpdf<true>(Y, dof, Sigma));
 
   dof = 5;
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_log<true>(Y, dof, Sigma));
+  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_lpdf<true>(Y, dof, Sigma));
 }
 
 TEST(ProbDistributionsWishart, error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::wishart_log;
+  using stan::math::wishart_lpdf;
   Matrix<double, Dynamic, Dynamic> Sigma;
   Matrix<double, Dynamic, Dynamic> Y;
   double nu;
@@ -148,28 +148,28 @@ TEST(ProbDistributionsWishart, error) {
   Sigma.setIdentity();
   Y.setIdentity();
   nu = 1;
-  EXPECT_NO_THROW(wishart_log(Y, nu, Sigma));
+  EXPECT_NO_THROW(wishart_lpdf(Y, nu, Sigma));
 
   nu = 5;
   Sigma.resize(2, 1);
-  EXPECT_THROW(wishart_log(Y, nu, Sigma), std::invalid_argument);
+  EXPECT_THROW(wishart_lpdf(Y, nu, Sigma), std::invalid_argument);
 
   nu = 5;
   Sigma.resize(2, 2);
   Y.resize(2, 1);
-  EXPECT_THROW(wishart_log(Y, nu, Sigma), std::invalid_argument);
+  EXPECT_THROW(wishart_lpdf(Y, nu, Sigma), std::invalid_argument);
 
   nu = 5;
   Sigma.resize(2, 2);
   Y.resize(3, 3);
-  EXPECT_THROW(wishart_log(Y, nu, Sigma), std::invalid_argument);
+  EXPECT_THROW(wishart_lpdf(Y, nu, Sigma), std::invalid_argument);
 
   Sigma.resize(3, 3);
   Sigma.setIdentity();
   Y.resize(3, 3);
   Y.setIdentity();
   nu = 3;
-  EXPECT_NO_THROW(wishart_log(Y, nu, Sigma));
+  EXPECT_NO_THROW(wishart_lpdf(Y, nu, Sigma));
   nu = 2;
-  EXPECT_THROW(wishart_log(Y, nu, Sigma), std::domain_error);
+  EXPECT_THROW(wishart_lpdf(Y, nu, Sigma), std::domain_error);
 }

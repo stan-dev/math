@@ -435,7 +435,7 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
   using neg_binomial_2_test_internal::TestValue;
   using neg_binomial_2_test_internal::testValues;
   using stan::math::is_nan;
-  using stan::math::neg_binomial_2_log;
+  using stan::math::neg_binomial_2_lpmf;
   using stan::math::value_of;
   using stan::math::var;
 
@@ -443,7 +443,7 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
     int n = t.n;
     var mu(t.mu);
     var phi(t.phi);
-    var val = neg_binomial_2_log(n, mu, phi);
+    var val = neg_binomial_2_lpmf(n, mu, phi);
 
     std::vector<var> x;
     x.push_back(mu);
@@ -470,15 +470,15 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
 TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using boost::math::differentiation::complex_step_derivative;
   using stan::math::is_nan;
-  using stan::math::neg_binomial_2_log;
+  using stan::math::neg_binomial_2_lpmf;
   using stan::math::var;
   using stan::test::internal::expect_near_rel_finite;
 
   std::vector<int> n_to_test = {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
-  auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
-                             const std::complex<double>& phi) {
+  auto nb2_lpmf_for_test = [](int n, const std::complex<double>& mu,
+                              const std::complex<double>& phi) {
     // Using first-order Taylor expansion of lgamma(a + b*i) around b = 0
     // Which happens to work nice in this case, as b is always 0 or the very
     // small complex step
@@ -514,17 +514,17 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
           EXPECT_FALSE(is_nan(gradients[i]));
         }
 
-        auto nb2_log_mu
-            = [n, phi_dbl, nb2_log_for_test](const std::complex<double>& mu) {
-                return nb2_log_for_test(n, mu, phi_dbl);
+        auto nb2_lpmf_mu
+            = [n, phi_dbl, nb2_lpmf_for_test](const std::complex<double>& mu) {
+                return nb2_lpmf_for_test(n, mu, phi_dbl);
               };
-        auto nb2_log_phi
-            = [n, mu_dbl, nb2_log_for_test](const std::complex<double>& phi) {
-                return nb2_log_for_test(n, mu_dbl, phi);
+        auto nb2_lpmf_phi
+            = [n, mu_dbl, nb2_lpmf_for_test](const std::complex<double>& phi) {
+                return nb2_lpmf_for_test(n, mu_dbl, phi);
               };
-        double complex_step_dmu = complex_step_derivative(nb2_log_mu, mu_dbl);
+        double complex_step_dmu = complex_step_derivative(nb2_lpmf_mu, mu_dbl);
         double complex_step_dphi
-            = complex_step_derivative(nb2_log_phi, phi_dbl);
+            = complex_step_derivative(nb2_lpmf_phi, phi_dbl);
 
         std::stringstream message;
         message << ", n = " << n << ", mu = " << mu_dbl

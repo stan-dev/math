@@ -7,7 +7,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -30,15 +30,14 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> bernoulli_lccdf(const T_n_cl& n,
                                          const T_prob_cl& theta) {
-  static const char* function = "bernoulli_lccdf(OpenCL)";
+  static constexpr const char* function = "bernoulli_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  const size_t N = is_n_vector ? size(n) : size(theta);
+  const size_t N = is_n_vector ? math::size(n) : math::size(theta);
   if (N == 0) {
     return 0.0;
   }
@@ -73,10 +72,10 @@ return_type_t<T_prob_cl> bernoulli_lccdf(const T_n_cl& n,
   }
 
   T_partials_return P = from_matrix_cl(P_cl).sum();
-  operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
+  auto ops_partials = make_partials_propagator(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(deriv_cl);
+    partials<0>(ops_partials) = std::move(deriv_cl);
   }
 
   return ops_partials.build(P);

@@ -1,5 +1,9 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/neg_binomial_lpmf.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <boost/math/special_functions/binomial.hpp>
+
 #include <stdexcept>
 
 using stan::math::var;
@@ -52,7 +56,7 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
                                                      const T_inv_scale& beta,
                                                      const T3&, const T4&,
                                                      const T5&) {
-    return stan::math::neg_binomial_log(n, alpha, beta);
+    return stan::math::neg_binomial_lpmf(n, alpha, beta);
   }
 
   template <bool propto, class T_n, class T_shape, class T_inv_scale,
@@ -62,7 +66,7 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
                                                      const T_inv_scale& beta,
                                                      const T3&, const T4&,
                                                      const T5) {
-    return stan::math::neg_binomial_log<propto>(n, alpha, beta);
+    return stan::math::neg_binomial_lpmf<propto>(n, alpha, beta);
   }
 
   template <class T_n, class T_shape, class T_inv_scale, typename T3,
@@ -71,7 +75,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
       const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
-    using stan::math::log1m;
     using stan::math::multiply_log;
     using std::log;
 

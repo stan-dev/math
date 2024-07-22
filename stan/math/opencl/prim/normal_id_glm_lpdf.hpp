@@ -68,23 +68,24 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   constexpr bool is_sigma_vector = !is_stan_scalar<T_sigma_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
   using std::isfinite;
-  static const char* function = "normal_id_glm_lpdf(OpenCL)";
+  static constexpr const char* function = "normal_id_glm_lpdf(OpenCL)";
 
   const size_t N = x.rows();
   const size_t M = x.cols();
 
   if (is_y_vector) {
-    check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
+                     math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
-                   size(beta));
+                   math::size(beta));
   if (is_sigma_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "sigma",
-                     size(sigma));
+                     math::size(sigma));
   }
   if (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
-                     size(alpha));
+                     math::size(alpha));
   }
   if (!include_summand<propto, T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
                        T_sigma_cl>::value) {
@@ -139,31 +140,30 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                     calc_if<need_log_sigma_sum>(log_sigma_sum_expr));
 
   double y_scaled_sq_sum = sum(from_matrix_cl(y_scaled_sq_sum_cl));
-  operands_and_partials<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
-      ops_partials(y, x, alpha, beta, sigma);
+  auto ops_partials = make_partials_propagator(y, x, alpha, beta, sigma);
   double mu_derivative_sum;
   if (need_mu_derivative_sum) {
     mu_derivative_sum = sum(from_matrix_cl(mu_derivative_sum_cl));
   }
   if (!is_constant<T_y_cl>::value) {
     if (is_y_vector) {
-      ops_partials.edge1_.partials_ = -mu_derivative_cl;
+      partials<0>(ops_partials) = -mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge1_.partials_)[0]
+          partials<0>(ops_partials))[0]
           = -mu_derivative_sum;
     }
   }
   if (!is_constant<T_x_cl>::value) {
-    ops_partials.edge2_.partials_
+    partials<1>(ops_partials)
         = transpose(beta_val * transpose(mu_derivative_cl));
   }
   if (!is_constant<T_alpha_cl>::value) {
     if (is_alpha_vector) {
-      ops_partials.edge3_.partials_ = mu_derivative_cl;
+      partials<2>(ops_partials) = mu_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
-          ops_partials.edge3_.partials_)[0]
+          partials<2>(ops_partials))[0]
           = mu_derivative_sum;
     }
   }
@@ -173,16 +173,17 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
-    ops_partials.edge4_.partials_
+    partials<3>(ops_partials)
         = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
                             edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      ops_partials.edge4_.partials_.add_write_event(
-          edge4_partials_transpose_cl.write_events().back());
+      edge<3>(ops_partials)
+          .partials_.add_write_event(
+              edge4_partials_transpose_cl.write_events().back());
     }
   }
   if (!is_constant<T_sigma_cl>::value) {
-    ops_partials.edge5_.partials_ = sigma_derivative_cl;
+    partials<4>(ops_partials) = sigma_derivative_cl;
   }
 
   if (!std::isfinite(y_scaled_sq_sum)) {

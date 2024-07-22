@@ -38,6 +38,7 @@ TEST(mathMixScalFun, pow) {
     using stan::math::pow;
     return pow(x1, x2);
   };
+
   stan::test::expect_ad(f, -0.4, 0.5);
   stan::test::expect_ad(f, 0.5, 0.5);
   stan::test::expect_ad(f, 0.5, 1.0);
@@ -57,5 +58,9 @@ TEST(mathMixScalFun, pow) {
   in1 << 0.5, 3.4, 5.2;
   Eigen::VectorXd in2(3);
   in2 << 3.3, 0.9, 2.1;
+  stan::test::expect_ad(f, in1, in2);
+  stan::test::expect_ad(f, in1, 2.0);
+  stan::test::expect_ad(f, 2.0, in1);
+
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }

@@ -55,8 +55,6 @@ struct operator_divide_tester {
 }  // namespace stan
 
 TEST(mathMixCore, operatorDivisionVarMat) {
-  auto f = [](const auto& x1, const auto& x2) { return x1 / x2; };
-
   Eigen::MatrixXd mat1(2, 2);
   mat1 << -2, -1, 0.5, 2.8;
   Eigen::MatrixXd mat2 = mat1.reverse();

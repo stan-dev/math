@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/bernoulli_cdf.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

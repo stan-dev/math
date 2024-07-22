@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -30,15 +30,14 @@ template <
     require_any_not_stan_scalar_t<T_n_cl, T_rate_cl>* = nullptr>
 return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
                                       const T_rate_cl& lambda) {
-  static const char* function = "poisson_lpmf(OpenCL)";
+  static constexpr const char* function = "poisson_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_rate_cl>;
   using std::isinf;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_lambda_vector = !is_stan_scalar<T_rate_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
-  const size_t N = is_n_vector ? size(n) : size(lambda);
+  const size_t N = is_n_vector ? math::size(n) : math::size(lambda);
   if (N == 0) {
     return 0.0;
   }
@@ -50,7 +49,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   const auto& lambda_val = value_of(lambda_col);
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype(lambda_col)> ops_partials(lambda_col);
+  auto ops_partials = make_partials_propagator(lambda_col);
 
   auto check_n_nonnegative
       = check_cl(function, "Random variable", n, "nonnegative");
@@ -87,7 +86,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   logp = sum(from_matrix_cl(logp_cl));
 
   if (!is_constant_all<T_rate_cl>::value) {
-    ops_partials.edge1_.partials_ = deriv_cl;
+    partials<0>(ops_partials) = deriv_cl;
   }
 
   return ops_partials.build(logp);

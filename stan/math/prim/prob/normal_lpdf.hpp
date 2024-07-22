@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,19 +41,18 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
+                                                      T_scale&& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  static const char* function = "normal_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  static constexpr const char* function = "normal_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
+  T_y_ref y_ref = std::forward<T_y>(y);
+  T_mu_ref mu_ref = std::forward<T_loc>(mu);
+  T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -63,15 +62,14 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", sigma_val);
 
-  if (size_zero(y, mu, sigma)) {
+  if (size_zero(y_ref, mu_ref, sigma_ref)) {
     return 0.0;
   }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(inv(sigma_val));
@@ -79,13 +77,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   const auto& y_scaled_sq
       = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
 
-  size_t N = max_size(y, mu, sigma);
+  size_t N = max_size(y_ref, mu_ref, sigma_ref);
   T_partials_return logp = -0.5 * sum(y_scaled_sq);
   if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
@@ -94,23 +92,23 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                      + !is_constant_all<T_loc>::value
                                  >= 2>(inv_sigma * y_scaled);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -scaled_diff;
+      partials<0>(ops_partials) = -scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = inv_sigma * y_scaled_sq - inv_sigma;
+      partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = std::move(scaled_diff);
+      partials<1>(ops_partials) = std::move(scaled_diff);
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
-  return normal_lpdf<false>(y, mu, sigma);
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
+                                                      T_scale&& sigma) {
+  return normal_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                            std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

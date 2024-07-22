@@ -12,7 +12,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string add_batch_kernel_code = STRINGIFY(
+static constexpr const char *add_batch_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Sums a batch of matrices. Buffer A contains

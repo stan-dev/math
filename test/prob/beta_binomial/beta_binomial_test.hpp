@@ -1,5 +1,7 @@
 // Arguments: Ints, Ints, Doubles, Doubles
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/prob/beta_binomial_lpmf.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
+#include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -61,7 +63,7 @@ class AgradDistributionsBetaBinomial : public AgradDistributionTest {
                                                  const T_size1& alpha,
                                                  const T_size2& beta, const T4&,
                                                  const T5&) {
-    return stan::math::beta_binomial_log(n, N, alpha, beta);
+    return stan::math::beta_binomial_lpmf(n, N, alpha, beta);
   }
 
   template <bool propto, class T_n, class T_N, class T_size1, class T_size2,
@@ -70,7 +72,7 @@ class AgradDistributionsBetaBinomial : public AgradDistributionTest {
                                                  const T_size1& alpha,
                                                  const T_size2& beta, const T4&,
                                                  const T5&) {
-    return stan::math::beta_binomial_log<propto>(n, N, alpha, beta);
+    return stan::math::beta_binomial_lpmf<propto>(n, N, alpha, beta);
   }
 
   template <class T_n, class T_N, class T_size1, class T_size2, typename T4,

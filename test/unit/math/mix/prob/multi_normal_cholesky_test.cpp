@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiNormalCholesky, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
     auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
     auto L = stan::math::cholesky_decompose(sigma_sym);
@@ -45,7 +45,7 @@ TEST(ProbDistributionsMultiNormalCholesky, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -68,12 +68,12 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_var) {
 
   Matrix<fvar<var>, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).val_.val());
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).val_.val());
   EXPECT_FLOAT_EQ(0.54899865,
-                  stan::math::multi_normal_cholesky_log(y, mu, L).d_.val());
+                  stan::math::multi_normal_cholesky_lpdf(y, mu, L).d_.val());
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -97,8 +97,8 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_var) {
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(
       -11.73908,
-      stan::math::multi_normal_cholesky_log(y, mu, L).val_.val_.val());
+      stan::math::multi_normal_cholesky_lpdf(y, mu, L).val_.val_.val());
   EXPECT_FLOAT_EQ(
       0.54899865,
-      stan::math::multi_normal_cholesky_log(y, mu, L).d_.val_.val());
+      stan::math::multi_normal_cholesky_lpdf(y, mu, L).d_.val_.val());
 }

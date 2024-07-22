@@ -22,10 +22,17 @@ struct is_eigen_sparse_base
     : bool_constant<
           is_base_pointer_convertible<Eigen::SparseMatrixBase, T>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_sparse_base, is_eigen_sparse_base,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_sparse_base, is_eigen_sparse_base,
-                           require_eigens_types);
+/*! \ingroup require_eigens_types */
+/*! \defgroup eigen_sparse_base_types eigen_sparse_base  */
+/*! \addtogroup eigen_sparse_base_types */
+/*! @{ */
+
+/*! \brief Require type satisfies @ref is_eigen_sparse_base */
+/*! @tparam T the type to check */
+template <typename T>
+using require_eigen_sparse_base_t
+    = require_t<is_eigen_sparse_base<std::decay_t<T>>>;
+/*! @} */
 
 }  // namespace stan
 

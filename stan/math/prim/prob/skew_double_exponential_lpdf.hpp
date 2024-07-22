@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -44,11 +44,11 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
-  static const char* function = "skew_double_exponential_lpdf";
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+  using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  using T_tau_ref = ref_type_if_not_constant_t<T_skewness>;
+  static constexpr const char* function = "skew_double_exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
@@ -65,8 +65,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, tau_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -97,10 +97,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     logp += N * LOG_TWO;
   }
   if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   if (include_summand<propto, T_skewness>::value) {
-    logp += sum(log(tau_val) + log1m(tau_val)) * N / size(tau);
+    logp += sum(log(tau_val) + log1m(tau_val)) * N / math::size(tau);
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {
@@ -109,17 +109,17 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -deriv;
+      partials<0>(ops_partials) = -deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = deriv;
+      partials<1>(ops_partials) = deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = -inv_sigma + 2.0 * expo * inv_sigma;
+    partials<2>(ops_partials) = -inv_sigma + 2.0 * expo * inv_sigma;
   }
   if (!is_constant_all<T_skewness>::value) {
-    ops_partials.edge4_.partials_
+    edge<3>(ops_partials).partials_
         = inv(tau_val) - inv(1.0 - tau_val)
           + (-1.0 * diff_sign) * 2.0 * abs_diff_y_mu_over_sigma;
   }
