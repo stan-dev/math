@@ -108,9 +108,8 @@ struct diff_poisson_log {
    * @return the log density.
    */
   template <typename T1, typename T2>
-  inline auto log_likelihood(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const T2& /* eta */) const {
+  inline auto log_likelihood(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+                             const T2& /* eta */) const {
     double factorial_term = 0;
     for (Eigen::Index i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
@@ -135,8 +134,7 @@ struct diff_poisson_log {
    */
   template <typename T1, typename T2>
   inline Eigen::SparseMatrix<double> diff(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const T2& /*eta*/,
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta, const T2& /*eta*/,
       Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
       // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
       const Eigen::Index hessian_block_size = 1) const {

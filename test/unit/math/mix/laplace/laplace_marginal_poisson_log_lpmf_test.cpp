@@ -48,38 +48,44 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   ad_tol.gradient_grad_ = 1.1e-3;
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
-        for (int solver_num = 1; solver_num < 4; solver_num++) {
+  for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3;
+         hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
-            return laplace_marginal_tol_poisson_log_lpmf(
-            sums, n_samples, tolerance, max_num_steps, hessian_block_size,
-            solver_num, max_steps_line_search, theta_0, sq_kernel, nullptr, x, alpha, rho);
+          return laplace_marginal_tol_poisson_log_lpmf(
+              sums, n_samples, tolerance, max_num_steps, hessian_block_size,
+              solver_num, max_steps_line_search, theta_0, sq_kernel, nullptr, x,
+              alpha, rho);
         };
         stan::test::expect_ad<true>(ad_tol, f, alpha_dbl, rho_dbl);
-        }
+      }
     }
   }
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
-        for (int solver_num = 1; solver_num < 4; solver_num++) {
+  for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3;
+         hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
-            return laplace_marginal_tol_poisson_2_log_lpmf(
-            sums, n_samples, ye, tolerance, max_num_steps, hessian_block_size,
-            solver_num, max_steps_line_search, theta_0, sq_kernel, nullptr, x, alpha, rho);
+          return laplace_marginal_tol_poisson_2_log_lpmf(
+              sums, n_samples, ye, tolerance, max_num_steps, hessian_block_size,
+              solver_num, max_steps_line_search, theta_0, sq_kernel, nullptr, x,
+              alpha, rho);
         };
         stan::test::expect_ad<true>(ad_tol, f, alpha_dbl, rho_dbl);
-        }
+      }
     }
   }
 }
 
 TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   using stan::math::laplace_marginal_poisson_2_log_lpmf;
-  using stan::math::laplace_marginal_tol_poisson_2_log_lpmf;
   using stan::math::laplace_marginal_poisson_log_lpmf;
+  using stan::math::laplace_marginal_tol_poisson_2_log_lpmf;
   using stan::math::value_of;
   using stan::math::var;
 
@@ -97,14 +103,17 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   ad_tol.gradient_grad_ = 1.1e-3;
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
+  for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3;
+         hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
-            return laplace_marginal_tol_poisson_2_log_lpmf(
-            y, n_samples, ye, tolerance, max_num_steps, hessian_block_size,
-            solver_num, max_steps_line_search, theta_0,
-            stan::math::test::sqr_exp_kernel_functor(), nullptr, x, alpha, rho);
+          return laplace_marginal_tol_poisson_2_log_lpmf(
+              y, n_samples, ye, tolerance, max_num_steps, hessian_block_size,
+              solver_num, max_steps_line_search, theta_0,
+              stan::math::test::sqr_exp_kernel_functor(), nullptr, x, alpha,
+              rho);
         };
         stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
       }
