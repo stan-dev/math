@@ -30,7 +30,6 @@ struct nonexisting_adjoint {
         "internal::nonexisting_adjoint.array() should never be called! "
         "Please file a bug report.");
   }
-
 };
 }  // namespace internal
 
@@ -56,11 +55,11 @@ auto get_adj(const T& x) {
 }
 
 template <typename T, require_st_var<T>* = nullptr,
- require_std_vector_t<T>* = nullptr>
+          require_std_vector_t<T>* = nullptr>
 auto get_adj(const T& x) {
   std::vector<promote_scalar_t<double, value_type_t<T>>> res(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-      res[i] = get_adj(x[i]);
+    res[i] = get_adj(x[i]);
   }
   return res;
 }

@@ -22,8 +22,8 @@ struct stationary_point {
              std::ostream* pstream__ = 0) const {
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic, 1>
         z(2);
-    z(0) =  1 / (1 + exp(theta(0))) - theta(0) / (parms(0) * parms(0));
-    z(1) = - 1 / (1 + exp(-theta(1))) - theta(1) / (parms(1) * parms(1));
+    z(0) = 1 / (1 + exp(theta(0))) - theta(0) / (parms(0) * parms(0));
+    z(1) = -1 / (1 + exp(-theta(1))) - theta(1) / (parms(1) * parms(1));
     return z;
   }
 };
@@ -31,8 +31,9 @@ struct stationary_point {
 struct diagonal_kernel_functor {
   template <typename T1, typename T2>
   auto operator()(const T1& arg1, const T2& arg2,
-      std::ostream* msgs = nullptr) const {
-    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+                  std::ostream* msgs = nullptr) const {
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic>
+        K(2, 2);
     K(0, 0) = arg1 * arg1;
     K(1, 1) = arg2 * arg2;
     K(0, 1) = 0;
@@ -42,27 +43,29 @@ struct diagonal_kernel_functor {
 };
 
 template <typename T1, typename T2>
-Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance (
-  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-  const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
-    using stan::math::exp;
-    using stan::math::square;
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-    K(0, 0) = - 1 / (- 1 / (phi(0) * phi(0))
-      - exp(theta(0)) / square(1 + exp(theta(0))));
-    K(1, 1) = - 1 / (- 1 / (phi(1) * phi(1))
-      - exp(- theta(1)) / square(1 + exp(-theta(1))));
-    K(0, 1) = 0;
-    K(1, 0) = 0;
-    return K;
-  }
+Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
+  using stan::math::exp;
+  using stan::math::square;
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+  K(0, 0)
+      = -1
+        / (-1 / (phi(0) * phi(0)) - exp(theta(0)) / square(1 + exp(theta(0))));
+  K(1, 1) = -1
+            / (-1 / (phi(1) * phi(1))
+               - exp(-theta(1)) / square(1 + exp(-theta(1))));
+  K(0, 1) = 0;
+  K(1, 0) = 0;
+  return K;
+}
 
 TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
+  using stan::math::algebra_solver;
   using stan::math::laplace_marginal_bernoulli_logit_rng;
   using stan::math::multi_normal_rng;
-  using stan::math::algebra_solver;
-  using stan::math::square;
   using stan::math::sqrt;
+  using stan::math::square;
 
   Eigen::VectorXd theta_0(2);
   theta_0 << 0, 0;
@@ -81,18 +84,18 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 
   boost::random::mt19937 rng;
   rng.seed(1954);
-  Eigen::MatrixXd theta_pred
-    = laplace_marginal_bernoulli_logit_rng(sums, n_samples, theta_0, covariance_function,
-      rng, nullptr, std::make_tuple(), std::make_tuple(), phi(0), phi(1));
+  Eigen::MatrixXd theta_pred = laplace_marginal_bernoulli_logit_rng(
+      sums, n_samples, theta_0, covariance_function, rng, nullptr,
+      std::make_tuple(), std::make_tuple(), phi(0), phi(1));
 
   // Compute exact mean and covariance
   Eigen::VectorXd theta_root
-    = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
+      = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
   Eigen::MatrixXd K_laplace = laplace_covariance(theta_root, phi);
 
   rng.seed(1954);
   Eigen::MatrixXd theta_benchmark
-    = multi_normal_rng(theta_root, K_laplace, rng);
+      = multi_normal_rng(theta_root, K_laplace, rng);
 
   double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
@@ -162,16 +165,16 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //     Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
 //     double marginal_density = laplace_marginal_density(
 //         diff_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
-//         di0, covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root, theta0_val,
-//         0, tolerance, max_num_steps);
+//         di0, covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root,
+//         theta0_val, 0, tolerance, max_num_steps);
 //   }
 //
 //   Eigen::VectorXd W_root(theta.size());
 //   for (int i = 0; i < theta.size(); i++)
 //     W_root(i) = W_r.coeff(i, i);
 //   Eigen::MatrixXd V;
-//   V = mdivide_left_tri<Eigen::Lower>(L, diag_pre_multiply(W_root, covariance));
-//   std::cout << "K (method 1): " << std::endl
+//   V = mdivide_left_tri<Eigen::Lower>(L, diag_pre_multiply(W_root,
+//   covariance)); std::cout << "K (method 1): " << std::endl
 //             << covariance - V.transpose() * V << std::endl
 //             << std::endl;
 //
@@ -187,14 +190,17 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //   // Check calls to rng functions compile
 //   boost::random::mt19937 rng;
 //   Eigen::MatrixXd theta_pred
-//       = laplace_base_rng(diff_likelihood, covariance_function, sigma, eta_dummy,
+//       = laplace_base_rng(diff_likelihood, covariance_function, sigma,
+//       eta_dummy,
 //                          x_dummy, x_dummy, d0, di0, theta_0, rng);
 //
 //   theta_pred
-//       = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function, sigma,
+//       = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function,
+//       sigma,
 //                                     x_dummay_mat, d0, di0, theta_0, rng);
 //
 //   // Bonus: make the distribution with a poisson rng also runs.
 //   theta_pred = laplace_poisson_log_rng(sums, n_samples, covariance_function,
-//                                        sigma, x_dummy, d0, di0, theta_0, rng);
+//                                        sigma, x_dummy, d0, di0, theta_0,
+//                                        rng);
 // }

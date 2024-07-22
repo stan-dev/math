@@ -102,16 +102,15 @@ struct laplace_density_estimates {
  * 7. l_grad the log density of the likelihood.
  *
  */
-template <typename D, typename CovarFun, typename ThetaVec, typename Eta, typename... Args,
+template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
+          typename... Args,
           require_all_st_arithmetic<Eta, ThetaVec, Args...>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const ThetaVec& theta_0, std::ostream* msgs,
-    const double tolerance, const long int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search,
-    Args&&... covar_args) {
+    const ThetaVec& theta_0, std::ostream* msgs, const double tolerance,
+    const long int max_num_steps, const int hessian_block_size,
+    const int solver, const int max_steps_line_search, Args&&... covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -168,7 +167,8 @@ inline laplace_density_estimates laplace_marginal_density_est(
       // do an element wise square-root. Else try a matirx square-root.
       bool W_is_spd = true;
       for (Eigen::Index i = 0; i < theta_0.size(); i++) {
-        if (W.coeff(i, i) < 0) W_is_spd = false;
+        if (W.coeff(i, i) < 0)
+          W_is_spd = false;
       }
       Eigen::SparseMatrix<double> W_r;
       if (W_is_spd) {
@@ -228,7 +228,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, hessian_block_size);
       Eigen::SparseMatrix<double> W_r
-        = block_matrix_sqrt(W, hessian_block_size);
+          = block_matrix_sqrt(W, hessian_block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
                    + W_r * (covariance * W_r);
       Eigen::MatrixXd L = cholesky_decompose(B);
@@ -411,8 +411,7 @@ template <typename D, typename CovarFun, typename Eta, typename ThetaVec,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline double laplace_marginal_density(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const ThetaVec& theta_0,
-    std::ostream* msgs, const double tolerance,
+    const ThetaVec& theta_0, std::ostream* msgs, const double tolerance,
     const long int max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search, Args&&... args) {
   return laplace_marginal_density_est(
@@ -466,8 +465,7 @@ template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_density(
     const D& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const ThetaVec& theta_0,
-    std::ostream* msgs, const double tolerance,
+    const ThetaVec& theta_0, std::ostream* msgs, const double tolerance,
     const long int max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search, Args&&... args) {
   auto args_refs = stan::math::apply(
@@ -479,9 +477,11 @@ inline auto laplace_marginal_density(
   auto args_arena = stan::math::filter_map<has_var_scalar_type>(
       [](auto&& arg) {
         auto xx = to_arena(arg);
-        static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value, "Yikes!!");
+        static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value,
+                      "Yikes!!");
         return xx;
-      }, args...);
+      },
+      args...);
 
   auto eta_arena = to_arena(eta);
 
@@ -490,8 +490,7 @@ inline auto laplace_marginal_density(
         return laplace_marginal_density_est(
             diff_likelihood, covariance_function, value_of(eta_arena),
             value_of(theta_0), msgs, tolerance, max_num_steps,
-            hessian_block_size, solver, max_steps_line_search,
-            v_args...);
+            hessian_block_size, solver, max_steps_line_search, v_args...);
       },
       value_args);
   double marginal_density_dbl = marginal_density_ests.lmd;
@@ -528,8 +527,8 @@ inline auto laplace_marginal_density(
       // int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
       //                                            : hessian_block_size;
       Eigen::MatrixXd A = covariance - C.transpose() * C;
-      partial_parm = diff_likelihood.compute_s2(theta, eta_dbl, A,
-                                                hessian_block_size);
+      partial_parm
+          = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
       s2 = partial_parm.head(theta_size);
     }
   } else if (solver == 2) {
@@ -577,7 +576,8 @@ inline auto laplace_marginal_density(
     auto arg_adj_arena = stan::math::filter_map<has_var_scalar_type>(
         [](auto&& arg) {
           auto xx = to_arena(get_adj(arg));
-          static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value, "Yikes 2!!");
+          static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value,
+                        "Yikes 2!!");
           return xx;
         },
         args_refs);

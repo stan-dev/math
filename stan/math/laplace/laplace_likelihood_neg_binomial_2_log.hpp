@@ -104,9 +104,9 @@ struct diff_neg_binomial_2_log {
   }
 
   template <typename T_theta, typename T_eta>
-  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> diff_eta(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_eta, Eigen::Dynamic, 1> y_plus_eta

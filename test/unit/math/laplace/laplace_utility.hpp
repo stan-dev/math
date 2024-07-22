@@ -48,8 +48,7 @@ struct spatial_covariance {
   Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
   operator()(const std::vector<Eigen::Matrix<T2, Eigen::Dynamic, 1>>& x,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-             int M = 0) const {
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, int M = 0) const {
     typedef typename stan::return_type<T1, T2>::type scalar;
     int space_matters = true;
     using std::pow;
@@ -85,9 +84,9 @@ struct squared_kernel_functor {
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
   template <typename T1, typename T2, typename T3>
-  Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const T1& x, const T2& arg1, const T3& arg2,
-      std::ostream* msgs = nullptr) const {
+  Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
+  operator()(const T1& x, const T2& arg1, const T3& arg2,
+             std::ostream* msgs = nullptr) const {
     return stan::math::gp_exp_quad_cov(x, arg1, arg2)
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
@@ -99,12 +98,11 @@ struct squared_kernel_functor {
 // function.
 struct sqr_exp_kernel_functor {
   template <typename T1, typename T2, typename T3>
-  auto operator()(
-      const T1& x, const T2& alpha, const T3& rho,
-      std::ostream* msgs = nullptr) const {
+  auto operator()(const T1& x, const T2& alpha, const T3& rho,
+                  std::ostream* msgs = nullptr) const {
     double jitter = 1e-8;
-    Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic> kernel
-        = stan::math::gp_exp_quad_cov(x, alpha, rho);
+    Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
+        kernel = stan::math::gp_exp_quad_cov(x, alpha, rho);
     for (int i = 0; i < kernel.cols(); i++)
       kernel(i, i) += jitter;
 
@@ -407,6 +405,5 @@ class laplace_disease_map_test : public ::testing::Test {
   Eigen::VectorXd delta_lk;
   // stan::math::poisson_log_likelihood f;
 };
-
 
 #endif

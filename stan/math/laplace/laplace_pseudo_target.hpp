@@ -40,14 +40,14 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
   auto&& a_ref = to_ref(std::forward<AVec>(a));
   auto&& R_ref = to_ref(std::forward<RMat>(R));
   auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));
-    auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
-    arena_matrix<Eigen::MatrixXd> K_adj_arena
-        = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
-          + s2_ref * l_grad_ref.transpose()
-          - (R_ref * (value_of(K_arena) * s2_ref)) * l_grad_ref.transpose();
-    return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
-      K_arena.adj().array() += vi.adj() * K_adj_arena.array();
-    });
+  auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
+  arena_matrix<Eigen::MatrixXd> K_adj_arena
+      = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
+        + s2_ref * l_grad_ref.transpose()
+        - (R_ref * (value_of(K_arena) * s2_ref)) * l_grad_ref.transpose();
+  return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
+    K_arena.adj().array() += vi.adj() * K_adj_arena.array();
+  });
 }
 
 }  // namespace math
