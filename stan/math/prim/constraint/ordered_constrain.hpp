@@ -53,7 +53,7 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline auto ordered_constrain(EigVec&& x, value_type_t<EigVec>& lp) {
   auto&& x_ref = to_ref(std::forward<EigVec>(x));
-  if (likely(x.size() > 1)) {
+  if (likely(x_ref.size() > 1)) {
     lp += sum(x_ref.tail(x.size() - 1));
   }
   return ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
