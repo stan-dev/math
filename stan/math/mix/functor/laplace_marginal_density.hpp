@@ -672,7 +672,7 @@ inline auto laplace_marginal_density(
                           + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
       return make_callback_var(
           marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena,
-                                eta_adj_arena](const auto& vi) mutable {
+                                 eta_adj_arena](const auto& vi) mutable {
             stan::math::for_each(
                 [&vi](auto&& arg, auto&& arg_adj) {
                   internal::update_adjoints(arg, arg_adj, vi);
@@ -712,7 +712,7 @@ inline auto laplace_marginal_density(
     });
   } else if (!is_constant<Eta>::value && eta_size_ != 0) {
     if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
-    Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
+      Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
     if (options.solver == 1 || options.solver == 2) {
@@ -725,10 +725,11 @@ inline auto laplace_marginal_density(
         = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
           + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
 
-    return make_callback_var(marginal_density_dbl, [eta_arena, eta_adj_arena](
-                                                       const auto& vi) mutable {
-      internal::update_adjoints(eta_arena, eta_adj_arena, vi);
-    });
+      return make_callback_var(
+          marginal_density_dbl,
+          [eta_arena, eta_adj_arena](const auto& vi) mutable {
+            internal::update_adjoints(eta_arena, eta_adj_arena, vi);
+          });
     }
   }
   return var(0);

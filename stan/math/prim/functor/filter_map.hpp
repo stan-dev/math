@@ -155,7 +155,6 @@ inline constexpr decltype(auto) filter_map_impl(
 
 }  // namespace internal
 
-
 template <typename... Types>
 using is_any_tuple = disjunction<is_tuple<Types>...>;
 /*
