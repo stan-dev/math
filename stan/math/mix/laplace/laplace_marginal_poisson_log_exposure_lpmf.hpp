@@ -9,27 +9,36 @@
 namespace stan {
 namespace math {
 
-
-struct poisson_log_likelihood {
+struct poisson_log_exposure_likelihood {
   /**
    * Returns the lpmf for a Poisson with a log link across
    * multiple groups. No need to compute the log normalizing constant.
+   * Same as above, but includes a exposure term to correct the
+   * log rate for each group.
    * @tparam T_theta Type of the log Poisson rate.
    * @tparam T_eta Type of the auxiliary parameter (not used here).
    * @param[in] theta log Poisson rate for each group.
-   * @param[in] y sum of counts in each group.
+   * @param[in] y_and_ye First n elements contain the sum of counts
+   *                     in each group, next n elements the exposure
+   *                     in each group, where n is the number of groups.
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    */
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  static auto operator()(const Theta& theta, const Eta& /* eta */,
-                  const Eigen::VectorXd& y, const std::vector<int>& delta_int,
-                  std::ostream* pstream) const {
+  inline static auto operator()(const Theta& theta, const Eta& /* eta */,
+                         const Eigen::VectorXd& y_and_ye,
+                         const std::vector<int>& delta_int,
+                         std::ostream* pstream) const {
+    int n = delta_int.size();
+    Eigen::VectorXd y = y_and_ye.head(n);
+    Eigen::VectorXd ye = y_and_ye.tail(n);
+
     Eigen::VectorXd n_samples = to_vector(delta_int);
-    return -lgamma(y.array() + 1).sum() + theta.dot(y)
-           - n_samples.dot(exp(theta));
+    auto shifted_mean = to_ref(theta + log(ye));
+    return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
+           - n_samples.dot(exp(shifted_mean));
   }
 };
 
@@ -57,38 +66,47 @@ struct poisson_log_likelihood {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename CovarFun, typename ThetaVec, typename... Args,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
-inline auto laplace_marginal_tol_poisson_log_lpmf(
+template <typename CovarFun, typename YeVec, typename ThetaVec,
+          typename... Args,
+          require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
+inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    double tolerance, long int max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, const ThetaVec& theta_0,
+    const YeVec& ye, double tolerance, long int max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search, const ThetaVec& theta_0,
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
+  Eigen::VectorXd y_vec = to_vector(y);
+  Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
+  y_and_ye << y_vec, ye;
   laplace_options ops{hessian_block_size, solver,
     max_steps_line_search, tolerance, max_num_steps};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
-                                              to_vector(y), n_samples, msgs),
-      covariance_function, eta_dummy, theta_0, msgs, ops, args...);
+      diff_likelihood<poisson_log_exposure_likelihood>(
+          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+      std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
+      ops, std::forward<Args>(args)...);
 }
 
-template <typename CovarFun, typename ThetaVec, typename... Args,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
-inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
-                                              const std::vector<int>& n_samples,
-                                              const ThetaVec& theta_0,
-                                              CovarFun&& covariance_function,
-                                              std::ostream* msgs,
-                                              Args&&... args) {
+template <typename CovarFun, typename YeVec, typename ThetaVec,
+          typename... Args,
+          require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
+inline auto laplace_marginal_poisson_2_log_lpmf(
+    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
+    std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
+  Eigen::VectorXd y_vec = to_vector(y);
+  Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
+  y_and_ye << y_vec, ye;
   laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
-                                              to_vector(y), n_samples, msgs),
-      covariance_function, eta_dummy, theta_0, msgs, ops, args...);
+      diff_likelihood<poisson_log_exposure_likelihood>(
+          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+      std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
+      ops, std::forward<Args>(args)...);
 }
 
 }  // namespace math

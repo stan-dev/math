@@ -59,22 +59,26 @@ struct diff_likelihood {
       var f_var = f_(theta_var, eta_var, delta_, delta_int_, pstream_);
       grad(f_var.vi_);
       gradient.resize(theta_size + eta_size);
-      for (Eigen::Index i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++) {
         gradient(i) = theta_var(i).adj();
-      for (Eigen::Index i = 0; i < eta_size; i++)
+      }
+      for (Eigen::Index i = 0; i < eta_size; i++) {
         gradient(theta_size + i) = eta_var(i).adj();
+      }
     }
 
     if (hessian_block_size == 1) {
       Eigen::VectorXd v(theta_size);
-      for (Eigen::Index i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++) {
         v(i) = 1;
+      }
       Eigen::VectorXd hessian_v = hessian_times_vector(f_, theta, eta, delta_,
                                                        delta_int_, v, pstream_);
       Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
       hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-      for (Eigen::Index i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++) {
         hessian_theta.insert(i, i) = hessian_v(i);
+      }
       return hessian_theta;
     } else {
       return hessian_block_diag(f_, theta, eta, delta_, delta_int_,
@@ -167,11 +171,12 @@ struct diff_likelihood {
     grad(target_ffvar.d_.d_.vi_);
 
     VectorXd parm_adj(parm_size);
-    for (Eigen::Index i = 0; i < theta_size; ++i)
+    for (Eigen::Index i = 0; i < theta_size; ++i) {
       parm_adj(i) = theta_var(i).adj();
-    for (Eigen::Index i = 0; i < eta_size; ++i)
+    }
+    for (Eigen::Index i = 0; i < eta_size; ++i) {
       parm_adj(theta_size + i) = eta_var(i).adj();
-
+    }
     return 0.5 * parm_adj;
   }
 

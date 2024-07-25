@@ -42,12 +42,14 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
 
   VectorXd eta_dbl = value_of(eta);
+  laplace_options ops{hessian_block_size, solver,
+    max_steps_line_search, tolerance, max_num_steps};
+
   auto marginal_density_est = apply(
       [&](auto&&... args_val) {
         return laplace_marginal_density_est(
             diff_likelihood, covariance_function, eta_dbl, value_of(theta_0),
-            msgs, tolerance, max_num_steps, hessian_block_size, solver,
-            max_steps_line_search, args_val...);
+            msgs, ops, args_val...);
       },
       std::tuple_cat(std::forward<TrainTuple>(train_tuple), args_dbl));
   auto marginal_density = marginal_density_est.lmd;
