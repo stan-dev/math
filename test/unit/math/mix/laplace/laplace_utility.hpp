@@ -1,6 +1,6 @@
 #ifndef STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #define STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
-#include <stan/math/mix/laplace.hpp>
+#include <stan/math/mix.hpp>
 #include <iostream>
 #include <istream>
 #include <fstream>

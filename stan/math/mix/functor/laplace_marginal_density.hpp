@@ -1,21 +1,16 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_HPP
+#ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
+#define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/quad_form_diag.hpp>
-#include <stan/math/prim/fun/diag_pre_multiply.hpp>
-#include <stan/math/prim/fun/diag_post_multiply.hpp>
-#include <stan/math/prim/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
-#include <stan/math/rev/fun/cholesky_decompose.hpp>
-#include <stan/math/mix/laplace/laplace_pseudo_target.hpp>
-#include <stan/math/mix/laplace/block_matrix_sqrt.hpp>
-
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
 #include <Eigen/Sparse>
 #include <Eigen/LU>
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include <cmath>
+
 
 // Reference for calculations of marginal and its gradients:
 // Margossian et al (2020), https://arxiv.org/abs/2004.12550
@@ -53,6 +48,82 @@ struct laplace_density_estimates {
   Eigen::PartialPivLU<Eigen::MatrixXd> LU;
   Eigen::MatrixXd K_root;
 };
+
+/**
+ * Function to compute the pseudo target, $\tilde Z$,
+ * with a custom derivative method.
+ * NOTE: we actually don't need to compute the pseudo-target, only its
+ * derivative.
+ */
+template <typename KMat,
+          require_eigen_matrix_dynamic_vt<std::is_arithmetic, KMat>* = nullptr>
+inline constexpr double laplace_pseudo_target(const KMat& K,
+                                              const Eigen::VectorXd& a,
+                                              const Eigen::MatrixXd& R,
+                                              const Eigen::VectorXd& l_grad,
+                                              const Eigen::VectorXd& s2) {
+  return 0;
+}
+
+/**
+ * Overload function for case where K is passed as a matrix of var.
+ */
+template <typename KMat, typename AVec, typename RMat, typename LGradVec,
+          typename S2Vec,
+          require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
+inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
+                                  LGradVec&& l_grad, S2Vec&& s2) {
+  const Eigen::Index dim_theta = K.rows();
+  auto K_arena = to_arena(std::forward<KMat>(K));
+  auto&& a_ref = to_ref(std::forward<AVec>(a));
+  auto&& R_ref = to_ref(std::forward<RMat>(R));
+  auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));
+  auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
+  arena_matrix<Eigen::MatrixXd> K_adj_arena
+      = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
+        + s2_ref * l_grad_ref.transpose()
+        - (R_ref * (value_of(K_arena) * s2_ref)) * l_grad_ref.transpose();
+  return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
+    K_arena.adj().array() += vi.adj() * K_adj_arena.array();
+  });
+}
+
+/**
+ * Return the matrix square-root for a block diagonal matrix.
+ */
+inline Eigen::SparseMatrix<double> block_matrix_sqrt(
+    const Eigen::SparseMatrix<double>& W, const Eigen::Index block_size) {
+  int n_block = W.cols() / block_size;
+  Eigen::MatrixXd local_block(block_size, block_size);
+  Eigen::MatrixXd local_block_sqrt(block_size, block_size);
+  Eigen::SparseMatrix<double> W_root(W.rows(), W.cols());
+  W_root.reserve(Eigen::VectorXi::Constant(W_root.cols(), block_size));
+
+  // No block operation available for sparse matrices, so we have to loop.
+  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
+  for (int i = 0; i < n_block; i++) {
+    for (int j = 0; j < block_size; j++) {
+      for (int k = 0; k < block_size; k++) {
+        local_block(j, k) = W.coeff(i * block_size + j, i * block_size + k);
+      }
+    }
+
+    local_block_sqrt = local_block.sqrt();
+    // local_block_sqrt = cholesky_decompose(local_block);
+
+    for (int j = 0; j < block_size; j++) {
+      for (int k = 0; k < block_size; k++) {
+        W_root.insert(i * block_size + j, i * block_size + k)
+            = local_block_sqrt(j, k);
+      }
+    }
+  }
+
+  W_root.makeCompressed();
+
+  return W_root;
+}
+
 /**
  * For a latent Gaussian model with hyperparameters phi and eta,
  * latent variables theta, and observations y, this function computes
@@ -115,7 +186,7 @@ template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
           require_all_st_arithmetic<Eta, ThetaVec, Args...>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
-    D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
+    D&& ll_fun, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0, std::ostream* msgs,
     const laplace_options& options, Args&&... covar_args) {
   using Eigen::MatrixXd;
@@ -139,7 +210,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   };
   auto line_search = [](auto& objective_new, auto& a, auto& theta,
                         const auto& a_old, const auto& covariance,
-                        const auto& diff_likelihood, const auto& eta,
+                        const auto& ll_fun, const auto& eta,
                         const auto max_steps_line_search,
                         const auto objective_old) mutable {
     for (int j = 0;
@@ -148,7 +219,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       theta = covariance * a;
       if (std::isfinite(theta.sum())) {
         objective_new
-            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+            = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       } else {
         break;
       }
@@ -168,7 +239,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   if (options.solver == 1 && options.hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, options.hessian_block_size);
+          = -ll_fun.diff(theta, eta, l_grad, options.hessian_block_size);
 
       // Compute matrix square-root of W. If all elements of W are positive,
       // do an element wise square-root. Else try a matirx square-root.
@@ -205,12 +276,12 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       if (std::isfinite(theta.sum())) {
         objective_new
-            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+            = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       }
       // linesearch
       // CHECK -- does linesearch work for solver 2?
       if (options.max_steps_line_search && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+        line_search(objective_new, a, theta, a_old, covariance, ll_fun,
                     eta, options.max_steps_line_search, objective_old);
       }
       a_old = a;
@@ -233,7 +304,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   } else if (options.solver == 1 && !(options.hessian_block_size == 1)) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, options.hessian_block_size);
+          = -ll_fun.diff(theta, eta, l_grad, options.hessian_block_size);
       Eigen::SparseMatrix<double> W_r
           = block_matrix_sqrt(W, options.hessian_block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
@@ -254,12 +325,12 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       if (std::isfinite(theta.sum())) {
         objective_new
-            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+            = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       }
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+        line_search(objective_new, a, theta, a_old, covariance, ll_fun,
                     eta, options.max_steps_line_search, objective_old);
       }
       a_old = a;
@@ -282,7 +353,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   } else if (options.solver == 2) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, options.hessian_block_size);
+          = -ll_fun.diff(theta, eta, l_grad, options.hessian_block_size);
       // TODO -- use triangularView for K_root.
       Eigen::MatrixXd K_root = cholesky_decompose(covariance);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
@@ -302,11 +373,11 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       if (std::isfinite(theta.sum())) {
         objective_new
-            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+            = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       }
       // linesearch
       if (options.max_steps_line_search > 0 && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+        line_search(objective_new, a, theta, a_old, covariance, ll_fun,
                     eta, options.max_steps_line_search, objective_old);
       }
       a_old = a;
@@ -329,7 +400,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       SparseMatrix<double> W
-          = -diff_likelihood.diff(theta, eta, l_grad, options.hessian_block_size);
+          = -ll_fun.diff(theta, eta, l_grad, options.hessian_block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
           = Eigen::PartialPivLU<Eigen::MatrixXd>(B);
@@ -345,13 +416,13 @@ inline laplace_density_estimates laplace_marginal_density_est(
 
       if (std::isfinite(theta.sum())) {
         objective_new
-            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+            = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       }
 
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+        line_search(objective_new, a, theta, a_old, covariance, ll_fun,
                     eta, options.max_steps_line_search, objective_old);
       }
       a_old = a;
@@ -417,11 +488,11 @@ template <typename D, typename CovarFun, typename Eta, typename ThetaVec,
           require_arithmetic_t<return_type_t<Eta, Args...>>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline double laplace_marginal_density(
-    D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
+    D&& ll_fun, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0, std::ostream* msgs, const laplace_options& options,
      Args&&... args) {
   return laplace_marginal_density_est(
-             diff_likelihood, covariance_function, eta,
+             ll_fun, covariance_function, eta,
              value_of(theta_0), msgs,
              options, to_ref(value_of(args))...).lmd;
 }
@@ -469,7 +540,7 @@ template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
           require_var_t<return_type_t<ThetaVec, Eta, Args...>>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_density(
-    const D& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
+    const D& ll_fun, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0, std::ostream* msgs,
     const laplace_options& options, Args&&... args) {
   auto args_refs = stan::math::apply(
@@ -492,7 +563,7 @@ inline auto laplace_marginal_density(
   auto marginal_density_ests = stan::math::apply(
       [&](auto&&... v_args) {
         return laplace_marginal_density_est(
-            diff_likelihood, covariance_function, value_of(eta_arena),
+            ll_fun, covariance_function, value_of(eta_arena),
             value_of(theta_0), msgs, options, v_args...);
       },
       value_args);
@@ -525,13 +596,13 @@ inline auto laplace_marginal_density(
     if (options.hessian_block_size == 1 && eta_size_ == 0) {
       s2 = 0.5
            * (covariance.diagonal() - (C.transpose() * C).diagonal())
-                 .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
+                 .cwiseProduct(ll_fun.third_diff(theta, eta_dbl));
     } else {
       // int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
       //                                            : hessian_block_size;
       Eigen::MatrixXd A = covariance - C.transpose() * C;
       partial_parm
-          = diff_likelihood.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+          = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
       s2 = partial_parm.head(theta_size);
     }
   } else if (options.solver == 2) {
@@ -546,7 +617,7 @@ inline auto laplace_marginal_density(
         = L.triangularView<Eigen::Lower>().solve(K_root.transpose());
     Eigen::MatrixXd A = C.transpose() * C;
     partial_parm
-        = diff_likelihood.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+        = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
     s2 = partial_parm.head(theta_size);
   } else {  // options.solver with LU decomposition
     LU_solve_covariance = LU.solve(covariance);
@@ -555,7 +626,7 @@ inline auto laplace_marginal_density(
     Eigen::MatrixXd A = covariance - covariance * W_root * LU_solve_covariance;
     // Eigen::MatrixXd A = covariance - covariance * R * covariance;
     partial_parm
-        = diff_likelihood.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+        = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
     s2 = partial_parm.head(theta_size);
   }
 
@@ -598,7 +669,7 @@ inline auto laplace_marginal_density(
       arena_matrix<
           Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>>
           eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-                          + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+                          + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
       return make_callback_var(
           marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena,
                                 eta_adj_arena](const auto& vi) mutable {
@@ -652,7 +723,7 @@ inline auto laplace_marginal_density(
 
     arena_matrix<Eigen::VectorXd> eta_adj_arena
         = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-          + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+          + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
 
     return make_callback_var(marginal_density_dbl, [eta_arena, eta_adj_arena](
                                                        const auto& vi) mutable {

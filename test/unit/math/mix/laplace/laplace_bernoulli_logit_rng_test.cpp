@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <stan/math/mix/laplace.hpp>
+#include <stan/math/mix.hpp>
 
 #include <Eigen/Sparse>
 
@@ -126,7 +126,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //   std::vector<int> n_samples = {1, 1};
 //   std::vector<int> sums = {1, 0};
 //
-//   diff_poisson_log diff_likelihood(to_vector(n_samples), to_vector(sums));
+//   diff_poisson_log laplace_likelihood(to_vector(n_samples), to_vector(sums));
 //   std::vector<double> d0;
 //   std::vector<int> di0;
 //
@@ -136,7 +136,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //
 //   Eigen::VectorXd gradient, eta_dummy;
 //   Eigen::SparseMatrix<double> W_sparse;
-//   diff_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
+//   laplace_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
 //   Eigen::MatrixXd W = -W_sparse;
 //   diagonal_kernel_functor covariance_function;
 //   std::vector<Eigen::VectorXd> x_dummy;
@@ -164,7 +164,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //     Eigen::VectorXd l_grad;
 //     Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
 //     double marginal_density = laplace_marginal_density(
-//         diff_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
+//         laplace_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
 //         di0, covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root,
 //         theta0_val, 0, tolerance, max_num_steps);
 //   }
@@ -190,7 +190,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //   // Check calls to rng functions compile
 //   boost::random::mt19937 rng;
 //   Eigen::MatrixXd theta_pred
-//       = laplace_base_rng(diff_likelihood, covariance_function, sigma,
+//       = laplace_base_rng(laplace_likelihood, covariance_function, sigma,
 //       eta_dummy,
 //                          x_dummy, x_dummy, d0, di0, theta_0, rng);
 //

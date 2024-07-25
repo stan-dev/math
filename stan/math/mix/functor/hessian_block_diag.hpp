@@ -1,9 +1,7 @@
-#ifndef STAN_MATH_LAPLACE_HESSIAN_BLOCK_DIAG_HPP
-#define STAN_MATH_LAPLACE_HESSIAN_BLOCK_DIAG_HPP
+#ifndef STAN_MATH_MIX_FUNCTOR_HESSIAN_BLOCK_DIAG_HPP
+#define STAN_MATH_MIX_FUNCTOR_HESSIAN_BLOCK_DIAG_HPP
 
-// TODO: refine include.
-#include <stan/math/mix.hpp>
-#include <stan/math/mix/laplace/hessian_times_vector.hpp>
+#include <stan/math/mix/functor/hessian_times_vector.hpp>
 #include <Eigen/Sparse>
 
 namespace stan {

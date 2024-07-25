@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_GENERAL_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_GENERAL_HPP
+#ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
+#define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
 // #include <stan/math/mix/laplace/hessian_times_vector.hpp>
-#include <stan/math/mix/laplace/hessian_block_diag.hpp>
-
+#include <stan/math/mix/functor/hessian_block_diag.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <Eigen/Sparse>
 
 namespace stan {
@@ -14,7 +14,7 @@ namespace math {
  * and third-order derivatives for a likelihoood specified by the user.
  */
 template <typename F>
-struct diff_likelihood {
+struct laplace_likelihood {
   /* Likelihood function. */
   F f_;
   /* Real variables passed to the likelihood. */
@@ -24,7 +24,7 @@ struct diff_likelihood {
   /* stream to return print statements when function is called. */
   std::ostream* pstream_;
   template <typename FF, typename DeltaVec, typename DeltaInt>
-  diff_likelihood(FF&& f, DeltaVec&& delta, DeltaInt&& delta_int,
+  laplace_likelihood(FF&& f, DeltaVec&& delta, DeltaInt&& delta_int,
                   std::ostream* pstream = 0)
       : f_(std::forward<FF>(f)),
         delta_(std::forward<DeltaVec>(delta)),

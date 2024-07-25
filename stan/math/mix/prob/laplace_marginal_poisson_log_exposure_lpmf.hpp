@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_EXPOSURE_LPMF_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_EXPOSURE_LPMF_HPP
 
-#include <stan/math/mix/laplace/laplace_marginal.hpp>
-#include <stan/math/mix/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/mix/functor/laplace_marginal_density.hpp>
+#include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <Eigen/Sparse>
 
@@ -27,18 +27,17 @@ struct poisson_log_exposure_likelihood {
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  inline static auto operator()(const Theta& theta, const Eta& /* eta */,
+  inline auto operator()(const Theta& theta, const Eta& /* eta */,
                          const Eigen::VectorXd& y_and_ye,
                          const std::vector<int>& delta_int,
                          std::ostream* pstream) const {
-    int n = delta_int.size();
-    Eigen::VectorXd y = y_and_ye.head(n);
-    Eigen::VectorXd ye = y_and_ye.tail(n);
-
-    Eigen::VectorXd n_samples = to_vector(delta_int);
+    auto n = delta_int.size();
+    auto y = y_and_ye.head(n);
+    auto ye = y_and_ye.tail(n);
+    auto n_samples = to_vector(delta_int);
     auto shifted_mean = to_ref(theta + log(ye));
-    return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
-           - n_samples.dot(exp(shifted_mean));
+    return -sum(lgamma(add(y, 1))) + dot_product(shifted_mean, y)
+      - dot_product(n_samples, exp(shifted_mean));
   }
 };
 
@@ -83,7 +82,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
   laplace_options ops{hessian_block_size, solver,
     max_steps_line_search, tolerance, max_num_steps};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_exposure_likelihood>(
+      laplace_likelihood<poisson_log_exposure_likelihood>(
           poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);
@@ -103,7 +102,7 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
   y_and_ye << y_vec, ye;
   laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_exposure_likelihood>(
+      laplace_likelihood<poisson_log_exposure_likelihood>(
           poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);

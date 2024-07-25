@@ -1,5 +1,6 @@
+#include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
-#include <stan/math/mix/laplace.hpp>
+#include <stan/math/mix.hpp>
 #include <test/unit/math/mix/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -27,8 +28,8 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   using stan::math::var;
 
   int dim_phi = 2;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
-  phi << 1.6, 0.45;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
+  phi_dbl << 1.6, 0.45;
 
   int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
@@ -43,7 +44,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   x[0] = x_0;
   x[1] = x_1;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> eta_dummy;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy;
   Eigen::VectorXd y_dummy;
   std::vector<double> delta_dummy;
   std::vector<int> delta_int_dummy;
@@ -52,9 +53,9 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   std::vector<int> sums = {1, 0};
 
   stan::math::test::squared_kernel_functor K;
-  var target = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
+  double target = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
                                             eta_dummy, y_dummy, theta_0, K,
-                                            nullptr, x, phi(0), phi(1));
+                                            nullptr, x, phi_dbl(0), phi_dbl(1));
 
   // TODO: benchmark target against gpstuff.
   // Expected: -2.53056
@@ -62,6 +63,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
   // Test with optional arguments
+  {
   double tolerance = 1e-6;
   int max_num_steps = 100;
   int hessian_block_size = 1;
@@ -72,45 +74,29 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   target = laplace_marginal_tol_lpmf<false>(
       sums, poisson_log_likelihood2(), eta_dummy, y_dummy, tolerance,
       max_num_steps, hessian_block_size, solver, max_steps_line_search, theta_0,
-      K, nullptr, x, phi(0), phi(1));
+      K, nullptr, x, phi_dbl(0), phi_dbl(1));
   EXPECT_NEAR(-2.53056, value_of(target), tol);
+  }
 
-  std::vector<double> g;
-  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
-  target.grad(parm_vec, g);
-
-  // // finite diff test
-  double diff = 1e-7;
-  Eigen::VectorXd phi_dbl = value_of(phi);
-  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl, phi_2l = phi_dbl,
-                  phi_2u = phi_dbl;
-  phi_1l(0) -= diff;
-  phi_1u(0) += diff;
-  phi_2l(1) -= diff;
-  phi_2u(1) += diff;
-
-  Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
-
-  double target_1u = laplace_marginal_lpmf<false>(
-      sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
-      nullptr, x, phi_1u(0), phi_1u(1));
-  double target_1l = laplace_marginal_lpmf<false>(
-      sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
-      nullptr, x, phi_1l(0), phi_1l(1));
-  double target_2u = laplace_marginal_lpmf<false>(
-      sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
-      nullptr, x, phi_2u(0), phi_2u(1));
-  double target_2l = laplace_marginal_lpmf<false>(
-      sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, theta_0, K,
-      nullptr, x, phi_2l(0), phi_2l(1));
-
-  std::vector<double> g_finite(dim_phi);
-  g_finite[0] = (target_1u - target_1l) / (2 * diff);
-  g_finite[1] = (target_2u - target_2l) / (2 * diff);
-
-  tol = 1.1e-4;
-  EXPECT_NEAR(g_finite[0], g[0], tol);
-  EXPECT_NEAR(g_finite[1], g[1], tol);
+  double tolerance = 1e-6;
+  int max_num_steps = 100;
+  stan::test::ad_tolerances ad_tol;
+  ad_tol.gradient_val_ = 4e-4;
+  ad_tol.gradient_grad_ = 1.1e-3;
+  //FIXME(Steve): hessian_block_size of 3 fails approx test
+  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
+        auto f = [&](auto&& alpha, auto&& rho) {
+          return laplace_marginal_tol_lpmf<false>(
+            sums, poisson_log_likelihood2(), eta_dummy, y_dummy, tolerance,
+            max_num_steps, hessian_block_size, solver_num, max_steps_line_search, theta_0,
+            K, nullptr, x, alpha, rho);
+        };
+        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        }
+    }
+  }
 }
 
 struct poisson_log_exposure_likelihood {
@@ -124,63 +110,44 @@ struct poisson_log_exposure_likelihood {
 
 TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   using stan::math::laplace_marginal_lpmf;
+  using stan::math::laplace_marginal_tol_lpmf;
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::value_of;
   using stan::math::var;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> eta_dummy;
+  Eigen::Matrix<double, -1, 1> eta_dummy;
   // Eigen::VectorXd y_dummy;
   std::vector<double> delta_dummy;
   std::vector<int> delta_int_dummy;
   stan::math::test::sqr_exp_kernel_functor K;
 
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  int hessian_block_size = 1;
-  int solver = 1;
-  int do_line_search = 0;
-  int max_steps_line_search = 0;
-
-  var marginal_density = laplace_marginal_lpmf<false>(
+  double marginal_density = laplace_marginal_lpmf<false>(
       y, poisson_log_exposure_likelihood(), eta_dummy, ye, theta_0, K, nullptr,
-      x, phi(0), phi(1));
+      x, phi_dbl(0), phi_dbl(1));
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
   EXPECT_NEAR(-2866.88, value_of(marginal_density), tol);
+  double tolerance = 1e-6;
+  int max_num_steps = 100;
+  stan::test::ad_tolerances ad_tol;
+  ad_tol.gradient_val_ = 4e-4;
+  ad_tol.gradient_grad_ = 1.1e-3;
+  //FIXME(Steve): hessian_block_size of 3 fails approx test
+  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
+        auto f = [&](auto&& alpha, auto&& rho) {
+          return laplace_marginal_tol_lpmf<false>(
+            y, poisson_log_exposure_likelihood(), eta_dummy, ye, tolerance,
+            max_num_steps, hessian_block_size, solver_num, max_steps_line_search, theta_0,
+            K, nullptr, x, alpha, rho);
+        };
+        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        }
+    }
+  }
 
-  std::vector<double> g;
-  std::vector<var> parm_vec{phi(0), phi(1)};
-  marginal_density.grad(parm_vec, g);
-
-  // finite diff
-  Eigen::VectorXd phi_dbl = value_of(phi);
-  Eigen::VectorXd phi_u0 = phi_dbl, phi_u1 = phi_dbl, phi_l0 = phi_dbl,
-                  phi_l1 = phi_dbl;
-  double eps = 1e-7;
-
-  phi_u0(0) += eps;
-  phi_u1(1) += eps;
-  phi_l0(0) -= eps;
-  phi_l1(1) -= eps;
-
-  Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
-
-  double target_u0 = laplace_marginal_lpmf<false>(
-      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
-      nullptr, x, phi_u0(0), phi_u0(1));
-  double target_u1 = laplace_marginal_lpmf<false>(
-      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
-      nullptr, x, phi_u1(0), phi_u1(1));
-  double target_l0 = laplace_marginal_lpmf<false>(
-      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
-      nullptr, x, phi_l0(0), phi_l0(1));
-  double target_l1 = laplace_marginal_lpmf<false>(
-      y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, theta_0, K,
-      nullptr, x, phi_l1(0), phi_l1(1));
-
-  EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
-  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 0.0016);
 }
 
 struct bernoulli_logit_likelihood {
@@ -194,8 +161,8 @@ struct bernoulli_logit_likelihood {
 
 TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   using stan::math::laplace_marginal_lpmf;
+  using stan::math::laplace_marginal_tol_lpmf;
   using stan::math::to_vector;
-  using stan::math::var;
 
   int dim_theta = 500;
   int n_observations = 500;
@@ -217,54 +184,38 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   std::vector<double> delta;
   std::vector<int> delta_int;
   int dim_phi = 2;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
-  phi << 1.6, 1;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> eta_dummy;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
+  phi_dbl << 1.6, 1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy;
 
   stan::math::test::sqr_exp_kernel_functor K;
   bernoulli_logit_likelihood L;
-  var target = laplace_marginal_lpmf<false>(y, L, eta_dummy, delta_L, theta_0,
-                                            K, nullptr, x, phi(0), phi(1));
+  double target = laplace_marginal_lpmf<false>(y, L, eta_dummy, delta_L, theta_0,
+                                            K, nullptr, x, phi_dbl(0), phi_dbl(1));
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
-  EXPECT_NEAR(-195.368, value_of(target), tol);
+  EXPECT_NEAR(-195.368, target, tol);
 
-  std::vector<double> g;
-  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
-  target.grad(parm_vec, g);
-
-  // finite diff benchmark
-  double diff = 1e-7;
-  Eigen::VectorXd phi_dbl = value_of(phi);
-  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl, phi_2l = phi_dbl,
-                  phi_2u = phi_dbl;
-  phi_1l(0) -= diff;
-  phi_1u(0) += diff;
-  phi_2l(1) -= diff;
-  phi_2u(1) += diff;
-  Eigen::VectorXd eta_dummy_dbl;
-
-  double target_1u
-      = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L, theta_0, K,
-                                     nullptr, x, phi_1u(0), phi_1u(1));
-  double target_1l
-      = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L, theta_0, K,
-                                     nullptr, x, phi_1l(0), phi_1l(1));
-  double target_2u
-      = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L, theta_0, K,
-                                     nullptr, x, phi_2u(0), phi_2u(1));
-  double target_2l
-      = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L, theta_0, K,
-                                     nullptr, x, phi_2l(0), phi_2l(1));
-
-  std::vector<double> g_finite(dim_phi);
-  g_finite[0] = (target_1u - target_1l) / (2 * diff);
-  g_finite[1] = (target_2u - target_2l) / (2 * diff);
-
-  tol = 1e-3;
-  EXPECT_NEAR(g_finite[0], g[0], tol);
-  EXPECT_NEAR(g_finite[1], g[1], tol);
+  double tolerance = 1e-6;
+  int max_num_steps = 100;
+  stan::test::ad_tolerances ad_tol;
+  ad_tol.gradient_val_ = 4e-4;
+  ad_tol.gradient_grad_ = 1.1e-3;
+  //FIXME(Steve): hessian_block_size of 3 fails approx test
+  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
+        auto f = [&](auto&& alpha, auto&& rho) {
+          return laplace_marginal_tol_lpmf<false>(
+            y, L, eta_dummy, delta_L, tolerance,
+            max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+            theta_0, K, nullptr, x, alpha, rho);
+        };
+        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        }
+    }
+  }
 }
 
 struct covariance_motorcycle_functor {
@@ -368,8 +319,8 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     sigma_g = 0.25;
 
     dim_phi = 4;
-    phi.resize(dim_phi);
-    phi << length_scale_f, length_scale_g, sigma_f, sigma_g;
+    phi_dbl.resize(dim_phi);
+    phi_dbl << length_scale_f, length_scale_g, sigma_f, sigma_g;
 
     eta.resize(1);
     eta(0) = 1;
@@ -395,7 +346,6 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
 
     solver = 2;
     eps = 1e-7;
-    phi_dbl = value_of(phi);
     eta_dbl = value_of(eta);
   }
 
@@ -404,16 +354,15 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
   std::vector<double> x;
   Eigen::VectorXd y;
 
-  stan::math::var length_scale_f;
-  stan::math::var length_scale_g;
-  stan::math::var sigma_f;
-  stan::math::var sigma_g;
-  Eigen::Matrix<stan::math::var, -1, 1> phi;
+  double length_scale_f;
+  double length_scale_g;
+  double sigma_f;
+  double sigma_g;
   std::vector<int> delta_int;
   std::vector<double> delta_dummy;
   Eigen::VectorXd theta0;
   Eigen::VectorXd eta_dbl;
-  Eigen::Matrix<stan::math::var, -1, 1> eta;
+  Eigen::Matrix<double, -1, 1> eta;
   int solver;
   double eps;
   Eigen::VectorXd phi_dbl;
@@ -423,11 +372,10 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   using stan::math::laplace_marginal_lpdf;
   using stan::math::laplace_marginal_tol_lpdf;
   using stan::math::value_of;
-  using stan::math::var;
 
   covariance_motorcycle_functor K_f;
   normal_likelihood L;
-
+  {
   double tolerance = 1e-08;
   int max_num_steps = 100;
   int hessian_block_size = 2;
@@ -436,55 +384,31 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   int max_steps_line_search = 10;
 
   covariance_motorcycle_functor K;
-  var target = laplace_marginal_tol_lpdf<false>(
+  double target = laplace_marginal_tol_lpdf<false>(
+      y, L, eta, delta_int, tolerance, max_num_steps, hessian_block_size,
+      solver, max_steps_line_search, theta0, K, nullptr, x, phi_dbl(0), phi_dbl(1),
+      phi_dbl(2), phi_dbl(3), n_obs);
+  }
+  // TODO: benchmark this result against GPStuff.
+  double tolerance = 1e-6;
+  int max_num_steps = 100;
+  stan::test::ad_tolerances ad_tol;
+  ad_tol.gradient_val_ = 4e-4;
+  ad_tol.gradient_grad_ = 1.1e-3;
+  covariance_motorcycle_functor K;
+  //FIXME(Steve): hessian_block_size of 3 fails approx test
+  for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 3; hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
+        auto f = [&](auto&& phi) {
+          return laplace_marginal_tol_lpdf<false>(
       y, L, eta, delta_int, tolerance, max_num_steps, hessian_block_size,
       solver, max_steps_line_search, theta0, K, nullptr, x, phi(0), phi(1),
       phi(2), phi(3), n_obs);
-
-  // TODO: benchmark this result against GPStuff.
-
-  std::vector<double> g;
-  std::vector<stan::math::var> parm_vec{phi(0), phi(1), phi(2), phi(3), eta(0)};
-  target.grad(parm_vec, g);
-
-  // finite diff benchmark
-  double g_finite;
-  for (int i = 0; i < dim_phi; i++) {
-    Eigen::VectorXd phi_u = phi_dbl, phi_l = phi_dbl;
-    phi_u(i) += eps;
-    phi_l(i) -= eps;
-
-    double target_u = laplace_marginal_tol_lpdf<false>(
-        y, L, eta_dbl, delta_int, tolerance, max_num_steps, hessian_block_size,
-        solver, max_steps_line_search, theta0, K, nullptr, x, phi_u(0),
-        phi_u(1), phi_u(2), phi_u(3), n_obs);
-
-    double target_l = laplace_marginal_tol_lpdf<false>(
-        y, L, eta_dbl, delta_int, tolerance, max_num_steps, hessian_block_size,
-        solver, max_steps_line_search, theta0, K, nullptr, x, phi_l(0),
-        phi_l(1), phi_l(2), phi_l(3), n_obs);
-
-    g_finite = (target_u - target_l) / (2 * eps);
-
-    double tol = 1.2e-5;
-    EXPECT_NEAR(g_finite, g[i], tol);
+        };
+        stan::test::expect_ad<true>(ad_tol, f, phi_dbl);
+        }
+    }
   }
 
-  Eigen::VectorXd eta_u = eta_dbl, eta_l = eta_dbl;
-  eta_u(0) += eps;
-  eta_l(0) -= eps;
-
-  double target_u = laplace_marginal_tol_lpdf<false>(
-      y, L, eta_u, delta_int, tolerance, max_num_steps, hessian_block_size,
-      solver, max_steps_line_search, theta0, K, nullptr, x, phi_dbl(0),
-      phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
-
-  double target_l = laplace_marginal_tol_lpdf<false>(
-      y, L, eta_l, delta_int, tolerance, max_num_steps, hessian_block_size,
-      solver, max_steps_line_search, theta0, K, nullptr, x, phi_dbl(0),
-      phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
-
-  g_finite = (target_u - target_l) / (2 * eps);
-  double tol = 1e-7;
-  EXPECT_NEAR(g_finite, g[dim_phi], tol);
 }

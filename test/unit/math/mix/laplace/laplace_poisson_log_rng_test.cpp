@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
-#include <stan/math/mix/laplace/prob/laplace_rng.hpp>
-#include <stan/math/mix/laplace/prob/laplace_poisson_log_rng.hpp>
+#include <stan/math/mix.hpp>
+#include <test/unit/math/mix/laplace/laplace_utility.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -154,7 +154,7 @@ TEST(laplace, basic_rng) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
 
-  diff_poisson_log diff_likelihood(to_vector(n_samples), to_vector(sums));
+  diff_poisson_log laplace_likelihood(to_vector(n_samples), to_vector(sums));
   std::vector<double> d0;
   std::vector<int> di0;
 
@@ -165,7 +165,7 @@ TEST(laplace, basic_rng) {
   Eigen::VectorXd gradient;
   Eigen::SparseMatrix<double> W_sparse;
   Eigen::VectorXd eta_dummy;
-  diff_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
+  laplace_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
   Eigen::MatrixXd W = -W_sparse;
   diagonal_kernel_functor covariance_function;
   std::vector<Eigen::VectorXd> x_dummy;
@@ -190,7 +190,7 @@ TEST(laplace, basic_rng) {
     Eigen::VectorXd l_grad;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
     double marginal_density = laplace_marginal_density(
-        diff_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
+        laplace_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
         di0, covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root, theta0_val,
         0, tolerance, max_num_steps);
 

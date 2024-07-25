@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
-#include <stan/math/mix/laplace/laplace_marginal.hpp>
-#include <stan/math/mix/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <Eigen/Sparse>
 
@@ -24,12 +24,12 @@ struct poisson_log_likelihood {
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  static auto operator()(const Theta& theta, const Eta& /* eta */,
+  auto operator()(const Theta& theta, const Eta& /* eta */,
                   const Eigen::VectorXd& y, const std::vector<int>& delta_int,
                   std::ostream* pstream) const {
-    Eigen::VectorXd n_samples = to_vector(delta_int);
-    return -lgamma(y.array() + 1).sum() + theta.dot(y)
-           - n_samples.dot(exp(theta));
+    auto n_samples = to_vector(delta_int);
+    return -sum(lgamma(add(y, 1))) + dot_product(theta, y)
+           - dot_product(n_samples, exp(theta));
   }
 };
 
@@ -69,7 +69,7 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
   laplace_options ops{hessian_block_size, solver,
     max_steps_line_search, tolerance, max_num_steps};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
+      laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
                                               to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, ops, args...);
 }
@@ -86,7 +86,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
+      laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
                                               to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, ops, args...);
 }

@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_LAPLACE_PROB_LAPLACE_BASE_RNG_HPP
-#define STAN_MATH_LAPLACE_PROB_LAPLACE_BASE_RNG_HPP
+#ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_BASE_RNG_HPP
+#define STAN_MATH_MIX_FUNCTOR_LAPLACE_BASE_RNG_HPP
 
+#include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
-#include <stan/math/prim/fun/cholesky_decompose.hpp>
-#include <stan/math/mix/laplace/laplace_marginal.hpp>
+#include <stan/math/prim/fun.hpp>
 
 #include <Eigen/Sparse>
 #include <Eigen/LU>
@@ -27,13 +27,9 @@ template <typename ThetaMatrix, typename EtaMatrix, typename D,
           typename CovarFun, class RNG, typename TrainTuple, typename PredTuple,
           typename... Args,
           require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
-inline Eigen::VectorXd  // CHECK -- right return type -- It's not this need to
-                        // return a std::vector<> :(
-laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
+inline Eigen::VectorXd laplace_base_rng(D&& ll_fun, CovarFun&& covariance_function,
                  const ThetaMatrix& eta, const EtaMatrix& theta_0, RNG& rng,
-                 std::ostream* msgs, const double tolerance,
-                 const long int max_num_steps, const int hessian_block_size,
-                 const int solver, const int max_steps_line_search,
+                 std::ostream* msgs, laplace_options& options,
                  TrainTuple&& train_tuple, PredTuple&& pred_tuple,
                  Args&&... args) {
   using Eigen::MatrixXd;
@@ -41,15 +37,12 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
 
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
 
-  VectorXd eta_dbl = value_of(eta);
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
-
+  auto eta_dbl = value_of(eta);
   auto marginal_density_est = apply(
       [&](auto&&... args_val) {
         return laplace_marginal_density_est(
-            diff_likelihood, covariance_function, eta_dbl, value_of(theta_0),
-            msgs, ops, args_val...);
+            ll_fun, covariance_function, eta_dbl, value_of(theta_0),
+            msgs, options, args_val...);
       },
       std::tuple_cat(std::forward<TrainTuple>(train_tuple), args_dbl));
   auto marginal_density = marginal_density_est.lmd;
@@ -70,7 +63,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
   Eigen::MatrixXd Sigma;
-  if (solver == 1 || solver == 2) {
+  if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec
         = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance_pred);
     Sigma = covariance_pred - V_dec.transpose() * V_dec;
