@@ -63,11 +63,11 @@ inline auto ordered_constrain(T&& x) {
  */
 template <typename VarVec, require_var_col_vector_t<VarVec>* = nullptr>
 auto ordered_constrain(VarVec&& x, scalar_type_t<VarVec>& lp) {
-  auto&& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<VarVec>(x));
   if (x_ref.size() > 1) {
     lp += sum(x_ref.tail(x_ref.size() - 1));
   }
-  return ordered_constrain(x_ref);
+  return ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 }  // namespace math
