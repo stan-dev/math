@@ -2,6 +2,7 @@
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
 #include <test/unit/math/mix/laplace/laplace_utility.hpp>
+#include <test/unit/math/mix/laplace/aki_synth_data/x1.hpp>
 
 #include <test/unit/math/rev/fun/util.hpp>
 
@@ -19,11 +20,9 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
 
   int dim_theta = 500;
   int n_observations = 500;
-  std::string data_directory = "test/unit/math/mix/laplace/aki_synth_data/";
-  std::vector<double> x1(dim_theta), x2(dim_theta);
-  std::vector<int> y(n_observations);
-  stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1,
-                                 x2, y);
+  auto x1 = stan::test::laplace::x1;
+  auto x2 = stan::test::laplace::x2;
+  auto y = stan::test::laplace::y;
 
   int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);

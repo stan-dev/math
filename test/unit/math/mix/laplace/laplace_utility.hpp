@@ -1,6 +1,7 @@
 #ifndef STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #define STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/laplace/aki_disease_data/x1.hpp>
 #include <iostream>
 #include <istream>
 #include <fstream>
@@ -345,12 +346,10 @@ class laplace_disease_map_test : public ::testing::Test {
     dim_theta = 911;
     n_observations = 911;
     data_directory = "test/unit/math/mix/laplace/aki_disease_data/";
-    x1.resize(dim_theta);
-    x2.resize(dim_theta);
-    y.resize(n_observations);
-    ye.resize(n_observations);
-    stan::math::test::read_in_data(dim_theta, n_observations, data_directory,
-                                   x1, x2, y, ye);
+    x1 = stan::test::laplace::disease::x1;
+    x2 = stan::test::laplace::disease::x2;
+    y = stan::test::laplace::disease::y;
+    ye = stan::test::laplace::disease::ye;
 
     if (false) {
       // look at some of the data

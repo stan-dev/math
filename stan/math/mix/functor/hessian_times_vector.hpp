@@ -31,6 +31,7 @@ inline Eigen::VectorXd hessian_times_vector(
   return x_var.adj();
 }
 
+
 }  // namespace math
 }  // namespace stan
 

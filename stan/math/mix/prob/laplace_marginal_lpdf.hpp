@@ -131,7 +131,7 @@ inline auto laplace_marginal_lpdf(const YVec& y, LFun&& L_f, const EtaVec& eta,
                                   const Theta0& theta_0, CovarFun&& K_f,
                                   std::ostream* msgs, Args&&... args) {
   // TEST: provisional signature to agree with parser.
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       laplace_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
       std::forward<CovarFun>(K_f), eta, theta_0, msgs, ops,
@@ -147,7 +147,7 @@ inline auto laplace_marginal_lpdf(const YVec& y, LFun&& L_f,
                                   std::ostream* msgs, Args&&... args) {
   // TEST: provisional signature to agree with parser.
     Eigen::Matrix<double, 0, 0> eta;
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       laplace_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
       std::forward<CovarFun>(K_f), eta, theta_0, msgs, ops,

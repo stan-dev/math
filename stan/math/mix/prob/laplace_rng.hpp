@@ -66,7 +66,7 @@ inline Eigen::VectorXd laplace_marginal_rng(
     const std::vector<int>& delta_int_L, const ThetaVec& theta_0,
     CovarFun&& K_f, RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, Args&&... args) {
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(
       laplace_likelihood<LFun>(std::forward<LFun>(L_f), delta_L, delta_int_L,
                             msgs),
@@ -83,7 +83,7 @@ inline Eigen::VectorXd laplace_marginal_rng(
     const std::vector<int>& delta_int_L, const ThetaVec& theta_0,
     CovarFun&& K_f, RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, Args&&... args) {
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta;
   return laplace_base_rng(
       laplace_likelihood<LFun>(std::forward<LFun>(L_f), delta_L, delta_int_L,

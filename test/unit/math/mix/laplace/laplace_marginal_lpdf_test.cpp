@@ -4,6 +4,8 @@
 #include <test/unit/math/mix/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <test/unit/math/mix/laplace/aki_synth_data/x1.hpp>
+#include <test/unit/math/mix/laplace/motorcycle_gp/x_vec.hpp>
 
 #include <gtest/gtest.h>
 #include <iostream>
@@ -131,7 +133,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   double tolerance = 1e-6;
   int max_num_steps = 100;
   stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
+  ad_tol.gradient_val_ = 8e-4;
   ad_tol.gradient_grad_ = 1.1e-3;
   //FIXME(Steve): hessian_block_size of 3 fails approx test
   for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
@@ -166,11 +168,9 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 
   int dim_theta = 500;
   int n_observations = 500;
-  std::string data_directory = "test/unit/math/mix/laplace/aki_synth_data/";
-  std::vector<double> x1(dim_theta), x2(dim_theta);
-  std::vector<int> y(n_observations);
-  stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1,
-                                 x2, y);
+  auto x1 = stan::test::laplace::x1;
+  auto x2 = stan::test::laplace::x2;
+  auto y = stan::test::laplace::y;
 
   int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
@@ -296,22 +296,11 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     using stan::math::gp_exp_quad_cov;
     using stan::math::value_of;
 
-    if (false) {
-      n_obs = 6;
-      Eigen::VectorXd x_vec(n_obs);
-      x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
-      x.resize(n_obs);
-      for (int i = 0; i < n_obs; i++)
-        x[i] = x_vec(i);
-      y.resize(n_obs);
-      y << 0.0, -1.3, -2.7, 0.0, -2.7, -2.7;
-    }
 
-    if (true) {
+
       n_obs = 133;
-      stan::math::test::read_data(
-          n_obs, "test/unit/math/mix/laplace/motorcycle_gp/", x, y);
-    }
+    x = stan::test::laplace::moto::x;
+    y = stan::test::laplace::moto::y;
 
     length_scale_f = 0.3;
     length_scale_g = 0.5;

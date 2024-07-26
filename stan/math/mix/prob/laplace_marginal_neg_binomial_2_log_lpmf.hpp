@@ -20,21 +20,15 @@ struct diff_neg_binomial_2_log {
   int n_theta_;
 
   diff_neg_binomial_2_log(const Eigen::VectorXd& y,
-                          const std::vector<int>& y_index, int n_theta)
-      : y_(y), y_index_(y_index), n_theta_(n_theta) {
-    sums_ = Eigen::VectorXd::Zero(n_theta);
-    n_samples_ = Eigen::VectorXd::Zero(n_theta);
+                          const std::vector<int>& y_index,
+                          const Eigen::VectorXd& n_samples,
+                          const Eigen::VectorXd& sums, int n_theta)
+      : y_(y), y_index_(y_index), n_samples_(n_samples), sums_(sums), n_theta_(n_theta) {}
 
-    for (Eigen::Index i = 0; i < n_theta; i++) {
-      n_samples_(y_index[i]) += 1;
-      sums_(y_index[i]) += y[i];
-    }
-  }
-
-  template <typename T_theta, typename T_eta>
+  template <typename T_theta, typename T_eta, typename... Args>
   inline return_type_t<T_theta, T_eta> log_likelihood(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta, Args&&... args) const {
     T_eta eta_scalar = eta(0);
     return_type_t<T_theta, T_eta> logp = 0;
     for (size_t i = 0; i < y_.size(); i++) {
@@ -198,14 +192,16 @@ struct diff_neg_binomial_2_log {
  */
 template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
-    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
+    const std::vector<int>& y, const std::vector<int>& y_index,
+    const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
+    const Eta& eta,
     double tolerance, long int max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search, const Theta0& theta_0,
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
   laplace_options ops{hessian_block_size, solver,
     max_steps_line_search, tolerance, max_num_steps};
   return laplace_marginal_density(
-      diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
+      diff_neg_binomial_2_log(to_vector(y), y_index, n_samples, sums, theta_0.size()),
       std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
       tolerance, max_num_steps, hessian_block_size, solver,
       max_steps_line_search, std::forward<Args>(args)...);
@@ -213,12 +209,14 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
 
 template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
-    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
+    const std::vector<int>& y, const std::vector<int>& y_index,
+    const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
+    const Eta& eta,
     const Theta0& theta_0, CovarFun&& covariance_function, std::ostream* msgs,
     Args&&... args) {
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
+      diff_neg_binomial_2_log(to_vector(y), y_index, n_samples, sums, theta_0.size()),
       std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
       ops, std::forward<Args>(args)...);
 }

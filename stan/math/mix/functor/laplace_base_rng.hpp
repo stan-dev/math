@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun.hpp>
 
 #include <Eigen/Sparse>
-#include <Eigen/LU>
 
 namespace stan {
 namespace math {
@@ -29,7 +28,7 @@ template <typename ThetaMatrix, typename EtaMatrix, typename D,
           require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(D&& ll_fun, CovarFun&& covariance_function,
                  const ThetaMatrix& eta, const EtaMatrix& theta_0, RNG& rng,
-                 std::ostream* msgs, laplace_options& options,
+                 std::ostream* msgs, const laplace_options& options,
                  TrainTuple&& train_tuple, PredTuple&& pred_tuple,
                  Args&&... args) {
   using Eigen::MatrixXd;
@@ -38,21 +37,13 @@ inline Eigen::VectorXd laplace_base_rng(D&& ll_fun, CovarFun&& covariance_functi
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
 
   auto eta_dbl = value_of(eta);
-  auto marginal_density_est = apply(
+  auto md_est = apply(
       [&](auto&&... args_val) {
         return laplace_marginal_density_est(
             ll_fun, covariance_function, eta_dbl, value_of(theta_0),
             msgs, options, args_val...);
       },
       std::tuple_cat(std::forward<TrainTuple>(train_tuple), args_dbl));
-  auto marginal_density = marginal_density_est.lmd;
-  Eigen::SparseMatrix<double> W_r = std::move(marginal_density_est.W_r);
-  MatrixXd L = std::move(marginal_density_est.L);
-  MatrixXd K_root = std::move(marginal_density_est.K_root);
-  Eigen::PartialPivLU<MatrixXd> LU = std::move(marginal_density_est.LU);
-  VectorXd l_grad = std::move(marginal_density_est.l_grad);
-  MatrixXd covariance = std::move(marginal_density_est.covariance);
-
   // Modified R&W method
   MatrixXd covariance_pred = apply(
       [&covariance_function, &msgs](auto&&... args_val) {
@@ -60,20 +51,20 @@ inline Eigen::VectorXd laplace_base_rng(D&& ll_fun, CovarFun&& covariance_functi
       },
       std::tuple_cat(std::forward<PredTuple>(pred_tuple), args_dbl));
 
-  VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
+  VectorXd pred_mean = covariance_pred * md_est.l_grad.head(theta_0.rows());
 
-  Eigen::MatrixXd Sigma;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec
-        = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance_pred);
-    Sigma = covariance_pred - V_dec.transpose() * V_dec;
+        = mdivide_left_tri<Eigen::Lower>(md_est.L, md_est.W_r * covariance_pred);
+    Eigen::MatrixXd Sigma = covariance_pred - V_dec.transpose() * V_dec;
+    return multi_normal_rng(pred_mean, Sigma, rng);
   } else {
-    Sigma = covariance_pred
-            - covariance_pred * (W_r - W_r * LU.solve(covariance * W_r))
+    Eigen::MatrixXd Sigma = covariance_pred
+            - covariance_pred * (md_est.W_r - md_est.W_r * md_est.LU.solve(md_est.covariance * md_est.W_r))
                   * covariance_pred;
+    return multi_normal_rng(pred_mean, Sigma, rng);
   }
 
-  return multi_normal_rng(pred_mean, Sigma, rng);
 }
 
 }  // namespace math

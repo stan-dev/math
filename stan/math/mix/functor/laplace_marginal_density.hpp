@@ -217,7 +217,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
          j < max_steps_line_search && (objective_new < objective_old); ++j) {
       a = (a + a_old) * 0.5;  // TODO -- generalize for any factor.
       theta = covariance * a;
-      if (std::isfinite(theta.sum())) {
+      if (Eigen::isfinite(theta.array()).sum()) {
         objective_new
             = -0.5 * a.dot(theta) + ll_fun.log_likelihood(theta, eta);
       } else {

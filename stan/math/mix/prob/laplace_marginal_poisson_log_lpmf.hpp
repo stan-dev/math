@@ -24,7 +24,7 @@ struct poisson_log_likelihood {
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  auto operator()(const Theta& theta, const Eta& /* eta */,
+  inline auto operator()(const Theta& theta, const Eta& /* eta */,
                   const Eigen::VectorXd& y, const std::vector<int>& delta_int,
                   std::ostream* pstream) const {
     auto n_samples = to_vector(delta_int);
@@ -84,7 +84,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
                                               to_vector(y), n_samples, msgs),

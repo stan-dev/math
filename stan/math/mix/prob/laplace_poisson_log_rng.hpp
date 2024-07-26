@@ -50,7 +50,7 @@ inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
     std::ostream* msgs, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     Args&&... args) {
   Eigen::VectorXd eta_dummy;
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(
       laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
                                               to_vector(y), n_samples, msgs),

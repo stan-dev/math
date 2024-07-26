@@ -13,8 +13,8 @@ struct bernoulli_logit_likelihood {
   inline stan::return_type_t<T_theta, T_eta> operator()(
       const T_theta& theta, const T_eta& /* eta */, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
-    return sum(theta.cwiseProduct(y)
-               - to_vector(delta_int).cwiseProduct(log(add(1.0, exp(theta)))));
+    return sum(elt_multiply(theta, y)
+               - elt_multiply(to_vector(delta_int),log(add(1.0, exp(theta)))));
   }
 };
 
@@ -67,7 +67,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
     std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  laplace_options ops{1, 1, 0, 1e-6, 100};
+  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       laplace_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
