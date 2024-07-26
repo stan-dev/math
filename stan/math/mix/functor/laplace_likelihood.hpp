@@ -31,20 +31,20 @@ struct laplace_likelihood {
         delta_int_(std::forward<DeltaInt>(delta_int)),
         pstream_(pstream) {}
 
-  template <typename Theta, typename Eta,
+  template <typename Theta, typename Eta, typename... Args,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  inline auto log_likelihood(const Theta& theta, const Eta& eta) const {
-    return f_(theta, eta, delta_, delta_int_, pstream_);
+  inline auto log_likelihood(const Theta& theta, const Eta& eta, Args&&... args) const {
+    return f_(theta, eta, delta_, delta_int_, args..., pstream_);
   }
 
-  template <typename Theta, typename Eta,
+  template <typename Theta, typename Eta, typename... Args,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
   inline Eigen::SparseMatrix<double> diff(const Theta& theta, const Eta& eta,
                                           Eigen::VectorXd& gradient,
-                                          const Eigen::Index hessian_block_size
-                                          = 1) const {
+                                          const Eigen::Index hessian_block_size,
+                                          Args&&... args) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
 
@@ -56,7 +56,7 @@ struct laplace_likelihood {
       Matrix<var, Dynamic, 1> theta_var = theta;
       Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
 
-      var f_var = f_(theta_var, eta_var, delta_, delta_int_, pstream_);
+      var f_var = f_(theta_var, eta_var, delta_, delta_int_, args..., pstream_);
       grad(f_var.vi_);
       gradient.resize(theta_size + eta_size);
       for (Eigen::Index i = 0; i < theta_size; i++) {
@@ -73,7 +73,7 @@ struct laplace_likelihood {
         v(i) = 1;
       }
       Eigen::VectorXd hessian_v = hessian_times_vector(f_, theta, eta, delta_,
-                                                       delta_int_, v, pstream_);
+                                                       delta_int_, v, args..., pstream_);
       Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
       hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
       for (Eigen::Index i = 0; i < theta_size; i++) {
@@ -81,15 +81,15 @@ struct laplace_likelihood {
       }
       return hessian_theta;
     } else {
-      return hessian_block_diag(f_, theta, eta, delta_, delta_int_,
+      return hessian_block_diag(f_, theta, eta, delta_, delta_int_, args...,
                                 hessian_block_size, pstream_);
     }
   }
 
-  template <typename Theta, typename Eta,
+  template <typename Theta, typename Eta, typename... Args,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  inline Eigen::VectorXd third_diff(const Theta& theta, const Eta& eta) const {
+  inline Eigen::VectorXd third_diff(const Theta& theta, const Eta& eta, Args&&... args) const {
     const Eigen::Index theta_size = theta.size();
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
     double f_theta;
@@ -99,24 +99,24 @@ struct laplace_likelihood {
     for (Eigen::Index i = 0; i < theta_size; ++i) {
       theta_fvar(i) = fvar<var>(theta_var(i), v(i));
     }
-    fvar<var> ftheta_fvar = f_(theta_fvar, eta, delta_, delta_int_, pstream_);
+    fvar<var> ftheta_fvar = f_(theta_fvar, eta, delta_, delta_int_, args..., pstream_);
 
     Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
     for (Eigen::Index i = 0; i < theta_size; ++i) {
       theta_ffvar(i) = fvar<fvar<var>>(theta_fvar(i), v(i));
     }
     fvar<fvar<var>> ftheta_ffvar
-        = f_(theta_ffvar, eta, delta_, delta_int_, pstream_);
+        = f_(theta_ffvar, eta, delta_, delta_int_, args..., pstream_);
     grad(ftheta_ffvar.d_.d_.vi_);
     return theta_var.adj();
   }
 
-  template <typename Theta, typename Eta,
+  template <typename Theta, typename Eta, typename... Args,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
   inline Eigen::VectorXd compute_s2(const Theta& theta, const Eta& eta,
                                     const Eigen::MatrixXd& A,
-                                    int hessian_block_size) const {
+                                    int hessian_block_size, Args&&... args) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::MatrixXd;
@@ -148,7 +148,7 @@ struct laplace_likelihood {
       Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
           = eta_var.template cast<fvar<var>>();
 
-      fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
+      fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, args..., pstream_);
 
       VectorXd w(theta_size);
       for (int j = 0; j < n_blocks; ++j) {
@@ -165,7 +165,7 @@ struct laplace_likelihood {
       Matrix<fvar<fvar<var>>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>
           eta_ffvar = eta_fvar.template cast<fvar<fvar<var>>>();
 
-      target_ffvar += f_(theta_ffvar, eta_ffvar, delta_, delta_int_, pstream_);
+      target_ffvar += f_(theta_ffvar, eta_ffvar, delta_, delta_int_, args..., pstream_);
     }
     grad(target_ffvar.d_.d_.vi_);
 
@@ -179,15 +179,17 @@ struct laplace_likelihood {
     return 0.5 * parm_adj;
   }
 
-  template <typename Theta, typename Eta,
+  template <typename Theta, typename Eta, typename... Args,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  inline Eigen::VectorXd diff_eta_implicit(const Theta& v, const Eta& theta,
-                                           const Eigen::VectorXd& eta) const {
+  inline plain_type_t<Eta> diff_eta_implicit(const Theta& v, const Eta& theta,
+                                           const Eigen::VectorXd& eta, Args&&... args) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::VectorXd;
-
+    if constexpr (Eta::RowsAtCompileTime == 0 && Eta::ColsAtCompileTime == 0) {
+      return plain_type_t<Eta>{};
+    }
     nested_rev_autodiff nested;
     const Eigen::Index eta_size = eta.size();
     Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
@@ -204,7 +206,7 @@ struct laplace_likelihood {
     Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
         = eta_var.template cast<fvar<var>>();
 
-    fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
+    fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, args..., pstream_);
     grad(f_fvar.d_.vi_);
 
     return eta_var.adj();
