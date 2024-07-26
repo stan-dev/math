@@ -99,7 +99,6 @@ struct laplace_likelihood {
     for (Eigen::Index i = 0; i < theta_size; ++i) {
       theta_fvar(i) = fvar<var>(theta_var(i), v(i));
     }
-    // TODO:(Steve) I think this can just be commented out?
     fvar<var> ftheta_fvar = f_(theta_fvar, eta, delta_, delta_int_, pstream_);
 
     Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);

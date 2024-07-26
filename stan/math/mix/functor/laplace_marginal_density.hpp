@@ -556,77 +556,69 @@ inline auto laplace_marginal_density(
                       "Yikes!!");
         return xx;
       },
-      args...);
+      args_refs);
 
   auto eta_arena = to_arena(eta);
 
-  auto marginal_density_ests = stan::math::apply(
+  auto md_est = stan::math::apply(
       [&](auto&&... v_args) {
         return laplace_marginal_density_est(
             ll_fun, covariance_function, value_of(eta_arena),
             value_of(theta_0), msgs, options, v_args...);
       },
       value_args);
-  double marginal_density_dbl = marginal_density_ests.lmd;
-  Eigen::VectorXd theta = std::move(marginal_density_ests.theta);
-  Eigen::VectorXd a = std::move(marginal_density_ests.a);
-  Eigen::VectorXd l_grad = std::move(marginal_density_ests.l_grad);
-  Eigen::SparseMatrix<double> W_root = std::move(marginal_density_ests.W_r);
-  Eigen::MatrixXd L = std::move(marginal_density_ests.L);
-  Eigen::MatrixXd K_root = std::move(marginal_density_ests.K_root);
-  Eigen::MatrixXd covariance = std::move(marginal_density_ests.covariance);
-  Eigen::PartialPivLU<Eigen::MatrixXd> LU = std::move(marginal_density_ests.LU);
-  const Eigen::Index theta_size = theta.size();
+  const Eigen::Index theta_size = md_est.theta.size();
   const Eigen::Index eta_size_ = eta_arena.size();
-
+  // Solver 1, 2
   Eigen::MatrixXd R;
+  // Solver 3
   Eigen::MatrixXd LU_solve_covariance;
   auto eta_dbl = value_of(eta_arena);
-
+  // Solver 1, 2, 3
   Eigen::VectorXd partial_parm;
+  // Solver 1, 2, 3
   Eigen::VectorXd s2;
 
   if (options.solver == 1) {
-    Eigen::MatrixXd W_root_diag = W_root;
-    R = W_root
-        * L.transpose().triangularView<Eigen::Upper>().solve(
-            L.triangularView<Eigen::Lower>().solve(W_root_diag));
+    Eigen::MatrixXd W_root_diag = md_est.W_r;
+    R = md_est.W_r
+        * md_est.L.transpose().template triangularView<Eigen::Upper>().solve(
+            md_est.L.template triangularView<Eigen::Lower>().solve(W_root_diag));
 
-    Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_root * covariance);
+    Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(md_est.L, md_est.W_r * md_est.covariance);
     if (options.hessian_block_size == 1 && eta_size_ == 0) {
       s2 = 0.5
-           * (covariance.diagonal() - (C.transpose() * C).diagonal())
-                 .cwiseProduct(ll_fun.third_diff(theta, eta_dbl));
+           * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
+                 .cwiseProduct(ll_fun.third_diff(md_est.theta, eta_dbl));
     } else {
       // int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
       //                                            : hessian_block_size;
-      Eigen::MatrixXd A = covariance - C.transpose() * C;
+      Eigen::MatrixXd A = md_est.covariance - C.transpose() * C;
       partial_parm
-          = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+          = ll_fun.compute_s2(md_est.theta, eta_dbl, A, options.hessian_block_size);
       s2 = partial_parm.head(theta_size);
     }
   } else if (options.solver == 2) {
     // TODO -- use triangularView for K_root.
-    R = W_root
-        - W_root * K_root
-              * L.transpose().triangularView<Eigen::Upper>().solve(
-                  L.triangularView<Eigen::Lower>().solve(K_root.transpose()
-                                                         * W_root));
+    R = md_est.W_r
+        - md_est.W_r * md_est.K_root
+              * md_est.L.transpose().template triangularView<Eigen::Upper>().solve(
+                  md_est.L.template triangularView<Eigen::Lower>().solve(md_est.K_root.transpose()
+                                                         * md_est.W_r));
 
     Eigen::MatrixXd C
-        = L.triangularView<Eigen::Lower>().solve(K_root.transpose());
+        = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.K_root.transpose());
     Eigen::MatrixXd A = C.transpose() * C;
     partial_parm
-        = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+        = ll_fun.compute_s2(md_est.theta, eta_dbl, A, options.hessian_block_size);
     s2 = partial_parm.head(theta_size);
   } else {  // options.solver with LU decomposition
-    LU_solve_covariance = LU.solve(covariance);
-    R = W_root - W_root * LU_solve_covariance * W_root;
+    LU_solve_covariance = md_est.LU.solve(md_est.covariance);
+    R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
 
-    Eigen::MatrixXd A = covariance - covariance * W_root * LU_solve_covariance;
-    // Eigen::MatrixXd A = covariance - covariance * R * covariance;
+    Eigen::MatrixXd A = md_est.covariance - md_est.covariance * md_est.W_r * LU_solve_covariance;
     partial_parm
-        = ll_fun.compute_s2(theta, eta_dbl, A, options.hessian_block_size);
+        = ll_fun.compute_s2(md_est.theta, eta_dbl, A, options.hessian_block_size);
     s2 = partial_parm.head(theta_size);
   }
 
@@ -643,7 +635,7 @@ inline auto laplace_marginal_density(
               },
               args_refs);
       //  = covariance_function(x, phi_v, delta, delta_int, msgs);
-      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      var Z = laplace_pseudo_target(K_var, md_est.a, R, md_est.l_grad.head(theta_size), s2);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
     }
@@ -657,21 +649,21 @@ inline auto laplace_marginal_density(
         args_refs);
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, args_refs);
 
-    Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
+    Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
     if (options.solver == 1 || options.solver == 2) {
-      v = covariance * s2 - covariance * R * covariance * s2;
+      v = md_est.covariance * s2 - md_est.covariance * R * md_est.covariance * s2;
     } else {
       v = LU_solve_covariance * s2;
     }
     if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
       arena_matrix<
           Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>>
-          eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-                          + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
+          eta_adj_arena = md_est.l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+                          + ll_fun.diff_eta_implicit(v, md_est.theta, eta_dbl);
       return make_callback_var(
-          marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena,
+          md_est.lmd, [arg_adj_arena, args_arena, eta_arena,
                                  eta_adj_arena](const auto& vi) mutable {
             stan::math::for_each(
                 [&vi](auto&& arg, auto&& arg_adj) {
@@ -681,7 +673,7 @@ inline auto laplace_marginal_density(
             internal::update_adjoints(eta_arena, eta_adj_arena, vi);
           });
     }
-  } else if constexpr (is_any_var<Args...>::value) {
+  } else if constexpr (is_any_var<scalar_type_t<Args>...>::value) {
     {
       const nested_rev_autodiff nested;
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
@@ -691,7 +683,7 @@ inline auto laplace_marginal_density(
               },
               args_refs);
       //  = covariance_function(x, phi_v, delta, delta_int, msgs);
-      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      var Z = laplace_pseudo_target(K_var, md_est.a, R, md_est.l_grad.head(theta_size), s2);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
     }
@@ -702,7 +694,7 @@ inline auto laplace_marginal_density(
         },
         args_refs);
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, args_refs);
-    return make_callback_var(marginal_density_dbl, [arg_adj_arena, args_arena](
+    return make_callback_var(md_est.lmd, [arg_adj_arena, args_arena](
                                                        const auto& vi) mutable {
       stan::math::for_each(
           [&vi](auto&& arg, auto&& arg_adj) {
@@ -712,21 +704,21 @@ inline auto laplace_marginal_density(
     });
   } else if (!is_constant<Eta>::value && eta_size_ != 0) {
     if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
-      Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
+      Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
     if (options.solver == 1 || options.solver == 2) {
-      v = covariance * s2 - covariance * R * covariance * s2;
+      v = md_est.covariance * s2 - md_est.covariance * R * md_est.covariance * s2;
     } else {
       v = LU_solve_covariance * s2;
     }
 
     arena_matrix<Eigen::VectorXd> eta_adj_arena
-        = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-          + ll_fun.diff_eta_implicit(v, theta, eta_dbl);
+        = md_est.l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+          + ll_fun.diff_eta_implicit(v, md_est.theta, eta_dbl);
 
       return make_callback_var(
-          marginal_density_dbl,
+          md_est.lmd,
           [eta_arena, eta_adj_arena](const auto& vi) mutable {
             internal::update_adjoints(eta_arena, eta_adj_arena, vi);
           });
