@@ -45,11 +45,11 @@ inline Eigen::MatrixXd hessian_block_diag(F&& f, const Eigen::VectorXd& x,
 /**
  * Overload for case where hessian is stored as a sparse matrix.
  */
-template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr>
+template <typename F, typename Eta, typename... Args,
+          require_eigen_t<Eta>* = nullptr>
 inline Eigen::SparseMatrix<double> hessian_block_diag(
     F&& f, const Eigen::VectorXd& x, const Eta& eta,
-    const Eigen::VectorXd& delta, const std::vector<int>& delta_int,
-    const Eigen::Index hessian_block_size, std::ostream* pstream = 0) {
+    const Eigen::Index hessian_block_size, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
@@ -65,7 +65,7 @@ inline Eigen::SparseMatrix<double> hessian_block_diag(
     for (Eigen::Index j = i; j < x_size; j += hessian_block_size) {
       v(j) = 1;
     }
-    VectorXd Hv = hessian_times_vector(f, x, eta, delta, delta_int, v, pstream);
+    VectorXd Hv = hessian_times_vector(f, x, eta, v, args...);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         H.insert(k + j * hessian_block_size, i + j * hessian_block_size)

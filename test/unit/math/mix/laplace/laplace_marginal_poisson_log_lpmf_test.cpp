@@ -12,8 +12,8 @@
 
 TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   using stan::math::laplace_marginal_poisson_2_log_lpmf;
-  using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_2_log_lpmf;
+  using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
   using stan::math::to_vector;
@@ -63,6 +63,7 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       }
     }
   }
+
   Eigen::VectorXd ye(2);
   ye << 1, 1;
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
@@ -80,6 +81,7 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       }
     }
   }
+
 }
 
 TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
@@ -120,6 +122,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
     }
   }
 }
+
 /*
 TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   using stan::math::laplace_marginal_poisson_2_log_lpmf;

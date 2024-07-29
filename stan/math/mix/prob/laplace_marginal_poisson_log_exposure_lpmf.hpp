@@ -37,10 +37,9 @@ struct poisson_log_exposure_likelihood {
     auto n_samples = to_vector(delta_int);
     auto shifted_mean = to_ref(theta + log(ye));
     return -sum(lgamma(add(y, 1))) + dot_product(shifted_mean, y)
-      - dot_product(n_samples, exp(shifted_mean));
+           - dot_product(n_samples, exp(shifted_mean));
   }
 };
-
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -79,11 +78,10 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
-  return laplace_marginal_density(
-      laplace_likelihood<poisson_log_exposure_likelihood>(
-          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+                      tolerance, max_num_steps};
+  return laplace_marginal_density(poisson_log_exposure_likelihood{},
+      std::forward_as_tuple(y_and_ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);
 }
@@ -101,9 +99,8 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(
-      laplace_likelihood<poisson_log_exposure_likelihood>(
-          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+  return laplace_marginal_density(poisson_log_exposure_likelihood{},
+      std::forward_as_tuple(y_and_ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);
 }

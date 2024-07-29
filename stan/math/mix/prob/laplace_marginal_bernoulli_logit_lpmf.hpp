@@ -14,11 +14,9 @@ struct bernoulli_logit_likelihood {
       const T_theta& theta, const T_eta& /* eta */, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
     return sum(elt_multiply(theta, y)
-               - elt_multiply(to_vector(delta_int),log(add(1.0, exp(theta)))));
+               - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta)))));
   }
 };
-
-
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -50,11 +48,10 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
-  return laplace_marginal_density(
-      laplace_likelihood<bernoulli_logit_likelihood>(
-          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+                      tolerance, max_num_steps};
+  return laplace_marginal_density(bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, msgs, ops,
       std::forward<Args>(args)...);
 }
@@ -68,9 +65,8 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(
-      laplace_likelihood<bernoulli_logit_likelihood>(
-          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+  return laplace_marginal_density(bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, msgs, ops,
       std::forward<Args>(args)...);
 }

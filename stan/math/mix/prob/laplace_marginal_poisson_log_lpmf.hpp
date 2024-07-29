@@ -9,7 +9,6 @@
 namespace stan {
 namespace math {
 
-
 struct poisson_log_likelihood {
   /**
    * Returns the lpmf for a Poisson with a log link across
@@ -25,14 +24,14 @@ struct poisson_log_likelihood {
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
   inline auto operator()(const Theta& theta, const Eta& /* eta */,
-                  const Eigen::VectorXd& y, const std::vector<int>& delta_int,
-                  std::ostream* pstream) const {
+                         const Eigen::VectorXd& y,
+                         const std::vector<int>& delta_int,
+                         std::ostream* pstream) const {
     auto n_samples = to_vector(delta_int);
     return -sum(lgamma(add(y, 1))) + dot_product(theta, y)
            - dot_product(n_samples, exp(theta));
   }
 };
-
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -66,11 +65,10 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
+  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+                      tolerance, max_num_steps};
   return laplace_marginal_density(
-      laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
-                                              to_vector(y), n_samples, msgs),
+      poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, msgs, ops, args...);
 }
 
@@ -86,8 +84,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      laplace_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
-                                              to_vector(y), n_samples, msgs),
+      poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, msgs, ops, args...);
 }
 

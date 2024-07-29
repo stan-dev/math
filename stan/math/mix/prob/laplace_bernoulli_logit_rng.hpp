@@ -29,12 +29,11 @@ laplace_marginal_tol_bernoulli_logit_rng(
     const int max_steps_line_search, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, RNG& rng, std::ostream* msgs,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, Args&&... args) {
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
+  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+                      tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  return laplace_base_rng(
-      laplace_likelihood<bernoulli_logit_likelihood>(
-          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+  return laplace_base_rng(bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, rng, msgs, ops,
       std::forward<TrainTuple>(train_tuple),
       std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
@@ -53,9 +52,8 @@ laplace_marginal_bernoulli_logit_rng(const std::vector<int>& y,
                                      PredTuple&& pred_tuple, Args&&... args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta_dummy;
-  return laplace_base_rng(
-      laplace_likelihood<bernoulli_logit_likelihood>(
-          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+  return laplace_base_rng(bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples),
       covariance_function, eta_dummy, theta_0, rng, msgs, ops,
       std::forward<TrainTuple>(train_tuple),
       std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);

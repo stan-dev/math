@@ -7,162 +7,27 @@
 namespace stan {
 namespace math {
 
-struct diff_neg_binomial_2_log {
-  /* Observed counts */
-  Eigen::VectorXd y_;
-  /* Latent parameter index for each observation. */
-  std::vector<int> y_index_;
-  /* The number of samples in each group. */
-  Eigen::VectorXd n_samples_;
-  /* The sum of cours in each group. */
-  Eigen::VectorXd sums_;
-  /* Number of latent Gaussian variables. */
-  int n_theta_;
-
-  diff_neg_binomial_2_log(const Eigen::VectorXd& y,
-                          const std::vector<int>& y_index,
-                          const Eigen::VectorXd& n_samples,
-                          const Eigen::VectorXd& sums, int n_theta)
-      : y_(y), y_index_(y_index), n_samples_(n_samples), sums_(sums), n_theta_(n_theta) {}
-
-  template <typename T_theta, typename T_eta, typename... Args>
-  inline return_type_t<T_theta, T_eta> log_likelihood(
+struct neg_binomial_2_log_likelihood {
+  template <typename T_theta, typename T_eta, typename Y_t, typename Sums_t, typename NSamples>
+  inline return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta, Args&&... args) const {
+      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
+      Y_t&& y, Sums_t&& sums, NSamples&& n_samples) const {
     T_eta eta_scalar = eta(0);
     return_type_t<T_theta, T_eta> logp = 0;
-    for (size_t i = 0; i < y_.size(); i++) {
-      logp += binomial_coefficient_log(y_(i) + eta_scalar - 1, y_(i));
+    for (size_t i = 0; i < y.size(); i++) {
+      logp += binomial_coefficient_log(y(i) + eta_scalar - 1, y(i));
     }
     // CHECK -- is it better to vectorize this loop?
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    for (Eigen::Index i = 0; i < n_theta_; i++) {
+    for (Eigen::Index i = 0; i < theta.size(); i++) {
       return_type_t<T_theta, T_eta> log_eta_plus_exp_theta
           = log(eta_scalar + exp_theta(i));
-      logp += sums_(i) * (theta(i) - log_eta_plus_exp_theta)
-              + n_samples_(i) * eta_scalar
+      logp += sums(i) * (theta(i) - log_eta_plus_exp_theta)
+              + n_samples(i) * eta_scalar
                     * (log(eta_scalar) - log_eta_plus_exp_theta);
     }
     return logp;
-  }
-
-  template <typename T_theta, typename T_eta>
-  inline Eigen::SparseMatrix<double> diff(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-      Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>& gradient,
-      const Eigen::Index hessian_block_size = 1) const {
-    using scalar_t = return_type_t<T_theta, T_eta>;
-    Eigen::VectorXd one = rep_vector(1, theta.size());
-    const Eigen::Index theta_size = theta.size();
-    T_eta eta_scalar = eta(0);
-    Eigen::Matrix<T_eta, Eigen::Dynamic, 1> sums_plus_n_eta
-        = sums_ + eta_scalar * n_samples_;
-    Eigen::Matrix<T_theta, Eigen::Dynamic, -1> exp_neg_theta = exp(-theta);
-
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> one_plus_exp
-        = one + eta_scalar * exp_neg_theta;
-    gradient = sums_ - elt_divide(sums_plus_n_eta, one_plus_exp);
-    Eigen::MatrixXd hessian_val = eta_scalar
-                                  * sums_plus_n_eta.cwiseProduct(elt_divide(
-                                      exp_neg_theta, square(one_plus_exp)));
-    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
-    hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
-    // hessian.col(0) = - common_term;
-    for (Eigen::Index i = 0; i < theta_size; i++) {
-      hessian.insert(i, i) = -hessian_val(i);
-    }
-    /*
-        hessian = -eta_scalar
-                  * sums_plus_n_eta.cwiseProduct(
-                        elt_divide(exp_neg_theta, square(one_plus_exp)));
-    */
-    return hessian;
-  }
-
-  template <typename T_theta, typename T_eta>
-  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
-  third_diff(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    using scalar_t = return_type_t<T_theta, T_eta>;
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    T_eta eta_scalar = eta(0);
-    Eigen::Matrix<T_eta, Eigen::Dynamic, 1> eta_vec
-        = rep_vector(eta_scalar, theta.size());
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> eta_plus_exp_theta
-        = eta_vec + exp_theta;
-
-    return -((sums_ + eta_scalar * n_samples_) * eta_scalar)
-                .cwiseProduct(exp_theta.cwiseProduct(
-                    elt_divide(eta_vec - exp_theta,
-                               square(eta_plus_exp_theta)
-                                   .cwiseProduct(eta_plus_exp_theta))));
-  }
-
-  template <typename T_theta, typename T_eta>
-  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
-  diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    using scalar_t = return_type_t<T_theta, T_eta>;
-    T_eta eta_scalar = eta(0);
-    Eigen::Matrix<T_eta, Eigen::Dynamic, 1> y_plus_eta
-        = y_ + rep_vector(eta_scalar, y_.size());
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> exp_theta_plus_eta
-        = exp_theta + rep_vector(eta_scalar, theta.size());
-
-    T_eta y_plus_eta_digamma_sum = 0;
-    for (Eigen::Index i = 0; i < y_.size(); i++)
-      y_plus_eta_digamma_sum += digamma(y_plus_eta(i));
-
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> gradient_eta(1);
-    gradient_eta(0)
-        = y_plus_eta_digamma_sum - y_.size() * digamma(eta_scalar)
-          - sum(elt_divide(sums_ + n_samples_ * eta_scalar, exp_theta_plus_eta))
-          + sum(n_samples_ * log(eta_scalar)
-                - n_samples_.cwiseProduct(log(exp_theta_plus_eta))
-                + n_samples_);
-    return gradient_eta;
-  }
-
-  template <typename T_theta, typename T_eta>
-  inline auto diff_theta_eta(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    using scalar_t = return_type_t<T_theta, T_eta>;
-    T_eta eta_scalar = eta(0);
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
-        theta.size(), 1);
-    diff_matrix.col(0) = -elt_divide(
-        n_samples_ - sums_.cwiseProduct(exp_neg_theta),
-        square(eta_scalar * exp_neg_theta + rep_vector(1, theta.size())));
-    return diff_matrix;
-  }
-
-  // TODO: Address special case where we have an empty group (induces zero
-  // elements in W).
-  template <typename T_theta, typename T_eta>
-  inline Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
-                       Eigen::Dynamic>
-  diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    using scalar_t = return_type_t<T_theta, T_eta>;
-    T_eta eta_scalar = eta(0);
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> one_plus_eta_exp
-        = rep_vector(1, theta.size()) + eta_scalar * exp_neg_theta;
-
-    Eigen::Matrix<scalar_t, Eigen::Dynamic, Eigen::Dynamic> diff_matrix(
-        theta.size(), 1);
-
-    diff_matrix.col(0) = -elt_divide(
-        exp_neg_theta.cwiseProduct(-eta_scalar
-                                       * exp_neg_theta.cwiseProduct(sums_)
-                                   + sums_ + 2 * eta_scalar * n_samples_),
-        square(one_plus_eta_exp).cwiseProduct(one_plus_eta_exp));  // );
-
-    return diff_matrix;
   }
 };
 
@@ -194,14 +59,14 @@ template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
-    const Eta& eta,
-    double tolerance, long int max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, const Theta0& theta_0,
+    const Eta& eta, double tolerance, long int max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search, const Theta0& theta_0,
     CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
-  laplace_options ops{hessian_block_size, solver,
-    max_steps_line_search, tolerance, max_num_steps};
-  return laplace_marginal_density(
-      diff_neg_binomial_2_log(to_vector(y), y_index, n_samples, sums, theta_0.size()),
+  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+                      tolerance, max_num_steps};
+  return laplace_marginal_density(neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(to_vector(y), y_index, n_samples, sums),
       std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
       tolerance, max_num_steps, hessian_block_size, solver,
       max_steps_line_search, std::forward<Args>(args)...);
@@ -211,14 +76,13 @@ template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
-    const Eta& eta,
-    const Theta0& theta_0, CovarFun&& covariance_function, std::ostream* msgs,
-    Args&&... args) {
+    const Eta& eta, const Theta0& theta_0, CovarFun&& covariance_function,
+    std::ostream* msgs, Args&&... args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(
-      diff_neg_binomial_2_log(to_vector(y), y_index, n_samples, sums, theta_0.size()),
-      std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
-      ops, std::forward<Args>(args)...);
+  return laplace_marginal_density(neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(to_vector(y), y_index, n_samples, sums),
+      std::forward<CovarFun>(covariance_function), eta, theta_0, msgs, ops,
+      std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

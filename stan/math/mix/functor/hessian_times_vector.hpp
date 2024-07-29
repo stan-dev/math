@@ -14,11 +14,11 @@ namespace math {
  * to handle functions which take in arguments eta, delta, delta_int,
  * and pstream.
  */
-template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr>
+template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr,
+typename... Args>
 inline Eigen::VectorXd hessian_times_vector(
     const F& f, const Eigen::VectorXd& x, const Eta& eta,
-    const Eigen::VectorXd& delta, const std::vector<int>& delta_int,
-    const Eigen::VectorXd& v, std::ostream* pstream = 0) {
+    const Eigen::VectorXd& v, Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index x_size = x.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var = x;
@@ -26,11 +26,10 @@ inline Eigen::VectorXd hessian_times_vector(
   for (Eigen::Index i = 0; i < x_size; i++) {
     x_fvar(i) = fvar<var>(x_var(i), v(i));
   }
-  fvar<var> fx_fvar = f(x_fvar, eta, delta, delta_int, pstream);
+  fvar<var> fx_fvar = f(x_fvar, eta, args...);
   grad(fx_fvar.d_.vi_);
   return x_var.adj();
 }
-
 
 }  // namespace math
 }  // namespace stan

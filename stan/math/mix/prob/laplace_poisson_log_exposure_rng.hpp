@@ -29,10 +29,8 @@ laplace_marginal_tol_poisson_2_log_rng(
   y_and_ye << y_vec, ye;
   laplace_options ops{hessian_block_size, solver,
     max_steps_line_search, tolerance, max_num_steps};
-  poisson_log_exposure_likelihood L;
-  return laplace_base_rng(
-      laplace_likelihood<poisson_log_exposure_likelihood>(L, y_and_ye, n_samples,
-                                                       msgs),
+  return laplace_base_rng(poisson_log_exposure_likelihood{},
+      std::forward_as_tuple(y_and_ye, n_samples),
       covariance_function, eta_dummy, theta_0, rng, msgs, ops,
       std::forward<TrainTuple>(train_tuple),
       std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
@@ -62,9 +60,8 @@ laplace_marginal_poisson_2_log_rng(const std::vector<int>& y,
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(
-      laplace_likelihood<poisson_log_exposure_likelihood>(
-          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+  return laplace_base_rng(poisson_log_exposure_likelihood{},
+      std::forward_as_tuple(y_and_ye, n_samples),
       covariance_function, eta_dummy, theta_0, rng, msgs, ops,
       std::forward<TrainTuple>(train_tuple),
       std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
