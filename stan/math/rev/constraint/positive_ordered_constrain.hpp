@@ -43,7 +43,6 @@ inline auto positive_ordered_constrain(const T& x) {
   }
 
   arena_t<ret_type> y = y_val;
-
   reverse_pass_callback([arena_x, exp_x, y]() mutable {
     const size_t N = arena_x.size();
     double rolling_adjoint_sum = 0.0;
