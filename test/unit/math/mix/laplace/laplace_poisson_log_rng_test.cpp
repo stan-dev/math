@@ -77,13 +77,15 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
-      sums, n_samples, theta_0, covariance_function, rng, nullptr,
-      std::make_tuple(), std::make_tuple(), phi(0), phi(1));
+      sums, n_samples, theta_0, covariance_function,
+      std::make_tuple(), std::make_tuple(), rng, nullptr,
+      phi(0), phi(1));
 
   rng.seed(1954);
   Eigen::MatrixXd theta_pred_exp = laplace_marginal_poisson_2_log_rng(
-      sums, n_samples, ye, theta_0, covariance_function, rng, nullptr,
-      std::make_tuple(), std::make_tuple(), phi(0), phi(1));
+      sums, n_samples, ye, theta_0, covariance_function,
+      std::make_tuple(), std::make_tuple(), rng, nullptr,
+      phi(0), phi(1));
 
   // Compute exact mean and covariance.
   Eigen::VectorXd theta_root

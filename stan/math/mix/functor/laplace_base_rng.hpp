@@ -27,15 +27,14 @@ template <typename D, typename LLArgs, typename ThetaMatrix, typename EtaMatrix,
           typename... Args,
           require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
-    D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function, const ThetaMatrix& eta,
-    const EtaMatrix& theta_0, RNG& rng, std::ostream* msgs,
+    D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
+    const ThetaMatrix& eta, const EtaMatrix& theta_0,
     const laplace_options& options, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, Args&&... args) {
+    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs,
+    Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
-
   auto eta_dbl = value_of(eta);
   auto md_est = apply(
       [&](auto&&... args_val) {
@@ -50,9 +49,7 @@ inline Eigen::VectorXd laplace_base_rng(
         return covariance_function(args_val..., msgs);
       },
       std::tuple_cat(std::forward<PredTuple>(pred_tuple), args_dbl));
-
   VectorXd pred_mean = covariance_pred * md_est.l_grad.head(theta_0.rows());
-
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(
         md_est.L, md_est.W_r * covariance_pred);

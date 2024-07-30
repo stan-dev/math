@@ -59,10 +59,11 @@ template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
-    const Eta& eta, double tolerance, long int max_num_steps,
+    const Eta& eta, const Theta0& theta_0,
+    CovarFun&& covariance_function,
+    double tolerance, long int max_num_steps,
     const int hessian_block_size, const int solver,
-    const int max_steps_line_search, const Theta0& theta_0,
-    CovarFun&& covariance_function, std::ostream* msgs, Args&&... args) {
+    const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(neg_binomial_2_log_likelihood{},

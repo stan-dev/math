@@ -42,9 +42,9 @@ template <typename CovarF, typename ThetaMatrix, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
+    const ThetaMatrix& theta_0, CovarF&& covariance_function,
     double tolerance, long int max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search,
-    const ThetaMatrix& theta_0, CovarF&& covariance_function,
     std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;

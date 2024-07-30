@@ -24,11 +24,13 @@ template <typename CovarFun, typename ThetaMatrix, class RNG,
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
+    const ThetaMatrix& theta_0,
+    CovarFun&& covariance_function,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     const double tolerance, const long int max_num_steps,
     const int hessian_block_size, const int solver,
-    const int max_steps_line_search, const ThetaMatrix& theta_0,
-    CovarFun&& covariance_function, RNG& rng, std::ostream* msgs,
-    TrainTuple&& train_tuple, PredTuple&& pred_tuple, Args&&... args) {
+    const int max_steps_line_search, RNG& rng, std::ostream* msgs,
+    Args&&... args) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta_dummy;
@@ -46,17 +48,19 @@ inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_bernoulli_logit_rng(const std::vector<int>& y,
                                      const std::vector<int>& n_samples,
                                      const ThetaMatrix& theta_0,
-                                     CovarFun&& covariance_function, RNG& rng,
-                                     std::ostream* msgs,
+                                     CovarFun&& covariance_function,
                                      TrainTuple&& train_tuple,
-                                     PredTuple&& pred_tuple, Args&&... args) {
+                                     PredTuple&& pred_tuple,
+                                     RNG& rng,
+                                     std::ostream* msgs,
+                                     Args&&... args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta_dummy;
   return laplace_base_rng(bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples),
-      covariance_function, eta_dummy, theta_0, rng, msgs, ops,
-      std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
+      covariance_function, eta_dummy, theta_0, ops,
+      std::make_tuple(), std::make_tuple(), rng, msgs,
+      std::forward<Args>(args)...);
 }
 
 }  // namespace math
