@@ -582,7 +582,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
       },
       value_args);
   const Eigen::Index theta_size = md_est.theta.size();
-  const Eigen::Index eta_size_ = eta_arena.size();
+  const Eigen::Index eta_size = eta_arena.size();
   // Solver 1, 2
   Eigen::MatrixXd R;
   // Solver 3
@@ -602,7 +602,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
 
     Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(
         md_est.L, md_est.W_r * md_est.covariance);
-    if (options.hessian_block_size == 1 && eta_size_ == 0) {
+    if (options.hessian_block_size == 1 && eta_size == 0) {
       s2 = 0.5
            * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
                  .cwiseProduct(laplace_likelihood::third_diff(
@@ -648,7 +648,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
   // TODO: Why does remove this phi_size != 0 check work but for eta it fails?
   // Because we have an eta_dummy sometimes...
   if (is_any_var<Args...>::value && !is_constant<Eta>::value
-      && eta_size_ != 0) {
+      && eta_size != 0) {
     {
       const nested_rev_autodiff nested;
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
@@ -673,7 +673,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
         args_refs);
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, args_refs);
 
-    Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size_);
+    Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size);
 
     Eigen::VectorXd v;
     if (options.solver == 1 || options.solver == 2) {
@@ -686,7 +686,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
       arena_matrix<
           Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>>
           eta_adj_arena
-          = md_est.l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+          = md_est.l_grad.tail(eta_size) + partial_parm.tail(eta_size)
             + laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
                                                     eta_dbl, ll_args, msgs);
       return make_callback_var(
@@ -730,9 +730,9 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
               },
               args_arena, arg_adj_arena);
         });
-  } else if (!is_constant<Eta>::value && eta_size_ != 0) {
+  } else if (!is_constant<Eta>::value && eta_size != 0) {
     if constexpr (Eta::RowsAtCompileTime != 0 && Eta::ColsAtCompileTime != 0) {
-      Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size_);
+      Eigen::VectorXd diff_eta = md_est.l_grad.tail(eta_size);
 
       Eigen::VectorXd v;
       if (options.solver == 1 || options.solver == 2) {
@@ -743,7 +743,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
       }
 
       arena_matrix<Eigen::VectorXd> eta_adj_arena
-          = md_est.l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+          = md_est.l_grad.tail(eta_size) + partial_parm.tail(eta_size)
             + laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
                                                     eta_dbl, ll_args, msgs);
 
