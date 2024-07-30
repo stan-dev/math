@@ -106,6 +106,7 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
   int n_blocks = theta_size / hessian_block_size;
   fvar<fvar<var>> target_ffvar = 0;
   VectorXd v(theta_size);
+  VectorXd w(theta_size);
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v.setZero();
     for (int j = i; j < theta_size; j += hessian_block_size) {
@@ -115,16 +116,15 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
     for (int j = 0; j < theta_size; ++j) {
       theta_fvar(j) = fvar<var>(theta_var(j), v(j));
     }
-    Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
-        = eta_var.template cast<fvar<var>>();
-    fvar<var> f_fvar = f(theta_fvar, eta_fvar, args...);
-    VectorXd w(theta_size);
+    w.setZero();
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         w(k + j * hessian_block_size)
             = A(k + j * hessian_block_size, i + j * hessian_block_size);
       }
     }
+    Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
+        = eta_var.template cast<fvar<var>>();
     Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
     for (int j = 0; j < theta_size; ++j) {
       theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
@@ -132,6 +132,7 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
     Matrix<fvar<fvar<var>>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>
         eta_ffvar = eta_fvar.template cast<fvar<fvar<var>>>();
 
+    fvar<var> f_fvar = f(theta_fvar, eta_fvar, args...);
     target_ffvar += f(theta_ffvar, eta_ffvar, args...);
   }
   grad(target_ffvar.d_.d_.vi_);
