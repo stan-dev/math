@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,8 +24,6 @@ namespace math {
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
-  using T = value_type_t<Vec>;
-
   int Km1 = y.size();
   plain_type_t<Vec> x(Km1 + 1);
   // copy the first Km1 elements
