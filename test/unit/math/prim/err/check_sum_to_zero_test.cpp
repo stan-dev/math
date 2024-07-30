@@ -60,7 +60,6 @@ TEST(ErrorHandlingMatrix, checkSumToZero_message_sum) {
   EXPECT_TRUE(std::string::npos != message.find("sum(y[1]) = 0.1")) << message;
 }
 
-
 TEST(ErrorHandlingMatrix, checkSumToZero_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y_vec(2);
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> y{y_vec, y_vec, y_vec};
