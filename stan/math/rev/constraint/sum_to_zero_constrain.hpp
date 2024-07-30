@@ -46,10 +46,9 @@ inline auto sum_to_zero_constrain(const T& y) {
 
   arena_x.coeffRef(N) = x_N;
 
-
   reverse_pass_callback([arena_y, arena_x, x_N, N]() mutable {
     arena_y.adj() += arena_x.adj().head(N);
-     x_N.adj() += arena_x.adj().coeff(N);
+    x_N.adj() += arena_x.adj().coeff(N);
   });
 
   return ret_type(arena_x);
