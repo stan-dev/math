@@ -25,12 +25,13 @@ namespace math {
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
-  int Km1 = y.size();
+  const auto Km1 = y.size();
   plain_type_t<Vec> x(Km1 + 1);
   // copy the first Km1 elements
-  x.head(Km1) = y;
+  auto&& y_ref = to_ref(y);
+  x.head(Km1) = y_ref;
   // set the last element to -sum(y)
-  x.coeffRef(Km1) = -sum(y);
+  x.coeffRef(Km1) = -sum(y_ref);
   return x;
 }
 

@@ -29,28 +29,20 @@ template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto sum_to_zero_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 
-  size_t N = y.size();
-  Eigen::VectorXd x_val(N + 1);
-
-  arena_t<T> arena_y = y;
-
+  const auto N = y.size();
   if (unlikely(N == 0)) {
-    x_val << 0;
-    return ret_type(x_val);
+    return ret_type(Eigen::VectorXd{{0}});
   }
-
-  x_val.head(N) = y.val();
+  Eigen::VectorXd x_val = Eigen::VectorXd::Zero(N + 1);
+  auto arena_y = to_arena(y);
+  double x_sum = -sum(arena_y.val());
+  x_val.head(N) = arena_y.val();
+  x_val(N) = x_sum;
   arena_t<ret_type> arena_x = x_val;
-
-  var x_N = -sum(y);
-
-  arena_x.coeffRef(N) = x_N;
-
-  reverse_pass_callback([arena_y, arena_x, x_N, N]() mutable {
-    arena_y.adj() += arena_x.adj().head(N);
-    x_N.adj() += arena_x.adj().coeff(N);
+  reverse_pass_callback([arena_y, arena_x, x_sum, N]() mutable {
+    arena_y.adj().array() -= arena_x.adj_op()(N);
+    arena_y.adj() += arena_x.adj_op().head(N);
   });
-
   return ret_type(arena_x);
 }
 
