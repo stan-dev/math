@@ -17,7 +17,8 @@ namespace internal {
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
-inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta, Args&&... args) {
+inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
+                           Args&&... args) {
   return f(theta, eta, args...);
 }
 
@@ -61,7 +62,6 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
     return hessian_block_diag(f, theta, eta, hessian_block_size, args...);
   }
 }
-
 
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -179,16 +179,19 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const Theta& v,
   return eta_var.adj();
 }
 
-}
+}  // namespace internal
 
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr, require_tuple_t<TupleArgs>* = nullptr>
+          require_eigen_t<Eta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
 inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
                            TupleArgs&& ll_tup, std::ostream* msgs) {
-  return apply([](auto&& f, auto&& theta, auto&& eta, auto&& msgs,
-                  auto&&... args) { return internal::log_likelihood(f, theta, eta, args..., msgs); },
-               ll_tup, f, theta, eta, msgs);
+  return apply(
+      [](auto&& f, auto&& theta, auto&& eta, auto&& msgs, auto&&... args) {
+        return internal::log_likelihood(f, theta, eta, args..., msgs);
+      },
+      ll_tup, f, theta, eta, msgs);
 }
 
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
@@ -204,7 +207,8 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
   return apply(
       [](auto&& f, auto&& theta, auto&& eta, auto&& gradient,
          auto hessian_block_size, auto* msgs, auto&&... args) {
-        return internal::diff(f, theta, eta, gradient, hessian_block_size, args..., msgs);
+        return internal::diff(f, theta, eta, gradient, hessian_block_size,
+                              args..., msgs);
       },
       ll_tuple, f, theta, eta, gradient, hessian_block_size, msgs);
 }
@@ -233,7 +237,8 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
   return apply(
       [](auto&& f, auto&& theta, auto&& eta, auto&& A, auto hessian_block_size,
          auto* msgs, auto&&... args) {
-        return internal::compute_s2(f, theta, eta, A, hessian_block_size, args..., msgs);
+        return internal::compute_s2(f, theta, eta, A, hessian_block_size,
+                                    args..., msgs);
       },
       ll_args, f, theta, eta, A, hessian_block_size, msgs);
 }

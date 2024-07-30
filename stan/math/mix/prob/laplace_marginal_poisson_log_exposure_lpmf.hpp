@@ -66,11 +66,10 @@ template <typename CovarFun, typename YeVec, typename ThetaVec,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const YeVec& ye, const ThetaVec& theta_0,
-    CovarFun&& covariance_function,
-    double tolerance, long int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
+    const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
+    double tolerance, long int max_num_steps, const int hessian_block_size,
+    const int solver, const int max_steps_line_search, std::ostream* msgs,
+    Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
@@ -78,7 +77,8 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
   y_and_ye << y_vec, ye;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_marginal_density(poisson_log_exposure_likelihood{},
+  return laplace_marginal_density(
+      poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);
@@ -94,7 +94,8 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(poisson_log_exposure_likelihood{},
+  return laplace_marginal_density(
+      poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
       ops, std::forward<Args>(args)...);

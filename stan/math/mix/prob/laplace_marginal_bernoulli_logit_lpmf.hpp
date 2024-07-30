@@ -42,18 +42,17 @@ template <typename CovarF, typename ThetaMatrix, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaMatrix& theta_0, CovarF&& covariance_function,
-    double tolerance, long int max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search,
-    std::ostream* msgs, Args&&... args) {
+    const ThetaMatrix& theta_0, CovarF&& covariance_function, double tolerance,
+    long int max_num_steps, const int hessian_block_size, const int solver,
+    const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_marginal_density(bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples),
-      covariance_function, eta_dummy, theta_0, msgs, ops,
-      std::forward<Args>(args)...);
+  return laplace_marginal_density(
+      bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples), covariance_function,
+      eta_dummy, theta_0, msgs, ops, std::forward<Args>(args)...);
 }
 
 template <typename CovarF, typename ThetaMatrix, typename... Args,
@@ -65,10 +64,10 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples),
-      covariance_function, eta_dummy, theta_0, msgs, ops,
-      std::forward<Args>(args)...);
+  return laplace_marginal_density(
+      bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples), covariance_function,
+      eta_dummy, theta_0, msgs, ops, std::forward<Args>(args)...);
 }
 
 }  // namespace math

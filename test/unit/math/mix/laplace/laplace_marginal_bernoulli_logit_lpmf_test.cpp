@@ -58,8 +58,8 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_bernoulli_logit_lpmf(
-              y, n_samples, theta_0, kernel_functor, tolerance, max_num_steps, hessian_block_size,
-              solver_num, max_steps_line_search, nullptr, x,
+              y, n_samples, theta_0, kernel_functor, tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr, x,
               alpha, rho);
         };
         stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);

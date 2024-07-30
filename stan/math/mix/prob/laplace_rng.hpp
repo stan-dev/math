@@ -17,9 +17,9 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi)
  * where the log likelihood is given by L_f.
  */
-template <typename LFun, typename LArgs, typename EtaVec, typename DeltaVec, typename CovarFun,
-          typename ThetaVec, typename RNG, typename TrainTuple,
-          typename PredTuple, typename... Args>
+template <typename LFun, typename LArgs, typename EtaVec, typename DeltaVec,
+          typename CovarFun, typename ThetaVec, typename RNG,
+          typename TrainTuple, typename PredTuple, typename... Args>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const double tolerance,
     const long int max_num_steps, const int hessian_block_size,
@@ -27,32 +27,30 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
     CovarFun&& K_f, RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, Args&&... args) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                      tolerance, max_num_steps};
-  return laplace_base_rng(std::forward<LFun>(L_f),
-      l_args, K_f, eta, theta_0,
-      ops, std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple), rng, msgs, std::forward<Args>(args)...);
+                            tolerance, max_num_steps};
+  return laplace_base_rng(std::forward<LFun>(L_f), l_args, K_f, eta, theta_0,
+                          ops, std::forward<TrainTuple>(train_tuple),
+                          std::forward<PredTuple>(pred_tuple), rng, msgs,
+                          std::forward<Args>(args)...);
 }
 
-template <typename LFun, typename LArgs, typename CovarFun,
-          typename ThetaVec, typename RNG, typename TrainTuple,
-          typename PredTuple, typename... Args>
+template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
+          typename RNG, typename TrainTuple, typename PredTuple,
+          typename... Args>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
-    LFun&& L_f, LArgs&& l_args,
-    const ThetaVec& theta_0, CovarFun&& K_f,
+    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
     const double tolerance, const long int max_num_steps,
     const int hessian_block_size, const int solver,
-    const int max_steps_line_search,
-    TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple,
-    RNG& rng, std::ostream* msgs, Args&&... args) {
+    const int max_steps_line_search, TrainTuple&& train_tuple,
+    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, Args&&... args) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                      tolerance, max_num_steps};
+                            tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta;
-  return laplace_base_rng(std::forward<LFun>(L_f),
-      std::forward<LArgs>(l_args),
-      K_f, eta, theta_0, ops, std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple), rng, msgs, std::forward<Args>(args)...);
+  return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
+                          K_f, eta, theta_0, ops,
+                          std::forward<TrainTuple>(train_tuple),
+                          std::forward<PredTuple>(pred_tuple), rng, msgs,
+                          std::forward<Args>(args)...);
 }
 
 template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
@@ -60,32 +58,30 @@ template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
           typename PredTuple, typename... Args>
 inline Eigen::VectorXd laplace_marginal_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const ThetaVec& theta_0,
-    CovarFun&& K_f, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, Args&&... args) {
+    CovarFun&& K_f, TrainTuple&& train_tuple, PredTuple&& pred_tuple, RNG& rng,
+    std::ostream* msgs, Args&&... args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(std::forward<LFun>(L_f),
-      std::forward<LArgs>(l_args),
-      K_f, eta, theta_0, ops, std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple), rng, msgs,
-      std::forward<Args>(args)...);
+  return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
+                          K_f, eta, theta_0, ops,
+                          std::forward<TrainTuple>(train_tuple),
+                          std::forward<PredTuple>(pred_tuple), rng, msgs,
+                          std::forward<Args>(args)...);
 }
 
-template <typename LFun, typename LArgs, typename CovarFun,
-          typename ThetaVec, typename RNG, typename TrainTuple,
-          typename PredTuple, typename... Args>
+template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
+          typename RNG, typename TrainTuple, typename PredTuple,
+          typename... Args>
 inline Eigen::VectorXd laplace_marginal_rng(
-    LFun&& L_f, LArgs&& l_args,
-    const ThetaVec& theta_0, CovarFun&& K_f, RNG& rng,
-    TrainTuple&& train_tuple, PredTuple&& pred_tuple, std::ostream* msgs,
-    Args&&... args) {
+    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
+    RNG& rng, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    std::ostream* msgs, Args&&... args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta;
-  return laplace_base_rng(std::forward<LFun>(L_f),
-      std::forward<LArgs>(l_args),
-      K_f, eta, theta_0,
-      ops, std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple),
-      rng, msgs, std::forward<Args>(args)...);
+  return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
+                          K_f, eta, theta_0, ops,
+                          std::forward<TrainTuple>(train_tuple),
+                          std::forward<PredTuple>(pred_tuple), rng, msgs,
+                          std::forward<Args>(args)...);
 }
 
 }  // namespace math

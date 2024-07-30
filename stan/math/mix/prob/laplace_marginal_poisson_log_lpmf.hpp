@@ -60,9 +60,9 @@ template <typename CovarFun, typename ThetaVec, typename... Args,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaVec& theta_0, CovarFun&& covariance_function,
-    double tolerance, long int max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
+    const ThetaVec& theta_0, CovarFun&& covariance_function, double tolerance,
+    long int max_num_steps, const int hessian_block_size, const int solver,
+    const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,

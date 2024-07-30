@@ -30,17 +30,16 @@ inline Eigen::VectorXd laplace_base_rng(
     D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
     const ThetaMatrix& eta, const EtaMatrix& theta_0,
     const laplace_options& options, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs,
-    Args&&... args) {
+    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
   auto eta_dbl = value_of(eta);
   auto md_est = apply(
       [&](auto&&... args_val) {
-        return laplace_marginal_density_est(ll_fun, ll_args, covariance_function,
-                                            eta_dbl, value_of(theta_0), msgs,
-                                            options, args_val...);
+        return laplace_marginal_density_est(
+            ll_fun, ll_args, covariance_function, eta_dbl, value_of(theta_0),
+            msgs, options, args_val...);
       },
       std::tuple_cat(std::forward<TrainTuple>(train_tuple), args_dbl));
   // Modified R&W method

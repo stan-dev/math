@@ -647,8 +647,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
 
   // TODO: Why does remove this phi_size != 0 check work but for eta it fails?
   // Because we have an eta_dummy sometimes...
-  if (is_any_var<Args...>::value && !is_constant<Eta>::value
-      && eta_size != 0) {
+  if (is_any_var<Args...>::value && !is_constant<Eta>::value && eta_size != 0) {
     {
       const nested_rev_autodiff nested;
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var

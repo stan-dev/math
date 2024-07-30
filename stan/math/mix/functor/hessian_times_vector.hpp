@@ -15,10 +15,12 @@ namespace math {
  * and pstream.
  */
 template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr,
-typename... Args>
-inline Eigen::VectorXd hessian_times_vector(
-    const F& f, const Eigen::VectorXd& x, const Eta& eta,
-    const Eigen::VectorXd& v, Args&&... args) {
+          typename... Args>
+inline Eigen::VectorXd hessian_times_vector(const F& f,
+                                            const Eigen::VectorXd& x,
+                                            const Eta& eta,
+                                            const Eigen::VectorXd& v,
+                                            Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index x_size = x.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var = x;
