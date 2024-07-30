@@ -22,7 +22,8 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1.
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   int Km1 = y.size();
   plain_type_t<Vec> x(Km1 + 1);
@@ -47,7 +48,8 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
                                                value_type_t<Vec>& lp) {
   return sum_to_zero_constrain(y);
