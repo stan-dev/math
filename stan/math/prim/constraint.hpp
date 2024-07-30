@@ -37,6 +37,8 @@
 #include <stan/math/prim/constraint/stochastic_column_free.hpp>
 #include <stan/math/prim/constraint/stochastic_row_constrain.hpp>
 #include <stan/math/prim/constraint/stochastic_row_free.hpp>
+#include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
+#include <stan/math/prim/constraint/sum_to_zero_free.hpp>
 #include <stan/math/prim/constraint/ub_constrain.hpp>
 #include <stan/math/prim/constraint/ub_free.hpp>
 #include <stan/math/prim/constraint/unit_vector_constrain.hpp>
