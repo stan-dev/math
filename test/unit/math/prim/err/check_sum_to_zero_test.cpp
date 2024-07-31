@@ -7,8 +7,8 @@
 TEST(ErrorHandlingMatrix, checkSumToZero_edges) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> zero(0);
 
-  EXPECT_NO_THROW(
-      stan::math::check_sum_to_zero("checkSumToZero", "zero", zero));
+  EXPECT_THROW(stan::math::check_sum_to_zero("checkSumToZero", "zero", zero),
+               std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y_vec(1);
   y_vec << 0.0;

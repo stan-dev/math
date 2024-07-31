@@ -26,6 +26,9 @@ template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   const auto Km1 = y.size();
+  if (unlikely(Km1 == 0)) {
+    return plain_type_t<Vec>(Eigen::VectorXd{{0}});
+  }
   plain_type_t<Vec> x(Km1 + 1);
   // copy the first Km1 elements
   auto&& y_ref = to_ref(y);

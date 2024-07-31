@@ -28,9 +28,7 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& x) {
   const auto& x_ref = to_ref(x);
   check_sum_to_zero("stan::math::sum_to_zero_free", "sum_to_zero variable",
                     x_ref);
-  if (x_ref.size() == 0) {
-    return plain_type_t<Vec>(0);
-  }
+
   return x_ref.head(x_ref.size() - 1);
 }
 

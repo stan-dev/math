@@ -24,13 +24,17 @@ namespace math {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
+ * @throw `std::invalid_argument` if `theta` is a 0-vector
  * @throw `std::domain_error` if the vector does not sum to zero
  */
 template <typename T, require_matrix_t<T>* = nullptr>
 void check_sum_to_zero(const char* function, const char* name, const T& theta) {
   using std::fabs;
+  // the size-zero case is technically a valid sum-to-zero vector,
+  // but it cannot be unconstrained to anything
+  check_nonzero_size(function, name, theta);
   auto&& theta_ref = to_ref(value_of_rec(theta));
-  if (!(fabs(theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
+  if (unlikely(!(fabs(theta_ref.sum()) <= CONSTRAINT_TOLERANCE))) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
       scalar_type_t<T> sum = theta_ref.sum();
@@ -52,6 +56,7 @@ void check_sum_to_zero(const char* function, const char* name, const T& theta) {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
+ * @throw `std::invalid_argument` if `theta` is a 0-vector
  * @throw `std::domain_error` if the vector does not sum to zero
  */
 template <typename T, require_std_vector_t<T>* = nullptr>

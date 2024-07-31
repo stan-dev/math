@@ -31,7 +31,7 @@ inline auto sum_to_zero_constrain(const T& y) {
 
   const auto N = y.size();
   if (unlikely(N == 0)) {
-    return ret_type(Eigen::VectorXd{{0}});
+    return arena_t<ret_type>(Eigen::VectorXd{{0}});
   }
   Eigen::VectorXd x_val = Eigen::VectorXd::Zero(N + 1);
   auto arena_y = to_arena(y);
@@ -43,7 +43,7 @@ inline auto sum_to_zero_constrain(const T& y) {
     arena_y.adj().array() -= arena_x.adj_op()(N);
     arena_y.adj() += arena_x.adj_op().head(N);
   });
-  return ret_type(arena_x);
+  return arena_x;
 }
 
 /**
@@ -61,7 +61,7 @@ inline auto sum_to_zero_constrain(const T& y) {
  * @return Zero-sum vector of dimensionality K.
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-auto sum_to_zero_constrain(const T& y, scalar_type_t<T>& lp) {
+inline auto sum_to_zero_constrain(const T& y, scalar_type_t<T>& lp) {
   return sum_to_zero_constrain(y);
 }
 
