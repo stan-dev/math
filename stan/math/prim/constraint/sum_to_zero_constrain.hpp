@@ -14,9 +14,8 @@ namespace math {
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined such that the first K-1
- * elements are unconstrained and the last element is the negative
- * sum of those elements.
+ * The sum-to-zero transform is defined using the inverse of the
+ * isometric log ratio transform (ILR)
  *
  * @tparam Vec type of the vector
  * @param y Free vector input of dimensionality K - 1.
@@ -25,16 +24,20 @@ namespace math {
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
-  const auto Km1 = y.size();
-  if (unlikely(Km1 == 0)) {
+  const auto N = y.size() + 1;
+  if (unlikely(N == 1)) {
     return plain_type_t<Vec>(Eigen::VectorXd{{0}});
   }
-  plain_type_t<Vec> x(Km1 + 1);
-  // copy the first Km1 elements
+
   auto&& y_ref = to_ref(y);
-  x.head(Km1) = y_ref;
-  // set the last element to -sum(y)
-  x.coeffRef(Km1) = -sum(y_ref);
+
+  // straightforward port of Stan code, may be optimized
+  Eigen::VectorXd ns = linspaced_vector(N - 1, 1, N - 1);
+  auto w = y_ref.array() / sqrt(ns.array() * (ns.array() + 1));
+
+  plain_type_t<Vec> x = append_row(reverse(cumulative_sum(reverse(w))), 0)
+                        - append_row(0, ns.array() * w.array());
+
   return x;
 }
 
