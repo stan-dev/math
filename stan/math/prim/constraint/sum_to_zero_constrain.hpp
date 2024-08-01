@@ -25,18 +25,24 @@ template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   const auto N = y.size() + 1;
+
+  plain_type_t<Vec> x = Eigen::VectorXd::Zero(N);
   if (unlikely(N == 1)) {
-    return plain_type_t<Vec>(Eigen::VectorXd{{0}});
+    return x;
   }
 
   auto&& y_ref = to_ref(y);
 
-  // straightforward port of Stan code, may be optimized
-  Eigen::VectorXd ns = linspaced_vector(N - 1, 1, N - 1);
-  auto w = y_ref.array() / sqrt(ns.array() * (ns.array() + 1));
+  typename plain_type_t<Vec>::Scalar cumsum(0);
+  for (int i = N - 2; i >= 0; --i) {
+    double n = i + 1;
+    auto w = y_ref(i) * inv_sqrt(n * (n + 1));
+    cumsum += w;
 
-  plain_type_t<Vec> x = append_row(reverse(cumulative_sum(reverse(w))), 0)
-                        - append_row(0, ns.array() * w.array());
+    x.coeffRef(N - 2 - i) += cumsum;
+
+    x.coeffRef(i + 1) -= w * n;
+  }
 
   return x;
 }
