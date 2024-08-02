@@ -19,17 +19,34 @@ namespace math {
  * sum of those elements.
  *
  * @tparam ColVec a column vector type
- * @param x Vector of length K.
+ * @param z Vector of length K.
  * @return Free vector of length (K-1).
- * @throw std::domain_error if x does not sum to zero
+ * @throw std::domain_error if z does not sum to zero
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_free(const Vec& x) {
-  const auto& x_ref = to_ref(x);
+inline plain_type_t<Vec> sum_to_zero_free(const Vec& z) {
+  const auto& z_ref = to_ref(z);
   check_sum_to_zero("stan::math::sum_to_zero_free", "sum_to_zero variable",
-                    x_ref);
+                    z_ref);
 
-  return x_ref.head(x_ref.size() - 1);
+  const auto N = z.size() - 1;
+
+  plain_type_t<Vec> y = Eigen::VectorXd::Zero(N);
+  if (unlikely(N == 0)) {
+    return y;
+  }
+
+  y.coeffRef(N - 1) = -z_ref(N) * sqrt(N * (N + 1)) / N;
+  typename plain_type_t<Vec>::Scalar total(0);
+
+  for (int i = N - 2; i >= 0; --i) {
+    double n = i + 1;
+    auto w = y(i + 1) / sqrt((n + 1) * (n + 2));
+    total += w;
+    y.coeffRef(i) = (total - z_ref(i + 1)) * sqrt(n * (n + 1)) / n;
+  }
+
+  return y;
 }
 
 /**
@@ -37,12 +54,12 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& x) {
  * in a standard vector.
  * @tparam T A standard vector with with a `value_type` which inherits from
  *  `Eigen::MatrixBase` with compile time rows or columns equal to 1.
- * @param x The standard vector to untransform.
+ * @param z The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto sum_to_zero_free(const T& x) {
+auto sum_to_zero_free(const T& z) {
   return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return sum_to_zero_free(v); });
+      z, [](auto&& v) { return sum_to_zero_free(v); });
 }
 
 }  // namespace math

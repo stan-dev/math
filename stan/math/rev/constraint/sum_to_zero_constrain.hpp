@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>

@@ -11,6 +11,8 @@ TEST(prob_transform, sum_to_zero_rt0) {
   std::vector<Matrix<double, Dynamic, 1>> x_vec{x, x, x};
   std::vector<Matrix<double, Dynamic, 1>> y_vec
       = stan::math::sum_to_zero_constrain<false>(x_vec, lp);
+  EXPECT_NO_THROW(stan::math::check_sum_to_zero("checkSumToZero", "y", y_vec));
+
   for (auto&& y_i : y_vec) {
     EXPECT_MATRIX_FLOAT_EQ(Eigen::VectorXd::Zero(5), y_i);
   }
