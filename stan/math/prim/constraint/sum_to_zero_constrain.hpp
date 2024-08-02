@@ -24,23 +24,22 @@ namespace math {
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
-  const auto N = y.size() + 1;
+  const auto N = y.size();
 
-  plain_type_t<Vec> x = Eigen::VectorXd::Zero(N);
-  if (unlikely(N == 1)) {
+  plain_type_t<Vec> x = Eigen::VectorXd::Zero(N+1);
+  if (unlikely(N == 0)) {
     return x;
   }
 
   auto&& y_ref = to_ref(y);
 
-  typename plain_type_t<Vec>::Scalar cumsum(0);
-  for (int i = N - 2; i >= 0; --i) {
+  typename plain_type_t<Vec>::Scalar total(0);
+  for (int i = N - 1; i >= 0; --i) {
     double n = i + 1;
     auto w = y_ref(i) * inv_sqrt(n * (n + 1));
-    cumsum += w;
+    total += w;
 
-    x.coeffRef(N - 2 - i) += cumsum;
-
+    x.coeffRef(i) += total;
     x.coeffRef(i + 1) -= w * n;
   }
 
