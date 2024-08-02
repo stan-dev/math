@@ -26,9 +26,9 @@ template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   const auto N = y.size();
 
-  plain_type_t<Vec> x = Eigen::VectorXd::Zero(N+1);
+  plain_type_t<Vec> z = Eigen::VectorXd::Zero(N+1);
   if (unlikely(N == 0)) {
-    return x;
+    return z;
   }
 
   auto&& y_ref = to_ref(y);
@@ -39,11 +39,11 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
     auto w = y_ref(i) * inv_sqrt(n * (n + 1));
     total += w;
 
-    x.coeffRef(i) += total;
-    x.coeffRef(i + 1) -= w * n;
+    z.coeffRef(i) += total;
+    z.coeffRef(i + 1) -= w * n;
   }
 
-  return x;
+  return z;
 }
 
 /**

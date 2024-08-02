@@ -28,20 +28,15 @@ namespace math {
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto sum_to_zero_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
-
   const auto N = y.size();
   if (unlikely(N == 0)) {
     return arena_t<ret_type>(Eigen::VectorXd{{0}});
   }
-  Eigen::VectorXd x_val = Eigen::VectorXd::Zero(N + 1);
   auto arena_y = to_arena(y);
-  double x_sum = -sum(arena_y.val());
-  x_val.head(N) = arena_y.val();
-  x_val(N) = x_sum;
-  arena_t<ret_type> arena_x = x_val;
-  reverse_pass_callback([arena_y, arena_x, x_sum, N]() mutable {
-    arena_y.adj().array() -= arena_x.adj_op()(N);
-    arena_y.adj() += arena_x.adj_op().head(N);
+  arena_t<ret_type> arena_x = sum_to_zero_constrain(arena_y.val());
+
+  reverse_pass_callback([arena_y, arena_x]() mutable {
+    // TODO
   });
   return arena_x;
 }
