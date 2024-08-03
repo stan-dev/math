@@ -40,28 +40,19 @@ inline auto sum_to_zero_constrain(const T& y) {
   reverse_pass_callback([arena_y, arena_z]() mutable {
     const auto N = arena_y.size();
 
-    Eigen::VectorXd ns = linspaced_vector(N, 1, N );
+    double sum_u_adj = 0;
+    for (int i = 0; i < N; ++i) {
+      double n = i + 1;
 
-    /*
-    u3.adj += z.adj[1:N-1]
-    v.adj -= z.adj[2:N]
-    w.adj += v.adj .* ns
-    u2.adj += reverse(u3.adj)
-    u1.adj += cumulative_sum(u2.adj)
-    w.adj += reverse(u1.adj)
-    y.adj += w.adj ./ sqrt(ns .* (ns + 1))
-    */
+      double u_adj = arena_z.adj()(i);
+      sum_u_adj += u_adj;
 
-    Eigen::VectorXd u_adj = arena_z.adj_op().head(N).eval();
-    Eigen::VectorXd v_adj = -arena_z.adj_op().tail(N).eval();
+      double v_adj = -arena_z.adj()(i + 1);
 
-    Eigen::VectorXd w_from_v = v_adj.array() * ns.array();
+      double w = (v_adj * n) + sum_u_adj;
 
-    Eigen::VectorXd w_from_u = cumulative_sum(u_adj);
-
-    Eigen::VectorXd w_adj = (w_from_v.array() + w_from_u.array());
-
-    arena_y.adj() += (w_adj.array() / sqrt(ns.array() * (ns.array() + 1))).matrix();
+      arena_y.adj()(i) += w / sqrt(n * (n + 1));
+    }
   });
 
   return arena_z;
