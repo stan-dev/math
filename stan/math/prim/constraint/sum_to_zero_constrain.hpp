@@ -14,8 +14,15 @@ namespace math {
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined using the inverse of the
- * isometric log ratio transform (ILR)
+ * The sum-to-zero transform is defined using a modified version of the
+ * the inverse of the isometric log ratio transform (ILR).
+ * See:
+ * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
+ * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
+ * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
+ * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
  * @param y Free vector input of dimensionality K - 1.
@@ -26,7 +33,7 @@ template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
 inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   const auto N = y.size();
 
-  plain_type_t<Vec> z = Eigen::VectorXd::Zero(N+1);
+  plain_type_t<Vec> z = Eigen::VectorXd::Zero(N + 1);
   if (unlikely(N == 0)) {
     return z;
   }
@@ -36,10 +43,10 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   typename plain_type_t<Vec>::Scalar sum_w(0);
   for (int i = N; i > 0; --i) {
     double n = i;
-    auto w = y_ref(i-1) * inv_sqrt(n * (n + 1));
+    auto w = y_ref(i - 1) * inv_sqrt(n * (n + 1));
     sum_w += w;
 
-    z.coeffRef(i-1) += sum_w;
+    z.coeffRef(i - 1) += sum_w;
     z.coeffRef(i) -= w * n;
   }
 
@@ -50,10 +57,15 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined such that the first K-1
- * elements are unconstrained and the last element is the negative
- * sum of those elements. This is a linear transform, with no
- * Jacobian.
+ * The sum-to-zero transform is defined using a modified version of the
+ * the inverse of the isometric log ratio transform (ILR).
+ * See:
+ * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
+ * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
+ * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
+ * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
  * @param y Free vector input of dimensionality K - 1.
@@ -71,10 +83,15 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined such that the first K-1
- * elements are unconstrained and the last element is the negative
- * sum of those elements. This is a linear transform, with no
- * Jacobian.
+ * The sum-to-zero transform is defined using a modified version of the
+ * the inverse of the isometric log ratio transform (ILR).
+ * See:
+ * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
+ * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
+ * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
+ * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This is a linear transform, with no Jacobian.
  *
  * @tparam Jacobian unused
  * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
@@ -94,10 +111,15 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined such that the first K-1
- * elements are unconstrained and the last element is the negative
- * sum of those elements. This is a linear transform, with no
- * Jacobian.
+ * The sum-to-zero transform is defined using a modified version of the
+ * the inverse of the isometric log ratio transform (ILR).
+ * See:
+ * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
+ * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
+ * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
+ * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This is a linear transform, with no Jacobian. 
  *
  * @tparam Jacobian unused
  * @tparam Vec A standard vector with inner type inheriting from
