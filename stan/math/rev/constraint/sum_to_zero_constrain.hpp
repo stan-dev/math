@@ -44,14 +44,15 @@ inline auto sum_to_zero_constrain(const T& y) {
     for (int i = 0; i < N; ++i) {
       double n = i + 1;
 
-      double u_adj = arena_z.adj()(i);
-      sum_u_adj += u_adj;
+      // adjoint of the reverse cumulative sum computed in the forward mode
+      sum_u_adj += arena_z.adj()(i);
 
-      double v_adj = -arena_z.adj()(i + 1);
+      // adjoint of the offset subtraction
+      double v_adj = -arena_z.adj()(i + 1) * n;
 
-      double w = (v_adj * n) + sum_u_adj;
+      double w_adj = v_adj + sum_u_adj;
 
-      arena_y.adj()(i) += w / sqrt(n * (n + 1));
+      arena_y.adj()(i) += w_adj / sqrt(n * (n + 1));
     }
   });
 
