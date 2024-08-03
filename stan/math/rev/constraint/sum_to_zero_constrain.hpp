@@ -7,6 +7,8 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
+#include <stan/math/prim/fun/linspaced_vector.hpp>
+#include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
@@ -29,17 +31,40 @@ namespace math {
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto sum_to_zero_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
-  const auto N = y.size();
-  if (unlikely(N == 0)) {
+  if (unlikely(y.size() == 0)) {
     return arena_t<ret_type>(Eigen::VectorXd{{0}});
   }
   auto arena_y = to_arena(y);
-  arena_t<ret_type> arena_x = sum_to_zero_constrain(arena_y.val());
+  arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_y.val());
 
-  reverse_pass_callback([arena_y, arena_x]() mutable {
-    // TODO
+  reverse_pass_callback([arena_y, arena_z]() mutable {
+    const auto N = arena_y.size();
+
+    Eigen::VectorXd ns = linspaced_vector(N, 1, N );
+
+    /*
+    u3.adj += z.adj[1:N-1]
+    v.adj -= z.adj[2:N]
+    w.adj += v.adj .* ns
+    u2.adj += reverse(u3.adj)
+    u1.adj += cumulative_sum(u2.adj)
+    w.adj += reverse(u1.adj)
+    y.adj += w.adj ./ sqrt(ns .* (ns + 1))
+    */
+
+    Eigen::VectorXd u_adj = arena_z.adj_op().head(N).eval();
+    Eigen::VectorXd v_adj = -arena_z.adj_op().tail(N).eval();
+
+    Eigen::VectorXd w_from_v = v_adj.array() * ns.array();
+
+    Eigen::VectorXd w_from_u = cumulative_sum(u_adj);
+
+    Eigen::VectorXd w_adj = (w_from_v.array() + w_from_u.array());
+
+    arena_y.adj() += (w_adj.array() / sqrt(ns.array() * (ns.array() + 1))).matrix();
   });
-  return arena_x;
+
+  return arena_z;
 }
 
 /**

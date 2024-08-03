@@ -37,13 +37,14 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& z) {
   }
 
   y.coeffRef(N - 1) = -z_ref(N) * sqrt(N * (N + 1)) / N;
-  typename plain_type_t<Vec>::Scalar total(0);
+
+  typename plain_type_t<Vec>::Scalar sum_w(0);
 
   for (int i = N - 2; i >= 0; --i) {
     double n = i + 1;
     auto w = y(i + 1) / sqrt((n + 1) * (n + 2));
-    total += w;
-    y.coeffRef(i) = (total - z_ref(i + 1)) * sqrt(n * (n + 1)) / n;
+    sum_w += w;
+    y.coeffRef(i) = (sum_w - z_ref(i + 1)) * sqrt(n * (n + 1)) / n;
   }
 
   return y;

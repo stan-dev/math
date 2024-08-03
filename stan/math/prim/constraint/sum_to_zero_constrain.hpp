@@ -33,14 +33,14 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
 
   auto&& y_ref = to_ref(y);
 
-  typename plain_type_t<Vec>::Scalar total(0);
-  for (int i = N - 1; i >= 0; --i) {
-    double n = i + 1;
-    auto w = y_ref(i) * inv_sqrt(n * (n + 1));
-    total += w;
+  typename plain_type_t<Vec>::Scalar sum_w(0);
+  for (int i = N; i > 0; --i) {
+    double n = i;
+    auto w = y_ref(i-1) * inv_sqrt(n * (n + 1));
+    sum_w += w;
 
-    z.coeffRef(i) += total;
-    z.coeffRef(i + 1) -= w * n;
+    z.coeffRef(i-1) += sum_w;
+    z.coeffRef(i) -= w * n;
   }
 
   return z;
