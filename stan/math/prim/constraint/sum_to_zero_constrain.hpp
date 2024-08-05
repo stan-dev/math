@@ -23,6 +23,12 @@ namespace math {
  * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
  * doi:10.1023/A:1023818214614, S2CID 122844634
  *
+ * This implementation is closer to the description of the same using "pivot
+ * coordinates" in
+ * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of Compositional Data.
+ * In: Applied Compositional Data Analysis. Springer Series in Statistics.
+ * Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
+ *
  * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
@@ -66,6 +72,12 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
  * doi:10.1023/A:1023818214614, S2CID 122844634
  *
+ * This implementation is closer to the description of the same using "pivot
+ * coordinates" in
+ * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of Compositional Data.
+ * In: Applied Compositional Data Analysis. Springer Series in Statistics.
+ * Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
+ *
  * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
@@ -91,6 +103,12 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
  * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
  * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This implementation is closer to the description of the same using "pivot
+ * coordinates" in
+ * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of Compositional Data.
+ * In: Applied Compositional Data Analysis. Springer Series in Statistics.
+ * Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
  *
  * This is a linear transform, with no Jacobian.
  *
@@ -119,6 +137,12 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
  * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
  * doi:10.1023/A:1023818214614, S2CID 122844634
+ *
+ * This implementation is closer to the description of the same using "pivot
+ * coordinates" in
+ * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of Compositional Data.
+ * In: Applied Compositional Data Analysis. Springer Series in Statistics.
+ * Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
  *
  * This is a linear transform, with no Jacobian.
  *
