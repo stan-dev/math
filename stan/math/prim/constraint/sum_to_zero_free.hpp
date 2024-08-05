@@ -14,9 +14,13 @@ namespace math {
 /**
  * Return an unconstrained vector.
  *
- * The sum-to-zero transform is defined such that the first K-1
- * elements are unconstrained and the last element is the negative
- * sum of those elements.
+ * The sum-to-zero transform is defined using a modified version of the
+ * isometric log ratio transform (ILR).
+ * See:
+ * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
+ * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
+ * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
+ * doi:10.1023/A:1023818214614, S2CID 122844634
  *
  * @tparam ColVec a column vector type
  * @param z Vector of length K.

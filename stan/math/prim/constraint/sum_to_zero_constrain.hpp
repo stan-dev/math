@@ -83,7 +83,7 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined using a modified version of the
+ * The sum-to-zero transform is defined using a modified version of
  * the inverse of the isometric log ratio transform (ILR).
  * See:
  * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
@@ -111,7 +111,7 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
- * The sum-to-zero transform is defined using a modified version of the
+ * The sum-to-zero transform is defined using a modified version of
  * the inverse of the isometric log ratio transform (ILR).
  * See:
  * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
@@ -119,7 +119,7 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
  * doi:10.1023/A:1023818214614, S2CID 122844634
  *
- * This is a linear transform, with no Jacobian. 
+ * This is a linear transform, with no Jacobian.
  *
  * @tparam Jacobian unused
  * @tparam Vec A standard vector with inner type inheriting from
