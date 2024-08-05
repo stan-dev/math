@@ -22,16 +22,30 @@
 namespace stan {
 namespace math {
 
+/**
+ * Options for the laplace sampler
+ */
 struct laplace_options {
+  /* Size of the blocks in block diagonal hessian*/
   int hessian_block_size;
+  /**
+   * Which Newton solver to use:
+   * (1) method using the root of W.
+   * (2) method using the root of the covariance.
+   * (3) method using an LU decomposition.
+   */
   int solver;
+  /* Maximum number of steps in line search*/
   int max_steps_line_search;
+  /* iterations end when difference in objective function is less than tolerance */
   double tolerance;
+  /* Maximum number of steps*/
   long int max_num_steps;
 };
 
 struct laplace_density_estimates {
-  double lmd{std::numeric_limits<double>::infinity()};  // log marginal density
+  // log marginal density
+  double lmd{std::numeric_limits<double>::infinity()};
   // Evaluated covariance function for the latent gaussian variable.
   Eigen::MatrixXd covariance;
   // Mode
@@ -45,7 +59,9 @@ struct laplace_density_estimates {
   Eigen::VectorXd a;
   // the log density of the likelihood.
   Eigen::VectorXd l_grad;
+  // LU matrix
   Eigen::PartialPivLU<Eigen::MatrixXd> LU;
+  // Cholesky of the covariance matrix
   Eigen::MatrixXd K_root;
 };
 
@@ -54,19 +70,35 @@ struct laplace_density_estimates {
  * with a custom derivative method.
  * NOTE: we actually don't need to compute the pseudo-target, only its
  * derivative.
+ * @tparam Kmat
+ * @tparam AVec
+ * @tparam RMat
+ * @tparam LGradVec
+ * @tparam S2Vec
  */
-template <typename KMat,
-          require_eigen_matrix_dynamic_vt<std::is_arithmetic, KMat>* = nullptr>
-inline constexpr double laplace_pseudo_target(const KMat& K,
-                                              const Eigen::VectorXd& a,
-                                              const Eigen::MatrixXd& R,
-                                              const Eigen::VectorXd& l_grad,
-                                              const Eigen::VectorXd& s2) {
+template <typename KMat, typename AVec, typename RMat, typename LGradVec,
+          typename S2Vec,
+          require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
+inline constexpr double laplace_pseudo_target(KMat& /* K */,
+                                              AVec&& /* a */,
+                                              RMat&& /* R */,
+                                              LGradVec&& /* l_grad */,
+                                              S2Vec&& /* s2 */) {
   return 0;
 }
 
 /**
  * Overload function for case where K is passed as a matrix of var.
+ * @tparam Kmat
+ * @tparam AVec
+ * @tparam RMat
+ * @tparam LGradVec
+ * @tparam S2Vec
+ * @param K
+ * @param a
+ * @param R
+ * @param l_grad
+ * @param s2
  */
 template <typename KMat, typename AVec, typename RMat, typename LGradVec,
           typename S2Vec,
@@ -90,6 +122,8 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
 
 /**
  * Return the matrix square-root for a block diagonal matrix.
+ * @parma W
+ * @param block_size
  */
 inline Eigen::SparseMatrix<double> block_matrix_sqrt(
     const Eigen::SparseMatrix<double>& W, const Eigen::Index block_size) {
@@ -149,24 +183,13 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * @tparam K structure type for the covariance object.
  * @tparam Tx type of x, which can in Stan be passed as a matrix or
  *            an array of vectors.
- * @param[in] D structure to compute and differentiate the log likelihood.
- * @param[in] K structure to compute the covariance function.
- * @param[in] phi hyperparameter (input for the covariance function).
+ * @param[in] ll_fun structure to compute and differentiate the log likelihood.
+ * @param[in] ll_args Tuple containing parameters for `D`
+ * @param[in] covariance_functrion structure to compute the covariance function.
  * @param[in] eta hyperparameter (input for likelihood).
- * @param[in] x fixed spatial data (input for the covariance function).
- * @param[in] delta additional fixed real data (input for covariance
- *            function).
- * @param[in] delta_int additional fixed integer data (input for covariance
- *            function).
  * @param[in] theta_0 the initial guess for the mode.
- * @param[in] tolerance the convergence criterion for the Newton solver.
- * @param[in] max_num_steps maximum number of steps for the Newton solver.
- * @param[in] hessian_block_size the size of the block, where we assume
- *              the Hessian is block-diagonal.
- * @param[in] solver which Newton solver to use:
- *                     (1) method using the root of W.
- *                     (2) method using the root of the covariance.
- *                     (3) method using an LU decomposition.
+ * @param[in,out] msgs stream for messages from likelihood and covariance
+ * @param[in] covar_args
  *
  * @return A struct containing
  * 1. lmd the log marginal density, p(y | phi).

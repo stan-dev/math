@@ -21,6 +21,26 @@ namespace math {
  * Note that while the data is observed at x, the new samples
  * are drawn for covariates x_pred.
  * To sample the "original" theta's, set x_pred = x.
+ * @tparam D
+ * @tparam LLArgs
+ * @tparam ThetaMatrix
+ * @tparam EtaMatrix
+ * @tparam CovarFun
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param ll_fun
+ * @param ll_args
+ * @param covariance_function
+ * @param eta
+ * @param theta_0
+ * @param options
+ * @param train_tuple
+ * @param pred_tuple
+ * @param rng
+ * @param msgs
+ * @param args
  */
 template <typename D, typename LLArgs, typename ThetaMatrix, typename EtaMatrix,
           typename CovarFun, class RNG, typename TrainTuple, typename PredTuple,

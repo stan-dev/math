@@ -9,11 +9,20 @@
 namespace stan {
 namespace math {
 /**
- * A structure to compute the log density, first, second,
+ * functions to compute the log density, first, second,
  * and third-order derivatives for a likelihoood specified by the user.
  */
 namespace laplace_likelihood {
 namespace internal {
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @param f
+ * @param theta
+ * @param eta
+ * @param args
+ */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
@@ -22,6 +31,18 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
   return f(theta, eta, args...);
 }
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam Args
+ * @param f
+ * @param theta
+ * @param eta
+ * @param gradient
+ * @param hessian_block_size
+ * @param args
+ */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
@@ -63,6 +84,16 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
   }
 }
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam Args
+ * @param f
+ * @param theta
+ * @param eta
+ * @param args
+ */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
@@ -86,6 +117,19 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
   return theta_var.adj();
 }
 
+
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam Args
+ * @param f
+ * @param theta
+ * @param eta
+ * @param A
+ * @param hessian_block_size
+ * @param args
+ */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
@@ -146,12 +190,25 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
   return 0.5 * parm_adj;
 }
 
-template <typename F, typename Theta, typename Eta, typename... Args,
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam Args
+ * @param f
+ * @param v
+ * @param theta
+ * @param eta
+ * @param A
+ * @param hessian_block_size
+ * @param args
+ */
+template <typename F, typename V_t, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
-inline plain_type_t<Eta> diff_eta_implicit(F&& f, const Theta& v,
-                                           const Eta& theta,
-                                           const Eigen::VectorXd& eta,
+inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
+                                           const Theta& theta,
+                                           const Eta& eta,
                                            Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -181,6 +238,17 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const Theta& v,
 
 }  // namespace internal
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam TupleArgs
+ * @param f
+ * @param theta
+ * @param eta
+ * @param ll_args
+ * @param msgs
+ */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
@@ -194,6 +262,19 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
       ll_tup, f, theta, eta, msgs);
 }
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam TupleArgs
+ * @param f
+ * @param theta
+ * @param eta
+ * @param gradient
+ * @param hessian_block_size
+ * @param ll_args
+ * @param msgs
+ */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
@@ -213,6 +294,17 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
       ll_tuple, f, theta, eta, gradient, hessian_block_size, msgs);
 }
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam TupleArgs
+ * @param f
+ * @param theta
+ * @param eta
+ * @param ll_args
+ * @param msgs
+ */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
@@ -226,6 +318,19 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
       ll_args, f, theta, eta, msgs);
 }
 
+/**
+ * @tparam F
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam TupleArgs
+ * @param f
+ * @param theta
+ * @param eta
+ * @param A
+ * @param hessian_block_size
+ * @param ll_args
+ * @param msgs
+ */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
@@ -243,13 +348,29 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
       ll_args, f, theta, eta, A, hessian_block_size, msgs);
 }
 
-template <typename F, typename Theta, typename Eta, typename TupleArgs,
+/**
+ * @tparam F
+ * @tparam V_t
+ * @tparam Theta
+ * @tparam Eta
+ * @tparam TupleArgs
+ * @param f
+ * @param v
+ * @param theta
+ * @param eta
+ * @param A
+ * @param hessian_block_size
+ * @param ll_args
+ * @param msgs
+ */
+template <typename F, typename V_t, typename Theta, typename Eta,
+          typename TupleArgs,
+          require_tuple_t<TupleArgs>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr,
-          require_tuple_t<TupleArgs>* = nullptr>
-inline plain_type_t<Eta> diff_eta_implicit(F&& f, const Theta& v,
-                                           const Eta& theta,
-                                           const Eigen::VectorXd& eta,
+          require_eigen_t<Eta>* = nullptr>
+inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
+                                           const Theta& theta,
+                                           const Eta& eta,
                                            TupleArgs&& ll_args,
                                            std::ostream* msgs) {
   return apply(
