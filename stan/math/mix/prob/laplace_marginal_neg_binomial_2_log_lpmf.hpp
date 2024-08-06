@@ -39,22 +39,30 @@ struct neg_binomial_2_log_likelihood {
  * out the latent gaussian variable, with a Laplace approximation.
  * See the laplace_marginal function for more details.
  *
- * @tparam T0 The type of the initial guess, theta_0.
- * @tparam T1 The type for the global parameter, phi.
+ * @tparam CovarFun The type of the initial guess, theta_0.
+ * @tparam Eta The type for the global parameter, phi.
+ * @tparam Theta0 The type of the initial guess, theta_0.
+ * @tparam Args
  * @param[in] y observations.
  * @param[in] y_index group to which each observation belongs. Each group
  *            is parameterized by one element of theta.
- * @param[in] covariance a function which returns the prior covariance.
- * @param[in] phi model parameters for the covariance functor.
+ * @param[in] n_samples
+ * @param[in] sums
  * @param[in] eta non-marginalized model parameters for the likelihood.
- * @param[in] x data for the covariance functor.
- * @param[in] delta additional real data for the covariance functor.
- * @param[in] delta_int additional integer data for covariance functor.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
+ * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] tolerance controls the convergence criterion when finding
  *            the mode in the Laplace approximation.
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
+ * @param[in] hessian_block_size the size of the block for a block-diagonal
+ *              Hessian of the log likelihood. If 0, the Hessian is stored
+ *              inside a vector. If the Hessian is dense, this should be the
+ *              size of the Hessian.
+ * @param[in] solver
+ * @param[in] max_steps_line_search
+ * @param[in] msgs
+ * @param[in] args model parameters and data for the covariance functor.
  */
 template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
@@ -74,6 +82,28 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
       max_steps_line_search, std::forward<Args>(args)...);
 }
 
+/**
+ * Wrapper function around the laplace_marginal function for
+ * a negative binomial likelihood. Uses the 2nd parameterization.
+ * Returns the marginal density p(y | phi) by marginalizing
+ * out the latent gaussian variable, with a Laplace approximation.
+ * See the laplace_marginal function for more details.
+ *
+ * @tparam CovarFun The type of the initial guess, theta_0.
+ * @tparam Theta0 The type of the initial guess, theta_0.
+ * @tparam Eta
+ * @tparam Args
+ * @param[in] y observations.
+ * @param[in] y_index group to which each observation belongs. Each group
+ *            is parameterized by one element of theta.
+ * @param[in] n_samples
+ * @param[in] sums
+ * @param[in] eta
+ * @param[in] theta_0 the initial guess for the Laplace approximation.
+ * @param[in] covariance_function a function which returns the prior covariance.
+ * @param[in] msgs
+ * @param[in] args model parameters and data for the covariance functor.
+ */
 template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,

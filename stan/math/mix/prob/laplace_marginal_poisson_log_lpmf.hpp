@@ -19,6 +19,7 @@ struct poisson_log_likelihood {
    * @param[in] y sum of counts in each group.
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
+   * @param[in] pstream
    */
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
@@ -45,16 +46,20 @@ struct poisson_log_likelihood {
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
- * @param[in] covariance a function which returns the prior covariance.
- * @param[in] phi model parameters for the covariance functor.
- * @param[in] x data for the covariance functor.
- * @param[in] delta additional real data for the covariance functor.
- * @param[in] delta_int additional integer data for covariance functor.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
+ * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] tolerance controls the convergence criterion when finding
  *            the mode in the Laplace approximation.
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
+ * @param[in] hessian_block_size the size of the block for a block-diagonal
+ *              Hessian of the log likelihood. If 0, the Hessian is stored
+ *              inside a vector. If the Hessian is dense, this should be the
+ *              size of the Hessian.
+ * @param[in] solver
+ * @param[in] max_steps_line_search
+ * @param[in] msgs
+ * @param[in] args model parameters and data for the covariance functor.
  */
 template <typename CovarFun, typename ThetaVec, typename... Args,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>

@@ -181,16 +181,19 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * are stored by reference.
  *
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- * @tparam Tx type of x, which can in Stan be passed as a matrix or
- *            an array of vectors.
+ * @tparam LLTupleArgs A tuple of arguments passed to the functor type `D`
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type of the initial guess.
+ * @tparam Eta type of the global parameters.
+ * @tparam Args type for the spatial data passed to the covariance.
  * @param[in] ll_fun structure to compute and differentiate the log likelihood.
  * @param[in] ll_args Tuple containing parameters for `D`
- * @param[in] covariance_functrion structure to compute the covariance function.
+ * @param[in] covariance_function structure to compute the covariance function.
  * @param[in] eta hyperparameter (input for likelihood).
  * @param[in] theta_0 the initial guess for the mode.
  * @param[in,out] msgs stream for messages from likelihood and covariance
- * @param[in] covar_args
+ * @param[in] options
+ * @param[in] covar_args Functions to pass to the covariance matrix
  *
  * @return A struct containing
  * 1. lmd the log marginal density, p(y | phi).
@@ -479,23 +482,21 @@ inline laplace_density_estimates laplace_marginal_density_est(
  *
  * Wrapper for when the hyperparameters passed as a double.
  *
- * @tparam T type of the initial guess.
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- * @tparam Tx type of spatial data for covariance: in Stan, this can
- *            either be a matrix or an array of vectors.
- * @param[in] D structure to compute and differentiate the log likelihood.
+ * @tparam LLArgs A tuple of arguments passed to the functor type `D`
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type of the initial guess.
+ * @tparam Eta type of the global parameters.
+ * @tparam Args type for the spatial data passed to the covariance.
+ * @param[in] ll_fun structure to compute and differentiate the log likelihood.
  *            The object stores the sufficient stats for the observations.
- * @param[in] K structure to compute the covariance function.
- * @param[in] phi the global parameter (input for the covariance function).
- * @param[in] x data for the covariance function.
- * @param[in] delta additional fixed real data (input for covariance
- *            function).
- * @param[in] delta_int additional fixed integer data (input for covariance
- *            function).
+ * @param[in] ll_args addition real data for covariance function.
+ * @param[in] covariance_function structure to compute the covariance function.
+ * @param[in] eta the global parameter (input for the covariance function).
  * @param[in] theta_0 the initial guess for the mode.
- * @param[in] tolerance the convergence criterion for the Newton solver.
- * @param[in] max_num_steps maximum number of steps for the Newton solver.
+ * @param[in,out] msgs stream to send messages from functors to
+ * @param[in] options Options for laplace approximation
+ * @param[in] args data for the covariance function.
  * @return the log maginal density, p(y | phi).
  */
 template <typename D, typename LLArgs, typename CovarFun, typename Eta,
@@ -535,21 +536,21 @@ using is_any_var = disjunction<is_var<scalar_type_t<Types>>...>;
  *
  * Wrapper for when the global parameter is passed as a double.
  *
- * @tparam T0 type of the initial guess.
- * @tparam T1 type of the global parameters.
  * @tparam D structure type for the likelihood object.
- * @tparam K structure type for the covariance object.
- *@tparam Tx type for the spatial data passed to the covariance.
- * @param[in] D structure to compute and differentiate the log likelihood.
+ * @tparam LLArgs A tuple of arguments passed to the functor type `D`
+ * @tparam CovarFun structure type for the covariance object.
+ * @tparam ThetaVec type of the initial guess.
+ * @tparam Eta type of the global parameters.
+ * @tparam Args type for the spatial data passed to the covariance.
+ * @param[in] ll_fun structure to compute and differentiate the log likelihood.
  *            The object stores the sufficient stats for the observations.
- * @param[in] K structure to compute the covariance function.
- * @param[in] phi the global parameter (input for the covariance function).
- * @param[in] x data for the covariance function.
- * @param[in] delta addition real data for covariance function.
- * @param[in] delta_int additional interger data for covariance function.
+ * @param[in] ll_args addition real data for covariance function.
+ * @param[in] covariance_function structure to compute the covariance function.
+ * @param[in] eta the global parameter (input for the covariance function).
  * @param[in] theta_0 the initial guess for the mode.
- * @param[in] tolerance the convergence criterion for the Newton solver.
- * @param[in] max_num_steps maximum number of steps for the Newton solver.
+ * @param[in,out] msgs stream to send messages from functors to
+ * @param[in] options Options for laplace approximation
+ * @param[in] args data for the covariance function.
  * @return the log maginal density, p(y | phi).
  */
 template <typename D, typename LLArgs, typename CovarFun, typename ThetaVec,

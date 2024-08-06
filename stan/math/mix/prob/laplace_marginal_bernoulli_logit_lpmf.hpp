@@ -25,18 +25,23 @@ struct bernoulli_logit_likelihood {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam T0 The type of the initial guess, theta_0.
- * @tparam T1 The type for the global parameter, phi.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] phi model parameters for the covariance function.
- * @param[in] x data for the covariance function.
+ * @tparam CovarF
+ * @tparam ThetaMatrix The type of the initial guess, theta_0.
+ * @tparam Args
+ * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
- * @param[in] y total counts per group. Second sufficient statistics.
+ * @param[in] theta_0 the initial guess for the Laplace approximation.
+ * @param covariance_function
  * @param[in] tolerance controls the convergence criterion when finding
  *            the mode in the Laplace approximation.
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
+ * @param hessian_block_size
+ * @param solver
+ * @param max_steps_line_search
+ * @param msgs
+ * @param[in] args data for the covariance function.
  */
 template <typename CovarF, typename ThetaMatrix, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
@@ -54,6 +59,24 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
       eta_dummy, theta_0, msgs, ops, std::forward<Args>(args)...);
 }
 
+/**
+ * Wrapper function around the laplace_marginal function for
+ * a logistic Bernoulli likelihood. Returns the marginal density
+ * p(y | phi) by marginalizing out the latent gaussian variable,
+ * with a Laplace approximation. See the laplace_marginal function
+ * for more details.
+ *
+ * @tparam CovarF
+ * @tparam ThetaMatrix The type of the initial guess, theta_0.
+ * @tparam Args
+ * @param[in] y total counts per group. Second sufficient statistics.
+ * @param[in] n_samples number of samples per group. First sufficient
+ *            statistics.
+ * @param[in] theta_0 the initial guess for the Laplace approximation.
+ * @param covariance_function
+ * @param msgs
+ * @param[in] args data for the covariance function.
+ */
 template <typename CovarF, typename ThetaMatrix, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_bernoulli_logit_lpmf(

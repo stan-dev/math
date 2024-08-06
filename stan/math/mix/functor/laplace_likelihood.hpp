@@ -198,8 +198,6 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param v
  * @param theta
  * @param eta
- * @param A
- * @param hessian_block_size
  * @param args
  */
 template <typename F, typename V_t, typename Theta, typename Eta,
@@ -244,7 +242,7 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
  * @param f
  * @param theta
  * @param eta
- * @param ll_args
+ * @param ll_tup
  * @param msgs
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
@@ -270,7 +268,7 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
  * @param eta
  * @param gradient
  * @param hessian_block_size
- * @param ll_args
+ * @param ll_tuple
  * @param msgs
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
@@ -356,8 +354,6 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param v
  * @param theta
  * @param eta
- * @param A
- * @param hessian_block_size
  * @param ll_args
  * @param msgs
  */

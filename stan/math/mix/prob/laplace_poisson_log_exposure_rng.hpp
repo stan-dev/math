@@ -9,7 +9,34 @@ namespace stan {
 namespace math {
 
 /**
- * Overload for case where user passes exposure, ye.
+ * Wrapper function around the laplace_marginal function for
+ * a log poisson likelihood with exposure. Returns the marginal density
+ * p(y | phi) by marginalizing out the latent gaussian variable,
+ * with a Laplace approximation. See the laplace_marginal function
+ * for more details.
+ *
+ * @tparam CovarFun
+ * @tparam ThetaMatrix
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param y
+ * @param n_samples
+ * @param ye
+ * @param theta_0
+ * @param covariance_function
+ * @param train_tuple
+ * @param pred_tuple
+ * @param tolerance
+ * @param max_num_steps
+ * @param hessian_block_size
+ * @param solver
+ * @param max_steps_line_search
+ * @param rng
+ * @param msgs
+ * @param args
+ *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
@@ -34,7 +61,29 @@ laplace_marginal_tol_poisson_2_log_rng(
 }
 
 /**
- * Overload for case where user passes exposure, ye.
+ * Wrapper function around the laplace_marginal function for
+ * a log poisson likelihood with exposure. Returns the marginal density
+ * p(y | phi) by marginalizing out the latent gaussian variable,
+ * with a Laplace approximation. See the laplace_marginal function
+ * for more details.
+ *
+ * @tparam CovarFun
+ * @tparam ThetaMatrix
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param y
+ * @param n_samples
+ * @param ye
+ * @param theta_0
+ * @param covariance_function
+ * @param train_tuple
+ * @param pred_tuple
+ * @param rng
+ * @param msgs
+ * @param args
+ *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,

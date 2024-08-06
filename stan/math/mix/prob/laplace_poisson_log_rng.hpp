@@ -18,6 +18,27 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
+ * @tparam CovarFun
+ * @tparam ThetaMatrix
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param y
+ * @param n_samples
+ * @param theta_0
+ * @param covariance_function
+ * @param train_tuple
+ * @param pred_tuple
+ * @param tolerance
+ * @param max_num_steps
+ * @param hessian_block_size
+ * @param solver
+ * @param max_steps_line_search
+ * @param rng
+ * @param msgs
+ * @param args
+ *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
@@ -40,6 +61,32 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
                           std::forward<Args>(args)...);
 }
 
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(theta | 0, Sigma(phi))
+ *   y ~ pi(y | theta)
+ *
+ * return a multivariate normal random variate sampled
+ * from the gaussian approximation of p(theta | y, phi)
+ * where the likelihood is a Poisson with a log link.
+ * @tparam CovarFun
+ * @tparam ThetaMatrix
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param y
+ * @param n_samples
+ * @param theta_0
+ * @param covariance_function
+ * @param train_tuple
+ * @param pred_tuple
+ * @param rng
+ * @param msgs
+ * @param args
+ *
+ */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>

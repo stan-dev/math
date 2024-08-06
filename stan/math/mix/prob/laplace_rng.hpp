@@ -16,8 +16,32 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi)
  * where the log likelihood is given by L_f.
+ * @tparam LFun
+ * @tparam LArgs
+ * @tparam ThetaVec
+ * @tparam EtaVec
+ * @tparam CovarFun
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param L_f
+ * @param l_args
+ * @param eta
+ * @param K_f
+ * @param theta_0
+ * @param tolerance
+ * @param max_num_steps
+ * @param hessian_block_size
+ * @param solver
+ * @param max_steps_line_search
+ * @param rng
+ * @param msgs
+ * @param train_tuple
+ * @param pred_tuple
+ * @param args
  */
-template <typename LFun, typename LArgs, typename EtaVec, typename DeltaVec,
+template <typename LFun, typename LArgs, typename EtaVec,
           typename CovarFun, typename ThetaVec, typename RNG,
           typename TrainTuple, typename PredTuple, typename... Args>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
@@ -34,6 +58,39 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
                           std::forward<Args>(args)...);
 }
 
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(theta | 0, Sigma(phi))
+ *   y ~ pi(y | theta)
+ *
+ * return a multivariate normal random variate sampled
+ * from the gaussian approximation of p(theta | y, phi)
+ * where the log likelihood is given by L_f.
+ * @tparam LFun
+ * @tparam LArgs
+ * @tparam ThetaVec
+ * @tparam EtaVec
+ * @tparam CovarFun
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param L_f
+ * @param l_args
+ * @param K_f
+ * @param theta_0
+ * @param tolerance
+ * @param max_num_steps
+ * @param hessian_block_size
+ * @param solver
+ * @param max_steps_line_search
+ * @param rng
+ * @param msgs
+ * @param train_tuple
+ * @param pred_tuple
+ * @param args
+ */
 template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
           typename RNG, typename TrainTuple, typename PredTuple,
           typename... Args>
@@ -53,6 +110,35 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
                           std::forward<Args>(args)...);
 }
 
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(theta | 0, Sigma(phi))
+ *   y ~ pi(y | theta)
+ *
+ * return a multivariate normal random variate sampled
+ * from the gaussian approximation of p(theta | y, phi)
+ * where the log likelihood is given by L_f.
+ * @tparam LFun
+ * @tparam LArgs
+ * @tparam ThetaVec
+ * @tparam EtaVec
+ * @tparam CovarFun
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param L_f
+ * @param l_args
+ * @param eta
+ * @param K_f
+ * @param theta_0
+ * @param rng
+ * @param msgs
+ * @param train_tuple
+ * @param pred_tuple
+ * @param args
+ */
 template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
           typename ThetaVec, typename RNG, typename TrainTuple,
           typename PredTuple, typename... Args>
@@ -68,6 +154,33 @@ inline Eigen::VectorXd laplace_marginal_rng(
                           std::forward<Args>(args)...);
 }
 
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(theta | 0, Sigma(phi))
+ *   y ~ pi(y | theta)
+ *
+ * return a multivariate normal random variate sampled
+ * from the gaussian approximation of p(theta | y, phi)
+ * where the log likelihood is given by L_f.
+ * @tparam LFun
+ * @tparam LArgs
+ * @tparam ThetaVec
+ * @tparam CovarFun
+ * @tparam RNG
+ * @tparam TrainTuple
+ * @tparam PredTuple
+ * @tparam Args
+ * @param L_f
+ * @param l_args
+ * @param K_f
+ * @param theta_0
+ * @param train_tuple
+ * @param pred_tuple
+ * @param rng
+ * @param msgs
+ * @param args
+ */
 template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
           typename RNG, typename TrainTuple, typename PredTuple,
           typename... Args>
