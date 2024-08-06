@@ -46,41 +46,30 @@ namespace math {
  * @param[out] fx function applied to argument
  * @param[out] grad_fx gradient of function at argument
  */
-template <typename F, typename VectorT,
+template <typename F, typename VectorT, typename GradVectorT,
           typename ScalarT = return_type_t<VectorT>>
-void finite_diff_gradient_auto(const F& f, const VectorT& x, ScalarT& fx,
-                               VectorT& grad_fx) {
-  VectorT x_temp(x);
+void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
+                               GradVectorT& grad_fx) {
+  using EigT = Eigen::Matrix<ScalarT, -1, 1>;
+  static constexpr int h_scale[6] = {3, 2, 1, -3, -2, -1};
+  static constexpr int mults[6] = {1, -9, 45, -1, 9, -45};
+
   fx = f(x);
   grad_fx.resize(x.size());
-  for (int i = 0; i < x.size(); ++i) {
+  Eigen::Map<EigT> grad_map(grad_fx.data(), grad_fx.size());
+
+  grad_map = EigT::NullaryExpr(x.size(), [&f, &x](Eigen::Index i) {
     double h = finite_diff_stepsize(value_of_rec(x[i]));
-
     ScalarT delta_f = 0;
-
-    x_temp[i] = x[i] + 3 * h;
-    delta_f += f(x_temp);
-
-    x_temp[i] = x[i] + 2 * h;
-    delta_f -= 9 * f(x_temp);
-
-    x_temp[i] = x[i] + h;
-    delta_f += 45 * f(x_temp);
-
-    x_temp[i] = x[i] + -3 * h;
-    delta_f -= f(x_temp);
-
-    x_temp[i] = x[i] + -2 * h;
-    delta_f += 9 * f(x_temp);
-
-    x_temp[i] = x[i] - h;
-    delta_f -= 45 * f(x_temp);
-
-    delta_f /= 60 * h;
-
-    x_temp[i] = x[i];
-    grad_fx[i] = delta_f;
-  }
+    for (int j = 0; j < 6; ++j) {
+      auto x_temp
+          = EigT::NullaryExpr(x.size(), [&x, &i, &h, &j](Eigen::Index k) {
+              return k == i ? x[i] + h * h_scale[j] : x[k];
+            });
+      delta_f += f(std::move(x_temp)) * mults[j];
+    }
+    return delta_f / (60 * h);
+  });
 }
 
 }  // namespace math
