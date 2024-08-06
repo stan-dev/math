@@ -22,9 +22,9 @@ template <typename LFun, typename LArgs, typename EtaVec, typename DeltaVec,
           typename TrainTuple, typename PredTuple, typename... Args>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, const ThetaVec& theta_0,
-    CovarFun&& K_f, RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
+    const int64_t max_num_steps, const int hessian_block_size, const int solver,
+    const int max_steps_line_search, const ThetaVec& theta_0, CovarFun&& K_f,
+    RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, Args&&... args) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                             tolerance, max_num_steps};

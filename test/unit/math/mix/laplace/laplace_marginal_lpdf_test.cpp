@@ -395,9 +395,10 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& eta_v, auto&& phi) {
           return laplace_marginal_tol_lpdf<false>(
-              L, std::forward_as_tuple(y, delta_int), eta_v, theta0, K, tolerance,
-              max_num_steps, hessian_block_size, solver, max_steps_line_search,
-              nullptr, x, phi(0), phi(1), phi(2), phi(3), n_obs);
+              L, std::forward_as_tuple(y, delta_int), eta_v, theta0, K,
+              tolerance, max_num_steps, hessian_block_size, solver,
+              max_steps_line_search, nullptr, x, phi(0), phi(1), phi(2), phi(3),
+              n_obs);
         };
         stan::test::expect_ad<true>(ad_tol, f, eta, phi_dbl);
       }

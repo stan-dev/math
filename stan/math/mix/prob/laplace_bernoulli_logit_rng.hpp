@@ -26,9 +26,9 @@ laplace_marginal_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, RNG& rng,
-    std::ostream* msgs, Args&&... args) {
+    const int64_t max_num_steps, const int hessian_block_size, const int solver,
+    const int max_steps_line_search, RNG& rng, std::ostream* msgs,
+    Args&&... args) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta_dummy;
