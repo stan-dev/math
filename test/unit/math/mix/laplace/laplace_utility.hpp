@@ -303,7 +303,7 @@ void read_in_data(int dim_theta, int dim_observations,
   }
 }
 
-// TODO: write a more general data reader, rather than overload.
+// TODO(Steve): Should not be reading in data
 // Overload function to read in gp motorcycle data.
 void read_data(int dim_observations, std::string data_directory,
                std::vector<double>& x, Eigen::VectorXd& y) {

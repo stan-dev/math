@@ -59,7 +59,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
       poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0, K,
       nullptr, x, phi_dbl(0), phi_dbl(1));
 
-  // TODO: benchmark target against gpstuff.
+  // TODO(Steve): benchmark target against gpstuff.
   // Expected: -2.53056
   double tol = 1e-4;
   EXPECT_NEAR(-2.53056, value_of(target), tol);
@@ -380,7 +380,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         max_num_steps, hessian_block_size, solver, max_steps_line_search,
         nullptr, x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
   }
-  // TODO: benchmark this result against GPStuff.
+  // TODO(Steve): benchmark this result against GPStuff.
   double tolerance = 1e-6;
   int max_num_steps = 100;
   stan::test::ad_tolerances ad_tol;

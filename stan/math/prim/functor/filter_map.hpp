@@ -1,18 +1,19 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_FILTER_MAP_HPP
 #define STAN_MATH_PRIM_FUNCTOR_FILTER_MAP_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <functional>
 #include <tuple>
 #include <utility>
-#include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 namespace internal {
 template <template <typename> class Filter, typename F, typename Arg>
 inline constexpr auto filter_fun(F&& f, Arg&& arg) {
   if constexpr (Filter<Arg>::value) {
-    return f(std::forward<Arg>(arg));
+    return std::forward<F>(f)(std::forward<Arg>(arg));
   } else {
     return std::forward<Arg>(arg);
   }
@@ -37,9 +38,9 @@ inline constexpr auto filter_map(F&& f, Tuple&& arg) {
   return stan::math::apply(
       [](auto&& f, auto&&... args) {
         return std::make_tuple(internal::filter_fun<Filter>(
-            std::forward<decltype(f)>(f), args)...);
+            std::forward<decltype(f)>(f), std::forward<decltype(args)>(args))...);
       },
-      std::forward<Tuple>(arg), f);
+      std::forward<Tuple>(arg), std::forward<F>(f));
 }
 
 /*
@@ -65,7 +66,7 @@ inline constexpr auto filter_map(F&& f, Arg1&& arg1, Args&&... args) {
 
 template <template <typename> class Filter, typename F, typename Arg,
           require_t<bool_constant<!is_tuple<Arg>::value>>* = nullptr>
-inline constexpr auto filter_map(F&& f, Arg&& arg1) {
+inline constexpr auto filter_map(F&& f, Arg&& arg) {
   return internal::filter_fun<Filter>(std::forward<F>(f),
                                       std::forward<Arg>(arg));
 }
