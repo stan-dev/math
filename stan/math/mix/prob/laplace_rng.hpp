@@ -41,9 +41,9 @@ namespace math {
  * @param pred_tuple
  * @param args
  */
-template <typename LFun, typename LArgs, typename EtaVec,
-          typename CovarFun, typename ThetaVec, typename RNG,
-          typename TrainTuple, typename PredTuple, typename... Args>
+template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
+          typename ThetaVec, typename RNG, typename TrainTuple,
+          typename PredTuple, typename... Args>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const double tolerance,
     const int64_t max_num_steps, const int hessian_block_size, const int solver,

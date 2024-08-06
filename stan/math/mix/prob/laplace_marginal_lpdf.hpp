@@ -195,8 +195,8 @@ inline auto laplace_marginal_tol_lpmf(
  * @param[in] args A parameter pack of arguments to be send to the covariance
  * function
  */
-template <bool propto = false, typename LFun, typename LArgs,
-          typename CovarFun, typename Theta0, typename... Args>
+template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
+          typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
     const double tolerance, const int64_t max_num_steps,

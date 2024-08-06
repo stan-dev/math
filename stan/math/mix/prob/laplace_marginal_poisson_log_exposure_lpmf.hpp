@@ -19,7 +19,8 @@ struct poisson_log_exposure_likelihood {
    * @tparam Eta Type of the auxiliary parameter (not used here).
    * @param[in] theta log Poisson rate for each group.
    * @param[in] y First n elements contain the sum of counts in each group
-   * @param[in] ye next n elements the exposure in each group, where n is the number of groups.
+   * @param[in] ye next n elements the exposure in each group, where n is the
+   * number of groups.
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    * @param pstream
