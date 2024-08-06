@@ -117,7 +117,6 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
   return theta_var.adj();
 }
 
-
 /**
  * @tparam F
  * @tparam Theta
@@ -203,12 +202,11 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param hessian_block_size
  * @param args
  */
-template <typename F, typename V_t, typename Theta, typename Eta, typename... Args,
-          require_eigen_vector_t<Theta>* = nullptr,
+template <typename F, typename V_t, typename Theta, typename Eta,
+          typename... Args, require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
 inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
-                                           const Theta& theta,
-                                           const Eta& eta,
+                                           const Theta& theta, const Eta& eta,
                                            Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -364,13 +362,11 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param msgs
  */
 template <typename F, typename V_t, typename Theta, typename Eta,
-          typename TupleArgs,
-          require_tuple_t<TupleArgs>* = nullptr,
+          typename TupleArgs, require_tuple_t<TupleArgs>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
 inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
-                                           const Theta& theta,
-                                           const Eta& eta,
+                                           const Theta& theta, const Eta& eta,
                                            TupleArgs&& ll_args,
                                            std::ostream* msgs) {
   return apply(

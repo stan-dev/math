@@ -26,5 +26,4 @@
 #include <stan/math/mix/functor.hpp>
 #include <stan/math/mix/prob.hpp>
 
-
 #endif

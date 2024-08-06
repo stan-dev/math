@@ -38,8 +38,7 @@ void hessian_times_vector(const F& f,
 template <typename T, typename F>
 void hessian_times_vector(const F& f,
                           const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& v,
-                          T& fx,
+                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, T& fx,
                           Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
   using Eigen::Matrix;
   Matrix<T, Eigen::Dynamic, 1> grad;
@@ -47,7 +46,6 @@ void hessian_times_vector(const F& f,
   hessian(f, x, fx, grad, H);
   Hv = H * v;
 }
-
 
 /**
  * Overload Hessian_times_vector function, under stan/math/mix/functor

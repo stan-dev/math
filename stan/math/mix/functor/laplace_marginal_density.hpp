@@ -37,7 +37,8 @@ struct laplace_options {
   int solver;
   /* Maximum number of steps in line search*/
   int max_steps_line_search;
-  /* iterations end when difference in objective function is less than tolerance */
+  /* iterations end when difference in objective function is less than tolerance
+   */
   double tolerance;
   /* Maximum number of steps*/
   long int max_num_steps;
@@ -79,8 +80,7 @@ struct laplace_density_estimates {
 template <typename KMat, typename AVec, typename RMat, typename LGradVec,
           typename S2Vec,
           require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
-inline constexpr double laplace_pseudo_target(KMat& /* K */,
-                                              AVec&& /* a */,
+inline constexpr double laplace_pseudo_target(KMat& /* K */, AVec&& /* a */,
                                               RMat&& /* R */,
                                               LGradVec&& /* l_grad */,
                                               S2Vec&& /* s2 */) {

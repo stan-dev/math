@@ -7,7 +7,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Returns a block diagonal Hessian by computing the relevant directional
  * derivatives and storing them in a matrix.
