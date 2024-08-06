@@ -38,7 +38,8 @@ inline constexpr auto filter_map(F&& f, Tuple&& arg) {
   return stan::math::apply(
       [](auto&& f, auto&&... args) {
         return std::make_tuple(internal::filter_fun<Filter>(
-            std::forward<decltype(f)>(f), std::forward<decltype(args)>(args))...);
+            std::forward<decltype(f)>(f),
+            std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(arg), std::forward<F>(f));
 }
