@@ -102,7 +102,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
 }
 
-// TEST(laplace, basic_rng) {
+// TEST(laplace, bernoulli_logit_basic_rng) {
 //   // make sure the right covariance function is computed
 //   // and compare results.
 //   using stan::math::diff_poisson_log;

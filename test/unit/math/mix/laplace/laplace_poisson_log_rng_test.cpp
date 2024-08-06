@@ -134,7 +134,7 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
 }
 /*
 
-TEST(laplace, basic_rng) {
+TEST(laplace, poisson_basic_rng) {
   using stan::math::algebra_solver;
   using stan::math::diag_matrix;
   using stan::math::diag_pre_multiply;
