@@ -47,9 +47,9 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
 
   auto&& y_ref = to_ref(y);
 
-  typename plain_type_t<Vec>::Scalar sum_w(0);
+  value_type_t<Vec> sum_w(0);
   for (int i = N; i > 0; --i) {
-    double n = i;
+    double n = static_cast<double>(i);
     auto w = y_ref(i - 1) * inv_sqrt(n * (n + 1));
     sum_w += w;
 

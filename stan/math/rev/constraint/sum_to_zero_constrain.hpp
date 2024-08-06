@@ -39,12 +39,12 @@ namespace math {
  * @return Zero-sum vector of dimensionality K.
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y) {
+inline auto sum_to_zero_constrain(T&& y) {
   using ret_type = plain_type_t<T>;
   if (unlikely(y.size() == 0)) {
     return arena_t<ret_type>(Eigen::VectorXd{{0}});
   }
-  auto arena_y = to_arena(y);
+  auto arena_y = to_arena(std::forward<T>(y));
   arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_y.val());
 
   reverse_pass_callback([arena_y, arena_z]() mutable {
@@ -52,7 +52,7 @@ inline auto sum_to_zero_constrain(const T& y) {
 
     double sum_u_adj = 0;
     for (int i = 0; i < N; ++i) {
-      double n = i + 1;
+      double n = static_cast<double>(i + 1);
 
       // adjoint of the reverse cumulative sum computed in the forward mode
       sum_u_adj += arena_z.adj()(i);
@@ -95,8 +95,8 @@ inline auto sum_to_zero_constrain(const T& y) {
  * @return Zero-sum vector of dimensionality K.
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, scalar_type_t<T>& lp) {
-  return sum_to_zero_constrain(y);
+inline auto sum_to_zero_constrain(T&& y, scalar_type_t<T>& lp) {
+  return sum_to_zero_constrain(std::forward<T>(y));
 }
 
 }  // namespace math
