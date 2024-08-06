@@ -14,13 +14,13 @@ namespace math {
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd  // CHECK -- right return type
+inline auto  // CHECK -- right return type
 laplace_marginal_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, RNG& rng, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, const double tolerance,
-    const long int max_num_steps, const int hessian_block_size,
+    const int64_t max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search, std::ostream* msgs,
     Args&&... args) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
@@ -40,7 +40,7 @@ laplace_marginal_tol_poisson_2_log_rng(
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd  // CHECK -- right return type
+inline auto  // TODO(Steve): Allow scalar or std vector return
 laplace_marginal_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,

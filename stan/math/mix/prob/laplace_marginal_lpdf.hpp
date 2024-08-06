@@ -46,7 +46,7 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           require_all_eigen_vector_t<EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_tol_lpdf(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const Theta0& theta_0,
-    CovarFun&& K_f, double tolerance, long int max_num_steps,
+    CovarFun&& K_f, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   // TEST: provisional signature to agree with parser.
@@ -64,7 +64,7 @@ template <bool propto = false, typename LArgs, typename LFun, typename CovarFun,
           require_all_eigen_vector_t<Theta0>* = nullptr>
 inline auto laplace_marginal_tol_lpdf(LFun&& L_f, LArgs&& l_args,
                                       const Theta0& theta_0, CovarFun&& K_f,
-                                      double tolerance, long int max_num_steps,
+                                      double tolerance, int64_t max_num_steps,
                                       const int hessian_block_size,
                                       const int solver,
                                       const int max_steps_line_search,
@@ -87,7 +87,7 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           typename CovarFun, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const Theta0& theta_0,
-    CovarFun&& K_f, const double tolerance, const long int max_num_steps,
+    CovarFun&& K_f, const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   return laplace_marginal_tol_lpdf<propto>(
@@ -100,7 +100,7 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           typename CovarFun, typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
-    const double tolerance, const long int max_num_steps,
+    const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   return laplace_marginal_tol_lpdf<propto>(
@@ -118,7 +118,7 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
-    const double tolerance, const long int max_num_steps,
+    const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
   return laplace_marginal_tol_lpdf<propto>(

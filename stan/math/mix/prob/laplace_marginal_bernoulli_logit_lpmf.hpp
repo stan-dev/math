@@ -43,9 +43,8 @@ template <typename CovarF, typename ThetaMatrix, typename... Args,
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarF&& covariance_function, double tolerance,
-    long int max_num_steps, const int hessian_block_size, const int solver,
+    int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
-  // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -61,7 +60,6 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarF&& covariance_function,
     std::ostream* msgs, Args&&... args) {
-  // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
