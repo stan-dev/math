@@ -23,8 +23,13 @@ using return_var_matrix_t = std::conditional_t<
     is_any_var_matrix<ReturnType, Types...>::value,
     stan::math::var_value<
         stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
-    stan::math::promote_scalar_t<stan::math::var_value<double>,
-                                 plain_type_t<ReturnType>>>;
+    std::conditional_t<
+        is_complex<scalar_type_t<ReturnType>>::value,
+        stan::math::promote_scalar_t<
+            std::complex<stan::math::var_value<double>>,
+            plain_type_t<ReturnType>>,
+        stan::math::promote_scalar_t<stan::math::var_value<double>,
+                                     plain_type_t<ReturnType>>>>;
 }  // namespace stan
 
 #endif

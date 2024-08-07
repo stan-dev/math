@@ -73,11 +73,11 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @return Unit length vector of dimension K
  */
 template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
-  if (Jacobian) {
-    return unit_vector_constrain(y, lp);
+inline auto unit_vector_constrain(T&& y, return_type_t<T>& lp) {
+  if constexpr (Jacobian) {
+    return unit_vector_constrain(std::forward<T>(y), lp);
   } else {
-    return unit_vector_constrain(y);
+    return unit_vector_constrain(std::forward<T>(y));
   }
 }
 
@@ -98,9 +98,10 @@ inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
  * @return Unit length vector of dimension K
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return unit_vector_constrain<Jacobian>(v, lp); });
+inline auto unit_vector_constrain(T&& y, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return unit_vector_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 }  // namespace math

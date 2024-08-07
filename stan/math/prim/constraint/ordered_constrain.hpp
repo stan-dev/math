@@ -51,12 +51,12 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @return Positive, increasing ordered vector.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
-  const auto& x_ref = to_ref(x);
-  if (likely(x.size() > 1)) {
-    lp += sum(x_ref.tail(x.size() - 1));
+inline auto ordered_constrain(EigVec&& x, value_type_t<EigVec>& lp) {
+  auto&& x_ref = to_ref(std::forward<EigVec>(x));
+  if (likely(x_ref.size() > 1)) {
+    lp += sum(x_ref.tail(x_ref.size() - 1));
   }
-  return ordered_constrain(x_ref);
+  return ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
@@ -78,11 +78,11 @@ inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
  * @return Positive, increasing ordered vector.
  */
 template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
-  if (Jacobian) {
-    return ordered_constrain(x, lp);
+inline auto ordered_constrain(T&& x, return_type_t<T>& lp) {
+  if constexpr (Jacobian) {
+    return ordered_constrain(std::forward<T>(x), lp);
   } else {
-    return ordered_constrain(x);
+    return ordered_constrain(std::forward<T>(x));
   }
 }
 
@@ -105,9 +105,10 @@ inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
  * @return Positive, increasing ordered vector.
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp](auto&& v) { return ordered_constrain<Jacobian>(v, lp); });
+inline auto ordered_constrain(T&& x, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return ordered_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 }  // namespace math

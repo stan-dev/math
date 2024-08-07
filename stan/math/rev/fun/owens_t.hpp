@@ -28,9 +28,9 @@ namespace math {
 template <typename Var1, typename Var2,
           require_all_st_var<Var1, Var2>* = nullptr,
           require_all_not_std_vector_t<Var1, Var2>* = nullptr>
-inline auto owens_t(const Var1& h, const Var2& a) {
-  auto h_arena = to_arena(h);
-  auto a_arena = to_arena(a);
+inline auto owens_t(Var1&& h, Var2&& a) {
+  auto h_arena = to_arena(std::forward<Var1>(h));
+  auto a_arena = to_arena(std::forward<Var2>(a));
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena.val(), a_arena.val())),
                             Var1, Var2>;
@@ -47,7 +47,7 @@ inline auto owens_t(const Var1& h, const Var2& a) {
         as_array_or_scalar(ret.adj()) * exp(neg_h_sq_div_2 * one_p_a_sq)
         / (one_p_a_sq * TWO_PI));
   });
-  return return_type(ret);
+  return ret;
 }
 
 /**
@@ -65,9 +65,9 @@ inline auto owens_t(const Var1& h, const Var2& a) {
 template <typename Var, typename Arith, require_st_arithmetic<Arith>* = nullptr,
           require_all_not_std_vector_t<Var, Arith>* = nullptr,
           require_st_var<Var>* = nullptr>
-inline auto owens_t(const Var& h, const Arith& a) {
-  auto h_arena = to_arena(h);
-  auto a_arena = to_arena(a);
+inline auto owens_t(Var&& h, Arith&& a) {
+  auto h_arena = to_arena(std::forward<Var>(h));
+  auto a_arena = to_arena(std::forward<Arith>(a));
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena.val(), a_arena)), Var,
                             Arith>;
@@ -79,7 +79,7 @@ inline auto owens_t(const Var& h, const Arith& a) {
         * erf(as_array_or_scalar(a_arena) * h_val * INV_SQRT_TWO)
         * exp(-square(h_val) * 0.5) * INV_SQRT_TWO_PI * -0.5);
   });
-  return return_type(ret);
+  return ret;
 }
 
 /**
@@ -97,9 +97,9 @@ inline auto owens_t(const Var& h, const Arith& a) {
 template <typename Arith, typename Var, require_st_arithmetic<Arith>* = nullptr,
           require_all_not_std_vector_t<Var, Arith>* = nullptr,
           require_st_var<Var>* = nullptr>
-inline auto owens_t(const Arith& h, const Var& a) {
-  auto h_arena = to_arena(h);
-  auto a_arena = to_arena(a);
+inline auto owens_t(Arith&& h, Var&& a) {
+  auto h_arena = to_arena(std::forward<Arith>(h));
+  auto a_arena = to_arena(std::forward<Var>(a));
   using return_type
       = return_var_matrix_t<decltype(owens_t(h_arena, a_arena.val())), Var,
                             Arith>;
@@ -112,7 +112,7 @@ inline auto owens_t(const Arith& h, const Var& a) {
         * exp(-0.5 * square(as_array_or_scalar(h_arena)) * one_p_a_sq)
         / (one_p_a_sq * TWO_PI));
   });
-  return return_type(ret);
+  return ret;
 }
 
 }  // namespace math

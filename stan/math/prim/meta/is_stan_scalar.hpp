@@ -28,6 +28,10 @@ struct is_stan_scalar
           is_fvar<std::decay_t<T>>, std::is_arithmetic<std::decay_t<T>>,
           is_complex<std::decay_t<T>>>::value> {};
 
+template <typename... Types>
+inline constexpr bool is_stan_scalar_v
+    = std::conjunction<is_stan_scalar<Types>...>::value;
+
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup stan_scalar_types stan_scalar  */
 /*! \addtogroup stan_scalar_types */

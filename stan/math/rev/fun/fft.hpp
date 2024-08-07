@@ -39,13 +39,14 @@ namespace math {
  */
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr,
           require_var_t<base_type_t<value_type_t<V>>>* = nullptr>
-inline plain_type_t<V> fft(const V& x) {
+inline auto fft(const V& x) {
   if (unlikely(x.size() <= 1)) {
-    return plain_type_t<V>(x);
+    return arena_t<plain_type_t<V>>(x);
   }
 
   arena_t<V> arena_v = x;
-  arena_t<V> res = fft(to_complex(arena_v.real().val(), arena_v.imag().val()));
+  arena_t<plain_type_t<V>> res
+      = fft(to_complex(arena_v.real().val(), arena_v.imag().val()));
 
   reverse_pass_callback([arena_v, res]() mutable {
     auto adj_inv_fft = inv_fft(to_complex(res.real().adj(), res.imag().adj()));
@@ -54,7 +55,7 @@ inline plain_type_t<V> fft(const V& x) {
     arena_v.imag().adj() += adj_inv_fft.imag();
   });
 
-  return plain_type_t<V>(res);
+  return res;
 }
 
 /**
@@ -84,13 +85,13 @@ inline plain_type_t<V> fft(const V& x) {
  */
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr,
           require_var_t<base_type_t<value_type_t<V>>>* = nullptr>
-inline plain_type_t<V> inv_fft(const V& y) {
+inline auto inv_fft(const V& y) {
   if (unlikely(y.size() <= 1)) {
-    return plain_type_t<V>(y);
+    return arena_t<plain_type_t<V>>(y);
   }
 
   arena_t<V> arena_v = y;
-  arena_t<V> res
+  arena_t<plain_type_t<V>> res
       = inv_fft(to_complex(arena_v.real().val(), arena_v.imag().val()));
 
   reverse_pass_callback([arena_v, res]() mutable {
@@ -100,7 +101,7 @@ inline plain_type_t<V> inv_fft(const V& y) {
     arena_v.real().adj() += adj_fft.real();
     arena_v.imag().adj() += adj_fft.imag();
   });
-  return plain_type_t<V>(res);
+  return res;
 }
 
 /**
@@ -120,7 +121,7 @@ inline plain_type_t<V> inv_fft(const V& y) {
  */
 template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,
           require_var_t<base_type_t<value_type_t<M>>>* = nullptr>
-inline plain_type_t<M> fft2(const M& x) {
+inline auto fft2(const M& x) {
   arena_t<M> arena_v = x;
   arena_t<M> res = fft2(to_complex(arena_v.real().val(), arena_v.imag().val()));
 
@@ -131,7 +132,7 @@ inline plain_type_t<M> fft2(const M& x) {
     arena_v.imag().adj() += adj_inv_fft.imag();
   });
 
-  return plain_type_t<M>(res);
+  return res;
 }
 
 /**
@@ -152,7 +153,7 @@ inline plain_type_t<M> fft2(const M& x) {
  */
 template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,
           require_var_t<base_type_t<value_type_t<M>>>* = nullptr>
-inline plain_type_t<M> inv_fft2(const M& y) {
+inline auto inv_fft2(const M& y) {
   arena_t<M> arena_v = y;
   arena_t<M> res
       = inv_fft2(to_complex(arena_v.real().val(), arena_v.imag().val()));
@@ -164,7 +165,7 @@ inline plain_type_t<M> inv_fft2(const M& y) {
     arena_v.real().adj() += adj_fft.real();
     arena_v.imag().adj() += adj_fft.imag();
   });
-  return plain_type_t<M>(res);
+  return res;
 }
 
 }  // namespace math

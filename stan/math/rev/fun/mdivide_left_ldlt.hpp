@@ -24,20 +24,20 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
-  using ret_val_type
-      = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
+inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, T2&& B) {
+  using ret_val_type = Eigen::Matrix<double, Eigen::Dynamic,
+                                     std::decay_t<T2>::ColsAtCompileTime>;
   using ret_type = promote_var_matrix_t<ret_val_type, T1, T2>;
 
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix().val(), "B", B);
 
   if (A.matrix().size() == 0) {
-    return ret_type(ret_val_type(0, B.cols()));
+    return arena_t<ret_type>(ret_val_type(0, B.cols()));
   }
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
+  if constexpr (is_autodiffable_v<T1, T2>) {
+    arena_t<T2> arena_B = std::forward<T2>(B);
+    arena_t<T1> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
@@ -48,19 +48,19 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
       arena_B.adj() += adjB;
     });
 
-    return ret_type(res);
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
-    arena_t<ret_type> res = A.ldlt().solve(value_of(B));
+    return res;
+  } else if constexpr (is_autodiffable_v<T1>) {
+    arena_t<T1> arena_A = A.matrix();
+    arena_t<ret_type> res = A.ldlt().solve(std::forward<T2>(B));
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
     reverse_pass_callback([arena_A, ldlt_ptr, res]() mutable {
       arena_A.adj() -= ldlt_ptr->solve(res.adj()) * res.val_op().transpose();
     });
 
-    return ret_type(res);
+    return res;
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<T2> arena_B = std::forward<T2>(B);
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
@@ -68,7 +68,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
       arena_B.adj() += ldlt_ptr->solve(res.adj());
     });
 
-    return ret_type(res);
+    return res;
   }
 }
 

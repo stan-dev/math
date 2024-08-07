@@ -27,12 +27,12 @@ namespace math {
  * @return Unit length vector of dimension K
  **/
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y) {
+inline auto unit_vector_constrain(T&& y) {
   using ret_type = return_var_matrix_t<T>;
   check_nonzero_size("unit_vector", "y", y);
 
-  arena_t<T> arena_y = y;
-  arena_t<promote_scalar_t<double, T>> arena_y_val = arena_y.val();
+  arena_t<T> arena_y = std::forward<T>(y);
+  auto arena_y_val = to_arena(arena_y.val());
 
   const double r = arena_y_val.norm();
   arena_t<ret_type> res = arena_y_val / r;
@@ -44,7 +44,7 @@ inline auto unit_vector_constrain(const T& y) {
                               / (r * r * r));
   });
 
-  return ret_type(res);
+  return res;
 }
 
 /**
@@ -58,10 +58,10 @@ inline auto unit_vector_constrain(const T& y) {
  * @param lp Log probability reference to increment.
  **/
 template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, var& lp) {
-  const auto& y_ref = to_ref(y);
+inline auto unit_vector_constrain(T&& y, var& lp) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
   auto x = unit_vector_constrain(y_ref);
-  lp -= 0.5 * dot_self(y_ref);
+  lp -= 0.5 * dot_self(std::forward<decltype(y_ref)>(y_ref));
   return x;
 }
 
@@ -76,9 +76,9 @@ inline auto unit_vector_constrain(const T& y, var& lp) {
  * @param lp Log probability reference to increment.
  **/
 template <typename T, require_var_col_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, var& lp) {
+inline auto unit_vector_constrain(T&& y, var& lp) {
   auto x = unit_vector_constrain(y);
-  lp -= 0.5 * dot_self(y);
+  lp -= 0.5 * dot_self(std::forward<T>(y));
   return x;
 }
 

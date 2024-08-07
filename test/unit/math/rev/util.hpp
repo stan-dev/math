@@ -69,8 +69,8 @@ void check_varis_on_stack(const std::vector<stan::math::var>& x) {
         << n << " is not on the stack";
 }
 
-template <int R, int C>
-void check_varis_on_stack(const Eigen::Matrix<stan::math::var, R, C>& x) {
+template <typename T, stan::require_matrix_t<T>* = nullptr>
+void check_varis_on_stack(const T& x) {
   for (int j = 0; j < x.cols(); ++j)
     for (int i = 0; i < x.rows(); ++i)
       EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(

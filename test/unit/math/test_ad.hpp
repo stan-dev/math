@@ -22,6 +22,17 @@ using ffd_t = stan::math::fvar<fd_t>;
 using fv_t = stan::math::fvar<stan::math::var>;
 using ffv_t = stan::math::fvar<fv_t>;
 
+struct StanAutoDiff : public testing::Test {
+  void SetUp() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+  void TearDown() {
+    // make sure memory's clean after each test
+    stan::math::recover_memory();
+  }
+};
+
 namespace stan {
 namespace test {
 namespace internal {

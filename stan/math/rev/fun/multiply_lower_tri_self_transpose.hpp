@@ -14,13 +14,14 @@ namespace stan {
 namespace math {
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto multiply_lower_tri_self_transpose(const T& L) {
+inline auto multiply_lower_tri_self_transpose(T&& L) {
   using ret_type = return_var_matrix_t<T>;
   if (L.size() == 0) {
-    return ret_type(decltype(multiply_lower_tri_self_transpose(value_of(L)))());
+    return arena_t<ret_type>(
+        decltype(multiply_lower_tri_self_transpose(value_of(L)))());
   }
 
-  arena_t<T> arena_L = L;
+  arena_t<T> arena_L = std::forward<T>(L);
   arena_t<promote_scalar_t<double, T>> arena_L_val
       = arena_L.val().template triangularView<Eigen::Lower>();
 
@@ -33,7 +34,7 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
                          .template triangularView<Eigen::Lower>();
   });
 
-  return ret_type(res);
+  return res;
 }
 
 }  // namespace math

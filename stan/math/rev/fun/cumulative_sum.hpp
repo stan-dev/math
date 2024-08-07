@@ -32,7 +32,7 @@ inline auto cumulative_sum(const EigVec& x) {
   using return_t = return_var_matrix_t<EigVec>;
   arena_t<return_t> res = cumulative_sum(x_arena.val()).eval();
   if (unlikely(x.size() == 0)) {
-    return return_t(res);
+    return res;
   }
   reverse_pass_callback([x_arena, res]() mutable {
     for (Eigen::Index i = x_arena.size() - 1; i > 0; --i) {
@@ -41,7 +41,7 @@ inline auto cumulative_sum(const EigVec& x) {
     }
     x_arena.adj().coeffRef(0) += res.adj().coeffRef(0);
   });
-  return return_t(res);
+  return res;
 }
 
 }  // namespace math

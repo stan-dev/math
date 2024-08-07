@@ -20,13 +20,13 @@ namespace math {
  * @return Singular values of matrix
  */
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
-inline auto singular_values(const EigMat& m) {
+inline auto singular_values(EigMat&& m) {
   using ret_type = return_var_matrix_t<Eigen::VectorXd, EigMat>;
   if (unlikely(m.size() == 0)) {
-    return ret_type(Eigen::VectorXd(0));
+    return arena_t<ret_type>(Eigen::VectorXd(0));
   }
 
-  auto arena_m = to_arena(m);
+  auto arena_m = to_arena(std::forward<EigMat>(m));
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
       arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -41,7 +41,7 @@ inline auto singular_values(const EigMat& m) {
         += arena_U * singular_values.adj().asDiagonal() * arena_V.transpose();
   });
 
-  return ret_type(singular_values);
+  return singular_values;
 }
 
 }  // namespace math

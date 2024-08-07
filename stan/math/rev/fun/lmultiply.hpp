@@ -103,10 +103,9 @@ template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto lmultiply(const T1& a, const T2& b) {
   check_matching_dims("lmultiply", "a", a, "b", b);
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
-
+  arena_t<T1> arena_a = a;
+  arena_t<T2> arena_b = b;
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         lmultiply(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -115,10 +114,7 @@ inline auto lmultiply(const T1& a, const T2& b) {
           arena_b.adj().array() += res.adj().array() * arena_a.val().array()
                                    / arena_b.val().array();
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
-
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(lmultiply(arena_a.val(), arena_b),
                              [arena_a, arena_b](const auto& res) mutable {
                                arena_a.adj().array()
@@ -126,9 +122,6 @@ inline auto lmultiply(const T1& a, const T2& b) {
                                       * arena_b.val().array().log();
                              });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
-
     return make_callback_var(lmultiply(arena_a, arena_b.val()),
                              [arena_a, arena_b](const auto& res) mutable {
                                arena_b.adj().array() += res.adj().array()
@@ -151,11 +144,9 @@ template <typename T1, typename T2, require_var_matrix_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto lmultiply(const T1& a, const T2& b) {
   using std::log;
-
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    var arena_b = b;
-
+  arena_t<T1> arena_a = a;
+  auto arena_b = b;
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         lmultiply(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -163,18 +154,13 @@ inline auto lmultiply(const T1& a, const T2& b) {
           arena_b.adj() += (res.adj().array() * arena_a.val().array()).sum()
                            / arena_b.val();
         });
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_a = a;
-
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(lmultiply(arena_a.val(), value_of(b)),
                              [arena_a, b](const auto& res) mutable {
                                arena_a.adj().array()
                                    += res.adj().array() * log(value_of(b));
                              });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
-    var arena_b = b;
-
     return make_callback_var(
         lmultiply(arena_a, arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -196,10 +182,9 @@ inline auto lmultiply(const T1& a, const T2& b) {
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_var_matrix_t<T2>* = nullptr>
 inline auto lmultiply(const T1& a, const T2& b) {
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    var arena_a = a;
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
-
+  auto arena_a = a;
+  arena_t<T2> arena_b = b;
+  if constexpr (is_autodiffable_v<T1, T2>) {
     return make_callback_var(
         lmultiply(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
@@ -208,10 +193,7 @@ inline auto lmultiply(const T1& a, const T2& b) {
           arena_b.adj().array()
               += arena_a.val() * res.adj().array() / arena_b.val().array();
         });
-  } else if (!is_constant<T1>::value) {
-    var arena_a = a;
-    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
-
+  } else if constexpr (is_autodiffable_v<T1>) {
     return make_callback_var(
         lmultiply(arena_a.val(), arena_b),
         [arena_a, arena_b](const auto& res) mutable {
@@ -219,8 +201,6 @@ inline auto lmultiply(const T1& a, const T2& b) {
               += (res.adj().array() * arena_b.val().array().log()).sum();
         });
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_b = b;
-
     return make_callback_var(lmultiply(value_of(a), arena_b.val()),
                              [a, arena_b](const auto& res) mutable {
                                arena_b.adj().array() += value_of(a)

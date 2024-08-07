@@ -99,12 +99,11 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y,
  * @return simplex of dimensionality one greater than `y`
  */
 template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y,
-                                           return_type_t<Vec>& lp) {
-  if (Jacobian) {
-    return simplex_constrain(y, lp);
+inline auto simplex_constrain(Vec&& y, return_type_t<Vec>& lp) {
+  if constexpr (Jacobian) {
+    return simplex_constrain(std::forward<Vec>(y), lp);
   } else {
-    return simplex_constrain(y);
+    return simplex_constrain(std::forward<Vec>(y));
   }
 }
 
@@ -125,9 +124,10 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y,
  * @return simplex of dimensionality one greater than `y`
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return simplex_constrain<Jacobian>(v, lp); });
+inline auto simplex_constrain(T&& y, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return simplex_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 }  // namespace math

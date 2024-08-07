@@ -182,15 +182,15 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
                  [](auto&& x) { return x - 1; });
   using sparse_var_value_t
       = var_value<Eigen::SparseMatrix<double, Eigen::RowMajor>>;
-  if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T2>> b_arena = b;
+  if constexpr (is_autodiffable_v<T1, T2>) {
+    arena_t<T2> b_arena = b;
     sparse_var_value_t w_mat_arena
         = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w, u_arena, v_arena);
     arena_t<return_t> res = w_mat_arena.val() * value_of(b_arena);
     stan::math::internal::make_csr_adjoint(res, w_mat_arena, b_arena);
     return return_t(res);
-  } else if (!is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T2>> b_arena = b;
+  } else if constexpr (is_autodiffable_v<T2>) {
+    arena_t<T2> b_arena = b;
     auto w_val_arena = to_arena(value_of(w));
     sparse_val_mat w_val_mat(m, n, w_val_arena.size(), u_arena.data(),
                              v_arena.data(), w_val_arena.data());

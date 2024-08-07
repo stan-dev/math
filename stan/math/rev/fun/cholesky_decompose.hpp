@@ -153,7 +153,7 @@ inline auto cholesky_decompose(const EigMat& A) {
     internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, arena_A));
   }
-  return plain_type_t<EigMat>(L);
+  return L;
 }
 
 /**

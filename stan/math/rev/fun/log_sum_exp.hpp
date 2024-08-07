@@ -66,8 +66,8 @@ inline var log_sum_exp(double a, const var& b) {
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
-inline var log_sum_exp(const T& v) {
-  arena_t<decltype(v)> arena_v = v;
+inline var log_sum_exp(T&& v) {
+  arena_t<decltype(v)> arena_v = std::forward<T>(v);
   arena_t<decltype(v.val())> arena_v_val = arena_v.val();
   var res = log_sum_exp(arena_v_val);
 

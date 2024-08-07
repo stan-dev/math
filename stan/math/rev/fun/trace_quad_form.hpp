@@ -115,72 +115,59 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
-inline var trace_quad_form(const Mat1& A, const Mat2& B) {
+inline var trace_quad_form(Mat1&& A, Mat2&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  var res;
-
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
-    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
-
-    res = (value_of(arena_B).transpose() * value_of(arena_A)
-           * value_of(arena_B))
+  arena_t<Mat1> arena_A = std::forward<Mat1>(A);
+  arena_t<Mat2> arena_B = std::forward<Mat2>(B);
+  if constexpr (is_autodiffable_v<Mat1, Mat2>) {
+    var res
+        = (arena_B.val_op().transpose() * arena_A.val_op() * arena_B.val_op())
               .trace();
-
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias()
-            += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
+            += res.adj() * arena_B.val_op() * arena_B.val_op().transpose();
       } else {
         arena_A.adj()
-            += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
+            += res.adj() * arena_B.val_op() * arena_B.val_op().transpose();
       }
-
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
-            += res.adj() * (value_of(arena_A) + value_of(arena_A).transpose())
-               * value_of(arena_B);
+            += res.adj() * (arena_A.val_op() + arena_A.val_op().transpose())
+               * arena_B.val_op();
       } else {
         arena_B.adj() += res.adj()
-                         * (value_of(arena_A) + value_of(arena_A).transpose())
-                         * value_of(arena_B);
+                         * (arena_A.val_op() + arena_A.val_op().transpose())
+                         * arena_B.val_op();
       }
     });
-  } else if (!is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<double, Mat1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
-
-    res = (value_of(arena_B).transpose() * value_of(arena_A)
-           * value_of(arena_B))
-              .trace();
-
+    return res;
+  } else if constexpr (is_autodiffable_v<Mat2>) {
+    var res
+        = (arena_B.val_op().transpose() * arena_A * arena_B.val_op()).trace();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
-            += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
+            += res.adj() * (arena_A + arena_A.transpose()) * arena_B.val_op();
       } else {
         arena_B.adj()
-            += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
+            += res.adj() * (arena_A + arena_A.transpose()) * arena_B.val_op();
       }
     });
+    return res;
   } else {
-    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
-    arena_t<promote_scalar_t<double, Mat2>> arena_B = value_of(B);
-
-    res = (arena_B.transpose() * value_of(arena_A) * arena_B).trace();
-
+    var res = (arena_B.transpose() * arena_A.val_op() * arena_B).trace();
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += res.adj() * arena_B * arena_B.transpose();
       } else {
         arena_A.adj() += res.adj() * arena_B * arena_B.transpose();
       }
     });
+    return res;
   }
-
-  return res;
 }
 
 }  // namespace math

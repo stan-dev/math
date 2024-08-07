@@ -21,10 +21,12 @@ namespace math {
  * @return M times its transpose.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto tcrossprod(const T& M) {
+inline auto tcrossprod(T&& M) {
   using ret_type = return_var_matrix_t<
-      Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
-  arena_t<T> arena_M = M;
+      Eigen::Matrix<double, std::decay_t<T>::RowsAtCompileTime,
+                    std::decay_t<T>::RowsAtCompileTime>,
+      T>;
+  arena_t<T> arena_M = std::forward<T>(M);
   arena_t<ret_type> res = arena_M.val_op() * arena_M.val_op().transpose();
 
   if (likely(M.size() > 0)) {
@@ -34,7 +36,7 @@ inline auto tcrossprod(const T& M) {
     });
   }
 
-  return ret_type(res);
+  return res;
 }
 
 }  // namespace math

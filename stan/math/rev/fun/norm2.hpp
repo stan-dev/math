@@ -19,8 +19,8 @@ namespace math {
  * @return L2 norm of v.
  */
 template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
-inline var norm2(const T& v) {
-  arena_t<T> arena_v = v;
+inline var norm2(T&& v) {
+  arena_t<T> arena_v = std::forward<T>(v);
   var res = norm2(arena_v.val());
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() += res.adj() * (arena_v.val().array() / res.val());
