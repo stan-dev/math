@@ -17,6 +17,7 @@
 #include <stan/math/rev/constraint/simplex_constrain.hpp>
 #include <stan/math/rev/constraint/stochastic_column_constrain.hpp>
 #include <stan/math/rev/constraint/stochastic_row_constrain.hpp>
+#include <stan/math/rev/constraint/sum_to_zero_constrain.hpp>
 #include <stan/math/rev/constraint/unit_vector_constrain.hpp>
 #include <stan/math/rev/constraint/ub_constrain.hpp>
 

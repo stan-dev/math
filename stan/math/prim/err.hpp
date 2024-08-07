@@ -41,6 +41,7 @@
 #include <stan/math/prim/err/check_std_vector_index.hpp>
 #include <stan/math/prim/err/check_stochastic_column.hpp>
 #include <stan/math/prim/err/check_stochastic_row.hpp>
+#include <stan/math/prim/err/check_sum_to_zero.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_unit_vector.hpp>
 #include <stan/math/prim/err/check_vector.hpp>
