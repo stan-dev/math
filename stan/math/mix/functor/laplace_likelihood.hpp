@@ -166,16 +166,12 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
             = A(k + j * hessian_block_size, i + j * hessian_block_size);
       }
     }
-    Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
-        = eta_var.template cast<fvar<var>>();
     Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
     for (int j = 0; j < theta_size; ++j) {
       theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
     }
     Matrix<fvar<fvar<var>>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>
-        eta_ffvar = eta_fvar.template cast<fvar<fvar<var>>>();
-
-    fvar<var> f_fvar = f(theta_fvar, eta_fvar, args...);
+        eta_ffvar = eta_var.template cast<fvar<fvar<var>>>();
     target_ffvar += f(theta_ffvar, eta_ffvar, args...);
   }
   grad(target_ffvar.d_.d_.vi_);
