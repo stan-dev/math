@@ -102,15 +102,9 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta;
-  Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> theta_fvar(theta_size);
-  for (Eigen::Index i = 0; i < theta_size; ++i) {
-    theta_fvar(i) = fvar<var>(theta_var(i), 1.0);
-  }
-  fvar<var> ftheta_fvar = f(theta_fvar, eta, args...);
-
   Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; ++i) {
-    theta_ffvar(i) = fvar<fvar<var>>(theta_fvar(i), 1.0);
+    theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
   fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, eta, args...);
   grad(ftheta_ffvar.d_.d_.vi_);
