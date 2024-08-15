@@ -63,6 +63,18 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3,
  * @param t A tuple
  */
 template <typename F, typename T>
+constexpr inline void for_each(F&& f, const std::tuple<>& /* t */) {
+  return;
+}
+
+/**
+ * Apply a function to each element of a tuple
+ * @tparam F type with a valid `operator()`
+ * @tparam T Tuple
+ * @param f A functor to apply over each element of the tuple.
+ * @param t A tuple
+ */
+template <typename F, typename T>
 constexpr inline auto for_each(F&& f, T&& t) {
   return internal::for_each(
       std::forward<F>(f), std::forward<T>(t),
