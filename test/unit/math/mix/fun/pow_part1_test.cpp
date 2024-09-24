@@ -33,9 +33,8 @@ TEST(mathMixScalFun, powInstantiations) {
 }
 
 TEST(mathMixScalFun, pow) {
-  auto f = [](const auto& x1, const auto& x2) {
-    return stan::math::pow(x1, x2);
-  };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::pow(x1, x2); };
 
   stan::test::expect_ad(f, -0.4, 0.5);
   stan::test::expect_ad(f, 0.5, 0.5);
