@@ -319,7 +319,7 @@ inline std::complex<var> pow(const std::complex<var>& x, const var& y) {
  * @return first argument to the power of the second argument
  */
 template <typename T, typename = require_arithmetic_t<T>>
-inline std::complex<var> pow(const std::complex<var>& x, T y) {
+inline std::complex<var> pow(const std::complex<var>& x, const T& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -382,7 +382,7 @@ inline std::complex<var> pow(const var& x, std::complex<T> y) {
  * @return first argument to the power of the second argument
  */
 template <typename T, typename = require_arithmetic_t<T>>
-inline std::complex<var> pow(T x, const std::complex<var>& y) {
+inline std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -399,6 +399,26 @@ inline std::complex<var> pow(T x, const std::complex<var>& y) {
  */
 inline std::complex<var> pow(const std::complex<var>& x, int y) {
   return internal::complex_pow(x, y);
+}
+
+/**
+ * Returns the elementwise raising of the first argument to the power of the
+ * second argument.
+ *
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param a first argument
+ * @param b second argument
+ * @return the elementwise raising of the first argument to the power of the
+ * second argument.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
+          require_any_not_st_arithmetic<T1, T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [](const auto& c, const auto& d) {
+    return stan::math::pow(c, d);
+  });
 }
 
 }  // namespace math

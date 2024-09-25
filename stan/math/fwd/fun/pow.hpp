@@ -193,7 +193,7 @@ inline std::complex<fvar<V>> pow(const fvar<V>& x, const std::complex<T>& y) {
  * @return first argument to the power of the second argument
  */
 template <typename T, typename V, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(T x, const std::complex<fvar<V>>& y) {
+inline std::complex<fvar<V>> pow(const T& x, const std::complex<fvar<V>>& y) {
   return internal::complex_pow(x, y);
 }
 
