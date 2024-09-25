@@ -5,8 +5,7 @@
 
 TEST(mathMixFun, complexPow) {
   auto f = [](const auto& x1, const auto& x2) {
-    using stan::math::pow;
-    return pow(x1, x2);
+    return stan::math::pow(x1, x2);
   };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 5e-3;
