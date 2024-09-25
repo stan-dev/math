@@ -25,7 +25,7 @@ inline fvar<T> pow(const fvar<T>& x1, const fvar<T>& x2) {
 }
 
 template <typename T, typename U, typename = require_arithmetic_t<U>>
-inline fvar<T> pow(U x1, const fvar<T>& x2) {
+inline fvar<T> pow(const U& x1, const fvar<T>& x2) {
   using std::log;
   using std::pow;
   T u = pow(x1, x2.val_);
@@ -33,7 +33,7 @@ inline fvar<T> pow(U x1, const fvar<T>& x2) {
 }
 
 template <typename T, typename U, typename = require_arithmetic_t<U>>
-inline fvar<T> pow(const fvar<T>& x1, U x2) {
+inline fvar<T> pow(const fvar<T>& x1, const U& x2) {
   using std::pow;
   using std::sqrt;
   if (x2 == -2) {
