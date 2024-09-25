@@ -4,9 +4,8 @@
 #include <vector>
 
 TEST(mathMixFun, complexPow) {
-  auto f = [](const auto& x1, const auto& x2) {
-    return stan::math::pow(x1, x2);
-  };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::pow(x1, x2); };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 5e-3;
   tols.hessian_fvar_hessian_ = 5e-3;
