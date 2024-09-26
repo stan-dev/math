@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_VAR_HPP
 #define STAN_MATH_PRIM_META_IS_VAR_HPP
 
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 
 #include <type_traits>
 

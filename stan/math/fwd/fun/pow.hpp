@@ -6,6 +6,7 @@
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
+#include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/pow.hpp>
@@ -61,22 +62,6 @@ inline auto pow(const T1& x1, const T2& x2) {
     return T1(stan::math::pow(x1.val_, x2), x1.d_ * x2 * stan::math::pow(x1.val_, x2 - 1));
   }
 }
-
-
-// must uniquely match all pairs of:
-//    { complex<fvar<V>>, complex<T>, fvar<V>, T }
-// with at least one fvar<V> and at least one complex, where T is arithmetic:
-// 1) complex<fvar<V>>, complex<fvar<V>>
-// 2) complex<fvar<V>>, complex<T>
-// 3) complex<fvar<V>>, fvar<V>
-// 4) complex<fvar<V>>, T
-// 5) complex<T>, complex<fvar<V>>
-// 6) complex<T>, fvar<V>
-// 7) fvar<V>, complex<fvar<V>>
-// 8) fvar<V>, complex<T>
-// 9) T, complex<fvar<V>>
-
-
 
 
 /**
