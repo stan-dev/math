@@ -84,126 +84,50 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lpmf(
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, r, alpha, beta);
 
-  VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
-      normalizing_constant(size_n);
-  for (size_t i = 0; i < size_n; i++)
-    if (include_summand<propto>::value)
-      normalizing_constant[i] = -lgamma(n_vec[i] + 1);
-
-  VectorBuilder<true, T_partials_return, T_r, T_alpha> lbeta_denominator(
-      size_r_alpha);
-  for (size_t i = 0; i < size_r_alpha; i++) {
-    lbeta_denominator[i] = lbeta(r_vec.val(i), alpha_vec.val(i));
-  }
-
-  VectorBuilder<true, T_partials_return, T_beta> lgamma_denominator(size_beta);
-  for (size_t i = 0; i < size_beta; i++) {
-    lgamma_denominator[i] = lgamma(beta_vec.val(i));
-  }
-
-  VectorBuilder<true, T_partials_return, T_n, T_beta> lgamma_numerator(
-      size_n_beta);
-  for (size_t i = 0; i < size_n_beta; i++) {
-    lgamma_numerator[i] = lgamma(n_vec[i] + beta_vec.val(i));
-  }
-
-  VectorBuilder<true, T_partials_return, T_n, T_r, T_alpha, T_beta> lbeta_diff(
-      max_size_seq_view);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    lbeta_diff[i]
-        = lbeta(n_vec[i] + r_vec.val(i), alpha_vec.val(i) + beta_vec.val(i))
-          + lgamma_numerator[i] - lbeta_denominator[i] - lgamma_denominator[i];
-  }
-
-  // derivative w.r.t. r, alpha and beta
-
-  VectorBuilder<!is_constant_all<T_r, T_alpha, T_beta>::value,
-                T_partials_return, T_n, T_r, T_alpha, T_beta>
-      digamma_n_r_alpha_beta(max_size_seq_view);
-  if (!is_constant_all<T_r, T_alpha, T_beta>::value) {
-    for (size_t i = 0; i < max_size_seq_view; i++) {
-      digamma_n_r_alpha_beta[i] = digamma(n_vec[i] + r_vec.val(i)
-                                          + alpha_vec.val(i) + beta_vec.val(i));
+    const T_partials_return lbeta_denominator
+        = lbeta(r_vec.val(i), alpha_vec.val(i));
+    const T_partials_return lgamma_numerator
+        = lgamma(n_vec[i] + beta_vec.val(i));
+    const T_partials_return lgamma_denominator = lgamma(beta_vec.val(i));
+    const T_partials_return lbeta_numerator
+        = lbeta(n_vec[i] + r_vec.val(i), alpha_vec.val(i) + beta_vec.val(i));
+    if (include_summand<propto>::value) {
+      logp -= lgamma(n_vec[i] + 1);
     }
-  }
+    logp += lbeta_numerator + lgamma_numerator - lbeta_denominator
+            - lgamma_denominator;
 
-  VectorBuilder<!is_constant_all<T_alpha, T_beta>::value, T_partials_return,
-                T_alpha, T_beta>
-      digamma_alpha_beta(size_alpha_beta);
-  if (!is_constant_all<T_alpha, T_beta>::value) {
-    for (size_t i = 0; i < size_alpha_beta; i++) {
-      digamma_alpha_beta[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
-    }
-  }
+    T_partials_return digamma_n_r_alpha_beta
+        = is_constant_all<T_r, T_alpha, T_beta>::value
+              ? 0
+              : digamma(n_vec[i] + r_vec.val(i) + alpha_vec.val(i)
+                        + beta_vec.val(i));
 
-  VectorBuilder<!is_constant_all<T_r>::value, T_partials_return, T_n, T_r>
-      digamma_n_r(size_n_r);
-  if (!is_constant_all<T_r>::value) {
-    for (size_t i = 0; i < size_n_r; i++) {
-      digamma_n_r[i] = digamma(n_vec[i] + r_vec.val(i));
-    }
-  }
+    T_partials_return digamma_r_alpha
+        = is_constant_all<T_r, T_alpha>::value
+              ? 0
+              : digamma(r_vec.val(i) + alpha_vec.val(i));
 
-  VectorBuilder<!is_constant_all<T_r, T_alpha>::value, T_partials_return, T_r,
-                T_alpha>
-      digamma_r_alpha(size_r_alpha);
-  if (!is_constant_all<T_r, T_alpha>::value) {
-    for (size_t i = 0; i < size_r_alpha; i++) {
-      digamma_r_alpha[i] = digamma(r_vec.val(i) + alpha_vec.val(i));
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_beta>::value, T_partials_return, T_n,
-                T_beta>
-      digamma_n_beta(size_n_beta);
-  if (!is_constant_all<T_n, T_beta>::value) {
-    for (size_t i = 0; i < size_n_beta; i++) {
-      digamma_n_beta[i] = digamma(n_vec[i] + beta_vec.val(i));
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_r>::value, T_partials_return, T_r> digamma_r(
-      size_r);
-  if (!is_constant_all<T_r>::value) {
-    for (size_t i = 0; i < size_r; i++) {
-      digamma_r[i] = digamma(r_vec.val(i));
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_alpha>::value, T_partials_return, T_alpha>
-      digamma_alpha(size_alpha);
-  if (!is_constant_all<T_alpha>::value) {
-    for (size_t i = 0; i < size_alpha; i++) {
-      digamma_alpha[i] = digamma(alpha_vec.val(i));
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_beta>::value, T_partials_return, T_beta>
-      digamma_beta(size_beta);
-  if (!is_constant_all<T_beta>::value) {
-    for (size_t i = 0; i < size_beta; i++) {
-      digamma_beta[i] = digamma(beta_vec.val(i));
-    }
-  }
-
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (include_summand<propto>::value)
-      logp += normalizing_constant[i];
-    logp += lbeta_diff[i];
+    T_partials_return digamma_alpha_beta
+        = is_constant_all<T_alpha, T_beta>::value
+              ? 0
+              : digamma(alpha_vec.val(i) + beta_vec.val(i));
 
     if (!is_constant_all<T_r>::value) {
-      partials<0>(ops_partials)[i] += digamma_n_r[i] - digamma_n_r_alpha_beta[i]
-                                      - (digamma_r[i] - digamma_r_alpha[i]);
+      partials<0>(ops_partials)[i]
+          += digamma(n_vec[i] + r_vec.val(i)) - digamma_n_r_alpha_beta
+             - (digamma(r_vec.val(i)) - digamma_r_alpha);
     }
     if (!is_constant_all<T_alpha>::value) {
-      partials<1>(ops_partials)[i] += digamma_alpha_beta[i]
-                                      - digamma_n_r_alpha_beta[i]
-                                      - (digamma_alpha[i] - digamma_r_alpha[i]);
+      partials<1>(ops_partials)[i]
+          += digamma_alpha_beta - digamma_n_r_alpha_beta
+             - (digamma(alpha_vec.val(i)) - digamma_r_alpha);
     }
     if (!is_constant_all<T_beta>::value) {
-      partials<2>(ops_partials)[i] += digamma_alpha_beta[i]
-                                      - digamma_n_r_alpha_beta[i]
-                                      + digamma_n_beta[i] - digamma_beta[i];
+      partials<2>(ops_partials)[i]
+          += digamma_alpha_beta - digamma_n_r_alpha_beta
+             + digamma(n_vec[i] + beta_vec.val(i)) - digamma(beta_vec.val(i));
     }
   }
   return ops_partials.build(logp);
