@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -20,9 +20,9 @@ namespace math {
  */
 template <typename T = double, typename S = double,
           require_all_not_container_t<T, S>* = nullptr>
-constexpr inline std::complex<stan::real_return_t<T, S>> to_complex(
+constexpr inline stan::math::complex<stan::real_return_t<T, S>> to_complex(
     const T& re = 0, const S& im = 0) {
-  return std::complex<stan::real_return_t<T, S>>(re, im);
+  return stan::math::complex<stan::real_return_t<T, S>>(re, im);
 }
 
 /**

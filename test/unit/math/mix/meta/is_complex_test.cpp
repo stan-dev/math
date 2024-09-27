@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <string>
 
 template <bool expected, typename T>
@@ -11,12 +12,12 @@ void expect_is_complex() {
 
 template <typename T>
 void test_is_complex() {
-  expect_is_complex<true, std::complex<T>>();
-  expect_is_complex<true, const std::complex<T>>();
-  expect_is_complex<true, std::complex<T>&>();
-  expect_is_complex<true, const std::complex<T>&>();
-  expect_is_complex<false, std::complex<T>*>();
-  expect_is_complex<false, const std::complex<T>*>();
+  expect_is_complex<true, stan::math::complex<T>>();
+  expect_is_complex<true, const stan::math::complex<T>>();
+  expect_is_complex<true, stan::math::complex<T>&>();
+  expect_is_complex<true, const stan::math::complex<T>&>();
+  expect_is_complex<false, stan::math::complex<T>*>();
+  expect_is_complex<false, const stan::math::complex<T>*>();
 }
 
 TEST(stanMathMix, isComplex) {
@@ -43,8 +44,8 @@ void expect_is_vt_complex() {
 
 template <typename T>
 void test_is_vt_complex() {
-  using complex_std_vec = std::vector<std::complex<T>>;
-  using complex_eigen_vec = Eigen::Matrix<std::complex<T>, -1, 1>;
+  using complex_std_vec = std::vector<stan::math::complex<T>>;
+  using complex_eigen_vec = Eigen::Matrix<stan::math::complex<T>, -1, 1>;
   expect_is_vt_complex<true, complex_std_vec>();
   expect_is_vt_complex<true, const complex_std_vec>();
   expect_is_vt_complex<true, complex_std_vec&>();
@@ -84,8 +85,8 @@ void expect_is_vt_not_complex() {
 
 template <typename T>
 void test_is_vt_not_complex() {
-  using complex_std_vec = std::vector<std::complex<T>>;
-  using complex_eigen_vec = Eigen::Matrix<std::complex<T>, -1, 1>;
+  using complex_std_vec = std::vector<stan::math::complex<T>>;
+  using complex_eigen_vec = Eigen::Matrix<stan::math::complex<T>, -1, 1>;
   expect_is_vt_not_complex<!true, complex_std_vec>();
   expect_is_vt_not_complex<!true, const complex_std_vec>();
   expect_is_vt_not_complex<!true, complex_std_vec&>();

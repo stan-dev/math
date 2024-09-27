@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +32,7 @@ inline fvar<T> abs(const fvar<T>& x) {
  * @return absolute value of the argument
  */
 template <typename T>
-inline fvar<T> abs(const std::complex<fvar<T>>& z) {
+inline fvar<T> abs(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_abs(z);
 }
 

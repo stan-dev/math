@@ -3,12 +3,12 @@
 #include <test/unit/util.hpp>
 #include <stdexcept>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 TEST(MathMatrixPrimMat, svd_U) {
   using stan::math::matrix_d;
   using stan::math::svd_U;
-  using compl_t = std::complex<double>;
+  using compl_t = stan::math::complex<double>;
   using matrix_c = Eigen::Matrix<compl_t, Eigen::Dynamic, Eigen::Dynamic>;
 
   // Values generated using R base::svd

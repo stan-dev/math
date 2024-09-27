@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 
 TEST(mathMixMatFun, get_imag) {
   auto f = [](const auto& z) { return stan::math::get_imag(z); };
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, get_imag) {
 
 template <typename T>
 void test_vectorized_get_imag() {
-  using complex_t = std::complex<T>;
+  using complex_t = stan::math::complex<T>;
   using matrix_t = Eigen::Matrix<T, -1, -1>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;
   complex_matrix A(2, 2);

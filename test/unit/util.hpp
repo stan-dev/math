@@ -53,7 +53,7 @@
 
 /**
  * Tests for elementwise equality of the input matrices
- * of std::complex<double>s with the EXPECT_FLOAT_EQ macro
+ * of stan::math::complex<double>s with the EXPECT_FLOAT_EQ macro
  * from GTest.
  *
  * @param A first input matrix to compare
@@ -122,7 +122,7 @@
 
 /**
  * Tests for elementwise equality of the input matrices
- * of std::complex<double>s with the EXPECT_FLOAT_EQ macro
+ * of stan::math::complex<double>s with the EXPECT_FLOAT_EQ macro
  * from GTest.
  *
  * @param A first input matrix to compare

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 #include <type_traits>
 
@@ -54,7 +55,7 @@ TEST(mixFun, abs) {
   // complex tests
   for (double re : std::vector<double>{-4, -2.5, -1.5, -0.3, 1.3, 2.1, 3.9}) {
     for (double im : std::vector<double>{-4, -2.5, -1.5, -0.3, 1.3, 2.1, 3.9}) {
-      stan::test::expect_ad(f, std::complex<double>(re, im));
+      stan::test::expect_ad(f, stan::math::complex<double>(re, im));
     }
   }
 
@@ -72,8 +73,8 @@ TEST(mixFun, abs) {
   stan::test::expect_ad(f, svvd_t{svd_t{1.9}, svd_t{-13.987}});
   stan::test::expect_ad(f, svvd_t{svd_t{1.9, -2.7}, svd_t{-13.987, 8.8}});
 
-  // vector<complex<double>>
-  using c_t = std::complex<double>;
+  // vector<costan::math::complex>>
+  using c_t = stan::math::complex<double>;
   using svc_t = std::vector<c_t>;
   stan::test::expect_ad(f, svc_t{});
   stan::test::expect_ad(f, svc_t{c_t{1.0, -1.9}});
@@ -233,12 +234,12 @@ TEST(mixFun, abs) {
   stan::test::expect_ad(f, q2);
 }
 TEST(mixFun, absReturnType) {
-  // validate return types not overpromoted to complex by assignability
-  std::complex<stan::math::var> a = 3;
+  stan::math::complexreturn types not overpromoted to complex by assignability
+  stan::math::complex<stan::math::var> a = 3;
   stan::math::var b = abs(a);
   EXPECT_FLOAT_EQ(b.val(), 3);
-
-  std::complex<stan::math::fvar<double>> c = 3;
+stan::math::complex
+  stan::math::complex<stan::math::fvar<double>> c = 3;
   stan::math::fvar<double> d = abs(c);
   EXPECT_FLOAT_EQ(d.val(), 3);
   SUCCEED();

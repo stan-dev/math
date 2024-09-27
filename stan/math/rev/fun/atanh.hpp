@@ -11,7 +11,7 @@
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -84,7 +84,7 @@ inline auto atanh(const VarMat& x) {
  * @param[in] z argument
  * @return hyperbolic arc tangent of the argument
  */
-inline std::complex<var> atanh(const std::complex<var>& z) {
+inline stan::math::complex<var> atanh(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_atanh(z);
 }
 

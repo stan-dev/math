@@ -51,7 +51,7 @@ T make_arg(double value = 0.4, int size = 1) {
 }
 
 template <typename T, require_complex_t<T>* = nullptr>
-T make_arg(std::complex<double> value = 0.4, int size = 1) {
+T make_arg(stan::math::complex<double> value = 0.4, int size = 1) {
   return value;
 }
 
@@ -128,20 +128,21 @@ void expect_eq(math::fvar<T> a, math::fvar<T> b, const char* msg) {
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(std::complex<T> a, std::complex<T> b, const char* msg) {
+void expect_eq(stan::math::complex<T> a, stan::math::complex<T> b,
+               const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
-void expect_eq(std::complex<math::var> a, std::complex<math::var> b,
-               const char* msg) {
+void expect_eq(stan::math::complex<math::var> a,
+               stan::math::complex<math::var> b, const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(std::complex<math::fvar<T>> a, std::complex<math::fvar<T>> b,
-               const char* msg) {
+void expect_eq(stan::math::complex<math::fvar<T>> a,
+               stan::math::complex<math::fvar<T>> b, const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
@@ -206,7 +207,7 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 void grad(stan::math::var& a) { a.grad(); }
-void grad(std::complex<stan::math::var>& a) {
+void grad(stan::math::complex<stan::math::var>& a) {
   a.real().grad();
   a.imag().grad();
 }

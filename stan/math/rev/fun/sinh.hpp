@@ -9,7 +9,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -69,7 +69,7 @@ inline auto sinh(const VarMat& a) {
  * @param[in] z argument
  * @return hyperbolic sine of the argument
  */
-inline std::complex<var> sinh(const std::complex<var>& z) {
+inline stan::math::complex<var> sinh(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_sinh(z);
 }
 

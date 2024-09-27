@@ -9,7 +9,7 @@
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -73,7 +73,7 @@ inline auto tan(const VarMat& a) {
  * @param[in] z argument
  * @return tangent of the argument
  */
-inline std::complex<var> tan(const std::complex<var>& z) {
+inline stan::math::complex<var> tan(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_tan(z);
 }
 

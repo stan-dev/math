@@ -9,7 +9,7 @@
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -68,7 +68,7 @@ inline auto cosh(const VarMat& a) {
  * @param[in] z argument
  * @return hyperbolic cosine of the argument
  */
-inline std::complex<var> cosh(const std::complex<var>& z) {
+inline stan::math::complex<var> cosh(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_cosh(z);
 }
 

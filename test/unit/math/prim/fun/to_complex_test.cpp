@@ -4,8 +4,8 @@
 
 template <typename T, typename S>
 void test_constructor(const T& re, const S& im) {
-  std::complex<double> z1(re, im);
-  std::complex<double> z2 = stan::math::to_complex(re, im);
+  stan::math::complex<double> z1(re, im);
+  stan::math::complex<double> z2 = stan::math::to_complex(re, im);
   EXPECT_EQ(z1, z2);
 }
 

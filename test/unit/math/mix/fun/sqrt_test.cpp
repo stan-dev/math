@@ -21,10 +21,10 @@ TEST(mathMixMatFun, sqrt) {
   tols.grad_hessian_grad_hessian_ = 2.0;
   stan::test::expect_ad(tols, ff, 0.0);
 
-  stan::test::expect_ad(f, std::complex<double>(0.9, 0.8));
+  stan::test::expect_ad(f, stan::math::complex<double>(0.9, 0.8));
   for (double im : std::vector<double>{-1.3, 2.3}) {
     for (double re : std::vector<double>{-3.6, -0.0, 0.0, 0.5}) {
-      stan::test::expect_ad(f, std::complex<double>(re, im));
+      stan::test::expect_ad(f, stan::math::complex<double>(re, im));
     }
   }
 }

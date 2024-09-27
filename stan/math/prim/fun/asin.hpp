@@ -11,7 +11,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -72,7 +72,7 @@ namespace internal {
  * @return arc sine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_asin(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_asin(const stan::math::complex<V>& z) {
   auto y_d = asin(value_of_rec(z));
   auto y = neg_i_times(asinh(i_times(z)));
   return copysign(y, y_d);

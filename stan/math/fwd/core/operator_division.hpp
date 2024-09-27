@@ -3,7 +3,8 @@
 
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/prim/core/operator_division.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -52,50 +53,53 @@ inline fvar<T> operator/(U x1, const fvar<T>& x2) {
 }
 
 template <typename T>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const std::complex<fvar<T>>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const stan::math::complex<fvar<T>>& x1,
+    const stan::math::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const std::complex<U>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const stan::math::complex<fvar<T>>& x1, const stan::math::complex<U>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const fvar<T>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const stan::math::complex<fvar<T>>& x1, const fvar<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1, U x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const stan::math::complex<fvar<T>>& x1, U x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-                                       const std::complex<fvar<T>>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const stan::math::complex<U>& x1, const stan::math::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-                                       const fvar<T>& x2) {
+inline stan::math::complex<fvar<T>> operator/(const stan::math::complex<U>& x1,
+                                              const fvar<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T>
-inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-                                       const std::complex<fvar<T>>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const fvar<T>& x1, const stan::math::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U,
           typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-                                       const std::complex<U>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    const fvar<T>& x1, const stan::math::complex<U>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(U x1, const std::complex<fvar<T>>& x2) {
+inline stan::math::complex<fvar<T>> operator/(
+    U x1, const stan::math::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 

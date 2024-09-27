@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 
 TEST(mathMixMatFun, to_complex) {
   auto f0 = []() { return stan::math::to_complex(); };
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, to_complex) {
     return stan::math::to_complex(x, y);
   };
 
-  EXPECT_EQ(std::complex<double>(), f0());
+  EXPECT_EQ(stan::math::complex<double>(), f0());
   stan::test::expect_common_unary(f1);
   stan::test::expect_common_binary(f2);
 }

@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -100,8 +100,8 @@ namespace internal {
  * @return hyperbolic arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acosh(const std::complex<V>& z) {
-  std::complex<double> y_d = acosh(value_of_rec(z));
+inline stan::math::complex<V> complex_acosh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = acosh(value_of_rec(z));
   auto y = log(z + sqrt(z * z - 1));
   return copysign(y, y_d);
 }

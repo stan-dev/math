@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/conj.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,8 @@ namespace math {
  * @return phase angle of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> conj(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> conj(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_conj(z);
 }
 

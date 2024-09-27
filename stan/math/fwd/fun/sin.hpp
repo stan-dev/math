@@ -5,7 +5,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/fun/sin.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -25,7 +25,7 @@ inline fvar<T> sin(const fvar<T>& x) {
  * @return sine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> sin(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> sin(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_sin(z);
 }
 

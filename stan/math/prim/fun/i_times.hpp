@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_I_TIMES_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_I_TIMES_HPP
 
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,7 @@ namespace math {
  * @return argument multipled by `i`
  */
 template <typename T>
-inline std::complex<T> i_times(const std::complex<T>& z) {
+inline stan::math::complex<T> i_times(const stan::math::complex<T>& z) {
   return {-z.imag(), z.real()};
 }
 
@@ -33,7 +33,7 @@ inline std::complex<T> i_times(const std::complex<T>& z) {
  * @return argument multipled by `-i`
  */
 template <typename T>
-inline std::complex<T> neg_i_times(const std::complex<T>& z) {
+inline stan::math::complex<T> neg_i_times(const stan::math::complex<T>& z) {
   return {z.imag(), -z.real()};
 }
 
@@ -45,7 +45,7 @@ inline std::complex<T> neg_i_times(const std::complex<T>& z) {
  * @return negation of argument
  */
 template <typename V>
-inline std::complex<V> complex_negate(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_negate(const stan::math::complex<V>& z) {
   return {-z.real(), -z.imag()};
 }
 

@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_NOT_EQUAL_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_NOT_EQUAL_HPP
 
-#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/operator_equal.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -70,7 +69,7 @@ inline bool operator!=(Arith a, const var& b) {
  * @return `false` if the real number is equal to the real part of the
  * complex number, and the imaginary part of the complex number is zero
  */
-inline bool operator!=(const var& x, const std::complex<var>& z) {
+inline bool operator!=(const var& x, const stan::math::complex<var>& z) {
   return !(x == z.real() && 0 == z.imag());
 }
 
@@ -83,7 +82,7 @@ inline bool operator!=(const var& x, const std::complex<var>& z) {
  * @return `false` if the real number is equal to the real part of the
  * complex number, and the imaginary part of the complex number is zero
  */
-inline bool operator!=(const std::complex<var>& z, const var& y) {
+inline bool operator!=(const stan::math::complex<var>& z, const var& y) {
   return !(z.real() == y && z.imag() == 0);
 }
 

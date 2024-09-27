@@ -1,12 +1,13 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 
 TEST(PrimScalarSigTests, abs) {
-  using namespace std::complex_literals;
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::abs(real_1);
   auto result_2 = stan::math::abs(int_1);
   auto result_3 = stan::math::abs(complex_1);
@@ -19,11 +20,11 @@ TEST(PrimScalarSigTests, abs) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, acos) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 1;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex1;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::acos(real_1);
   auto result_2 = stan::math::acos(int_1);
   auto result_3 = stan::math::acos(complex_1);
@@ -36,11 +37,11 @@ TEST(PrimScalarSigTests, acos) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, acosh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex) {
+  using namespace stan::math::complex_literals;
   double real_1 = 1.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::acosh(real_1);
   auto result_2 = stan::math::acosh(int_1);
   auto result_3 = stan::math::acosh(complex_1);
@@ -53,9 +54,9 @@ TEST(PrimScalarSigTests, acosh) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, arg) {
-  using namespace std::complex_literals;
-  std::complex<double> complex_1 = 1. + 2.0i;
+TEST(PrimScalarSigstan::math::complex{
+  stan::math::complexace stan::math::complex_literals;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::arg(complex_1);
   EXPECT_EQ(result_1, std::arg(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
@@ -64,11 +65,11 @@ TEST(PrimScalarSigTests, arg) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, asin) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 1;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex1;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::asin(real_1);
   auto result_2 = stan::math::asin(int_1);
   auto result_3 = stan::math::asin(complex_1);
@@ -81,11 +82,11 @@ TEST(PrimScalarSigTests, asin) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, asinh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex) {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::asinh(real_1);
   auto result_2 = stan::math::asinh(int_1);
   auto result_3 = stan::math::asinh(complex_1);
@@ -98,11 +99,11 @@ TEST(PrimScalarSigTests, asinh) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, atan) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::atan(real_1);
   auto result_2 = stan::math::atan(int_1);
   auto result_3 = stan::math::atan(complex_1);
@@ -115,11 +116,11 @@ TEST(PrimScalarSigTests, atan) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, atanh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex) {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 1;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex1;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::atanh(real_1);
   auto result_2 = stan::math::atanh(int_1);
   auto result_3 = stan::math::atanh(complex_1);
@@ -158,9 +159,9 @@ TEST(PrimScalarSigTests, ceil) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, conj) {
-  using namespace std::complex_literals;
-  std::complex<double> complex_1 = 1. + 2.0i;
+TEST(PrimScalarSigstan::math::complex {
+  stan::math::complexace stan::math::complex_literals;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::conj(complex_1);
   EXPECT_EQ(result_1, std::conj(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
@@ -169,11 +170,11 @@ TEST(PrimScalarSigTests, conj) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, cos) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::cos(real_1);
   auto result_2 = stan::math::cos(int_1);
   auto result_3 = stan::math::cos(complex_1);
@@ -186,11 +187,11 @@ TEST(PrimScalarSigTests, cos) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, cosh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::cosh(real_1);
   auto result_2 = stan::math::cosh(int_1);
   auto result_3 = stan::math::cosh(complex_1);
@@ -229,11 +230,11 @@ TEST(PrimScalarSigTests, erfc) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, exp) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::exp(real_1);
   auto result_2 = stan::math::exp(int_1);
   auto result_3 = stan::math::exp(complex_1);
@@ -311,11 +312,11 @@ TEST(PrimScalarSigTests, lgamma) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, log) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log(real_1);
   auto result_2 = stan::math::log(int_1);
   auto result_3 = stan::math::log(complex_1);
@@ -328,11 +329,11 @@ TEST(PrimScalarSigTests, log) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, log10) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex) {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log10(real_1);
   auto result_2 = stan::math::log10(int_1);
   auto result_3 = stan::math::log10(complex_1);
@@ -371,9 +372,9 @@ TEST(PrimScalarSigTests, log2) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, norm) {
-  using namespace std::complex_literals;
-  std::complex<double> complex_1 = 1. + 2.0i;
+TEST(PrimScalarSigstan::math::complex {
+  stan::math::complexace stan::math::complex_literals;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::norm(complex_1);
   EXPECT_EQ(result_1, std::norm(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
@@ -382,9 +383,9 @@ TEST(PrimScalarSigTests, norm) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, proj) {
-  using namespace std::complex_literals;
-  std::complex<double> complex_1 = 1. + 2.0i;
+TEST(PrimScalarSigstan::math::complex {
+  stan::math::complexace stan::math::complex_literals;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::proj(complex_1);
   EXPECT_EQ(result_1, std::proj(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
@@ -406,11 +407,11 @@ TEST(PrimScalarSigTests, round) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, sin) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sin(real_1);
   auto result_2 = stan::math::sin(int_1);
   auto result_3 = stan::math::sin(complex_1);
@@ -423,11 +424,11 @@ TEST(PrimScalarSigTests, sin) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, sinh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sinh(real_1);
   auto result_2 = stan::math::sinh(int_1);
   auto result_3 = stan::math::sinh(complex_1);
@@ -440,11 +441,11 @@ TEST(PrimScalarSigTests, sinh) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, sqrt) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sqrt(real_1);
   auto result_2 = stan::math::sqrt(int_1);
   auto result_3 = stan::math::sqrt(complex_1);
@@ -457,11 +458,11 @@ TEST(PrimScalarSigTests, sqrt) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, tan) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tan(real_1);
   auto result_2 = stan::math::tan(int_1);
   auto result_3 = stan::math::tan(complex_1);
@@ -474,11 +475,11 @@ TEST(PrimScalarSigTests, tan) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, tanh) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex {
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
-  int int_1 = 2;
-  std::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex2;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tanh(real_1);
   auto result_2 = stan::math::tanh(int_1);
   auto result_3 = stan::math::tanh(complex_1);
@@ -669,14 +670,14 @@ TEST(PrimScalarSigTests, ldexp) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
-TEST(PrimScalarSigTests, pow) {
-  using namespace std::complex_literals;
+TEST(PrimScalarSigstan::math::complex{
+  using namespace stan::math::complex_literals;
   double real_1 = 0.4;
   double real_2 = 2.2;
   int int_1 = 2;
-  int int_2 = 4;
-  std::complex<double> complex_1 = 1. + 2.0i;
-  std::complex<double> complex_2 = 2. + 3.0i;
+  stan::math::complex4;
+  stan::math::complex<double> complex_1 = 1. + 2.0i;
+  stan::math::complex<double> complex_2 = 2. + 3.0i;
   auto result_1 = stan::math::pow(real_1, real_2);
   auto result_2 = stan::math::pow(real_1, int_2);
   auto result_3 = stan::math::pow(real_1, complex_2);

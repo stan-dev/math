@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/asin.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -26,7 +26,8 @@ inline fvar<T> asin(const fvar<T>& x) {
  * @return arc sine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> asin(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> asin(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_asin(z);
 }
 

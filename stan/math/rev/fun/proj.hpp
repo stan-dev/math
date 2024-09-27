@@ -5,7 +5,7 @@
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,7 @@ namespace math {
  * @param[in] z argument
  * @return projection of the argument onto the Riemann sphere
  */
-inline std::complex<var> proj(const std::complex<var>& z) {
+inline stan::math::complex<var> proj(const stan::math::complex<var>& z) {
   return internal::complex_proj(z);
 }
 

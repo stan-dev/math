@@ -115,9 +115,9 @@ struct ScalarBinaryOpTraits<int, stan::math::fvar<T>, BinaryOp> {
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<double, std::complex<stan::math::fvar<T>>,
+struct ScalarBinaryOpTraits<double, stan::math::complex<stan::math::fvar<T>>,
                             BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -129,9 +129,9 @@ struct ScalarBinaryOpTraits<double, std::complex<stan::math::fvar<T>>,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
+struct ScalarBinaryOpTraits<stan::math::complex<stan::math::fvar<T>>, double,
                             BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -143,8 +143,9 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<int, std::complex<stan::math::fvar<T>>, BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+struct ScalarBinaryOpTraits<int, stan::math::complex<stan::math::fvar<T>>,
+                            BinaryOp> {
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -156,8 +157,9 @@ struct ScalarBinaryOpTraits<int, std::complex<stan::math::fvar<T>>, BinaryOp> {
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, int, BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+struct ScalarBinaryOpTraits<stan::math::complex<stan::math::fvar<T>>, int,
+                            BinaryOp> {
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -169,9 +171,9 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, int, BinaryOp> {
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<stan::math::fvar<T>, std::complex<double>,
+struct ScalarBinaryOpTraits<stan::math::fvar<T>, stan::math::complex<double>,
                             BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -183,9 +185,9 @@ struct ScalarBinaryOpTraits<stan::math::fvar<T>, std::complex<double>,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<double>, stan::math::fvar<T>,
+struct ScalarBinaryOpTraits<stan::math::complex<double>, stan::math::fvar<T>,
                             BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -197,9 +199,10 @@ struct ScalarBinaryOpTraits<std::complex<double>, stan::math::fvar<T>,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<double>,
-                            std::complex<stan::math::fvar<T>>, BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+struct ScalarBinaryOpTraits<stan::math::complex<double>,
+                            stan::math::complex<stan::math::fvar<T>>,
+                            BinaryOp> {
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -211,9 +214,9 @@ struct ScalarBinaryOpTraits<std::complex<double>,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
-                            std::complex<double>, BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
+struct ScalarBinaryOpTraits<stan::math::complex<stan::math::fvar<T>>,
+                            stan::math::complex<double>, BinaryOp> {
+  using ReturnType = stan::math::complex<stan::math::fvar<T>>;
 };
 
 namespace internal {

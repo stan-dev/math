@@ -8,7 +8,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -69,7 +69,7 @@ namespace internal {
  * @return cosine of the argument
  */
 template <typename T>
-inline std::complex<T> complex_cos(const std::complex<T>& z) {
+inline stan::math::complex<T> complex_cos(const stan::math::complex<T>& z) {
   return cosh(i_times(z));
 }
 }  // namespace internal

@@ -25,7 +25,8 @@
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
 
-    namespace Eigen {
+
+namespace Eigen {
 
   /**
    * Traits specialization for Eigen binary operations for `int`
@@ -51,29 +52,46 @@
     using ReturnType = double;
   };
 
-  /**
-   * Traits specialization for Eigen binary operations for `int`
-   * and complex `double` arguments.
-   *
-   * @tparam BinaryOp type of binary operation for which traits are
-   * defined
-   */
-  template <typename BinaryOp>
-  struct ScalarBinaryOpTraits<int, std::complex<double>, BinaryOp> {
-    using ReturnType = std::complex<double>;
-  };
+//   /**
+//    * Traits specialization for Eigen binary operations for `int`
+//    * and complex `double` arguments.
+//    *
+//    * @tparam BinaryOp type of binary operation for which traits are
+//    * defined
+//    */
+//   template <typename BinaryOp>
+//   struct ScalarBinaryOpTraits<int, stan::math::complex<double>, BinaryOp> {
+//     using ReturnType = stan::math::complex<double>;
+//   };
 
-  /**
-   * Traits specialization for Eigen binary operations for complex
-   * `double` and `int` arguments.
-   *
-   * @tparam BinaryOp type of binary operation for which traits are
-   * defined
-   */
-  template <typename BinaryOp>
-  struct ScalarBinaryOpTraits<std::complex<double>, int, BinaryOp> {
-    using ReturnType = std::complex<double>;
-  };
+//   /**
+//    * Traits specialization for Eigen binary operations for complex
+//    * `double` and `int` arguments.
+//    *
+//    * @tparam BinaryOp type of binary operation for which traits are
+//    * defined
+//    */
+//   template <typename BinaryOp>
+//   struct ScalarBinaryOpTraits<stan::math::complex<double>, int, BinaryOp> {
+//     using ReturnType = stan::math::complex<double>;
+//   };
+
+// template <typename V>
+// struct NumTraits<stan::math::complex<V>> {
+//   using Real = V;
+//   using NonInteger = stan::math::complex<V>;
+//   using Literal = stan::math::complex<V>;
+//   using Nested = stan::math::complex<V>;
+//   enum {
+//     IsComplex = 1,
+//     IsInteger = 0,
+//     IsSigned = 1,
+//     RequireInitialization = 1,
+//     ReadCost = 1,
+//     AddCost = 4,
+//     MulCost = 8
+//   };
+// };
 
 }  // namespace Eigen
 

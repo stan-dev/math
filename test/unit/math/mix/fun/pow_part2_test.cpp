@@ -16,8 +16,8 @@ TEST(mathMixFun, complexPow) {
     for (auto im1 : std::vector<double>{-1.8, 3.4}) {
       for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
         for (auto im2 : std::vector<double>{-1.5, 1.2}) {
-          stan::test::expect_ad(tols, f, std::complex<double>{re1, im1},
-                                std::complex<double>{re2, im2});
+          stan::test::expect_ad(tols, f, stan::math::complex<double>{re1, im1},
+                                stan::math::complex<double>{re2, im2});
         }
       }
     }
@@ -26,22 +26,24 @@ TEST(mathMixFun, complexPow) {
   for (auto re1 : std::vector<double>{3.4}) {
     for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
       for (auto im2 : std::vector<double>{-1.5, 1.2}) {
-        stan::test::expect_ad(tols, f, re1, std::complex<double>{re2, im2});
+        stan::test::expect_ad(tols, f, re1,
+                              stan::math::complex<double>{re2, im2});
       }
     }
   }
   for (auto re1 : std::vector<double>{-1.8, 3.4}) {
     for (auto im1 : std::vector<double>{-1.8, 3.4}) {
       for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
-        stan::test::expect_ad(tols, f, std::complex<double>{re1, im1}, re2);
+        stan::test::expect_ad(tols, f, stan::math::complex<double>{re1, im1},
+                              re2);
       }
     }
   }
 
-  Eigen::Matrix<std::complex<double>, -1, 1> din1(2);
+  Eigen::Matrix<stan::math::complex<double>, -1, 1> din1(2);
   din1.real() << 0.5, 0.1;
   din1.imag() << 1.6, 5.4;
-  Eigen::Matrix<std::complex<double>, -1, 1> din2(2);
+  Eigen::Matrix<stan::math::complex<double>, -1, 1> din2(2);
   din2.real() << 1.2, 2.3;
   din2.imag() << 8.1, 6.1;
 
@@ -49,9 +51,9 @@ TEST(mathMixFun, complexPow) {
 }
 
 TEST(mathMixFun, powIntAmbiguityTest) {
+  using stan::math::complex;
   using stan::math::pow;  // included to check ambiguities
   using stan::math::var;
-  using std::complex;
   int i = 2;
   double d = 2.5;
   var v = 2.5;
@@ -95,9 +97,9 @@ TEST(mathMixFun, powIntAmbiguityTest) {
 }
 
 TEST(mathMixFun, powIntAmbiguityTestFvar) {
+  using stan::math::complex;
   using stan::math::fvar;
   using stan::math::pow;  // included to check ambiguities
-  using std::complex;
   int i = 2;
   double d = 2.5;
   fvar<double> v = 2.5;

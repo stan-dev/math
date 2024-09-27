@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 
 template <typename R, typename... Ts>
@@ -38,22 +39,26 @@ void test_return() {
                 std::vector<Eigen::Matrix<double, -1, -1>>>();
 
   // complex types
-  expect_return<std::complex<T>, std::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>>();
 
-  expect_return<std::complex<T>, int, std::complex<T>>();
-  expect_return<std::complex<T>, std::complex<T>, int>();
+  expect_return<stan::math::complex<T>, int, stan::math::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>, int>();
 
-  expect_return<std::complex<T>, double, std::complex<T>>();
-  expect_return<std::complex<T>, std::complex<T>, double>();
+  expect_return<stan::math::complex<T>, double, stan::math::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>, double>();
 
-  expect_return<std::complex<T>, std::complex<double>, std::complex<T>>();
-  expect_return<std::complex<T>, std::complex<T>, std::complex<double>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<double>,
+                stan::math::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>,
+                stan::math::complex<double>>();
 
-  expect_return<std::complex<T>, T, std::complex<T>>();
-  expect_return<std::complex<T>, std::complex<T>, T>();
+  expect_return<stan::math::complex<T>, T, stan::math::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>, T>();
 
-  expect_return<std::complex<T>, std::complex<T>, std::complex<T>>();
-  expect_return<std::complex<T>, std::complex<T>, std::complex<T>, T>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>,
+                stan::math::complex<T>>();
+  expect_return<stan::math::complex<T>, stan::math::complex<T>,
+                stan::math::complex<T>, T>();
 }
 
 TEST(mathMetaMix, returnType) {

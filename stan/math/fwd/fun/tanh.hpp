@@ -6,7 +6,7 @@
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -26,7 +26,8 @@ inline fvar<T> tanh(const fvar<T>& x) {
  * @return hyperbolic tangent of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> tanh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> tanh(
+    const stan::math::complex<fvar<T>>& z) {
   return stan::math::internal::complex_tanh(z);
 }
 

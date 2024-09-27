@@ -118,41 +118,43 @@ inline var operator*(Arith a, const var& b) {
 }
 
 /**
- * Return the product of std::complex<var> arguments.
+ * Return the product of stan::math::complex<var> arguments.
  *
  * @param[in] x first argument
  * @param[in] y second argument
  * @return product of arguments
  */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<stan::math::var>& x,
-    const std::complex<stan::math::var>& y) {
+inline stan::math::complex<stan::math::var> operator*(
+    const stan::math::complex<stan::math::var>& x,
+    const stan::math::complex<stan::math::var>& y) {
   return internal::complex_multiply(x, y);
 }
 
 /**
- * Return the product of std::complex<double> and
- * std::complex<var> arguments.
+ * Return the product of stan::math::complex<double> and
+ * stan::math::complex<var> arguments.
  *
  * @param[in] x first argument
  * @param[in] y second argument
  * @return product of arguments
  */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<double>& x, const std::complex<stan::math::var>& y) {
+inline stan::math::complex<stan::math::var> operator*(
+    const stan::math::complex<double>& x,
+    const stan::math::complex<stan::math::var>& y) {
   return internal::complex_multiply(x, y);
 }
 
 /**
- * Return the product of std::complex<double> and
- * std::complex<var> arguments.
+ * Return the product of stan::math::complex<double> and
+ * stan::math::complex<var> arguments.
  *
  * @param[in] x first argument
  * @param[in] y second argument
  * @return product of arguments
  */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<stan::math::var>& x, const std::complex<double>& y) {
+inline stan::math::complex<stan::math::var> operator*(
+    const stan::math::complex<stan::math::var>& x,
+    const stan::math::complex<double>& y) {
   return internal::complex_multiply(x, y);
 }
 

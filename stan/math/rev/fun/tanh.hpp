@@ -7,7 +7,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -67,7 +67,7 @@ inline auto tanh(const VarMat& a) {
  * @param[in] z argument
  * @return hyperbolic tangent of the argument
  */
-inline std::complex<var> tanh(const std::complex<var>& z) {
+inline stan::math::complex<var> tanh(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_tanh(z);
 }
 

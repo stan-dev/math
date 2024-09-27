@@ -12,7 +12,7 @@
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -50,7 +50,7 @@ inline var exp(const var& a) {
  * @param z argument
  * @return exponentiation of argument
  */
-inline std::complex<var> exp(const std::complex<var>& z) {
+inline stan::math::complex<var> exp(const stan::math::complex<var>& z) {
   return internal::complex_exp(z);
 }
 

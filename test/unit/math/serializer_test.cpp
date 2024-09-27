@@ -1,6 +1,7 @@
 #include <stan/math/prim/fun/serializer.hpp>
 #include <gtest/gtest.h>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 
 TEST(testUnitMathSerializer, serializer_deserializer) {
@@ -9,7 +10,7 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   s.write(3.2);
   s.write(-1);
 
-  s.write(std::complex<double>(-1.5, 15.75));
+  s.write(stan::math::complex<double>(-1.5, 15.75));
 
   s.write(std::vector<double>{10, 20, 30});
 
@@ -33,8 +34,8 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   stan::math::deserializer<double> d = stan::math::to_deserializer(s.vals_);
 
   EXPECT_EQ(3.2, d.read(0.0));
-  EXPECT_EQ(-1, d.read(0.0));
-  std::complex<double> w = d.read(std::complex<double>(1, 1));
+  stan::math::complex, d.read(0.0));stan::math::complex
+  stan::math::complex<double> w = d.read(stan::math::complex<double>(1, 1));
   EXPECT_EQ(-1.5, w.real());
   EXPECT_EQ(15.75, w.imag());
   std::vector<double> x = d.read(std::vector<double>{0, 0, 0});
@@ -61,8 +62,8 @@ TEST(testUnitMathSerializer, serialize) {
   std::vector<double> xs = stan::math::serialize<double>();
   EXPECT_EQ(0, xs.size());
 
-  double a = 2;
-  std::complex<double> b(1, 2);
+  stan::math::complex;
+  stan::math::complex<double> b(1, 2);
   std::vector<double> c{3, 4, 5};
   Eigen::MatrixXd d(2, 3);
   d << -1, -2, -3, -4, -5, -6;

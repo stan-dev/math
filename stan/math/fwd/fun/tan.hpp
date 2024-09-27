@@ -5,7 +5,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/fun/tan.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -24,7 +24,7 @@ inline fvar<T> tan(const fvar<T>& x) {
  * @return tangent of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> tan(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> tan(const stan::math::complex<fvar<T>>& z) {
   return stan::math::internal::complex_tan(z);
 }
 

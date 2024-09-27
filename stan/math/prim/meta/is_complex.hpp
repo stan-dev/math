@@ -5,7 +5,8 @@
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -13,7 +14,7 @@ namespace internal {
 
 /**
  * Provides a member constant `value` which is equal to `true` if
- * `T` is an instance of `std::complex` and `false` otherwise.
+ * `T` is an instance of `stan::math::complex` and `false` otherwise.
  *
  * @tparam T type to check
  * @ingroup type_trait
@@ -22,13 +23,13 @@ template <typename T>
 struct is_complex_impl : std::false_type {};
 
 template <typename... Ts>
-struct is_complex_impl<std::complex<Ts...>> : std::true_type {};
+struct is_complex_impl<stan::math::complex<Ts...>> : std::true_type {};
 
 }  // namespace internal
 
 /**
  * If `T` is an arithmetic type (that is, an instance of
- * `std::complex`) or a cv-qualified version thereof, provides the
+ * `stan::math::complex`) or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
  * `false`.
  *
@@ -52,7 +53,7 @@ struct is_complex<
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
-  using type = std::complex<typename std::decay_t<T>::value_type>;
+  using type = stan::math::complex<typename std::decay_t<T>::value_type>;
 };
 
 /*! \ingroup require_stan_scalar_complex */
@@ -111,7 +112,7 @@ using require_not_st_complex
 
 /**
  * If the `value_type` of the type `T` is of type
- *  `std::complex` or a cv-qualified version thereof, provides the
+ *  `stan::math::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
  * `false`.
  *
@@ -123,7 +124,7 @@ struct is_vt_complex : is_complex<value_type_t<std::decay_t<T>>> {};
 
 /**
  * If the `value_type` of the type `T` is not of type
- * `std::complex` or a cv-qualified version thereof, provides the
+ * `stan::math::complex` or a cv-qualified version thereof, provides the
  * member constant `value` equal `true`; for any other type the value is
  * `false`.
  *

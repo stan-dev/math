@@ -5,7 +5,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <unsupported/Eigen/FFT>
 #include <Eigen/Dense>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 #include <vector>
 

@@ -7,7 +7,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -66,7 +66,7 @@ namespace internal {
  * @return base 10 logarithm of the argument
  */
 template <typename V>
-inline std::complex<V> complex_log10(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_log10(const stan::math::complex<V>& z) {
   static constexpr double inv_log_10 = 1.0f / LOG_TEN;
   return log(z) * inv_log_10;
 }

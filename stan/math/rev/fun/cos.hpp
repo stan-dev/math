@@ -11,7 +11,7 @@
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -70,7 +70,7 @@ inline auto cos(const VarMat& a) {
  * @param[in] z argument
  * @return cosine of the argument
  */
-inline std::complex<var> cos(const std::complex<var>& z) {
+inline stan::math::complex<var> cos(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_cos(z);
 }
 

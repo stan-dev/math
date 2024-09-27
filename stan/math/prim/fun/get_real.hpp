@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_GET_REAL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace math {
  * @return real component of argument
  */
 template <typename T>
-inline T get_real(const std::complex<T>& z) {
+inline T get_real(const stan::math::complex<T>& z) {
   return z.real();
 }
 

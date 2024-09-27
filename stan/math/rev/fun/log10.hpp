@@ -10,7 +10,7 @@
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -59,7 +59,7 @@ inline auto log10(const var_value<T>& a) {
  * @param z complex argument
  * @return base 10 log of argument
  */
-inline std::complex<var> log10(const std::complex<var>& z) {
+inline stan::math::complex<var> log10(const stan::math::complex<var>& z) {
   return internal::complex_log10(z);
 }
 

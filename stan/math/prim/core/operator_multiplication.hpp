@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -38,8 +38,8 @@ inline complex_return_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
  * @return product of the arguments
  */
 template <typename U, typename V, require_all_stan_scalar_t<U, V>* = nullptr>
-inline complex_return_t<U, V> operator*(const std::complex<U>& x,
-                                        const std::complex<V>& y) {
+inline complex_return_t<U, V> operator*(const stan::math::complex<U>& x,
+                                        const stan::math::complex<V>& y) {
   return internal::complex_multiply(x, y);
 }
 
@@ -53,7 +53,8 @@ inline complex_return_t<U, V> operator*(const std::complex<U>& x,
  * @return product of the arguments
  */
 template <typename U, typename V, require_stan_scalar_t<V>* = nullptr>
-inline complex_return_t<U, V> operator*(const std::complex<U>& x, const V& y) {
+inline complex_return_t<U, V> operator*(const stan::math::complex<U>& x,
+                                        const V& y) {
   return internal::complex_multiply(x, y);
 }
 
@@ -67,7 +68,8 @@ inline complex_return_t<U, V> operator*(const std::complex<U>& x, const V& y) {
  * @return product of the arguments
  */
 template <typename U, typename V, require_stan_scalar_t<U>* = nullptr>
-inline complex_return_t<U, V> operator*(const U& x, const std::complex<V>& y) {
+inline complex_return_t<U, V> operator*(const U& x,
+                                        const stan::math::complex<V>& y) {
   return internal::complex_multiply(x, y);
 }
 

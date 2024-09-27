@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <limits>
 #include <vector>
 
@@ -37,12 +38,12 @@ void expect_copysign() {
   // complex
   for (double re1 : vs) {
     for (double im1 : vs) {
-      auto x_d = std::complex<double>(re1, im1);
-      auto x_t = std::complex<T>(re1, im1);
+      auto x_d = stan::math::complex<double>(re1, im1);
+      auto x_t = stan::math::complex<T>(re1, im1);
       for (double re2 : vs) {
-        for (double im2 : vs) {
-          auto y_d = std::complex<double>(re2, im2);
-          auto y_t = std::complex<T>(re2, im2);
+        for (double istan::math::complex
+          auto y_d = stan::math::complex<double>(re2, im2);
+          auto y_t = stan::math::complex<T>(re2, im2);
           if (re1 == 0) {
             EXPECT_FLOAT_EQ(0.0, value_of_rec(copysign(x_d, y_d).real()));
             EXPECT_FLOAT_EQ(0.0, value_of_rec(copysign(x_d, y_t).real()));

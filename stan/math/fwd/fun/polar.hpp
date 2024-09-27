@@ -4,7 +4,8 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/fun/polar.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -19,7 +20,8 @@ namespace math {
  * @return complex number with magnitude and phase angle
  */
 template <typename T>
-inline std::complex<fvar<T>> polar(const fvar<T>& r, const fvar<T>& theta) {
+inline stan::math::complex<fvar<T>> polar(const fvar<T>& r,
+                                          const fvar<T>& theta) {
   return internal::complex_polar(r, theta);
 }
 
@@ -33,7 +35,7 @@ inline std::complex<fvar<T>> polar(const fvar<T>& r, const fvar<T>& theta) {
  * @return complex number with magnitude and phase angle
  */
 template <typename T, typename U>
-inline std::complex<fvar<T>> polar(const fvar<T>& r, U theta) {
+inline stan::math::complex<fvar<T>> polar(const fvar<T>& r, U theta) {
   return internal::complex_polar(r, theta);
 }
 
@@ -47,7 +49,7 @@ inline std::complex<fvar<T>> polar(const fvar<T>& r, U theta) {
  * @return complex number with magnitude and phase angle
  */
 template <typename T, typename U>
-inline std::complex<fvar<T>> polar(U r, const fvar<T>& theta) {
+inline stan::math::complex<fvar<T>> polar(U r, const fvar<T>& theta) {
   return internal::complex_polar(r, theta);
 }
 }  // namespace math

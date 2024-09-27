@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_CORE_OPERATOR_MINUS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace math {
  * @return negation of the argument
  */
 template <typename U, require_autodiff_t<U>>
-inline std::complex<U> operator-(const std::complex<U>& x) {
+inline stan::math::complex<U> operator-(const stan::math::complex<U>& x) {
   return {-x.real(), -x.imag()};
 }
 

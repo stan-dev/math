@@ -6,7 +6,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {

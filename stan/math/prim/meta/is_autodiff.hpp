@@ -4,7 +4,8 @@
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 
 namespace stan {

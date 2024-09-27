@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_CORE_OPERATOR_EQUAL_EQUAL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -18,7 +18,8 @@ namespace math {
  * @return `true` if the arguments are equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator==(const std::complex<U>& x, const std::complex<V>& y) {
+inline bool operator==(const stan::math::complex<U>& x,
+                       const stan::math::complex<V>& y) {
   return x.real() == y.real() && x.imag() == y.imag();
 }
 
@@ -33,7 +34,7 @@ inline bool operator==(const std::complex<U>& x, const std::complex<V>& y) {
  * @return `true` if the arguments are equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator==(const std::complex<U>& x, const V& y) {
+inline bool operator==(const stan::math::complex<U>& x, const V& y) {
   return x.real() == y && x.imag() == 0;
 }
 
@@ -49,7 +50,7 @@ inline bool operator==(const std::complex<U>& x, const V& y) {
  * @return `true` if the arguments are equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator==(const U& x, const std::complex<V>& y) {
+inline bool operator==(const U& x, const stan::math::complex<V>& y) {
   return x == y.real() && 0 == y.imag();
 }
 

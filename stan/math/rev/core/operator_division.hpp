@@ -8,13 +8,13 @@
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -256,8 +256,8 @@ inline auto operator/(const T1& dividend, const T2& divisor) {
   return divide(dividend, divisor);
 }
 
-inline std::complex<var> operator/(const std::complex<var>& x1,
-                                   const std::complex<var>& x2) {
+inline stan::math::complex<var> operator/(const stan::math::complex<var>& x1,
+                                          const stan::math::complex<var>& x2) {
   return internal::complex_divide(x1, x2);
 }
 

@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <limits>
 #include <vector>
 
@@ -17,7 +18,7 @@ TEST(mathMixMatFun, acos) {
       3.4, 4);
   for (double re : std::vector<double>{-0.2, 0, 0.3}) {
     for (double im : std::vector<double>{-0.3, 0, 0.2}) {
-      stan::test::expect_ad(f, std::complex<double>{re, im});
+      stan::test::expect_ad(f, stan::math::complex<double>{re, im});
     }
   }
 }

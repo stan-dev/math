@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 #include <type_traits>
 
@@ -80,18 +81,18 @@ TEST(mixFun, promote_scalar_tuple) {
   test_promote_scalar<fvar<var>, double>();
   test_promote_scalar<fvar<var>, var>();
   test_promote_scalar<fvar<var>, fvar<var>>();
-  test_promote_scalar<std::complex<double>, double>();
-  test_promote_scalar<std::complex<var>, double>();
-  test_promote_scalar<std::complex<fvar<var>>, double>();
+  test_promote_scalar<stan::math::complex<double>, double>();
+  test_promote_scalar<stan::math::complex<var>, double>();
+  test_promote_scalar<stan::math::complex<fvar<var>>, double>();
 }
 
 template <typename UnPromotedType>
 void test_promote_scalar_basic() {
   std::tuple<UnPromotedType, UnPromotedType> x{UnPromotedType(3.5),
-                                               UnPromotedType(4.5)};
-  std::tuple<std::complex<UnPromotedType>, UnPromotedType> z
-      = stan::math::promote_scalar<
-          std::tuple<std::complex<UnPromotedType>, UnPromotedType>>(x);
+             stan::math::complex                      UnPromotedType(4.5)};
+  std::tuple<stan::math::complex<UnPromotedType>, UnPromotedType> z
+      = stan::math::pstan::math::complexr<
+          std::tuple<stan::math::complex<UnPromotedType>, UnPromotedType>>(x);
   stan::math::test::expect_same_value_of_rec(x, z);
 }
 

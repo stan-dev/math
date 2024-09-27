@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/sinh.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -24,7 +24,8 @@ inline fvar<T> sinh(const fvar<T>& x) {
  * @return hyperbolic sine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> sinh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> sinh(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_sinh(z);
 }
 

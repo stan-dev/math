@@ -5,7 +5,8 @@
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 
 namespace stan {
@@ -47,14 +48,15 @@ using real_return_t = typename real_return<Ts...>::type;
 
 /**
  * Convenience type to calculate the complex return type, which wraps
- * `std::complex` around the return type of the specified template parameters.
+ * `stan::math::complex` around the return type of the specified template
+ * parameters.
  *
  * @tparam Ts sequence of argument types
  * @see real_return
  * @ingroup type_trait
  */
 template <typename... Ts>
-using complex_return_t = std::complex<real_return_t<Ts...>>;
+using complex_return_t = stan::math::complex<real_return_t<Ts...>>;
 
 /**
  * Convenience type to calculate the complex return type, which wraps
@@ -120,18 +122,18 @@ struct scalar_lub {
 };
 
 template <typename T1, typename T2>
-struct scalar_lub<std::complex<T1>, T2> {
-  using type = std::complex<promote_args_t<T1, T2>>;
+struct scalar_lub<stan::math::complex<T1>, T2> {
+  using type = stan::math::complex<promote_args_t<T1, T2>>;
 };
 
 template <typename T1, typename T2>
-struct scalar_lub<T1, std::complex<T2>> {
-  using type = std::complex<promote_args_t<T1, T2>>;
+struct scalar_lub<T1, stan::math::complex<T2>> {
+  using type = stan::math::complex<promote_args_t<T1, T2>>;
 };
 
 template <typename T1, typename T2>
-struct scalar_lub<std::complex<T1>, std::complex<T2>> {
-  using type = std::complex<promote_args_t<T1, T2>>;
+struct scalar_lub<stan::math::complex<T1>, stan::math::complex<T2>> {
+  using type = stan::math::complex<promote_args_t<T1, T2>>;
 };
 
 /**
@@ -173,7 +175,7 @@ struct return_type_impl<std::tuple<T...>, Ts...> {
  * arguments are assignable. The metaprogram can take an arbitrary
  * number of template parameters.
  *
- * Complex numbers (instances of `std::complex<T>`) are considered
+ * Complex numbers (instances of `stan::math::complex<T>`) are considered
  * scalars.  All C++ primitive types (except `long double`) are
  * automatically promoted to `double`.
  *
@@ -191,9 +193,10 @@ struct return_type_impl<std::tuple<T...>, Ts...> {
  * The assignability relation among scalar types is defined to be
  * the smallest such that
  * - `double` is assignable to any type `T`,
- * - `T1` is assignable to `std::complex<T2>` if `T1` is assignable to
+ * - `T1` is assignable to `stan::math::complex<T2>` if `T1` is assignable to
  * - `T2`, and
- * - `std::complex<T1>` is assignable to `std::complex<T2>` if `T1` is
+ * - `stan::math::complex<T1>` is assignable to `stan::math::complex<T2>` if
+ `T1` is
  * assignable to `T2`.
  *
  * Example usage:

@@ -7,7 +7,8 @@
 #include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/to_complex.hpp>
 #include <Eigen/Dense>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <type_traits>
 #include <vector>
 

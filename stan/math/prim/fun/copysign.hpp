@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -69,8 +69,8 @@ inline T copysign_non_zero(const T& x, const U& y) {
  * necessary to match sign of first argument
  */
 template <typename T, typename U>
-inline std::complex<T> copysign(const std::complex<T>& x,
-                                const std::complex<U>& y) {
+inline stan::math::complex<T> copysign(const stan::math::complex<T>& x,
+                                       const stan::math::complex<U>& y) {
   return {copysign_non_zero(x.real(), y.real()),
           copysign_non_zero(x.imag(), y.imag())};
 }

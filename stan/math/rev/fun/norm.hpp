@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/square.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace math {
  * @param[in] z argument
  * @return squared magnitude of the argument
  */
-inline var norm(const std::complex<var>& z) {
+inline var norm(const stan::math::complex<var>& z) {
   return internal::complex_norm(z);
 }
 

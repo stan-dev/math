@@ -13,7 +13,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -74,7 +74,7 @@ namespace internal {
  * @return arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acos(const std::complex<V>& x) {
+inline stan::math::complex<V> complex_acos(const stan::math::complex<V>& x) {
   return 0.5 * pi() - asin(x);
 }
 }  // namespace internal

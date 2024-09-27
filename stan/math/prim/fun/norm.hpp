@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/fun/isinf.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace math {
  * @return squared magnitude of the argument
  */
 template <typename V>
-inline V norm(const std::complex<V>& z) {
+inline V norm(const stan::math::complex<V>& z) {
   return std::norm(z);
 }
 
@@ -28,7 +28,7 @@ namespace internal {
  * @return squared magnitude of the argument
  */
 template <typename V>
-inline V complex_norm(const std::complex<V>& z) {
+inline V complex_norm(const stan::math::complex<V>& z) {
   return square(z.real()) + square(z.imag());
 }
 }  // namespace internal

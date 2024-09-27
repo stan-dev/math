@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <iostream>
 #include <vector>
 

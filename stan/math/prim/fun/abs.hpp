@@ -8,7 +8,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -94,7 +94,7 @@ namespace internal {
  * @return absolute value of the argument
  */
 template <typename V>
-inline V complex_abs(const std::complex<V>& z) {
+inline V complex_abs(const stan::math::complex<V>& z) {
   return hypot(z.real(), z.imag());
 }
 }  // namespace internal

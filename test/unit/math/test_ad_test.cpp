@@ -246,11 +246,12 @@ stan::math::var baz(const stan::math::var& x) {
   ++baz_var;
   return x / 2.0;
 }
-std::complex<double> baz(std::complex<double> x) {
+stan::math::complex<double> baz(stan::math::complex<double> x) {
   ++baz_complex;
   return x / 2.0;
 }
-std::complex<stan::math::var> baz(const std::complex<stan::math::var>& x) {
+stan::math::complex<stan::math::var> baz(
+    const stan::math::complex<stan::math::var>& x) {
   ++baz_complex_var;
   return x / 2.0;
 }
@@ -260,8 +261,8 @@ stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
   return x / 2.0;
 }
 template <typename T>
-std::complex<stan::math::fvar<T>> baz(
-    const std::complex<stan::math::fvar<T>>& x) {
+stan::math::complex<stan::math::fvar<T>> baz(
+    const stan::math::complex<stan::math::fvar<T>>& x) {
   ++baz_complex_fvar;
   return x / 2.0;
 }

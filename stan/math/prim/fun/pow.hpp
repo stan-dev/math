@@ -5,7 +5,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {

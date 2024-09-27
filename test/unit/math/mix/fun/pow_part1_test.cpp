@@ -12,13 +12,13 @@ void expect_arith_instantiate() {
   auto d1 = pow(1.0, T(1.0));
   auto e1 = pow(T(1.0), T(1.0));
 
-  auto a2 = pow(std::complex<T>(1.0), 1);
-  auto b2 = pow(std::complex<T>(1.0), 1.0);
-  auto c2 = pow(1, std::complex<T>(1.0));
-  auto d2 = pow(1.0, std::complex<T>(1.0));
-  auto e2 = pow(std::complex<T>(1.0), std::complex<T>(1.0));
-  auto f2 = pow(std::complex<double>(1.0), std::complex<T>(1.0));
-  auto g2 = pow(std::complex<T>(1.0), std::complex<double>(1.0));
+  auto a2 = pow(stan::math::complex<T>(1.0), 1);
+  auto b2 = pow(stan::math::complex<T>(1.0), 1.0);
+  auto c2 = pow(1, stan::math::complex<T>(1.0));
+  auto d2 = pow(1.0, stan::math::complex<T>(1.0));
+  auto e2 = pow(stan::math::complex<T>(1.0), stan::math::complex<T>(1.0));
+  auto f2 = pow(stan::math::complex<double>(1.0), stan::math::complex<T>(1.0));
+  auto g2 = pow(stan::math::complex<T>(1.0), stan::math::complex<double>(1.0));
 }
 
 // this one's been tricky to instantiate, so test all instances

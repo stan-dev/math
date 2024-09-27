@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -88,8 +88,8 @@ namespace internal {
  * @return hyperbolic arc tangent of the argument
  */
 template <typename V>
-inline std::complex<V> complex_atanh(const std::complex<V>& z) {
-  std::complex<double> y_d = atanh(value_of_rec(z));
+inline stan::math::complex<V> complex_atanh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = atanh(value_of_rec(z));
   V one(1);
   auto y = 0.5 * (log(one + z) - log(one - z));
   return copysign(y, y_d);

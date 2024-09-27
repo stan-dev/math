@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/proj.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,8 @@ namespace math {
  * @return projection of the argument onto the Riemann sphere
  */
 template <typename T>
-inline std::complex<fvar<T>> proj(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> proj(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_proj(z);
 }
 

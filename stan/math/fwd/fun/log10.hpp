@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log10.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -30,7 +30,8 @@ inline fvar<T> log10(const fvar<T>& x) {
  * @return base 10 log of argument
  */
 template <typename T>
-inline std::complex<fvar<T>> log10(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> log10(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_log10(z);
 }
 

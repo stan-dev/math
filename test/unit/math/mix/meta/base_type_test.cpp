@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
+
 #include <vector>
 
 template <typename R, typename T>
@@ -31,13 +32,13 @@ void test_base() {
   expect_base<T, Eigen::Matrix<T, 1, -1>>();
 
   // complex types
-  expect_base<T, std::complex<T>>();
+  expect_base<T, stan::math::complex<T>>();
 
   // higher-level containers
   expect_base<T, std::vector<Eigen::Matrix<T, -1, -1>>>();
   expect_base<T, std::vector<Eigen::Matrix<T, -1, 1>>>();
-  expect_base<T, std::vector<Eigen::Matrix<T, 1, -1>>>();
-  expect_base<T, std::vector<std::complex<T>>>();
+  expect_base<T, std::vector<stan::math::complexx<T, 1, -1>>>();
+  expect_base<T, std::vector<stan::math::complex<T>>>();
 }
 
 TEST(mathMetaMix, baseType) {

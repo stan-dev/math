@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/norm.hpp>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ namespace math {
  * @return phase squared magnitude of the argument
  */
 template <typename T>
-inline fvar<T> norm(const std::complex<fvar<T>>& z) {
+inline fvar<T> norm(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_norm(z);
 }
 

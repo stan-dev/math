@@ -11,7 +11,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/polar.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -80,7 +80,7 @@ inline auto acos(const VarMat& x) {
  * @param x argument
  * @return arc cosine of the argument
  */
-inline std::complex<var> acos(const std::complex<var>& x) {
+inline stan::math::complex<var> acos(const stan::math::complex<var>& x) {
   return stan::math::internal::complex_acos(x);
 }
 

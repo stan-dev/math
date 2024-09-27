@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <cmath>
-#include <complex>
+#include <stan/math/prim/core/complex_base.hpp>
 
 namespace stan {
 namespace math {
@@ -33,7 +33,8 @@ inline fvar<T> atanh(const fvar<T>& x) {
  * @return hyperbolic arc tangent of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> atanh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> atanh(
+    const stan::math::complex<fvar<T>>& z) {
   return internal::complex_atanh(z);
 }
 
