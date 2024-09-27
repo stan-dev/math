@@ -67,22 +67,6 @@ inline auto pow(const T1& x1, const T2& x2) {
   }
 }
 
-<<<<<<< HEAD
-=======
-// must uniquely match all pairs of:
-//    { complex<fvar<V>>, complex<T>, fvar<V>, T }
-// with at least one fvar<V> and at least one complex, where T is arithmetic:
-// 1) complex<fvar<V>>, complex<fvar<V>>
-// 2) complex<fvar<V>>, complex<T>
-// 3) complex<fvar<V>>, fvar<V>
-// 4) complex<fvar<V>>, T
-// 5) complex<T>, complex<fvar<V>>
-// 6) complex<T>, fvar<V>
-// 7) fvar<V>, complex<fvar<V>>
-// 8) fvar<V>, complex<T>
-// 9) T, complex<fvar<V>>
->>>>>>> origin/fix/pow-overload-resolution
-
 /**
  * Returns the elementwise raising of the first argument to the power of the
  * second argument.
