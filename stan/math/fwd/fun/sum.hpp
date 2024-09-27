@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_FWD_FUN_SUM_HPP
 #define STAN_MATH_FWD_FUN_SUM_HPP
 
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,18 +19,18 @@ namespace math {
  * @param m Vector.
  * @return Sum of vector entries.
  */
-template <typename T>
-inline fvar<T> sum(const std::vector<fvar<T>>& m) {
+template <typename T, require_fvar_t<T>* = nullptr>
+inline auto sum(const std::vector<T>& m) {
   if (m.size() == 0) {
-    return 0.0;
+    return T(0.0);
   }
-  std::vector<T> vals(m.size());
-  std::vector<T> tans(m.size());
+  std::vector<partials_type_t<T>> vals(m.size());
+  std::vector<partials_type_t<T>> tans(m.size());
   for (size_t i = 0; i < m.size(); ++i) {
     vals[i] = m[i].val();
     tans[i] = m[i].d();
   }
-  return fvar<T>(sum(vals), sum(tans));
+  return T(sum(vals), sum(tans));
 }
 
 /**
