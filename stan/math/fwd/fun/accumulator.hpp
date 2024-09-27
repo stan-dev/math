@@ -99,5 +99,4 @@ class accumulator<T, require_fvar_t<T>> {
 }  // namespace math
 }  // namespace stan
 
-
 #endif
