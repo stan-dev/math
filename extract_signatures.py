@@ -27,7 +27,10 @@ def processCLIArgs():
     )
     # Now define all the rules of the command line args and opts
     parser.add_argument(
-        "--input_base_path", type=str, default="./math/", help="Base path to stan math"
+        "--input_base_path", type=str, default="./", help="Base path to stan math"
+    )
+    parser.add_argument(
+        "--math_path", type=str, default="./stan/math/", help="Base path to stan math"
     )
     parser.add_argument(
         "--debug_functions", type=bool, default=False, help="Base path to stan math"
@@ -52,7 +55,7 @@ def processCLIArgs():
 
 
 def get_functions_and_classes_in_namespace(
-    tu, debug_function_nodes=False, debug_class_nodes=False
+    tu, input_path, debug_function_nodes=False, debug_class_nodes=False
 ):
     functions = []
     classes = []
@@ -86,9 +89,9 @@ def get_functions_and_classes_in_namespace(
                         node.spelling,
                     )
                     import pdb
-
                     pdb.set_trace()
-                if node.extent.start.file.name.find("forward_decls.hpp") > 0:
+                if node.extent.start.file.name.find("forward_decls.hpp") > 0 or \
+                    str(node.location.file).find(input_path) == -1:
                     return
                 functions.append(node)
         elif node.kind in [
@@ -110,9 +113,9 @@ def get_functions_and_classes_in_namespace(
                         node.spelling,
                     )
                     import pdb
-
                     pdb.set_trace()
-                if node.extent.start.file.name.find("forward_decls.hpp") > 0:
+                if node.extent.start.file.name.find("forward_decls.hpp") > 0 or \
+                    str(node.location.file).find(input_path) == -1:
                     return
                 classes.append(node)
         else:
@@ -124,18 +127,17 @@ def get_functions_and_classes_in_namespace(
     return functions, classes
 
 
-
 def generate_forward_declaration_from_tokens(tokens):
     """
     Generate a forward declaration from a list of tokens.
 
     Args:
-        tokens (list of tuples): List of (spelling, kind) tuples representing tokens.
-        file_name (str): The name of the file where the function is declared.
-        line_number (int): The line number where the function is declared.
+      tokens (list of tuples): List of (spelling, kind) tuples representing tokens.
+      file_name (str): The name of the file where the function is declared.
+      line_number (int): The line number where the function is declared.
 
     Returns:
-        str: The forward declaration as a formatted string.
+      str: The forward declaration as a formatted string.
     """
     code_tokens = []
     nesting_level = 0
@@ -145,14 +147,15 @@ def generate_forward_declaration_from_tokens(tokens):
     # Collect tokens up to the first '{' or ';' (excluding it)
     while i < len(tokens):
         spelling, kind = tokens[i]
-        if spelling == '{' or spelling == ';':
+        if spelling == "{" or spelling == ";":
             break
         code_tokens.append((spelling, kind))
         i += 1
+    print("Token Full: ", [x[0] for x in code_tokens])
     # Now, reconstruct the code from code_tokens with appropriate formatting
     code_lines = []
-    current_line = ''
-    indent = ''
+    current_line = ""
+    indent = ""
     nesting_level = 0
     in_template_parameter_list = False
     in_default_value = False
@@ -160,132 +163,164 @@ def generate_forward_declaration_from_tokens(tokens):
     i = 0
     template_str = ""
     signature_str = ""
-    debug_function_decl = False
+    debug_function_decl = True
     if debug_function_decl:
         print("BEGIN\n\n\n")
     first_entry = True
     while i < len(code_tokens):
         if debug_function_decl:
             print("-------------------")
-            print("I: ", i)
-            print("Code Tokens: ", code_tokens[i])
-            print("template_str: ", template_str)
+            print("            I: ", i)
+            print("Code Tokens:   ", code_tokens[i])
+            print("template_str:  ", template_str)
             print("signature_str: ", signature_str)
-            print("in_template_parameter_list: ", in_template_parameter_list)
+            print("in_template_p: ", in_template_parameter_list)
             print("nesting_level: ", nesting_level)
-            print("in_default_value: ", in_default_value)
-            print("default_nesting_level: ", default_nesting_level)
-            if (code_tokens[i][0] == ">"):
-              import pdb; pdb.set_trace()
-        if not in_template_parameter_list and first_entry:
-          first_entry = False
-          if debug_function_decl:
-            print("----\n\nENTERED FUNCTION DECLARATION----\n\n")
-
+            print("in_default_va: ", in_default_value)
+            print("default_nesti: ", default_nesting_level)
+            if code_tokens[i][0] == ">":
+                import pdb
+#                pdb.set_trace()
         spelling, kind = code_tokens[i]
         # Handle 'template' keyword
-        if spelling == 'template':
-            template_str += 'template '
+        if spelling == "internal":
+            import pdb; pdb.set_trace()
+        if spelling == "template":
+            template_str += "template "
             i += 1
             continue
         # Handle entering template parameter list
-        if spelling == '<' and (i > 0 and code_tokens[i - 1][0] == 'template'):
+        if spelling == "<" and (i > 0 and code_tokens[i - 1][0] == "template"):
             in_template_parameter_list = True
             nesting_level += 1
-            template_str += '<'
+            template_str += "<"
             i += 1
             continue
+        if not in_template_parameter_list and first_entry:
+            first_entry = False
+            if debug_function_decl:
+                print("----\n\nENTERED FUNCTION DECLARATION----\n\n")
         # Handle template parameter list
-        if in_template_parameter_list:
-            if in_default_value:
-              if spelling == '<':
-                  default_nesting_level += 1
-                  i += 1
-                  continue
-              elif spelling == '>':
-                  # If we never nest (* = nullptr>) then we are done with the default value
-                  if default_nesting_level == 0:
-                    in_default_value = False
-                    nesting_level -= 1
-                  else:
-                    default_nesting_level -= 1
-                  if nesting_level == 0:
-                      template_str += '>'
-                      in_template_parameter_list = False
-                  i += 1
-                  continue
-              elif spelling == '>>':
-                  if default_nesting_level == 0:
-                    in_default_value = False
-                    nesting_level -= 2
-                    if nesting_level == 0:
-                        template_str += '>>'
-                        in_template_parameter_list = False
-                  else:
-                    default_nesting_level -= 1
-                    # One of them could be in the default value
+        if in_template_parameter_list and in_default_value:
+            match spelling:
+                case "<":
+                    default_nesting_level += 1
+                    i += 1
+                    continue
+                case ">":
+                    # If we never nest (* = nullptr>) then we are done with the default value
                     if default_nesting_level == 0:
-                      in_default_value = False                 
-                      nesting_level -= 1
-                      if nesting_level == 0:
-                          template_str += '>'
-                          in_template_parameter_list = False
-                  i += 1
-                  continue
-              elif spelling == ">" and default_nesting_level == 0:
-                  in_default_value = False
-                  template_str += '>'
-                  nesting_level -= 1
-                  if nesting_level == 0:
-                      in_template_parameter_list = False
-                  i += 1
-                  continue
-              else:
-                  i += 1
-                  continue
-            if spelling == '<':
-                nesting_level += 1
-                template_str += '<'
-            elif spelling == '>':
-                nesting_level -= 1
-                template_str += '>'
-                if nesting_level == 0:
-                    in_template_parameter_list = False
-            elif spelling == '>>':
-                nesting_level -= 2
-                template_str += '>>'
-                if nesting_level == 0:
-                    in_template_parameter_list = False
-            elif spelling == ',':
-                # Add comma and line break
-                template_str += ',\n    '
-            else:
-                if kind == clang.cindex.TokenKind.PUNCTUATION and spelling == '=':
-                    in_default_value = True
-                elif kind == clang.cindex.TokenKind.PUNCTUATION or kind == clang.cindex.TokenKind.IDENTIFIER:
-                    template_str += spelling
-                else:
-                    template_str += spelling + ' '
+                        in_default_value = False
+                        nesting_level -= 1
+                    else:
+                        default_nesting_level -= 1
+                    if nesting_level == 0:
+                        template_str += ">"
+                        in_template_parameter_list = False
+                    i += 1
+                    continue
+                case ">>":
+                    if default_nesting_level == 0:
+                        in_default_value = False
+                        nesting_level -= 2
+                        if nesting_level == 0:
+                            template_str += ">>"
+                            in_template_parameter_list = False
+                    else:
+                        default_nesting_level -= 1
+                        # One of them could be in the default value
+                        if default_nesting_level == 0:
+                            in_default_value = False
+                            nesting_level -= 1
+                            if nesting_level == 0:
+                                template_str += ">"
+                                in_template_parameter_list = False
+                    i += 1
+                    continue
+                case ">" if default_nesting_level == 0:
+                    in_default_value = False
+                    template_str += ">"
+                    nesting_level -= 1
+                    if nesting_level == 0:
+                        in_template_parameter_list = False
+                    i += 1
+                    continue
+                case _:
+                    i += 1
+                    continue
+        elif in_template_parameter_list:
+            match kind:
+                case clang.cindex.TokenKind.IDENTIFIER:
+                    if code_tokens[i + 1][0] == "::":
+                        template_str += spelling + "::"
+                        i += 1
+                    else:
+                        template_str += spelling + " "
+
+                case clang.cindex.TokenKind.KEYWORD:
+                    match spelling:
+                        case "typename" if code_tokens[i + 1][0] == "...":
+                            template_str += spelling + "... "
+                            i += 1
+                        case "sizeof" if code_tokens[i + 1][0] == "..." and code_tokens[i + 2][0] == "(":
+                            template_str += spelling + "...("
+                            i += 2
+                        case _:
+                            template_str += spelling + " "
+                case clang.cindex.TokenKind.PUNCTUATION:
+                    match spelling:
+                        case "<":
+                            nesting_level += 1
+                            template_str += "<"
+                        case ">":
+                            nesting_level -= 1
+                            template_str += ">"
+                            if nesting_level == 0:
+                                in_template_parameter_list = False
+                        case ">>":
+                            nesting_level -= 2
+                            template_str += ">>"
+                            if nesting_level == 0:
+                                in_template_parameter_list = False
+                        case ",":
+                            # Add comma and line break
+                            template_str += ",\n  "
+                        case "=":
+                            in_default_value = True
+                        case _:
+                            template_str += spelling
+                case _:
+                    if (
+                        kind == clang.cindex.TokenKind.PUNCTUATION
+                        or (kind == clang.cindex.TokenKind.IDENTIFIER)
+                    ):
+                        template_str += spelling
+                    else:
+                        template_str += spelling + " "
             i += 1
             continue
         # Handle function declaration
         else:
-            if spelling == '(':
-                # Start of function parameter list
-                in_function_parameter_list = True
-                signature_str += '('
-            elif spelling == ')':
-                # End of function parameter list
-                in_function_parameter_list = False
-                signature_str += ')'
-            elif spelling == ',' and in_function_parameter_list:
-                # Function parameter separator
-                signature_str += ', '
-            else:
-                if kind == clang.cindex.TokenKind.KEYWORD or kind == clang.cindex.TokenKind.IDENTIFIER:
-                    signature_str += spelling + ' '
-                else:
-                    signature_str += spelling
+            match spelling:
+                case "(":
+                    # Start of function parameter list
+                    in_function_parameter_list = True
+                    signature_str += "("
+                case ")":
+                    # End of function parameter list
+                    in_function_parameter_list = False
+                    signature_str += ")"
+                case "," if in_function_parameter_list:
+                    # Function parameter separator
+                    signature_str += ", "
+                case _:
+                    if (
+                        kind == clang.cindex.TokenKind.KEYWORD
+                        or kind == clang.cindex.TokenKind.IDENTIFIER
+                    ):
+                        signature_str += spelling + " "
+                    else:
+                        signature_str += spelling
             i += 1
             continue
     # Clean up extra spaces
@@ -294,8 +329,8 @@ def generate_forward_declaration_from_tokens(tokens):
         print("Signature Str: ", signature_str)
     current_line = template_str + "\n" + signature_str
     # Ensure it ends with a semicolon
-    if not current_line.endswith(';'):
-        current_line += ';'
+    if not current_line.endswith(";"):
+        current_line += ";"
     # Add comment for file and line number
     forward_declaration = current_line
     return forward_declaration
@@ -311,7 +346,6 @@ def generate_forward_declaration(function_node):
     if function_node.spelling == "check_square":
         do_debug = True
         import pdb
-
         pdb.set_trace()
     sentinal = 0
     raw_tokens = [(token.spelling, token.kind) for token in tokens]
@@ -322,7 +356,6 @@ def generate_forward_declaration(function_node):
     if do_debug:
         print("Forward Declaration: ", forward_declaration)
         import pdb
-
         pdb.set_trace()
     if not forward_declaration.endswith(";"):
         forward_declaration += ";"
@@ -340,7 +373,6 @@ def generate_class_forward_declaration(class_node):
     if class_node.spelling == "index_type" and False:
         do_debug = True
         import pdb
-
         pdb.set_trace()
     if class_node.spelling.find("unnamed") > 0:
         return ""
@@ -356,7 +388,7 @@ def generate_class_forward_declaration(class_node):
         ):
             body_start = token.location
             break
-    print("Token Full: ", token_full)
+#    print("Token Full: ", token_full)
     if body_start is None:
         # If no body is found, use the end of the class node
         body_start = class_node.extent.end
@@ -375,7 +407,6 @@ def generate_class_forward_declaration(class_node):
     # Add a semicolon if necessary
     if do_debug:
         import pdb
-
         pdb.set_trace()
     if not forward_declaration.endswith(";"):
         forward_declaration += ";"
@@ -385,7 +416,7 @@ def generate_class_forward_declaration(class_node):
 def main(inputs):
     # Parse the command line arguments
     base_path = inputs.input_base_path
-    filename = base_path + inputs.input_file
+    filename = inputs.math_path + inputs.input_file
     print("Parsing: ", filename)
     args = [
         "-std=c++17",
@@ -405,6 +436,7 @@ def main(inputs):
     translation_unit = index.parse(filename, args=args)
     functions, classes = get_functions_and_classes_in_namespace(
         translation_unit,
+        inputs.math_path,
         debug_function_nodes=inputs.debug_functions,
         debug_class_nodes=inputs.debug_classes,
     )
@@ -452,155 +484,59 @@ if __name__ == "__main__":
     inputs = processCLIArgs()
     main(inputs)
 
-
-def generate_forward_declaration_from_tokens(tokens, file_name, line_number):
-    """
-    Generate a forward declaration from a list of tokens.
-
-    Args:
-        tokens (list of tuples): List of (spelling, kind) tuples representing tokens.
-        file_name (str): The name of the file where the function is declared.
-        line_number (int): The line number where the function is declared.
-
-    Returns:
-        str: The forward declaration as a formatted string.
-    """
-    code_tokens = []
-    nesting_level = 0
-    in_template_parameter_list = False
-    in_function_parameter_list = False
-    i = 0
-    # Collect tokens up to the first '{' or ';' (excluding it)
-    while i < len(tokens):
-        spelling, kind = tokens[i]
-        if spelling == '{' or spelling == ';':
-            break
-        code_tokens.append((spelling, kind))
-        i += 1
-    # Now, reconstruct the code from code_tokens with appropriate formatting
-    code_lines = []
-    current_line = ''
-    indent = ''
-    nesting_level = 0
-    in_template_parameter_list = False
-    i = 0
-    template_str = ""
-    signature_str = ""
-    while i < len(code_tokens):
-        spelling, kind = code_tokens[i]
-        # Handle 'template' keyword
-        if spelling == 'template':
-            template_str += 'template '
-            i += 1
-            continue
-        # Handle entering template parameter list
-        if spelling == '<' and (i > 0 and code_tokens[i - 1][0] == 'template'):
-            in_template_parameter_list = True
-            nesting_level += 1
-            template_str += '<'
-            i += 1
-            continue
-        # Handle template parameter list
-        if in_template_parameter_list:
-            if spelling == '<':
-                nesting_level += 1
-                template_str += '<'
-            elif spelling == '>':
-                nesting_level -= 1
-                template_str += '>'
-                if nesting_level == 0:
-                    in_template_parameter_list = False
-            elif spelling == ',':
-                # Add comma and line break
-                template_str += ',\n    '
-            else:
-                if kind == clang.cindex.TokenKind.PUNCTUATION:
-                    template_str += spelling
-                else:
-                    template_str += spelling + ' '
-            i += 1
-            continue
-        # Handle function declaration
-        else:
-            if spelling == '(':
-                # Start of function parameter list
-                in_function_parameter_list = True
-                signature_str += '('
-            elif spelling == ')':
-                # End of function parameter list
-                in_function_parameter_list = False
-                signature_str += ')'
-            elif spelling == ',' and in_function_parameter_list:
-                # Function parameter separator
-                signature_str += ', '
-            else:
-                if kind == clang.cindex.TokenKind.KEYWORD or kind == clang.cindex.TokenKind.IDENTIFIER:
-                    signature_str += spelling + ' '
-                else:
-                    signature_str += spelling
-            i += 1
-            continue
-    # Clean up extra spaces
-    print("Template Str: ", template_str)
-    print("Signature Str: ", signature_str)
-    current_line = template_str + "\n" + signature_str
-    # Ensure it ends with a semicolon
-    if not current_line.endswith(';'):
-        current_line += ';'
-    # Add comment for file and line number
-    forward_declaration = f"// {file_name}:{line_number}\n"
-    forward_declaration += current_line
-    return forward_declaration
-
+"""
 # Your list of tokens
 tokens = [
-    ('template', clang.cindex.TokenKind.KEYWORD),
-    ('<', clang.cindex.TokenKind.PUNCTUATION),
-    ('typename', clang.cindex.TokenKind.KEYWORD),
-    ('T_y', clang.cindex.TokenKind.IDENTIFIER),
-    (',', clang.cindex.TokenKind.PUNCTUATION),
-    ('require_any_t', clang.cindex.TokenKind.IDENTIFIER),
-    ('<', clang.cindex.TokenKind.PUNCTUATION),
-    ('is_matrix', clang.cindex.TokenKind.IDENTIFIER),
-    ('<', clang.cindex.TokenKind.PUNCTUATION),
-    ('T_y', clang.cindex.TokenKind.IDENTIFIER),
-    ('>', clang.cindex.TokenKind.PUNCTUATION),
-    (',', clang.cindex.TokenKind.PUNCTUATION),
-    ('is_prim_or_rev_kernel_expression', clang.cindex.TokenKind.IDENTIFIER),
-    ('<', clang.cindex.TokenKind.PUNCTUATION),
-    ('T_y', clang.cindex.TokenKind.IDENTIFIER),
-    ('>>', clang.cindex.TokenKind.PUNCTUATION),
-    ('*', clang.cindex.TokenKind.PUNCTUATION),
-    ('=', clang.cindex.TokenKind.PUNCTUATION),
-    ('nullptr', clang.cindex.TokenKind.KEYWORD),
-    ('>', clang.cindex.TokenKind.PUNCTUATION),
-    ('inline', clang.cindex.TokenKind.KEYWORD),
-    ('void', clang.cindex.TokenKind.KEYWORD),
-    ('check_square', clang.cindex.TokenKind.IDENTIFIER),
-    ('(', clang.cindex.TokenKind.PUNCTUATION),
-    ('const', clang.cindex.TokenKind.KEYWORD),
-    ('char', clang.cindex.TokenKind.KEYWORD),
-    ('*', clang.cindex.TokenKind.PUNCTUATION),
-    ('function', clang.cindex.TokenKind.IDENTIFIER),
-    (',', clang.cindex.TokenKind.PUNCTUATION),
-    ('const', clang.cindex.TokenKind.KEYWORD),
-    ('char', clang.cindex.TokenKind.KEYWORD),
-    ('*', clang.cindex.TokenKind.PUNCTUATION),
-    ('name', clang.cindex.TokenKind.IDENTIFIER),
-    (',', clang.cindex.TokenKind.PUNCTUATION),
-    ('const', clang.cindex.TokenKind.KEYWORD),
-    ('T_y', clang.cindex.TokenKind.IDENTIFIER),
-    ('&', clang.cindex.TokenKind.PUNCTUATION),
-    ('y', clang.cindex.TokenKind.IDENTIFIER),
-    (')', clang.cindex.TokenKind.PUNCTUATION),
-    ('{', clang.cindex.TokenKind.PUNCTUATION),
+    ("template", clang.cindex.TokenKind.KEYWORD),
+    ("<", clang.cindex.TokenKind.PUNCTUATION),
+    ("typename", clang.cindex.TokenKind.KEYWORD),
+    ("T_y", clang.cindex.TokenKind.IDENTIFIER),
+    (",", clang.cindex.TokenKind.PUNCTUATION),
+    ("require_any_t", clang.cindex.TokenKind.IDENTIFIER),
+    ("<", clang.cindex.TokenKind.PUNCTUATION),
+    ("is_matrix", clang.cindex.TokenKind.IDENTIFIER),
+    ("<", clang.cindex.TokenKind.PUNCTUATION),
+    ("T_y", clang.cindex.TokenKind.IDENTIFIER),
+    (">", clang.cindex.TokenKind.PUNCTUATION),
+    (",", clang.cindex.TokenKind.PUNCTUATION),
+    ("is_prim_or_rev_kernel_expression", clang.cindex.TokenKind.IDENTIFIER),
+    ("<", clang.cindex.TokenKind.PUNCTUATION),
+    ("T_y", clang.cindex.TokenKind.IDENTIFIER),
+    (">>", clang.cindex.TokenKind.PUNCTUATION),
+    ("*", clang.cindex.TokenKind.PUNCTUATION),
+    ("=", clang.cindex.TokenKind.PUNCTUATION),
+    ("nullptr", clang.cindex.TokenKind.KEYWORD),
+    (">", clang.cindex.TokenKind.PUNCTUATION),
+    ("inline", clang.cindex.TokenKind.KEYWORD),
+    ("void", clang.cindex.TokenKind.KEYWORD),
+    ("check_square", clang.cindex.TokenKind.IDENTIFIER),
+    ("(", clang.cindex.TokenKind.PUNCTUATION),
+    ("const", clang.cindex.TokenKind.KEYWORD),
+    ("char", clang.cindex.TokenKind.KEYWORD),
+    ("*", clang.cindex.TokenKind.PUNCTUATION),
+    ("function", clang.cindex.TokenKind.IDENTIFIER),
+    (",", clang.cindex.TokenKind.PUNCTUATION),
+    ("const", clang.cindex.TokenKind.KEYWORD),
+    ("char", clang.cindex.TokenKind.KEYWORD),
+    ("*", clang.cindex.TokenKind.PUNCTUATION),
+    ("name", clang.cindex.TokenKind.IDENTIFIER),
+    (",", clang.cindex.TokenKind.PUNCTUATION),
+    ("const", clang.cindex.TokenKind.KEYWORD),
+    ("T_y", clang.cindex.TokenKind.IDENTIFIER),
+    ("&", clang.cindex.TokenKind.PUNCTUATION),
+    ("y", clang.cindex.TokenKind.IDENTIFIER),
+    (")", clang.cindex.TokenKind.PUNCTUATION),
+    ("{", clang.cindex.TokenKind.PUNCTUATION),
     # Function body tokens...
 ]
 
 # File information
-file_name = './stan/math/prim/err/check_square.hpp'
+file_name = "./stan/math/prim/err/check_square.hpp"
 line_number = 20
 
 # Generate forward declaration
-forward_declaration = generate_forward_declaration_from_tokens(tokens, file_name, line_number)
+forward_declaration = generate_forward_declaration_from_tokens(
+    tokens, file_name, line_number
+)
 print(forward_declaration)
+"""
