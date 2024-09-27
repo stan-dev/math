@@ -13,6 +13,8 @@ namespace internal {
  * @param x A scalar
  * @return \f$\mathbb{e}^{x}\
  */
+ 
+// This function prevents abortion errors
 template <typename T_x>
 inline auto rexp(T_x&& x) noexcept {
   return (x <= 700) ? exp(x) : exp(700);
@@ -26,9 +28,6 @@ inline auto rexp(T_x&& x) noexcept {
  */
 template <typename T_x>
 inline auto logMill(T_x&& x) noexcept {
-  if (x > 1.0e5) {
-    return -log(x);
-  }
   const auto m = std_normal_lcdf(-x) - std_normal_log(x);
   return m;
 }
@@ -45,32 +44,26 @@ template <typename T_a, typename T_w, typename T_v>
 inline auto log_probability_distribution(const T_a& a, const T_v& v,
                                          const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  auto nearly_one = ret_t(1.0 - 1.0e-6);
   if (fabs(v) == 0.0) {
     return ret_t(log1p(-w));
   }
-  auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
-  ret_t prob;
+  auto minus_two_va_one_minus_w = -2.0 * v * a * (1.0 - w);
+
+  // This split prevents abortion errors
   if (minus_two_va_one_minus_w < 0) {
     const auto exp_arg = exp(minus_two_va_one_minus_w);
-    if (exp_arg >= nearly_one) {
-      return ret_t(log1p(-w));
-    }
     auto two_vaw = 2 * v * a * w;
     if (two_vaw > minus_two_va_one_minus_w) {
-      prob = log1p(-exp_arg) - log_diff_exp(two_vaw, minus_two_va_one_minus_w);
+      return log1p(-exp_arg) - log_diff_exp(two_vaw, minus_two_va_one_minus_w);
     } else if (two_vaw < minus_two_va_one_minus_w) {
-      prob = log1p(-exp_arg) - log_diff_exp(minus_two_va_one_minus_w, two_vaw);
+      return log1p(-exp_arg) - log_diff_exp(minus_two_va_one_minus_w, two_vaw);
     } else {
-      prob = log1p(-exp_arg) - NEGATIVE_INFTY;
+      return log1p(-exp_arg) - NEGATIVE_INFTY;
     }
   } else {
     const auto exp_arg = exp(-minus_two_va_one_minus_w);
-    if (exp_arg >= nearly_one)
-      return ret_t(log1p(-w));
-    prob = log1p(-exp_arg) - log1p(-exp(2 * v * a));
+    return log1p(-exp_arg) - log1p(-exp(2 * v * a));
   }
-  return prob;
 }
 
 /**
@@ -85,11 +78,11 @@ template <typename T_a, typename T_w, typename T_v>
 inline auto log_probability_GradAV(const T_a& a, const T_v& v,
                                    const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  auto nearly_one = ret_t(1.0 - 1.0e-6);
   if (fabs(v) == 0.0) {
     return ret_t(-w);
   }
-  nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
+  auto nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
+//  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
   ret_t prob;
   if (v < 0) {
     const auto two_va_one_minus_w = (2.0 * v * a * (1.0 - w));
@@ -106,10 +99,10 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     auto log_quotient = log1p(-exp_two_avw) - log1p(-exp_two_av);
     if (log(w) > log_quotient) {
       prob += log_diff_exp(log(w), log_quotient);
-      prob = exp(prob);
+	return exp(prob);
     } else {
       prob += log_diff_exp(log_quotient, log(w));
-      prob = -exp(prob);
+	return -exp(prob);
     }
   } else {
     const auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
@@ -133,13 +126,12 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     }
     if (log(w) > log_quotient) {
       prob += log_diff_exp(log(w), log_quotient);
-      prob = -exp(prob);
+	return -exp(prob);
     } else {
       prob += log_diff_exp(log_quotient, log(w));
-      prob = exp(prob);
+	return exp(prob);
     }
   }
-  return (is_inf(prob)) ? NEGATIVE_INFTY : prob;
 }
 
 /**
@@ -166,10 +158,6 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
   ret_t log_distribution = NEGATIVE_INFTY;
   const auto v = -vn;
   const auto w = 1 - wn;
-
-  if (is_inf(y)) {
-    return ret_t(log_probability_distribution(a, v, w));
-  }
 
   const auto K1 = 0.5 * (fabs(v) / a * y - w);
   const auto arg
@@ -216,6 +204,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
       ans = NEGATIVE_INFTY;
     }
     log_distribution = ans + -v * a * w - square(v) * y / 2;
+	return NaturalScale ? exp(log_distribution) : log_distribution;
   } else {
     auto summand_1 = log_probability_distribution(a, v, w);
 
@@ -252,8 +241,9 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     } else if (summand_1 < summand_2) {
       log_distribution = log_diff_exp(summand_2, summand_1);
     }
+	return NaturalScale ? exp(log_distribution) : log_distribution;
   }
-  return NaturalScale ? exp(log_distribution) : log_distribution;
+//  return NaturalScale ? exp(log_distribution) : log_distribution;
 }
 
 /**
