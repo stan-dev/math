@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/prob/gamma_log.hpp>
+#include <stan/math/prim/prob/gamma_lpdf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 
@@ -67,7 +67,7 @@ class AgradDistributionsGamma : public AgradDistributionTest {
   stan::return_type_t<T_y, T_shape, T_inv_scale> log_prob(
       const T_y& y, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
-    return stan::math::gamma_log(y, alpha, beta);
+    return stan::math::gamma_lpdf(y, alpha, beta);
   }
 
   template <bool propto, typename T_y, typename T_shape, typename T_inv_scale,
@@ -75,7 +75,7 @@ class AgradDistributionsGamma : public AgradDistributionTest {
   stan::return_type_t<T_y, T_shape, T_inv_scale> log_prob(
       const T_y& y, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
-    return stan::math::gamma_log<propto>(y, alpha, beta);
+    return stan::math::gamma_lpdf<propto>(y, alpha, beta);
   }
 
   template <typename T_y, typename T_shape, typename T_inv_scale, typename T3,

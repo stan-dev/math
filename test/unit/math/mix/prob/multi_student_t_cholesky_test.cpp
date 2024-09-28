@@ -76,7 +76,6 @@ TEST(ProbDistributionsMultiStudentTCholesky, fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
-  using stan::math::multi_student_t_log;
   using stan::math::var;
   using std::vector;
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);

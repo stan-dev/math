@@ -154,8 +154,6 @@ The implementation of @ref stan::math::make_holder is [here](https://github.com/
 
 ### Move Semantics
 
-In general, Stan Math does not use move semantics very often.
-This is because of our arena allocator.
 Move semantics generally work as
 
 ```cpp
@@ -179,6 +177,96 @@ We can see in the above that the standard style of a move (the constructor takin
 But in Stan, particularly for reverse mode, we need to keep memory around even if it's only temporary for when we call the gradient calculations in the reverse pass.
 And since memory for reverse mode is stored in our arena allocator no copying happens in the first place.
 
+Functions for Stan Math's reverse mode autodiff should use [_perfect forwarding_](https://drewcampbell92.medium.com/understanding-move-semantics-and-perfect-forwarding-part-3-65575d523ff8) arguments. Perfect forwarding arguments use a template parameter wit no attributes such as `const` and `volatile` and have a double ampersand `&&` next to them.
+
+```c++
+  template <typename T>
+  auto my_function(T&& x) {
+    return my_other_function(std::forward<T>(x));
+  }
+```
+
+The `std::forward<T>` in the in the code above tells the compiler that if `T` is deduced to be an rvalue reference (such as `Eigen::MatrixXd&&`), then it should be moved to `my_other_function`, where there it can possibly use another objects move constructor to reuse memory.
+A perfect forwarding argument of a function accepts any reference type as its input argument. 
+The above signature is equivalent to writing out several functions with different reference types
+
+```c++
+  // Accepts a plain lvalue reference
+  auto my_function(Eigen::MatrixXd& x) {
+    return my_other_function(x);
+  }
+  // Accepts a const lvalue reference
+  auto my_function(const Eigen::MatrixXd& x) {
+    return my_other_function(x);
+  }
+  // Accepts an rvalue reference
+  auto my_function(Eigen::MatrixXd&& x) {
+    return my_other_function(std::move(x));
+  }
+  // Accepts a const rvalue reference
+  auto my_function(const Eigen::MatrixXd&& x) {
+    return my_other_function(std::move(x));
+  }
+```
+
+In Stan, perfect forwarding is used in reverse mode functions which can accept an Eigen matrix type.
+
+```c++
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto sin(T&& x) {
+  // Store `x` on the arena
+  arena_t<T> x_arena(std::forward<T>(x));
+  arena_t<T> ret(x_arena.val().array().sin().matrix());
+  reverse_pass_callback([x_arena, ret] mutable {
+    x_arena.adj() += ret.adj().cwiseProduct(x_arena.val().array().cos().matrix());
+  });
+  return ret;
+}
+```
+
+Let's go through the above line by line.
+
+```c++
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto sin(T&& x) {
+```
+
+The signature for this function has a template `T` that is required to be an Eigen type with a `value_type` that is a `var` type. 
+The template parameter `T` is then used in the signature as an perfect forwarding argument. 
+
+```c++
+  // Store `x` on the arena
+  arena_t<T> x_arena(std::forward<T>(x));
+```
+
+The input is stored in the arena, which is where the perfect forwarding magic actually occurs. 
+If `T` is an lvalue type such as `Eigen::MatrixXd&` then `arena_matrix` will use it's copy constructor, creating new memory in Stan's arena allocator and then copying the values of `x` into that memory. 
+But if `T` was a temporary rvalue type such as `Eigen::MatrixXd&&`, then the `arena_matrix` class will use it's move constructor to place the temporary matrix in Stan's `var_alloc_stack_`. 
+The `var_alloc_stick_` is used to hold objects that were created outside of the arena allocator but need to be deleted when the arena allocator is cleared. 
+This allows the `arena_matrix` to reuse the memory from the temporary matrix. Then the matrix will be deleted once arena allocator requests memory to be cleared.
+
+```c++
+  arena_t<T> ret(x_arena.val().array().sin().matrix());
+```
+
+This construction of an `arena_matrix` will *not* use the move constructor for `arena_matrix`. 
+Here, `x_arena` is an `arena_matrix<T>`, which is then wrapped in an expression to compute the elementwise `sin`. 
+That expression will be evaluated into new memory allocated in the arena allocator and then a pointer to it will be stored in the `arena_matrix.`
+
+```c++
+  reverse_pass_callback([x_arena, ret] mutable {
+    x_arena.adj() += ret.adj().cwiseProduct(x_arena.val().array().cos().matrix());
+  });
+  return ret;
+```
+
+The rest of this code follows the standard format for the rest of Stan Math's reverse mode that accepts Eigen types as input. 
+The `reverse_pass_callback` function accepts a lambda as input and places the lambda in Stan's callback stack to be called later when `grad()` is called by the user.
+Since `arena_matrix` types only store a pointer to memory allocated elsewhere they are copied into the lambda. 
+The body of the lambda holds the gradient calculation needed for the reverse mode pass.
+
+Then finally `ret`, the `arena_matrix` type is returned by the function.
+
 When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy.
 For instance, Stan's `var` type uses the pointer to implementation (PIMPL) pattern, so it simply holds a pointer of size 8 bytes.
 A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs with at least 64-byte cache lines.
@@ -189,6 +277,45 @@ The general rules to follow for passing values to a function are:
 1. If a type is smaller than two words (16 bytes), pass it by value
 2. If you are writing a function for reverse mode, pass values by `const&`
 3. In prim, if you are confident and working with larger types, use perfect forwarding to pass values that can be moved from. Otherwise simply pass values by `const&`.
+
+### Using auto is Dangerous With Eigen Matrix Functions in Reverse Mode
+
+The use of auto with the Stan Math library should be used with care, like in [Eigen](https://eigen.tuxfamily.org/dox/TopicPitfalls.html). 
+Along with the cautions mentioned in the Eigen docs, there are also memory considerations when using reverse mode automatic differentiation. 
+When returning from a function in the Stan Math library with an Eigen matrix output with a scalar `var` type, the actual returned type will often be an `arena_matrix<Eigen::Matrix<...>>`. 
+The `arena_matrix` class is an Eigen matrix where the underlying array of memory is located in Stan's memory arena. 
+The `arena_matrix` that is returned by Math functions is normally the same one resting in the callback used to calculate gradients in the reverse pass.
+Directly changing the elements of this matrix would also change the memory the reverse pass callback sees which would result in incorrect calculations.
+
+The simple solution to this is that when you use a math library function that returns a matrix and then want to assign to any of the individual elements of the matrix, assign to an actual Eigen matrix type instead of using auto. 
+In the below example, we see the first case which uses auto and will change the memory of the `arena_matrix` returned in the callback for multiply's reverse mode.
+Directly below it is the safe version, which just directly assigns to an Eigen matrix type and is safe to do element insertion into.
+
+```c++
+Eigen::Matrix<var, -1, 1> y;
+Eigen::Matrix<var, -1, -1> X;
+// Bad!! Will change memory used by reverse pass callback within multiply!
+auto mu = multiply(X, y);
+mu(4) = 1.0;
+// Good! Will not change memory used by reverse pass callback within multiply
+Eigen::Matrix<var, -1, 1> mu_good = multiply(X, y);
+mu_good(4) = 1.0;
+```
+
+The reason we do this is for cases where function returns are passed to other functions. 
+An `arena_matrix` will always make a shallow copy when being constructed from another `arena_matrix`, which lets the functions avoid unnecessary copies.
+
+```c++
+Eigen::Matrix<var, -1, 1> y1;
+Eigen::Matrix<var, -1, -1> X1;
+Eigen::Matrix<var, -1, 1> y2;
+Eigen::Matrix<var, -1, -1> X2;
+auto mu1 = multiply(X1, y1);
+auto mu2 = multiply(X2, y2);
+// Inputs not copied in this case!
+auto z = add(mu1, mu2);
+```
+
 
 ### Passing variables that need destructors called after the reverse pass (`make_chainable_ptr`)
 
@@ -242,22 +369,17 @@ grad();
 ```
 
 Now `res` is `innocent_return` and we've changed one of the elements of `innocent_return`, but that is also going to change the element of `res` which is being used in our reverse pass callback!
-The answer for this is simple but sadly requires a copy.
 
-```cpp
-template <typename EigVec, require_eigen_vt<is_var, EigVec>* = nullptr>
-inline var cool_fun(const EigVec& v) {
-  arena_t<EigVec> arena_v(v);
-  arena_t<EigVec> res = arena_v.val().array() * arena_v.val().array();
-  reverse_pass_callback([res, arena_v]() mutable {
-    arena_v.adj().array() += (2.0 * res.adj().array()) * arena_v.val().array();
-  });
-  return plain_type_t<EigVec>(res);
-}
+Care must be taken by end users of Stan Math by using `auto` with caution. 
+When a user wishes to manipulate the coefficients of a matrix that is a return from a function in Stan Math, they should assign the matrix to a plain Eigen type.
+
+```c++
+Eigen::Matrix<var, -1, 1> x = Eigen::Matrix<double, -1, 1>::Random(5);
+Eigen::MatrixXd actually_innocent_return = cool_fun(x);
+actually_innocent_return.coeffRef(3) = var(3.0);
+auto still_unsafe_return = cool_fun2(actually_innocent_return);
+grad();
 ```
-
-we make a deep copy of the return whose inner `vari` will not be the same, but the `var` will produce a new copy of the pointer to the `vari`.
-Now the user code above will be protected, and it is safe for them to assign to individual elements of the `auto` returned matrix.
 
 ### Const correctness, reverse mode autodiff, and arena types
 

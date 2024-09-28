@@ -15,7 +15,7 @@ namespace internal {
  */
 template <typename T_x>
 inline auto logMill(T_x&& x) noexcept {
-  const auto m = std_normal_lcdf(-x) - std_normal_log(x);
+  const auto m = std_normal_lcdf(-x) - std_normal_lpdf(x);
   return m;
 }
 
@@ -173,12 +173,12 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     ret_t fminus = NEGATIVE_INFTY;
     for (auto k = K_small_value; k >= 0; k--) {
       auto rj = a * (2 * k + w);
-      auto dj = std_normal_log(rj / sqrt_y);
+      auto dj = std_normal_lpdf(rj / sqrt_y);
       auto pos1 = dj + logMill((rj - vy) / sqrt_y);
       auto pos2 = dj + logMill((rj + vy) / sqrt_y);
       fplus = log_sum_exp(fplus, log_sum_exp(pos1, pos2));
       rj = a * (2 * k + 2 - w);
-      dj = std_normal_log(rj / sqrt_y);
+      dj = std_normal_lpdf(rj / sqrt_y);
       auto neg1 = dj + logMill((rj - vy) / sqrt_y);
       auto neg2 = dj + logMill((rj + vy) / sqrt_y);
       fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
@@ -280,7 +280,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = std_normal_log(r_k / sqrt_y);
+      auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
@@ -295,7 +295,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = std_normal_log(r_k / sqrt_y);
+      d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
@@ -391,7 +391,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = std_normal_log(r_k / sqrt_y);
+      auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
@@ -403,7 +403,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
       const auto t2 = temp * x;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = std_normal_log(r_k / sqrt_y);
+      d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
@@ -495,7 +495,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = std_normal_log(r_k / sqrt_y);
+      auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
       auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
@@ -510,7 +510,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
-      d_k = std_normal_log(r_k / sqrt_y);
+      d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
       temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  

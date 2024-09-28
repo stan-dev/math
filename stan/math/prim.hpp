@@ -5,8 +5,10 @@
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim.hpp>
+#include <stan/math/opencl/prim_constraint.hpp>
 #endif
 
+#include <stan/math/prim/constraint.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

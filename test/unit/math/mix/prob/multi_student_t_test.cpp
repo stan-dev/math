@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsMultiStudentT, matvar) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_matvar) {
   auto f
       = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {
           auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
@@ -58,11 +58,11 @@ TEST(ProbDistributionsMultiStudentT, matvar) {
   stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma00);
 }
 
-TEST(ProbDistributionsMultiStudentT, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
-  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_lpdf;
   using stan::math::var;
   using std::vector;
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);
@@ -80,18 +80,18 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
       Sigma(i, j).d_ = 1.0;
   }
 
-  fvar<var> lp = multi_student_t_log(y, nu, mu, Sigma);
+  fvar<var> lp = multi_student_t_lpdf(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val(), 0.0001);
 
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
-  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_lpdf;
   using stan::math::var;
   using std::vector;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3, 1);
@@ -109,7 +109,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
       Sigma(i, j).d_.val_ = 1.0;
   }
 
-  fvar<fvar<var> > lp = multi_student_t_log(y, nu, mu, Sigma);
+  fvar<fvar<var> > lp = multi_student_t_lpdf(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val_.val(), 0.0001);
 

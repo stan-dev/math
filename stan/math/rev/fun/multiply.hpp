@@ -26,11 +26,11 @@ namespace math {
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
+inline auto multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T1>> arena_A(std::forward<T1>(A));
+    arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     auto arena_A_val = to_arena(arena_A.val());
     auto arena_B_val = to_arena(arena_B.val());
     using return_t
@@ -48,19 +48,19 @@ inline auto multiply(const T1& A, const T2& B) {
             arena_B.adj() += arena_A_val.transpose() * res_adj;
           }
         });
-    return return_t(res);
+    return res;
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t
         = return_var_matrix_t<decltype(arena_A * value_of(B).eval()), T1, T2>;
     arena_t<return_t> res = arena_A * arena_B.val_op();
     reverse_pass_callback([arena_B, arena_A, res]() mutable {
       arena_B.adj() += arena_A.transpose() * res.adj_op();
     });
-    return return_t(res);
+    return res;
   } else {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T1>> arena_A(std::forward<T1>(A));
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     using return_t
         = return_var_matrix_t<decltype(value_of(arena_A).eval() * arena_B), T1,
@@ -70,7 +70,7 @@ inline auto multiply(const T1& A, const T2& B) {
       arena_A.adj() += res.adj_op() * arena_B.transpose();
     });
 
-    return return_t(res);
+    return res;
   }
 }
 
@@ -129,7 +129,7 @@ inline var multiply(const T1& A, const T2& B) {
  * @tparam T1 type of the scalar
  * @tparam T2 type of the matrix or expression
  *
- * @param A scalar
+ * @param a scalar
  * @param B matrix
  * @return product of matrix and scalar
  */
@@ -137,41 +137,41 @@ template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
+inline auto multiply(const T1& a, T2&& B) {
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t = return_var_matrix_t<T2, T1, T2>;
-    arena_t<return_t> res = arena_A.val() * arena_B.val().array();
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      const auto a_val = arena_A.val();
+    var av = a;
+    auto a_val = value_of(av);
+    arena_t<return_t> res = a_val * arena_B.val().array();
+    reverse_pass_callback([av, a_val, arena_B, res]() mutable {
       for (Eigen::Index j = 0; j < res.cols(); ++j) {
         for (Eigen::Index i = 0; i < res.rows(); ++i) {
           const auto res_adj = res.adj().coeffRef(i, j);
-          arena_A.adj() += res_adj * arena_B.val().coeff(i, j);
+          av.adj() += res_adj * arena_B.val().coeff(i, j);
           arena_B.adj().coeffRef(i, j) += a_val * res_adj;
         }
       }
     });
-    return return_t(res);
+    return res;
   } else if (!is_constant<T2>::value) {
-    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    double val_a = value_of(a);
+    arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t = return_var_matrix_t<T2, T1, T2>;
-    arena_t<return_t> res = arena_A * arena_B.val().array();
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      arena_B.adj().array() += arena_A * res.adj().array();
+    arena_t<return_t> res = val_a * arena_B.val().array();
+    reverse_pass_callback([val_a, arena_B, res]() mutable {
+      arena_B.adj().array() += val_a * res.adj().array();
     });
-    return return_t(res);
+    return res;
   } else {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    var av = a;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     using return_t = return_var_matrix_t<T2, T1, T2>;
-    arena_t<return_t> res = arena_A.val() * arena_B.array();
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      arena_A.adj() += (res.adj().array() * arena_B.array()).sum();
+    arena_t<return_t> res = av.val() * arena_B.array();
+    reverse_pass_callback([av, arena_B, res]() mutable {
+      av.adj() += (res.adj().array() * arena_B.array()).sum();
     });
-    return return_t(res);
+    return res;
   }
 }
 
@@ -192,8 +192,8 @@ template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_not_complex_t<value_type_t<T1>>* = nullptr,
           require_not_complex_t<value_type_t<T2>>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-  return multiply(B, A);
+inline auto multiply(T1&& A, T2&& B) {
+  return multiply(std::forward<T2>(B), std::forward<T1>(A));
 }
 
 /**
@@ -207,8 +207,8 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param b The right hand side of the multiplication
  */
 template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto operator*(const T1& a, const T2& b) {
-  return multiply(a, b);
+inline auto operator*(T1&& a, T2&& b) {
+  return multiply(std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

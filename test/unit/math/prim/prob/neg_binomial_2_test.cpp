@@ -245,7 +245,7 @@ TEST(ProbDistributionsNegBinomial2, extreme_values) {
     for (int n : n_to_test) {
       // Test across a range of phi
       for (double phi = 1e12; phi < 1e22; phi *= 10) {
-        double logp = stan::math::neg_binomial_2_log<false>(n, mu, phi);
+        double logp = stan::math::neg_binomial_2_lpmf<false>(n, mu, phi);
         EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << mu
                            << ", phi = " << phi;
       }
