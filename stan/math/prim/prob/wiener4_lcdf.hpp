@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 namespace internal {
- 
+
 /**
  * Helper function. Log of Mill's ratio for the normal distribution
  *
@@ -69,7 +69,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     return ret_t(-w);
   }
   auto nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
-//  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
+  //  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
   ret_t prob;
   if (v < 0) {
     const auto two_va_one_minus_w = (2.0 * v * a * (1.0 - w));
@@ -86,10 +86,10 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     auto log_quotient = log1p(-exp_two_avw) - log1p(-exp_two_av);
     if (log(w) > log_quotient) {
       prob += log_diff_exp(log(w), log_quotient);
-	return exp(prob);
+      return exp(prob);
     } else {
       prob += log_diff_exp(log_quotient, log(w));
-	return -exp(prob);
+      return -exp(prob);
     }
   } else {
     const auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
@@ -113,10 +113,10 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     }
     if (log(w) > log_quotient) {
       prob += log_diff_exp(log(w), log_quotient);
-	return -exp(prob);
+      return -exp(prob);
     } else {
       prob += log_diff_exp(log_quotient, log(w));
-	return exp(prob);
+      return exp(prob);
     }
   }
 }
@@ -191,7 +191,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
       ans = NEGATIVE_INFTY;
     }
     log_distribution = ans + -v * a * w - square(v) * y / 2;
-	return NaturalScale ? exp(log_distribution) : log_distribution;
+    return NaturalScale ? exp(log_distribution) : log_distribution;
   } else {
     auto summand_1 = log_probability_distribution(a, v, w);
 
@@ -228,9 +228,9 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     } else if (summand_1 < summand_2) {
       log_distribution = log_diff_exp(summand_2, summand_1);
     }
-	return NaturalScale ? exp(log_distribution) : log_distribution;
+    return NaturalScale ? exp(log_distribution) : log_distribution;
   }
-//  return NaturalScale ? exp(log_distribution) : log_distribution;
+  //  return NaturalScale ? exp(log_distribution) : log_distribution;
 }
 
 /**
@@ -283,7 +283,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
-      auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      auto temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto factor = (2 * k + w);
       const auto factor_2 = (2 * k + 2.0 - w);
       auto temp2 = exp(d_k);
@@ -291,25 +292,29 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       const auto t1 = temp3 * factor;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
       d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp2 = exp(d_k);
       temp3 = temp * (-vy) - sqrt_y * temp2;
       const auto t3 = -temp3 * factor_2;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t4 = -temp3 * factor;
       ans += (t1 + t2 + t3 + t4);
     }
-    F_k = min(exp(v * a * w + 0.5 * square(v) * y), std::numeric_limits<ret_t>::max());  
+    F_k = min(exp(v * a * w + 0.5 * square(v) * y),
+              std::numeric_limits<ret_t>::max());
     const auto summands_small_y = ans / y / F_k;
     return -v * w * cdf + summands_small_y;
   } else {
@@ -327,7 +332,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = min(exp(log_probability_distribution(a, v, w)), std::numeric_limits<ret_t>::max());  
+    const auto prob = min(exp(log_probability_distribution(a, v, w)),
+                          std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv
@@ -363,10 +369,12 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
   const auto log_a = log(a);
   auto K_large_value = ret_t(1.0);
   if (v != 0) {
-    const auto temp = -min(exp(log_a - LOG_PI - 0.5 * log_y), std::numeric_limits<ret_t>::max());  
+    const auto temp = -min(exp(log_a - LOG_PI - 0.5 * log_y),
+                           std::numeric_limits<ret_t>::max());
     const auto log_v = log(fabs(v));
-    auto alphK_large = min(exp(factor + 0.5 * (7 * LOG_PI + log_y) - 2.5 * LOG_TWO
-                            - 3 * log_a - log_v), std::numeric_limits<ret_t>::max());  
+    auto alphK_large = min(exp(factor + 0.5 * (7 * LOG_PI + log_y)
+                               - 2.5 * LOG_TWO - 3 * log_a - log_v),
+                           std::numeric_limits<ret_t>::max());
     alphK_large = fmax(0.0, fmin(1.0, alphK_large));
     K_large_value
         = fmax(ceil((alphK_large == 0)
@@ -394,27 +402,32 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
-      auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      auto temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto factor = 2 * k + w;
       const auto factor_2 = 2 * k + 2.0 - w;
       const auto t1 = -temp * x;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto t2 = temp * x;
       r_k = (2 * k + 1) * a + a * (1 - w);
       d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto t3 = temp * x;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto t4 = -temp * x;
       ans += (t1 + t2 + t3 + t4);
     }
-    F_k = min(exp(v * a * w + 0.5 * square(v) * y), std::numeric_limits<ret_t>::max());  
+    F_k = min(exp(v * a * w + 0.5 * square(v) * y),
+              std::numeric_limits<ret_t>::max());
     const auto summands_small_y = ans / F_k;
     return -1 * ((-w * a - v * y) * cdf + summands_small_y);
   } else {
@@ -432,7 +445,8 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = min(exp(log_probability_distribution(a, v, w)), std::numeric_limits<ret_t>::max());  
+    const auto prob = min(exp(log_probability_distribution(a, v, w)),
+                          std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv = is_inf(dav * a) ? NEGATIVE_INFTY : dav * a;
@@ -465,9 +479,11 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
 
   const auto log_y = log(y);
   const auto log_a = log(a);
-  const auto temp = -min(exp(log_a - LOG_PI - 0.5 * log_y), std::numeric_limits<ret_t>::max());  
+  const auto temp = -min(exp(log_a - LOG_PI - 0.5 * log_y),
+                         std::numeric_limits<ret_t>::max());
   auto alphK_large
-      = min(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a), std::numeric_limits<ret_t>::max());  
+      = min(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a),
+            std::numeric_limits<ret_t>::max());
   alphK_large = fmax(0.0, fmin(1.0, alphK_large));
   const auto K_large_value
       = fmax(ceil((alphK_large == 0)
@@ -481,7 +497,8 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
   const auto K_large = fabs(v) / a * y - wdash;
   const auto lv = log1p(square(v) * y);
   const auto alphK_small = factor - LOG_TWO - lv;
-  const auto arg = fmin(min(exp(alphK_small), std::numeric_limits<ret_t>::max()), 1.0);  
+  const auto arg
+      = fmin(min(exp(alphK_small), std::numeric_limits<ret_t>::max()), 1.0);
   const auto K_small
       = (arg == 0)
             ? INFTY
@@ -498,7 +515,8 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
-      auto temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      auto temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       const auto factor = a;
       const auto factor_2 = -a;
       auto temp2 = exp(d_k);
@@ -506,25 +524,29 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       const auto t1 = temp3 * factor;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t2 = temp3 * factor;
       r_k = (2 * k + 1) * a + a * (1 - w);
       d_k = std_normal_lpdf(r_k / sqrt_y);
       x = r_k - vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp2 = exp(d_k);
       temp3 = temp * (-vy) - sqrt_y * temp2;
       const auto t3 = -temp3 * factor_2;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
-      temp = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());  
+      temp
+          = min(exp(d_k + logMill(xsqrt_y)), std::numeric_limits<ret_t>::max());
       temp3 = temp * vy - sqrt_y * temp2;
       const auto t4 = -temp3 * factor;
       ans += (t1 + t2 + t3 + t4);
     }
-    F_k = min(exp(v * a * w + 0.5 * square(v) * y), std::numeric_limits<ret_t>::max());  
+    F_k = min(exp(v * a * w + 0.5 * square(v) * y),
+              std::numeric_limits<ret_t>::max());
     const auto summands_small_y = ans / y / F_k;
     return -1 * (-v * a * cdf + summands_small_y);
   } else {
@@ -542,7 +564,8 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = min(exp(log_probability_distribution(a, v, w)), std::numeric_limits<ret_t>::max());
+    const auto prob = min(exp(log_probability_distribution(a, v, w)),
+                          std::numeric_limits<ret_t>::max());
 
     // Calculate the probability term 'P' on log scale
     auto dav = ret_t(-1 / (1.0 - w));
