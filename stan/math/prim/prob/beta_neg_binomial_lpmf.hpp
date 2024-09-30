@@ -79,46 +79,45 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lpmf(
     if constexpr (include_summand<propto>::value) {
       logp -= lgamma(n_vec[i] + 1);
     }
-    T_partials_return lbeta_denominator
-        = lbeta(r_vec.val(i), alpha_vec.val(i));
-    T_partials_return lgamma_numerator
-        = lgamma(n_vec[i] + beta_vec.val(i));
+    T_partials_return lbeta_denominator = lbeta(r_vec.val(i), alpha_vec.val(i));
+    T_partials_return lgamma_numerator = lgamma(n_vec[i] + beta_vec.val(i));
     T_partials_return lgamma_denominator = lgamma(beta_vec.val(i));
     T_partials_return lbeta_numerator
         = lbeta(n_vec[i] + r_vec.val(i), alpha_vec.val(i) + beta_vec.val(i));
     logp += lbeta_numerator + lgamma_numerator - lbeta_denominator
             - lgamma_denominator;
     if (!is_constant_all<T_r, T_alpha, T_beta>::value) {
-      T_partials_return digamma_n_r_alpha_beta
-          = digamma(n_vec[i] + r_vec.val(i) + alpha_vec.val(i)
-                          + beta_vec.val(i));
+      T_partials_return digamma_n_r_alpha_beta = digamma(
+          n_vec[i] + r_vec.val(i) + alpha_vec.val(i) + beta_vec.val(i));
 
       if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
-        T_partials_return digamma_r_alpha = digamma(r_vec.val(i) + alpha_vec.val(i));
+        T_partials_return digamma_r_alpha
+            = digamma(r_vec.val(i) + alpha_vec.val(i));
         if constexpr (!is_constant_all<T_r>::value) {
           partials<0>(ops_partials)[i]
               += digamma(n_vec[i] + r_vec.val(i)) - digamma_n_r_alpha_beta
-                - (digamma(r_vec.val(i)) - digamma_r_alpha);
+                 - (digamma(r_vec.val(i)) - digamma_r_alpha);
         }
         if constexpr (!is_constant_all<T_alpha>::value) {
           partials<1>(ops_partials)[i]
               += -digamma_n_r_alpha_beta
-                - (digamma(alpha_vec.val(i)) - digamma_r_alpha);
+                 - (digamma(alpha_vec.val(i)) - digamma_r_alpha);
         }
       }
-      if constexpr (!is_constant<T_beta>::value || !is_constant<T_alpha>::value) {
+      if constexpr (!is_constant<T_beta>::value
+                    || !is_constant<T_alpha>::value) {
         T_partials_return digamma_alpha_beta
             = digamma(alpha_vec.val(i) + beta_vec.val(i));
         if constexpr (!is_constant_all<T_beta>::value) {
-          partials<2>(ops_partials)[i]
-              += digamma_alpha_beta - digamma_n_r_alpha_beta
-                + digamma(n_vec[i] + beta_vec.val(i)) - digamma(beta_vec.val(i));
+          partials<2>(ops_partials)[i] += digamma_alpha_beta
+                                          - digamma_n_r_alpha_beta
+                                          + digamma(n_vec[i] + beta_vec.val(i))
+                                          - digamma(beta_vec.val(i));
         }
         if constexpr (!is_constant_all<T_alpha>::value) {
           partials<1>(ops_partials)[i] += digamma_alpha_beta;
         }
       }
-
     }
   }
   return ops_partials.build(logp);
