@@ -3,10 +3,12 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
+#include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/sqrt.hpp>
+#include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/pow.hpp>
 #include <cmath>
 #include <complex>
@@ -14,204 +16,74 @@
 
 namespace stan {
 namespace math {
-
-template <typename T>
-inline fvar<T> pow(const fvar<T>& x1, const fvar<T>& x2) {
+/*
+ *
+ * @tparam T1 Either an `fvar`, `arithmetic`, or `complex` type with an inner
+ * `fvar` or `arithmetic` type.
+ * @tparam T2 Either a `fvar`, `arithmetic`, or `complex` type with an inner
+ * `fvar` or `arithmetic` type.
+ * @param x1 Base variable.
+ * @param x2 Exponent variable.
+ * @return Base raised to the exponent.
+ */
+template <typename T1, typename T2,
+          require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr,
+          require_all_stan_scalar_t<T1, T2>* = nullptr>
+inline auto pow(const T1& x1, const T2& x2) {
   using std::log;
   using std::pow;
-  T pow_x1_x2(pow(x1.val_, x2.val_));
-  return fvar<T>(pow_x1_x2, (x2.d_ * log(x1.val_) + x2.val_ * x1.d_ / x1.val_)
-                                * pow_x1_x2);
-}
-
-template <typename T, typename U, typename = require_arithmetic_t<U>>
-inline fvar<T> pow(U x1, const fvar<T>& x2) {
-  using std::log;
-  using std::pow;
-  T u = pow(x1, x2.val_);
-  return fvar<T>(u, x2.d_ * log(x1) * u);
-}
-
-template <typename T, typename U, typename = require_arithmetic_t<U>>
-inline fvar<T> pow(const fvar<T>& x1, U x2) {
-  using std::pow;
-  using std::sqrt;
-  if (x2 == -2) {
-    return inv_square(x1);
+  if constexpr (is_complex<T1>::value || is_complex<T2>::value) {
+    return internal::complex_pow(x1, x2);
+  } else if constexpr (is_fvar<T1>::value && is_fvar<T2>::value) {
+    auto pow_x1_x2(stan::math::pow(x1.val_, x2.val_));
+    return T1(pow_x1_x2,
+              (x2.d_ * stan::math::log(x1.val_) + x2.val_ * x1.d_ / x1.val_)
+                  * pow_x1_x2);
+  } else if constexpr (is_fvar<T2>::value) {
+    auto u = stan::math::pow(x1, x2.val_);
+    return T2(u, x2.d_ * stan::math::log(x1) * u);
+  } else {
+    using std::sqrt;
+    if (x2 == -2) {
+      return stan::math::inv_square(x1);
+    }
+    if (x2 == -1) {
+      return stan::math::inv(x1);
+    }
+    if (x2 == -0.5) {
+      return stan::math::inv_sqrt(x1);
+    }
+    if (x2 == 0.5) {
+      return stan::math::sqrt(x1);
+    }
+    if (x2 == 1.0) {
+      return x1;
+    }
+    if (x2 == 2.0) {
+      return stan::math::square(x1);
+    }
+    return T1(stan::math::pow(x1.val_, x2),
+              x1.d_ * x2 * stan::math::pow(x1.val_, x2 - 1));
   }
-  if (x2 == -1) {
-    return inv(x1);
-  }
-  if (x2 == -0.5) {
-    return inv_sqrt(x1);
-  }
-  if (x2 == 0.5) {
-    return sqrt(x1);
-  }
-  if (x2 == 1.0) {
-    return x1;
-  }
-  if (x2 == 2.0) {
-    return square(x1);
-  }
-  return fvar<T>(pow(x1.val_, x2), x1.d_ * x2 * pow(x1.val_, x2 - 1));
-}
-
-// must uniquely match all pairs of:
-//    { complex<fvar<V>>, complex<T>, fvar<V>, T }
-// with at least one fvar<V> and at least one complex, where T is arithmetic:
-// 1) complex<fvar<V>>, complex<fvar<V>>
-// 2) complex<fvar<V>>, complex<T>
-// 3) complex<fvar<V>>, fvar<V>
-// 4) complex<fvar<V>>, T
-// 5) complex<T>, complex<fvar<V>>
-// 6) complex<T>, fvar<V>
-// 7) fvar<V>, complex<fvar<V>>
-// 8) fvar<V>, complex<T>
-// 9) T, complex<fvar<V>>
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V>
-inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-                                 const std::complex<fvar<V>>& y) {
-  return internal::complex_pow(x, y);
 }
 
 /**
- * Return the first argument raised to the power of the second argument.
+ * Returns the elementwise raising of the first argument to the power of the
+ * second argument.
  *
- * @tparam V autodiff value type
- * @tparam T arithmetic type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param a first argument
+ * @param b second argument
+ * @return the elementwise raising of the first argument to the power of the
+ * second argument.
  */
-template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-                                 const std::complex<T>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V>
-inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-                                 const fvar<V>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @tparam T arithmetic type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x, const T& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @tparam T arithmetic type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const std::complex<T>& x,
-                                 const std::complex<fvar<V>>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @tparam T arithmetic type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const std::complex<T>& x, const fvar<V>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V>
-inline std::complex<fvar<V>> pow(const fvar<V>& x,
-                                 const std::complex<fvar<V>>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @tparam T arithmetic type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const fvar<V>& x, const std::complex<T>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * @tparam V autodiff value type
- * @tparam T real type (`fvar<V>` or arithmetic)
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename T, typename V, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(T x, const std::complex<fvar<V>>& y) {
-  return internal::complex_pow(x, y);
-}
-
-/**
- * Return the first argument raised to the power of the second argument.
- *
- * Note: this overload is required because gcc still provides the
- * C++99 template function `pow(complex<T>, int)`, which introduces
- * an ambiguity.
- *
- * @tparam T autodiff value type
- * @param x first argument
- * @param y second argument
- * @return first argument to the power of the second argument
- */
-template <typename T>
-inline std::complex<fvar<T>> pow(const std::complex<fvar<T>>& x, int y) {
-  return internal::complex_pow(x, y);
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
+          require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
 }
 
 }  // namespace math
