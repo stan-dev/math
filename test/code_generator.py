@@ -75,7 +75,7 @@ class CodeGenerator:
 
             # The first case here is used for the array initializers in sig_utils.special_arg_values
             # Everything else uses the second case
-            if number_nested_arrays > 0 and isinstance(value, collections.Iterable):
+            if number_nested_arrays > 0 and isinstance(value, collections.abc.Iterable):
                 arg = statement_types.ArrayVariable(
                     overload,
                     "array" + suffix,
