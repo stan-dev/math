@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/util.hpp>
-
+#include <test/unit/math/rev/fun/util.hpp>
 TEST_F(mathMix, ProbDistributionsWishartCholesky_matvar) {
   auto f = [](const auto& Y, const auto& dof, const auto& Sigma) {
     auto Y_ref = stan::math::to_ref(Y);

@@ -36,11 +36,12 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_double) {
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<double>, Dynamic, 1> cy(y.row(i).transpose());
     Matrix<fvar<double>, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
-    lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
+    lp_ref += stan::math::multi_normal_lpdf(cy, mu, cSigma);
   }
 
-  EXPECT_FLOAT_EQ(lp_ref.val_, stan::math::multi_gp_cholesky_log(y, L, w).val_);
-  EXPECT_FLOAT_EQ(-74.572952, stan::math::multi_gp_cholesky_log(y, L, w).d_);
+  EXPECT_FLOAT_EQ(lp_ref.val_,
+                  stan::math::multi_gp_cholesky_lpdf(y, L, w).val_);
+  EXPECT_FLOAT_EQ(-74.572952, stan::math::multi_gp_cholesky_lpdf(y, L, w).d_);
 }
 
 TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_double) {
@@ -78,11 +79,11 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_double) {
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<fvar<double> >, Dynamic, 1> cy(y.row(i).transpose());
     Matrix<fvar<fvar<double> >, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
-    lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
+    lp_ref += stan::math::multi_normal_lpdf(cy, mu, cSigma);
   }
 
   EXPECT_FLOAT_EQ(lp_ref.val_.val_,
-                  stan::math::multi_gp_cholesky_log(y, L, w).val_.val_);
+                  stan::math::multi_gp_cholesky_lpdf(y, L, w).val_.val_);
   EXPECT_FLOAT_EQ(-74.572952,
-                  stan::math::multi_gp_cholesky_log(y, L, w).d_.val_);
+                  stan::math::multi_gp_cholesky_lpdf(y, L, w).d_.val_);
 }

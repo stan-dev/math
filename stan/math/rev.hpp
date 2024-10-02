@@ -5,8 +5,10 @@
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
+#include <stan/math/opencl/rev_constraint.hpp>
 #endif
 
+#include <stan/math/rev/constraint.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun.hpp>

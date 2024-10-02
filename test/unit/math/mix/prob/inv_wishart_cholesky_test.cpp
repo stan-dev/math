@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/mix/util.hpp>
 
 TEST_F(mathMix, ProbDistributionsInvWishartCholesky_matvar) {

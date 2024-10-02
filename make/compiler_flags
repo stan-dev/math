@@ -70,7 +70,6 @@ CXX_VERSION :=  $(shell $(CXX) -dumpfullversion -dumpversion 2>&1)
 CXX_MAJOR := $(word 1,$(subst ., ,$(CXX_VERSION)))
 CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
 
-
 ################################################################################
 # Set optional compiler flags for performance
 #
@@ -120,11 +119,9 @@ INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 ## setup precompiler options
 CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
 CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_FLTO_SUNDIALS)
-#CPPFLAGS_GTEST ?=
 
-
-## setup compiler flags
-CXXFLAGS_LANG ?= -std=c++1y
+CXXFLAGS_LANG ?= -std=c++17
+CXXFLAGS_STANDARD ?= c++17
 #CXXFLAGS_BOOST ?=
 CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
@@ -225,6 +222,10 @@ endif
 
 ## silence warnings occuring due to the TBB and Eigen libraries
 CXXFLAGS_WARNINGS += -Wno-ignored-attributes
+## https://github.com/oneapi-src/oneTBB/issues/307
+ifeq ($(CXX_TYPE), gcc)
+  CXXFLAGS_WARNINGS += -Wno-class-memaccess
+endif
 
 ################################################################################
 # Setup OpenCL
@@ -284,12 +285,18 @@ CXXFLAGS_TBB ?= -I $(TBB_INC)
 else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,--disable-new-dtags
+
+# MacOS ld does not support --disable-new-dtags
+ifneq ($(OS),Darwin)
+  LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
+endif
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
 ifneq ($(OS), Windows_NT)
-  LDFLAGS_TBB += -Wl,-rpath,"$(TBB_LIB)"
+  LDFLAGS_TBB_RPATH ?= -Wl,-rpath,"$(TBB_LIB)"
 endif
+
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" $(LDFLAGS_TBB_DTAGS) $(LDFLAGS_TBB_RPATH)
 
 LDLIBS_TBB ?= -ltbb
 
