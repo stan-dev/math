@@ -2,7 +2,6 @@
 #include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_matvar_helpers.hpp>
 
-
 // array[] matrix, matrix, real
 // array[] matrix, real, matrix
 // array[] matrix, real, real

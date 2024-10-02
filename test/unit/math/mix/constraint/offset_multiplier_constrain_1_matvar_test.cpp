@@ -2,7 +2,6 @@
 #include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_matvar_helpers.hpp>
 
-
 TEST_F(mathMix, offset_multiplier_constrain_matvar_scalars) {
   double x1 = 0.7;
   double x2 = -38.1;

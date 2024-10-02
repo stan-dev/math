@@ -2,7 +2,6 @@
 #include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_matvar_helpers.hpp>
 
-
 TEST_F(mathMix, offset_multiplier_constrain_matvar_vector_scalar_vector) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;

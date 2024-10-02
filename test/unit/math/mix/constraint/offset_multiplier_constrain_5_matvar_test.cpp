@@ -2,7 +2,6 @@
 #include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_matvar_helpers.hpp>
 
-
 // array[] matrix, array[] matrix, real
 // array[] matrix, real, array[] matrix
 TEST_F(mathMix, offset_multiplier_matvar_stdvec_mat_scalar1_constrain) {
