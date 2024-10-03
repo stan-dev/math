@@ -385,14 +385,14 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   if (N == 0) {
     return ret_t(0);
   }
-  scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_a_ref> a_vec(a_ref);
-  scalar_seq_view<T_v_ref> v_vec(v_ref);
-  scalar_seq_view<T_w_ref> w_vec(w_ref);
-  scalar_seq_view<T_t0_ref> t0_vec(t0_ref);
-  scalar_seq_view<T_sv_ref> sv_vec(sv_ref);
-  scalar_seq_view<T_sw_ref> sw_vec(sw_ref);
-  scalar_seq_view<T_st0_ref> st0_vec(st0_ref);
+  scalar_seq_view<decltype(y_val)> y_vec(y_val);
+  scalar_seq_view<decltype(a_val)> a_vec(a_val);
+  scalar_seq_view<decltype(v_val)> v_vec(v_val);
+  scalar_seq_view<decltype(w_val)> w_vec(w_val);
+  scalar_seq_view<decltype(t0_val)> t0_vec(t0_val);
+  scalar_seq_view<decltype(sv_val)> sv_vec(sv_val);
+  scalar_seq_view<decltype(sw_val)> sw_vec(sw_val);
+  scalar_seq_view<decltype(st0_val)> st0_vec(st0_val);
   const size_t N_y_t0 = max_size(y, t0, st0);
 
   for (size_t i = 0; i < N_y_t0; ++i) {
