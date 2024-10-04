@@ -679,12 +679,12 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
     return ret_t(0.0);
   }
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
-  using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
-  using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
-  using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
-  using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_a_ref = ref_type_t<T_a>;
+  using T_t0_ref = ref_type_t<T_t0>;
+  using T_w_ref = ref_type_t<T_w>;
+  using T_v_ref = ref_type_t<T_v>;
+  using T_sv_ref = ref_type_t<T_sv>;
 
   static constexpr const char* function_name = "wiener5_lpdf";
 
@@ -725,12 +725,12 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     return ret_t(0.0);
   }
 
-  scalar_seq_view<decltype(y_val)> y_vec(y_val);
-  scalar_seq_view<decltype(a_val)> a_vec(a_val);
-  scalar_seq_view<decltype(v_val)> v_vec(v_val);
-  scalar_seq_view<decltype(w_val)> w_vec(w_val);
-  scalar_seq_view<decltype(t0_val)> t0_vec(t0_val);
-  scalar_seq_view<decltype(sv_val)> sv_vec(sv_val);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_a_ref> a_vec(a_ref);
+  scalar_seq_view<T_t0_ref> t0_vec(t0_ref);
+  scalar_seq_view<T_w_ref> w_vec(w_ref);
+  scalar_seq_view<T_v_ref> v_vec(v_ref);
+  scalar_seq_view<T_sv_ref> sv_vec(sv_ref);
   const size_t N_y_t0 = max_size(y, t0);
 
   for (size_t i = 0; i < N_y_t0; ++i) {
