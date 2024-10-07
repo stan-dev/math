@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_helpers.hpp>
 
-TEST(mathMixMatFun, offset_multiplier_constrain_vector_scalar_vector) {
+TEST_F(mathMix, offset_multiplier_constrain_vector_scalar_vector) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -14,7 +15,7 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_scalar_vector) {
   offset_multiplier_constrain_tests::expect(x2, mu, sigma);
 }
 
-TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
+TEST_F(mathMix, offset_multiplier_constrain_vector_vector_vector) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);

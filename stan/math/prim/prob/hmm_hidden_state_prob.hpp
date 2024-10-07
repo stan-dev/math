@@ -50,11 +50,11 @@ inline Eigen::MatrixXd hmm_hidden_state_prob(const T_omega& log_omegas,
                                              const T_rho& rho) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
-
-  Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
-  ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
-  ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
-  hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_hidden_state_prob");
+  auto&& log_omegas_ref = to_ref(log_omegas);
+  Eigen::MatrixXd omegas = value_of(log_omegas_ref).array().exp();
+  auto&& rho_dbl = to_ref(value_of(rho));
+  auto&& Gamma_dbl = to_ref(value_of(Gamma));
+  hmm_check(log_omegas_ref, Gamma_dbl, rho_dbl, "hmm_hidden_state_prob");
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);

@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <limits>
 #include <vector>
 
-TEST(mathMixMatFun, acos) {
+TEST_F(mathMix, acos) {
   using stan::test::expect_unary_vectorized;
   auto f = [](const auto& x1) {
     using stan::math::acos;
@@ -22,7 +23,7 @@ TEST(mathMixMatFun, acos) {
   }
 }
 
-TEST(mathMixMatFun, acos_varmat) {
+TEST_F(mathMix, acos_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, logSoftmax) {
+TEST_F(mathMix, logSoftmax) {
   auto f = [](const auto& x) { return stan::math::log_softmax(x); };
   // Column Vectors
   Eigen::VectorXd x0(0);  // error case

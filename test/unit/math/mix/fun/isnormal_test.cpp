@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -20,7 +21,7 @@ void expect_isnormal() {
   EXPECT_TRUE(isnormal(T(-1.0)));
 }
 
-TEST(mixFun, isnormal) {
+TEST_F(mathMix, isnormal) {
   using stan::math::fvar;
   using stan::math::var;
   expect_isnormal<double>();

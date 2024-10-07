@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, offset_multiplier_consistent_sizes) {
+TEST_F(mathMix, offset_multiplier_consistent_sizes) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     stan::return_type_t<decltype(x1), decltype(x2), decltype(x3)> lp = 0;
     return stan::math::offset_multiplier_constrain<false>(x1, x2, x3, lp);

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, tcrossprod) {
+TEST_F(mathMix, tcrossprod) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& y) { return stan::math::tcrossprod(y); };
 

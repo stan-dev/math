@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <complex>
@@ -71,7 +72,7 @@ void expect_copysign() {
   }
 }
 
-TEST(mixFun, copysign) {
+TEST_F(mathMix, copysign) {
   using stan::math::fvar;
   using stan::math::var;
   expect_copysign<double>();

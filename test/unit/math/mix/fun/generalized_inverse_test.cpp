@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 #include <gtest/gtest.h>
 
-TEST(mathMixMatFun, gen_inv_test_1) {
+TEST_F(mathMix, gen_inv_test_1) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -13,7 +14,7 @@ TEST(mathMixMatFun, gen_inv_test_1) {
   expect_ad_matvar(f, t);
 }
 
-TEST(mathMixMatFun, gen_inv_test_2) {
+TEST_F(mathMix, gen_inv_test_2) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -25,7 +26,7 @@ TEST(mathMixMatFun, gen_inv_test_2) {
   expect_ad_matvar(f, u);
 }
 
-TEST(mathMixMatFun, gen_inv_test_3) {
+TEST_F(mathMix, gen_inv_test_3) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -37,7 +38,7 @@ TEST(mathMixMatFun, gen_inv_test_3) {
   expect_ad_matvar(f, v);
 }
 
-TEST(mathMixMatFun, gen_inv_test_4) {
+TEST_F(mathMix, gen_inv_test_4) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -49,7 +50,7 @@ TEST(mathMixMatFun, gen_inv_test_4) {
   expect_ad_matvar(f, v);
 }
 
-TEST(mathMixMatFun, gen_inv_test_5) {
+TEST_F(mathMix, gen_inv_test_5) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -61,7 +62,7 @@ TEST(mathMixMatFun, gen_inv_test_5) {
   expect_ad_matvar(f, s);
 }
 
-TEST(mathMixMatFun, gen_inv_test_6) {
+TEST_F(mathMix, gen_inv_test_6) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 
@@ -78,13 +79,13 @@ TEST(mathMixMatFun, gen_inv_test_6) {
   expect_ad_matvar(f, w);
 }
 
-TEST(mathMixMatFun, gen_inv_test_8) {
+TEST_F(mathMix, gen_inv_test_8) {
   Eigen::MatrixXd z(2, 2);
   z << 1, 2, 5, std::numeric_limits<double>::quiet_NaN();
   EXPECT_NO_THROW(stan::math::generalized_inverse(z));
 }
 
-TEST(mathMixMatFun, gen_inv_test_9) {
+TEST_F(mathMix, gen_inv_test_9) {
   using stan::test::expect_ad;
   using stan::test::expect_ad_matvar;
 

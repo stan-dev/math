@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_fv) {
+TEST_F(mathMix, get_base1_lhs_failing_pre_20_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -13,7 +14,7 @@ TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_fv) {
   fvar<var> z = get_base1_lhs(y, 1, "y", 1);
   EXPECT_FLOAT_EQ(1, z.val_.val());
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_fv) {
+TEST_F(mathMix, get_base1_lhs_vec1_fv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;
@@ -29,7 +30,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_fv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x[0]", 0), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 3, "x[3]", 0), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_fv) {
+TEST_F(mathMix, get_base1_lhs_vec2_fv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;
@@ -61,7 +62,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_fv) {
   EXPECT_THROW(get_base1_lhs(get_base1_lhs(x, 1, "", -1), 12, "", -1),
                std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_fv) {
+TEST_F(mathMix, get_base1_lhs_matrix_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -96,7 +97,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_fv) {
   EXPECT_THROW(get_base1_lhs(x, 0, 1, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_fv) {
+TEST_F(mathMix, get_base1_lhs_vector_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -111,7 +112,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_fv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_fv) {
+TEST_F(mathMix, get_base1_lhs_row_vector_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -126,7 +127,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_fv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_fv) {
+TEST_F(mathMix, get_base1_lhs_8_fv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;
@@ -172,7 +173,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_fv) {
                                     i6 + 1, i7 + 1, i8 + 1, "x8", 1)
                           .val_.val());
 }
-TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_ffv) {
+TEST_F(mathMix, get_base1_lhs_failing_pre_20_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -183,7 +184,7 @@ TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_ffv) {
   fvar<fvar<var> > z = get_base1_lhs(y, 1, "y", 1);
   EXPECT_FLOAT_EQ(1, z.val_.val_.val());
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_ffv) {
+TEST_F(mathMix, get_base1_lhs_vec1_ffv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;
@@ -199,7 +200,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x[0]", 0), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 3, "x[3]", 0), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_ffv) {
+TEST_F(mathMix, get_base1_lhs_vec2_ffv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;
@@ -231,7 +232,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_ffv) {
   EXPECT_THROW(get_base1_lhs(get_base1_lhs(x, 1, "", -1), 12, "", -1),
                std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_ffv) {
+TEST_F(mathMix, get_base1_lhs_matrix_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -267,7 +268,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 0, 1, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_ffv) {
+TEST_F(mathMix, get_base1_lhs_vector_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -282,7 +283,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_ffv) {
+TEST_F(mathMix, get_base1_lhs_row_vector_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -297,7 +298,7 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_ffv) {
+TEST_F(mathMix, get_base1_lhs_8_ffv) {
   using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using stan::math::var;

@@ -32,16 +32,17 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     return 0;
   }
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
-
+  auto&& y_ref = to_ref(y);
+  auto&& mu_ref = to_ref(mu);
   lp_type lp(0);
-  vector_seq_view<T_y> y_vec(y);
-  vector_seq_view<T_loc> mu_vec(mu);
-  size_t size_vec = max_size_mvt(y, mu);
+  vector_seq_view<std::decay_t<decltype(y_ref)>> y_vec(y_ref);
+  vector_seq_view<std::decay_t<decltype(mu_ref)>> mu_vec(mu_ref);
+  size_t size_vec = max_size_mvt(y_ref, mu_ref);
 
   int size_y = y_vec[0].size();
   int size_mu = mu_vec[0].size();
   if (size_vec > 1) {
-    for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
+    for (size_t i = 1, size_mvt_y = size_mvt(y_ref); i < size_mvt_y; i++) {
       check_size_match(function,
                        "Size of one of the vectors "
                        "of the random variable",
@@ -50,7 +51,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
                        "the random variable",
                        size_y);
     }
-    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+    for (size_t i = 1, size_mvt_mu = size_mvt(mu_ref); i < size_mvt_mu; i++) {
       check_size_match(function,
                        "Size of one of the vectors "
                        "of the location variable",

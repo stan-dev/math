@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, mathMixScalFun_ordered_logistic_glm_lpmf) {
+TEST_F(mathMix, mathMixScalFun_ordered_logistic_glm_lpmf) {
   auto f = [](const auto y) {
     return [=](const auto& x, const auto& beta, const auto& cutpoints) {
       return stan::math::ordered_logistic_glm_lpmf(y, x, beta, cutpoints);

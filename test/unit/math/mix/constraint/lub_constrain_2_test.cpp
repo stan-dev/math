@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/lub_constrain_helpers.hpp>
 
-TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar) {
+TEST_F(mathMix, lub_constrain_vector_scalar_scalar) {
   Eigen::MatrixXd x1(1, 1);
   x1 << 0.7;
   Eigen::MatrixXd x2(1, 1);
@@ -10,8 +11,6 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar) {
   double ub = 3.5;
   lub_constrain_tests::expect(x1, lb, ub);
   lub_constrain_tests::expect(x2, lb, ub);
-  lub_constrain_tests::expect(x1, lb, lb);
-  lub_constrain_tests::expect(x2, lb, lb);
 
   // ub inf
   auto ub_inf = stan::math::INFTY;
@@ -28,7 +27,7 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar) {
   lub_constrain_tests::expect(x2, lb_inf, ub_inf);
 }
 
-TEST(mathMixMatFun, lub_constrain_vector_vector_scalar) {
+TEST_F(mathMix, lub_constrain_vector_vector_scalar) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);

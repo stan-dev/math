@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
-TEST(mathMixMatFun, lambert_w0) {
+TEST_F(mathMix, lambert_w0) {
   auto f = [](const auto& x1) {
     using stan::math::lambert_w0;
     return lambert_w0(x1);
@@ -15,7 +16,7 @@ TEST(mathMixMatFun, lambert_w0) {
   stan::math::recover_memory();
 }
 
-TEST(mathMixMatFun, lambert_w0_varmat) {
+TEST_F(mathMix, lambert_w0_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;
@@ -33,7 +34,7 @@ TEST(mathMixMatFun, lambert_w0_varmat) {
   expect_ad_vector_matvar(f, A);
 }
 
-TEST(mathMixMatFun, lambert_wm1) {
+TEST_F(mathMix, lambert_wm1) {
   auto f = [](const auto& x1) {
     using stan::math::lambert_wm1;
     return lambert_wm1(x1);
@@ -47,7 +48,7 @@ TEST(mathMixMatFun, lambert_wm1) {
   stan::math::recover_memory();
 }
 
-TEST(mathMixMatFun, lambert_wm1_varmat) {
+TEST_F(mathMix, lambert_wm1_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 template <typename T>
 void expect_identity_matrix_complex(const T& x) {
@@ -32,7 +33,7 @@ void expectComplexEigenvectorsId() {
   expect_identity_matrix_complex(I2);
 }
 
-TEST(mathMixFun, eigenvectorsIdComplex) {
+TEST_F(mathMix, eigenvectorsIdComplex) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<double>;

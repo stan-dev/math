@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, mathMixScalFun_gamma_lcdf) {
+TEST_F(mathMix, mathMixScalFun_gamma_lcdf) {
   auto f = [](const auto& y, const auto& alpha, const auto& beta) {
     return stan::math::gamma_lcdf(y, alpha, beta);
   };

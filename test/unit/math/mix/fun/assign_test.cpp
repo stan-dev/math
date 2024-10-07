@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
 
-TEST(AgradMixMatrixAssign, vector_fvar_var) {
+TEST_F(mathMix, vector_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -41,7 +42,7 @@ TEST(AgradMixMatrixAssign, vector_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
 
-TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_to_fvar_var) {
+TEST_F(mathMix, eigen_row_vector_fvar_var_to_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -76,7 +77,7 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_to_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[1]);
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
-TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_shape_mismatch) {
+TEST_F(mathMix, eigen_row_vector_fvar_var_shape_mismatch) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -100,7 +101,7 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_shape_mismatch) {
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
 }
 
-TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
+TEST_F(mathMix, eigen_matrix_fvar_var_to_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -147,7 +148,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 
-TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
+TEST_F(mathMix, eigen_matrix_fvar_var_shape_mismatch) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -173,7 +174,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
 }
 
-TEST(AgradMixMatrixAssign, block_fvar_var) {
+TEST_F(mathMix, block_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -193,7 +194,7 @@ TEST(AgradMixMatrixAssign, block_fvar_var) {
   EXPECT_FLOAT_EQ(1000.0, m(0, 2).val_.val());
 }
 
-TEST(AgradMixMatrixAssign, vector_vector_fvar_var) {
+TEST_F(mathMix, vector_vector_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -235,7 +236,7 @@ TEST(AgradMixMatrixAssign, vector_vector_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 
-TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_var) {
+TEST_F(mathMix, vector_vector_vector_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -275,7 +276,7 @@ TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_var) {
     EXPECT_FLOAT_EQ(0, grads[i]);
 }
 
-TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_var) {
+TEST_F(mathMix, vector_eigen_vector_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -310,7 +311,7 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_var) {
     EXPECT_FLOAT_EQ(0, grads[i]);
 }
 
-TEST(AgradMixMatrixAssign, get_assign_row_fvar_var) {
+TEST_F(mathMix, get_assign_row_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -330,7 +331,7 @@ TEST(AgradMixMatrixAssign, get_assign_row_fvar_var) {
   EXPECT_FLOAT_EQ(1000.0, m(0, 2).val_.val());
 }
 
-TEST(AgradMixMatrixAssign, vector_fvar_fvar_var) {
+TEST_F(mathMix, vector_fvar_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -376,7 +377,7 @@ TEST(AgradMixMatrixAssign, vector_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
 
-TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
+TEST_F(mathMix, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -420,7 +421,7 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
 
-TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
+TEST_F(mathMix, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -444,7 +445,7 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
 }
 
-TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
+TEST_F(mathMix, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -505,7 +506,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 
-TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
+TEST_F(mathMix, eigen_matrix_fvar_fvar_var_shape_mismatch) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -531,7 +532,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
 }
 
-TEST(AgradMixMatrixAssign, block_fvar_fvar_var) {
+TEST_F(mathMix, block_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -551,7 +552,7 @@ TEST(AgradMixMatrixAssign, block_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(1000.0, m(0, 2).val_.val_.val());
 }
 
-TEST(AgradMixMatrixAssign, vector_vector_fvar_fvar_var) {
+TEST_F(mathMix, vector_vector_fvar_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -597,7 +598,7 @@ TEST(AgradMixMatrixAssign, vector_vector_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 
-TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_fvar_var) {
+TEST_F(mathMix, vector_vector_vector_fvar_fvar_var) {
   using stan::math::assign;
   using stan::math::fvar;
   using stan::math::var;
@@ -641,7 +642,7 @@ TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_fvar_var) {
     EXPECT_FLOAT_EQ(0, grads[i]);
 }
 
-TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
+TEST_F(mathMix, vector_eigen_vector_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -682,7 +683,7 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
     EXPECT_FLOAT_EQ(0, grads[i]);
 }
 
-TEST(AgradMixMatrixAssign, get_assign_row_fvar_fvar_var) {
+TEST_F(mathMix, get_assign_row_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;

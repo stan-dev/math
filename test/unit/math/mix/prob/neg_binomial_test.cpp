@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/differentiation/finite_difference.hpp>
 
-TEST_F(AgradRev, mathMixScalFun_neg_binomial_lpmf_derivatives) {
+TEST_F(mathMix, mathMixScalFun_neg_binomial_lpmf_derivatives) {
   auto f = [](const int y) {
     return [=](const auto& alpha, const auto& beta) {
       return stan::math::neg_binomial_lpmf(y, alpha, beta);

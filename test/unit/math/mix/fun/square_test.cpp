@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, square) {
+TEST_F(mathMix, square) {
   auto f = [](const auto& x1) { return stan::math::square(x1); };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -2.6, -1.0, -0.5, -0.2, 0.5, 1.3, 3, 5,

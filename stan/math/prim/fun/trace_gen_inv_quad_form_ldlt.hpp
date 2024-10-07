@@ -35,15 +35,18 @@ template <typename EigMat1, typename T2, typename EigMat3,
           require_all_not_st_var<EigMat1, T2, EigMat3>* = nullptr>
 inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
     const EigMat1& D, LDLT_factor<T2>& A, const EigMat3& B) {
-  check_square("trace_gen_inv_quad_form_ldlt", "D", D);
+  auto&& D_ref = to_ref(D);
+  check_square("trace_gen_inv_quad_form_ldlt", "D", D_ref);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D_ref);
 
-  if (D.size() == 0 || A.matrix().size() == 0) {
+  if (D_ref.size() == 0 || A.matrix().size() == 0) {
     return 0;
   }
-
-  return multiply(B, D.transpose()).cwiseProduct(mdivide_left_ldlt(A, B)).sum();
+  auto&& B_ref = to_ref(B);
+  return multiply(B_ref, D_ref.transpose())
+      .cwiseProduct(mdivide_left_ldlt(A, B_ref))
+      .sum();
 }
 
 /**
@@ -68,14 +71,17 @@ template <typename EigVec, typename T, typename EigMat,
           require_all_not_st_var<EigVec, T, EigMat>* = nullptr>
 inline return_type_t<EigVec, T, EigMat> trace_gen_inv_quad_form_ldlt(
     const EigVec& D, LDLT_factor<T>& A, const EigMat& B) {
+  auto&& D_ref = to_ref(D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D_ref);
 
-  if (D.size() == 0 || A.matrix().size() == 0) {
+  if (D_ref.size() == 0 || A.matrix().size() == 0) {
     return 0;
   }
-
-  return (B * D.asDiagonal()).cwiseProduct(mdivide_left_ldlt(A, B)).sum();
+  auto&& B_ref = to_ref(B);
+  return (B_ref * D_ref.asDiagonal())
+      .cwiseProduct(mdivide_left_ldlt(A, B_ref))
+      .sum();
 }
 
 }  // namespace math

@@ -1,10 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, mdivideRightLdlt) {
+TEST_F(mathMix, mdivideRightLdlt) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
-    auto y_sym = stan::math::multiply(0.5, y + y.transpose()).eval();
+    auto&& y_ref = stan::math::to_ref(y);
+    auto y_sym = stan::math::multiply(0.5, y_ref + y_ref.transpose()).eval();
     auto ldlt = stan::math::make_ldlt_factor(y_sym);
     return stan::math::mdivide_right_ldlt(x, ldlt);
   };

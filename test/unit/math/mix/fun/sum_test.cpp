@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
 template <typename T>
@@ -17,7 +18,7 @@ void expect_sum(const T& m) {
   expect_ad_matvar(f, rv);
 }
 
-TEST(MathMixMatFun, sum) {
+TEST_F(mathMix, sum) {
   Eigen::MatrixXd v00(0, 0);
   expect_sum(v00);
 
@@ -42,4 +43,4 @@ TEST(MathMixMatFun, sum) {
   expect_sum(v32);
 }
 
-TEST(MathMixMatFun, sum_matvar) {}
+TEST_F(mathMix, sum_matvar) {}

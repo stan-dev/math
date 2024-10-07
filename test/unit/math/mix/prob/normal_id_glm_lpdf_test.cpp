@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, mathMixScalFun_normal_id_glm_lpdf) {
+TEST_F(mathMix, mathMixScalFun_normal_id_glm_lpdf) {
   auto f = [](const auto& y, const auto& x) {
     return [=](const auto& alpha, const auto& beta, const auto& sigma) {
       return stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma);

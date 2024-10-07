@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 
-TEST(mathMixMatFun, get_real) {
+TEST_F(mathMix, get_real) {
   auto f = [](const auto& z) { return stan::math::get_real(z); };
   stan::test::expect_complex_common(f);
 }
@@ -31,7 +32,7 @@ void test_vectorized_get_real() {
     }
   }
 }
-TEST(mathMixMatFun, get_real_vectorized) {
+TEST_F(mathMix, get_real_vectorized) {
   test_vectorized_get_real<double>();
   test_vectorized_get_real<stan::math::var>();
   test_vectorized_get_real<stan::math::fvar<double>>();

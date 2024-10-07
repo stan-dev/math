@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
 template <typename T>
@@ -20,7 +21,7 @@ void expect_isinf() {
   EXPECT_FALSE(isinf(T(-1.0)));
 }
 
-TEST(mixFun, isinf) {
+TEST_F(mathMix, isinf) {
   expect_isinf<d_t>();
   expect_isinf<v_t>();
   expect_isinf<fd_t>();

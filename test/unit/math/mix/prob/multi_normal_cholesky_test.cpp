@@ -1,8 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_matvar) {
+TEST_F(mathMix, ProbDistributionsMultiNormalCholesky_matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
-    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    auto&& sigma_ref = stan::math::to_ref(sigma);
+    auto sigma_sym
+        = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     auto L = stan::math::cholesky_decompose(sigma_sym);
     return stan::math::multi_normal_cholesky_lpdf(y, mu, L);
   };
@@ -45,7 +48,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiNormalCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -73,7 +76,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_var) {
                   stan::math::multi_normal_cholesky_lpdf(y, mu, L).d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiNormalCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

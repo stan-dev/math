@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace lub_constrain_tests {
 template <typename T1, typename T2, typename T3>
@@ -29,7 +30,7 @@ void expect_matvar(const T1& x, const T2& lb, const T3& ub) {
 }
 }  // namespace lub_constrain_tests
 
-TEST(mathMixMatFun, lub_constrain_scalars_matvar) {
+TEST_F(mathMix, lub_constrain_scalars_matvar) {
   double x1 = 0.7;
   double x2 = -38.1;
   double lb = -2.0;
@@ -53,7 +54,7 @@ TEST(mathMixMatFun, lub_constrain_scalars_matvar) {
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub_inf);
 }
 
-TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar_matvar) {
+TEST_F(mathMix, lub_constrain_vector_scalar_scalar_matvar) {
   Eigen::MatrixXd x1(1, 1);
   x1 << 0.7;
   Eigen::MatrixXd x2(1, 1);
@@ -80,7 +81,7 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar_matvar) {
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub_inf);
 }
 
-TEST(mathMixMatFun, lub_constrain_vector_vector_scalar_matvar) {
+TEST_F(mathMix, lub_constrain_vector_vector_scalar_matvar) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -106,7 +107,7 @@ TEST(mathMixMatFun, lub_constrain_vector_vector_scalar_matvar) {
   lub_constrain_tests::expect_matvar(x2, lb, ub_inf);
 }
 
-TEST(mathMixMatFun, lub_constrain_vector_scalar_vector_matvar) {
+TEST_F(mathMix, lub_constrain_vector_scalar_vector_matvar) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -135,7 +136,7 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_vector_matvar) {
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub);
 }
 
-TEST(mathMixMatFun, lub_constrain_vector_vector_vector_matvar) {
+TEST_F(mathMix, lub_constrain_vector_vector_vector_matvar) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);

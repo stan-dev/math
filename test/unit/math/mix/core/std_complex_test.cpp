@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <vector>
 
@@ -61,7 +62,7 @@ void test_std_complex_constructor() {
   test_constructor_init_type<T, long int>();  // NOLINT(runtime/int)
 }
 
-TEST(mathMixCore, stdComplexConstructor) {
+TEST_F(mathMix, stdComplexConstructor) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::test::expect_ad;
@@ -105,7 +106,7 @@ void expect_common_for_complex(const F& f) {
 // it is modified using std::complex<double> or double, then
 // with the argument.
 
-TEST(mathMixCore, stdComplexOperatorEqual) {
+TEST_F(mathMix, stdComplexOperatorEqual) {
   // operator=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;  // for auto type
@@ -132,7 +133,7 @@ TEST(mathMixCore, stdComplexOperatorEqual) {
   expect_common_for_complex(g);
 }
 
-TEST(mathMixCore, stdComplexOperatorPlusEqual) {
+TEST_F(mathMix, stdComplexOperatorPlusEqual) {
   // operator+=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
@@ -153,7 +154,7 @@ TEST(mathMixCore, stdComplexOperatorPlusEqual) {
   expect_common_for_complex(g);
 }
 
-TEST(mathMixCore, stdComplexOperatorMinusEqual) {
+TEST_F(mathMix, stdComplexOperatorMinusEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
@@ -174,7 +175,7 @@ TEST(mathMixCore, stdComplexOperatorMinusEqual) {
   expect_common_for_complex(g);
 }
 
-TEST(mathMixCore, stdComplexOperatorTimesEqual) {
+TEST_F(mathMix, stdComplexOperatorTimesEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
@@ -195,7 +196,7 @@ TEST(mathMixCore, stdComplexOperatorTimesEqual) {
   expect_common_for_complex(g);
 }
 
-TEST(mathMixCore, stdComplexOperatorDivideEqual) {
+TEST_F(mathMix, stdComplexOperatorDivideEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;

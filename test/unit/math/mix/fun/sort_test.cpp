@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
@@ -22,7 +23,7 @@ void expect_sort(const std::vector<double>& sv,
   stan::test::expect_ad(tols, f_desc, rv);
 }
 
-TEST(MathMixMatFun, sort_asc_and_sort_desc) {
+TEST_F(mathMix, sort_asc_and_sort_desc) {
   std::vector<double> a;
   expect_sort(a);
 

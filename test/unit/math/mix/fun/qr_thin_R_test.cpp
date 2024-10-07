@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, qrThinR) {
+TEST_F(mathMix, qrThinR) {
   auto f = [](const auto& x) { return stan::math::qr_thin_R(x); };
 
   Eigen::MatrixXd a(0, 0);

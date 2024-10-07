@@ -2,17 +2,17 @@
 
 namespace sum_to_zero_constrain_test {
 template <typename T>
-T g1(const T& x) {
+inline auto g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::sum_to_zero_constrain<false>(x, lp);
 }
 template <typename T>
-T g2(const T& x) {
+inline auto g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::sum_to_zero_constrain<true>(x, lp);
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
+inline typename stan::scalar_type<T>::type g3(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   stan::math::sum_to_zero_constrain<true>(x, lp);
   return lp;

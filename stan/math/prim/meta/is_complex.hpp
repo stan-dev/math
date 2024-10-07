@@ -134,6 +134,21 @@ template <typename T>
 struct is_vt_not_complex
     : bool_constant<!is_complex<value_type_t<std::decay_t<T>>>::value> {};
 
+/*! \brief Require any @ref scalar_type satisfies @ref is_complex */
+/*! @tparam Types types with a valid overload of @ref scalar_type available */
+template <typename... Types>
+using require_any_st_complex = require_t<
+    stan::math::disjunction<is_complex<scalar_type_t<std::decay_t<Types>>>...>>;
+
+/*! \brief Require all @ref scalar_type of `Types` does not satisfy @ref
+ * is_complex */
+/*! @tparam Types types with a valid overload of @ref scalar_type available */
+template <typename... Types>
+using require_all_not_st_complex = require_not_t<
+    stan::math::disjunction<is_complex<scalar_type_t<std::decay_t<Types>>>...>>;
+
+/*! @} */
+
 }  // namespace stan
 
 #endif

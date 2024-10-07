@@ -162,8 +162,9 @@ inline auto ub_constrain(const T& x, const U& ub,
 template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
 inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
+  auto&& ub_ref = to_ref(ub);
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub);
+    ret[i] = ub_constrain(x[i], ub_ref);
   }
   return ret;
 }
@@ -183,8 +184,9 @@ template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
 inline auto ub_constrain(const std::vector<T>& x, const U& ub,
                          return_type_t<T, U>& lp) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
+  auto&& ub_ref = to_ref(ub);
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub, lp);
+    ret[i] = ub_constrain(x[i], ub_ref, lp);
   }
   return ret;
 }

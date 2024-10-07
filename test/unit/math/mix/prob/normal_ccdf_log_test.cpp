@@ -1,7 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, mathMixScalFun_normal_lccdf) {
+TEST_F(mathMix, mathMixScalFun_normal_lccdf) {
   auto f = [](const double mu, const double sigma) {
     return
         [=](const auto& y) { return stan::math::normal_lccdf(y, mu, sigma); };

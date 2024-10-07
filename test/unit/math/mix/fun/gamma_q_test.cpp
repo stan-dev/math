@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, gammaQ) {
+TEST_F(mathMix, gammaQ) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::gamma_q(x1, x2);
   };
@@ -18,7 +19,7 @@ TEST(mathMixScalFun, gammaQ) {
   // stan::test::expect_value(f, 8.01006, 2.47579e+215);
 }
 
-TEST(MathFunctions, gammaQ_vec) {
+TEST_F(mathMix, gammaQ_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::gamma_q;
     return gamma_q(x1, x2);
