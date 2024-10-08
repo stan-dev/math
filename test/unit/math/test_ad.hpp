@@ -26,6 +26,63 @@ namespace stan {
 namespace test {
 namespace internal {
 
+
+template<class T>
+struct TypeTag {
+  using type = T;
+};
+
+template<class... Ts>
+struct TypeList {
+  static constexpr std::size_t size = sizeof...(Ts);
+};
+
+
+template<class Base, class Exponent>
+inline constexpr Base intpow(Base base, Exponent exponent) {
+  Base ret = static_cast<Base>(1);
+  for(Exponent i=static_cast<Exponent>(0); i<exponent; ++i) ret *= base;
+  return ret;
+}
+
+template<
+  class Tuple,
+  std::size_t... is,
+  std::size_t... as
+>
+inline constexpr auto make_combinations(
+  TypeTag<Tuple>,
+  std::index_sequence<is...>,
+  std::index_sequence<as...>
+) {
+  constexpr std::size_t N = std::tuple_size<Tuple>{};
+
+  auto make_combination_at_i = [&] (auto i) {
+    return TypeList<
+      std::tuple_element_t<(i() / intpow(N, as)) % N, Tuple>...
+    >{};
+  };
+
+  return TypeList<
+    decltype(
+      make_combination_at_i(std::integral_constant<std::size_t, is>{})
+    )...
+  >{};
+}
+
+template<class... Args>
+struct Combinations
+{
+  template<std::size_t arity>
+  using OfSize = decltype(
+    make_combinations(
+      TypeTag< std::tuple<Args...> >{},
+      std::make_index_sequence<intpow(sizeof...(Args), arity)>{},
+      std::make_index_sequence<arity>{}
+    )
+  );
+};
+
 /**
  * Evaluates nested matrix template expressions, which is a no-op for
  * arithmetic arguments.
@@ -499,6 +556,129 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
 }
 
 /**
+ * End of recursion for split_by_type_impl.
+ */
+template <std::size_t idx,
+typename AdTuple,
+typename TupleArgs>
+inline auto&& split_by_type_impl(TypeList<>,
+  AdTuple&& ad_tuple,
+  TupleArgs&& arg_tuple) {
+    return std::forward<AdTuple>(ad_tuple);
+  }
+
+
+template <std::size_t idx, typename FirstType, typename... WhichTypes,
+typename AdTuple, typename TupleArgs>
+inline auto split_by_type_impl(TypeList<FirstType, WhichTypes...>,
+  AdTuple&& ad_tuple,
+  TupleArgs&& args_tuple) {
+  if constexpr (stan::is_autodiff<FirstType>::value) {
+    return split_by_type_impl<idx + 1>(TypeList<WhichTypes...>{},
+      std::tuple_cat(std::forward<AdTuple>(ad_tuple),
+       std::forward_as_tuple(std::get<idx>(args_tuple))),
+      args_tuple
+    );
+  } else {
+    return split_by_type_impl<idx + 1>(TypeList<WhichTypes...>{},
+      std::forward<AdTuple>(ad_tuple),
+      args_tuple
+    );
+  }
+}
+
+
+template <typename FirstType, typename... WhichTypes, typename ArgTuple>
+inline auto split_by_type(TypeList<FirstType, WhichTypes...>,
+  ArgTuple&& args_tuple) {
+  if constexpr (stan::is_autodiff<FirstType>::value) {
+    return split_by_type_impl<1>(TypeList<WhichTypes...>{},
+      std::forward_as_tuple(std::get<0>(args_tuple)),
+      args_tuple
+    );
+  } else {
+    return split_by_type_impl<1>(TypeList<WhichTypes...>{},
+      std::make_tuple(),
+      args_tuple
+    );
+  }
+}
+
+
+template <typename WhichType, typename Deserializer, typename Arg>
+inline auto conditional_read_from_ds(Deserializer&& ds, Arg&& arg) {
+  if constexpr (stan::is_autodiff<WhichType>::value) {
+    return ds.read(arg);
+  } else {
+    return arg;
+  }
+}
+
+
+template <typename Tuple>
+struct any_ad_type_impl {
+  static_assert(1, "This Should Never Happen");
+};
+
+template <typename... Types>
+struct any_ad_type_impl<TypeList<Types...>> {
+  static constexpr bool value = (stan::is_autodiff<std::decay_t<Types>>::value || ...);
+};
+
+template <typename T>
+struct any_ad_type {
+  static constexpr bool value = any_ad_type_impl<std::decay_t<T>>::value;
+};
+
+template <typename... WhichTypes, typename F, typename ArgTuple>
+inline auto expect_ad_setup(TypeList<WhichTypes...>, const ad_tolerances& tols,
+  F&& f, ArgTuple&&  args) {
+  if constexpr (TypeList<WhichTypes...>::size == 0) {
+    return;
+  } else if constexpr (!any_ad_type<TypeList<WhichTypes...>>::value) {
+    return;
+  } else {
+    using stan::math::serialize_args;
+    using stan::math::serialize_return;
+    using stan::math::to_deserializer;
+    // Pull out the types to be used in AD
+    auto arg_pair = split_by_type(TypeList<WhichTypes...>{}, args);
+    std::cout << "types: " << stan::math::test::type_name<TypeList<WhichTypes...>>() << std::endl;
+    auto g = [&](const auto& v) {
+      auto ds = to_deserializer(v);
+      return stan::math::apply([&](auto&&... x_args) {
+        return serialize_return(eval(f(conditional_read_from_ds<WhichTypes>(ds, x_args)...)));
+      }, args);
+    };
+    auto serialized_args =  stan::math::apply([&](auto&&... ad_args) {
+      return serialize_args(ad_args...);
+    }, arg_pair);
+    stan::math::apply([&](auto&&... non_ad_args) {
+      internal::expect_ad_helper(tols, f, g, serialized_args, non_ad_args...);
+    }, args);
+
+  }
+}
+
+template<typename... WhichTypes, class I, I... is, class F, typename... Args>
+inline constexpr void loop_impl(TypeList<WhichTypes...>, std::integer_sequence<I, is...>,
+  const ad_tolerances& tols, F&& f, Args&&... args) {
+  auto args_tuple = std::forward_as_tuple(std::forward<Args>(args)...);
+  (expect_ad_setup(WhichTypes{}, tols, f, args_tuple), ...);
+}
+
+template <typename WhichTypesList, typename F, typename... Types>
+inline auto expect_ad_alt(const ad_tolerances& tols, F&& f, Types&&...  args) {
+  // iterate over each type in the typelist
+  using num_param_seq = std::make_integer_sequence<std::size_t, WhichTypesList::size>;
+  loop_impl(WhichTypesList{}, num_param_seq{}, tols, std::forward<F>(f), args...);
+}
+
+template <std::size_t N>
+using generate_double_var_combinations = stan::test::internal::Combinations<double, stan::math::var>::OfSize<N>;
+
+
+/**
  * Test that the specified unary functor and arguments produce for
  * every autodiff type the same value as the specified argument and
  * the same derivatives as finite differences.
@@ -511,15 +691,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  */
 template <typename F, typename T>
 void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
-  using stan::math::serialize_args;
-  using stan::math::serialize_return;
-  using stan::math::to_deserializer;
-  auto g = [&](const auto& v) {
-    auto ds = to_deserializer(v);
-    auto xds = ds.read(x);
-    return serialize_return(eval(f(xds)));
-  };
-  internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
+  expect_ad_alt<generate_double_var_combinations<1>>(tols, f, x);
 }
 
 /**
@@ -558,6 +730,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   expect_ad_v(tols, f, x_dbl);
 }
 
+
 /**
  * Test that the specified binary functor and arguments produce for
  * every autodiff type the same value as the double-based version and
@@ -575,33 +748,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
-  using stan::math::serialize_args;
-  using stan::math::serialize_return;
-  using stan::math::to_deserializer;
-  // d.x1
-  auto g1 = [&](const auto& v) {
-    auto ds = to_deserializer(v);
-    auto x1ds = ds.read(x1);
-    return serialize_return(eval(f(x1ds, x2)));
-  };
-  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
-
-  // d.x2
-  auto g2 = [&](const auto& v) {
-    auto ds = to_deserializer(v);
-    auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1, x2ds)));
-  };
-  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
-
-  // d.x1, d.x2
-  auto g12 = [&](const auto& v) {
-    auto ds = to_deserializer(v);
-    auto x1ds = ds.read(x1);
-    auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1ds, x2ds)));
-  };
-  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
+  expect_ad_alt<generate_double_var_combinations<2>>(tols, f, x1, x2);
 }
 
 template <typename F, typename T2>
@@ -619,7 +766,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
 
   // expect autodiff to work at double value
-  expect_ad_vv(tols, f, x1_dbl, x2);
+  expect_ad_alt<generate_double_var_combinations<2>>(tols, f, x1_dbl, x2);
 
   // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(x1, u); };
@@ -641,7 +788,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
 
   // expect autodiff to work at double value
-  expect_ad_vv(tols, f, x1, x2_dbl);
+  expect_ad_alt<generate_double_var_combinations<2>>(tols, f, x1, x2_dbl);
 
   // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(u, x2); };
@@ -669,6 +816,9 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // they also take care of binding int tests
   expect_ad_vv(tols, f, x1, x2_dbl);
   expect_ad_vv(tols, f, x1_dbl, x2);
+  expect_ad_alt<generate_double_var_combinations<2>>(tols, f, x1, x2_dbl);
+  expect_ad_alt<generate_double_var_combinations<2>>(tols, f, x1_dbl, x2);
+
 }
 
 /**
