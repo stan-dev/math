@@ -991,3 +991,8 @@ TEST_F(AgradRev, assign_nullptr_var) {
   EXPECT_MATRIX_EQ(x.adj(), x_ans_adj);
   EXPECT_MATRIX_EQ(x_ans_adj, y.adj());
 }
+
+
+TEST_F(AgradRev, var_complex_type) {
+  stan::math::var_value<std::complex<double>> z(std::complex<double>(1.0, 2.0));
+}

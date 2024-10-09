@@ -64,6 +64,10 @@ class vari_base {
   }
 };
 
+template <typename T>
+using require_fp_or_complex_t2 = require_any_t<std::is_floating_point<std::decay_t<T>>,
+  stan::is_complex<std::decay_t<T>>>;
+
 /**
  * The variable implementation for floating point types.
  *
@@ -76,7 +80,7 @@ class vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
+class vari_value<T, require_fp_or_complex_t2<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
   /**
@@ -166,14 +170,14 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  inline void init_dependent() noexcept { adj_ = 1.0; }
+  inline void init_dependent() noexcept { adj_ = value_type{1.0}; }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept final { adj_ = value_type{0.0}; }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -195,6 +199,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
 
 // For backwards compatability the default is double
 using vari = vari_value<double>;
+using vari_complex = vari_value<std::complex<double>>;
 
 /**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner

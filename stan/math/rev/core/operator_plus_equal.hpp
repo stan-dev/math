@@ -9,20 +9,33 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator+=(
+inline var_value<T>& var_value<T, require_fp_or_complex_t<T>>::operator+=(
     const var_value<T>& b) {
-  vi_ = (*this + b).vi_;
-  return *this;
+  if constexpr (std::is_floating_point_v<T>) {
+    if (b.vi_->val_ == 0.0) {
+      return *this;
+    }
+    vi_ = (*this + b).vi_;
+    return *this;
+  } else {
+    vi_ = stan::math::add(*this, b).vi_;
+    return *this;
+  }
 }
 
 template <typename T>
-inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator+=(
+inline var_value<T>& var_value<T, require_fp_or_complex_t<T>>::operator+=(
     T b) {
-  if (b == 0.0) {
+  if constexpr (std::is_floating_point_v<T>) {
+    if (b == 0.0) {
+      return *this;
+    }
+    vi_ = (*this + b).vi_;
+    return *this;
+  } else {
+    vi_ = stan::math::add(*this, b).vi_;
     return *this;
   }
-  vi_ = (*this + b).vi_;
-  return *this;
 }
 
 }  // namespace math

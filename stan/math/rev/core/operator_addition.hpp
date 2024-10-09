@@ -13,6 +13,23 @@ namespace stan {
 namespace math {
 
 /**
+ * Conditionally get just the real part of a complex number.
+ * This is used in adjoint accumulation. When we
+ * propogate from a complex return to a real operand, we
+ * Should only propogate the real part of the complex adjoint.
+ *
+ */
+template <typename PossiblyArithmetic, typename T>
+inline auto real_adjoint(T&& x) {
+  // Second cond can only happen if T is complex
+  if constexpr (std::is_arithmetic_v<std::decay_t<T>> || !std::is_arithmetic_v<std::decay_t<PossiblyArithmetic>>) {
+    return x;
+  } else if constexpr (is_complex_v<std::decay_t<T>>) {
+    return x.real();
+  }
+}
+
+/**
  * Addition operator for variables (C++).
  *
  * The partial derivatives are defined by
@@ -50,11 +67,13 @@ namespace math {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(const var& a, const var& b) {
-  return make_callback_vari(a.vi_->val_ + b.vi_->val_,
+template <typename T1, typename T2,
+  require_all_floating_point_or_complex_t<T1, T2>* = nullptr>
+inline auto operator+(const var_value<T1>& a, const var_value<T2>& b) {
+  return make_callback_var(a.vi_->val_ + b.vi_->val_,
                             [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
-                              avi->adj_ += vi.adj_;
-                              bvi->adj_ += vi.adj_;
+                              avi->adj_ += real_adjoint<T1>(vi.adj_);
+                              bvi->adj_ += real_adjoint<T2>(vi.adj_);
                             });
 }
 

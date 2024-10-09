@@ -43,6 +43,9 @@ struct is_complex<
     T, std::enable_if_t<internal::is_complex_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
+template <typename T>
+constexpr bool is_complex_v = is_complex<T>::value;
+
 /** \ingroup type_trait
  *
  * Template metaprogram defining the scalar type for values
@@ -51,7 +54,7 @@ struct is_complex<
  * @tparam T type of complex number
  */
 template <typename T>
-struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
+struct scalar_type<T, std::enable_if_t<is_complex_v<T>>> {
   using type = std::complex<typename std::decay_t<T>::value_type>;
 };
 
@@ -132,7 +135,7 @@ struct is_vt_complex : is_complex<value_type_t<std::decay_t<T>>> {};
  */
 template <typename T>
 struct is_vt_not_complex
-    : bool_constant<!is_complex<value_type_t<std::decay_t<T>>>::value> {};
+    : bool_constant<!is_complex_v<value_type_t<std::decay_t<T>>>> {};
 
 }  // namespace stan
 

@@ -22,6 +22,10 @@ namespace math {
 template <typename Vari>
 static void grad(Vari* vi);
 
+template <typename T>
+using require_fp_or_complex_t = require_any_t<std::is_floating_point<std::decay_t<T>>,
+  stan::is_complex<std::decay_t<T>>>;
+
 /**
  * Independent (input) and dependent (output) variables for gradients.
  *
@@ -34,10 +38,10 @@ static void grad(Vari* vi);
  * and subtraction, as well as a range of mathematical functions
  * like exponentiation and powers are overridden to operate on
  * var values objects.
- * @tparam T An Floating point type.
+ * @tparam T An Floating point or complex type type.
  */
 template <typename T>
-class var_value<T, require_floating_point_t<T>> {
+class var_value<T, require_fp_or_complex_t<T>> {
  public:
   using value_type = std::decay_t<T>;  // type in vari_value.
   using vari_type = vari_value<value_type>;
