@@ -50,12 +50,13 @@ namespace math {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(const var& a, const var& b) {
-  return make_callback_vari(a.vi_->val_ + b.vi_->val_,
+template <typename T1, typename T2, require_all_floating_point_or_complex_t<T1, T2>* = nullptr>
+inline auto operator+(const var_value<T1>& a, const var_value<T2>& b) {
+  return var_value<return_type_t<T1, T2>>(make_callback_vari(a.vi_->val_ + b.vi_->val_,
                             [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
                               avi->adj_ += vi.adj_;
                               bvi->adj_ += vi.adj_;
-                            });
+                            }));
 }
 
 /**
@@ -70,13 +71,15 @@ inline var operator+(const var& a, const var& b) {
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator+(const var& a, Arith b) {
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr, 
+  require_any_t<std::is_arithmetic<Arith>, is_complex<Arith>>* = nullptr,
+  require_t<std::bool_constant<!is_complex<Arith>::value && !is_var<value_type_t<Arith>>::value>>* = nullptr>
+inline auto operator+(const var_value<T1>& a, Arith b) {
   if (unlikely(b == 0.0)) {
     return a;
   }
-  return make_callback_vari(
-      a.vi_->val_ + b,
+  return make_callback_var(
+      a.val() + b,
       [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_; });
 }
 
@@ -92,8 +95,10 @@ inline var operator+(const var& a, Arith b) {
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator+(Arith a, const var& b) {
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr, 
+  require_any_t<std::is_arithmetic<Arith>, is_complex<Arith>>* = nullptr,
+  require_t<std::bool_constant<!is_complex<Arith>::value && !is_var<value_type_t<Arith>>::value>>* = nullptr>
+inline auto operator+(Arith a, const var_value<T1>& b) {
   return b + a;  // by symmetry
 }
 

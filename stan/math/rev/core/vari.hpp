@@ -76,7 +76,7 @@ class vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
+class vari_value<T, require_floating_point_or_complex_t<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
   /**
@@ -195,6 +195,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
 
 // For backwards compatability the default is double
 using vari = vari_value<double>;
+using vari_complex = vari_value<std::complex<double>>;
 
 /**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner

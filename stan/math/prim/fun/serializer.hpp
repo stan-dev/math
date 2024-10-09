@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SERIALIZER_HPP
 
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <complex>
@@ -78,10 +79,14 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U>
-  std::complex<T> read(const std::complex<U>& x) {
+  auto read(const std::complex<U>& x) {
     T re = read(x.real());
     T im = read(x.imag());
-    return {re, im};
+    if constexpr (is_var<T>::value) {
+      return to_complex_var(re, im);
+    } else {
+      return std::complex<T>(re, im);
+    }
   }
 
   /**

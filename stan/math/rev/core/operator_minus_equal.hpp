@@ -9,14 +9,14 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator-=(
+inline var_value<T>& var_value<T, require_floating_point_or_complex_t<T>>::operator-=(
     const var_value<T>& b) {
   vi_ = (*this - b).vi_;
   return *this;
 }
 
 template <typename T>
-inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator-=(
+inline var_value<T>& var_value<T, require_floating_point_or_complex_t<T>>::operator-=(
     T b) {
   if (unlikely(b == 0.0)) {
     return *this;

@@ -37,7 +37,7 @@ static void grad(Vari* vi);
  * @tparam T An Floating point type.
  */
 template <typename T>
-class var_value<T, require_floating_point_t<T>> {
+class var_value<T, require_floating_point_or_complex_t<T>> {
  public:
   using value_type = std::decay_t<T>;  // type in vari_value.
   using vari_type = vari_value<value_type>;
@@ -1185,6 +1185,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
 
 // For backwards compatability the default value is double
 using var = var_value<double>;
+using var_complex = var_value<std::complex<double>>;
 
 }  // namespace math
 
