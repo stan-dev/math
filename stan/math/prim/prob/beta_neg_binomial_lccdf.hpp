@@ -33,13 +33,16 @@ namespace math {
  * @param r Number of successes parameter
  * @param alpha prior success parameter
  * @param beta prior failure parameter
+ * @param precision precision for `grad_F32`, default \f$10^{-8}\f$
+ * @param max_steps max iteration allowed for `grad_F32`, default \f$10^{-8}\f$
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if r, alpha, or beta fails to be positive
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_r, typename T_alpha, typename T_beta>
 inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
-    const T_n& n, const T_r& r, const T_alpha& alpha, const T_beta& beta) {
+    const T_n& n, const T_r& r, const T_alpha& alpha, const T_beta& beta,
+    const double precision = 1e-8, const int max_steps = 1e6) {
   using std::exp;
   using std::log;
   using T_partials_return = partials_return_t<T_n, T_r, T_alpha, T_beta>;
@@ -61,7 +64,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
   check_positive_finite(function, "Prior success parameter", alpha_ref);
   check_positive_finite(function, "Prior failure parameter", beta_ref);
 
-  T_partials_return P(0.0);
+  T_partials_return log_ccdf(0.0);
   auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
@@ -93,7 +96,8 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     T_partials_return r_plus_n = r_dbl + n_dbl;
     T_partials_return a_plus_r = alpha_dbl + r_dbl;
     T_partials_return one = 1;
-    T_partials_return precision = 1e-8;  // default -6, set -8 to pass all tests
+    T_partials_return precision_t
+        = precision;  // default -6, set -8 to pass all tests
 
     T_partials_return F
         = hypergeometric_3F2({one, b_plus_n + 1, r_plus_n + 1},
@@ -102,15 +106,15 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
                           - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl)
                           - lgamma(n_dbl + 2);
     T_partials_return ccdf = exp(C) * F;
-    T_partials_return P_i = log(ccdf);
-    P += P_i;
+    T_partials_return log_ccdf_i = log(ccdf);
+    log_ccdf += log_ccdf_i;
 
-    if (!is_constant_all<T_r, T_alpha, T_beta>::value) {
+    if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
       T_partials_return digamma_n_r_alpha_beta
           = digamma(a_plus_r + b_plus_n + 1);
       T_partials_return dF[6];
       grad_F32(dF, one, b_plus_n + 1, r_plus_n + 1, n_dbl + 2,
-               a_plus_r + b_plus_n + 1, one, precision, 1e5);
+               a_plus_r + b_plus_n + 1, one, precision_t, max_steps);
 
       if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
         T_partials_return digamma_r_alpha = digamma(a_plus_r);
@@ -143,7 +147,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     }
   }
 
-  return ops_partials.build(P);
+  return ops_partials.build(log_ccdf);
 }
 
 }  // namespace math
