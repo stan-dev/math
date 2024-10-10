@@ -194,9 +194,11 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
 
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   const auto exponent = -sign(v) * 2.0 * v * a * w;
-  auto prob_grad_w = (v != 0) ? exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent)) : ret_t(1 / w);
+  auto prob_grad_w
+      = (v != 0) ? exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent))
+                 : ret_t(1 / w);
   prob_grad_w = (v > 0) ? prob_grad_w * exp(exponent) : prob_grad_w;
-  
+
   const auto cdf_grad_w = wiener4_cdf_grad_w(y, a, v, w, cdf, err);
   return prob_grad_w * exp(prob) - cdf_grad_w;
 }
