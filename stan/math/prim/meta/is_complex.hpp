@@ -88,6 +88,7 @@ using require_any_complex_t = require_any_t<is_complex<std::decay_t<Types>>...>;
 template <typename... Types>
 using require_all_not_complex_t
     = require_all_not_t<is_complex<std::decay_t<Types>>...>;
+
 /*! @} */
 
 /*! \ingroup require_stan_scalar_complex */

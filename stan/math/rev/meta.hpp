@@ -6,6 +6,7 @@
 #include <stan/math/rev/meta/conditional_var_value.hpp>
 #include <stan/math/rev/meta/is_arena_matrix.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
+#include <stan/math/rev/meta/is_var_complex.hpp>
 #include <stan/math/rev/meta/is_rev_matrix.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/modify_eigen_options.hpp>

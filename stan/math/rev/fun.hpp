@@ -76,6 +76,7 @@
 #include <stan/math/rev/fun/hypergeometric_pFq.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
+#include <stan/math/rev/fun/imag.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
 #include <stan/math/rev/fun/inv_inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
@@ -138,6 +139,7 @@
 #include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
+#include <stan/math/rev/fun/real.hpp>
 #include <stan/math/rev/fun/read_corr_L.hpp>
 #include <stan/math/rev/fun/read_corr_matrix.hpp>
 #include <stan/math/rev/fun/read_cov_L.hpp>

@@ -13,6 +13,9 @@ namespace stan {
 template <typename T, typename = void>
 struct is_var : std::false_type {};
 
+template <typename T>
+constexpr bool is_var_v = is_var<T>::value;
+
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup var_types var  */
 /*! \addtogroup var_types */

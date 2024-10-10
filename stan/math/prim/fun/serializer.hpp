@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SERIALIZER_HPP
 
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
-#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_complex.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <complex>
@@ -205,10 +205,19 @@ struct serializer {
    * @tparam U type of specified scalar; must be assignable to T
    * @param x scalar to serialize
    */
-  template <typename U, require_stan_scalar_t<U>* = nullptr>
+  template <typename U, require_stan_scalar_t<U>* = nullptr,
+    require_not_var_complex_t<U>* = nullptr>
   void write(const U& x) {
     vals_.push_back(x);
   }
+
+  template <typename U,
+    require_var_complex_t<U>* = nullptr>
+  void write(const U& x) {
+    vals_.push_back(real(x));
+    vals_.push_back(imag(x));
+  }
+
 
   /**
    * Serialize the specified complex number.
@@ -328,9 +337,14 @@ std::vector<U> serialize(const Ts... xs) {
  * @return serialized argument
  */
 template <typename T>
-std::vector<real_return_t<T>> serialize_return(const T& x) {
-  return serialize<real_return_t<T>>(x);
+inline auto serialize_return(const T& x) {
+  if constexpr (is_var_complex<T>::value) {
+    return serialize<var>(x);
+  } else {
+    return serialize<real_return_t<T>>(x);
+  }
 }
+
 
 /**
  * Serialize the specified sequence of structured objects with

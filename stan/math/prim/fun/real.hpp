@@ -15,9 +15,34 @@ namespace math {
  * @return real component of argument
  */
 template <typename T, require_autodiff_t<T>>
-T real(const std::complex<T>& z) {
+inline T real(const std::complex<T>& z) {
   return z.real();
 }
+
+/**
+ * Return the real component of the complex argument.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] z complex value whose real component is extracted
+ * @return real component of argument
+ */
+template <typename T, require_floating_point_t<T>* = nullptr>
+inline T& real(std::complex<T>& z) {
+  return reinterpret_cast<T(&)[2]>(z)[0];
+}
+
+/**
+ * Return the real component of the complex argument.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] z complex value whose real component is extracted
+ * @return real component of argument
+ */
+template <typename T, require_floating_point_t<T>* = nullptr>
+inline T& real(std::complex<T>&& z) {
+  return reinterpret_cast<T(&)[2]>(z)[0];
+}
+
 
 }  // namespace math
 }  // namespace stan

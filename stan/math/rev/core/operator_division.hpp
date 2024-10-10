@@ -58,7 +58,8 @@ namespace math {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(const var& dividend, const var& divisor) {
+template <typename T1, typename T2, require_all_floating_point_or_complex_t<T1, T2>* = nullptr>
+inline auto operator/(const var_value<T1>& dividend, const var_value<T2>& divisor) {
   return make_callback_var(
       dividend.val() / divisor.val(), [dividend, divisor](auto&& vi) {
         dividend.adj() += vi.adj() / divisor.val();
@@ -80,15 +81,34 @@ inline var operator/(const var& dividend, const var& divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator/(const var& dividend, Arith divisor) {
-  if (divisor == 1.0) {
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator/(const var_value<T1>& dividend, Arith divisor) {
+  if (unlikely(divisor == 1.0)) {
     return dividend;
   }
   return make_callback_var(
       dividend.val() / divisor,
       [dividend, divisor](auto&& vi) { dividend.adj() += vi.adj() / divisor; });
 }
+
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator/(const var_value<T1>& dividend, std::complex<Arith> divisor) {
+  if (unlikely(divisor == 1.0)) {
+    return dividend;
+  }
+  return make_callback_var(
+      dividend.val() / divisor,
+      [dividend, divisor](auto&& vi) {
+        if constexpr (is_complex_v<T1>) {
+          dividend.adj() += vi.adj() / divisor;
+        } else {
+          dividend.adj() += (vi.adj() / divisor).real();
+        }
+      });
+}
+
 
 /**
  * Division operator for dividing a scalar by a variable (C++).
@@ -102,14 +122,31 @@ inline var operator/(const var& dividend, Arith divisor) {
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator/(Arith dividend, const var& divisor) {
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator/(Arith dividend, const var_value<T1>& divisor) {
   return make_callback_var(
       dividend / divisor.val(), [dividend, divisor](auto&& vi) {
-        divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+        if constexpr (is_complex_v<T1>) {
+          divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+        } else if constexpr (std::is_floating_point_v<T1>) {
+          divisor.adj() -= (vi.adj() * dividend / (divisor.val() * divisor.val()));
+        }
       });
 }
 
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator/(std::complex<Arith> dividend, const var_value<T1>& divisor) {
+  return make_callback_var(
+      dividend / divisor.val(), [dividend, divisor](auto&& vi) {
+        if constexpr (is_complex_v<T1>) {
+          divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+        } else {
+          divisor.adj() -= (vi.adj() * dividend / (divisor.val() * divisor.val())).real();
+        }
+      });
+}
 /**
  * Return matrix divided by scalar.
  *
@@ -261,6 +298,8 @@ inline std::complex<var> operator/(const std::complex<var>& x1,
   return internal::complex_divide(x1, x2);
 }
 
+
 }  // namespace math
 }  // namespace stan
 #endif
+

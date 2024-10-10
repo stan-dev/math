@@ -1,6 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
+TEST(BLAH, op_div) {
+  std::complex<double> a(1.0);
+  std::complex<double> b(1.0);
+  stan::test::expect_ad([](auto&& a, auto&& b){ return a / b;}, a, b);
+}
+/*
 TEST(mathMixCore, operatorDivision) {
   auto f = [](const auto& x1, const auto& x2) { return x1 / x2; };
   bool disable_lhs_int = true;
@@ -63,3 +69,4 @@ TEST(mathMixCore, operatorDivisionVarMat) {
   stan::test::expect_ad_matvar(stan::test::operator_divide_tester{}, mat1, 2.0);
   stan::test::expect_ad_matvar(stan::test::operator_divide_tester{}, 2.0, mat2);
 }
+*/

@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
+#include <stan/math/rev/core/adjoint.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
@@ -52,11 +53,11 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_floating_point_or_complex_t<T1, T2>* = nullptr>
 inline auto operator+(const var_value<T1>& a, const var_value<T2>& b) {
-  return var_value<return_type_t<T1, T2>>(make_callback_vari(a.vi_->val_ + b.vi_->val_,
-                            [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
-                              avi->adj_ += vi.adj_;
-                              bvi->adj_ += vi.adj_;
-                            }));
+  return make_callback_var(a.val() + b.val(),
+    [a, b](const auto& vi) mutable {
+      a.adj() += adjoint<var_value<T1>>(vi);
+      b.adj() += adjoint<var_value<T2>>(vi);
+    });
 }
 
 /**
@@ -71,9 +72,8 @@ inline auto operator+(const var_value<T1>& a, const var_value<T2>& b) {
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr, 
-  require_any_t<std::is_arithmetic<Arith>, is_complex<Arith>>* = nullptr,
-  require_t<std::bool_constant<!is_complex<Arith>::value && !is_var<value_type_t<Arith>>::value>>* = nullptr>
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
 inline auto operator+(const var_value<T1>& a, Arith b) {
   if (unlikely(b == 0.0)) {
     return a;
@@ -82,6 +82,17 @@ inline auto operator+(const var_value<T1>& a, Arith b) {
       a.val() + b,
       [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_; });
 }
+
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator+(const var_value<T1>& a, const std::complex<Arith>& b) {
+  return make_callback_var(
+      a.val() + b,
+      [avi = a.vi_](const auto& vi) mutable {
+        avi->adj_ += adjoint<var_value<T1>>(vi);
+      });
+}
+
 
 /**
  * Addition operator for scalar and variable (C++).
@@ -95,12 +106,18 @@ inline auto operator+(const var_value<T1>& a, Arith b) {
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr, 
-  require_any_t<std::is_arithmetic<Arith>, is_complex<Arith>>* = nullptr,
-  require_t<std::bool_constant<!is_complex<Arith>::value && !is_var<value_type_t<Arith>>::value>>* = nullptr>
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
 inline auto operator+(Arith a, const var_value<T1>& b) {
   return b + a;  // by symmetry
 }
+
+template <typename T1, typename Arith, require_floating_point_or_complex_t<T1>* = nullptr,
+  require_arithmetic_t<Arith>* = nullptr>
+inline auto operator+(const std::complex<Arith>& a, const var_value<T1>& b) {
+  return b + a;  // by symmetry
+}
+
 
 /**
  * Addition operator for matrix variables (C++).
