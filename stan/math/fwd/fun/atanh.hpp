@@ -33,7 +33,7 @@ inline fvar<T> atanh(const fvar<T>& x) {
  * @return hyperbolic arc tangent of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> atanh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> atanh(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_atanh(z);
 }
 

@@ -67,7 +67,7 @@ namespace internal {
  * @return sine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_sin(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_sin(const stan::math::complex<V>& z) {
   return neg_i_times(sinh(i_times(z)));
 }
 }  // namespace internal

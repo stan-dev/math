@@ -24,7 +24,7 @@ inline fvar<T> sinh(const fvar<T>& x) {
  * @return hyperbolic sine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> sinh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> sinh(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_sinh(z);
 }
 

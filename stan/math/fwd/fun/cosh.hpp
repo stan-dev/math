@@ -26,7 +26,7 @@ inline fvar<T> cosh(const fvar<T>& x) {
  * @return hyperbolic cosine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> cosh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> cosh(const stan::math::complex<fvar<T>>& z) {
   return stan::math::internal::complex_cosh(z);
 }
 

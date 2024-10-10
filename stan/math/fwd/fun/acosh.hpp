@@ -26,7 +26,7 @@ inline fvar<T> acosh(const fvar<T>& x) {
  * @return hyperbolic arc cosine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> acosh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> acosh(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_acosh(z);
 }
 

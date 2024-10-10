@@ -37,8 +37,8 @@ inline complex_return_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
  * @return difference of the arguments
  */
 template <typename U, typename V, require_all_stan_scalar_t<U, V>* = nullptr>
-inline complex_return_t<U, V> operator-(const std::complex<U>& x,
-                                        const std::complex<V>& y) {
+inline complex_return_t<U, V> operator-(const stan::math::complex<U>& x,
+                                        const stan::math::complex<V>& y) {
   return internal::complex_subtract(x, y);
 }
 
@@ -52,7 +52,7 @@ inline complex_return_t<U, V> operator-(const std::complex<U>& x,
  * @return difference of the arguments
  */
 template <typename U, typename V, require_all_stan_scalar_t<U, V>* = nullptr>
-inline complex_return_t<U, V> operator-(const std::complex<U>& x, const V& y) {
+inline complex_return_t<U, V> operator-(const stan::math::complex<U>& x, const V& y) {
   return internal::complex_subtract(x, y);
 }
 
@@ -66,7 +66,7 @@ inline complex_return_t<U, V> operator-(const std::complex<U>& x, const V& y) {
  * @return difference of the arguments
  */
 template <typename U, typename V, require_all_stan_scalar_t<U, V>* = nullptr>
-inline complex_return_t<U, V> operator-(const U& x, const std::complex<V>& y) {
+inline complex_return_t<U, V> operator-(const U& x, const stan::math::complex<V>& y) {
   return internal::complex_subtract(x, y);
 }
 

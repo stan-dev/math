@@ -67,7 +67,7 @@ namespace internal {
  * @return square root of the argument
  */
 template <typename V>
-inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_sqrt(const stan::math::complex<V>& z) {
   auto m = sqrt(hypot(z.real(), z.imag()));
   auto at = 0.5 * atan2(z.imag(), z.real());
   return {m * cos(at), m * sin(at)};

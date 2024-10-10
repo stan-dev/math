@@ -23,7 +23,7 @@ inline fvar<T> exp(const fvar<T>& x) {
  * @return exponentiation of argument
  */
 template <typename T>
-inline std::complex<fvar<T>> exp(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> exp(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_exp(z);
 }
 

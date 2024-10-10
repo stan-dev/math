@@ -29,7 +29,7 @@ inline fvar<T> log(const fvar<T>& x) {
  * @return natural logarithm of argument
  */
 template <typename T>
-inline std::complex<fvar<T>> log(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> log(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_log(z);
 }
 

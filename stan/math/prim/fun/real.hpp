@@ -15,7 +15,7 @@ namespace math {
  * @return real component of argument
  */
 template <typename T, require_autodiff_t<T>>
-T real(const std::complex<T>& z) {
+T real(const stan::math::complex<T>& z) {
   return z.real();
 }
 

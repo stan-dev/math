@@ -42,19 +42,19 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  */
 template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
           require_arithmetic_t<T2>* = nullptr>
-inline auto pow(const std::complex<T1>& a, const std::complex<T2>& b) {
+inline auto pow(const stan::math::complex<T1>& a, const stan::math::complex<T2>& b) {
   return std::pow(a, b);
 }
 
 template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
           require_arithmetic_t<T2>* = nullptr>
-inline auto pow(const T1& a, const std::complex<T2>& b) {
+inline auto pow(const T1& a, const stan::math::complex<T2>& b) {
   return std::pow(a, b);
 }
 
 template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
           require_arithmetic_t<T2>* = nullptr>
-inline auto pow(const std::complex<T1>& a, const T2& b) {
+inline auto pow(const stan::math::complex<T1>& a, const T2& b) {
   return std::pow(a, b);
 }
 

@@ -69,7 +69,7 @@ namespace internal {
  * @return cosine of the argument
  */
 template <typename T>
-inline std::complex<T> complex_cos(const std::complex<T>& z) {
+inline stan::math::complex<T> complex_cos(const stan::math::complex<T>& z) {
   return cosh(i_times(z));
 }
 }  // namespace internal

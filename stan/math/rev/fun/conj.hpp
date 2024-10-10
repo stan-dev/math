@@ -14,7 +14,7 @@ namespace math {
  * @param[in] z argument
  * @return complex conjugate of the argument
  */
-inline std::complex<var> conj(const std::complex<var>& z) {
+inline stan::math::complex<var> conj(const stan::math::complex<var>& z) {
   return internal::complex_conj(z);
 }
 

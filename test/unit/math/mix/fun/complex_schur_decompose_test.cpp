@@ -75,9 +75,9 @@ void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
   using stan::math::value_of_rec;
-  Eigen::Matrix<std::complex<V>, -1, -1> X(x.rows(), x.cols());
+  Eigen::Matrix<stan::math::complex<V>, -1, -1> X(x.rows(), x.cols());
   for (int i = 0; i < x.size(); ++i)
-    X(i) = std::complex<double>(x(i), i);
+    X(i) = stan::math::complex<double>(x(i), i);
   auto T = complex_schur_decompose_t(X);
   auto U = complex_schur_decompose_u(X);
   auto X2 = U * T * U.adjoint();

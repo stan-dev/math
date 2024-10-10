@@ -24,8 +24,8 @@
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
-
-    namespace Eigen {
+#include <stan/math/prim/core/complex_base.hpp>
+namespace Eigen {
 
   /**
    * Traits specialization for Eigen binary operations for `int`
@@ -59,8 +59,8 @@
    * defined
    */
   template <typename BinaryOp>
-  struct ScalarBinaryOpTraits<int, std::complex<double>, BinaryOp> {
-    using ReturnType = std::complex<double>;
+  struct ScalarBinaryOpTraits<int, stan::math::complex<double>, BinaryOp> {
+    using ReturnType = stan::math::complex<double>;
   };
 
   /**
@@ -71,8 +71,8 @@
    * defined
    */
   template <typename BinaryOp>
-  struct ScalarBinaryOpTraits<std::complex<double>, int, BinaryOp> {
-    using ReturnType = std::complex<double>;
+  struct ScalarBinaryOpTraits<stan::math::complex<double>, int, BinaryOp> {
+    using ReturnType = stan::math::complex<double>;
   };
 
 }  // namespace Eigen

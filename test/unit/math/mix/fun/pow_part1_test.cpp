@@ -11,13 +11,13 @@ void expect_arith_instantiate() {
   auto d1 = stan::math::pow(1.0, T(1.0));
   auto e1 = stan::math::pow(T(1.0), T(1.0));
 
-  auto a2 = stan::math::pow(std::complex<T>(1.0), 1);
-  auto b2 = stan::math::pow(std::complex<T>(1.0), 1.0);
-  auto c2 = stan::math::pow(1, std::complex<T>(1.0));
-  auto d2 = stan::math::pow(1.0, std::complex<T>(1.0));
-  auto e2 = stan::math::pow(std::complex<T>(1.0), std::complex<T>(1.0));
-  auto f2 = stan::math::pow(std::complex<double>(1.0), std::complex<T>(1.0));
-  auto g2 = stan::math::pow(std::complex<T>(1.0), std::complex<double>(1.0));
+  auto a2 = stan::math::pow(stan::math::complex<T>(1.0), 1);
+  auto b2 = stan::math::pow(stan::math::complex<T>(1.0), 1.0);
+  auto c2 = stan::math::pow(1, stan::math::complex<T>(1.0));
+  auto d2 = stan::math::pow(1.0, stan::math::complex<T>(1.0));
+  auto e2 = stan::math::pow(stan::math::complex<T>(1.0), stan::math::complex<T>(1.0));
+  auto f2 = stan::math::pow(stan::math::complex<double>(1.0), stan::math::complex<T>(1.0));
+  auto g2 = stan::math::pow(stan::math::complex<T>(1.0), stan::math::complex<double>(1.0));
 }
 
 // this one's been tricky to instantiate, so test all instances

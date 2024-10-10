@@ -70,7 +70,7 @@ inline auto sin(const VarMat& a) {
  * @param[in] z argument
  * @return sine of the argument
  */
-inline std::complex<var> sin(const std::complex<var>& z) {
+inline stan::math::complex<var> sin(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_sin(z);
 }
 

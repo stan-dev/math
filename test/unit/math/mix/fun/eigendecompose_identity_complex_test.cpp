@@ -13,7 +13,7 @@ void expect_identity_matrix_complex(const T& x) {
 
 template <typename T>
 void expectComplexEigenvectorsId() {
-  Eigen::Matrix<std::complex<T>, -1, -1> c22(2, 2);
+  Eigen::Matrix<stan::math::complex<T>, -1, -1> c22(2, 2);
   c22 << stan::math::to_complex(T(0), T(-1)),
       stan::math::to_complex(T(0), T(0)), stan::math::to_complex(T(2), T(0)),
       stan::math::to_complex(T(4), T(0));

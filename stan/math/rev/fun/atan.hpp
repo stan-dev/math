@@ -80,7 +80,7 @@ inline auto atan(const VarMat& x) {
  * @param[in] z argument
  * @return arc tangent of the argument
  */
-inline std::complex<var> atan(const std::complex<var>& z) {
+inline stan::math::complex<var> atan(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_atan(z);
 }
 

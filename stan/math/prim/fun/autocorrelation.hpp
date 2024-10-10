@@ -61,7 +61,7 @@ inline size_t fft_next_good_size(size_t N) {
 template <typename T>
 void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
                      Eigen::FFT<T>& fft) {
-  using std::complex;
+  using stan::math::complex;
   using std::vector;
 
   size_t N = y.size();
@@ -127,7 +127,7 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   centered_signal.setZero();
   centered_signal.head(N) = y.array() - y.mean();
 
-  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> freqvec(Mt2);
+  Eigen::Matrix<stan::math::complex<T>, Eigen::Dynamic, 1> freqvec(Mt2);
   fft.SetFlag(fft.HalfSpectrum);
   fft.fwd(freqvec, centered_signal);
   // cwiseAbs2 == norm

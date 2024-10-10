@@ -78,7 +78,7 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U>
-  std::complex<T> read(const std::complex<U>& x) {
+  stan::math::complex<T> read(const stan::math::complex<U>& x) {
     T re = read(x.real());
     T im = read(x.imag());
     return {re, im};
@@ -105,7 +105,7 @@ struct deserializer {
   }
 
   /**
-   * Read a standard vector of std::complex variables conforming to the
+   * Read a standard vector of stan::math::complex variables conforming to the
    * shape of the specified argument, here a standard vector. The specified
    * argument is only used for its shape---there is no relationship between
    * the type of argument and type of result.
@@ -115,8 +115,8 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U, require_std_vector_st<is_complex, U>* = nullptr>
-  promote_scalar_t<std::complex<T>, U> read(const U& x) {
-    promote_scalar_t<std::complex<T>, U> y;
+  promote_scalar_t<stan::math::complex<T>, U> read(const U& x) {
+    promote_scalar_t<stan::math::complex<T>, U> y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
       y.push_back(read(x[i]));
@@ -147,7 +147,7 @@ struct deserializer {
   }
 
   /**
-   * Read a standard vector of std::complex variables conforming to the
+   * Read a standard vector of stan::math::complex variables conforming to the
    * shape of the specified argument, here an Eigen matrix, vector, or
    * row vector. The specified argument is only used for its shape---there
    * is no relationship between the type of argument and type of result.
@@ -159,9 +159,9 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U, int R, int C>
-  Eigen::Matrix<std::complex<T>, R, C> read(
-      const Eigen::Matrix<std::complex<U>, R, C>& x) {
-    Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
+  Eigen::Matrix<stan::math::complex<T>, R, C> read(
+      const Eigen::Matrix<stan::math::complex<U>, R, C>& x) {
+    Eigen::Matrix<stan::math::complex<T>, R, C> y(x.rows(), x.cols());
     for (int j = 0; j < x.cols(); ++j) {
       for (int i = 0; i < x.rows(); ++i) {
         y(i + j * x.rows()) = read(x(i, j));
@@ -212,7 +212,7 @@ struct serializer {
    * @param x complex number to serialize
    */
   template <typename U>
-  void write(const std::complex<U>& x) {
+  void write(const stan::math::complex<U>& x) {
     write(x.real());
     write(x.imag());
   }
@@ -286,7 +286,7 @@ deserializer<scalar_type_t<T>> to_deserializer(const T& vals) {
 }
 
 template <typename T>
-deserializer<T> to_deserializer(const std::complex<T>& vals) {
+deserializer<T> to_deserializer(const stan::math::complex<T>& vals) {
   return to_deserializer(std::vector<T>{vals.real(), vals.imag()});
 }
 

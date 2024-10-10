@@ -17,7 +17,7 @@ namespace math {
  * @param[in] z argument
  * @return projection of the argument onto the Riemann sphere
  */
-inline std::complex<var> proj(const std::complex<var>& z) {
+inline stan::math::complex<var> proj(const stan::math::complex<var>& z) {
   return internal::complex_proj(z);
 }
 

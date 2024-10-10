@@ -194,8 +194,8 @@ void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
  * @param tol[in] tolerance for comparison
  */
 template <typename T1, typename T2>
-void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
-                     const std::complex<T2>& z2,
+void expect_near_rel(const std::string& msg, const stan::math::complex<T1>& z1,
+                     const stan::math::complex<T2>& z2,
                      relative_tolerance tol = relative_tolerance(),
                      const char* x1_name = "x1", const char* x2_name = "x2") {
   expect_near_rel(msg, z1.real(), z2.real(), tol, x1_name, x2_name);
@@ -217,7 +217,7 @@ void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
  */
 template <typename T1, typename T2>
 void expect_near_rel(const std::string& msg, const T1& x1,
-                     const std::complex<T2>& z2,
+                     const stan::math::complex<T2>& z2,
                      relative_tolerance tol = relative_tolerance(),
                      const char* x1_name = "x1", const char* x2_name = "x2") {
   expect_near_rel(msg, x1, z2.real(), tol, x1_name, x2_name);
@@ -238,7 +238,7 @@ void expect_near_rel(const std::string& msg, const T1& x1,
  * @param tol[in] tolerance for comparison
  */
 template <typename T1, typename T2>
-void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
+void expect_near_rel(const std::string& msg, const stan::math::complex<T1>& z1,
                      const T2& x2,
                      relative_tolerance tol = relative_tolerance(),
                      const char* x1_name = "x1", const char* x2_name = "x2") {

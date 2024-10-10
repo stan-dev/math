@@ -85,7 +85,7 @@ inline auto asinh(const VarMat& x) {
  * @param[in] z argument
  * @return hyperbolic arcsine of the argument
  */
-inline std::complex<var> asinh(const std::complex<var>& z) {
+inline stan::math::complex<var> asinh(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_asinh(z);
 }
 

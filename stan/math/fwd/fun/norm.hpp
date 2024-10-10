@@ -16,7 +16,7 @@ namespace math {
  * @return phase squared magnitude of the argument
  */
 template <typename T>
-inline fvar<T> norm(const std::complex<fvar<T>>& z) {
+inline fvar<T> norm(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_norm(z);
 }
 

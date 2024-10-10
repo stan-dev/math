@@ -9,7 +9,7 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   s.write(3.2);
   s.write(-1);
 
-  s.write(std::complex<double>(-1.5, 15.75));
+  s.write(stan::math::complex<double>(-1.5, 15.75));
 
   s.write(std::vector<double>{10, 20, 30});
 
@@ -34,7 +34,7 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
 
   EXPECT_EQ(3.2, d.read(0.0));
   EXPECT_EQ(-1, d.read(0.0));
-  std::complex<double> w = d.read(std::complex<double>(1, 1));
+  stan::math::complex<double> w = d.read(stan::math::complex<double>(1, 1));
   EXPECT_EQ(-1.5, w.real());
   EXPECT_EQ(15.75, w.imag());
   std::vector<double> x = d.read(std::vector<double>{0, 0, 0});
@@ -62,7 +62,7 @@ TEST(testUnitMathSerializer, serialize) {
   EXPECT_EQ(0, xs.size());
 
   double a = 2;
-  std::complex<double> b(1, 2);
+  stan::math::complex<double> b(1, 2);
   std::vector<double> c{3, 4, 5};
   Eigen::MatrixXd d(2, 3);
   d << -1, -2, -3, -4, -5, -6;

@@ -6,7 +6,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <complex>
 
-namespace std {
+namespace stan {
+namespace math {
 
 /**
  * Specialization of the standard library complex number type for
@@ -36,7 +37,7 @@ class complex<stan::math::fvar<T>>
   complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
 
   template <typename U>
-  complex(const std::complex<U>& z)  // NOLINT(runtime/explicit)
+  complex(const stan::math::complex<U>& z)  // NOLINT(runtime/explicit)
       : base_t(z.real(), z.imag()) {}
 
   /**
@@ -60,13 +61,13 @@ class complex<stan::math::fvar<T>>
    * @return this
    */
   template <typename U, typename = stan::require_arithmetic_t<U>>
-  auto& operator=(const std::complex<U>& x) {
+  auto& operator=(const stan::math::complex<U>& x) {
     this->re_ = x.real();
     this->im_ = x.imag();
     return *this;
   }
 };
-
+}
 }  // namespace std
 
 #endif

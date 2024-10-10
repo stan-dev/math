@@ -9,7 +9,7 @@ TEST(MathMatrixPrimMat, singular_values) {
   using stan::math::matrix_d;
   using stan::math::singular_values;
   using stan::math::vector_d;
-  using compl_t = std::complex<double>;
+  using compl_t = stan::math::complex<double>;
   using matrix_c = Eigen::Matrix<compl_t, Eigen::Dynamic, Eigen::Dynamic>;
 
   matrix_d m0(0, 0);

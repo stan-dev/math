@@ -59,8 +59,8 @@ namespace internal {
  * @return hyperbolic arc sine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_asinh(const std::complex<V>& z) {
-  std::complex<double> y_d = asinh(value_of_rec(z));
+inline stan::math::complex<V> complex_asinh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = asinh(value_of_rec(z));
   auto y = log(z + sqrt(1 + z * z));
   return copysign(y, y_d);
 }

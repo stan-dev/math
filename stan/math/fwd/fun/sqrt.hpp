@@ -30,7 +30,7 @@ inline fvar<T> sqrt(const fvar<T>& x) {
  * @return square root of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> sqrt(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_sqrt(z);
 }
 

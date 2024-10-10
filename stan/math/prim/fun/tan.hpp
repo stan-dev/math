@@ -68,7 +68,7 @@ namespace internal {
  * @return tangent of the argument
  */
 template <typename V>
-inline std::complex<V> complex_tan(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_tan(const stan::math::complex<V>& z) {
   return neg_i_times(tanh(i_times(z)));
 }
 }  // namespace internal

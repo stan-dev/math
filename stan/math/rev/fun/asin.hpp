@@ -79,7 +79,7 @@ inline auto asin(const VarMat& x) {
  * @param[in] z argument
  * @return arc sine of the argument
  */
-inline std::complex<var> asin(const std::complex<var>& z) {
+inline stan::math::complex<var> asin(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_asin(z);
 }
 

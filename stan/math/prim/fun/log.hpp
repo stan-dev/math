@@ -76,7 +76,7 @@ namespace internal {
  * @return natural logarithm of the argument
  */
 template <typename V>
-inline std::complex<V> complex_log(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_log(const stan::math::complex<V>& z) {
   if ((is_nan(z.real()) && is_inf(z.imag()))
       || (is_inf(z.real()) && is_nan(z.imag()))) {
     return {INFTY, NOT_A_NUMBER};

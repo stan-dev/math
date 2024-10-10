@@ -31,13 +31,13 @@ void test_base() {
   expect_base<T, Eigen::Matrix<T, 1, -1>>();
 
   // complex types
-  expect_base<T, std::complex<T>>();
+  expect_base<T, stan::math::complex<T>>();
 
   // higher-level containers
   expect_base<T, std::vector<Eigen::Matrix<T, -1, -1>>>();
   expect_base<T, std::vector<Eigen::Matrix<T, -1, 1>>>();
   expect_base<T, std::vector<Eigen::Matrix<T, 1, -1>>>();
-  expect_base<T, std::vector<std::complex<T>>>();
+  expect_base<T, std::vector<stan::math::complex<T>>>();
 }
 
 TEST(mathMetaMix, baseType) {

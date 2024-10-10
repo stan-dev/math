@@ -56,15 +56,15 @@ inline fvar<T> operator*(const fvar<T>& x, double y) {
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>> operator*(
-    const std::complex<stan::math::fvar<T>>& x,
-    const std::complex<stan::math::fvar<T>>& y) {
+inline stan::math::complex<stan::math::fvar<T>> operator*(
+    const stan::math::complex<stan::math::fvar<T>>& x,
+    const stan::math::complex<stan::math::fvar<T>>& y) {
   return internal::complex_multiply(x, y);
 }
 
 /**
- * Return the product of std::complex<double> and
- * std::complex<fvar<T>> arguments.
+ * Return the product of stan::math::complex<double> and
+ * stan::math::complex<fvar<T>> arguments.
  *
  * @tparam value and tangent type for variables
  * @param[in] x first argument
@@ -72,14 +72,14 @@ inline std::complex<stan::math::fvar<T>> operator*(
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>> operator*(
-    const std::complex<double>& x, const std::complex<stan::math::fvar<T>>& y) {
+inline stan::math::complex<stan::math::fvar<T>> operator*(
+    const stan::math::complex<double>& x, const stan::math::complex<stan::math::fvar<T>>& y) {
   return internal::complex_multiply(x, y);
 }
 
 /**
- * Return the product of std::complex<double> and
- * std::complex<fvar<T>> arguments.
+ * Return the product of stan::math::complex<double> and
+ * stan::math::complex<fvar<T>> arguments.
  *
  * @tparam value and tangent type for variables
  * @param[in] x first argument
@@ -87,8 +87,8 @@ inline std::complex<stan::math::fvar<T>> operator*(
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<stan::math::fvar<T>> operator*(
-    const std::complex<stan::math::fvar<T>>& x, const std::complex<double>& y) {
+inline stan::math::complex<stan::math::fvar<T>> operator*(
+    const stan::math::complex<stan::math::fvar<T>>& x, const stan::math::complex<double>& y) {
   return internal::complex_multiply(x, y);
 }
 

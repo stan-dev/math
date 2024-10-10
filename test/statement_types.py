@@ -106,7 +106,7 @@ class ComplexVariable(CppStatement):
         """Generate c++"""
         scalar = overload_scalar[self.overload]
 
-        return "std::complex<{type}> {name} = {value};".format(
+        return "stan::math::complex<{type}> {name} = {value};".format(
             type=scalar, name=self.name, value=self.value
         )
 
@@ -500,7 +500,7 @@ class ExpressionVariable(CppStatement):
         scalar = overload_scalar[self._arg_overload]
         counter_op_name = "{name}_counter_op".format(name=self.name)
         value_type = (
-            "std::complex<" + scalar + ">"
+            "stan::math::complex<" + scalar + ">"
             if "complex_" in self._arg_stan_arg
             else scalar
         )

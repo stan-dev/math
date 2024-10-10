@@ -17,7 +17,7 @@ namespace math {
  * @return projection of the argument onto the Riemann sphere
  */
 template <typename T>
-inline std::complex<fvar<T>> proj(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> proj(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_proj(z);
 }
 

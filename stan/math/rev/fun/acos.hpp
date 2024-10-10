@@ -80,7 +80,7 @@ inline auto acos(const VarMat& x) {
  * @param x argument
  * @return arc cosine of the argument
  */
-inline std::complex<var> acos(const std::complex<var>& x) {
+inline stan::math::complex<var> acos(const stan::math::complex<var>& x) {
   return stan::math::internal::complex_acos(x);
 }
 

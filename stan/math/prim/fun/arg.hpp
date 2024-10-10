@@ -14,7 +14,7 @@ namespace math {
  * @return phase angle of the argument
  */
 template <typename V>
-inline V arg(const std::complex<V>& z) {
+inline V arg(const stan::math::complex<V>& z) {
   return std::arg(z);
 }
 
@@ -27,7 +27,7 @@ namespace internal {
  * @return phase angle of the argument
  */
 template <typename V>
-inline V complex_arg(const std::complex<V>& z) {
+inline V complex_arg(const stan::math::complex<V>& z) {
   using std::atan2;
   return atan2(z.imag(), z.real());
 }

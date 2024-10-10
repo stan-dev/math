@@ -13,7 +13,7 @@ TEST(mathMixMatFun, conj) {
 template <typename T>
 void test_vectorized_conj() {
   using stan::math::value_of_rec;
-  using complex_t = std::complex<T>;
+  using complex_t = stan::math::complex<T>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;
   complex_matrix A(2, 2);
   A << complex_t(T(0), T(1)), complex_t(T(2), T(3)), complex_t(T(4), T(5)),
@@ -26,8 +26,8 @@ void test_vectorized_conj() {
 
   std::vector<complex_t> v_conj = stan::math::conj(v);
   for (int i = 0; i < v.size(); ++i) {
-    std::complex<double> vi = value_of_rec(v_conj[i]);
-    std::complex<double> ci = value_of_rec(stan::math::conj(v[i]));
+    stan::math::complex<double> vi = value_of_rec(v_conj[i]);
+    stan::math::complex<double> ci = value_of_rec(stan::math::conj(v[i]));
     EXPECT_FLOAT_EQ(vi.real(), ci.real());
     EXPECT_FLOAT_EQ(vi.imag(), ci.imag());
   }

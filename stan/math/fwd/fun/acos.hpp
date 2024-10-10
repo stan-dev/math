@@ -26,7 +26,7 @@ inline fvar<T> acos(const fvar<T>& x) {
  * @return arc cosine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> acos(const std::complex<fvar<T>>& x) {
+inline stan::math::complex<fvar<T>> acos(const stan::math::complex<fvar<T>>& x) {
   return internal::complex_acos(x);
 }
 

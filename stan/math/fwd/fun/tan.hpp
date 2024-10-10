@@ -24,7 +24,7 @@ inline fvar<T> tan(const fvar<T>& x) {
  * @return tangent of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> tan(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> tan(const stan::math::complex<fvar<T>>& z) {
   return stan::math::internal::complex_tan(z);
 }
 

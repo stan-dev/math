@@ -16,7 +16,7 @@ namespace math {
  * @return phase angle of the argument
  */
 template <typename T>
-inline fvar<T> arg(const std::complex<fvar<T>>& z) {
+inline fvar<T> arg(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_arg(z);
 }
 

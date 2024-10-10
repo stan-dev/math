@@ -25,7 +25,7 @@ inline fvar<T> atan(const fvar<T>& x) {
  * @return arc tanget of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> atan(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> atan(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_atan(z);
 }
 

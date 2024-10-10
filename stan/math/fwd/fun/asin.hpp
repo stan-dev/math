@@ -26,7 +26,7 @@ inline fvar<T> asin(const fvar<T>& x) {
  * @return arc sine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> asin(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> asin(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_asin(z);
 }
 

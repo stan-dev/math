@@ -70,7 +70,7 @@ namespace internal {
  * @return arc tangent of the argument
  */
 template <typename V>
-inline std::complex<V> complex_atan(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_atan(const stan::math::complex<V>& z) {
   return neg_i_times(atanh(i_times(z)));
 }
 }  // namespace internal

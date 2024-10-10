@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_CORE_COMPLEX_BASE_HPP
 #define STAN_MATH_PRIM_CORE_COMPLEX_BASE_HPP
 
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <complex>
 
 namespace stan {
 namespace math {
 
+template <typename T>
+class complex;
 /**
  * Base class for complex numbers.  Extending classes must be of
  * of the form `complex<ValueType>`.
@@ -25,7 +25,7 @@ class complex_base {
   /**
    * Derived complex type used for function return types
    */
-  using complex_type = std::complex<value_type>;
+  using complex_type = stan::math::complex<value_type>;
 
   /**
    * Construct a complex base with zero real and imaginary parts.
@@ -90,7 +90,7 @@ class complex_base {
    * @param[in] re real part
    * @return this
    */
-  template <typename U, typename = require_stan_scalar_t<U>>
+  template <typename U, std::enable_if_t<!std::is_same_v<std::decay_t<U>, complex_type>>* = nullptr>
   complex_type& operator=(U&& re) {
     re_ = re;
     im_ = 0;
@@ -118,7 +118,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator+=(const std::complex<U>& other) {
+  complex_type& operator+=(const stan::math::complex<U>& other) {
     re_ += other.real();
     im_ += other.imag();
     return derived();
@@ -145,7 +145,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator-=(const std::complex<U>& other) {
+  complex_type& operator-=(const stan::math::complex<U>& other) {
     re_ -= other.real();
     im_ -= other.imag();
     return derived();
@@ -173,7 +173,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator*=(const std::complex<U>& other) {
+  complex_type& operator*=(const stan::math::complex<U>& other) {
     value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -202,8 +202,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator/=(const std::complex<U>& other) {
-    using stan::math::square;
+  complex_type& operator/=(const stan::math::complex<U>& other) {
     value_type sum_sq_im
         = (other.real() * other.real()) + (other.imag() * other.imag());
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
@@ -230,6 +229,9 @@ class complex_base {
    */
   complex_type& derived() { return static_cast<complex_type&>(*this); }
 };
+
+template <>
+class complex<double> : std::complex<double> {};
 
 }  // namespace math
 }  // namespace stan

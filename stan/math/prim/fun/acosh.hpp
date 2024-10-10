@@ -100,8 +100,8 @@ namespace internal {
  * @return hyperbolic arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acosh(const std::complex<V>& z) {
-  std::complex<double> y_d = acosh(value_of_rec(z));
+inline stan::math::complex<V> complex_acosh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = acosh(value_of_rec(z));
   auto y = log(z + sqrt(z * z - 1));
   return copysign(y, y_d);
 }

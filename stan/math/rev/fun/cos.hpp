@@ -70,7 +70,7 @@ inline auto cos(const VarMat& a) {
  * @param[in] z argument
  * @return cosine of the argument
  */
-inline std::complex<var> cos(const std::complex<var>& z) {
+inline stan::math::complex<var> cos(const stan::math::complex<var>& z) {
   return stan::math::internal::complex_cos(z);
 }
 

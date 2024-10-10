@@ -61,7 +61,7 @@ inline auto log(const var_value<T>& a) {
  * @param z complex argument
  * @return natural logarithm of argument
  */
-inline std::complex<var> log(const std::complex<var>& z) {
+inline stan::math::complex<var> log(const stan::math::complex<var>& z) {
   return internal::complex_log(z);
 }
 

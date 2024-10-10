@@ -68,7 +68,7 @@ namespace internal {
  * @return hyperbolic tangent of the argument
  */
 template <typename V>
-inline std::complex<V> complex_tanh(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_tanh(const stan::math::complex<V>& z) {
   using std::exp;
   auto exp_z = exp(z);
   auto exp_neg_z = exp(-z);

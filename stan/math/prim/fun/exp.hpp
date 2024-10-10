@@ -71,11 +71,11 @@ namespace internal {
  * @tparam V value type (must be Stan autodiff type)
  * @param z complex number
  * @return natural exponentiation of specified complex number
- * @see documentation for `std::complex` for boundary condition and
+ * @see documentation for `stan::math::complex` for boundary condition and
  * branch cut details
  */
 template <typename V>
-inline std::complex<V> complex_exp(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_exp(const stan::math::complex<V>& z) {
   if (is_inf(z.real()) && z.real() > 0) {
     if (is_nan(z.imag()) || z.imag() == 0) {
       // (+inf, nan), (+inf, 0)

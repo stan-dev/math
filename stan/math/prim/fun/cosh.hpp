@@ -68,7 +68,7 @@ namespace internal {
  * @return hyperbolic cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_cosh(const std::complex<V>& z) {
+inline stan::math::complex<V> complex_cosh(const stan::math::complex<V>& z) {
   return 0.5 * (exp(z) + exp(-z));
 }
 }  // namespace internal

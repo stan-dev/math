@@ -15,7 +15,7 @@ namespace math {
  * @return argument
  */
 template <typename U, require_autodiff_t<U>>
-inline std::complex<U> operator+(const std::complex<U>& x) {
+inline stan::math::complex<U> operator+(const stan::math::complex<U>& x) {
   return x;
 }
 

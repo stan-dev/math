@@ -74,7 +74,7 @@ namespace internal {
  * @return arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acos(const std::complex<V>& x) {
+inline stan::math::complex<V> complex_acos(const stan::math::complex<V>& x) {
   return 0.5 * pi() - asin(x);
 }
 }  // namespace internal

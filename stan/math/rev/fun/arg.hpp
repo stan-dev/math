@@ -15,7 +15,7 @@ namespace math {
  * @param[in] z argument
  * @return phase angle of the argument
  */
-inline var arg(const std::complex<var>& z) { return internal::complex_arg(z); }
+inline var arg(const stan::math::complex<var>& z) { return internal::complex_arg(z); }
 
 }  // namespace math
 }  // namespace stan

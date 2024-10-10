@@ -25,7 +25,7 @@ inline fvar<T> asinh(const fvar<T>& x) {
  * @return hyperbolic arcsine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> asinh(const std::complex<fvar<T>>& z) {
+inline stan::math::complex<fvar<T>> asinh(const stan::math::complex<fvar<T>>& z) {
   return internal::complex_asinh(z);
 }
 

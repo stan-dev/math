@@ -94,7 +94,7 @@ namespace internal {
  * @return absolute value of the argument
  */
 template <typename V>
-inline V complex_abs(const std::complex<V>& z) {
+inline V complex_abs(const stan::math::complex<V>& z) {
   return hypot(z.real(), z.imag());
 }
 }  // namespace internal
