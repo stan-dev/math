@@ -332,13 +332,13 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = fmin(exp(log_probability_distribution(a, v, w)),
+    const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
                            std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv
-        = ((fabs(v) == 0) ? 0 : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v);
-    prob_deriv = prob_deriv * prob;
+        = ((fabs(v) == 0) ? ret_t(0.0) : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v);
+    prob_deriv *= prob;
     ans = (-2 / a - v * w) * (cdf - prob) + ans * pia2 * evaw;
     return prob_deriv + ans;
   }
@@ -445,12 +445,12 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = fmin(exp(log_probability_distribution(a, v, w)),
+    const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
                            std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
     const auto pia2 = 2 * pi() / square(a);
-    auto prob_deriv = is_inf(dav * a) ? NEGATIVE_INFTY : dav * a;
-    prob_deriv = prob_deriv * prob;
+    auto prob_deriv = is_inf(dav * a) ? ret_t(NEGATIVE_INFTY) : dav * a;
+    prob_deriv *= prob;
     ans = (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * pia2 * evaw;
     return -1 * (prob_deriv + ans);
   }
@@ -564,7 +564,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
       ans += -last * factor;
     }
     const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
-    const auto prob = fmin(exp(log_probability_distribution(a, v, w)),
+    const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
                            std::numeric_limits<ret_t>::max());
 
     // Calculate the probability term 'P' on log scale
@@ -585,7 +585,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
 
     const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv = dav;
-    prob_deriv = prob_deriv * prob;
+    prob_deriv *= prob;
     ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
     return -1 * (prob_deriv + ans);
   }
