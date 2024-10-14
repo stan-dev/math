@@ -51,7 +51,7 @@ inline void check_range(const char* function, const char* name, int max,
   STAN_NO_RANGE_CHECKS_RETURN;
   if (!((index >= stan::error_index::value)
         && (index < max + stan::error_index::value))) {
-    [&]() STAN_COLD_PATH { out_of_range(function, max, index, error_msg); }();
+    [&]() STAN_COLD_PATH { out_of_range(function, max, index, error_msg, ""); }();
   }
 }
 
@@ -70,7 +70,7 @@ inline void check_range(const char* function, const char* name, int max,
   STAN_NO_RANGE_CHECKS_RETURN;
   if (!((index >= stan::error_index::value)
         && (index < max + stan::error_index::value))) {
-    [&]() STAN_COLD_PATH { out_of_range(function, max, index); }();
+    [&]() STAN_COLD_PATH { out_of_range(function, max, index, "", ""); }();
   }
 }
 

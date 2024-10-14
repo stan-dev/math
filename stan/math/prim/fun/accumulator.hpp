@@ -20,7 +20,7 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T, typename = void>
+template <typename T, typename>
 class accumulator {
  private:
   std::vector<T> buf_;
@@ -36,7 +36,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_stan_scalar_t<S>>
+  template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
     buf_.push_back(x);
   }

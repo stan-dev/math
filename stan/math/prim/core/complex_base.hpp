@@ -90,7 +90,7 @@ class complex_base {
    * @param[in] re real part
    * @return this
    */
-  template <typename U, typename = require_stan_scalar_t<U>>
+  template <typename U, require_stan_scalar_t<U>* = nullptr>
   complex_type& operator=(U&& re) {
     re_ = re;
     im_ = 0;

@@ -41,7 +41,7 @@ namespace math {
  * @return Sum of terms
  */
 template <typename ReduceFunction, typename Vec,
-          typename = require_vector_like_t<Vec>, typename... Args>
+          require_vector_like_t<Vec>* = nullptr, typename... Args>
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;

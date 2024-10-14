@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_MIX_HPP
 #define STAN_MATH_MIX_HPP
 
+#ifndef STAN_MATH_FORWARD_DECL_HPP
 #include <stan/math/forward_decls.hpp>
+#endif
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/mix/fun.hpp>
 #include <stan/math/mix/functor.hpp>

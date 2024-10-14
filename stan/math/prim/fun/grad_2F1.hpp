@@ -327,7 +327,7 @@ auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
  */
 template <typename T1, typename T2, typename T3, typename T_z>
 auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
-              double precision = 1e-14, int max_steps = 1e6) {
+              double precision, int max_steps) {
   return grad_2F1<false>(a1, a2, b1, z, precision, max_steps);
 }
 

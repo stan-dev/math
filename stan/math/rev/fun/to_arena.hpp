@@ -22,7 +22,7 @@ namespace math {
  * @param a argument
  * @return argument
  */
-template <typename T, require_not_same_t<T, arena_t<T>>* = nullptr,
+template <typename T, require_not_arena_t<T>* = nullptr,
           require_not_container_t<T>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr>
 inline arena_t<T> to_arena(T&& a) {
@@ -43,7 +43,7 @@ inline arena_t<T> to_arena(T&& a) {
  * @param a argument
  * @return argument
  */
-template <typename T, require_same_t<T, arena_t<T>>* = nullptr,
+template <typename T, require_arena_t<T>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr,
           require_not_std_vector_t<T>* = nullptr>
 inline std::remove_reference_t<T> to_arena(T&& a) {
@@ -63,7 +63,7 @@ inline std::remove_reference_t<T> to_arena(T&& a) {
  * @return argument copied/evaluated on AD stack
  */
 template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_same_t<T, arena_t<T>>* = nullptr>
+          require_not_arena_t<T>* = nullptr>
 inline arena_t<T> to_arena(const T& a) {
   return arena_t<T>(a);
 }

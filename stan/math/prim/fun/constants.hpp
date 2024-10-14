@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_CONSTANTS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/inv.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <limits>

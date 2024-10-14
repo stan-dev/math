@@ -97,7 +97,7 @@ inline int get_num_threads() {
  * @throws std::runtime_error if n_threads (defaults to zero) is not provided
  * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
-inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
+inline auto& init_threadpool_tbb(int n_threads) {
   int tbb_max_threads = 1;
 #ifdef STAN_THREADS
   if (n_threads == 0) {
@@ -142,7 +142,7 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
  * @throws std::runtime_error if n_threads (defaults to zero) is not provided
  * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
-inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
+inline auto& init_threadpool_tbb(int n_threads) {
   int tbb_max_threads = 1;
 #ifdef STAN_THREADS
   if (n_threads == 0) {

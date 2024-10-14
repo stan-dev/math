@@ -39,7 +39,7 @@ namespace opencl {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-template <typename T, typename = require_floating_point_t<T>>
+template <typename T, require_floating_point_t<T>* = nullptr>
 inline void cholesky_decompose(matrix_cl<T>& A) {
   if (A.rows() == 0) {
     return;

@@ -86,9 +86,9 @@ class trace_gen_quad_form_vari : public vari {
 }  // namespace internal
 
 template <typename Td, typename Ta, typename Tb,
-          typename = require_any_var_t<value_type_t<Td>, value_type_t<Ta>,
-                                       value_type_t<Tb>>,
-          typename = require_all_eigen_t<Td, Ta, Tb>>
+          require_any_var_t<value_type_t<Td>, value_type_t<Ta>,
+                                       value_type_t<Tb>>* = nullptr,
+          require_all_eigen_t<Td, Ta, Tb>* = nullptr>
 inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
   using Td_scal = value_type_t<Td>;
   using Ta_scal = value_type_t<Ta>;

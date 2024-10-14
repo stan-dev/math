@@ -1,9 +1,11 @@
-import sys
 import clang.cindex
-import glob
 import errno
+import glob
 import os
+import re
+import sys
 from argparse import ArgumentParser, RawTextHelpFormatter
+from clang.cindex import Config, Index, CursorKind
 
 
 def silentremove(filename):
@@ -12,6 +14,105 @@ def silentremove(filename):
     except OSError as e:  # this would be "except OSError, e:" before Python 2.6
         if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
             raise  # re-raise exception if a different error occurred
+
+import clang.cindex
+
+def extract_function_template_declaration(cursor):
+    """
+    Extracts the function declaration from a Cursor object of kind FUNCTION_TEMPLATE.
+
+    Args:
+        cursor (clang.cindex.Cursor): The FUNCTION_TEMPLATE cursor.
+
+    Returns:
+        str: The reconstructed function declaration as a string.
+    """
+
+    def get_template_parameters(cursor):
+        template_params = []
+        for child in cursor.get_children():
+            if child.kind == clang.cindex.CursorKind.TEMPLATE_TYPE_PARAMETER:
+                # Template type parameter
+                param_name = child.spelling
+                # Check for default type
+                default_type = None
+                for gc in child.get_children():
+                    if gc.kind == clang.cindex.CursorKind.TYPE_REF:
+                        default_type = gc.spelling
+                if default_type:
+                    template_params.append(f"typename {param_name} = {default_type}")
+                else:
+                    template_params.append(f"typename {param_name}")
+            elif child.kind == clang.cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER:
+                # Non-type template parameter
+                param_type = child.type.spelling
+                param_name = child.spelling
+                template_params.append(f"{param_type} {param_name}")
+            elif child.kind == clang.cindex.CursorKind.TEMPLATE_TEMPLATE_PARAMETER:
+                # Template template parameter
+                param_name = child.spelling
+                template_params.append(f"template <class...> class {param_name}")
+        return template_params
+
+    def get_function_decl(cursor):
+        if cursor.kind in [clang.cindex.CursorKind.FUNCTION_DECL,
+                           clang.cindex.CursorKind.CXX_METHOD]:
+            return cursor
+        for child in cursor.get_children():
+            result = get_function_decl(child)
+            if result is not None:
+                return result
+        return None
+    def get_function_declaration(func_decl_cursor):
+        # Return type
+        return_type = func_decl_cursor.result_type.spelling
+
+        # Function name
+        func_name = func_decl_cursor.spelling
+
+        # Function parameters
+        params = []
+        for param_cursor in func_decl_cursor.get_arguments():
+            param_type = param_cursor.type.spelling
+            param_name = param_cursor.spelling
+            params.append(f"{param_type} {param_name}")
+
+        # Function qualifiers (const, noexcept)
+        func_qualifiers = ''
+        if func_decl_cursor.is_const_method():
+            func_qualifiers += ' const'
+        if func_decl_cursor.exception_specification_kind == clang.cindex.ExceptionSpecificationKind.BasicNoexcept:
+            func_qualifiers += ' noexcept'
+
+        # Storage class (static, virtual)
+        storage_class = ''
+        if func_decl_cursor.is_static_method():
+            storage_class = 'static '
+        elif func_decl_cursor.is_virtual_method():
+            storage_class = 'virtual '
+
+        return storage_class, return_type, func_name, params, func_qualifiers
+
+    # Extract template parameters
+    template_params = get_template_parameters(cursor)
+
+    # Find the function declaration cursor
+    func_decl_cursor = get_function_decl(cursor)
+    if func_decl_cursor is None:
+        raise ValueError("Function declaration not found in the FUNCTION_TEMPLATE cursor.")
+
+    # Extract function declaration components
+    storage_class, return_type, func_name, params, func_qualifiers = get_function_declaration(func_decl_cursor)
+
+    # Build the function declaration string
+    template_str = f"template <{', '.join(template_params)}>\n" if template_params else ""
+    params_str = ', '.join(params)
+    func_decl_str = f"{storage_class}{return_type} {func_name}({params_str}){func_qualifiers};"
+
+    # Combine template and function declaration
+    full_decl = template_str + func_decl_str
+
+    return full_decl
 
 
 def processCLIArgs():
@@ -127,238 +228,86 @@ def get_functions_and_classes_in_namespace(
     return functions, classes
 
 
-def generate_forward_declaration_from_tokens(tokens):
-    """
-    Generate a forward declaration from a list of tokens.
-
-    Args:
-      tokens (list of tuples): List of (spelling, kind) tuples representing tokens.
-      file_name (str): The name of the file where the function is declared.
-      line_number (int): The line number where the function is declared.
-
-    Returns:
-      str: The forward declaration as a formatted string.
-    """
-    code_tokens = []
-    nesting_level = 0
-    in_template_parameter_list = False
-    in_function_parameter_list = False
-    i = 0
-    # Collect tokens up to the first '{' or ';' (excluding it)
-    while i < len(tokens):
-        spelling, kind = tokens[i]
-        if spelling == "{" or spelling == ";":
-            break
-        code_tokens.append((spelling, kind))
-        i += 1
-    print("Token Full: ", [x[0] for x in code_tokens])
-    # Now, reconstruct the code from code_tokens with appropriate formatting
-    code_lines = []
-    current_line = ""
-    indent = ""
-    nesting_level = 0
-    in_template_parameter_list = False
-    in_default_value = False
-    default_nesting_level = 0
-    i = 0
-    template_str = ""
-    signature_str = ""
-    debug_function_decl = True
-    if debug_function_decl:
-        print("BEGIN\n\n\n")
-    first_entry = True
-    while i < len(code_tokens):
-        if debug_function_decl:
-            print("-------------------")
-            print("            I: ", i)
-            print("Code Tokens:   ", code_tokens[i])
-            print("template_str:  ", template_str)
-            print("signature_str: ", signature_str)
-            print("in_template_p: ", in_template_parameter_list)
-            print("nesting_level: ", nesting_level)
-            print("in_default_va: ", in_default_value)
-            print("default_nesti: ", default_nesting_level)
-            if code_tokens[i][0] == ">":
-                import pdb
-#                pdb.set_trace()
-        spelling, kind = code_tokens[i]
-        # Handle 'template' keyword
-        if spelling == "internal":
-            import pdb; pdb.set_trace()
-        if spelling == "template":
-            template_str += "template "
-            i += 1
-            continue
-        # Handle entering template parameter list
-        if spelling == "<" and (i > 0 and code_tokens[i - 1][0] == "template"):
-            in_template_parameter_list = True
-            nesting_level += 1
-            template_str += "<"
-            i += 1
-            continue
-        if not in_template_parameter_list and first_entry:
-            first_entry = False
-            if debug_function_decl:
-                print("----\n\nENTERED FUNCTION DECLARATION----\n\n")
-        # Handle template parameter list
-        if in_template_parameter_list and in_default_value:
-            match spelling:
-                case "<":
-                    default_nesting_level += 1
-                    i += 1
-                    continue
-                case ">":
-                    # If we never nest (* = nullptr>) then we are done with the default value
-                    if default_nesting_level == 0:
-                        in_default_value = False
-                        nesting_level -= 1
-                    else:
-                        default_nesting_level -= 1
-                    if nesting_level == 0:
-                        template_str += ">"
-                        in_template_parameter_list = False
-                    i += 1
-                    continue
-                case ">>":
-                    if default_nesting_level == 0:
-                        in_default_value = False
-                        nesting_level -= 2
-                        if nesting_level == 0:
-                            template_str += ">>"
-                            in_template_parameter_list = False
-                    else:
-                        default_nesting_level -= 1
-                        # One of them could be in the default value
-                        if default_nesting_level == 0:
-                            in_default_value = False
-                            nesting_level -= 1
-                            if nesting_level == 0:
-                                template_str += ">"
-                                in_template_parameter_list = False
-                    i += 1
-                    continue
-                case ">" if default_nesting_level == 0:
-                    in_default_value = False
-                    template_str += ">"
-                    nesting_level -= 1
-                    if nesting_level == 0:
-                        in_template_parameter_list = False
-                    i += 1
-                    continue
-                case _:
-                    i += 1
-                    continue
-        elif in_template_parameter_list:
-            match kind:
-                case clang.cindex.TokenKind.IDENTIFIER:
-                    if code_tokens[i + 1][0] == "::":
-                        template_str += spelling + "::"
-                        i += 1
-                    else:
-                        template_str += spelling + " "
-
-                case clang.cindex.TokenKind.KEYWORD:
-                    match spelling:
-                        case "typename" if code_tokens[i + 1][0] == "...":
-                            template_str += spelling + "... "
-                            i += 1
-                        case "sizeof" if code_tokens[i + 1][0] == "..." and code_tokens[i + 2][0] == "(":
-                            template_str += spelling + "...("
-                            i += 2
-                        case _:
-                            template_str += spelling + " "
-                case clang.cindex.TokenKind.PUNCTUATION:
-                    match spelling:
-                        case "<":
-                            nesting_level += 1
-                            template_str += "<"
-                        case ">":
-                            nesting_level -= 1
-                            template_str += ">"
-                            if nesting_level == 0:
-                                in_template_parameter_list = False
-                        case ">>":
-                            nesting_level -= 2
-                            template_str += ">>"
-                            if nesting_level == 0:
-                                in_template_parameter_list = False
-                        case ",":
-                            # Add comma and line break
-                            template_str += ",\n  "
-                        case "=":
-                            in_default_value = True
-                        case _:
-                            template_str += spelling
-                case _:
-                    if (
-                        kind == clang.cindex.TokenKind.PUNCTUATION
-                        or (kind == clang.cindex.TokenKind.IDENTIFIER)
-                    ):
-                        template_str += spelling
-                    else:
-                        template_str += spelling + " "
-            i += 1
-            continue
-        # Handle function declaration
-        else:
-            match spelling:
-                case "(":
-                    # Start of function parameter list
-                    in_function_parameter_list = True
-                    signature_str += "("
-                case ")":
-                    # End of function parameter list
-                    in_function_parameter_list = False
-                    signature_str += ")"
-                case "," if in_function_parameter_list:
-                    # Function parameter separator
-                    signature_str += ", "
-                case _:
-                    if (
-                        kind == clang.cindex.TokenKind.KEYWORD
-                        or kind == clang.cindex.TokenKind.IDENTIFIER
-                    ):
-                        signature_str += spelling + " "
-                    else:
-                        signature_str += spelling
-            i += 1
-            continue
-    # Clean up extra spaces
-    if debug_function_decl:
-        print("Template Str: ", template_str)
-        print("Signature Str: ", signature_str)
-    current_line = template_str + "\n" + signature_str
-    # Ensure it ends with a semicolon
-    if not current_line.endswith(";"):
-        current_line += ";"
-    # Add comment for file and line number
-    forward_declaration = current_line
-    return forward_declaration
-
-
 def generate_forward_declaration(function_node):
+    # Skip functions with default values or other manually specified forward declarations
+    if function_node.spelling in ["init_threadpool_tbb", 
+                                  "finite_diff_grad_hessian",
+                                    "grad_reg_inc_gamma", 
+                                    "grad_reg_lower_inc_gamma",
+                                    "grad_pFq",
+                                    "grad_2F1"]:
+        return ""
     # Get the start of the function declaration
     start = function_node.extent.start
     # Find the location where the function body starts ('{' or ';')
     tokens = list(function_node.get_tokens())
     body_start = None
     do_debug = False
-    if function_node.spelling == "check_square":
-        do_debug = True
-        import pdb
-        pdb.set_trace()
-    sentinal = 0
-    raw_tokens = [(token.spelling, token.kind) for token in tokens]
-    forward_decl = generate_forward_declaration_from_tokens(raw_tokens)
+    # Get the start of the class/struct declaration
+    start = function_node.extent.start
+    # Find the location where the class/struct body starts ('{' or ';')
+    tokens = list(function_node.get_tokens())
+    body_start = None
+    token_full = ""
+    do_debug = False
+    if function_node.spelling.find("unnamed") > 0:
+        return ""
+    
+    for i in range(len(tokens)):
+        token = tokens[i]
+        token_full += token.spelling
+        # Look for the first '{', ';', or ' : ' to show end of class/struct declaration
+        if (
+            token.spelling == "{"
+            or token.spelling == ";"
+            or (token.spelling == ":" and tokens[i + 1].spelling != ":")
+            or (i > 0 and token.spelling == ":" and tokens[i - 1].spelling != ":")
+        ):
+            body_start = token.location
+            break
+#    print("Token Full: ", token_full)
+    if body_start is None:
+        # If no body is found, use the end of the class node
+        body_start = function_node.extent.end
+    # Ensure that the start and body_start are in the same file
+    if start.file.name != body_start.file.name:
+        raise Exception("Start and body_start are in different files")
+    # Read the source code between start and body_start
     file_name = start.file.name
-    forward_declaration = f"// {file_name}:{start.line}\n" + forward_decl
-    # Add a semicolon if necessary
-    if do_debug:
-        print("Forward Declaration: ", forward_declaration)
-        import pdb
-        pdb.set_trace()
+    with open(file_name, "r") as f:
+        code = f.read()
+    start_offset = start.offset
+    end_offset = body_start.offset
+    # Add comment for file and line number
+    while code[start_offset] != "\n":
+        start_offset -= 1
+    while code[end_offset] != "{":
+        end_offset -= 1
+    forward_declaration = code[start_offset:end_offset].strip()
+#    import pdb; pdb.set_trace()
     if not forward_declaration.endswith(";"):
         forward_declaration += ";"
+    raw_tokens = [(token.spelling, token.kind) for token in tokens]
+    has_default_value = any([x[0].strip() == "=" for x in raw_tokens])
+    forward_declaration = forward_declaration.replace("* = nullptr", "*")
+    forward_declaration = forward_declaration.replace(" = void", "")
+    forward_declaration = forward_declaration.replace(" = double", "")
+    forward_declaration = forward_declaration.replace(" = std::tuple<>", "")
+    base_pattern = r"((?:[^<>]++|<[^<>]*>)*?)"
+    forward_declaration = re.sub(r"= return_type_t<"+ base_pattern + r">,", ",", forward_declaration)
+    forward_declaration = re.sub(r"= scalar_type_t<"+ base_pattern + r">,", ",", forward_declaration)
+    forward_declaration = re.sub(r"= boost::optional<"+ base_pattern + r">,", ",", forward_declaration)
+    forward_declaration = re.sub(r"= promote_scalar_t<"+ base_pattern + r">,", ",", forward_declaration)
+    forward_declaration = re.sub(r"= !is_constant<"+ base_pattern + r">::value,", ",", forward_declaration)
+    forward_declaration = re.sub(r"= return_type_t<"+ base_pattern + r">,", ",", forward_declaration)
+    forward_declaration = f"// {file_name}:{start.line}\n" + forward_declaration
+        # Regular expression pattern for matching `return_type_t<...>` with nested brackets
+    # Replace all matches of `return_type_t<...>` with an empty string
+    # Add a semicolon if necessary
+    if do_debug:# or function_node.spelling == "zero_adjoints":
+        print("Function Decl: \n", forward_declaration)
+        import pdb
+        pdb.set_trace()
     return forward_declaration
 
 
@@ -370,12 +319,8 @@ def generate_class_forward_declaration(class_node):
     body_start = None
     token_full = ""
     do_debug = False
-    if class_node.spelling == "index_type" and False:
-        do_debug = True
-        import pdb
-        pdb.set_trace()
     if class_node.spelling.find("unnamed") > 0:
-        return ""
+        return ""    
     for i in range(len(tokens)):
         token = tokens[i]
         token_full += token.spelling
@@ -404,12 +349,20 @@ def generate_class_forward_declaration(class_node):
     # Add comment for file and line number
     forward_declaration = f"// {file_name}:{start.line}\n"
     forward_declaration += code[start_offset:end_offset].strip()
+    if not forward_declaration.endswith(";"):
+        forward_declaration += ";"
+    raw_tokens = [(token.spelling, token.kind) for token in tokens]
+    has_default_value = any([x[0].strip() == "=" for x in raw_tokens])
+    forward_declaration = forward_declaration.replace(" = void", "")
+    forward_declaration = forward_declaration.replace(" = double", "")
+    forward_declaration = forward_declaration.replace(" = std::tuple<>", "")
+    forward_declaration = re.sub(r"= scalar_type_t<[^>]+?>", "", forward_declaration)
+    forward_declaration = forward_declaration.replace(" final;", ";")
+    
     # Add a semicolon if necessary
     if do_debug:
         import pdb
         pdb.set_trace()
-    if not forward_declaration.endswith(";"):
-        forward_declaration += ";"
     return forward_declaration
 
 
@@ -418,22 +371,43 @@ def main(inputs):
     base_path = inputs.input_base_path
     filename = inputs.math_path + inputs.input_file
     print("Parsing: ", filename)
-    args = [
+    comp_args = [
         "-std=c++17",
         "-D_REENTRANT",
         "-DBOOST_DISABLE_ASSERTS",
         "-DSTAN_THREADS",
+        "-DSTAN_MATH_FORWARD_DECL_HPP",
+        "-fparse-all-comments",
         "-O0",
         "-g",
+        "-x", "c++",
+        "-fno-delayed-template-parsing",
         "-I" + base_path,
-        "-I" + base_path + "/lib/tbb_2020.3/include",
-        "-I" + base_path + "/lib/eigen_3.4.0",
-        "-I" + base_path + "/lib/boost_1.84.0",
-        "-I" + base_path + "/lib/sundials_6.1.1/include",
-        "-I" + base_path + "/lib/sundials_6.1.1/src/sundials",
+        "-I" + base_path + "lib/tbb_2020.3/include",
+        "-I" + base_path + "lib/eigen_3.4.0",
+        "-I" + base_path + "lib/boost_1.84.0",
+        "-I" + base_path + "lib/sundials_6.1.1/include",
+        "-I" + base_path + "lib/sundials_6.1.1/src/sundials",
     ]  # Add any necessary compiler flags here
-    index = clang.cindex.Index.create()
-    translation_unit = index.parse(filename, args=args)
+    print("args: ", comp_args)
+    silentremove(inputs.output_file)
+    #index = clang.cindex.Index.create(excludeDecls=False)
+    options = (
+    clang.cindex.TranslationUnit.PARSE_INCOMPLETE |
+    clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD |
+    clang.cindex.TranslationUnit.PARSE_PRECOMPILED_PREAMBLE |
+    clang.cindex.TranslationUnit.PARSE_INCLUDE_BRIEF_COMMENTS_IN_CODE_COMPLETION |
+    clang.cindex.TranslationUnit.PARSE_CACHE_COMPLETION_RESULTS
+    )
+    try:
+        translation_unit = clang.cindex.TranslationUnit.from_source(filename, comp_args, options=options)
+    except Exception as e:
+        import pdb; pdb.set_trace()
+        print(f"Error parsing {filename}: {e}")
+        return
+    for diag in translation_unit.diagnostics:
+        print("Diagnostic:\n")
+        print(diag)
     functions, classes = get_functions_and_classes_in_namespace(
         translation_unit,
         inputs.math_path,
@@ -441,33 +415,26 @@ def main(inputs):
         debug_class_nodes=inputs.debug_classes,
     )
     # Open the output file and write the forward declarations
-    silentremove(inputs.output_file)
     with open(inputs.output_file, "w") as output_file:
         output_file.write(
             """
 #ifndef STAN_MATH_FORWARD_DECL_HPP
 #define STAN_MATH_FORWARD_DECL_HPP
-#include <type_traits>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/manual_forward_decls.hpp>
 namespace stan {
 namespace math {
-namespace internal {
-struct nonexisting_adjoint;
-template <typename T, typename S, typename Enable>
-class empty_broadcast_array;
-template <typename T, typename F>
-struct callback_vari;
-template <typename ReturnType, typename Enable, typename... Ops>
-class partials_propagator;
-} // namespace internal
 \n"""
         )
         for class_node in classes:
             forward_decl = generate_class_forward_declaration(class_node)
             output_file.write(forward_decl + "\n\n")
         for function in functions:
-            forward_decl = generate_forward_declaration(function)
+            try:
+                function_declaration = extract_function_template_declaration(function)
+                print(function_declaration)
+            except Exception as e:
+                forward_decl = generate_forward_declaration(function)
+                pass
             output_file.write(forward_decl + "\n\n")  # Add two newlines for readability
         output_file.write(f"// Functions Parsed: {len(functions)}\n")
         output_file.write(

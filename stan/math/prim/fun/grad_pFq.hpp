@@ -91,8 +91,8 @@ template <bool calc_a = true, bool calc_b = true, bool calc_z = true,
           typename Tb_Rtn = promote_scalar_t<T_Rtn, plain_type_t<Tb>>>
 std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
                                            const Tb& b, const Tz& z,
-                                           double precision = 1e-14,
-                                           int max_steps = 1e6) {
+                                           double precision,
+                                           int max_steps) {
   using std::max;
   using Ta_Array = Eigen::Array<return_type_t<Ta>, -1, 1>;
   using Tb_Array = Eigen::Array<return_type_t<Tb>, -1, 1>;

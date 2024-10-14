@@ -19,7 +19,7 @@ namespace math {
  * @throw std::out_of_range if j is out of range.
  */
 template <typename T_x,
-          typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr>
 inline auto row(T_x&& x, size_t j) {  // NOLINT
   return block(std::forward<T_x>(x), j, 1, 1, x.cols());
 }

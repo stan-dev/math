@@ -21,7 +21,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the input matrix
  * is not square.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline plain_type_t<T> matrix_exp(const T& A_in) {
   using std::exp;
   const auto& A = A_in.eval();

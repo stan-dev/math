@@ -135,7 +135,7 @@ inline void check_matching_dims(const char* function, const char* name1,
  *    do not match
  */
 template <bool check_compile, typename Mat1, typename Mat2,
-          typename = require_all_eigen_t<Mat1, Mat2>>
+          require_all_eigen_t<Mat1, Mat2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const Mat1& y1, const char* name2,
                                 const Mat2& y2) {

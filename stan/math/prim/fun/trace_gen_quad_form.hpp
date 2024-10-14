@@ -30,9 +30,9 @@ namespace math {
  * be multiplied by D.
  */
 template <typename TD, typename TA, typename TB,
-          typename = require_all_eigen_t<TD, TA, TB>,
-          typename = require_all_not_vt_var<TD, TA, TB>,
-          typename = require_any_not_vt_arithmetic<TD, TA, TB>>
+          require_all_eigen_t<TD, TA, TB>* = nullptr,
+          require_all_not_vt_var<TD, TA, TB>* = nullptr,
+          require_any_not_vt_arithmetic<TD, TA, TB>* = nullptr>
 inline auto trace_gen_quad_form(const TD& D, const TA& A, const TB& B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);

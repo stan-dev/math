@@ -9,6 +9,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 namespace stan {
 namespace math {
+template <typename MatrixType, typename = void>
+class arena_matrix;
 
 template <typename MatrixType>
 class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>

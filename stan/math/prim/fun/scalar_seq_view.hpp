@@ -21,7 +21,7 @@ template <typename C>
 class scalar_seq_view<C, require_eigen_vector_t<C>> {
  public:
   template <typename T,
-            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+            require_same_t<plain_type_t<T>, plain_type_t<C>>* = nullptr>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /**
@@ -54,7 +54,7 @@ template <typename C>
 class scalar_seq_view<C, require_var_matrix_t<C>> {
  public:
   template <typename T,
-            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+            require_same_t<plain_type_t<T>, plain_type_t<C>>* = nullptr>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /**
@@ -86,7 +86,7 @@ template <typename C>
 class scalar_seq_view<C, require_std_vector_t<C>> {
  public:
   template <typename T,
-            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+            require_same_t<plain_type_t<T>, plain_type_t<C>>* = nullptr>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /**
@@ -116,7 +116,7 @@ template <typename C>
 class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
  public:
   template <typename T,
-            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+            require_same_t<plain_type_t<T>, plain_type_t<C>>* = nullptr>
   explicit scalar_seq_view(const T& c) : c_(c) {}
 
   /**

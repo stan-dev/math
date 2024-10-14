@@ -21,7 +21,7 @@ namespace math {
  * @param i row index to check
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
-template <typename T_y, typename = require_matrix_t<T_y>>
+template <typename T_y, require_matrix_t<T_y>* = nullptr>
 inline void check_row_index(const char* function, const char* name,
                             const T_y& y, size_t i) {
   STAN_NO_RANGE_CHECKS_RETURN;
@@ -31,7 +31,7 @@ inline void check_row_index(const char* function, const char* name,
       std::stringstream msg;
       msg << " for rows of " << name;
       std::string msg_str(msg.str());
-      out_of_range(function, y.rows(), i, msg_str.c_str());
+      out_of_range(function, y.rows(), i, msg_str.c_str(), "");
     }();
   }
 }

@@ -17,7 +17,7 @@ namespace math {
  * @param[in] x argument
  * @return true if argument is not-a-number
  */
-template <typename T, typename = require_autodiff_t<T>>
+template <typename T, require_autodiff_t<T>* = nullptr>
 inline bool isnan(const T& x) {
   return is_nan(x);
 }

@@ -25,7 +25,7 @@ namespace math {
  * @throw std::out_of_range with message.
  */
 inline void out_of_range(const char* function, int max, int index,
-                         const char* msg1 = "", const char* msg2 = "") {
+                         const char* msg1, const char* msg2) {
   std::ostringstream message;
   message << function << ": accessing element out of range. "
           << "index " << index << " out of range; ";

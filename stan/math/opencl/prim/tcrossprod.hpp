@@ -17,7 +17,7 @@ namespace math {
  * @return A * transpose(A)
  */
 template <typename T_A,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T_A>>
+          require_all_kernel_expressions_and_none_scalar_t<T_A>* = nullptr>
 inline matrix_cl<typename std::decay_t<T_A>::Scalar> tcrossprod(T_A&& A) {
   const matrix_cl<typename std::decay_t<T_A>::Scalar>& A_eval
       = std::forward<T_A>(A);

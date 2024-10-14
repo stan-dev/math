@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/var_value_fwd_declare.hpp>
 
@@ -56,6 +57,13 @@ struct arena_type_impl<
  */
 template <typename T>
 using arena_t = typename internal::arena_type_impl<std::decay_t<T>>::type;
+
+template <typename T>
+using require_arena_t = require_t<std::is_same<arena_t<std::decay_t<T>>, std::decay_t<T>>>;
+
+template <typename T>
+using require_not_arena_t = require_not_t<std::is_same<arena_t<std::decay_t<T>>, std::decay_t<T>>>;
+
 
 }  // namespace stan
 

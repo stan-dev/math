@@ -25,7 +25,7 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline double value_of_rec(const T x) {
   return static_cast<double>(x);
 }
@@ -102,8 +102,8 @@ inline T value_of_rec(T&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_not_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& M) {
   return make_holder(
       [](auto& m) {
@@ -124,8 +124,8 @@ inline auto value_of_rec(T&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }

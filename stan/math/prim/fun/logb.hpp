@@ -20,7 +20,7 @@ namespace math {
  * @param[in] x floating-point argument
  * @return unbiased radix-independent exponent of the argument
  */
-template <typename T, typename = require_autodiff_t<T>>
+template <typename T, require_autodiff_t<T>* = nullptr>
 double logb(const T& x) {
   return std::logb(value_of_rec(x));
 }

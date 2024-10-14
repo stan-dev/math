@@ -54,7 +54,7 @@ class accumulator<T, require_var_t<T>> {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_stan_scalar_t<S>>
+  template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
     check_size();
     buf_.push_back(x);

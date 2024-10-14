@@ -19,7 +19,7 @@ namespace stan {
  * @param n index of the element to return
  * @return input scalar
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline T get(const T& x, size_t n) {
   return x;
 }
@@ -43,7 +43,7 @@ inline T get(const std::vector<T>& x, size_t n) {
  * @param n index of the element to return
  * @return n-th element of the \c Eigen \c Matrix or expression
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline scalar_type_t<T> get(const T& m, size_t n) {
   return m(static_cast<int>(n));
 }

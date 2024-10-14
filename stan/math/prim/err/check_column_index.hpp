@@ -35,7 +35,7 @@ inline void check_column_index(const char* function, const char* name,
       std::stringstream msg;
       msg << " for columns of " << name;
       std::string msg_str(msg.str());
-      out_of_range(function, y.cols(), i, msg_str.c_str());
+      out_of_range(function, y.cols(), i, msg_str.c_str(), "");
     }();
   }
 }

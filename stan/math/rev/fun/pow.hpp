@@ -293,7 +293,7 @@ inline std::complex<var> pow(const std::complex<var>& x,
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(const std::complex<var>& x,
                              const std::complex<T> y) {
   return internal::complex_pow(x, y);
@@ -318,7 +318,7 @@ inline std::complex<var> pow(const std::complex<var>& x, const var& y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(const std::complex<var>& x, T y) {
   return internal::complex_pow(x, y);
 }
@@ -331,7 +331,7 @@ inline std::complex<var> pow(const std::complex<var>& x, T y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(std::complex<T> x, const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }
@@ -344,7 +344,7 @@ inline std::complex<var> pow(std::complex<T> x, const std::complex<var>& y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(std::complex<T> x, const var& y) {
   return internal::complex_pow(x, y);
 }
@@ -368,7 +368,7 @@ inline std::complex<var> pow(const var& x, const std::complex<var>& y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(const var& x, std::complex<T> y) {
   return internal::complex_pow(x, y);
 }
@@ -381,7 +381,7 @@ inline std::complex<var> pow(const var& x, std::complex<T> y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline std::complex<var> pow(T x, const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }

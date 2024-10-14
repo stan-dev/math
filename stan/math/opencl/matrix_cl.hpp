@@ -347,7 +347,7 @@ class matrix_cl : public matrix_cl_base {
    * be allocated
    */
   template <typename Scal,
-            typename = require_same_t<T, std::remove_reference_t<Scal>>>
+            require_same_t<T, std::remove_reference_t<Scal>>* = nullptr>
   explicit matrix_cl(Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {

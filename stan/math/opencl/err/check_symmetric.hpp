@@ -23,7 +23,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline void check_symmetric(const char* function, const char* name,
                             const matrix_cl<T>& y) {
   if (y.size() == 0) {

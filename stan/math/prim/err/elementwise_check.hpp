@@ -39,7 +39,7 @@ class Iser {
    * @param x scalar
    * @return `false` if the scalar fails the error check
    */
-  template <typename T, typename = require_stan_scalar_t<T>>
+  template <typename T, require_stan_scalar_t<T>* = nullptr>
   bool is(const T& x) {
     return is_good(value_of_rec(x));
   }
@@ -50,7 +50,7 @@ class Iser {
    * @param x container
    * @return `false` if any of the scalars fail the error check
    */
-  template <typename T, typename = require_not_stan_scalar_t<T>,
+  template <typename T, require_not_stan_scalar_t<T>* = nullptr,
             typename = void>
   bool is(const T& x) {
     for (size_t i = 0; i < stan::math::size(x); ++i)

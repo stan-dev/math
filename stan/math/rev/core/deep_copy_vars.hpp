@@ -19,7 +19,7 @@ namespace math {
  * @param arg For lvalue references this will be passed by reference.
  *  Otherwise it will be moved.
  */
-template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr>
 inline Arith deep_copy_vars(Arith&& arg) {
   return std::forward<Arith>(arg);
 }

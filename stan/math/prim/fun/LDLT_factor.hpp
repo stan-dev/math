@@ -17,7 +17,7 @@ namespace math {
  *
  * @tparam T type of elements in the matrix
  */
-template <typename T, typename Enable = void>
+template <typename T, typename Enable>
 class LDLT_factor;
 
 /**

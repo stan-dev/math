@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 // forward declaration of vari_value
-template <typename T, typename = void>
+template <typename T, typename>
 class vari_value;
 
 /**

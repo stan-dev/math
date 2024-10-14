@@ -196,7 +196,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * @return Sum of terms
  */
 template <typename ReduceFunction, typename Vec,
-          typename = require_vector_like_t<Vec>, typename... Args>
+          require_vector_like_t<Vec>* = nullptr, typename... Args>
 inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;

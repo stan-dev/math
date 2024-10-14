@@ -32,7 +32,7 @@ inline void check_std_vector_index(const char* function, const char* name,
       std::stringstream msg;
       msg << " for " << name;
       std::string msg_str(msg.str());
-      out_of_range(function, y.size(), i, msg_str.c_str());
+      out_of_range(function, y.size(), i, msg_str.c_str(), "");
     }();
   }
 }

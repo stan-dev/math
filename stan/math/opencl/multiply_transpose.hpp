@@ -20,7 +20,7 @@ namespace math {
  * @return the product of the input matrix and its transpose
  *
  */
-template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline matrix_cl<T> multiply_transpose(const matrix_cl<T>& A) {
   matrix_cl<T> temp(A.rows(), A.rows(),
                     A.view() == matrix_cl_view::Diagonal

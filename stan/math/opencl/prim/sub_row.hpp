@@ -19,7 +19,7 @@ namespace math {
  * @throw std::out_of_range if either index is out of range.
  */
 template <typename T_x,
-          typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr>
 inline auto sub_row(T_x&& x, size_t i, size_t j, size_t ncols) {
   return block(std::forward<T_x>(x), i, j, 1, ncols);
 }
