@@ -14,6 +14,19 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the absolute value of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return absolute value of the argument
+ */
+template <typename V>
+inline V abs(const stan::math::complex<V>& z) {
+  return hypot(z.real(), z.imag());
+}
+
+
+/**
  * Return the absolute value of the specified arithmetic argument.
  * The return type is the same as the argument type.
  *
@@ -84,20 +97,6 @@ inline auto abs(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().abs(); });
 }
-
-namespace internal {
-/**
- * Return the absolute value of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return absolute value of the argument
- */
-template <typename V>
-inline V complex_abs(const stan::math::complex<V>& z) {
-  return hypot(z.real(), z.imag());
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

@@ -10,16 +10,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the projection of the complex argument onto the Riemann
- * sphere.
- *
- * @param[in] z argument
- * @return projection of the argument onto the Riemann sphere
- */
-inline stan::math::complex<var> proj(const stan::math::complex<var>& z) {
-  return internal::complex_proj(z);
-}
 
 }  // namespace math
 }  // namespace stan

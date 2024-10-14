@@ -33,7 +33,7 @@ inline auto pow(const T1& x1, const T2& x2) {
   using std::log;
   using std::pow;
   if constexpr (is_complex<T1>::value || is_complex<T2>::value) {
-    return internal::complex_pow(x1, x2);
+    return exp(x2 * log(x1));
   } else if constexpr (is_fvar<T1>::value && is_fvar<T2>::value) {
     auto pow_x1_x2(stan::math::pow(x1.val_, x2.val_));
     return T1(pow_x1_x2,

@@ -11,8 +11,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-
 /**
  * Return the first argument raised to the power of the second
  * argument.  At least one of the arguments must be a complex number.
@@ -23,11 +21,10 @@ namespace internal {
  * @param[in] y exponent
  * @return base raised to the power of the exponent
  */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
+template <typename U, typename V, require_any_complex_t<U, V>* = nullptr>
+inline complex_return_t<U, V> pow(const U& x, const V& y) {
   return exp(y * log(x));
 }
-}  // namespace internal
 
 /**
  * Return the first argument raised to the power of the second
@@ -58,8 +55,7 @@ inline auto pow(const stan::math::complex<T1>& a, const T2& b) {
   return std::pow(a, b);
 }
 
-template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
-          require_arithmetic_t<T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return std::pow(a, b);
 }

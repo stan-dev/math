@@ -24,17 +24,6 @@ inline fvar<T> abs(const fvar<T>& x) {
   }
 }
 
-/**
- * Return the absolute value of the complex argument.
- *
- * @tparam T value type of argument
- * @param[in] z argument
- * @return absolute value of the argument
- */
-template <typename T>
-inline fvar<T> abs(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_abs(z);
-}
 
 }  // namespace math
 }  // namespace stan

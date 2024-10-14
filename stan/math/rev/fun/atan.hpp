@@ -74,15 +74,7 @@ inline auto atan(const VarMat& x) {
             += vi.adj().array() / (1.0 + (x.val().array().square()));
       });
 }
-/**
- * Return the arc tangent of the complex argument.
- *
- * @param[in] z argument
- * @return arc tangent of the argument
- */
-inline stan::math::complex<var> atan(const stan::math::complex<var>& z) {
-  return stan::math::internal::complex_atan(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

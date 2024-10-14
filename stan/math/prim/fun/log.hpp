@@ -17,6 +17,25 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return natural logarithm of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> log(const stan::math::complex<V>& z) {
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {INFTY, NOT_A_NUMBER};
+  }
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
+
+
+/**
  * Structure to wrap `log()` so that it can be vectorized.
  */
 struct log_fun {
@@ -66,26 +85,6 @@ inline auto log(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log(); });
 }
-
-namespace internal {
-/**
- * Return the natural logarithm of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return natural logarithm of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_log(const stan::math::complex<V>& z) {
-  if ((is_nan(z.real()) && is_inf(z.imag()))
-      || (is_inf(z.real()) && is_nan(z.imag()))) {
-    return {INFTY, NOT_A_NUMBER};
-  }
-  V r = sqrt(norm(z));
-  V theta = arg(z);
-  return {log(r), theta};
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

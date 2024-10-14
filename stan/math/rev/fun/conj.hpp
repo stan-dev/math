@@ -8,15 +8,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the complex conjugate of the complex argument.
- *
- * @param[in] z argument
- * @return complex conjugate of the argument
- */
-inline stan::math::complex<var> conj(const stan::math::complex<var>& z) {
-  return internal::complex_conj(z);
-}
 
 }  // namespace math
 }  // namespace stan

@@ -17,18 +17,6 @@ inline fvar<T> sin(const fvar<T>& x) {
   return fvar<T>(sin(x.val_), x.d_ * cos(x.val_));
 }
 
-/**
- * Return the sine of the complex argument.
- *
- * @tparam T autodiff value type
- * @param[in] z argument
- * @return sine of the argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> sin(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_sin(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

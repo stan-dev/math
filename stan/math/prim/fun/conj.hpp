@@ -16,7 +16,7 @@ namespace math {
  */
 template <typename V>
 inline stan::math::complex<V> conj(const stan::math::complex<V>& z) {
-  return std::conj(z);
+  return {z.real(), -z.imag()};
 }
 
 /**
@@ -46,19 +46,6 @@ inline auto conj(const StdVec& z) {
   return result;
 }
 
-namespace internal {
-/**
- * Return the complex conjugate the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return complex conjugate of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_conj(const stan::math::complex<V>& z) {
-  return {z.real(), -z.imag()};
-}
-}  // namespace internal
 }  // namespace math
 }  // namespace stan
 

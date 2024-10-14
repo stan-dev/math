@@ -16,6 +16,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc cosine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> acosh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = acosh(value_of_rec(z));
+  auto y = log(z + sqrt(z * z - 1));
+  return copysign(y, y_d);
+}
+
+/**
  * Return the inverse hyperbolic cosine of the specified value.
  * Returns nan for nan argument.
  *
@@ -89,24 +103,6 @@ template <
 inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
-
-namespace internal {
-
-/**
- * Return the hyperbolic arc cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc cosine of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_acosh(const stan::math::complex<V>& z) {
-  stan::math::complex<double> y_d = acosh(value_of_rec(z));
-  auto y = log(z + sqrt(z * z - 1));
-  return copysign(y, y_d);
-}
-
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

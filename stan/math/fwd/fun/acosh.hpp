@@ -18,17 +18,6 @@ inline fvar<T> acosh(const fvar<T>& x) {
   return fvar<T>(acosh(x.val_), x.d_ / sqrt(square(x.val_) - 1));
 }
 
-/**
- * Return the hyperbolic arc cosine of the complex argument.
- *
- * @tparam T autodiff value type
- * @param[in] z argument
- * @return hyperbolic arc cosine of the argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> acosh(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_acosh(z);
-}
 
 }  // namespace math
 }  // namespace stan

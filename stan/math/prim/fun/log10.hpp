@@ -13,6 +13,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the base 10 logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return base 10 logarithm of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> log10(const stan::math::complex<V>& z) {
+  static constexpr double inv_log_10 = 1.0f / LOG_TEN;
+  return log(z) * inv_log_10;
+}
+
+
+/**
  * Structure to wrap log10() so it can be vectorized.
  *
  * @tparam T type of variable
@@ -56,21 +70,6 @@ inline auto log10(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log10(); });
 }
-
-namespace internal {
-/**
- * Return the base 10 logarithm of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return base 10 logarithm of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_log10(const stan::math::complex<V>& z) {
-  static constexpr double inv_log_10 = 1.0f / LOG_TEN;
-  return log(z) * inv_log_10;
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

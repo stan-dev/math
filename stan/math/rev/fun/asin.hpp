@@ -73,16 +73,6 @@ inline auto asin(const VarMat& x) {
       });
 }
 
-/**
- * Return the arc sine of the complex argument.
- *
- * @param[in] z argument
- * @return arc sine of the argument
- */
-inline stan::math::complex<var> asin(const stan::math::complex<var>& z) {
-  return stan::math::internal::complex_asin(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

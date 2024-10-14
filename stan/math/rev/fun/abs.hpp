@@ -42,14 +42,6 @@ inline auto abs(const var_value<T>& a) {
   return fabs(a);
 }
 
-/**
- * Return the absolute value of the complex argument.
- *
- * @param[in] z argument
- * @return absolute value of the argument
- */
-inline var abs(const stan::math::complex<var>& z) { return internal::complex_abs(z); }
-
 }  // namespace math
 }  // namespace stan
 #endif

@@ -9,16 +9,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the squared magnitude of the complex argument.
- *
- * @param[in] z argument
- * @return squared magnitude of the argument
- */
-inline var norm(const stan::math::complex<var>& z) {
-  return internal::complex_norm(z);
-}
-
 }  // namespace math
 }  // namespace stan
 

@@ -46,15 +46,6 @@ inline var exp(const var& a) {
 }
 
 /**
- * Return the exponentiation (base e) of the specified complex number.
- * @param z argument
- * @return exponentiation of argument
- */
-inline stan::math::complex<var> exp(const stan::math::complex<var>& z) {
-  return internal::complex_exp(z);
-}
-
-/**
  * Return the exponentiation of the elements of x
  *
  * @tparam T type of x

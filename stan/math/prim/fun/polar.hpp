@@ -19,13 +19,13 @@ namespace internal {
  * @return complex number with magnitude and phase angle
  */
 template <typename U, typename V>
-inline complex_return_t<U, V> complex_polar(const U& r, const V& theta) {
+inline auto complex_polar(const U& r, const V& theta) {
   using std::cos;
   using std::sin;
   if (!(r >= 0) || is_inf(theta)) {
-    return {std::numeric_limits<double>::quiet_NaN()};
+    return complex_return_t<U, V>{std::numeric_limits<double>::quiet_NaN()};
   }
-  return {r * cos(theta), r * sin(theta)};
+  return complex_return_t<U, V>{r * cos(theta), r * sin(theta)};
 }
 }  // namespace internal
 

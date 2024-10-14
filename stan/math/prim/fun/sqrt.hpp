@@ -12,6 +12,25 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> sqrt(const stan::math::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto sqrt(const T x) {
+  return std::sqrt(x);
+}
+
+/**
  * Structure to wrap `sqrt()` so that it can be vectorized.
  *
  * @tparam T type of variable
@@ -21,8 +40,7 @@ namespace math {
 struct sqrt_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::sqrt;
-    return sqrt(x);
+    return stan::math::sqrt(x);
   }
 };
 
@@ -37,7 +55,8 @@ template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr>
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_not_arithmetic_t<Container>* = nullptr>
 inline auto sqrt(const Container& x) {
   return apply_scalar_unary<sqrt_fun, Container>::apply(x);
 }
@@ -57,22 +76,6 @@ inline auto sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sqrt(); });
 }
-
-namespace internal {
-/**
- * Return the square root of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return square root of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_sqrt(const stan::math::complex<V>& z) {
-  auto m = sqrt(hypot(z.real(), z.imag()));
-  auto at = 0.5 * atan2(z.imag(), z.real());
-  return {m * cos(at), m * sin(at)};
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

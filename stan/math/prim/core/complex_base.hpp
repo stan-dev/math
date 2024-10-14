@@ -231,7 +231,20 @@ class complex_base {
 };
 
 template <>
-class complex<double> : std::complex<double> {};
+class complex<double> : public std::complex<double> {
+  using std::complex<double>::complex;
+};
+
+
+template <typename T>
+inline auto operator-(const complex<T>& x) {
+  return complex<T>(-x.real(), -x.imag());
+}
+
+template <typename T>
+inline auto operator+(const complex<T>& x) {
+  return complex<T>(x.real(), x.imag());
+}
 
 }  // namespace math
 }  // namespace stan

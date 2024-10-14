@@ -74,7 +74,7 @@ template <typename Scal1, typename Scal2,
           require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
 inline auto pow(const Scal1& base, const Scal2& exponent) {
   if constexpr (is_complex<Scal1>::value || is_complex<Scal2>::value) {
-    return internal::complex_pow(base, exponent);
+    return exp(exponent * log(base));
   } else {
     if constexpr (is_constant<Scal2>::value) {
       if (exponent == 0.5) {

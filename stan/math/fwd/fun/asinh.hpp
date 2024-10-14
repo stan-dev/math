@@ -17,18 +17,6 @@ inline fvar<T> asinh(const fvar<T>& x) {
   return fvar<T>(asinh(x.val_), x.d_ / sqrt(square(x.val_) + 1));
 }
 
-/**
- * Return the hyperbolic arcsine of the complex argument.
- *
- * @tparam T autodiff value type
- * @param[in] z argument
- * @return hyperbolic arcsine of the argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> asinh(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_asinh(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

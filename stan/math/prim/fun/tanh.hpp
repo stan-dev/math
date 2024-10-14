@@ -14,6 +14,23 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic tangent of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> tanh(const stan::math::complex<V>& z) {
+  using std::exp;
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return stan::math::internal::complex_divide(exp_z - exp_neg_z,
+                                              exp_z + exp_neg_z);
+}
+
+
+/**
  * Structure to wrap `tanh()` so that it can be vectorized.
  *
  * @tparam T type of argument
@@ -58,24 +75,6 @@ inline auto tanh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().tanh(); });
 }
-
-namespace internal {
-/**
- * Return the hyperbolic tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic tangent of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_tanh(const stan::math::complex<V>& z) {
-  using std::exp;
-  auto exp_z = exp(z);
-  auto exp_neg_z = exp(-z);
-  return stan::math::internal::complex_divide(exp_z - exp_neg_z,
-                                              exp_z + exp_neg_z);
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

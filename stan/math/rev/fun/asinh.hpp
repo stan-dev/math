@@ -79,15 +79,6 @@ inline auto asinh(const VarMat& x) {
       });
 }
 
-/**
- * Return the hyperbolic arcsine of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic arcsine of the argument
- */
-inline stan::math::complex<var> asinh(const stan::math::complex<var>& z) {
-  return stan::math::internal::complex_asinh(z);
-}
 
 }  // namespace math
 }  // namespace stan

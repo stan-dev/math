@@ -66,16 +66,6 @@ inline auto sqrt(const T& a) {
       });
 }
 
-/**
- * Return the square root of the complex argument.
- *
- * @param[in] z argument
- * @return square root of the argument
- */
-inline stan::math::complex<var> sqrt(const stan::math::complex<var>& z) {
-  return internal::complex_sqrt(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

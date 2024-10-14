@@ -15,6 +15,19 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc tangent of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> atan(const stan::math::complex<V>& z) {
+  return neg_i_times(atanh(i_times(z)));
+}
+
+
+/**
  * Structure to wrap \c atan() so it can be vectorized.
  *
  * @tparam T type of variable
@@ -61,19 +74,6 @@ inline auto atan(const Container& x) {
       x, [](const auto& v) { return v.array().atan(); });
 }
 
-namespace internal {
-/**
- * Return the arc tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return arc tangent of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_atan(const stan::math::complex<V>& z) {
-  return neg_i_times(atanh(i_times(z)));
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

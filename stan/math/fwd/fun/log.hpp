@@ -21,17 +21,6 @@ inline fvar<T> log(const fvar<T>& x) {
   }
 }
 
-/**
- * Return the natural logarithm (base e) of the specified complex argument.
- *
- * @tparam T autodiff value type
- * @param z complex argument
- * @return natural logarithm of argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> log(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_log(z);
-}
 
 }  // namespace math
 }  // namespace stan

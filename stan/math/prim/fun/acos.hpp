@@ -19,6 +19,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] x argument
+ * @return arc cosine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> acos(const stan::math::complex<V>& x) {
+  return 0.5 * pi() - asin(x);
+}
+
+/**
  * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
@@ -64,20 +76,6 @@ inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().acos(); });
 }
-
-namespace internal {
-/**
- * Return the arc cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] x argument
- * @return arc cosine of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_acos(const stan::math::complex<V>& x) {
-  return 0.5 * pi() - asin(x);
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

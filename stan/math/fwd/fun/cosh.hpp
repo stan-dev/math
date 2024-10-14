@@ -18,18 +18,6 @@ inline fvar<T> cosh(const fvar<T>& x) {
   return fvar<T>(cosh(x.val_), x.d_ * sinh(x.val_));
 }
 
-/**
- * Return the hyperbolic cosine of the complex argument.
- *
- * @tparam T autodiff value type
- * @param[in] z argument
- * @return hyperbolic cosine of the argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> cosh(const stan::math::complex<fvar<T>>& z) {
-  return stan::math::internal::complex_cosh(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

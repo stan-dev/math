@@ -53,16 +53,6 @@ inline auto log10(const var_value<T>& a) {
   });
 }
 
-/**
- * Return the base 10 logarithm of the specified complex number.
- *
- * @param z complex argument
- * @return base 10 log of argument
- */
-inline stan::math::complex<var> log10(const stan::math::complex<var>& z) {
-  return internal::complex_log10(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

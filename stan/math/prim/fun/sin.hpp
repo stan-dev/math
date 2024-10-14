@@ -14,6 +14,19 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> sin(const stan::math::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+
+
+/**
  * Structure to wrap sin() so it can be vectorized.
  *
  * @tparam T type of argument
@@ -57,20 +70,6 @@ inline auto sin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().sin(); });
 }
-
-namespace internal {
-/**
- * Return the sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return sine of the argument
- */
-template <typename V>
-inline stan::math::complex<V> complex_sin(const stan::math::complex<V>& z) {
-  return neg_i_times(sinh(i_times(z)));
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

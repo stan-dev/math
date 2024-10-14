@@ -25,17 +25,6 @@ inline fvar<T> atanh(const fvar<T>& x) {
   return fvar<T>(atanh(x.val_), x.d_ / (1 - square(x.val_)));
 }
 
-/**
- * Return the hyperbolic arc tangent of the complex argument.
- *
- * @tparam T autodiff value type
- * @param[in] z argument
- * @return hyperbolic arc tangent of the argument
- */
-template <typename T>
-inline stan::math::complex<fvar<T>> atanh(const stan::math::complex<fvar<T>>& z) {
-  return internal::complex_atanh(z);
-}
 
 }  // namespace math
 }  // namespace stan

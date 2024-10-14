@@ -62,16 +62,6 @@ inline auto cosh(const VarMat& a) {
       });
 }
 
-/**
- * Return the hyperbolic cosine of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic cosine of the argument
- */
-inline stan::math::complex<var> cosh(const stan::math::complex<var>& z) {
-  return stan::math::internal::complex_cosh(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

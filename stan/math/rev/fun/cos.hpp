@@ -64,15 +64,6 @@ inline auto cos(const VarMat& a) {
         a.adj() -= vi.adj().cwiseProduct(a.val().array().sin().matrix());
       });
 }
-/**
- * Return the cosine of the complex argument.
- *
- * @param[in] z argument
- * @return cosine of the argument
- */
-inline stan::math::complex<var> cos(const stan::math::complex<var>& z) {
-  return stan::math::internal::complex_cos(z);
-}
 
 }  // namespace math
 }  // namespace stan

@@ -75,6 +75,27 @@ namespace Eigen {
     using ReturnType = stan::math::complex<double>;
   };
 
+  template <typename Real_>
+struct NumTraits<stan::math::complex<Real_> > : GenericNumTraits<stan::math::complex<Real_> > {
+  typedef Real_ Real;
+  typedef typename NumTraits<Real_>::Literal Literal;
+  enum {
+    IsComplex = 1,
+    IsSigned = NumTraits<Real_>::IsSigned,
+    RequireInitialization = NumTraits<Real_>::RequireInitialization,
+    ReadCost = 2 * NumTraits<Real_>::ReadCost,
+    AddCost = 2 * NumTraits<Real>::AddCost,
+    MulCost = 4 * NumTraits<Real>::MulCost + 2 * NumTraits<Real>::AddCost
+  };
+
+  EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR static inline Real epsilon() { return NumTraits<Real>::epsilon(); }
+  EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR static inline Real dummy_precision() { return NumTraits<Real>::dummy_precision(); }
+  EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR static inline int digits10() { return NumTraits<Real>::digits10(); }
+  EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR static inline int max_digits10() { return NumTraits<Real>::max_digits10(); }
+};
+
+
+
 }  // namespace Eigen
 
 #endif
