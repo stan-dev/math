@@ -13,7 +13,7 @@ inline constexpr auto construct_idx() noexcept { return ""; }
 
 template <typename... Idxs>
 inline auto construct_idx(size_t i, Idxs... idxs) {
-  if (sizeof...(Idxs) > 0) {
+  if constexpr (sizeof...(Idxs) > 0) {
     return std::to_string(i + stan::error_index::value) + ", "
            + construct_idx(idxs...);
   } else {
@@ -22,6 +22,7 @@ inline auto construct_idx(size_t i, Idxs... idxs) {
 }
 
 inline auto make_iter_name(const char* name) { return std::string(name); }
+inline auto make_iter_name(const std::string_view& name) { return std::string(name); }
 
 /**
  * Given a name and index, generate a new name with the index attached.
@@ -33,6 +34,12 @@ template <typename... Idxs>
 inline auto make_iter_name(const char* name, Idxs... idxs) {
   return (std::string(name) + "[" + construct_idx(idxs...) + "]");
 }
+
+template <typename... Idxs>
+inline auto make_iter_name(const std::string_view& name, Idxs... idxs) {
+  return (std::string(name) + "[" + construct_idx(idxs...) + "]");
+}
+
 }  // namespace internal
 }  // namespace math
 }  // namespace stan

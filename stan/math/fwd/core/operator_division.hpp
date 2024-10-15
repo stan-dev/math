@@ -88,7 +88,7 @@ inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U,
-          typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+          std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
 inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
                                        const std::complex<U>& x2) {
   return internal::complex_divide(x1, x2);

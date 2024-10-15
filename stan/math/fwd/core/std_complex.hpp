@@ -59,7 +59,7 @@ class complex<stan::math::fvar<T>>
    * @param[in] x complex number to set
    * @return this
    */
-  template <typename U, typename = stan::require_arithmetic_t<U>>
+  template <typename U,stan::require_arithmetic_t<U>* = nullptr>
   auto& operator=(const std::complex<U>& x) {
     this->re_ = x.real();
     this->im_ = x.imag();

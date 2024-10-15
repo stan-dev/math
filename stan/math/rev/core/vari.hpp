@@ -184,7 +184,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value* v) {
     return os << v->val_ << ":" << v->adj_;
   }
 

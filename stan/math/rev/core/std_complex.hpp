@@ -42,7 +42,7 @@ class complex<stan::math::var>
    * @tparam U type of real part (assignable to `value_type`)
    * @param[in] re real part
    */
-  template <typename U, typename = stan::require_stan_scalar_t<U>>
+  template <typename U, stan::require_stan_scalar_t<U>* = nullptr>
   complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
 
   template <typename U>
@@ -57,7 +57,7 @@ class complex<stan::math::var>
    * @param[in] x complex argument
    * @return this
    */
-  template <typename U, typename = stan::require_arithmetic_t<U>>
+  template <typename U, stan::require_arithmetic_t<U>* = nullptr>
   auto& operator=(const std::complex<U>& x) {
     re_ = x.real();
     im_ = x.imag();

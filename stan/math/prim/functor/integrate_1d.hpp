@@ -246,6 +246,15 @@ inline double integrate_1d(const F& f, double a, double b,
                            msgs, theta, x_r, x_i);
 }
 
+template <typename F>
+inline double integrate_1d(const F& f, double a, double b,
+                           const std::vector<double>& theta,
+                           const std::vector<double>& x_r,
+                           const std::vector<int>& x_i, std::ostream* msgs) {
+  return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, std::sqrt(EPSILON),
+                           msgs, theta, x_r, x_i);
+}
+
 }  // namespace math
 }  // namespace stan
 

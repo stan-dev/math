@@ -212,13 +212,40 @@ template <typename Arith, typename VecVar, typename VecArith,
           typename... ContainerOperands, typename... ContainerGradients>
 inline var precomputed_gradients(
     Arith value, const VecVar& operands, const VecArith& gradients,
-    const std::tuple<ContainerOperands...>& container_operands = std::tuple<>(),
-    const std::tuple<ContainerGradients...>& container_gradients
-    = std::tuple<>()) {
+    const std::tuple<ContainerOperands...>& container_operands,
+    const std::tuple<ContainerGradients...>& container_gradients) {
   return {new precomputed_gradients_vari_template<
       std::tuple<arena_t<ContainerOperands>...>,
       std::tuple<arena_t<ContainerGradients>...>>(
       value, operands, gradients, container_operands, container_gradients)};
+}
+
+/**
+ * This function returns a var for an expression that has the
+ * specified value, vector of operands, and vector of partial
+ * derivatives of value with respect to the operands.
+ *
+ * @tparam Arith An arithmetic type
+ * @tparam VecVar A vector of vars
+ * @tparam VecArith A vector of arithmetic types
+ * @tparam ContainerOperands tuple of any container operands (var_value
+ * containing Eigen types)
+ * @tparam ContainerGradients tupleof any container gradients (Eigen types)
+ * @param[in] value The value of the resulting dependent variable.
+ * @param[in] operands operands.
+ * @param[in] gradients vector of partial derivatives of result with
+ * respect to operands.
+ * @param container_operands any container operands
+ * @param container_gradients any container gradients
+ * @return An autodiff variable that uses the precomputed
+ * gradients provided.
+ */
+template <typename Arith, typename VecVar, typename VecArith>
+inline var precomputed_gradients(
+    Arith value, const VecVar& operands, const VecArith& gradients) {
+  return {new precomputed_gradients_vari_template<
+      std::tuple<>, std::tuple<>>(
+      value, operands, gradients, std::make_tuple(), std::make_tuple())};
 }
 
 }  // namespace math

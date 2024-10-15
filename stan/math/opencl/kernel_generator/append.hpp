@@ -342,7 +342,7 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
  * @return Stacked arguments
  */
 template <typename Ta, typename Tb,
-          typename = require_all_kernel_expressions_and_none_scalar_t<Ta, Tb>>
+         require_all_kernel_expressions_and_none_scalar_t<Ta, Tb>* = nullptr>
 inline auto append_col(Ta&& a, Tb&& b) {
   auto&& a_operation = as_operation_cl(std::forward<Ta>(a)).deep_copy();
   auto&& b_operation = as_operation_cl(std::forward<Tb>(b)).deep_copy();

@@ -33,8 +33,8 @@ namespace math {
  */
 template <typename T_y, typename T_low,
           require_all_stan_scalar_t<T_y, T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
+                                  const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   if (unlikely(!(y >= low))) {
     [](auto y, auto low, auto function, auto name,
@@ -71,7 +71,7 @@ template <
     require_vector_t<T_low>* = nullptr,
     require_not_std_vector_vt<is_container_or_var_matrix, T_low>* = nullptr,
     typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
@@ -109,7 +109,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
           require_dense_dynamic_t<T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& low_arr = value_of_rec(to_ref(low));
@@ -151,7 +151,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 template <typename T_y, typename T_low, require_vector_t<T_y>* = nullptr,
           require_not_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
@@ -190,7 +190,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low, require_dense_dynamic_t<T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
@@ -236,7 +236,7 @@ template <typename T_y, typename T_low,
           require_all_not_std_vector_vt<is_container_or_var_matrix, T_y,
                                         T_low>* = nullptr,
           typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
@@ -278,7 +278,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low,
           require_all_dense_dynamic_t<T_y, T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
@@ -320,7 +320,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 template <typename T_y, typename T_low,
           require_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
           require_not_std_vector_t<T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
@@ -349,7 +349,7 @@ template <typename T_y, typename T_low,
           require_not_std_vector_t<T_y>* = nullptr,
           require_std_vector_vt<is_container_or_var_matrix, T_low>* = nullptr,
           typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   for (size_t i = 0; i < low.size(); ++i) {
@@ -377,7 +377,7 @@ template <typename T_y, typename T_low,
           require_any_std_vector_vt<is_container_or_var_matrix, T_y,
                                     T_low>* = nullptr,
           require_all_std_vector_t<T_y, T_low>* = nullptr, typename... Idxs>
-inline void check_greater_or_equal(const char* function, const char* name,
+inline void check_greater_or_equal(const std::string_view& function, const std::string_view& name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {

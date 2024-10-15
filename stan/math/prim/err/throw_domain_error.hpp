@@ -32,6 +32,16 @@ inline void throw_domain_error(const char* function, const char* name,
   throw std::domain_error(message.str());
 }
 
+template <typename T>
+inline void throw_domain_error(const std::string_view& function, const std::string_view& name,
+                               const T& y, const std::string_view& msg1, const std::string_view& msg2) {
+  std::ostringstream message;
+  // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
+  const T* y_ptr = &y;
+  message << function << ": " << name << " " << msg1 << (*y_ptr) << msg2;
+  throw std::domain_error(message.str());
+}
+
 /**
  * Throw a domain error with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
@@ -48,6 +58,12 @@ inline void throw_domain_error(const char* function, const char* name,
 template <typename T>
 inline void throw_domain_error(const char* function, const char* name,
                                const T& y, const char* msg1) {
+  throw_domain_error(function, name, y, msg1, "");
+}
+
+template <typename T>
+inline void throw_domain_error(const std::string_view& function, const std::string_view& name,
+                               const T& y, const std::string_view& msg1) {
   throw_domain_error(function, name, y, msg1, "");
 }
 

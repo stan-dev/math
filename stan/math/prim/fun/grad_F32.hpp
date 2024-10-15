@@ -37,8 +37,8 @@ namespace math {
  */
 template <typename T>
 void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
-              const T& b2, const T& z, const T& precision = 1e-6,
-              int max_steps = 1e5) {
+              const T& b2, const T& z, const T& precision,
+              int max_steps) {
   check_3F2_converges("grad_F32", a1, a2, a3, b1, b2, z);
 
   using std::exp;
@@ -126,6 +126,12 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
                      " iterations, hypergeometric function gradient "
                      "did not converge.");
   return;
+}
+
+template <typename T>
+void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
+              const T& b2, const T& z) {
+  return grad_F32(g, a1, a2, a3, b1, b2, z, 1e-6, 1e5);
 }
 
 }  // namespace math

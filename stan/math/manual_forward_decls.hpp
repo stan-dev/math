@@ -20,6 +20,9 @@ template <typename T, typename, typename>
 struct arena_type_impl;
 } // namespace internal
 
+template <typename T>
+struct fvar;
+
 template <typename T, typename = void>
 class vari_value;
 
@@ -54,7 +57,7 @@ template <typename T, typename = void>
 class accumulator;
 #ifdef TBB_INTERFACE_NEW
 inline auto& init_threadpool_tbb(int n_threads = 0);
-#else 
+#else
 inline auto& init_threadpool_tbb(int n_threads = 0);
 #endif
 
@@ -74,7 +77,7 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
 template <bool calc_a, bool calc_b, bool calc_z,
           typename TpFq, typename Ta, typename Tb, typename Tz,
           typename T_Rtn,
-          typename Ta_Rtn, 
+          typename Ta_Rtn,
           typename Tb_Rtn>
 std::tuple<Ta_Rtn, Tb_Rtn, T_Rtn> grad_pFq(const TpFq& pfq_val, const Ta& a,
                                            const Tb& b, const Tz& z,

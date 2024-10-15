@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_MIX_HPP
 #define STAN_MATH_MIX_HPP
 
+#include <stan/math/manual_forward_decls.hpp>
 #ifndef STAN_MATH_FORWARD_DECL_HPP
 #include <stan/math/forward_decls.hpp>
 #endif

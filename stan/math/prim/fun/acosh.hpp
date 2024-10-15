@@ -1,14 +1,15 @@
 #ifndef STAN_MATH_PRIM_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_FUN_ACOSH_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/err/check_greater_or_equal.hpp>
 #include <cmath>
 #include <complex>
 

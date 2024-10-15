@@ -28,6 +28,15 @@ inline bool operator==(const var& a, const var& b) {
   return a.val() == b.val();
 }
 
+inline bool operator==(int a, const var& b) {
+  return a == b.val();
+}
+
+inline bool operator==(const var& a, int b) {
+  return a.val() == b;
+}
+
+
 /**
  * Equality operator comparing a variable's value and a double
  * (C++).

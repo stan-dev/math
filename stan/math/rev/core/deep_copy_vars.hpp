@@ -30,7 +30,7 @@ inline Arith deep_copy_vars(Arith&& arg) {
  * @param arg A var
  * @return A new var
  */
-inline auto deep_copy_vars(const var& arg) {
+inline var deep_copy_vars(const var& arg) {
   return var(new vari(arg.val(), false));
 }
 
