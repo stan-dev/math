@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_CORE_COMPLEX_BASE_HPP
 #define STAN_MATH_PRIM_CORE_COMPLEX_BASE_HPP
 
-#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <complex>
 
@@ -203,7 +202,6 @@ class complex_base {
    */
   template <typename U>
   complex_type& operator/=(const std::complex<U>& other) {
-    using stan::math::square;
     value_type sum_sq_im
         = (other.real() * other.real()) + (other.imag() * other.imag());
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;

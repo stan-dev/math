@@ -33,7 +33,7 @@ namespace math {
  * @return Square of variable.
  */
 inline var square(const var& x) {
-  return make_callback_var(square(x.val()), [x](auto& vi) mutable {
+  return make_callback_var(x.val() * x.val(), [x](auto& vi) mutable {
     x.adj() += vi.adj() * 2.0 * x.val();
   });
 }

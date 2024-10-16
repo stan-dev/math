@@ -7,26 +7,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Type for sizes and indexes in an Eigen matrix with double elements.
- */
-using size_type
-    = index_type_t<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;
-
-/**
- * Type for matrix of double values.
- */
-using matrix_d = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-
-/**
- * Type for (column) vector of double values.
- */
-using vector_d = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-
-/**
- * Type for (row) vector of double values.
- */
-using row_vector_d = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
 }  // namespace math
 }  // namespace stan

@@ -3,75 +3,15 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <memory>
 #include <type_traits>
 #include <utility>
 
-/**
- * \defgroup eigen_expressions Eigen expressions
- */
-/**
- * \ingroup eigen_expressions
- * \defgroup returning_expressions Returning expressions
- */
-/**
- * \ingroup returning_expressions
- *
- * Operations in Eigen Expressions hold their arguments either by value or by
- * reference. Which one is chosen depends on type of the argument. Other
- * operations are held by value. "Heavy" objects that can hold data themselves,
- * such as `Eigen::Matrix` or `Eigen::Ref` are instead held by reference. THis
- * is the only criterion - holding rvalue arguments by value is not supported,
- * so we can not use perfect forwarding.
- *
- * When returning an expression from function we have to be careful that any
- * arguments in this expression that are held by reference do not go out of
- * scope. For instance, consider the function:
- *
- * ```
- * template<typename T>
- * auto f(const T& x){
- *   const Eigen::Ref<const Eigen::VectorXd>& x_ref = x;
- *   return x_ref.cwiseProduct(x_ref);
- * }
- * ```
- * And the code calling it:
- * ```
- * Eigen::MatrixXd test_mat(2,2);
- * test_mat << 5, 5, 5, 5;
- * VectorXd X  = f(test_mat.diagonal());
- * ```
- * This function will return back a `CwiseBinaryOp` Eigen expression, which is
- * then evaluated out of the function scope when assigned to `X`. The expression
- * references `x_ref`, which was created withing function and destroyed when
- * the function returned. The returned expression is evaluated after the
- * function returned, so its evaluation references a matrix that was already
- * deleted. In other words the returned expression contains a dangling
- * reference.
- *
- * So a function returning an expression referencing local matrices or
- * matrices that were rvalue reference arguments to the function will not work.
- *
- * A workarount to this issue is allocating and constructing or moving such
- * objects to heap. `Holder` object is a no-op operation that can also take
- * pointers to such objects and release them when it goes out of scope. It can
- * be created either by directly supplying pointers to such objects to `holder`
- * function or by forwarding function arguments and moving local variables to
- * `make_holder`, which will move any rvalues to heap first.
- */
 
 // This was implenmented following the tutorial on edding new expressions to
 // Eigen: https://eigen.tuxfamily.org/dox/TopicNewExpressionType.html
-
-namespace stan {
-namespace math {
-
-template <class ArgType, typename... Ptrs>
-class Holder;
-
-}  // namespace math
-}  // namespace stan
 
 namespace Eigen {
 namespace internal {

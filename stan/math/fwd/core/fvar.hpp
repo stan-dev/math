@@ -2,8 +2,6 @@
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
-#include <ostream>
 #include <type_traits>
 
 namespace stan {

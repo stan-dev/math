@@ -21,9 +21,5 @@
 #include <stan/math/rev/constraint/unit_vector_constrain.hpp>
 #include <stan/math/rev/constraint/ub_constrain.hpp>
 
-#include <stan/math/prim/constraint.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun.hpp>
-#include <stan/math/prim/meta.hpp>
 
 #endif

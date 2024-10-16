@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/pow.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 
@@ -27,8 +28,8 @@ namespace math {
  * @return Gauss hypergeometric function
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
-          require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
-          require_any_var_t<Ta1, Ta2, Tb, Tz>* = nullptr>
+          require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>*,
+          require_any_var_t<Ta1, Ta2, Tb, Tz>*>
 inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,

@@ -5,16 +5,13 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
 
 namespace stan {
 namespace math {
-
-// forward declaration of vari_value
-template <typename T, typename = void>
-class vari_value;
 
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
@@ -194,8 +191,9 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
 };
 
 // For backwards compatability the default is double
+#ifndef STAN_MATH_MANUAL_FORWARD_DECLS_HPP
 using vari = vari_value<double>;
-
+#endif
 /**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner
  * eigen type. It can only accept expressions which do not allocate dynamic

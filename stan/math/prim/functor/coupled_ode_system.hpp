@@ -11,8 +11,6 @@
 namespace stan {
 namespace math {
 
-template <bool ArithmeticArguments, typename F, typename T_y0, typename... Args>
-struct coupled_ode_system_impl;
 
 /**
  * The <code>coupled_ode_system_impl</code> for arithmetic arguments reduces to

@@ -8,13 +8,11 @@
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-// Forward declaration to allow specializations
-template <typename T, typename Enable = void>
-struct apply_vector_unary {};
 
 /**
  * Base template class for vectorization of unary vector functions

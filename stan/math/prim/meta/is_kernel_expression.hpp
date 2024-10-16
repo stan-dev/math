@@ -7,6 +7,7 @@
 #include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <type_traits>
 
 namespace stan {

@@ -74,6 +74,7 @@
 #include <stan/math/prim/meta/contains_std_vector.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>

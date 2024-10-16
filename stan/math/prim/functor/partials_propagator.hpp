@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
@@ -15,8 +16,6 @@ namespace math {
 
 namespace internal {
 
-template <typename ReturnType, typename Enable, typename... Ops>
-class partials_propagator;
 
 /** \ingroup type_trait
  * \callergraph

@@ -141,12 +141,12 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
  * @param a argument
  * @return argument copied/evaluated on AD stack
  */
-template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
+template <bool Condition, typename T, require_not_t<std::bool_constant<Condition>>* = nullptr>
 inline T to_arena_if(T&& a) {
   return std::forward<T>(a);
 }
 
-template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
+template <bool Condition, typename T, require_t<std::bool_constant<Condition>>* = nullptr>
 inline arena_t<T> to_arena_if(const T& a) {
   return to_arena(a);
 }

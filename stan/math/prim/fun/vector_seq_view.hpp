@@ -7,19 +7,6 @@
 
 namespace stan {
 
-/**
- * This class provides a low-cost wrapper for situations where you either need
- * an Eigen Vector or RowVector or a std::vector of them and you want to be
- * agnostic between those two options. This is similar to scalar_seq_view but
- * instead of being a sequence-like view over a scalar or seq of scalars, it's
- * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the outer container type, since we would have
- * difficulty figuring out which contained type was the container otherwise.
- *
- * @tparam T the wrapped type, either a Vector or std::vector of them.
- */
-template <typename T, typename = void>
-class vector_seq_view;
 
 /**
  * This class provides a low-cost wrapper for situations where you either need

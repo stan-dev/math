@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
@@ -12,37 +13,9 @@
 namespace stan {
 namespace math {
 
-template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
-          typename Op4 = double, typename Op5 = double, typename Op6 = double,
-          typename Op7 = double, typename Op8 = double,
-          typename T_return_type
-          = return_type_t<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8>>
-class operands_and_partials;  // Forward declaration
 
 namespace internal {
 
-/** \ingroup type_trait
- * \callergraph
- * An edge holds both the operands and its associated
- * partial derivatives. They're held together in the
- * same class because then we can keep the templating logic that
- * specializes on type of operand in one place.
- *
- * This is the base template class that ends up getting instantiated
- * for arithmetic primitives (doubles and ints).
- *
- * NB: since ops_partials_edge.partials_ and ops_partials_edge.partials_vec
- * are sometimes represented internally as a broadcast_array, we need to take
- * care with assignments to them. Indeed, we can assign any right hand side
- * which allows for indexing to a broadcast_array. The resulting behaviour is
- * that the entry for the first index is what gets assigned. The most common
- * use-case should be where the rhs is some container of length 1.
- *
- * @tparam ViewElt the type we expect to be at partials_[i]
- * @tparam Op the type of the operand
- */
-template <typename ViewElt, typename Op, typename Enable = void>
-class ops_partials_edge;
 
 /**
  * Class representing an edge with an inner type of double. This class

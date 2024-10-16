@@ -7,10 +7,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-template <typename T, typename S, typename Enable>
-class empty_broadcast_array;
-}
 /**
  * no-op that passes the scalar
  *

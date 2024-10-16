@@ -8,37 +8,13 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <utility>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
- * Base template class for vectorization of unary scalar functions
- * defined by a template class <code>F</code> to a scalar,
- * standard library vector, or Eigen dense matrix expression
- * template.
- *
- * <p>Specializations of this base define applications to scalars
- * (primitive or autodiff in the corresponding autodiff library
- * directories) or to standard library vectors of vectorizable
- * types (primitives, Eigen dense matrix expressions, or further
- * standard vectors).
- *
- * <p>Each specialization must define the typedef
- * <code>return_t</code> for the vectorized return type and the
- * function <code>apply</code> which defines the vectorization or
- * base application of the function defined statically by the
- * class F.  The function definition class F defines a static
- * function <code>fun()</code>, which defines the function's
- * behavior on scalars.
- *
- * @tparam F Type of function to apply.
- * @tparam T Type of argument to which function is applied.
- */
-template <typename F, typename T, typename Enable = void>
-struct apply_scalar_unary;
 
 /**
  *

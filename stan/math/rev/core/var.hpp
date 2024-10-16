@@ -5,6 +5,7 @@
 #include <stan/math/opencl/rev/vari.hpp>
 #include <stan/math/opencl/plain_type.hpp>
 #endif
+#include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -18,9 +19,6 @@
 namespace stan {
 namespace math {
 
-// forward declare
-template <typename Vari>
-static void grad(Vari* vi);
 
 /**
  * Independent (input) and dependent (output) variables for gradients.
@@ -1182,9 +1180,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     return operator=<T>(other);
   }
 };
-
-// For backwards compatability the default value is double
-using var = var_value<double>;
 
 }  // namespace math
 

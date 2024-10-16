@@ -43,9 +43,8 @@ namespace internal {
  * @return Gauss hypergeometric function
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
-          typename RtnT = boost::optional<return_type_t<Ta1, Ta1, Tb, Tz>>,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
+inline boost::optional<return_type_t<Ta1, Ta1, Tb, Tz>> hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
                                     const Tz& z) {
   // https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/01/
   // // NOLINT
@@ -148,13 +147,14 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
  * @return Gauss hypergeometric function
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
-          typename ScalarT = return_type_t<Ta1, Ta1, Tb, Tz>,
-          typename OptT = boost::optional<ScalarT>,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
 inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
                                                           const Tz& z) {
+  using ScalarT = return_type_t<Ta1, Ta1, Tb, Tz>;
+  using OptT = boost::optional<ScalarT>;
+
   check_finite("hypergeometric_2F1", "a1", a1);
   check_finite("hypergeometric_2F1", "a2", a2);
   check_finite("hypergeometric_2F1", "b", b);

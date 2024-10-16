@@ -6,19 +6,12 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <memory>
 
 namespace stan {
 namespace math {
 
-/**
- * LDLT_factor is a structure that holds a matrix of type T and the
- * LDLT of its values.
- *
- * @tparam T type of elements in the matrix
- */
-template <typename T, typename Enable = void>
-class LDLT_factor;
 
 /**
  * An LDLT_factor is a structure that holds a matrix of type T and the

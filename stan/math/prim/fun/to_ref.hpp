@@ -25,7 +25,7 @@ inline ref_type_t<T&&> to_ref(T&& a) {
  * @param a argument
  * @return argument
  */
-template <bool Cond, typename T, std::enable_if_t<!Cond>* = nullptr>
+template <bool Cond, typename T, require_not_t<std::bool_constant<Cond>>* = nullptr>
 inline T to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
@@ -39,7 +39,7 @@ inline T to_ref_if(T&& a) {
  * @param a argument
  * @return argument converted to `Eigen::Ref`
  */
-template <bool Cond, typename T, std::enable_if_t<Cond>* = nullptr>
+template <bool Cond, typename T, require_t<std::bool_constant<Cond>>* = nullptr>
 inline ref_type_t<T&&> to_ref_if(T&& a) {
   return std::forward<T>(a);
 }

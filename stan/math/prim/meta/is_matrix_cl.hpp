@@ -2,13 +2,12 @@
 #define STAN_MATH_PRIM_META_IS_MATRIX_CL_HPP
 
 #include <stan/math/prim/meta/require_helpers.hpp>
+#include <stan/math/prim/meta/fwd_decl.hpp>
 #include <type_traits>
 
 namespace stan {
 namespace math {
 
-template <typename T>
-class arena_matrix_cl;
 
 /**
  * Non-templated base class for `matrix_cl` simplifies checking if something is
