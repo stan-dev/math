@@ -3,7 +3,7 @@
 
 #include <stan/math/manual_forward_decls.hpp>
 #ifndef STAN_MATH_FORWARD_DECL_HPP
-#include <stan/math/forward_decls.hpp>
+//#include <stan/math/forward_decls.hpp>
 #endif
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/mix/fun.hpp>

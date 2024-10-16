@@ -4,7 +4,27 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <type_traits>
 #include <vector>
+#include <boost/optional.hpp>
+#include <unsupported/Eigen/FFT>
+#ifndef TBB_INTERFACE_NEW
+#include <tbb/tbb_stddef.h>
+
+#if TBB_VERSION_MAJOR >= 2020
+#define TBB_INTERFACE_NEW
+#endif
+#endif
+
+#ifdef TBB_INTERFACE_NEW
+#include <tbb/global_control.h>
+#include <tbb/task_arena.h>
+#else
+#include <tbb/task_scheduler_init.h>
+#endif
+
 
 namespace stan {
 namespace math {
@@ -89,28 +109,7 @@ auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
 }
 }
 
-#include <type_traits>
-#include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/rev/core/typedefs.hpp>
-#include <boost/optional.hpp>
-#include <unsupported/Eigen/FFT>
-#include <stan/math/rev/core/std_complex.hpp>
-#ifndef TBB_INTERFACE_NEW
-#include <tbb/tbb_stddef.h>
 
-#if TBB_VERSION_MAJOR >= 2020
-#define TBB_INTERFACE_NEW
-#endif
-#endif
-
-#ifdef TBB_INTERFACE_NEW
-#include <tbb/global_control.h>
-#include <tbb/task_arena.h>
-#else
-#include <tbb/task_scheduler_init.h>
-#endif
 
 
 #endif

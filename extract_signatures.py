@@ -15,6 +15,7 @@ manual_decl_funcs = ["init_threadpool_tbb",
                                     "grad_2F1"]
 
 manual_decl_classes = ["fvar", "var_value", "vari_value"]
+
 def silentremove(filename):
     try:
         os.remove(filename)
@@ -22,15 +23,9 @@ def silentremove(filename):
         if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
             raise  # re-raise exception if a different error occurred
 
-import clang.cindex
-
 def get_template_parameters(cursor):
     template_params = []
     for child in cursor.get_children():
-        if False:
-            print("Template Type: ", child.spelling)
-            print("Full Template: ", " ".join([x.spelling for x in child.get_tokens()]))
-            import pdb; pdb.set_trace()
         if child.kind == clang.cindex.CursorKind.TEMPLATE_TYPE_PARAMETER:
             # Template type parameter
             param_name = child.spelling
@@ -54,9 +49,9 @@ def get_template_parameters(cursor):
     return template_params
 
 def get_function_declaration(func_decl_cursor):
-#    if func_decl_cursor.spelling == "linspaced_row_vector":
-#        import pdb; pdb.set_trace()
-    # Return type
+    # Sometimes clang makes auto return types into the actual literal return type.
+    # so we need to check if the return type is auto and not use
+    # the result type if so
     if func_decl_cursor.result_type.kind == clang.cindex.TypeKind.AUTO:
         return_type = "auto"
     else:
@@ -69,6 +64,8 @@ def get_function_declaration(func_decl_cursor):
     params = []
     for param_cursor in func_decl_cursor.get_children():
         if param_cursor.kind == clang.cindex.CursorKind.PARM_DECL:
+            if any([x.spelling == "=" for x in param_cursor.get_tokens()]):
+                return True, "", "", "", "", "", ""
             param_type = param_cursor.type.spelling
             param_name = param_cursor.spelling
             params.append(f"{param_type} {param_name}")
@@ -92,7 +89,7 @@ def get_function_declaration(func_decl_cursor):
         # If we hit the function name, stop
         elif kind == clang.cindex.TokenKind.IDENTIFIER and spelling == func_decl_cursor.spelling:
             break
-    return storage_class, attributes, return_type, func_name, params, func_qualifiers
+    return False, storage_class, attributes, return_type, func_name, params, func_qualifiers
 
 def extract_function_template_declaration(cursor):
     """
@@ -111,7 +108,9 @@ def extract_function_template_declaration(cursor):
     # Extract template parameters
     template_params = get_template_parameters(cursor)
     # Extract function declaration components
-    storage_class, attributes, return_type, func_name, params, func_qualifiers = get_function_declaration(cursor)
+    has_defaults, storage_class, attributes, return_type, func_name, params, func_qualifiers = get_function_declaration(cursor)
+    if has_defaults:
+        return ""
     # Build the function declaration string
     template_str = f"template <{', '.join(template_params)}>\n" if template_params else ""
     params_str = ', '.join(params)
