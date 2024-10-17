@@ -701,8 +701,7 @@ template <typename T1, typename T2, require_any_var_matrix_t<T1, T2> *  >
 
  inline  std::complex<var> operator/(const std::complex<var> & x1, const std::complex<var> & x2);
 
-template <typename T, require_var_t<T> *  >
- inline  bool operator==(const T & a, const T & b);
+ inline  bool operator==(const var & a, const var & b);
 
 template <typename Arith, require_arithmetic_t<Arith> *  >
  inline  bool operator==(const var & a, Arith b);

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_ASINH_HPP
 #define STAN_MATH_REV_FUN_ASINH_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/isinf.hpp>

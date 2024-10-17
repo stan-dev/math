@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_ACOSH_HPP
 #define STAN_MATH_REV_FUN_ACOSH_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/acosh.hpp>
 #include <stan/math/prim/fun/isnan.hpp>

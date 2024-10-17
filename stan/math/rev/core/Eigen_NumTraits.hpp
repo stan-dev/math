@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_EIGEN_NUMTRAITS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>

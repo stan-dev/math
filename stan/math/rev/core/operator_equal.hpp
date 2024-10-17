@@ -24,7 +24,8 @@ namespace math {
  * @return True if the first variable's value is the same as the
  * second's.
  */
-inline bool operator==(const var& a, const var& b) {
+template <typename T, require_var_t<T>* = nullptr>
+inline bool operator==(const T& a, const T& b) {
   return a.val() == b.val();
 }
 

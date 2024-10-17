@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_LOG10_HPP
 #define STAN_MATH_REV_FUN_LOG10_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/rev/meta.hpp>

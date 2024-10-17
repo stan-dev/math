@@ -102,6 +102,10 @@ def get_function_declaration(func_decl_cursor):
         if param_cursor.kind == clang.cindex.CursorKind.PARM_DECL:
             if any([x.spelling == "=" for x in param_cursor.get_tokens()]):
                 return True, "", "", "", "", "", ""
+            if func_decl_cursor.spelling == "operator==" and False:
+                print(" ".join([x.spelling for x in func_decl_cursor.get_tokens()]))
+                import pdb; pdb.set_trace()
+
             param_type = param_cursor.type.spelling
             param_name = param_cursor.spelling
             params.append(f"{param_type} {param_name}")
@@ -297,6 +301,7 @@ def get_functions_and_classes_in_namespace(
 
 def main(inputs):
     # Parse the command line arguments
+    clang.cindex.Config.set_library_path("/opt/homebrew/Cellar/llvm/19.1.2/lib/")
     base_path = inputs.input_base_path
     filename = inputs.math_path + inputs.input_file
     print("Parsing: ", filename)
@@ -311,7 +316,7 @@ def main(inputs):
         "-g",
         "-x", "c++",
         "-fno-delayed-template-parsing",
-        "-resource-dir", "/mnt/sw/nix/store/5pdiczci1q0js1nvzzxl8i2gxz8cxym8-llvm-14.0.6/lib/clang/14.0.6",
+        "-resource-dir", "/opt/homebrew//Cellar/llvm/19.1.2/lib/clang/19",
         "-I" + base_path,
         "-I" + base_path + "lib/tbb_2020.3/include",
         "-I" + base_path + "lib/eigen_3.4.0",
