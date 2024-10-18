@@ -4,6 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
+#include <stan/math/rev/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
