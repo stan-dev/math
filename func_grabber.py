@@ -110,7 +110,10 @@ def get_template_parameters(cursor: clang.cindex.Cursor) -> List[str]:
             # Non-type template parameter
             param_type = child.type.spelling
             param_name = child.spelling
-            template_params.append(f"{param_type} {param_name}")
+            default_value = ""
+            if param_type.find("std::enable_if_t") >= 0 or param_type.find("require_") >= 0 and param_type[-1] == "*":
+                default_value = " = nullptr"
+            template_params.append(f"{param_type} {param_name}{default_value}")
         elif child.kind == clang.cindex.CursorKind.TEMPLATE_TEMPLATE_PARAMETER:
             # Template template parameter
             param_name = child.spelling
@@ -462,7 +465,7 @@ def move_unary_apply_functions(
         return code, func_cursor.spelling
     else:
         return "", None
-    
+
 def check_between(i, start_end_list):
     is_inside = False
     for start, end in start_end_list:
@@ -477,9 +480,6 @@ def main(inputs: argparse.Namespace) -> None:
         inputs (argparse.Namespace): The parsed command-line arguments.
     """
     # Parse the command line arguments
-    clang.cindex.Config.set_library_path(
-        "/opt/homebrew/Cellar/llvm/19.1.2/lib/"
-    )
     base_path = inputs.input_base_path
     filename = inputs.math_path + inputs.input_file
     print("Parsing: ", filename)
@@ -495,8 +495,7 @@ def main(inputs: argparse.Namespace) -> None:
         "-x",
         "c++",
         "-fno-delayed-template-parsing",
-        "-resource-dir",
-        "/opt/homebrew//Cellar/llvm/19.1.2/lib/clang/19",
+        "-resource-dir", "/mnt/sw/nix/store/5pdiczci1q0js1nvzzxl8i2gxz8cxym8-llvm-14.0.6/lib/clang/14.0.6",
         "-I" + base_path,
         "-I" + base_path + "lib/tbb_2020.3/include",
         "-I" + base_path + "lib/eigen_3.4.0",
@@ -533,21 +532,43 @@ def main(inputs: argparse.Namespace) -> None:
         debug_class_nodes=inputs.debug_classes,
     )
     print("Functions: ", len(functions))
+    functions_to_move = {}
     functions_to_delete = {}
     for function in functions:
-        function_code, name = move_unary_apply_functions(function)
-        if function_code is None or function_code == "":
-            continue
         og_location = str(function.extent.start.file)[2:]
         if og_location.find("prim") == -1:
             continue
+        function_code, name = move_unary_apply_functions(function)
+        if function_code is None or function_code == "":
+            continue
+        function_decl = extract_function_template_declaration(function)
         base_folder = ""
         if og_location.find("constraint") >= 0:
             base_folder = "constraint"
         else:
             base_folder = "fun"
         temp_output_filename = f"./stan/math/vectorize/{base_folder}/{name}.hpp"
+        if name in functions_to_move:
+            functions_to_move[name]["function_cursor"].append(function)
+            functions_to_move[name]["function_code"].append(function_code)
+        else:
+            functions_to_move[name] = {"output_filename": temp_output_filename,
+                                    "function_cursor": [function],
+                                    "base_folder": base_folder,
+                                    "function_code": [function_code],
+                                    "og_location": og_location}
+        if og_location in functions_to_delete:
+            functions_to_delete[og_location].append(([function.extent.start.line, function.extent.end.line], function_decl))
+        else:
+            functions_to_delete[og_location] = [([function.extent.start.line, function.extent.end.line], function_decl)]
+    for name, item in functions_to_move.items():
+        functions = item["function_cursor"]
+        function_codes = item["function_code"]
+        base_folder = item["base_folder"]
+        og_location = item["og_location"]
+        temp_output_filename = item["output_filename"]
         with open(os.path.abspath(temp_output_filename), "w") as output_file:
+            # Unpack all items
             upper_name = name.upper()
             output_file.write(
             f"""
@@ -558,43 +579,44 @@ namespace stan {
 namespace math {
 \n"""
             )
-            output_file.write(
-              function.raw_comment + "\n"
-            )  # Add one newline for readability
-            output_file.write(
-              function_code + "\n\n"
-            )  # Add two newlines for readability
+            for function, function_code in zip(functions, function_codes):
+                output_file.write(
+                    function.raw_comment + "\n"
+                )  # Add one newline for readability
+                output_file.write(
+                    function_code.replace( "= nullptr", "") + "\n\n"
+                )  # Add two newlines for readability
             output_file.write(
         """
 } // namespace math
 } // namespace stan
-#endif 
+#endif
 \n"""
             )
-            if og_location in functions_to_delete:
-                functions_to_delete[og_location].append([function.extent.start.line, function.extent.end.line])
-            else:
-                functions_to_delete[og_location] = [[function.extent.start.line, function.extent.end.line]]
             output_file.flush()
             print("Wrote: ", temp_output_filename)
           # Clean up the temporary file
     for key, item in functions_to_delete.items():
-        import pdb; pdb.set_trace()
         lines = ""
+        locations = [x[0] for x in item]
+        locations = [(x[0] - 1, x[1]) for x in locations]
+        new_lines = ""
         with open("./" + key, "r") as fr:
             lines = fr.readlines()
-            for i in range(len(item)):
-                item[i][0] -= 2
-                print("Scan for comment in : ", item[i][0], item[i][1])
-                import pdb; pdb.set_trace()
-                if lines[item[i][0]].find("*/") != -1:
-                    while(lines[item[i][0]].find("/**") == -1):
-                        item[i][0] -= 1
+#        print("Lines: \n", '\n'.join(lines))
         with open("./" + key, "w") as fw:
             for i in range(len(lines)):
-                print("Items: ", item)
-                if not check_between(i, item):
+#                print("Line: ", i)
+#                print("Items: ", locations)
+#                print(lines[i])
+                decls = [x[1] for x in item if x[0][0] == i]
+                if len(decls) > 0:
+                    fw.write(decls[0] + "\n\n")
+                    new_lines += decls[0] + "\n\n"
+                if not check_between(i, locations):
                     fw.write(lines[i])
+                    new_lines += lines[i] + "\n"
+#                print("File: \n", new_lines)
 
 
 if __name__ == "__main__":
