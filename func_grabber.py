@@ -111,7 +111,11 @@ def get_template_parameters(cursor: clang.cindex.Cursor) -> List[str]:
             param_type = child.type.spelling
             param_name = child.spelling
             default_value = ""
-            if param_type.find("std::enable_if_t") >= 0 or param_type.find("require_") >= 0 and param_type[-1] == "*":
+            if (
+                param_type.find("std::enable_if_t") >= 0
+                or param_type.find("require_") >= 0
+                and param_type[-1] == "*"
+            ):
                 default_value = " = nullptr"
             template_params.append(f"{param_type} {param_name}{default_value}")
         elif child.kind == clang.cindex.CursorKind.TEMPLATE_TEMPLATE_PARAMETER:
@@ -158,9 +162,7 @@ def get_function_declaration(
             if any([x.spelling == "=" for x in param_cursor.get_tokens()]):
                 return True, "", "", "", "", [], ""
             if func_decl_cursor.spelling == "operator==" and False:
-                print(
-                    " ".join([x.spelling for x in func_decl_cursor.get_tokens()])
-                )
+                print(" ".join([x.spelling for x in func_decl_cursor.get_tokens()]))
                 import pdb
 
                 pdb.set_trace()
@@ -172,16 +174,16 @@ def get_function_declaration(
     # Function qualifiers (const, noexcept)
     func_qualifiers = ""
     if func_decl_cursor.is_const_method():
-        func_qualifiers += " const"
+        func_qualifiers += "const"
     if (
         func_decl_cursor.exception_specification_kind
         == clang.cindex.ExceptionSpecificationKind.BASIC_NOEXCEPT
     ):
-        func_qualifiers += " noexcept"
+        func_qualifiers += "noexcept"
     # Storage class (static, virtual)
     storage_class = ""
     if func_decl_cursor.storage_class == clang.cindex.StorageClass.STATIC:
-        storage_class = "static "
+        storage_class = "static"
     attributes = ""
     valid_attributes = [
         "virtual",
@@ -193,14 +195,27 @@ def get_function_declaration(
     for token in func_decl_cursor.get_tokens():
         (kind, spelling) = token.kind, token.spelling
         if kind == clang.cindex.TokenKind.KEYWORD and spelling in valid_attributes:
-            attributes += spelling + " "
+            if attributes == "":
+              attributes = spelling
+            else:
+              attributes += spelling + " "
+
+
         # If we hit the function name, stop
         elif (
             kind == clang.cindex.TokenKind.IDENTIFIER
             and spelling == func_decl_cursor.spelling
         ):
             break
-    return False, storage_class, attributes, return_type, func_name, params, func_qualifiers
+    return (
+        False,
+        storage_class,
+        attributes,
+        return_type,
+        func_name,
+        params,
+        func_qualifiers,
+    )
 
 
 def extract_function_template_declaration(
@@ -292,9 +307,7 @@ def extract_class_template_declaration(cursor: clang.cindex.Cursor) -> str:
             break
     # We need to check if this is just a specialization
     # If it is we can skip it
-    raw_tokens = [
-        (token.spelling, token.kind) for token in cursor.get_tokens()
-    ]
+    raw_tokens = [(token.spelling, token.kind) for token in cursor.get_tokens()]
     for i in range(len(raw_tokens)):
         if raw_tokens[i][0] == class_name and len(raw_tokens) > i + 1:
             if raw_tokens[i + 1][0] == "<":
@@ -418,9 +431,8 @@ def get_functions_and_classes_in_namespace(
     visit_node(tu.cursor, namespaces)
     return functions, classes
 
-def move_unary_apply_functions(
-    func_cursor: clang.cindex.Cursor
-) -> str:
+
+def extract_code_with_pattern(func_cursor: clang.cindex.Cursor, regex) -> str:
     """
     Extracts a function which contains the regex "apply_(.*)_unary<(.*)>::apply" and writes it to a file.
 
@@ -441,7 +453,7 @@ def move_unary_apply_functions(
 
     # Read the source code from the file
     filename = start.file.name
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         lines = f.readlines()
 
     # Adjust line numbers (0-based index)
@@ -455,22 +467,23 @@ def move_unary_apply_functions(
         code = lines[start_line][start_column:end_column]
     else:
         code_lines = [lines[start_line][start_column:]]
-        code_lines.extend(lines[start_line + 1:end_line])
+        code_lines.extend(lines[start_line + 1 : end_line])
         code_lines.append(lines[end_line][:end_column])
-        code = ''.join(code_lines)
+        code = "".join(code_lines)
 
     # Check if the code contains the specified regex
-    pattern = re.compile(r"apply_(.*)_unary<(.*)>::apply")
-    if pattern.search(code):
+    if regex.search(code):
         return code, func_cursor.spelling
     else:
         return "", None
+
 
 def check_between(i, start_end_list):
     is_inside = False
     for start, end in start_end_list:
         is_inside |= i >= start and i <= end
     return is_inside
+
 
 def main(inputs: argparse.Namespace) -> None:
     """
@@ -495,7 +508,8 @@ def main(inputs: argparse.Namespace) -> None:
         "-x",
         "c++",
         "-fno-delayed-template-parsing",
-        "-resource-dir", "/mnt/sw/nix/store/5pdiczci1q0js1nvzzxl8i2gxz8cxym8-llvm-14.0.6/lib/clang/14.0.6",
+        "-resource-dir",
+        "/mnt/sw/nix/store/5pdiczci1q0js1nvzzxl8i2gxz8cxym8-llvm-14.0.6/lib/clang/14.0.6",
         "-I" + base_path,
         "-I" + base_path + "lib/tbb_2020.3/include",
         "-I" + base_path + "lib/eigen_3.4.0",
@@ -505,7 +519,7 @@ def main(inputs: argparse.Namespace) -> None:
     ]  # Add any necessary compiler flags here
     print("args: ", comp_args)
     # Generate output in a temporary file
-        # Write to the temporary file
+    # Write to the temporary file
     options = (
         clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
         | clang.cindex.TranslationUnit.PARSE_PRECOMPILED_PREAMBLE
@@ -518,6 +532,7 @@ def main(inputs: argparse.Namespace) -> None:
         )
     except Exception as e:
         import pdb
+
         pdb.set_trace()
         print(f"Error parsing {filename}: {e}")
         return
@@ -532,13 +547,49 @@ def main(inputs: argparse.Namespace) -> None:
         debug_class_nodes=inputs.debug_classes,
     )
     print("Functions: ", len(functions))
-    functions_to_move = {}
-    functions_to_delete = {}
+    stuff_to_move = {}
+    stuff_to_delete = {}
+    for struct in classes:
+        struct_name = struct.spelling
+        if struct_name.find("_fun") == -1:
+            continue
+        og_location = str(struct.extent.start.file)[2:]
+        unary_functor_pattern = re.compile(r"struct (.*)_fun")
+        struct_code, name = extract_code_with_pattern(struct, unary_functor_pattern)
+        base_folder = ""
+        if og_location.find("constraint") >= 0:
+            base_folder = "constraint"
+        else:
+            base_folder = "fun"
+        temp_output_filename = f"./stan/math/vectorize/{base_folder}/{name}.hpp"
+        if og_location in stuff_to_move:
+            stuff_to_move[og_location]["struct"]["cursor"].append(struct)
+            stuff_to_move[og_location]["struct"]["code"].append(struct_code)
+        else:
+            stuff_to_move[og_location] = {
+                "output_filename": temp_output_filename,
+                "base_folder": base_folder,
+                "og_location": og_location,
+                "struct": {
+                "name": name,
+                "cursor": [struct],
+                "code": [struct_code],
+                }
+            }
+        if og_location in stuff_to_delete:
+            stuff_to_delete[og_location]["struct"].append(
+                ([struct.extent.start.line, struct.extent.end.line], None)
+            )
+        else:
+            stuff_to_delete[og_location] = {
+             "struct":   [([struct.extent.start.line, struct.extent.end.line], None)]
+            }
+    unary_pattern = re.compile(r"apply_(.*)_unary<(.*)>::apply")
     for function in functions:
         og_location = str(function.extent.start.file)[2:]
         if og_location.find("prim") == -1:
             continue
-        function_code, name = move_unary_apply_functions(function)
+        function_code, name = extract_code_with_pattern(function, unary_pattern)
         if function_code is None or function_code == "":
             continue
         function_decl = extract_function_template_declaration(function)
@@ -548,46 +599,88 @@ def main(inputs: argparse.Namespace) -> None:
         else:
             base_folder = "fun"
         temp_output_filename = f"./stan/math/vectorize/{base_folder}/{name}.hpp"
-        if name in functions_to_move:
-            functions_to_move[name]["function_cursor"].append(function)
-            functions_to_move[name]["function_code"].append(function_code)
+        if function_code.find("auto") >= 0:
+            if function_code.find("typename T,") >= 0:
+                function_code = function_code.replace("inline auto", "inline plain_type_t<T>")
+                function_decl = function_decl.replace("inline auto", "inline plain_type_t<T>")
+            elif function_code.find("typename Container") >= 0:
+                function_code = function_code.replace("inline auto", "inline plain_type_t<Container>")
+                function_decl = function_decl.replace("inline auto", "inline plain_type_t<Container>")
+        if og_location in stuff_to_move:
+            if "function" in stuff_to_move[og_location]:
+                stuff_to_move[og_location]["function"]["cursor"].append(function)
+                stuff_to_move[og_location]["function"]["code"].append(function_code)
+            else:
+                stuff_to_move[og_location]["function"] = {
+                  "name" : name,
+                  "cursor" : [function],
+                  "code" : [function_code]
+                  }
+            stuff_to_move[og_location]["output_filename"] = temp_output_filename
         else:
-            functions_to_move[name] = {"output_filename": temp_output_filename,
-                                    "function_cursor": [function],
-                                    "base_folder": base_folder,
-                                    "function_code": [function_code],
-                                    "og_location": og_location}
-        if og_location in functions_to_delete:
-            functions_to_delete[og_location].append(([function.extent.start.line, function.extent.end.line], function_decl))
+            stuff_to_move[og_location] = {
+                "output_filename": temp_output_filename,
+                "base_folder": base_folder,
+                "og_location": og_location,
+                "function": {
+                  "name" : name,
+                  "cursor" : [function],
+                  "code" : [function_code]
+                  }
+            }
+        if og_location in stuff_to_delete:
+            if "function" in stuff_to_delete[og_location]:
+                stuff_to_delete[og_location]["function"].append(
+                    ([function.extent.start.line, function.extent.end.line], function_decl)
+                )
+            else:
+                stuff_to_delete[og_location] = {
+                "function" : [([function.extent.start.line, function.extent.end.line], function_decl)]}
         else:
-            functions_to_delete[og_location] = [([function.extent.start.line, function.extent.end.line], function_decl)]
-    for name, item in functions_to_move.items():
-        functions = item["function_cursor"]
-        function_codes = item["function_code"]
+            stuff_to_delete[og_location] = {
+            "function" : [([function.extent.start.line, function.extent.end.line], function_decl)]
+            }
+    import pdb; pdb.set_trace()
+    for og_location, item in stuff_to_move.items():
         base_folder = item["base_folder"]
-        og_location = item["og_location"]
         temp_output_filename = item["output_filename"]
+        if not "function" in item:
+            continue
         with open(os.path.abspath(temp_output_filename), "w") as output_file:
             # Unpack all items
+            name = item["function"]["name"]
             upper_name = name.upper()
             output_file.write(
-            f"""
+                f"""
 #ifndef STAN_MATH_VECTORIZED_{base_folder.upper()}_{upper_name}_HPP
 #define STAN_MATH_VECTORIZED_{base_folder.upper()}_{upper_name}_HPP
-#include <{og_location}>""" + """
+#include <{og_location}>"""
+                + """
 namespace stan {
 namespace math {
 \n"""
             )
-            for function, function_code in zip(functions, function_codes):
-                output_file.write(
-                    function.raw_comment + "\n"
-                )  # Add one newline for readability
-                output_file.write(
-                    function_code.replace( "= nullptr", "") + "\n\n"
-                )  # Add two newlines for readability
+            if "struct" in item:
+                structs = item["struct"]["cursor"]
+                struct_codes = item["struct"]["code"]
+                for class_cursor, class_code in zip(structs, struct_codes):
+                    if class_cursor.raw_comment != "":
+                        output_file.write(
+                            class_cursor.raw_comment + "\n"
+                        )
+                    output_file.write(
+                        class_code + "\n\n"
+                    )
+            if "function" in item:
+                for function, function_code in zip(item["function"]["cursor"], item["function"]["code"]):
+                    output_file.write(
+                        function.raw_comment + "\n"
+                    )  # Add one newline for readability
+                    output_file.write(
+                        function_code.replace("= nullptr", "") + "\n\n"
+                    )  # Add two newlines for readability
             output_file.write(
-        """
+                """
 } // namespace math
 } // namespace stan
 #endif
@@ -595,27 +688,38 @@ namespace math {
             )
             output_file.flush()
             print("Wrote: ", temp_output_filename)
-          # Clean up the temporary file
-    for key, item in functions_to_delete.items():
+    import pdb; pdb.set_trace()
+        # Clean up the temporary file
+    for key, item in stuff_to_delete.items():
+        if key.find("atan") >= 0:
+            import pdb; pdb.set_trace()
         lines = ""
-        locations = [x[0] for x in item]
+        if "function" not in item:
+            continue
+        locations = [x[0] for x in item["function"]]
+        if "struct" in item:
+            locations += [x[0] for x in item["struct"]]
+        if len(locations) == 0:
+            continue
         locations = [(x[0] - 1, x[1]) for x in locations]
         new_lines = ""
         with open("./" + key, "r") as fr:
             lines = fr.readlines()
-#        print("Lines: \n", '\n'.join(lines))
+        #        print("Lines: \n", '\n'.join(lines))
         with open("./" + key, "w") as fw:
             for i in range(len(lines)):
-#                print("Line: ", i)
-#                print("Items: ", locations)
-#                print(lines[i])
-                decls = [x[1] for x in item if x[0][0] == i]
+                #                print("Line: ", i)
+                #                print("Items: ", locations)
+                #                print(lines[i])
+                decls = [x[1] for x in item["function"] if x[0][0] == i]
                 if len(decls) > 0:
                     fw.write(decls[0] + "\n\n")
                     new_lines += decls[0] + "\n\n"
                 if not check_between(i, locations):
                     fw.write(lines[i])
                     new_lines += lines[i] + "\n"
+
+
 #                print("File: \n", new_lines)
 
 
