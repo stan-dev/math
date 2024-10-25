@@ -93,7 +93,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
             return ret_t(0.0);
           } else {
             const auto dist = GradT ? 0
-                                    : wiener4_distribution<GradientCalc::ON>(
+                                    : wiener4_distribution<true>(
                                         y - new_t0, a, new_v, new_w, 0, lerr);
             const auto temp2 = (sv != 0) ? -0.5 * square(factor) - LOG_SQRT_PI
                                                - 0.5 * LOG_TWO + log1p(temp)
@@ -361,10 +361,8 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     const T_partials_return cdf
         = internal::wiener7_integrate_cdf<GradientCalc::ON>(
-            [](const auto& y, const auto& a, const auto& vn,
-                                 const auto& wn,
-                                 const auto& err) {
-              return internal::wiener4_distribution<GradientCalc::ON>(y, a, vn, wn, err);
+            [&](auto&&... args) {
+              return internal::wiener4_distribution<true>(args...);
             },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,

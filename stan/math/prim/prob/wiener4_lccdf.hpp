@@ -27,7 +27,6 @@ inline auto wiener_prob(const T_a& a, const T_v& v_value, const T_w& w_value) {
   if (fabs(v) == 0.0) {
     return ret_t(log1p(-w));
   }
-
   const auto exponent = -2.0 * v * a * (1.0 - w);
   if (exponent < 0) {
     return ret_t(log1m_exp(exponent) - log_diff_exp(2 * v * a * w, exponent));
@@ -76,11 +75,9 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
     diff_term = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
   }
   if (log_w > diff_term) {
-    ans += log_diff_exp(log_w, diff_term);
-    ans = sign_v * exp(ans);
+    ans += sign_v * exp(log_diff_exp(log_w, diff_term));
   } else {
-    ans += log_diff_exp(diff_term, log_w);
-    ans = -sign_v * exp(ans);
+    ans += -sign_v * exp(log_diff_exp(diff_term, log_w));
   }
   if (unlikely(!is_scal_finite(ans))) {
     return ret_t(NEGATIVE_INFTY);
@@ -107,7 +104,7 @@ inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                          T_err&& err = log(1e-12)) noexcept {
   const auto prob = exp(wiener_prob(a, v, w));
   const auto cdf
-      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, err);
+      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, 0, err);
   return prob - cdf;
 }
 
@@ -314,7 +311,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
               return internal::wiener4_distribution<GradientCalc::ON>(args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, log_error_absolute);
+            w_value, 0.0, log_error_absolute);
 
     const auto prob = exp(internal::wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;

@@ -259,8 +259,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
 
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
-  const auto lv = log1p(square(v) * y);
-  const auto ueps = fmin(-1, 2 * (factor + log(a) - lv) + LOG_PI);
+  const auto ueps = fmin(-1, 2 * (factor + log(a) - log1p(square(v) * y)) + LOG_PI);
   const auto K_small
       = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
   const auto K_large = sqrt_y / a - wdash;
@@ -377,7 +376,6 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
   const auto K_small
       = (alphK_small < 0) ? sqrt_y * sqrt(-2 * alphK_small) / a - wdash : 0;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
-
   if (K_large_value > 4 * K_small_value) {
     const auto sqrt_y = sqrt(y);
     const auto vy = v * y;
@@ -426,18 +424,15 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
       const auto ekpia2y = exp(-0.5 * kpia2 * y);
       const auto denom = 1.0 / (square(v) + kpia2);
       const auto denomk = k * denom;
-      auto last = denom;
-      last *= denomk * ekpia2y;
+      auto last = denom * denomk * ekpia2y;
       ans += -last * factor;
     }
-    const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
     const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
                             std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
-    const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv = is_inf(dav * a) ? ret_t(NEGATIVE_INFTY) : dav * a;
     prob_deriv *= prob;
-    ans = (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * pia2 * evaw;
+    ans = (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * (2 * pi() / square(a)) * exp(-v * a * w - 0.5 * square(v) * y);
     return -1 * (prob_deriv + ans);
   }
 }
@@ -680,13 +675,14 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto v_value = v_vec.val(i);
 
     using internal::GradientCalc;
-    const T_partials_return log_cdf = internal::wiener4_distribution<GradientCalc::OFF>(
-            y_value - t0_value,
-            a_value,
-            v_value,
-            w_value,
-            0.0,
-            log_error_absolute);
+    const T_partials_return log_cdf
+        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+                                            GradientCalc::OFF>(
+            [](auto&&... args) {
+              return internal::wiener4_distribution<GradientCalc::OFF>(args...);
+            },
+            log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
+            w_value, 0.0, log_error_absolute);
 
     const T_partials_return cdf = exp(log_cdf);
 
