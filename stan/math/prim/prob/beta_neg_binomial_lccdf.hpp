@@ -43,12 +43,6 @@ template <typename T_n, typename T_r, typename T_alpha, typename T_beta>
 inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     const T_n& n, const T_r& r, const T_alpha& alpha, const T_beta& beta,
     const double precision = 1e-8, const int max_steps = 1e6) {
-  using std::exp;
-  using std::log;
-  using T_partials_return = partials_return_t<T_n, T_r, T_alpha, T_beta>;
-  using T_r_ref = ref_type_t<T_r>;
-  using T_alpha_ref = ref_type_t<T_alpha>;
-  using T_beta_ref = ref_type_t<T_beta>;
   static constexpr const char* function = "beta_neg_binomial_lccdf";
   check_consistent_sizes(
       function, "Failures variable", n, "Number of successes parameter", r,
@@ -57,67 +51,70 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     return 0;
   }
 
+  using T_r_ref = ref_type_t<T_r>;
   T_r_ref r_ref = r;
+  using T_alpha_ref = ref_type_t<T_alpha>;
   T_alpha_ref alpha_ref = alpha;
+  using T_beta_ref = ref_type_t<T_beta>;
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "Number of successes parameter", r_ref);
   check_positive_finite(function, "Prior success parameter", alpha_ref);
   check_positive_finite(function, "Prior failure parameter", beta_ref);
 
-  T_partials_return log_ccdf(0.0);
-  auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_r_ref> r_vec(r_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t size_n = stan::math::size(n);
+  int size_n = stan::math::size(n);
   size_t max_size_seq_view = max_size(n, r, alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size_n; i++) {
+  for (int i = 0; i < size_n; i++) {
     if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
+      return 0.0;
     }
   }
 
+  using T_partials_return = partials_return_t<T_n, T_r, T_alpha, T_beta>;
+  T_partials_return log_ccdf(0.0);
+  auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit return for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (n_vec.val(i) == std::numeric_limits<int>::max()) {
       return ops_partials.build(negative_infinity());
     }
-    T_partials_return n_dbl = n_vec.val(i);
-    T_partials_return r_dbl = r_vec.val(i);
-    T_partials_return alpha_dbl = alpha_vec.val(i);
-    T_partials_return beta_dbl = beta_vec.val(i);
-    T_partials_return b_plus_n = beta_dbl + n_dbl;
-    T_partials_return r_plus_n = r_dbl + n_dbl;
-    T_partials_return a_plus_r = alpha_dbl + r_dbl;
-    T_partials_return one = 1;
-    T_partials_return precision_t
-        = precision;  // default -6, set -8 to pass all tests
-
-    T_partials_return F
-        = hypergeometric_3F2({one, b_plus_n + 1, r_plus_n + 1},
-                             {n_dbl + 2, a_plus_r + b_plus_n + 1}, one);
-    T_partials_return C = lgamma(r_plus_n + 1) + lbeta(a_plus_r, b_plus_n + 1)
+    auto n_dbl = n_vec.val(i);
+    auto r_dbl = r_vec.val(i);
+    auto alpha_dbl = alpha_vec.val(i);
+    auto beta_dbl = beta_vec.val(i);
+    auto b_plus_n = beta_dbl + n_dbl;
+    auto r_plus_n = r_dbl + n_dbl;
+    auto a_plus_r = alpha_dbl + r_dbl;
+    using a_t = return_type_t<decltype(b_plus_n), decltype(r_plus_n)>;
+    using b_t = return_type_t<decltype(n_dbl), decltype(a_plus_r), decltype(b_plus_n)>;
+    auto F
+        = hypergeometric_3F2(
+          std::initializer_list<a_t>{1.0, b_plus_n + 1.0, r_plus_n + 1.0},
+          std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0}, 1.0);
+    auto C = lgamma(r_plus_n + 1.0) + lbeta(a_plus_r, b_plus_n + 1.0)
                           - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl)
                           - lgamma(n_dbl + 2);
-    T_partials_return ccdf = exp(C) * F;
-    T_partials_return log_ccdf_i = log(ccdf);
-    log_ccdf += log_ccdf_i;
+    log_ccdf += C + stan::math::log(F);
 
     if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
-      T_partials_return digamma_n_r_alpha_beta
-          = digamma(a_plus_r + b_plus_n + 1);
+      auto digamma_n_r_alpha_beta
+          = digamma(a_plus_r + b_plus_n + 1.0);
       T_partials_return dF[6];
-      grad_F32(dF, one, b_plus_n + 1, r_plus_n + 1, n_dbl + 2,
-               a_plus_r + b_plus_n + 1, one, precision_t, max_steps);
+      grad_F32<false, !is_constant<T_beta>::value,
+        !is_constant_all<T_r>::value, false, true, false>(dF, 1.0,
+          b_plus_n + 1.0, r_plus_n + 1.0, n_dbl + 2.0,
+          a_plus_r + b_plus_n + 1.0, 1.0, precision, max_steps);
 
       if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
-        T_partials_return digamma_r_alpha = digamma(a_plus_r);
+        auto digamma_r_alpha = digamma(a_plus_r);
         if constexpr (!is_constant_all<T_r>::value) {
           partials<0>(ops_partials)[i]
               += digamma(r_plus_n + 1)
@@ -133,7 +130,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
 
       if constexpr (!is_constant<T_alpha>::value
                     || !is_constant<T_beta>::value) {
-        T_partials_return digamma_alpha_beta = digamma(alpha_dbl + beta_dbl);
+        auto digamma_alpha_beta = digamma(alpha_dbl + beta_dbl);
         if constexpr (!is_constant<T_alpha>::value) {
           partials<1>(ops_partials)[i] += digamma_alpha_beta;
         }
