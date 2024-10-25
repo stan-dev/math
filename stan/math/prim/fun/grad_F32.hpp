@@ -49,9 +49,9 @@ namespace math {
  * @param[in] max_steps number of steps to take
  */
 template <bool grad_a1 = true, bool grad_a2 = true, bool grad_a3 = true,
-  bool grad_b1 = true, bool grad_b2 = true, bool grad_z = true,
-  typename T1, typename T2, typename T3, typename T4, typename T5,
-  typename T6, typename T7, typename T8 = double>
+          bool grad_b1 = true, bool grad_b2 = true, bool grad_z = true,
+          typename T1, typename T2, typename T3, typename T4, typename T5,
+          typename T6, typename T7, typename T8 = double>
 void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
               const T6& b2, const T7& z, const T8& precision = 1e-6,
               int max_steps = 1e5) {
@@ -87,15 +87,17 @@ void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
     if constexpr (grad_a1) {
-      term[0] = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-              + inv(a1 + k);
+      term[0]
+          = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+            + inv(a1 + k);
       log_g_old[0] = log_t_new + log(fabs(term[0]));
       log_g_old_sign[0] = term[0] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
       g[0] += log_g_old_sign[0] * exp(log_g_old[0]);
     }
 
     if constexpr (grad_a2) {
-      term[1] = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
+      term[1]
+          = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
             + inv(a2 + k);
       log_g_old[1] = log_t_new + log(fabs(term[1]));
       log_g_old_sign[1] = term[1] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -103,7 +105,8 @@ void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
     }
 
     if constexpr (grad_a3) {
-      term[2] = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+      term[2]
+          = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
             + inv(a3 + k);
       log_g_old[2] = log_t_new + log(fabs(term[2]));
       log_g_old_sign[2] = term[2] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -111,7 +114,8 @@ void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
     }
 
     if constexpr (grad_b1) {
-      term[3] = log_g_old_sign[3] * log_t_old_sign * exp(log_g_old[3] - log_t_old)
+      term[3]
+          = log_g_old_sign[3] * log_t_old_sign * exp(log_g_old[3] - log_t_old)
             - inv(b1 + k);
       log_g_old[3] = log_t_new + log(fabs(term[3]));
       log_g_old_sign[3] = term[3] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -119,7 +123,8 @@ void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
     }
 
     if constexpr (grad_b2) {
-      term[4] = log_g_old_sign[4] * log_t_old_sign * exp(log_g_old[4] - log_t_old)
+      term[4]
+          = log_g_old_sign[4] * log_t_old_sign * exp(log_g_old[4] - log_t_old)
             - inv(b2 + k);
       log_g_old[4] = log_t_new + log(fabs(term[4]));
       log_g_old_sign[4] = term[4] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -127,7 +132,8 @@ void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
     }
 
     if constexpr (grad_z) {
-      term[5] = log_g_old_sign[5] * log_t_old_sign * exp(log_g_old[5] - log_t_old)
+      term[5]
+          = log_g_old_sign[5] * log_t_old_sign * exp(log_g_old[5] - log_t_old)
             + inv(z);
       log_g_old[5] = log_t_new + log(fabs(term[5]));
       log_g_old_sign[5] = term[5] >= 0.0 ? log_t_new_sign : -log_t_new_sign;
