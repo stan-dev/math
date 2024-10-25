@@ -107,7 +107,7 @@ inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                          T_err&& err = log(1e-12)) noexcept {
   const auto prob = exp(wiener_prob(a, v, w));
   const auto cdf
-      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, 0, err);
+      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, err);
   return prob - cdf;
 }
 
@@ -314,7 +314,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
               return internal::wiener4_distribution<GradientCalc::ON>(args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, 0.0, log_error_absolute);
+            w_value, log_error_absolute);
 
     const auto prob = exp(internal::wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;

@@ -66,7 +66,7 @@ inline auto wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w_value&& w_value,
   const auto log_y_asq = log(y) - two_log_a;
   const auto w = 1.0 - w_value;
 
-  const auto n_1_factor = Density ? 2 : 3;
+  constexpr auto n_1_factor = Density ? 2 : 3;
   const auto n_1 = (sqrt(n_1_factor * y_asq) + w) / 2.0;
   auto u_eps = (Density || GradW)
                    ? fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_error)
@@ -132,18 +132,22 @@ inline auto wiener5_gradient_large_reaction_time_terms(T_y&& y, T_a&& a,
   const auto y_asq = y / square(a);
   const auto log_y_asq = log(y) - 2 * log(a);
   static constexpr double PI_SQUARED = pi() * pi();
-  const auto n_1_factor = GradW ? 2 : 3;
+  constexpr auto n_1_factor = GradW ? 2 : 3;
   auto n_1 = sqrt(n_1_factor / y_asq) / pi();
   const auto two_error = 2.0 * error;
   const auto u_eps_arg
       = GradW ? log(4.0) - log(9.0) + 2.0 * LOG_PI + 3.0 * log_y_asq + two_error
               : log(3.0) - log(5.0) + LOG_PI + 2.0 * log_y_asq + error;
   const auto u_eps = fmin(-1, u_eps_arg);
-  const auto arg_mult = GradW ? 1 : (2.0 / PI_SQUARED / y_asq);
-  const auto arg = -arg_mult * (u_eps - sqrt(-2.0 * u_eps - 2.0));
-  auto n_2 = GradW ? ((arg > 0) ? sqrt(arg / y_asq) / pi() : n_1)
-                   : ((arg > 0) ? sqrt(arg) : n_1);
-  return ceil(fmax(n_1, n_2));
+  if constexpr (GradW) {
+    const auto arg = -1 * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    auto n_2 = (arg > 0) ? sqrt(arg / y_asq) / pi() : n_1;
+    return ceil(fmax(n_1, n_2));
+  } else {
+    const auto arg = -(2.0 / PI_SQUARED / y_asq) * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    auto n_2 = (arg > 0) ? sqrt(arg) : n_1;
+    return ceil(fmax(n_1, n_2));
+  }
 }
 
 /**
@@ -181,7 +185,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w_value,
   int current_sign;
   if (small_n_terms_small_t) {
     constexpr double mult = Density ? 1.0 : 3.0;
-    if (GradW) {
+    if constexpr (GradW) {
       for (auto k = n_terms_small_t; k >= 1; k--) {
         const auto w_plus_2_k = w + 2.0 * k;
         const auto w_minus_2_k = w - 2.0 * k;
@@ -472,7 +476,7 @@ inline auto wiener5_grad_v(const T_y& y, const T_a& a, const T_v& v_value,
                            const T_w& w_value, const T_sv& sv,
                            T_err&& err = log(1e-12)) noexcept {
   auto ans = (a * (1 - w_value) - v_value * y) / (1.0 + square(sv) * y);
-  if (WrtLog) {
+  if constexpr (WrtLog) {
     return ans * wiener5_density<true>(y, a, v_value, w_value, sv, err);
   } else {
     return ans;
@@ -626,7 +630,7 @@ inline void assign_err(std::tuple<TArgs...>& args_tuple, Scalar err) {
  * @param err Error value to check against
  * @param args_tuple Tuple of arguments to pass to functor
  */
-template <size_t ErrIndex, size_t NestedIndex = 0,
+template <int ErrIndex, size_t NestedIndex = 0,
           GradientCalc GradW7 = GradientCalc::OFF, bool LogResult = true,
           typename F, typename T_err, typename... ArgsTupleT>
 inline auto estimate_with_err_check(F&& functor, T_err&& err,
@@ -638,7 +642,9 @@ inline auto estimate_with_err_check(F&& functor, T_err&& err,
     auto err_args_tuple = std::make_tuple(args_tuple...);
     const auto new_error
         = GradW7 ? err + log_fabs_result + LOG_TWO : err + log_fabs_result;
-    assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple), new_error);
+    if constexpr (NestedIndex != -1) {
+      assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple), new_error);
+    }
     result
         = math::apply([](auto&& func, auto&&... args) { return func(args...); },
                       err_args_tuple, functor);
@@ -781,7 +787,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
-    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       const auto deriv_y
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -790,14 +796,14 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               },
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[i] = deriv_y;
       }
-      if (!is_constant_all<T_t0>::value) {
+      if constexpr (!is_constant_all<T_t0>::value) {
         partials<2>(ops_partials)[i] = -deriv_y;
       }
     }
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -807,7 +813,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -817,13 +823,13 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener5_grad_v<GradientCalc::OFF>(
               y_value - t0_value, a_value, v_value, w_value, sv_value,
               log_error_absolute_val);
     }
-    if (!is_constant_all<T_sv>::value) {
+    if constexpr (!is_constant_all<T_sv>::value) {
       partials<5>(ops_partials)[i]
           = internal::wiener5_grad_sv<GradientCalc::OFF>(
               y_value - t0_value, a_value, v_value, w_value, sv_value,
@@ -832,15 +838,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   }  // end for loop
   return ops_partials.build(log_density);
 }  // end wiener_lpdf
-
-// ToDo: delete old wiener_lpdf implementation to use this one
-// template <bool propto = false, typename T_y, typename T_a, typename T_t0,
-//          typename T_w, typename T_v>
-// inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
-//                        const T_w& w, const T_v& v,
-//                        const double& precision_derivatives = 1e-4) {
-//  return wiener_lpdf(y, a, t0, w, v, 0, precision_derivatives);
-//}  // end wiener_lpdf
 
 }  // namespace math
 }  // namespace stan

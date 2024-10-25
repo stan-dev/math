@@ -7,17 +7,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/**
- * Helper function. Log of Mill's ratio for the normal distribution
- *
- * @param x A scalar
- * @return Log of Mill's ratio
- */
-template <typename T_x>
-inline auto logMill(T_x&& x) noexcept {
-  const auto m = std_normal_lcdf(-x) - std_normal_lpdf(x);
-  return m;
-}
 
 /**
  * Calculate the probability term 'P' on log scale for distribution
@@ -29,14 +18,13 @@ inline auto logMill(T_x&& x) noexcept {
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto log_probability_distribution(const T_a& a, const T_v& v,
-                                         const T_w& w) noexcept {
+                                         const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   if (fabs(v) == 0.0) {
     return ret_t(log1p(-w));
   }
   auto minus_two_va_one_minus_w = -2.0 * v * a * (1.0 - w);
-
-  // This split prevents abortion errors
+  // This split prevents abort errors
   if (minus_two_va_one_minus_w < 0) {
     const auto exp_arg = exp(minus_two_va_one_minus_w);
     auto two_vaw = 2 * v * a * w;
@@ -48,8 +36,7 @@ inline auto log_probability_distribution(const T_a& a, const T_v& v,
       return log1p(-exp_arg) - NEGATIVE_INFTY;
     }
   } else {
-    const auto exp_arg = exp(-minus_two_va_one_minus_w);
-    return log1p(-exp_arg) - log1p(-exp(2 * v * a));
+    return log1p(-exp(-minus_two_va_one_minus_w)) - log1p(-exp(2 * v * a));
   }
 }
 
@@ -63,7 +50,7 @@ inline auto log_probability_distribution(const T_a& a, const T_v& v,
  */
 template <typename T_a, typename T_w, typename T_v>
 inline auto log_probability_GradAV(const T_a& a, const T_v& v,
-                                   const T_w& w) noexcept {
+                                   const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   if (fabs(v) == 0.0) {
     return ret_t(-w);
@@ -93,8 +80,8 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
     }
   } else {
     const auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
-    const auto minus_two_av = (-2 * a * v);
     const auto exp_minus_two_va_one_minus_w = exp(minus_two_va_one_minus_w);
+    const auto minus_two_av = (-2 * a * v);
     const auto exp_minus_two_av = exp(minus_two_av);
     if ((exp_minus_two_va_one_minus_w >= nearly_one)
         || (exp_minus_two_av >= nearly_one)) {
@@ -122,6 +109,17 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v,
 }
 
 /**
+ * Helper function. Log of Mill's ratio for the normal distribution
+ *
+ * @param x A scalar
+ * @return Log of Mill's ratio
+ */
+template <typename T_x>
+inline auto logMill(T_x&& x) {
+  return std_normal_lcdf(-x) - std_normal_lpdf(x);
+}
+
+/**
  * Calculate the wiener4 distribution
  *
  * @tparam NaturalScale Whether to return the distribution on natural or
@@ -140,9 +138,8 @@ template <bool NaturalScale = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_wildcard, typename T_err>
 inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
                                  const T_w& wn, T_wildcard&& wildcard = 0.0,
-                                 T_err&& err = log(1e-12)) noexcept {
+                                 T_err&& err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
-  ret_t log_distribution = NEGATIVE_INFTY;
   const auto v = -vn;
   const auto w = 1 - wn;
 
@@ -190,12 +187,9 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     } else {
       ans = NEGATIVE_INFTY;
     }
-    log_distribution = ans + -v * a * w - square(v) * y / 2;
+    ret_t log_distribution = ans + -v * a * w - square(v) * y / 2;
     return NaturalScale ? exp(log_distribution) : log_distribution;
   } else {
-    auto summand_1 = log_probability_distribution(a, v, w);
-
-    ret_t ans = NEGATIVE_INFTY;
     const auto log_a = log(a);
     const auto log_v = log(fabs(v));
     ret_t fplus = NEGATIVE_INFTY;
@@ -203,8 +197,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     for (auto k = K_large_value; k >= 1; k--) {
       auto log_k = log(k * 1.0);
       auto k_pi = k * pi();
-      auto k_pi_w = k_pi * w;
-      auto sin_k_pi_w = sin(k_pi_w);
+      auto sin_k_pi_w = sin(k_pi * w);
       if (sin_k_pi_w > 0) {
         fplus = log_sum_exp(
             fplus, log_k - log_sum_exp(2 * log_v, 2 * (log_k + LOG_PI - log_a))
@@ -215,14 +208,15 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
                         - 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
       }
     }
+    ret_t ans = NEGATIVE_INFTY;
     if (fplus > fminus) {
       ans = log_diff_exp(fplus, fminus);
     } else if (fplus < fminus) {
       ans = log_diff_exp(fminus, fplus);
     }
-    const auto summands_large_y = (ans - v * a * w - 0.5 * square(v) * y);
-
-    auto summand_2 = lg + summands_large_y;
+    auto summand_1 = log_probability_distribution(a, v, w);
+    auto summand_2 = lg + (ans - v * a * w - 0.5 * square(v) * y);
+    ret_t log_distribution = NEGATIVE_INFTY;
     if (summand_1 > summand_2) {
       log_distribution = log_diff_exp(summand_1, summand_2);
     } else if (summand_1 < summand_2) {
@@ -230,7 +224,6 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
     }
     return NaturalScale ? exp(log_distribution) : log_distribution;
   }
-  //  return NaturalScale ? exp(log_distribution) : log_distribution;
 }
 
 /**
@@ -248,47 +241,45 @@ template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
                                const T_w& wn, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) noexcept {
+                               T_err&& err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto v = -vn;
   const auto w = 1 - wn;
-  const auto factor = v * a * w + square(v) * y / 2 + err;
 
   const auto log_y = log(y);
   const auto log_a = log(a);
-  const auto K = a / pi() / sqrt(y);
   auto C1
       = ret_t(LOG_TWO - log_sum_exp(2 * log(fabs(v)), 2 * (LOG_PI - log_a)));
   C1 = log_sum_exp(C1, log_y);
+  const auto factor = v * a * w + square(v) * y / 2 + err;
   const auto alphK = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
+  const auto K = a / pi() / sqrt(y);
   const auto K_large_value
       = ceil(fmax(fmax(sqrt(-2 * alphK / y) * a / pi(), K), ret_t(1.0)));
 
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
   const auto lv = log1p(square(v) * y);
-  const auto K_large = sqrt_y / a - wdash;
   const auto ueps = fmin(-1, 2 * (factor + log(a) - lv) + LOG_PI);
   const auto K_small
       = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
+  const auto K_large = sqrt_y / a - wdash;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 
   if (K_large_value > 4 * K_small_value) {
-    const auto sqrt_y = sqrt(y);
     const auto vy = v * y;
     auto ans = ret_t(0.0);
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; k--) {
       auto r_k = 2 * k * a + a * w;
-      auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto x = r_k - vy;
       auto xsqrt_y = x / sqrt_y;
+      auto d_k = std_normal_lpdf(r_k / sqrt_y);
       auto temp = fmin(exp(d_k + logMill(xsqrt_y)),
                        std::numeric_limits<ret_t>::max());
-      const auto factor = (2 * k + w);
-      const auto factor_2 = (2 * k + 2.0 - w);
       auto temp2 = exp(d_k);
       auto temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto factor = (2 * k + w);
       const auto t1 = temp3 * factor;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
@@ -304,6 +295,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
                   std::numeric_limits<ret_t>::max());
       temp2 = exp(d_k);
       temp3 = temp * (-vy) - sqrt_y * temp2;
+      const auto factor_2 = (2 * k + 2.0 - w);
       const auto t3 = -temp3 * factor_2;
       x = r_k + vy;
       xsqrt_y = x / sqrt_y;
@@ -322,25 +314,18 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
     ans = 0.0;
     for (auto k = K_large_value; k >= 1; k--) {
       const auto kpi = k * pi();
-      const auto factor = sin(kpi * w);
       const auto kpia2 = square(kpi / a);
-      const auto ekpia2y = exp(-0.5 * kpia2 * y);
       const auto denom = 1.0 / (square(v) + kpia2);
-      const auto denomk = k * denom;
-      auto last = square(kpi) / pow(a, 3) * (y + 2.0 * denom);
-      last *= denomk * ekpia2y;
-      ans += -last * factor;
+      auto last = (square(kpi) / pow(a, 3) * (y + 2.0 * denom)) * k * denom * exp(-0.5 * kpia2 * y);
+      ans += -last * sin(kpi * w);
     }
-    const auto evaw = exp(-v * a * w - 0.5 * square(v) * y);
     const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
                             std::numeric_limits<ret_t>::max());
     const auto dav = log_probability_GradAV(a, v, w);
-    const auto pia2 = 2 * pi() / square(a);
     auto prob_deriv
         = ((fabs(v) == 0) ? ret_t(0.0)
-                          : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v);
-    prob_deriv *= prob;
-    ans = (-2 / a - v * w) * (cdf - prob) + ans * pia2 * evaw;
+                          : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v) * prob;
+    ans = (-2 / a - v * w) * (cdf - prob) + ans * (2 * pi() / square(a)) * exp(-v * a * w - 0.5 * square(v) * y);
     return prob_deriv + ans;
   }
 }
@@ -360,7 +345,7 @@ template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
                                const T_w& wn, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) noexcept {
+                               T_err&& err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto v = -vn;
   const auto w = 1 - wn;
@@ -472,7 +457,7 @@ template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
                                const T_w& wn, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) noexcept {
+                               T_err&& err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto v = -vn;
   const auto w = 1 - wn;
@@ -695,14 +680,13 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto v_value = v_vec.val(i);
 
     using internal::GradientCalc;
-    const T_partials_return log_cdf
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
-                                            GradientCalc::OFF>(
-            [](auto&&... args) {
-              return internal::wiener4_distribution<GradientCalc::OFF>(args...);
-            },
-            log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, 0.0, log_error_absolute);
+    const T_partials_return log_cdf = internal::wiener4_distribution<GradientCalc::OFF>(
+            y_value - t0_value,
+            a_value,
+            v_value,
+            w_value,
+            0.0,
+            log_error_absolute);
 
     const T_partials_return cdf = exp(log_cdf);
 
