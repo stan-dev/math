@@ -61,7 +61,6 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
   check_positive_finite(function, "Prior success parameter", alpha_ref);
   check_positive_finite(function, "Prior failure parameter", beta_ref);
 
-
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_r_ref> r_vec(r_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -94,24 +93,23 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     auto r_plus_n = r_dbl + n_dbl;
     auto a_plus_r = alpha_dbl + r_dbl;
     using a_t = return_type_t<decltype(b_plus_n), decltype(r_plus_n)>;
-    using b_t = return_type_t<decltype(n_dbl), decltype(a_plus_r), decltype(b_plus_n)>;
-    auto F
-        = hypergeometric_3F2(
-          std::initializer_list<a_t>{1.0, b_plus_n + 1.0, r_plus_n + 1.0},
-          std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0}, 1.0);
+    using b_t = return_type_t<decltype(n_dbl), decltype(a_plus_r),
+                              decltype(b_plus_n)>;
+    auto F = hypergeometric_3F2(
+        std::initializer_list<a_t>{1.0, b_plus_n + 1.0, r_plus_n + 1.0},
+        std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0},
+        1.0);
     auto C = lgamma(r_plus_n + 1.0) + lbeta(a_plus_r, b_plus_n + 1.0)
-                          - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl)
-                          - lgamma(n_dbl + 2);
+             - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl) - lgamma(n_dbl + 2);
     log_ccdf += C + stan::math::log(F);
 
     if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
-      auto digamma_n_r_alpha_beta
-          = digamma(a_plus_r + b_plus_n + 1.0);
+      auto digamma_n_r_alpha_beta = digamma(a_plus_r + b_plus_n + 1.0);
       T_partials_return dF[6];
-      grad_F32<false, !is_constant<T_beta>::value,
-        !is_constant_all<T_r>::value, false, true, false>(dF, 1.0,
-          b_plus_n + 1.0, r_plus_n + 1.0, n_dbl + 2.0,
-          a_plus_r + b_plus_n + 1.0, 1.0, precision, max_steps);
+      grad_F32<false, !is_constant<T_beta>::value, !is_constant_all<T_r>::value,
+               false, true, false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0,
+                                   n_dbl + 2.0, a_plus_r + b_plus_n + 1.0, 1.0,
+                                   precision, max_steps);
 
       if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
         auto digamma_r_alpha = digamma(a_plus_r);

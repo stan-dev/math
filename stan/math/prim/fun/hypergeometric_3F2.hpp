@@ -19,12 +19,13 @@ namespace internal {
 template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
-inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
-                                   double precision = 1e-6,
-                                   int max_steps = 1e5) {
+inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
+    const Ta& a, const Tb& b, const Tz& z, double precision = 1e-6,
+    int max_steps = 1e5) {
   using T_return = return_type_t<Ta, Tb, Tz>;
   Eigen::Array<scalar_type_t<Ta>, 3, 1> a_array = as_array_or_scalar(a);
-  Eigen::Array<scalar_type_t<Tb>, 3, 1> b_array = append_row(as_array_or_scalar(b), 1.0);
+  Eigen::Array<scalar_type_t<Tb>, 3, 1> b_array
+      = append_row(as_array_or_scalar(b), 1.0);
   check_3F2_converges("hypergeometric_3F2", a_array[0], a_array[1], a_array[2],
                       b_array[0], b_array[1], z);
 
@@ -141,7 +142,8 @@ inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
 template <typename Ta, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
 inline auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
-                        const std::initializer_list<Tb>& b, const Tz& z) {
+                               const std::initializer_list<Tb>& b,
+                               const Tz& z) {
   return hypergeometric_3F2(std::vector<Ta>(a), std::vector<Tb>(b), z);
 }
 
