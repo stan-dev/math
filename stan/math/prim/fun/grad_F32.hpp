@@ -24,14 +24,20 @@ namespace math {
  * This power-series representation converges for all gradients
  * under the same conditions as the 3F2 function itself.
  *
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
- * @tparam T1 type of g
+ * @tparam grad_a1 boolean indicating if gradient with respect to a1 is required
+ * @tparam grad_a2 boolean indicating if gradient with respect to a2 is required
+ * @tparam grad_a3 boolean indicating if gradient with respect to a3 is required
+ * @tparam grad_b1 boolean indicating if gradient with respect to b1 is required
+ * @tparam grad_b2 boolean indicating if gradient with respect to b2 is required
+ * @tparam grad_z boolean indicating if gradient with respect to z is required
+ * @tparam T1 a scalar type
+ * @tparam T2 a scalar type
+ * @tparam T3 a scalar type
+ * @tparam T4 a scalar type
+ * @tparam T5 a scalar type
+ * @tparam T6 a scalar type
+ * @tparam T7 a scalar type
+ * @tparam T8 a scalar type
  * @param[out] g g pointer to array of six values of type T, result.
  * @param[in] a1 a1 see generalized hypergeometric function definition.
  * @param[in] a2 a2 see generalized hypergeometric function definition.
