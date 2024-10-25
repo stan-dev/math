@@ -7,7 +7,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-
 /**
  * Calculate the probability term 'P' on log scale for distribution
  *
@@ -49,8 +48,7 @@ inline auto log_probability_distribution(const T_a& a, const T_v& v,
  * @return 'P' term
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto log_probability_GradAV(const T_a& a, const T_v& v,
-                                   const T_w& w) {
+inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   if (fabs(v) == 0.0) {
     return ret_t(-w);
@@ -259,7 +257,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
 
   const auto sqrt_y = sqrt(y);
   const auto wdash = fmin(w, 1.0 - w);
-  const auto ueps = fmin(-1, 2 * (factor + log(a) - log1p(square(v) * y)) + LOG_PI);
+  const auto ueps
+      = fmin(-1, 2 * (factor + log(a) - log1p(square(v) * y)) + LOG_PI);
   const auto K_small
       = (sqrt_y * sqrt(-(ueps - sqrt(-2 * ueps - 2))) - a * wdash) / a;
   const auto K_large = sqrt_y / a - wdash;
@@ -315,7 +314,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
       const auto kpi = k * pi();
       const auto kpia2 = square(kpi / a);
       const auto denom = 1.0 / (square(v) + kpia2);
-      auto last = (square(kpi) / pow(a, 3) * (y + 2.0 * denom)) * k * denom * exp(-0.5 * kpia2 * y);
+      auto last = (square(kpi) / pow(a, 3) * (y + 2.0 * denom)) * k * denom
+                  * exp(-0.5 * kpia2 * y);
       ans += -last * sin(kpi * w);
     }
     const ret_t prob = fmin(exp(log_probability_distribution(a, v, w)),
@@ -323,8 +323,11 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
     const auto dav = log_probability_GradAV(a, v, w);
     auto prob_deriv
         = ((fabs(v) == 0) ? ret_t(0.0)
-                          : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v) * prob;
-    ans = (-2 / a - v * w) * (cdf - prob) + ans * (2 * pi() / square(a)) * exp(-v * a * w - 0.5 * square(v) * y);
+                          : is_inf(dav * v) ? NEGATIVE_INFTY : dav * v)
+          * prob;
+    ans = (-2 / a - v * w) * (cdf - prob)
+          + ans * (2 * pi() / square(a))
+                * exp(-v * a * w - 0.5 * square(v) * y);
     return prob_deriv + ans;
   }
 }
@@ -432,7 +435,9 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
     const auto dav = log_probability_GradAV(a, v, w);
     auto prob_deriv = is_inf(dav * a) ? ret_t(NEGATIVE_INFTY) : dav * a;
     prob_deriv *= prob;
-    ans = (-w * a - v * y) * (cdf - prob) + ans * (-2 * v) * (2 * pi() / square(a)) * exp(-v * a * w - 0.5 * square(v) * y);
+    ans = (-w * a - v * y) * (cdf - prob)
+          + ans * (-2 * v) * (2 * pi() / square(a))
+                * exp(-v * a * w - 0.5 * square(v) * y);
     return -1 * (prob_deriv + ans);
   }
 }

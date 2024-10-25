@@ -144,7 +144,8 @@ inline auto wiener5_gradient_large_reaction_time_terms(T_y&& y, T_a&& a,
     auto n_2 = (arg > 0) ? sqrt(arg / y_asq) / pi() : n_1;
     return ceil(fmax(n_1, n_2));
   } else {
-    const auto arg = -(2.0 / PI_SQUARED / y_asq) * (u_eps - sqrt(-2.0 * u_eps - 2.0));
+    const auto arg
+        = -(2.0 / PI_SQUARED / y_asq) * (u_eps - sqrt(-2.0 * u_eps - 2.0));
     auto n_2 = (arg > 0) ? sqrt(arg) : n_1;
     return ceil(fmax(n_1, n_2));
   }
@@ -787,7 +788,8 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_y to edge1 and as -deriv_y to edge5
-    if constexpr (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_y>::value
+                  || !is_constant_all<T_t0>::value) {
       const auto deriv_y
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
