@@ -34,7 +34,7 @@ namespace math {
  * @param alpha prior success parameter
  * @param beta prior failure parameter
  * @param precision precision for `grad_F32`, default \f$10^{-8}\f$
- * @param max_steps max iteration allowed for `grad_F32`, default \f$10^{-8}\f$
+ * @param max_steps max iteration allowed for `grad_F32`, default \f$10^{8}\f$
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if r, alpha, or beta fails to be positive
  * @throw std::invalid_argument if container sizes mismatch
@@ -42,7 +42,7 @@ namespace math {
 template <typename T_n, typename T_r, typename T_alpha, typename T_beta>
 inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
     const T_n& n, const T_r& r, const T_alpha& alpha, const T_beta& beta,
-    const double precision = 1e-8, const int max_steps = 1e6) {
+    const double precision = 1e-8, const int max_steps = 1e8) {
   static constexpr const char* function = "beta_neg_binomial_lccdf";
   check_consistent_sizes(
       function, "Failures variable", n, "Number of successes parameter", r,
@@ -100,7 +100,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
         std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0},
         1.0);
     auto C = lgamma(r_plus_n + 1.0) + lbeta(a_plus_r, b_plus_n + 1.0)
-             - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl) - lgamma(n_dbl + 2);
+             - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl) - lgamma(n_dbl + 2.0);
     log_ccdf += C + stan::math::log(F);
 
     if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
