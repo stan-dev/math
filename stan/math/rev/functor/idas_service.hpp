@@ -9,7 +9,7 @@
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#include <sundials/sundials_context.h>
+#include <sundials/sundials_context.hpp>
 #include <ostream>
 #include <vector>
 #include <algorithm>
@@ -106,8 +106,8 @@ struct idas_service {
           "Failed to allocate yps N_Vectors for sensitivities.");
     }
     for (size_t is = 0; is < ns; ++is) {
-      N_VConst(RCONST(0.0), yys[is]);
-      N_VConst(RCONST(0.0), yps[is]);
+      N_VConst(SUN_RCONST(0.0), yys[is]);
+      N_VConst(SUN_RCONST(0.0), yps[is]);
     }
     set_init_sens(yys, yps, n);
     // std::cout << "Calling IDASensInit with ns=" << ns << " inner ns: " << ns_

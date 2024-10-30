@@ -140,7 +140,7 @@ else()
     sundials
     DOWNLOAD_EXTRACT_TIMESTAMP ON
     GIT_REPOSITORY https://github.com/LLNL/sundials
-    GIT_TAG        v6.1.1
+    GIT_TAG        v7.1.1
       # adjust this to the version you need
   )
   FetchContent_GetProperties(sundials)
@@ -150,7 +150,7 @@ else()
   endif()
 endif()
 
-
+set(BOOST_NUMERIC_ODEINT_NO_ADAPTORS ON)
 if (STAN_USE_SYSTEM_BOOST)
   find_package(Boost REQUIRED)
 else()
@@ -162,13 +162,13 @@ else()
   set(BOOST_ENABLE_PYTHON OFF)
   set(BOOST_BUILD_TESTS OFF)
   set(CMAKE_BUILD_TYPE Release)
-  set(BOOST_ENABLE_MPI ON)
+  set(BOOST_ENABLE_MPI ${STAN_MPI})
 
   set(BOOST_INCLUDE_LIBRARIES math numeric/odeint lexical_cast optional random mpi serialization)
   FetchContent_Declare(
     Boost
     DOWNLOAD_EXTRACT_TIMESTAMP ON
-    URL https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
+    URL https://github.com/boostorg/boost/releases/download/boost-1.86.0/boost-1.86.0-cmake.tar.xz
   )
   FetchContent_MakeAvailable(Boost)
 endif()

@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
-#include <sundials/sundials_context.h>
+#include <sundials/sundials_context.hpp>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -576,7 +576,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to CVODES.
    */
-  constexpr static int cv_rhs(realtype t, N_Vector y, N_Vector ydot,
+  constexpr static int cv_rhs(sunrealtype t, N_Vector y, N_Vector ydot,
                               void* user_data) {
     return cast_to_self(user_data)->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
   }
@@ -611,7 +611,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * Implements the function of type CVRhsFnB which is the
    * RHS of the backward ODE system.
    */
-  constexpr static int cv_rhs_adj(realtype t, N_Vector y, N_Vector yB,
+  constexpr static int cv_rhs_adj(sunrealtype t, N_Vector y, N_Vector yB,
                                   N_Vector yBdot, void* user_data) {
     return cast_to_self(user_data)->rhs_adj(t, y, yB, yBdot);
   }
@@ -654,7 +654,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * Implements the function of type CVQuadRhsFnB which is the
    * RHS of the backward ODE system's quadrature.
    */
-  constexpr static int cv_quad_rhs_adj(realtype t, N_Vector y, N_Vector yB,
+  constexpr static int cv_quad_rhs_adj(sunrealtype t, N_Vector y, N_Vector yB,
                                        N_Vector qBdot, void* user_data) {
     return cast_to_self(user_data)->quad_rhs_adj(t, y, yB, qBdot);
   }
@@ -693,7 +693,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * ode_rhs wrt to the states y. The jacobian is stored in column
    * major format.
    */
-  constexpr static int cv_jacobian_rhs_states(realtype t, N_Vector y,
+  constexpr static int cv_jacobian_rhs_states(sunrealtype t, N_Vector y,
                                               N_Vector fy, SUNMatrix J,
                                               void* user_data, N_Vector tmp1,
                                               N_Vector tmp2, N_Vector tmp3) {
@@ -722,7 +722,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * Implements the CVLsJacFnB function for evaluating the jacobian of
    * the adjoint problem wrt to the backward states.
    */
-  constexpr static int cv_jacobian_rhs_adj_states(realtype t, N_Vector y,
+  constexpr static int cv_jacobian_rhs_adj_states(sunrealtype t, N_Vector y,
                                                   N_Vector yB, N_Vector fyB,
                                                   SUNMatrix J, void* user_data,
                                                   N_Vector tmp1, N_Vector tmp2,
