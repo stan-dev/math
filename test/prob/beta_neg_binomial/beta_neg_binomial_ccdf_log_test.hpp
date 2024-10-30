@@ -13,12 +13,12 @@ class AgradCcdfLogBetaNegBinomial : public AgradCcdfLogTest {
                     vector<double>& ccdf_log) {
     vector<double> param(4);
 
-    param[0] = 10;   // n
-    param[1] = 5.5;  // r
-    param[2] = 2.5;  // alpha
-    param[3] = 0.5;  // beta
+    param[0] = 0;    // n
+    param[1] = 1.0;  // r
+    param[2] = 5.0;  // alpha
+    param[3] = 1.0;  // beta
     parameters.push_back(param);
-    ccdf_log.push_back(std::log(1.0 - 0.967906252841089));  // expected ccdf_log
+    ccdf_log.push_back(std::log(1.0 - 0.833333333333333));  // expected ccdf_log
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
