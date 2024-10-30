@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Doubles
-#include <stan/math/prim/prob/binomial_log.hpp>
+#include <stan/math/prim/prob/binomial_lpmf.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -46,7 +46,7 @@ class AgradDistributionsBinomial : public AgradDistributionTest {
   stan::return_type_t<T_prob> log_prob(const T_n& n, const T_N& N,
                                        const T_prob& theta, const T3&,
                                        const T4&, const T5&) {
-    return stan::math::binomial_log(n, N, theta);
+    return stan::math::binomial_lpmf(n, N, theta);
   }
 
   template <bool propto, class T_n, class T_N, class T_prob, typename T3,
@@ -54,7 +54,7 @@ class AgradDistributionsBinomial : public AgradDistributionTest {
   stan::return_type_t<T_prob> log_prob(const T_n& n, const T_N& N,
                                        const T_prob& theta, const T3&,
                                        const T4&, const T5&) {
-    return stan::math::binomial_log<propto>(n, N, theta);
+    return stan::math::binomial_lpmf<propto>(n, N, theta);
   }
 
   template <class T_n, class T_N, class T_prob, typename T3, typename T4,

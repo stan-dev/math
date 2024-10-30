@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/prob/bernoulli_log.hpp>
+#include <stan/math/prim/prob/bernoulli_lpmf.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stdexcept>
 
@@ -55,7 +55,7 @@ class AgradDistributionsBernoulli : public AgradDistributionTest {
   stan::return_type_t<T_n, T_prob> log_prob(const T_n& n, const T_prob& theta,
                                             const T2&, const T3&, const T4&,
                                             const T5&) {
-    return stan::math::bernoulli_log(n, theta);
+    return stan::math::bernoulli_lpmf(n, theta);
   }
 
   template <bool propto, class T_n, class T_prob, typename T2, typename T3,
@@ -63,7 +63,7 @@ class AgradDistributionsBernoulli : public AgradDistributionTest {
   stan::return_type_t<T_n, T_prob> log_prob(const T_n& n, const T_prob& theta,
                                             const T2&, const T3&, const T4&,
                                             const T5&) {
-    return stan::math::bernoulli_log<propto>(n, theta);
+    return stan::math::bernoulli_lpmf<propto>(n, theta);
   }
 
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,

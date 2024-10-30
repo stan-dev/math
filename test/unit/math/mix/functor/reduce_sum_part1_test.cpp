@@ -1,14 +1,14 @@
 #include <stan/math/prim/meta.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/functor/reduce_sum_util.hpp>
-
+#include <test/unit/math/rev/util.hpp>
 #include <limits>
 #include <vector>
 
 // Reduce sum tests are broken up into four files to avoid windows compiler
 // error
 
-TEST(MathMix_reduce_sum, grainsize_static) {
+TEST_F(AgradRev, reduce_sum_grainsize_static) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -33,7 +33,7 @@ TEST(MathMix_reduce_sum, grainsize_static) {
   stan::test::expect_ad(f4, data);
 }
 
-TEST(MathMix_reduce_sum, grainsize) {
+TEST_F(AgradRev, reduce_sum_grainsize) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
   auto f1 = [](auto&& data) {
@@ -57,7 +57,7 @@ TEST(MathMix_reduce_sum, grainsize) {
   stan::test::expect_ad(f4, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_zero_length) {
+TEST_F(AgradRev, reduce_sum_std_vector_zero_length) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -69,7 +69,7 @@ TEST(MathMix_reduce_sum, std_vector_zero_length) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -81,7 +81,7 @@ TEST(MathMix_reduce_sum, std_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_std_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_std_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -93,7 +93,7 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_eigen_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_eigen_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -105,7 +105,7 @@ TEST(MathMix_reduce_sum, std_vector_eigen_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_eigen_row_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_eigen_row_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -117,7 +117,7 @@ TEST(MathMix_reduce_sum, std_vector_eigen_row_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_eigen_matrix_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_eigen_matrix_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -129,7 +129,7 @@ TEST(MathMix_reduce_sum, std_vector_eigen_matrix_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_std_vector_std_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -142,7 +142,7 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_std_vector_eigen_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -155,7 +155,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_double_slice) {
+TEST_F(AgradRev,
+       reduce_sum_std_vector_std_vector_eigen_row_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -168,7 +169,7 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_double_slice) {
       [](auto&&... args) { return reduce_sum_sum_lpdf(args...); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_matrix_double_slice) {
+TEST_F(AgradRev, reduce_sum_std_vector_std_vector_eigen_matrix_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
 
@@ -200,7 +201,7 @@ TEST(StanMath_reduce_sum_static, start_end_slice) {
   stan::test::expect_ad(start_end_static, data);
 }
 
-TEST(MathMix_reduce_sum, int_arg) {
+TEST_F(AgradRev, reduce_sum_int_arg) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
   std::vector<double> data(2, 1.0);
@@ -212,7 +213,7 @@ TEST(MathMix_reduce_sum, int_arg) {
       [&](auto&& data) { return reduce_sum_sum_lpdf(data, arg); }, data);
 }
 
-TEST(MathMix_reduce_sum, std_vector_int_arg) {
+TEST_F(AgradRev, reduce_sum_std_vector_int_arg) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
   std::vector<double> data(2, 10.0);
@@ -224,12 +225,12 @@ TEST(MathMix_reduce_sum, std_vector_int_arg) {
       [&](auto&& data) { return reduce_sum_sum_lpdf(data, arg); }, data);
 }
 
-TEST(MathMix_reduce_sum, double_arg) {
+TEST_F(AgradRev, reduce_sum_double_arg) {
   stan::math::test::expect_ad_reduce_sum_lpdf(std::vector<double>(2, 10.0),
                                               5.0);
 }
 
-TEST(MathMix_reduce_sum, std_vector_double_arg) {
+TEST_F(AgradRev, reduce_sum_std_vector_double_arg) {
   stan::math::test::expect_ad_reduce_sum_lpdf(std::vector<double>(2, 10.0),
                                               std::vector<double>(2, 10.0));
 }

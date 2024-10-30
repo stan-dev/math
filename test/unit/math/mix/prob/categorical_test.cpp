@@ -1,10 +1,11 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-TEST(ProbDistributionsCategorical, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -15,16 +16,16 @@ TEST(ProbDistributionsCategorical, fvar_var) {
     theta(i).d_ = 1.0;
 
   EXPECT_FLOAT_EQ(std::log(0.3),
-                  stan::math::categorical_log(1, theta).val_.val());
+                  stan::math::categorical_lpmf(1, theta).val_.val());
   EXPECT_FLOAT_EQ(std::log(0.5),
-                  stan::math::categorical_log(2, theta).val_.val());
+                  stan::math::categorical_lpmf(2, theta).val_.val());
   EXPECT_FLOAT_EQ(std::log(0.2),
-                  stan::math::categorical_log(3, theta).val_.val());
-  EXPECT_FLOAT_EQ(1.0 / 0.3, stan::math::categorical_log(1, theta).d_.val());
-  EXPECT_FLOAT_EQ(1.0 / 0.5, stan::math::categorical_log(2, theta).d_.val());
-  EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_log(3, theta).d_.val());
+                  stan::math::categorical_lpmf(3, theta).val_.val());
+  EXPECT_FLOAT_EQ(1.0 / 0.3, stan::math::categorical_lpmf(1, theta).d_.val());
+  EXPECT_FLOAT_EQ(1.0 / 0.5, stan::math::categorical_lpmf(2, theta).d_.val());
+  EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_lpmf(3, theta).d_.val());
 }
-TEST(ProbDistributionsCategorical, fvar_var_vector) {
+TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -40,12 +41,12 @@ TEST(ProbDistributionsCategorical, fvar_var_vector) {
   xs[2] = 1;
 
   EXPECT_FLOAT_EQ(log(0.3) + log(0.2) + log(0.3),
-                  stan::math::categorical_log(xs, theta).val_.val());
+                  stan::math::categorical_lpmf(xs, theta).val_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.3 + 1.0 / 0.2 + 1.0 / 0.3,
-                  stan::math::categorical_log(xs, theta).d_.val());
+                  stan::math::categorical_lpmf(xs, theta).d_.val());
 }
 
-TEST(ProbDistributionsCategorical, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsCategorical_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -56,19 +57,19 @@ TEST(ProbDistributionsCategorical, fvar_fvar_var) {
     theta(i).d_.val_ = 1.0;
 
   EXPECT_FLOAT_EQ(std::log(0.3),
-                  stan::math::categorical_log(1, theta).val_.val_.val());
+                  stan::math::categorical_lpmf(1, theta).val_.val_.val());
   EXPECT_FLOAT_EQ(std::log(0.5),
-                  stan::math::categorical_log(2, theta).val_.val_.val());
+                  stan::math::categorical_lpmf(2, theta).val_.val_.val());
   EXPECT_FLOAT_EQ(std::log(0.2),
-                  stan::math::categorical_log(3, theta).val_.val_.val());
+                  stan::math::categorical_lpmf(3, theta).val_.val_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.3,
-                  stan::math::categorical_log(1, theta).d_.val_.val());
+                  stan::math::categorical_lpmf(1, theta).d_.val_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.5,
-                  stan::math::categorical_log(2, theta).d_.val_.val());
+                  stan::math::categorical_lpmf(2, theta).d_.val_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.2,
-                  stan::math::categorical_log(3, theta).d_.val_.val());
+                  stan::math::categorical_lpmf(3, theta).d_.val_.val());
 }
-TEST(ProbDistributionsCategorical, fvar_fvar_var_vector) {
+TEST_F(AgradRev, ProbDistributionsCategorical_fvar_fvar_var_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -84,7 +85,7 @@ TEST(ProbDistributionsCategorical, fvar_fvar_var_vector) {
   xs[2] = 1;
 
   EXPECT_FLOAT_EQ(log(0.3) + log(0.2) + log(0.3),
-                  stan::math::categorical_log(xs, theta).val_.val_.val());
+                  stan::math::categorical_lpmf(xs, theta).val_.val_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.3 + 1.0 / 0.2 + 1.0 / 0.3,
-                  stan::math::categorical_log(xs, theta).d_.val_.val());
+                  stan::math::categorical_lpmf(xs, theta).d_.val_.val());
 }

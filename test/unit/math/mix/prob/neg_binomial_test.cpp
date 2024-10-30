@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <boost/math/differentiation/finite_difference.hpp>
 
-TEST(mathMixScalFun, neg_binomial_lpmf_derivatives) {
+TEST_F(AgradRev, mathMixScalFun_neg_binomial_lpmf_derivatives) {
   auto f = [](const int y) {
     return [=](const auto& alpha, const auto& beta) {
       return stan::math::neg_binomial_lpmf(y, alpha, beta);

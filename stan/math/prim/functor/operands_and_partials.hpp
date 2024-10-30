@@ -54,7 +54,8 @@ class ops_partials_edge;
  *  for this specialization must be a `Arithmetic`
  */
 template <typename ViewElt, typename Op>
-struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
+class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
+ public:
   using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
                                       value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;

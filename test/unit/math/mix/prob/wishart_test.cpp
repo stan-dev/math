@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsWishart, matvar) {
+TEST_F(AgradRev, ProbDistributionsWishart_matvar) {
   auto f = [](const auto& y, const auto& dof, const auto& sigma) {
     auto y_sym = stan::math::multiply(0.5, y + y.transpose());
     auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
@@ -34,7 +34,7 @@ TEST(ProbDistributionsWishart, matvar) {
   stan::test::expect_ad_matvar(f, y11, dof, Sigma00);
 }
 
-TEST(ProbDistributionsWishart, fvar_var) {
+TEST_F(AgradRev, ProbDistributionsWishart_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -54,14 +54,14 @@ TEST(ProbDistributionsWishart, fvar_var) {
   // computed with MCMCpack in R
   double lp = log(8.658e-07);
 
-  EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_.val(), 0.01);
-  EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y, dof, Sigma).d_.val(),
+  EXPECT_NEAR(lp, stan::math::wishart_lpdf(Y, dof, Sigma).val_.val(), 0.01);
+  EXPECT_NEAR(-0.76893887, stan::math::wishart_lpdf(Y, dof, Sigma).d_.val(),
               0.01);
 
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsWishart, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributionsWishart_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -81,9 +81,10 @@ TEST(ProbDistributionsWishart, fvar_fvar_var) {
   // computed with MCMCpack in R
   double lp = log(8.658e-07);
 
-  EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_.val_.val(), 0.01);
-  EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y, dof, Sigma).d_.val_.val(),
+  EXPECT_NEAR(lp, stan::math::wishart_lpdf(Y, dof, Sigma).val_.val_.val(),
               0.01);
+  EXPECT_NEAR(-0.76893887,
+              stan::math::wishart_lpdf(Y, dof, Sigma).d_.val_.val(), 0.01);
 
   stan::math::recover_memory();
 }

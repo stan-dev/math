@@ -14,7 +14,6 @@
 
 MATH_MAKE ?=$(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 MATH ?= $(realpath $(MATH_MAKE)..)/
--include $(HOME)/.config/stan/make.local
 -include $(MATH)make/local
 -include $(MATH)make/compiler_flags
 -include $(MATH)make/libraries

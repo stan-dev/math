@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_PROB_WIENER5_LPDF_HPP
 
 #include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 
 namespace stan {
 namespace math {
@@ -678,12 +679,12 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
     return ret_t(0.0);
   }
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
-  using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
-  using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
-  using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
-  using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_a_ref = ref_type_t<T_a>;
+  using T_t0_ref = ref_type_t<T_t0>;
+  using T_w_ref = ref_type_t<T_w>;
+  using T_v_ref = ref_type_t<T_v>;
+  using T_sv_ref = ref_type_t<T_sv>;
 
   static constexpr const char* function_name = "wiener5_lpdf";
 

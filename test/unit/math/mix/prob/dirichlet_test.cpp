@@ -16,7 +16,7 @@ T vectorize_softmax(const T& y) {
 }
 }  // namespace dirichlet_test
 
-TEST(ProbDistributions, dirichlet) {
+TEST_F(AgradRev, ProbDistributions_dirichlet) {
   auto f = [](const auto& y, const auto& alpha) {
     auto y_simplex = dirichlet_test::vectorize_softmax(y);
     auto lp = stan::math::dirichlet_lpdf(y_simplex, alpha);
@@ -36,7 +36,7 @@ TEST(ProbDistributions, dirichlet) {
   stan::test::expect_ad(f, vs, vs);
 }
 
-TEST(ProbDistributions, fvar_var) {
+TEST_F(AgradRev, ProbDistributions_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -52,8 +52,9 @@ TEST(ProbDistributions, fvar_var) {
   }
 
   EXPECT_FLOAT_EQ(0.6931472,
-                  stan::math::dirichlet_log(theta, alpha).val_.val());
-  EXPECT_FLOAT_EQ(0.99344212, stan::math::dirichlet_log(theta, alpha).d_.val());
+                  stan::math::dirichlet_lpdf(theta, alpha).val_.val());
+  EXPECT_FLOAT_EQ(0.99344212,
+                  stan::math::dirichlet_lpdf(theta, alpha).d_.val());
 
   Matrix<fvar<var>, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
@@ -65,15 +66,15 @@ TEST(ProbDistributions, fvar_var) {
   }
 
   EXPECT_FLOAT_EQ(-43.40045,
-                  stan::math::dirichlet_log(theta2, alpha2).val_.val());
+                  stan::math::dirichlet_lpdf(theta2, alpha2).val_.val());
   EXPECT_FLOAT_EQ(2017.2858,
-                  stan::math::dirichlet_log(theta2, alpha2).d_.val());
+                  stan::math::dirichlet_lpdf(theta2, alpha2).d_.val());
 }
 
-TEST(ProbDistributions, fvar_varVectorized) {
+TEST_F(AgradRev, ProbDistributions_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::dirichlet_log;
+  using stan::math::dirichlet_lpdf;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -98,35 +99,35 @@ TEST(ProbDistributions, fvar_varVectorized) {
   alpha_vec[2] = alpha3;
 
   Matrix<fvar<var>, Dynamic, 1> result(3);
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha2);
-  result[2] = dirichlet_log(theta3, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha2);
+  result[2] = dirichlet_lpdf(theta3, alpha3);
 
-  fvar<var> out = dirichlet_log(theta_vec, alpha_vec);
-
-  EXPECT_FLOAT_EQ(result.val().val().sum(), out.val_.val());
-  EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
-
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha1);
-  result[2] = dirichlet_log(theta3, alpha1);
-
-  out = dirichlet_log(theta_vec, alpha1);
+  fvar<var> out = dirichlet_lpdf(theta_vec, alpha_vec);
 
   EXPECT_FLOAT_EQ(result.val().val().sum(), out.val_.val());
   EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
 
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta1, alpha2);
-  result[2] = dirichlet_log(theta1, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha1);
+  result[2] = dirichlet_lpdf(theta3, alpha1);
 
-  out = dirichlet_log(theta1, alpha_vec);
+  out = dirichlet_lpdf(theta_vec, alpha1);
+
+  EXPECT_FLOAT_EQ(result.val().val().sum(), out.val_.val());
+  EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
+
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta1, alpha2);
+  result[2] = dirichlet_lpdf(theta1, alpha3);
+
+  out = dirichlet_lpdf(theta1, alpha_vec);
 
   EXPECT_FLOAT_EQ(result.val().val().sum(), out.val_.val());
   EXPECT_FLOAT_EQ(result.d().val().sum(), out.d_.val());
 }
 
-TEST(ProbDistributions, fvar_fvar_var) {
+TEST_F(AgradRev, ProbDistributions_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -142,9 +143,9 @@ TEST(ProbDistributions, fvar_fvar_var) {
   }
 
   EXPECT_FLOAT_EQ(0.6931472,
-                  stan::math::dirichlet_log(theta, alpha).val_.val_.val());
+                  stan::math::dirichlet_lpdf(theta, alpha).val_.val_.val());
   EXPECT_FLOAT_EQ(0.99344212,
-                  stan::math::dirichlet_log(theta, alpha).d_.val_.val());
+                  stan::math::dirichlet_lpdf(theta, alpha).d_.val_.val());
 
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
@@ -156,15 +157,15 @@ TEST(ProbDistributions, fvar_fvar_var) {
   }
 
   EXPECT_FLOAT_EQ(-43.40045,
-                  stan::math::dirichlet_log(theta2, alpha2).val_.val_.val());
+                  stan::math::dirichlet_lpdf(theta2, alpha2).val_.val_.val());
   EXPECT_FLOAT_EQ(2017.2858,
-                  stan::math::dirichlet_log(theta2, alpha2).d_.val_.val());
+                  stan::math::dirichlet_lpdf(theta2, alpha2).d_.val_.val());
 }
 
-TEST(ProbDistributions, fvar_fvar_varVectorized) {
+TEST_F(AgradRev, ProbDistributions_fvar_fvar_varVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::dirichlet_log;
+  using stan::math::dirichlet_lpdf;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -189,29 +190,29 @@ TEST(ProbDistributions, fvar_fvar_varVectorized) {
   alpha_vec[2] = alpha3;
 
   Matrix<fvar<fvar<var>>, Dynamic, 1> result(3);
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha2);
-  result[2] = dirichlet_log(theta3, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha2);
+  result[2] = dirichlet_lpdf(theta3, alpha3);
 
-  fvar<fvar<var>> out = dirichlet_log(theta_vec, alpha_vec);
-
-  EXPECT_FLOAT_EQ(result.val().val().val().sum(), out.val_.val_.val());
-  EXPECT_FLOAT_EQ(result.d().val().val().sum(), out.d_.val_.val());
-
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta2, alpha1);
-  result[2] = dirichlet_log(theta3, alpha1);
-
-  out = dirichlet_log(theta_vec, alpha1);
+  fvar<fvar<var>> out = dirichlet_lpdf(theta_vec, alpha_vec);
 
   EXPECT_FLOAT_EQ(result.val().val().val().sum(), out.val_.val_.val());
   EXPECT_FLOAT_EQ(result.d().val().val().sum(), out.d_.val_.val());
 
-  result[0] = dirichlet_log(theta1, alpha1);
-  result[1] = dirichlet_log(theta1, alpha2);
-  result[2] = dirichlet_log(theta1, alpha3);
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta2, alpha1);
+  result[2] = dirichlet_lpdf(theta3, alpha1);
 
-  out = dirichlet_log(theta1, alpha_vec);
+  out = dirichlet_lpdf(theta_vec, alpha1);
+
+  EXPECT_FLOAT_EQ(result.val().val().val().sum(), out.val_.val_.val());
+  EXPECT_FLOAT_EQ(result.d().val().val().sum(), out.d_.val_.val());
+
+  result[0] = dirichlet_lpdf(theta1, alpha1);
+  result[1] = dirichlet_lpdf(theta1, alpha2);
+  result[2] = dirichlet_lpdf(theta1, alpha3);
+
+  out = dirichlet_lpdf(theta1, alpha_vec);
 
   EXPECT_FLOAT_EQ(result.val().val().val().sum(), out.val_.val_.val());
   EXPECT_FLOAT_EQ(result.d().val().val().sum(), out.d_.val_.val());

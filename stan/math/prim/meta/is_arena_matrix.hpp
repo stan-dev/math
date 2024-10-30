@@ -23,5 +23,17 @@ template <typename T>
 using require_arena_matrix_t = require_t<is_arena_matrix<std::decay_t<T>>>;
 /*! @} */
 
+/*! \ingroup require_eigen_types */
+/*! \defgroup arena_matrix_types arena_matrix  */
+/*! \addtogroup arena_matrix_types */
+/*! @{ */
+
+/*! \brief Require type does not satisfy @ref is_arena_matrix */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_arena_matrix_t
+    = require_t<bool_constant<!is_arena_matrix<std::decay_t<T>>::value>>;
+/*! @} */
+
 }  // namespace stan
 #endif

@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim/prob/exponential_log.hpp>
+#include <stan/math/prim/prob/exponential_lpdf.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 
 using stan::math::var;
@@ -56,7 +56,7 @@ class AgradDistributionsExponential : public AgradDistributionTest {
                                                  const T_inv_scale& beta,
                                                  const T2&, const T3&,
                                                  const T4&, const T5&) {
-    return stan::math::exponential_log(y, beta);
+    return stan::math::exponential_lpdf(y, beta);
   }
 
   template <bool propto, typename T_y, typename T_inv_scale, typename T2,
@@ -65,7 +65,7 @@ class AgradDistributionsExponential : public AgradDistributionTest {
                                                  const T_inv_scale& beta,
                                                  const T2&, const T3&,
                                                  const T4&, const T5&) {
-    return stan::math::exponential_log<propto>(y, beta);
+    return stan::math::exponential_lpdf<propto>(y, beta);
   }
 
   template <typename T_y, typename T_inv_scale, typename T2, typename T3,

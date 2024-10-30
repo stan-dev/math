@@ -2,16 +2,11 @@
 # Stan Math Library
 # -----------------
 #
-# To customize your build, set make variables in either:
-#    ~/.config/stan/make.local
-#    make/local
-# Variables in make/local is loaded after ~/.config/stan/make.local
-
+# To customize your build, set make variables in the file make/local.
 
 ## 'help' is the default make target.
 help:
 
--include $(HOME)/.config/stan/make.local  # user-defined variables
 -include make/local                       # user-defined variables
 
 include make/compiler_flags               # CXX, CXXFLAGS, LDFLAGS set by the end of this file
@@ -92,6 +87,7 @@ doxygen:
 clean:
 	@echo '  removing generated test files'
 	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
+	@$(RM) $(EXPRESSION_TESTS) $(call findfiles,test/expressions,*_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_v_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_vv_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_fd_test.cpp)

@@ -73,6 +73,13 @@ TEST(AgradRevVari, arena_matrix_matrix_vari) {
   EXPECT_MATRIX_FLOAT_EQ((*C).val(), x);
   auto* D = new vari_value<Eigen::MatrixXd>(x_ref, true);
   EXPECT_MATRIX_FLOAT_EQ((*D).val(), x);
+  auto* E = new vari_value<Eigen::MatrixXd>(x, (x.array() + 1.0).matrix());
+  EXPECT_MATRIX_FLOAT_EQ((*E).val(), x);
+  EXPECT_MATRIX_FLOAT_EQ((*E).adj(), (x.array() + 1.0).matrix());
+  auto* F = new vari_value<Eigen::MatrixXd>(x, x);
+  EXPECT_MATRIX_FLOAT_EQ((*F).val(), x);
+  EXPECT_MATRIX_FLOAT_EQ((*F).adj(), x);
+  EXPECT_EQ((*F).val().data(), (*F).adj().data());
 }
 
 TEST(AgradRevVari, dense_vari_matrix_views) {

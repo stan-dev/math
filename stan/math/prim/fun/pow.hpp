@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 #include <complex>
@@ -39,14 +40,29 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * @return the first argument raised to the power of the second
  * argument.
  */
-template <typename T1, typename T2,
-          require_all_t<
-              disjunction<is_complex<T1>, std::is_arithmetic<T1>>,
-              disjunction<is_complex<T2>, std::is_arithmetic<T2>>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
+template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
+          require_arithmetic_t<T2>* = nullptr>
+inline auto pow(const std::complex<T1>& a, const std::complex<T2>& b) {
   return std::pow(a, b);
 }
 
+template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
+          require_arithmetic_t<T2>* = nullptr>
+inline auto pow(const T1& a, const std::complex<T2>& b) {
+  return std::pow(a, b);
+}
+
+template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
+          require_arithmetic_t<T2>* = nullptr>
+inline auto pow(const std::complex<T1>& a, const T2& b) {
+  return std::pow(a, b);
+}
+
+template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
+          require_arithmetic_t<T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return std::pow(a, b);
+}
 /**
  * Returns the elementwise raising of the first argument to the power of the
  * second argument.
@@ -59,12 +75,11 @@ inline auto pow(const T1& a, const T2& b) {
  * second argument.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_matrix_st<is_var, T1, T2>* = nullptr>
+          require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
+          require_all_arithmetic_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
-  return apply_scalar_binary(a, b, [](const auto& c, const auto& d) {
-    using std::pow;
-    return pow(c, d);
-  });
+  return apply_scalar_binary(
+      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
 }
 }  // namespace math
 }  // namespace stan
