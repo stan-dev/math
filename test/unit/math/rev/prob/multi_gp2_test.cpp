@@ -8,8 +8,8 @@
 #include <string>
 
 template <typename T_y, typename T_scale, typename T_w>
-inline void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
-                   T_w w2, std::string message = "") {
+inline void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2,
+                          T_scale sigma2, T_w w2, std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_lpdf<false>(y1, sigma1, w1),
                   stan::math::multi_gp_lpdf<false>(y2, sigma2, w2),
                   stan::math::multi_gp_lpdf<true>(y1, sigma1, w1),
