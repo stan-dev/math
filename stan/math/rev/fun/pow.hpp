@@ -71,44 +71,42 @@ namespace math {
  */
 template <typename Scal1, typename Scal2,
           require_any_var_t<base_type_t<Scal1>, base_type_t<Scal2>>* = nullptr,
-          require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
+          require_all_stan_scalar_t<Scal1, Scal2>* = nullptr,
+          require_any_not_complex_t<Scal1, Scal2>* = nullptr>
 inline auto pow(const Scal1& base, const Scal2& exponent) {
-  if constexpr (is_complex<Scal1>::value || is_complex<Scal2>::value) {
-    return internal::complex_pow(base, exponent);
-  } else {
-    if constexpr (is_constant<Scal2>::value) {
-      if (exponent == 0.5) {
-        return sqrt(base);
-      } else if (exponent == 1.0) {
-        return base;
-      } else if (exponent == 2.0) {
-        return square(base);
-      } else if (exponent == -2.0) {
-        return inv_square(base);
-      } else if (exponent == -1.0) {
-        return inv(base);
-      } else if (exponent == -0.5) {
-        return inv_sqrt(base);
-      }
+  if constexpr (is_constant<Scal2>::value) {
+    if (exponent == 0.5) {
+      return sqrt(base);
+    } else if (exponent == 1.0) {
+      return base;
+    } else if (exponent == 2.0) {
+      return square(base);
+    } else if (exponent == -2.0) {
+      return inv_square(base);
+    } else if (exponent == -1.0) {
+      return inv(base);
+    } else if (exponent == -0.5) {
+      return inv_sqrt(base);
     }
-    return make_callback_var(std::pow(value_of(base), value_of(exponent)),
-                             [base, exponent](auto&& vi) mutable {
-                               if (value_of(base) == 0.0) {
-                                 return;  // partials zero, avoids 0 & log(0)
-                               }
-                               const double vi_mul = vi.adj() * vi.val();
-
-                               if (!is_constant<Scal1>::value) {
-                                 forward_as<var>(base).adj()
-                                     += vi_mul * value_of(exponent)
-                                        / value_of(base);
-                               }
-                               if (!is_constant<Scal2>::value) {
-                                 forward_as<var>(exponent).adj()
-                                     += vi_mul * std::log(value_of(base));
-                               }
-                             });
   }
+  return make_callback_var(std::pow(value_of(base), value_of(exponent)),
+                            [base, exponent](auto&& vi) mutable {
+                              if (value_of(base) == 0.0) {
+                                return;  // partials zero, avoids 0 & log(0)
+                              }
+                              const double vi_mul = vi.adj() * vi.val();
+
+                              if (!is_constant<Scal1>::value) {
+                                forward_as<var>(base).adj()
+                                    += vi_mul * value_of(exponent)
+                                      / value_of(base);
+                              }
+                              if (!is_constant<Scal2>::value) {
+                                forward_as<var>(exponent).adj()
+                                    += vi_mul * std::log(value_of(base));
+                              }
+                            });
+
 }
 
 /**

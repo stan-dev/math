@@ -48,7 +48,7 @@ auto eval(T x) {
  * @return value
  */
 template <typename T>
-auto eval(const std::complex<T>& x) {
+auto eval(const stan::math::complex<T>& x) {
   return x;
 }
 
@@ -1337,7 +1337,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
   using vector_t = Eigen::Matrix<Scalar, -1, 1>;
   using row_vector_t = Eigen::Matrix<Scalar, 1, -1>;
-  using complex_t = std::complex<double>;
+  using complex_t = stan::math::complex<double>;
   using complex_matrix_t = Eigen::Matrix<complex_t, -1, -1>;
   using complex_vector_t = Eigen::Matrix<complex_t, -1, 1>;
   using complex_row_vector_t = Eigen::Matrix<complex_t, 1, -1>;
@@ -1351,7 +1351,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
 
   expect_ad(tols, f, x1);
   expect_ad(tols, f, static_cast<Scalar>(x1));
-  expect_ad(tols, f, std::complex<double>(static_cast<Scalar>(x1)));
+  expect_ad(tols, f, stan::math::complex<double>(static_cast<Scalar>(x1)));
   for (int i = 0; i < 2; ++i) {
     expect_ad(tols, f, vector_t::Constant(i, x1).eval());
     expect_ad(tols, f, complex_vector_t::Constant(i, x1).eval());
@@ -1419,7 +1419,7 @@ template <ScalarSupport ComplexSupport, typename F, typename T1,
               ComplexSupport == ScalarSupport::ComplexOnly>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
-  using complex_t = std::complex<double>;
+  using complex_t = stan::math::complex<double>;
   using complex_matrix_t = Eigen::Matrix<complex_t, -1, -1>;
   using complex_vector_t = Eigen::Matrix<complex_t, -1, 1>;
   using complex_row_vector_t = Eigen::Matrix<complex_t, 1, -1>;
@@ -1428,7 +1428,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using vector2_complex = vector<vector_complex>;
   using vector3_complex = vector<vector2_complex>;
 
-  expect_ad(tols, f, std::complex<double>(static_cast<Scalar>(x1)));
+  expect_ad(tols, f, stan::math::complex<double>(static_cast<Scalar>(x1)));
   for (int i = 0; i < 2; ++i) {
     expect_ad(tols, f, complex_vector_t::Constant(i, x1).eval());
   }
@@ -1873,8 +1873,8 @@ std::vector<double> common_complex_parts_im() {
   return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
 }
 
-std::vector<std::complex<double>> common_complex() {
-  std::vector<std::complex<double>> zs;
+std::vector<stan::math::complex<double>> common_complex() {
+  std::vector<stan::math::complex<double>> zs;
   auto complex_re = common_complex_parts_re();
   auto complex_im = common_complex_parts_im();
   for (int i = 0; i < complex_re.size(); ++i) {
@@ -1916,9 +1916,9 @@ void expect_complex_common_binary(const F& f) {
 }
 
 template <typename T, typename F>
-void expect_complex_compare(const F& f, const std::complex<double>& z1,
-                            const std::complex<double>& z2) {
-  using c_t = std::complex<T>;
+void expect_complex_compare(const F& f, const stan::math::complex<double>& z1,
+                            const stan::math::complex<double>& z2) {
+  using c_t = stan::math::complex<T>;
   c_t cz1{z1};
   c_t cz2{z2};
   T z1r{z1.real()};
@@ -1936,8 +1936,8 @@ void expect_complex_compare(const F& f, const std::complex<double>& z1,
 }
 
 template <typename F>
-void expect_complex_comparison(const F& f, const std::complex<double>& z1,
-                               const std::complex<double>& z2) {
+void expect_complex_comparison(const F& f, const stan::math::complex<double>& z1,
+                               const stan::math::complex<double>& z2) {
   using stan::math::fvar;
   using stan::math::var;
   using std::complex;

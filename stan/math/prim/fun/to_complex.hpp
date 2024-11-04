@@ -20,9 +20,9 @@ namespace math {
  */
 template <typename T = double, typename S = double,
           require_all_not_container_t<T, S>* = nullptr>
-constexpr inline std::complex<stan::real_return_t<T, S>> to_complex(
+constexpr inline stan::math::complex<stan::real_return_t<T, S>> to_complex(
     const T& re = 0, const S& im = 0) {
-  return std::complex<stan::real_return_t<T, S>>(re, im);
+  return stan::math::complex<stan::real_return_t<T, S>>(re, im);
 }
 
 /**

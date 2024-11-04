@@ -51,7 +51,7 @@ inline double value_of_rec(double x) { return x; }
  * @return real complex value of argument
  */
 template <typename T>
-inline std::complex<double> value_of_rec(const std::complex<T>& x) {
+inline stan::math::complex<double> value_of_rec(const stan::math::complex<T>& x) {
   return {value_of_rec(x.real()), value_of_rec(x.imag())};
 }
 

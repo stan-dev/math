@@ -74,15 +74,6 @@ inline auto acos(const VarMat& x) {
       });
 }
 
-/**
- * Return the arc cosine of the complex argument.
- *
- * @param x argument
- * @return arc cosine of the argument
- */
-inline std::complex<var> acos(const std::complex<var>& x) {
-  return stan::math::internal::complex_acos(x);
-}
 
 }  // namespace math
 }  // namespace stan

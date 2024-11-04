@@ -13,6 +13,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> cosh(const stan::math::complex<V>& z) {
+  return 0.5 * (exp(z) + exp(-z));
+}
+
+/**
  * Structure to wrap `cosh()` so it can be vectorized.
  *
  * @tparam T type of argument
@@ -58,20 +70,6 @@ inline auto cosh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cosh(); });
 }
-
-namespace internal {
-/**
- * Return the hyperbolic cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic cosine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_cosh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) + exp(-z));
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

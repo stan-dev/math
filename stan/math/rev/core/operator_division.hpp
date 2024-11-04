@@ -256,10 +256,6 @@ inline auto operator/(const T1& dividend, const T2& divisor) {
   return divide(dividend, divisor);
 }
 
-inline std::complex<var> operator/(const std::complex<var>& x1,
-                                   const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
 
 }  // namespace math
 }  // namespace stan

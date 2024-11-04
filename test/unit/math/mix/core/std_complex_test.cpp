@@ -5,7 +5,7 @@
 template <typename T, typename S>
 void test_constructor_init_type() {
   S a = 2;
-  std::complex<T> z(a);
+  stan::math::complex<T> z(a);
   EXPECT_EQ(a, z.real());
   EXPECT_EQ(0, z.imag());
 }
@@ -13,14 +13,14 @@ void test_constructor_init_type() {
 template <typename T1, typename T2, typename T>
 void test_binary_constructor(const T1& x, const T2& y) {
   using stan::math::value_of_rec;
-  std::complex<T> z(x, y);
+  stan::math::complex<T> z(x, y);
   EXPECT_EQ(1.1, value_of_rec(z.real()));
   EXPECT_EQ(2.3, value_of_rec(z.imag()));
 }
 
 template <typename T>
 void test_set_real_imag() {
-  std::complex<T> z;
+  stan::math::complex<T> z;
   z.real(3.2);
   EXPECT_TRUE(z.real() == 3.2);
   z.imag(-1.9);
@@ -30,7 +30,7 @@ void test_set_real_imag() {
 template <typename T>
 void test_std_complex_constructor() {
   using stan::math::value_of_rec;
-  using c_t = std::complex<T>;
+  using c_t = stan::math::complex<T>;
 
   // set real and imaginary parts
   test_set_real_imag<T>();
@@ -77,7 +77,7 @@ TEST(mathMixCore, stdComplexConstructor) {
 
 // convenience for type inference of T
 template <typename T>
-std::complex<T> to_std_complex(const T& x) {
+stan::math::complex<T> to_std_complex(const T& x) {
   return {x};
 }
 
@@ -86,7 +86,7 @@ void expect_common_complex(const F& f) {
   // cover all quadrants and projections
   for (double re : std::vector<double>{-1.4, -1e-3, 0, 2e-3, 2.3}) {
     for (double im : std::vector<double>{-0.5, -3e-3, 0, 4e-3, 1.5}) {
-      stan::test::expect_ad(f, std::complex<double>(re, im));
+      stan::test::expect_ad(f, stan::math::complex<double>(re, im));
     }
   }
 }
@@ -100,16 +100,16 @@ void expect_common_for_complex(const F& f) {
 
 // remaining tests are for operators;  after here, each operator
 // is tested for complex and real assignability, including for
-// std::complex<double>, double, and int;  in each test an auto
+// stan::math::complex<double>, double, and int;  in each test an auto
 // variable is set up to get a matching type to the input, then
-// it is modified using std::complex<double> or double, then
+// it is modified using stan::math::complex<double> or double, then
 // with the argument.
 
 TEST(mathMixCore, stdComplexOperatorEqual) {
   // operator=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;  // for auto type
-    b = std::complex<double>(-1.1, 5.5);
+    b = stan::math::complex<double>(-1.1, 5.5);
     EXPECT_TRUE(b.real() == -1.1);
     EXPECT_TRUE(b.imag() == 5.5);
 
@@ -136,7 +136,7 @@ TEST(mathMixCore, stdComplexOperatorPlusEqual) {
   // operator+=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
-    b += std::complex<double>(-3.9, 1.8);
+    b += stan::math::complex<double>(-3.9, 1.8);
     b += a;
     return b;
   };
@@ -157,7 +157,7 @@ TEST(mathMixCore, stdComplexOperatorMinusEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
-    b -= std::complex<double>(18.3, -21.2);
+    b -= stan::math::complex<double>(18.3, -21.2);
     b -= a;
     return b;
   };
@@ -178,7 +178,7 @@ TEST(mathMixCore, stdComplexOperatorTimesEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
-    b *= std::complex<double>(-1.2, -6.3);
+    b *= stan::math::complex<double>(-1.2, -6.3);
     b *= a;
     return b;
   };
@@ -199,7 +199,7 @@ TEST(mathMixCore, stdComplexOperatorDivideEqual) {
   // operator-=(std::complex)
   auto f = [](const auto& a) {
     auto b = a;
-    b /= std::complex<double>(1.2, -5.5);
+    b /= stan::math::complex<double>(1.2, -5.5);
     b /= a;
     return b;
   };

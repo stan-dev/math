@@ -18,7 +18,7 @@ namespace math {
  * @return `true` if the arguments are equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator!=(const std::complex<U>& x, const std::complex<V>& y) {
+inline bool operator!=(const stan::math::complex<U>& x, const stan::math::complex<V>& y) {
   return !(x.real() == y.real() && x.imag() == y.imag());
 }
 
@@ -34,7 +34,7 @@ inline bool operator!=(const std::complex<U>& x, const std::complex<V>& y) {
  * @return `true` if the arguments are equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator!=(const std::complex<U>& x, const V& y) {
+inline bool operator!=(const stan::math::complex<U>& x, const V& y) {
   return !(x.real() == y && x.imag() == 0);
 }
 
@@ -50,7 +50,7 @@ inline bool operator!=(const std::complex<U>& x, const V& y) {
  * @return `true` if the arguments are not equal
  */
 template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
-inline bool operator!=(const U& x, const std::complex<V>& y) {
+inline bool operator!=(const U& x, const stan::math::complex<V>& y) {
   return !(x == y.real() && 0 == y.imag());
 }
 

@@ -15,23 +15,11 @@ namespace math {
  * @return squared magnitude of the argument
  */
 template <typename V>
-inline V norm(const std::complex<V>& z) {
-  return std::norm(z);
-}
-
-namespace internal {
-/**
- * Return the squared magnitude of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return squared magnitude of the argument
- */
-template <typename V>
-inline V complex_norm(const std::complex<V>& z) {
+inline V norm(const stan::math::complex<V>& z) {
   return square(z.real()) + square(z.imag());
 }
-}  // namespace internal
+
+
 }  // namespace math
 }  // namespace stan
 

@@ -8,7 +8,7 @@ TEST(mathMixMatFun, to_complex) {
     return stan::math::to_complex(x, y);
   };
 
-  EXPECT_EQ(std::complex<double>(), f0());
+  EXPECT_EQ(stan::math::complex<double>(), f0());
   stan::test::expect_common_unary(f1);
   stan::test::expect_common_binary(f2);
 }

@@ -295,6 +295,14 @@ inline auto subtract(const T1& a, const T2& b) {
   return a - b;
 }
 
+template <typename T1, typename T2,
+ require_any_var_t<T1, T2>* = nullptr,
+ require_any_complex_t<T1, T2>* = nullptr>
+inline auto subtract(const T1& a, const T2& b) {
+  return a - b;
+}
+
+
 /**
  * Addition operator for matrix variables.
  *

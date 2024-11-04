@@ -62,6 +62,7 @@ inline var asinh(const var& x) {
   });
 }
 
+
 /**
  * The inverse hyperbolic sine function for variables (C99).
  *
@@ -77,16 +78,6 @@ inline auto asinh(const VarMat& x) {
         x.adj().array()
             += vi.adj().array() / (x.val().array().square() + 1.0).sqrt();
       });
-}
-
-/**
- * Return the hyperbolic arcsine of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic arcsine of the argument
- */
-inline std::complex<var> asinh(const std::complex<var>& z) {
-  return stan::math::internal::complex_asinh(z);
 }
 
 }  // namespace math

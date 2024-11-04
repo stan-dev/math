@@ -15,7 +15,7 @@ namespace math {
  * @return imaginary component of argument
  */
 template <typename T>
-inline T get_imag(const std::complex<T>& z) {
+inline T get_imag(const stan::math::complex<T>& z) {
   return z.imag();
 }
 

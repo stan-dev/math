@@ -78,15 +78,7 @@ inline auto atanh(const VarMat& x) {
       });
 }
 
-/**
- * Return the hyperbolic arc tangent of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic arc tangent of the argument
- */
-inline std::complex<var> atanh(const std::complex<var>& z) {
-  return stan::math::internal::complex_atanh(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 
 TEST(primFun, fft) {
-  using c_t = std::complex<double>;
-  using cv_t = Eigen::Matrix<std::complex<double>, -1, 1>;
+  using c_t = stan::math::complex<double>;
+  using cv_t = Eigen::Matrix<stan::math::complex<double>, -1, 1>;
   using stan::math::fft;
 
   // reference answers calculated using Scipy.fft with double precision
@@ -46,8 +46,8 @@ TEST(primFun, fft) {
 }
 
 TEST(primFun, inv_fft) {
-  using c_t = std::complex<double>;
-  using cv_t = Eigen::Matrix<std::complex<double>, -1, 1>;
+  using c_t = stan::math::complex<double>;
+  using cv_t = Eigen::Matrix<stan::math::complex<double>, -1, 1>;
   using stan::math::inv_fft;
 
   // reference answers calculated using Scipy.fft with double precision
@@ -79,8 +79,8 @@ TEST(primFun, inv_fft) {
 }
 
 TEST(primFun, fft2) {
-  using c_t = std::complex<double>;
-  using cm_t = Eigen::Matrix<std::complex<double>, -1, -1>;
+  using c_t = stan::math::complex<double>;
+  using cm_t = Eigen::Matrix<stan::math::complex<double>, -1, -1>;
   using stan::math::fft2;
   using stan::math::inv_fft2;
 
@@ -119,8 +119,8 @@ TEST(primFun, fft2) {
 }
 
 TEST(primFunFFT, invfft2) {
-  using c_t = std::complex<double>;
-  using cm_t = Eigen::Matrix<std::complex<double>, -1, -1>;
+  using c_t = stan::math::complex<double>;
+  using cm_t = Eigen::Matrix<stan::math::complex<double>, -1, -1>;
   using stan::math::fft2;
   using stan::math::inv_fft;
   using stan::math::inv_fft2;

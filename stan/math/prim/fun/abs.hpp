@@ -85,20 +85,6 @@ inline auto abs(const Container& x) {
       x, [&](const auto& v) { return v.array().abs(); });
 }
 
-namespace internal {
-/**
- * Return the absolute value of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return absolute value of the argument
- */
-template <typename V>
-inline V complex_abs(const std::complex<V>& z) {
-  return hypot(z.real(), z.imag());
-}
-}  // namespace internal
-
 }  // namespace math
 }  // namespace stan
 

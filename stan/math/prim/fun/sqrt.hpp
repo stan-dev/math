@@ -12,6 +12,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> sqrt(const stan::math::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+
+/**
  * Structure to wrap `sqrt()` so that it can be vectorized.
  *
  * @tparam T type of variable
@@ -57,22 +71,6 @@ inline auto sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sqrt(); });
 }
-
-namespace internal {
-/**
- * Return the square root of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return square root of the argument
- */
-template <typename V>
-inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
-  auto m = sqrt(hypot(z.real(), z.imag()));
-  auto at = 0.5 * atan2(z.imag(), z.real());
-  return {m * cos(at), m * sin(at)};
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

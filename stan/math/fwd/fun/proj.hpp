@@ -8,18 +8,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the projection of the complex argument onto the Riemann
- * sphere.
- *
- * @tparam T value type of autodiff variable
- * @param[in] z argument
- * @return projection of the argument onto the Riemann sphere
- */
-template <typename T>
-inline std::complex<fvar<T>> proj(const std::complex<fvar<T>>& z) {
-  return internal::complex_proj(z);
-}
 
 }  // namespace math
 }  // namespace stan

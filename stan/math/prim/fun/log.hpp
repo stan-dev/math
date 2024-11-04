@@ -4,9 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/arg.hpp>
 #include <stan/math/prim/fun/isinf.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/norm.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -15,6 +18,25 @@
 
 namespace stan {
 namespace math {
+
+/**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return natural logarithm of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> log(const stan::math::complex<V>& z) {
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {INFTY, NOT_A_NUMBER};
+  }
+  using std::log;
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
 
 /**
  * Structure to wrap `log()` so that it can be vectorized.
@@ -66,26 +88,6 @@ inline auto log(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log(); });
 }
-
-namespace internal {
-/**
- * Return the natural logarithm of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return natural logarithm of the argument
- */
-template <typename V>
-inline std::complex<V> complex_log(const std::complex<V>& z) {
-  if ((is_nan(z.real()) && is_inf(z.imag()))
-      || (is_inf(z.real()) && is_nan(z.imag()))) {
-    return {INFTY, NOT_A_NUMBER};
-  }
-  V r = sqrt(norm(z));
-  V theta = arg(z);
-  return {log(r), theta};
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

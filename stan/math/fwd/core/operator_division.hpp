@@ -51,53 +51,7 @@ inline fvar<T> operator/(U x1, const fvar<T>& x2) {
                  -static_cast<double>(x1) * x2.d_ / (x2.val_ * x2.val_));
 }
 
-template <typename T>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const std::complex<fvar<T>>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const std::complex<U>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-                                       const fvar<T>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1, U x2) {
-  return internal::complex_divide(x1, x2);
-}
 
-template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-                                       const std::complex<fvar<T>>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-                                       const fvar<T>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-
-template <typename T>
-inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-                                       const std::complex<fvar<T>>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, typename U,
-          typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-                                       const std::complex<U>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-
-template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
-inline std::complex<fvar<T>> operator/(U x1, const std::complex<fvar<T>>& x2) {
-  return internal::complex_divide(x1, x2);
-}
 
 }  // namespace math
 }  // namespace stan

@@ -5,10 +5,10 @@ TEST(mathMix, complexMultiply) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::multiply(x, y); };
   double d_scalar = 1.0;
-  std::complex<double> cd_scalar = 1.0;
+  stan::math::complex<double> cd_scalar = 1.0;
   Eigen::Matrix<double, -1, -1> d_mat(2, 2);
   d_mat << 1, 2, 3, 4;
-  Eigen::Matrix<std::complex<double>, -1, -1> cd_mat(2, 2);
+  Eigen::Matrix<stan::math::complex<double>, -1, -1> cd_mat(2, 2);
   cd_mat << 1, 2, 3, 4;
 
   stan::test::expect_ad(f, d_scalar, cd_mat);
@@ -23,7 +23,7 @@ TEST(mathMix, complexMultiply) {
 
   Eigen::Matrix<double, -1, 1> d_vec(2);
   d_vec << 1, 2;
-  Eigen::Matrix<std::complex<double>, -1, 1> cd_vec(2);
+  Eigen::Matrix<stan::math::complex<double>, -1, 1> cd_vec(2);
   cd_vec << 1, 2;
 
   stan::test::expect_ad(f, d_mat, cd_vec);
@@ -32,7 +32,7 @@ TEST(mathMix, complexMultiply) {
 
   Eigen::Matrix<double, 1, -1> d_rowvec(2);
   d_rowvec << 1, 2;
-  Eigen::Matrix<std::complex<double>, 1, -1> cd_rowvec(2);
+  Eigen::Matrix<stan::math::complex<double>, 1, -1> cd_rowvec(2);
   cd_rowvec << 1, 2;
 
   stan::test::expect_ad(f, d_vec, cd_rowvec);

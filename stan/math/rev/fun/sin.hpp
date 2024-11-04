@@ -64,16 +64,6 @@ inline auto sin(const VarMat& a) {
       });
 }
 
-/**
- * Return the sine of the complex argument.
- *
- * @param[in] z argument
- * @return sine of the argument
- */
-inline std::complex<var> sin(const std::complex<var>& z) {
-  return stan::math::internal::complex_sin(z);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

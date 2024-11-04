@@ -15,7 +15,7 @@ namespace math {
  * @return real component of argument
  */
 template <typename T>
-inline T get_real(const std::complex<T>& z) {
+inline T get_real(const stan::math::complex<T>& z) {
   return z.real();
 }
 

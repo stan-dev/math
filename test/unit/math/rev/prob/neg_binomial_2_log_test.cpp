@@ -520,13 +520,13 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesComplexStep) {
   std::vector<int> n_to_test = {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> eta_to_test = {-124.5, -13, -2, 0, 0.536844, 1.26845, 11};
 
-  auto nb2_log_for_test = [](int n, const std::complex<double>& eta,
-                             const std::complex<double>& phi) {
+  auto nb2_log_for_test = [](int n, const stan::math::complex<double>& eta,
+                             const stan::math::complex<double>& phi) {
     // Using first-order Taylor expansion of lgamma(a + b*i) around b = 0
     // Which happens to work nice in this case, as b is always 0 or the very
     // small complex step
-    auto lgamma_c_approx = [](const std::complex<double>& x) {
-      return std::complex<double>(lgamma(x.real()),
+    auto lgamma_c_approx = [](const stan::math::complex<double>& x) {
+      return stan::math::complex<double>(lgamma(x.real()),
                                   x.imag() * boost::math::digamma(x.real()));
     };
 
@@ -560,11 +560,11 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesComplexStep) {
         }
 
         auto nb2_log_eta
-            = [n, phi_dbl, nb2_log_for_test](const std::complex<double>& eta) {
+            = [n, phi_dbl, nb2_log_for_test](const stan::math::complex<double>& eta) {
                 return nb2_log_for_test(n, eta, phi_dbl);
               };
         auto nb2_log_phi
-            = [n, eta_dbl, nb2_log_for_test](const std::complex<double>& phi) {
+            = [n, eta_dbl, nb2_log_for_test](const stan::math::complex<double>& phi) {
                 return nb2_log_for_test(n, eta_dbl, phi);
               };
         double complex_step_deta

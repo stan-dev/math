@@ -20,7 +20,7 @@ namespace math {
 template <typename ScalarA, typename ScalarB,
           require_all_stan_scalar_t<ScalarA, ScalarB>* = nullptr,
           require_all_not_var_t<ScalarA, ScalarB>* = nullptr>
-inline return_type_t<ScalarA, ScalarB> add(const ScalarA& a, const ScalarB& b) {
+inline auto add(const ScalarA& a, const ScalarB& b) {
   return a + b;
 }
 

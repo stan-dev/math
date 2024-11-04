@@ -23,7 +23,7 @@ namespace math {
  * @param[in] theta phase angle
  * @return complex number with magnitude and phase angle
  */
-inline std::complex<var> polar(const var& r, const var& theta) {
+inline stan::math::complex<var> polar(const var& r, const var& theta) {
   return internal::complex_polar(r, theta);
 }
 
@@ -36,7 +36,7 @@ inline std::complex<var> polar(const var& r, const var& theta) {
  * @return complex number with magnitude and phase angle
  */
 template <typename T>
-inline std::complex<var> polar(T r, const var& theta) {
+inline stan::math::complex<var> polar(T r, const var& theta) {
   return internal::complex_polar(r, theta);
 }
 
@@ -49,7 +49,7 @@ inline std::complex<var> polar(T r, const var& theta) {
  * @return complex number with magnitude and phase angle
  */
 template <typename T>
-inline std::complex<var> polar(const var& r, T theta) {
+inline stan::math::complex<var> polar(const var& r, T theta) {
   return internal::complex_polar(r, theta);
 }
 

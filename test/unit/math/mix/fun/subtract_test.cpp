@@ -54,6 +54,10 @@ TEST(MathMixMatFun, subtract_scal) {
   stan::test::expect_ad(f, 2.0, 5);
   stan::test::expect_ad(f, 2, 5.0);
   stan::test::expect_ad(f, 2.0, 5.0);
+  stan::test::expect_ad(f, stan::math::complex<double>(2.0), stan::math::complex<double>(5.0));
+  stan::test::expect_ad(f, stan::math::complex<double>(2.0), 5.0);
+  stan::test::expect_ad(f, 2.0, stan::math::complex<double>(5.0));
+
 }
 
 TEST(MathMixMatFun, subtract_empty) {

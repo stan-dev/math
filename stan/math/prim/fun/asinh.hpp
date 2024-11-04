@@ -21,6 +21,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc sine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> asinh(const stan::math::complex<V>& z) {
+  stan::math::complex<double> y_d = asinh(value_of_rec(z));
+  auto y = log(z + sqrt(1 + z * z));
+  return copysign(y, y_d);
+}
+
+/**
  * Structure to wrap `asinh()` so it can be vectorized.
  *
  * @tparam T argument scalar type
@@ -50,21 +64,6 @@ inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
 
-namespace internal {
-/**
- * Return the hyperbolic arc sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_asinh(const std::complex<V>& z) {
-  std::complex<double> y_d = asinh(value_of_rec(z));
-  auto y = log(z + sqrt(1 + z * z));
-  return copysign(y, y_d);
-}
-}  // namespace internal
 }  // namespace math
 }  // namespace stan
 

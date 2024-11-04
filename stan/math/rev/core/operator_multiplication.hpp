@@ -117,45 +117,6 @@ inline var operator*(Arith a, const var& b) {
   return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
 }
 
-/**
- * Return the product of std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return product of arguments
- */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<stan::math::var>& x,
-    const std::complex<stan::math::var>& y) {
-  return internal::complex_multiply(x, y);
-}
-
-/**
- * Return the product of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return product of arguments
- */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<double>& x, const std::complex<stan::math::var>& y) {
-  return internal::complex_multiply(x, y);
-}
-
-/**
- * Return the product of std::complex<double> and
- * std::complex<var> arguments.
- *
- * @param[in] x first argument
- * @param[in] y second argument
- * @return product of arguments
- */
-inline std::complex<stan::math::var> operator*(
-    const std::complex<stan::math::var>& x, const std::complex<double>& y) {
-  return internal::complex_multiply(x, y);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif

@@ -12,6 +12,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> sinh(const stan::math::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
+}
+
+/**
  * Structure to wrap sinh() so that it can be vectorized.
  *
  * @tparam T type of argument
@@ -56,20 +68,6 @@ inline auto sinh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sinh(); });
 }
-
-namespace internal {
-/**
- * Return the hyperbolic sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_sinh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) - exp(-z));
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

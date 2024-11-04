@@ -6,20 +6,5 @@
 #include <stan/math/rev/fun/square.hpp>
 #include <complex>
 
-namespace stan {
-namespace math {
-
-/**
- * Return the squared magnitude of the complex argument.
- *
- * @param[in] z argument
- * @return squared magnitude of the argument
- */
-inline var norm(const std::complex<var>& z) {
-  return internal::complex_norm(z);
-}
-
-}  // namespace math
-}  // namespace stan
 
 #endif

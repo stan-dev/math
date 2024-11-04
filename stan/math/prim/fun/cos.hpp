@@ -14,6 +14,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the cosine of the complex argument.
+ *
+ * @tparam T value type of argument
+ * @param[in] z argument
+ * @return cosine of the argument
+ */
+template <typename T>
+inline stan::math::complex<T> cos(const stan::math::complex<T>& z) {
+  return cosh(i_times(z));
+}
+
+/**
  * Structure to wrap `cos()` so it can be vectorized.
  *
  * @tparam T type of variable
@@ -59,20 +71,6 @@ inline auto cos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().cos(); });
 }
-
-namespace internal {
-/**
- * Return the cosine of the complex argument.
- *
- * @tparam T value type of argument
- * @param[in] z argument
- * @return cosine of the argument
- */
-template <typename T>
-inline std::complex<T> complex_cos(const std::complex<T>& z) {
-  return cosh(i_times(z));
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

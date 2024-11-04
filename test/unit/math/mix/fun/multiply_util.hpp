@@ -7,15 +7,15 @@ void instantiate_multiply() {
   using stan::math::multiply;
   T v_scalar = 1.0;
   double d_scalar = 1.0;
-  std::complex<double> cd_scalar = 1.0;
-  std::complex<T> cv_scalar = 1.0;
+  stan::math::complex<double> cd_scalar = 1.0;
+  stan::math::complex<T> cv_scalar = 1.0;
   Eigen::Matrix<double, -1, -1> d_mat(2, 2);
   d_mat << 1, 2, 3, 4;
   Eigen::Matrix<T, -1, -1> v_mat(2, 2);
   v_mat << 1, 2, 3, 4;
-  Eigen::Matrix<std::complex<double>, -1, -1> cd_mat(2, 2);
+  Eigen::Matrix<stan::math::complex<double>, -1, -1> cd_mat(2, 2);
   cd_mat << 1, 2, 3, 4;
-  Eigen::Matrix<std::complex<T>, -1, -1> cv_mat(2, 2);
+  Eigen::Matrix<stan::math::complex<T>, -1, -1> cv_mat(2, 2);
   cv_mat << 1, 2, 3, 4;
 
   auto d_scalar_d_mat = stan::math::eval(multiply(d_scalar, d_mat));
@@ -82,9 +82,9 @@ void instantiate_multiply() {
   d_vec << 1, 2;
   Eigen::Matrix<T, -1, 1> v_vec(2);
   v_vec << 1, 2;
-  Eigen::Matrix<std::complex<double>, -1, 1> cd_vec(2);
+  Eigen::Matrix<stan::math::complex<double>, -1, 1> cd_vec(2);
   cd_vec << 1, 2;
-  Eigen::Matrix<std::complex<T>, -1, 1> cv_vec(2);
+  Eigen::Matrix<stan::math::complex<T>, -1, 1> cv_vec(2);
   cv_vec << 1, 2;
 
   auto d_d_vec_mat = stan::math::eval(multiply(d_mat, d_vec));
@@ -111,9 +111,9 @@ void instantiate_multiply() {
   d_rowvec << 1, 2;
   Eigen::Matrix<T, 1, -1> v_rowvec(2);
   v_rowvec << 1, 2;
-  Eigen::Matrix<std::complex<double>, 1, -1> cd_rowvec(2);
+  Eigen::Matrix<stan::math::complex<double>, 1, -1> cd_rowvec(2);
   cd_rowvec << 1, 2;
-  Eigen::Matrix<std::complex<T>, 1, -1> cv_rowvec(2);
+  Eigen::Matrix<stan::math::complex<T>, 1, -1> cv_rowvec(2);
   cv_rowvec << 1, 2;
 
   auto d_d_dot_prod = stan::math::eval(multiply(d_vec, d_rowvec));

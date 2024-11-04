@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 TEST(primFun, complex_schur_decompose_ut) {
-  using c_t = std::complex<double>;
+  using c_t = stan::math::complex<double>;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
 
@@ -27,7 +27,7 @@ TEST(primFun, complex_schur_decompose_ut) {
 }
 
 TEST(primFun, complex_schur_decompose) {
-  using c_t = std::complex<double>;
+  using c_t = stan::math::complex<double>;
   using stan::math::complex_schur_decompose;
 
   // verify that A = U T U*

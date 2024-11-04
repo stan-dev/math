@@ -66,7 +66,7 @@ inline bool operator==(Arith a, const var& b) {
  * @return `true` if the real number is equal to the real part of the
  * complex number, and the imaginary part of the complex number is zero
  */
-inline bool operator==(const var& x, const std::complex<var>& z) {
+inline bool operator==(const var& x, const stan::math::complex<var>& z) {
   return x == z.real() && 0 == z.imag();
 }
 
@@ -79,7 +79,7 @@ inline bool operator==(const var& x, const std::complex<var>& z) {
  * @return `true` if the real number is equal to the real part of the
  * complex number, and the imaginary part of the complex number is zero
  */
-inline bool operator==(const std::complex<var>& z, const var& y) {
+inline bool operator==(const stan::math::complex<var>& z, const var& y) {
   return z.real() == y && z.imag() == 0;
 }
 

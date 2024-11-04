@@ -63,15 +63,7 @@ inline auto sinh(const VarMat& a) {
       });
 }
 
-/**
- * Return the hyperbolic sine of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic sine of the argument
- */
-inline std::complex<var> sinh(const std::complex<var>& z) {
-  return stan::math::internal::complex_sinh(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

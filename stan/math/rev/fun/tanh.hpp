@@ -61,15 +61,7 @@ inline auto tanh(const VarMat& a) {
       });
 }
 
-/**
- * Return the hyperbolic tangent of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic tangent of the argument
- */
-inline std::complex<var> tanh(const std::complex<var>& z) {
-  return stan::math::internal::complex_tanh(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

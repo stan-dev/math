@@ -22,17 +22,7 @@ inline fvar<T> log10(const fvar<T>& x) {
   }
 }
 
-/**
- * Return the base 10 logarithm of the specified complex number.
- *
- * @tparam T autodiff value type
- * @param z complex argument
- * @return base 10 log of argument
- */
-template <typename T>
-inline std::complex<fvar<T>> log10(const std::complex<fvar<T>>& z) {
-  return internal::complex_log10(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

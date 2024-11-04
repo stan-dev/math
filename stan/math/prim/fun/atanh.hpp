@@ -15,6 +15,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc tangent of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> atanh(const stan::math::complex<V>& z) {
+  auto y_d = std::atanh(std::complex<double>(value_of_rec(z.real()), value_of_rec(z.imag())));
+  auto y = 0.5 * (log(1.0 + z) - log(1.0 - z));
+  return copysign(y, stan::math::complex<double>(y_d.real(), y_d.imag()));
+}
+
+/**
  * Return the inverse hyperbolic tangent of the specified value.
  * An argument of -1 returns negative infinity and an argument of 1
  * returns infinity.
@@ -78,23 +92,6 @@ template <
 inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }
-
-namespace internal {
-/**
- * Return the hyperbolic arc tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc tangent of the argument
- */
-template <typename V>
-inline std::complex<V> complex_atanh(const std::complex<V>& z) {
-  std::complex<double> y_d = atanh(value_of_rec(z));
-  V one(1);
-  auto y = 0.5 * (log(one + z) - log(one - z));
-  return copysign(y, y_d);
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

@@ -84,15 +84,6 @@ inline auto acosh(const VarMat& x) {
       });
 }
 
-/**
- * Return the hyperbolic arc cosine of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic arc cosine of the argument
- */
-inline std::complex<var> acosh(const std::complex<var>& z) {
-  return stan::math::internal::complex_acosh(z);
-}
 
 }  // namespace math
 }  // namespace stan

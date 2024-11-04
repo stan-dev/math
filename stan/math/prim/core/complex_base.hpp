@@ -25,7 +25,7 @@ class complex_base {
   /**
    * Derived complex type used for function return types
    */
-  using complex_type = std::complex<value_type>;
+  using complex_type = stan::math::complex<value_type>;
 
   /**
    * Construct a complex base with zero real and imaginary parts.
@@ -118,7 +118,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator+=(const std::complex<U>& other) {
+  complex_type& operator+=(const stan::math::complex<U>& other) {
     re_ += other.real();
     im_ += other.imag();
     return derived();
@@ -145,7 +145,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator-=(const std::complex<U>& other) {
+  complex_type& operator-=(const stan::math::complex<U>& other) {
     re_ -= other.real();
     im_ -= other.imag();
     return derived();
@@ -173,7 +173,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator*=(const std::complex<U>& other) {
+  complex_type& operator*=(const stan::math::complex<U>& other) {
     value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -202,7 +202,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  complex_type& operator/=(const std::complex<U>& other) {
+  complex_type& operator/=(const stan::math::complex<U>& other) {
     using stan::math::square;
     value_type sum_sq_im
         = (other.real() * other.real()) + (other.imag() * other.imag());
@@ -230,6 +230,151 @@ class complex_base {
    */
   complex_type& derived() { return static_cast<complex_type&>(*this); }
 };
+
+template <typename T>
+class complex : public std::complex<T> {
+  public:
+    using std::complex<T>::complex;
+    using std::complex<T>::operator=;
+    template <typename U>
+    inline auto& operator+=(const stan::math::complex<U>& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() + other.real();
+      reinterpret_cast<T(&)[2]>(*this)[1] = this->imag() + other.imag();
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator-=(const stan::math::complex<U>& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() - other.real();
+      reinterpret_cast<T(&)[2]>(*this)[1] = this->imag() - other.imag();
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator*=(const stan::math::complex<U>& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] =
+        this->real() * other.real() - this->imag() * other.imag();
+      reinterpret_cast<T(&)[2]>(*this)[1] =
+        this->real() * other.imag() + other.real() * this->imag();
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator/=(const stan::math::complex<U>& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] =
+        this->real() * other.real() + this->imag() * other.imag()
+        / (other.real() * other.real() + other.imag() * other.imag());
+      reinterpret_cast<T(&)[2]>(*this)[1] =
+        this->imag() * other.real() - this->real() * other.imag()
+        / (other.real() * other.real() + other.imag() * other.imag());
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator+=(const U& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() + other;
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator-=(const U& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() - other;
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator*=(const U& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() * other;
+      reinterpret_cast<T(&)[2]>(*this)[1] = this->imag() * other;
+      return *this;
+    }
+    template <typename U>
+    inline auto& operator/=(const U& other) {
+      reinterpret_cast<T(&)[2]>(*this)[0] = this->real() / other;
+      reinterpret_cast<T(&)[2]>(*this)[1] = this->imag() / other;
+      return *this;
+    }
+
+
+};
+
+template<typename T>
+inline stan::math::complex<T> operator+( const stan::math::complex<T>& val ){
+  return val;
+}
+template<typename T>
+inline stan::math::complex<T> operator-( const stan::math::complex<T>& val ) {
+  return stan::math::complex<T>(-val.real(), -val.imag());
+}
+
+template<typename T1, typename T2>
+inline auto operator+( const stan::math::complex<T1>& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) += rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator+( const stan::math::complex<T1>& lhs, const T2& rhs ) {
+    return complex_return_t<T1, T2>(lhs) += rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator+( const T1& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) += rhs;
+}
+
+
+template<typename T1, typename T2>
+inline auto operator-( const stan::math::complex<T1>& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) -= rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator-( const stan::math::complex<T1>& lhs, const T2& rhs ) {
+    return complex_return_t<T1, T2>(lhs) -= rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator-( const T1& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) -= rhs;
+}
+
+
+template<typename T1, typename T2>
+inline auto operator*( const stan::math::complex<T1>& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) *= rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator*( const stan::math::complex<T1>& lhs, const T2& rhs ) {
+    return complex_return_t<T1, T2>(lhs) *= rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator*( const T1& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) *= rhs;
+}
+
+template <typename T1, typename T2, require_any_complex_t<T1, T2>* = nullptr>
+inline auto multiply(const T1& lhs, const T2& rhs) {
+  return lhs - rhs;
+}
+
+template<typename T1, typename T2>
+inline auto operator/( const stan::math::complex<T1>& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) /= rhs;
+}
+
+
+template<typename T1, typename T2>
+inline auto operator/( const stan::math::complex<T1>& lhs, const T2& rhs ) {
+    return complex_return_t<T1, T2>(lhs) /= rhs;
+}
+
+
+template<typename T1, typename T2>
+inline auto operator/( const T1& lhs, const stan::math::complex<T2>& rhs ) {
+    return complex_return_t<T1, T2>(lhs) /= rhs;
+}
+
+template <typename T1, typename T2, require_any_complex_t<T1, T2>* = nullptr>
+inline auto divide(const T1& lhs, const T2& rhs) {
+  return lhs - rhs;
+}
+
 
 }  // namespace math
 }  // namespace stan

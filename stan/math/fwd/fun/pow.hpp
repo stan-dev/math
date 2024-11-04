@@ -28,13 +28,12 @@ namespace math {
  */
 template <typename T1, typename T2,
           require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
+          require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_not_complex_t<T1, T2>* = nullptr>
 inline auto pow(const T1& x1, const T2& x2) {
   using std::log;
   using std::pow;
-  if constexpr (is_complex<T1>::value || is_complex<T2>::value) {
-    return internal::complex_pow(x1, x2);
-  } else if constexpr (is_fvar<T1>::value && is_fvar<T2>::value) {
+  if constexpr (is_fvar<T1>::value && is_fvar<T2>::value) {
     auto pow_x1_x2(stan::math::pow(x1.val_, x2.val_));
     return T1(pow_x1_x2,
               (x2.d_ * stan::math::log(x1.val_) + x2.val_ * x1.d_ / x1.val_)

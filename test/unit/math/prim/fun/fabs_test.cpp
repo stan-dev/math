@@ -8,6 +8,6 @@ TEST(primScalFun, fabs) {
 
 TEST(primScalFun, fabs_complex) {
   using stan::math::fabs;
-  std::complex<double> z(1.0, 2.0);
+  stan::math::complex<double> z(1.0, 2.0);
   EXPECT_FLOAT_EQ(fabs(z), 2.236068);
 }

@@ -15,7 +15,7 @@ namespace math {
  * @return imaginary component of argument
  */
 template <typename T, require_autodiff_t<T>>
-T imag(const std::complex<T>& z) {
+T imag(const stan::math::complex<T>& z) {
   return z.imag();
 }
 

@@ -67,15 +67,7 @@ inline auto tan(const VarMat& a) {
                            });
 }
 
-/**
- * Return the tangent of the complex argument.
- *
- * @param[in] z argument
- * @return tangent of the argument
- */
-inline std::complex<var> tan(const std::complex<var>& z) {
-  return stan::math::internal::complex_tan(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

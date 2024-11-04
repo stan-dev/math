@@ -55,15 +55,7 @@ inline auto log(const var_value<T>& a) {
   });
 }
 
-/**
- * Return the natural logarithm (base e) of the specified complex argument.
- *
- * @param z complex argument
- * @return natural logarithm of argument
- */
-inline std::complex<var> log(const std::complex<var>& z) {
-  return internal::complex_log(z);
-}
+
 
 }  // namespace math
 }  // namespace stan

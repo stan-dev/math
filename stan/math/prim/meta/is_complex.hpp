@@ -22,7 +22,7 @@ template <typename T>
 struct is_complex_impl : std::false_type {};
 
 template <typename... Ts>
-struct is_complex_impl<std::complex<Ts...>> : std::true_type {};
+struct is_complex_impl<stan::math::complex<Ts...>> : std::true_type {};
 
 }  // namespace internal
 
@@ -52,7 +52,7 @@ struct is_complex<
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
-  using type = std::complex<typename std::decay_t<T>::value_type>;
+  using type = stan::math::complex<typename std::decay_t<T>::value_type>;
 };
 
 /*! \ingroup require_stan_scalar_complex */
@@ -85,6 +85,13 @@ using require_any_complex_t = require_any_t<is_complex<std::decay_t<Types>>...>;
 template <typename... Types>
 using require_all_not_complex_t
     = require_all_not_t<is_complex<std::decay_t<Types>>...>;
+/*! @} */
+
+/*! \brief Require at least one of the types do not satisfy @ref is_complex */
+/*! @tparam Types The types that are checked */
+template <typename... Types>
+using require_any_not_complex_t
+    = require_any_not_t<is_complex<std::decay_t<Types>>...>;
 /*! @} */
 
 /*! \ingroup require_stan_scalar_complex */

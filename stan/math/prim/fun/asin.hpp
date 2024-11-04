@@ -17,6 +17,20 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc sine of the argument
+ */
+template <typename V>
+inline stan::math::complex<V> asin(const stan::math::complex<V>& z) {
+  auto y_d = asin(value_of_rec(z));
+  auto y = neg_i_times(asinh(i_times(z)));
+  return copysign(y, y_d);
+}
+
+/**
  * Structure to wrap `asin()` so it can be vectorized.
  *
  * @tparam T type of argument
@@ -63,21 +77,6 @@ inline auto asin(const Container& x) {
       x, [](const auto& v) { return v.array().asin(); });
 }
 
-namespace internal {
-/**
- * Return the arc sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return arc sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_asin(const std::complex<V>& z) {
-  auto y_d = asin(value_of_rec(z));
-  auto y = neg_i_times(asinh(i_times(z)));
-  return copysign(y, y_d);
-}
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
