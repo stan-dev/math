@@ -48,12 +48,11 @@ TEST(mathMixFun, complexPow) {
 
 TEST(mathMixFun, powIntAmbiguityTest) {
   using stan::math::var;
-  using std::complex;
   int i = 2;
   double d = 2.5;
   var v = 2.5;
-  complex<double> cd = 2.5;
-  complex<var> cv = 2.5;
+  stan::math::complex<double> cd = 2.5;
+  stan::math::complex<var> cv = 2.5;
 
   auto a1 = stan::math::pow(i, i);
   auto a2 = stan::math::pow(i, d);
@@ -93,7 +92,7 @@ TEST(mathMixFun, powIntAmbiguityTest) {
 
 TEST(mathMixFun, powIntAmbiguityTestFvar) {
   using stan::math::fvar;
-  using std::complex;
+  using stan::math::complex;
   int i = 2;
   double d = 2.5;
   fvar<double> v = 2.5;

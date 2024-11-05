@@ -21,7 +21,7 @@ void expect_scalar_type() {
 template <typename T>
 void test_scalar_type() {
   using Eigen::Matrix;
-  using std::complex;
+  using stan::math::complex;
   using std::vector;
   expect_scalar_type<T, T>();
   expect_scalar_type<T, vector<T>>();

@@ -43,14 +43,13 @@ template <typename EigCplxMat,
 inline Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>
 eigenvalues(const EigCplxMat& m) {
   if (unlikely(m.size() == 0)) {
-    return Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>(0,
-                                                                            1);
+    return Eigen::Matrix<complex_return_t<value_type_t<EigCplxMat>>, -1, 1>(0,                                                                            1);
   }
   check_square("eigenvalues", "m", m);
   using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
   const PlainMat& m_eval = m;
 
-  Eigen::ComplexEigenSolver<PlainMat> solver(m_eval, false);
+  Eigen::ComplexEigenSolverPatched<PlainMat> solver(m_eval, false);
 
   return solver.eigenvalues();
 }

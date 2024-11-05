@@ -20,6 +20,7 @@ namespace math {
  */
 template <typename V>
 inline stan::math::complex<V> sqrt(const stan::math::complex<V>& z) {
+  using std::sqrt;
   auto m = sqrt(hypot(z.real(), z.imag()));
   auto at = 0.5 * atan2(z.imag(), z.real());
   return {m * cos(at), m * sin(at)};

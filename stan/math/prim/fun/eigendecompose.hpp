@@ -63,7 +63,7 @@ eigendecompose(const EigCplxMat& m) {
   using PlainMat = Eigen::Matrix<scalar_type_t<EigCplxMat>, -1, -1>;
   const PlainMat& m_eval = m;
 
-  Eigen::ComplexEigenSolver<PlainMat> solver(m_eval);
+  Eigen::ComplexEigenSolverPatched<PlainMat> solver(m_eval);
 
   return std::make_tuple(std::move(solver.eigenvectors()),
                          std::move(solver.eigenvalues()));

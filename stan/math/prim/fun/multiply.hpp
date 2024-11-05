@@ -167,6 +167,7 @@ inline return_type_t<Scalar1, Scalar2> multiply(Scalar1 m, Scalar2 c) {
   return c * m;
 }
 
+
 }  // namespace math
 }  // namespace stan
 

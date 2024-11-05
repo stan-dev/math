@@ -1940,7 +1940,6 @@ void expect_complex_comparison(const F& f, const stan::math::complex<double>& z1
                                const stan::math::complex<double>& z2) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::complex;
   expect_complex_compare<double>(f, z1, z2);
   expect_complex_compare<var>(f, z1, z2);
   expect_complex_compare<fvar<double>>(f, z1, z2);

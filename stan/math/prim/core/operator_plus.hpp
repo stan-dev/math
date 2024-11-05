@@ -7,17 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the argument.
- *
- * @tparam U value type argument
- * @param x argument
- * @return argument
- */
-template <typename U, require_autodiff_t<U>>
-inline stan::math::complex<U> operator+(const stan::math::complex<U>& x) {
-  return x;
-}
+
 
 }  // namespace math
 }  // namespace stan
