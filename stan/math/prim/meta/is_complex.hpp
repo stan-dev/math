@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_COMPLEX_HPP
 #define STAN_MATH_PRIM_META_IS_COMPLEX_HPP
 
+#include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
@@ -55,6 +56,18 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
   using type = std::complex<typename std::decay_t<T>::value_type>;
 };
 
+/**
+ * Template metaprogram defining the base type for values
+ * stored in a complex number.
+ *
+ * @tparam T type of complex number
+ * @ingroup type_trait
+ */
+template <typename T>
+struct base_type<T, std::enable_if_t<is_complex<T>::value>> {
+  using type = base_type_t<typename std::decay_t<T>::value_type>;
+};
+
 /*! \ingroup require_stan_scalar_complex */
 /*! \defgroup complex_types complex  */
 /*! \addtogroup complex_types */
@@ -107,6 +120,11 @@ using require_not_vt_complex
 template <typename T>
 using require_not_st_complex
     = require_not_t<is_complex<scalar_type_t<std::decay_t<T>>>>;
+
+/*! \brief Require `T` is complex and it's @ref base_type satisfies a given type trait */
+/*! @tparam T A type with a valid overload of @ref base_type available */
+template <template <class...> typename Check, typename T>
+using require_complex_bt = require_t<stan::math::conjunction<Check<base_type_t<std::decay_t<T>>>, is_complex<std::decay_t<T>>>>;
 /*! @} */
 
 /**

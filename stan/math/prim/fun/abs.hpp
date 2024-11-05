@@ -34,7 +34,13 @@ inline T abs(T x) {
  * @param x argument
  * @return absolute value of argument (a real number)
  */
-template <typename T, require_complex_t<T>* = nullptr>
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto abs(T x) {
+  using std::hypot;
+  return hypot(x.real(), x.imag());
+}
+
+template <typename T, require_complex_bt<is_autodiff, T>* = nullptr>
 inline auto abs(T x) {
   return hypot(x.real(), x.imag());
 }
