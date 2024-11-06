@@ -2,11 +2,11 @@
 #define STAN_MATH_REV_FUN_ELT_MULTIPLY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/multiply.hpp>
 
 namespace stan {
 namespace math {

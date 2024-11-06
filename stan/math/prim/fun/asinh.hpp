@@ -19,6 +19,15 @@
 
 namespace stan {
 namespace math {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto asinh(const T x) {
+  return std::asinh(x);
+}
+
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto asinh(const T x) {
+  return std::asinh(x);
+}
 
 /**
  * Structure to wrap `asinh()` so it can be vectorized.
@@ -30,7 +39,6 @@ namespace math {
 struct asinh_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::asinh;
     return asinh(x);
   }
 };
@@ -43,12 +51,17 @@ struct asinh_fun {
  * @param x container
  * @return Inverse hyperbolic sine of each value in the container.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
+
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto asinh(const Container& x) {
+  return apply_scalar_unary<asinh_fun, Container>::apply(x);
+}
+
 
 namespace internal {
 /**

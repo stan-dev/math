@@ -45,8 +45,13 @@ namespace math {
  * @param x Argument.
  * @return Inverse complementary log-log of the argument.
  */
-inline double inv_cloglog(double x) {
-  using std::exp;
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto inv_cloglog(const T x) {
+  return 1. - std::exp(-std::exp(x));
+}
+
+template <typename T, require_complex_t<T>* = nullptr>
+inline auto inv_cloglog(const T& x) {
   return 1. - exp(-exp(x));
 }
 
@@ -71,11 +76,7 @@ struct inv_cloglog_fun {
  * @param x container
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto inv_cloglog(const Container& x) {
   return apply_scalar_unary<inv_cloglog_fun, Container>::apply(x);
 }
@@ -89,7 +90,7 @@ inline auto inv_cloglog(const Container& x) {
  * @return 1 - exp(-exp()) applied to each value in x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_cloglog(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return 1 - (-v.array().exp()).exp(); });

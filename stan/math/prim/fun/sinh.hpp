@@ -11,6 +11,16 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto sinh(const T x) {
+  return std::sinh(x);
+}
+
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto sinh(const T x) {
+  return std::sinh(x);
+}
+
 /**
  * Structure to wrap sinh() so that it can be vectorized.
  *
@@ -21,7 +31,6 @@ namespace math {
 struct sinh_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::sinh;
     return sinh(x);
   }
 };
@@ -33,11 +42,7 @@ struct sinh_fun {
  * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto sinh(const Container& x) {
   return apply_scalar_unary<sinh_fun, Container>::apply(x);
 }
@@ -51,7 +56,7 @@ inline auto sinh(const Container& x) {
  * @return Hyperbolic sine of each variable in x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto sinh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sinh(); });

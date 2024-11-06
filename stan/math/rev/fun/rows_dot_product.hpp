@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_FUN_ROWS_DOT_PRODUCT_HPP
 #define STAN_MATH_REV_FUN_ROWS_DOT_PRODUCT_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <type_traits>
 

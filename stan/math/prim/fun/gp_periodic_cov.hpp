@@ -46,8 +46,6 @@ inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l, T_p>,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
                 const T_p &p) {
-  using std::exp;
-  using std::sin;
   const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
@@ -126,8 +124,6 @@ inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l, T_p>,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma, const T_l &l, const T_p &p) {
-  using std::exp;
-  using std::sin;
   const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);

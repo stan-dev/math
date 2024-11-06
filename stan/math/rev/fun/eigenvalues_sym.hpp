@@ -5,11 +5,11 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {

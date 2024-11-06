@@ -24,7 +24,8 @@ namespace math {
  * @return Inverse hyperbolic tangent of the argument.
  * @throw std::domain_error If argument is not in [-1, 1].
  */
-inline double atanh(double x) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double atanh(const T x) {
   if (is_nan(x)) {
     return x;
   } else {
@@ -32,16 +33,8 @@ inline double atanh(double x) {
     return std::atanh(x);
   }
 }
-
-/**
- * Integer version of atanh.
- *
- * @param[in] x Argument.
- * @return Inverse hyperbolic tangent of the argument.
- * @throw std::domain_error If argument is less than 1.
- */
-inline double atanh(int x) {
-  check_bounded("atanh", "x", x, -1, 1);
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto atanh(const T x) {
   return std::atanh(x);
 }
 
@@ -72,12 +65,17 @@ struct atanh_fun {
  * @param x container
  * @return Elementwise atanh of members of container.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }
+
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto atanh(const Container& x) {
+  return apply_scalar_unary<atanh_fun, Container>::apply(x);
+}
+
 
 namespace internal {
 /**

@@ -23,7 +23,8 @@ namespace math {
  * @return Inverse hyperbolic cosine of the argument.
  * @throw std::domain_error If argument is less than 1.
  */
-inline double acosh(double x) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double acosh(const T x) {
   if (is_nan(x)) {
     return x;
   } else {
@@ -36,25 +37,11 @@ inline double acosh(double x) {
   }
 }
 
-/**
- * Integer version of acosh.
- *
- * @param[in] x Argument.
- * @return Inverse hyperbolic cosine of the argument.
- * @throw std::domain_error If argument is less than 1.
- */
-inline double acosh(int x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_greater_or_equal("acosh", "x", x, 1);
-#ifdef _WIN32
-    if (is_inf(x))
-      return x;
-#endif
-    return std::acosh(x);
-  }
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto acosh(const T x) {
+  return std::acosh(x);
 }
+
 
 /**
  * Structure to wrap acosh() so it can be vectorized.
@@ -83,12 +70,17 @@ struct acosh_fun {
  * @param x container
  * @return Elementwise acosh of members of container.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
+
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto acosh(const Container& x) {
+  return apply_scalar_unary<acosh_fun, Container>::apply(x);
+}
+
 
 namespace internal {
 

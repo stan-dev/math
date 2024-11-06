@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_IS_COMPLEX_HPP
 
 #include <stan/math/prim/meta/conjunction.hpp>
+#include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
@@ -121,10 +122,14 @@ template <typename T>
 using require_not_st_complex
     = require_not_t<is_complex<scalar_type_t<std::decay_t<T>>>>;
 
-/*! \brief Require `T` is complex and it's @ref base_type satisfies a given type trait */
-/*! @tparam T A type with a valid overload of @ref base_type available */
-template <template <class...> typename Check, typename T>
-using require_complex_bt = require_t<stan::math::conjunction<Check<base_type_t<std::decay_t<T>>>, is_complex<std::decay_t<T>>>>;
+/*! \brief Require type satisfies @ref is_eigen */
+/*! and scalar type satisfies `TypeCheck` */
+/*! @tparam TypeCheck The type trait to check the scalar type against */
+/*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
+ * is checked with `TypeCheck` */
+template <template <class...> class TypeCheck, class Check>
+using require_complex_bt =
+    require_all_t<is_complex<Check>, TypeCheck<base_type_t<Check>>>;
 /*! @} */
 
 /**

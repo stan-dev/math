@@ -6,7 +6,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
 #include <cmath>
 #include <vector>
 

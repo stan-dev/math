@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/rev/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
 
 namespace stan {

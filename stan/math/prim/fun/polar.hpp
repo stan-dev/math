@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_POLAR_HPP
 #define STAN_MATH_PRIM_FUN_POLAR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/cos.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/sin.hpp>
 #include <cmath>
 #include <complex>
 #include <limits>
@@ -20,8 +21,6 @@ namespace internal {
  */
 template <typename U, typename V>
 inline complex_return_t<U, V> complex_polar(const U& r, const V& theta) {
-  using std::cos;
-  using std::sin;
   if (!(r >= 0) || is_inf(theta)) {
     return {std::numeric_limits<double>::quiet_NaN()};
   }

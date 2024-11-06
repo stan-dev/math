@@ -36,14 +36,9 @@ inline T abs(T x) {
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto abs(T x) {
-  using std::hypot;
-  return hypot(x.real(), x.imag());
+  return std::hypot(x.real(), x.imag());
 }
 
-template <typename T, require_complex_bt<is_autodiff, T>* = nullptr>
-inline auto abs(T x) {
-  return hypot(x.real(), x.imag());
-}
 
 /**
  * Return elementwise absolute value of the specified real-valued
@@ -68,10 +63,7 @@ struct abs_fun {
  * @param x argument
  * @return Absolute value of each variable in the container.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_not_stan_scalar_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto abs(const Container& x) {
   return apply_scalar_unary<abs_fun, Container>::apply(x);
 }
@@ -85,7 +77,7 @@ inline auto abs(const Container& x) {
  * @return Absolute value of each variable in the container.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto abs(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().abs(); });

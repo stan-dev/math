@@ -6,7 +6,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/to_complex.hpp>
-#include <Eigen/Dense>
 #include <complex>
 #include <type_traits>
 #include <vector>
