@@ -12,11 +12,29 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the natural (base e) exponentiation of the specified
+ * complex argument.
+ *
+ * @tparam V `Arithmetic` type
+ * @param z input
+ * @return natural exponentiation of specified number
+ */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto exp(const T x) {
   return std::exp(x);
 }
 
+/**
+ * Return the natural (base e) complex exponentiation of the specified
+ * complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` type
+ * @param z complex number
+ * @return natural exponentiation of specified complex number
+ * @see documentation for `std::complex` for boundary condition and
+ * branch cut details
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto exp(const T x) {
   return std::exp(x);

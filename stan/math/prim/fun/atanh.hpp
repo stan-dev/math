@@ -20,7 +20,7 @@ namespace math {
  * returns infinity.
  * Returns nan for nan argument.
  *
- * @param[in] x Argument.
+ * @param[in] x `Arithmetic` Argument.
  * @return Inverse hyperbolic tangent of the argument.
  * @throw std::domain_error If argument is not in [-1, 1].
  */
@@ -33,6 +33,17 @@ inline double atanh(const T x) {
     return std::atanh(x);
   }
 }
+
+/**
+ * Return the inverse hyperbolic tangent of the specified value.
+ * An argument of -1 returns negative infinity and an argument of 1
+ * returns infinity.
+ * Returns nan for nan argument.
+ *
+ * @param[in] x `complex<Arithmetic>` Argument.
+ * @return Inverse hyperbolic tangent of the argument.
+ * @throw std::domain_error If argument is not in [-1, 1].
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto atanh(const T x) {
   return std::atanh(x);

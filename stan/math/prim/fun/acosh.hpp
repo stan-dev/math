@@ -19,7 +19,7 @@ namespace math {
  * Return the inverse hyperbolic cosine of the specified value.
  * Returns nan for nan argument.
  *
- * @param[in] x Argument.
+ * @param[in] x `Arithmetic` Argument.
  * @return Inverse hyperbolic cosine of the argument.
  * @throw std::domain_error If argument is less than 1.
  */
@@ -37,6 +37,14 @@ inline double acosh(const T x) {
   }
 }
 
+/**
+ * Return the inverse hyperbolic cosine of the specified value.
+ * Returns nan for nan argument.
+ *
+ * @param[in] x `complex<Arithmetic>` Argument.
+ * @return Inverse hyperbolic cosine of the argument.
+ * @throw std::domain_error If argument is less than 1.
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto acosh(const T x) {
   return std::acosh(x);

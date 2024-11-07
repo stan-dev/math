@@ -11,11 +11,25 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the square root of the arithmetic argument.
+ *
+ * @tparam V `Arithmetic` argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto sqrt(const T x) {
   return std::sqrt(x);
 }
 
+/**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V `complex<Aritmetic>` argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto sqrt(const T x) {
   return std::sqrt(x);

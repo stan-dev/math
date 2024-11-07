@@ -11,11 +11,25 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the hyperbolic sine of the arithmetic argument.
+ *
+ * @tparam V An arithmetic argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto sinh(const T x) {
   return std::sinh(x);
 }
 
+/**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto sinh(const T x) {
   return std::sinh(x);

@@ -18,11 +18,25 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the arc cosine of the arithmetic argument.
+ *
+ * @tparam V An `Arithmetic` argument
+ * @param[in] x argument
+ * @return arc cosine of the argument
+ */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto acos(const T x) {
   return std::acos(x);
 }
 
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` argument
+ * @param[in] x argument
+ * @return arc cosine of the argument
+ */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
 inline auto acos(const T x) {
   return std::acos(x);
