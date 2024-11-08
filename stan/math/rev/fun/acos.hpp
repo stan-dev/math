@@ -9,7 +9,6 @@
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/polar.hpp>
-#include <stan/math/rev/fun/asin.hpp>
 #include <stan/math/prim/fun/acos.hpp>
 #include <cmath>
 #include <complex>
