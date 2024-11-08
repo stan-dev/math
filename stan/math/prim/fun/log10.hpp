@@ -16,7 +16,7 @@ namespace math {
  * Return the base 10 logarithm of the arithmetic argument.
  *
  * @tparam V `Arithmetic` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return base 10 logarithm of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -28,7 +28,7 @@ inline auto log10(const T x) {
  * Return the base 10 logarithm of the complex argument.
  *
  * @tparam V `complex<Arithmetic>` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return base 10 logarithm of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>

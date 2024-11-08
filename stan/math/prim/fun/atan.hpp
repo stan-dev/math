@@ -18,7 +18,7 @@ namespace math {
  * Return the arc tangent of the arithmetic argument.
  *
  * @tparam V `Arithmetic` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return arc tangent of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -30,7 +30,7 @@ inline auto atan(const T x) {
  * Return the arc tangent of the complex argument.
  *
  * @tparam V `complex<Arithmetic>` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return arc tangent of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>

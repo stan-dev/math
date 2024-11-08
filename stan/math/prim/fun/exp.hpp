@@ -17,7 +17,7 @@ namespace math {
  * complex argument.
  *
  * @tparam V `Arithmetic` type
- * @param z input
+ * @param x input
  * @return natural exponentiation of specified number
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -30,7 +30,7 @@ inline auto exp(const T x) {
  * complex argument.
  *
  * @tparam V `complex<Arithmetic>` type
- * @param z complex number
+ * @param x complex number
  * @return natural exponentiation of specified complex number
  * @see documentation for `std::complex` for boundary condition and
  * branch cut details

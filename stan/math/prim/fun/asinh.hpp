@@ -23,7 +23,7 @@ namespace math {
  * Return the hyperbolic arc sine of the arithmetic argument.
  *
  * @tparam V An arithmetic type
- * @param[in] z argument
+ * @param[in] x argument
  * @return hyperbolic arc sine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -35,7 +35,7 @@ inline auto asinh(const T x) {
  * Return the hyperbolic arc sine of the complex argument.
  *
  * @tparam V a complex type with inner arithmetic type.
- * @param[in] z argument
+ * @param[in] x argument
  * @return hyperbolic arc sine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>

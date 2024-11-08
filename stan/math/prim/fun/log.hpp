@@ -20,7 +20,7 @@ namespace math {
  * Return the natural logarithm of the arithmetic argument.
  *
  * @tparam V `Arithmetic` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return natural logarithm of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -32,7 +32,7 @@ inline auto log(const T x) {
  * Return the natural logarithm of the complex argument.
  *
  * @tparam V `complex<Arithmetic>` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return natural logarithm of the argument
  */
 template <typename T, require_complex_t<T>* = nullptr>

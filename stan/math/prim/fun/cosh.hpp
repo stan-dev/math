@@ -16,7 +16,7 @@ namespace math {
  * Return the hyperbolic cosine of the arithmetic argument.
  *
  * @tparam V An arithmetic type
- * @param[in] z argument
+ * @param[in] x argument
  * @return hyperbolic cosine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -28,7 +28,7 @@ inline auto cosh(const T x) {
  * Return the hyperbolic cosine of the complex argument.
  *
  * @tparam V `complex<Arithmetic>` type of argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return hyperbolic cosine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>

@@ -17,7 +17,7 @@ namespace math {
  * Return the sine of the complex argument.
  *
  * @tparam V `Arithmetic` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return sine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -29,7 +29,7 @@ inline auto sin(const T x) {
  * Return the sine of the complex argument.
  *
  * @tparam V `complex<Arithmetic>` argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return sine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
