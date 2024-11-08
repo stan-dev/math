@@ -38,7 +38,6 @@ inline auto atan(const T x) {
   return std::atan(x);
 }
 
-
 /**
  * Structure to wrap \c atan() so it can be vectorized.
  *

@@ -36,7 +36,6 @@ inline auto log10(const T x) {
   return std::log10(x);
 }
 
-
 /**
  * Structure to wrap log10() so it can be vectorized.
  *
@@ -58,8 +57,7 @@ struct log10_fun {
  * @param x container
  * @return Log base-10 applied to each value in x.
  */
-template <
-    typename Container, require_ad_container_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto log10(const Container& x) {
   return apply_scalar_unary<log10_fun, Container>::apply(x);
 }

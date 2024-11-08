@@ -37,7 +37,6 @@ inline auto tanh(const T x) {
   return std::tanh(x);
 }
 
-
 /**
  * Structure to wrap `tanh()` so that it can be vectorized.
  *

@@ -37,7 +37,8 @@ inline complex_return_t<U, V> complex_polar(const U& r, const V& theta) {
  */
 template <typename U, typename V, require_all_arithmetic_t<U, V>* = nullptr>
 inline std::complex<double> polar(U r, V theta) {
-  return internal::complex_polar(static_cast<double>(r), static_cast<double>(theta));
+  return internal::complex_polar(static_cast<double>(r),
+                                 static_cast<double>(theta));
 }
 
 }  // namespace math

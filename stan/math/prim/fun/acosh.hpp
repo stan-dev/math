@@ -50,7 +50,6 @@ inline auto acosh(const T x) {
   return std::acosh(x);
 }
 
-
 /**
  * Structure to wrap acosh() so it can be vectorized.
  */
@@ -88,7 +87,6 @@ template <typename Container,
 inline auto acosh(const Container& x) {
   return apply_scalar_unary<acosh_fun, Container>::apply(x);
 }
-
 
 namespace internal {
 

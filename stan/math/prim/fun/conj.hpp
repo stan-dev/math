@@ -31,21 +31,21 @@ inline V conj(const V& z) {
   return {z.real(), -z.imag()};
 }
 
-
 /**
  * Return the complex conjugate the Eigen object.
  *
- * @tparam Eig A type derived from `Eigen::EigenBase` with an inner complex autodiff type.
+ * @tparam Eig A type derived from `Eigen::EigenBase` with an inner complex
+ * autodiff type.
  * @param[in] z argument
  * @return complex conjugate of the argument
  */
 template <typename Eig, require_eigen_vt<is_complex, Eig>* = nullptr>
 inline auto conj(Eig&& z) {
-  return make_holder([](auto&& z_inner) {
-    return z_inner.unaryExpr([](auto&& z_i) {
-      return conj(z_i);
-    });
-  }, std::forward<Eig>(z));
+  return make_holder(
+      [](auto&& z_inner) {
+        return z_inner.unaryExpr([](auto&& z_i) { return conj(z_i); });
+      },
+      std::forward<Eig>(z));
 }
 
 /**
@@ -64,7 +64,6 @@ inline auto conj(const StdVec& z) {
   }
   return result;
 }
-
 
 }  // namespace math
 }  // namespace stan

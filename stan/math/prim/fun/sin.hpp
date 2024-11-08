@@ -88,7 +88,7 @@ namespace internal {
  */
 template <typename V>
 inline std::complex<V> complex_sin(const std::complex<V>& z) {
-    using namespace stan::math;
+  using namespace stan::math;
   return neg_i_times(sinh(i_times(z)));
 }
 }  // namespace internal

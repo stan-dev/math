@@ -52,7 +52,5 @@ struct base_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = base_type_t<typename std::decay_t<T>::Scalar>;
 };
 
-
-
 }  // namespace stan
 #endif

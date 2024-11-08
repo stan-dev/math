@@ -35,7 +35,6 @@ namespace math {
  */
 template <typename T>
 inline T trigamma_impl(const T& x) {
-
   double small = 0.0001;
   double large = 5.0;
   T value;

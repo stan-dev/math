@@ -21,15 +21,14 @@ namespace stan {
  * @ingroup type_trait
  */
 template <typename T>
-struct is_real
-    : bool_constant<math::disjunction<
-          math::conjunction<is_var<std::decay_t<T>>,
-                            std::is_arithmetic<value_type_t<T>>>,
-          is_fvar<std::decay_t<T>>, std::is_arithmetic<std::decay_t<T>>>::value> {};
+struct is_real : bool_constant<math::disjunction<
+                     math::conjunction<is_var<std::decay_t<T>>,
+                                       std::is_arithmetic<value_type_t<T>>>,
+                     is_fvar<std::decay_t<T>>,
+                     std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 template <typename T>
 constexpr bool is_real_v = is_real<T>::value;
-
 
 /*! \ingroup require_real_real */
 /*! \defgroup real_types real  */
@@ -44,20 +43,17 @@ using require_real_t = require_t<is_real<std::decay_t<T>>>;
 /*! \brief Require type does not satisfy @ref is_real */
 /*! @tparam T the type to check */
 template <typename T>
-using require_not_real_t
-    = require_not_t<is_real<std::decay_t<T>>>;
+using require_not_real_t = require_not_t<is_real<std::decay_t<T>>>;
 
 /*! \brief Require all of the types satisfy @ref is_real */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
-using require_all_real_t
-    = require_all_t<is_real<std::decay_t<Types>>...>;
+using require_all_real_t = require_all_t<is_real<std::decay_t<Types>>...>;
 
 /*! \brief Require any of the types satisfy @ref is_real */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
-using require_any_real_t
-    = require_any_t<is_real<std::decay_t<Types>>...>;
+using require_any_real_t = require_any_t<is_real<std::decay_t<Types>>...>;
 
 /*! \brief Require none of the types satisfy @ref is_real */
 /*! @tparam Types The types that are checked */
@@ -73,7 +69,6 @@ using require_any_not_real_t
     = require_any_not_t<is_real<std::decay_t<Types>>...>;
 /*! @} */
 
-
-}
+}  // namespace stan
 
 #endif

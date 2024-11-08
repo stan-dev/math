@@ -24,7 +24,9 @@ namespace math {
  * @return Square of input.
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline double square(const T x) { return std::pow(x, 2); }
+inline double square(const T x) {
+  return std::pow(x, 2);
+}
 
 /**
  * Structure to wrap square() so that it can be vectorized.
@@ -47,8 +49,7 @@ struct square_fun {
  * @param x container
  * @return Each value in x squared.
  */
-template <
-    typename Container, require_ad_container_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto square(const Container& x) {
   return apply_scalar_unary<square_fun, Container>::apply(x);
 }

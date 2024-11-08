@@ -87,7 +87,6 @@ inline auto atanh(const Container& x) {
   return apply_scalar_unary<atanh_fun, Container>::apply(x);
 }
 
-
 namespace internal {
 /**
  * Return the hyperbolic arc tangent of the complex argument.

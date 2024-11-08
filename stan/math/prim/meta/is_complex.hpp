@@ -46,7 +46,6 @@ struct is_complex<
     T, std::enable_if_t<internal::is_complex_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-
 /** \ingroup type_trait
  *
  * Template metaprogram defining the scalar type for values
@@ -72,9 +71,9 @@ struct base_type<T, std::enable_if_t<is_complex<T>::value>> {
 };
 
 /**
- * If `T` is a complex type with an inner arithmetic type (that is, an instance of
- * `std::complex<Arithmetic>`) or a cv-qualified version thereof, provides the
- * member constant `value` equal `true`; for any other type the value is
+ * If `T` is a complex type with an inner arithmetic type (that is, an instance
+ * of `std::complex<Arithmetic>`) or a cv-qualified version thereof, provides
+ * the member constant `value` equal `true`; for any other type the value is
  * `false`.
  *
  * @tparam T type to check
@@ -85,17 +84,16 @@ struct is_complex_arithmetic : std::false_type {};
 
 template <typename T>
 struct is_complex_arithmetic<
-    T, std::enable_if_t< stan::math::conjunction<
-    std::is_arithmetic<base_type_t<T>>,
-    internal::is_complex_impl<std::decay_t<T>>
-    >::value >>
+    T, std::enable_if_t<stan::math::conjunction<
+           std::is_arithmetic<base_type_t<T>>,
+           internal::is_complex_impl<std::decay_t<T>>>::value>>
     : std::true_type {};
 
 /**
  * If `T` is a complex type with an inner autodiff type (that is, an instance of
- * `std::complex<var>` or `std::complex<fvar<T>>`) or a cv-qualified version thereof, provides the
- * member constant `value` equal `true`; for any other type the value is
- * `false`.
+ * `std::complex<var>` or `std::complex<fvar<T>>`) or a cv-qualified version
+ * thereof, provides the member constant `value` equal `true`; for any other
+ * type the value is `false`.
  *
  * @tparam T type to check
  * @ingroup type_trait
@@ -104,11 +102,9 @@ template <typename T, typename = void>
 struct is_complex_ad : std::false_type {};
 
 template <typename T>
-struct is_complex_ad<
-    T, std::enable_if_t< stan::math::conjunction<
-    is_autodiff<base_type_t<T>>,
-    internal::is_complex_impl<std::decay_t<T>>
-    >::value >>
+struct is_complex_ad<T, std::enable_if_t<stan::math::conjunction<
+                            is_autodiff<base_type_t<T>>,
+                            internal::is_complex_impl<std::decay_t<T>>>::value>>
     : std::true_type {};
 
 /*! \ingroup require_stan_scalar_complex */
@@ -170,8 +166,8 @@ using require_not_st_complex
 /*! @tparam Check The type to test @ref is_eigen for and whose @ref scalar_type
  * is checked with `TypeCheck` */
 template <template <class...> class TypeCheck, class Check>
-using require_complex_bt =
-    require_all_t<is_complex<Check>, TypeCheck<base_type_t<Check>>>;
+using require_complex_bt
+    = require_all_t<is_complex<Check>, TypeCheck<base_type_t<Check>>>;
 
 /*! @} */
 

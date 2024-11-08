@@ -39,7 +39,6 @@ inline auto abs(T x) {
   return std::hypot(x.real(), x.imag());
 }
 
-
 /**
  * Return elementwise absolute value of the specified real-valued
  * container.

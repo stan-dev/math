@@ -37,7 +37,6 @@ inline auto tan(const T x) {
   return std::tan(x);
 }
 
-
 /**
  * Structure to wrap `tan()` so that it can be vectorized.
  *

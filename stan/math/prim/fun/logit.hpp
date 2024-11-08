@@ -55,7 +55,9 @@ inline double logit(const T u) {
  * @return log odds of argument
  */
 template <typename T, require_integral_t<T>* = nullptr>
-inline double logit(const T u) { return logit(static_cast<double>(u)); }
+inline double logit(const T u) {
+  return logit(static_cast<double>(u));
+}
 
 /**
  * Structure to wrap logit() so it can be vectorized.
@@ -84,8 +86,7 @@ struct logit_fun {
  * @param x container
  * @return elementwise logit of container elements
  */
-template <
-    typename Container, require_ad_container_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto logit(const Container& x) {
   return apply_scalar_unary<logit_fun, Container>::apply(x);
 }
