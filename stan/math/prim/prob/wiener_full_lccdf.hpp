@@ -16,7 +16,6 @@ namespace internal {
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
  * @tparam T_sv type of inter-trial variability in v
- * @tparam T_wildcard type of wildcard
  * @tparam T_err type of log error tolerance
  *
  * @param y A scalar variable; the reaction time in seconds
@@ -30,17 +29,17 @@ namespace internal {
  * @return Gradient w.r.t. sw
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
-          typename T_wildcard, typename T_err>
+          typename T_err>
 inline auto wiener7_ccdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
                                  const T_w& w, const T_sw& sw,
-                                 T_wildcard&& wildcard, T_err&& log_error) {
+                                 T_err&& log_error) {
   auto low = w - sw / 2.0;
   low = (0 > low) ? 0 : low;
   auto high = w + sw / 2.0;
   high = (1 < high) ? 1 : high;
 
-  const auto lower_value = wiener4_ccdf(y, a, v, low, wildcard, log_error);
-  const auto upper_value = wiener4_ccdf(y, a, v, high, wildcard, log_error);
+  const auto lower_value = wiener4_ccdf(y, a, v, low, log_error);
+  const auto upper_value = wiener4_ccdf(y, a, v, high, log_error);
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
@@ -254,7 +253,9 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                                         log_error_absolute - LOG_TWO);
 
     const T_partials_return ccdf
-        = internal::wiener7_integrate_cdf<GradientCalc::OFF>(
+        = internal::wiener7_integrate_cdf<GradientCalc::OFF,
+		GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+		GradientCalc::OFF, GradientCalc::OFF>(
             [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
@@ -345,15 +346,13 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = 0.0;
       } else {
         if (st0_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<6, 0, GradientCalc::OFF,
+          deriv = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                                     GradientCalc::ON>(
               [](auto&&... args) {
                 return internal::wiener7_ccdf_grad_sw(args...);
               },
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
-              sw_value, 0.0,
-              log_error_absolute
-                  - LOG_TWO);  // added wildcard 0. delete later somehow
+              sw_value, log_error_absolute - LOG_TWO); 
           deriv = deriv / ccdf - 1 / sw_value;
         } else {
           deriv = internal::wiener7_integrate_cdf<
@@ -378,21 +377,20 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         const auto t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
-          deriv = internal::estimate_with_err_check<5, 0>(
+          deriv = internal::estimate_with_err_check<4, 0>(
               [](auto&&... args) { return internal::wiener4_ccdf(args...); },
               log_error_derivatives + log(st0_value), y_value - t0_st0, a_value,
-              v_value, w_value, 0.0,
-              log_error_absolute
-                  - LOG_TWO);  // added wildcard 0. delete later somehow
+              v_value, w_value, log_error_absolute - LOG_TWO); 
           deriv = deriv / st0_value / ccdf - 1 / st0_value;
         } else {
           const int dim_st = (sv_value != 0) + (sw_value != 0);
           const auto new_error = log_error_absolute - LOG_TWO;
           const auto& params_st = std::make_tuple(
               y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value,
-              0.0,
-              new_error);  // added wildcard 0. delete later somehow
-          deriv = internal::wiener7_integrate_cdf(
+              0.0, new_error);
+          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF,
+		  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, 
+		  GradientCalc::OFF, GradientCalc::OFF>(
               [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
               hcubature_err, params_st, dim_st, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,

@@ -92,19 +92,16 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
- * @param wildcard This parameter space is needed for a functor. Could be
- * deleted when another solution is found
  * @param err The log error tolerance
  * @return ccdf
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
-          typename T_wildcard, typename T_err>
+          typename T_err>
 inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
-                         T_wildcard&& wildcard = 0.0,
                          T_err&& err = log(1e-12)) noexcept {
   const auto prob = exp(wiener_prob(a, v, w));
   const auto cdf
-      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, 0, err);
+      = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, err);
   return prob - cdf;
 }
 
@@ -155,9 +152,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob
-      = wiener_prob(a, v, w);  // maybe hand over to this function, but then
-                               // wiener7_integrate_cdf has problems
-
+      = wiener_prob(a, v, w);  
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_v = -1 * wiener_prob_derivative_term(a, v, w) * a;
   if (fabs(prob_grad_v) == INFTY) {
@@ -186,9 +181,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto prob
-      = wiener_prob(a, v, w);  // maybe hand over to this function, but then
-                               // wiener7_integrate_cdf has problems
-
+      = wiener_prob(a, v, w); 
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   const auto exponent = -sign(v) * 2.0 * v * a * w;
   auto prob_grad_w
@@ -305,13 +298,13 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     using internal::GradientCalc;
     const T_partials_return cdf
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+        = internal::estimate_with_err_check<4, 0, GradientCalc::OFF,
                                             GradientCalc::OFF>(
             [](auto&&... args) {
               return internal::wiener4_distribution<GradientCalc::ON>(args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, 0.0, log_error_absolute);
+            w_value, log_error_absolute);
 
     const auto prob = exp(internal::wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;

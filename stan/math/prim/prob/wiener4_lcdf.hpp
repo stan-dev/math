@@ -127,16 +127,13 @@ inline auto logMill(T_x&& x) {
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
- * @param wildcard This parameter space is needed for a functor. Could be
- * deleted when another solution is found
  * @param err The log error tolerance
  * @return distribution
  */
 template <bool NaturalScale = false, typename T_y, typename T_a, typename T_w,
-          typename T_v, typename T_wildcard, typename T_err>
+          typename T_v, typename T_err>
 inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
-                                 const T_w& wn, T_wildcard&& wildcard = 0.0,
-                                 T_err&& err = log(1e-12)) {
+                                 const T_w& wn, T_err&& err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto v = -vn;
   const auto w = 1 - wn;
@@ -681,13 +678,13 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     using internal::GradientCalc;
     const T_partials_return log_cdf
-        = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
+        = internal::estimate_with_err_check<4, 0, GradientCalc::OFF,
                                             GradientCalc::OFF>(
             [](auto&&... args) {
               return internal::wiener4_distribution<GradientCalc::OFF>(args...);
             },
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
-            w_value, 0.0, log_error_absolute);
+            w_value, log_error_absolute);
 
     const T_partials_return cdf = exp(log_cdf);
 
