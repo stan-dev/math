@@ -75,9 +75,9 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
     diff_term = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
   }
   if (log_w > diff_term) {
-    ans += sign_v * exp(log_diff_exp(log_w, diff_term));
+	ans = sign_v * exp(ans + log_diff_exp(log_w, diff_term));
   } else {
-    ans += -sign_v * exp(log_diff_exp(diff_term, log_w));
+	ans = -sign_v * exp(ans + log_diff_exp(diff_term, log_w));
   }
   if (unlikely(!is_scal_finite(ans))) {
     return ret_t(NEGATIVE_INFTY);
