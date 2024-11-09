@@ -151,8 +151,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob
-      = wiener_prob(a, v, w);  
+  const auto prob = wiener_prob(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_v = -1 * wiener_prob_derivative_term(a, v, w) * a;
   if (fabs(prob_grad_v) == INFTY) {
@@ -180,8 +179,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob
-      = wiener_prob(a, v, w); 
+  const auto prob = wiener_prob(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   const auto exponent = -sign(v) * 2.0 * v * a * w;
   auto prob_grad_w

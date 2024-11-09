@@ -44,7 +44,6 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
   return 0.5 * (lower_value + upper_value) / sw;
 }
 
-
 /**
  * Helper function for agnostically calling wiener4 functions
  * (to be integrated over) or directly calling wiener7 functions,
@@ -76,9 +75,9 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
 template <GradientCalc Dist, typename F, typename T_y, typename T_a,
           typename T_v, typename T_w, typename T_sv, typename T_sw,
           typename T_err, std::enable_if_t<!Dist>* = nullptr>
-inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
-                                  T_w&& w, T_sv&& sv, T_sw&& sw,
-                                  T_err&& log_error) {
+inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a,
+                                      T_v&& v, T_w&& w, T_sv&& sv, T_sw&& sw,
+                                      T_err&& log_error) {
   return functor(y_diff, a, v, w, log_error);
 }
 
@@ -113,13 +112,11 @@ inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a, T_v&& 
 template <GradientCalc Dist, typename F, typename T_y, typename T_a,
           typename T_v, typename T_w, typename T_sv, typename T_sw,
           typename T_err, std::enable_if_t<Dist>* = nullptr>
-inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
-                                  T_w&& w, T_sv&& sv, T_sw&& sw,
-                                  T_err&& log_error) {
+inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a,
+                                      T_v&& v, T_w&& w, T_sv&& sv, T_sw&& sw,
+                                      T_err&& log_error) {
   return functor(y_diff, a, v, w, sv, log_error);
 }
-
-
 
 /**
  * Implementation function for preparing arguments and functor to be passed
@@ -139,10 +136,9 @@ template <GradientCalc Distribution = GradientCalc::OFF,
           GradientCalc GradW7 = GradientCalc::OFF,
           GradientCalc GradSV = GradientCalc::OFF,
           GradientCalc GradSW = GradientCalc::OFF,
-          GradientCalc GradT = GradientCalc::OFF, 
-		  GradientCalc Conditionally_cdf = GradientCalc::ON,
-		  typename Wiener7FunctorT,
-          typename T_err, typename... TArgs>
+          GradientCalc GradT = GradientCalc::OFF,
+          GradientCalc Conditionally_cdf = GradientCalc::ON,
+          typename Wiener7FunctorT, typename T_err, typename... TArgs>
 inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                                   T_err&& hcubature_err, TArgs&&... args) {
   const auto functor = [&wiener7_functor](auto&&... integration_args) {
@@ -181,15 +177,17 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
             const auto factor_sw
                 = GradSW ? ((sv != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5))
                          : 1;
-			const auto integrand = Distribution ? dist
-				  : GradT ? conditionally_grad_sw_cdf<
-						Conditionally_cdf>(  // deleted internal::
-						wiener7_functor, y - new_t0, a, v, new_w, sv, sw,
-						lerr)
-						  : factor_sv * factor_sw
-								* conditionally_grad_sw_cdf<Conditionally_cdf>(
-									wiener7_functor, y - new_t0, a, new_v,
-									new_w, dist, sw, lerr);
+            const auto integrand
+                = Distribution ? dist
+                               : GradT ? conditionally_grad_sw_cdf<
+                                     Conditionally_cdf>(  // deleted internal::
+                                     wiener7_functor, y - new_t0, a, v, new_w,
+                                     sv, sw, lerr)
+                                       : factor_sv * factor_sw
+                                             * conditionally_grad_sw_cdf<
+                                                 Conditionally_cdf>(
+                                                 wiener7_functor, y - new_t0, a,
+                                                 new_v, new_w, dist, sw, lerr);
             return ret_t(integrand * exp(temp2));
           }
         },
@@ -436,9 +434,9 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                                         log_error_absolute - LOG_TWO);
 
     const T_partials_return cdf
-        = internal::wiener7_integrate_cdf<GradientCalc::ON,
-		GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
-		GradientCalc::OFF, GradientCalc::OFF>(
+        = internal::wiener7_integrate_cdf<GradientCalc::ON, GradientCalc::OFF,
+                                          GradientCalc::OFF, GradientCalc::OFF,
+                                          GradientCalc::OFF, GradientCalc::OFF>(
             [&](auto&&... args) {
               return internal::wiener4_distribution<true>(args...);
             },
@@ -569,17 +567,17 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                     args...);
               },
               lerror_bound + log(st0_value), y_value - t0_st0, a_value, v_value,
-              w_value, log_error_absolute - LOG_TWO); 
+              w_value, log_error_absolute - LOG_TWO);
           deriv = deriv / st0_value / cdf - 1 / st0_value;
         } else {
           const int dim_st = (sv_value != 0) + (sw_value != 0);
           const T_partials_return new_error = log_error_absolute - LOG_TWO;
-          const auto& params_st = std::make_tuple(
-              y_value, a_value, v_value, w_value, t0_st0, sv_value, sw_value, 0,
-              new_error); 
-          deriv = internal::wiener7_integrate_cdf<GradientCalc::OFF,
-		  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF, 
-		  GradientCalc::OFF, GradientCalc::OFF>(
+          const auto& params_st
+              = std::make_tuple(y_value, a_value, v_value, w_value, t0_st0,
+                                sv_value, sw_value, 0, new_error);
+          deriv = internal::wiener7_integrate_cdf<
+              GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+              GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF>(
               [&](auto&&... args) {
                 return internal::wiener4_distribution<GradientCalc::ON>(
                     args...);
