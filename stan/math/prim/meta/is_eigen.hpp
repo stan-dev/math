@@ -27,7 +27,8 @@ struct has_internal_trait : std::false_type {};
 
 // specialization recognizes types that do have a nested ::type member:
 template <class T>
-struct has_internal_trait<T, std::void_t<Eigen::internal::traits<std::decay_t<T>>>>
+struct has_internal_trait<T,
+                          std::void_t<Eigen::internal::traits<std::decay_t<T>>>>
     : std::true_type {};
 
 // primary template handles types that have no nested ::type member:
@@ -41,7 +42,6 @@ struct has_scalar_trait<T, std::void_t<typename std::decay_t<T>::Scalar>>
 
 }  // namespace internal
 
-
 /**
  * Template metaprogram defining the base scalar type of
  * values stored in an Eigen matrix.
@@ -50,7 +50,9 @@ struct has_scalar_trait<T, std::void_t<typename std::decay_t<T>::Scalar>>
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<T, std::enable_if_t<is_eigen<T>::value && internal::has_scalar_trait<T>::value>> {
+struct scalar_type<T,
+                   std::enable_if_t<is_eigen<T>::value
+                                    && internal::has_scalar_trait<T>::value>> {
   using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
 };
 
@@ -62,10 +64,11 @@ struct scalar_type<T, std::enable_if_t<is_eigen<T>::value && internal::has_scala
  * @ingroup type_trait
  */
 template <typename T>
-struct value_type<T, std::enable_if_t<is_eigen<T>::value && internal::has_scalar_trait<T>::value>> {
+struct value_type<T,
+                  std::enable_if_t<is_eigen<T>::value
+                                   && internal::has_scalar_trait<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
-
 
 /**
  * Template metaprogram defining the base scalar type of
@@ -75,8 +78,11 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value && internal::has_scalar
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<T, std::enable_if_t<is_eigen<T>::value && !internal::has_scalar_trait<T>::value>> {
-  using type = scalar_type_t<typename Eigen::internal::traits<std::decay_t<T>>::Scalar>;
+struct scalar_type<T,
+                   std::enable_if_t<is_eigen<T>::value
+                                    && !internal::has_scalar_trait<T>::value>> {
+  using type = scalar_type_t<
+      typename Eigen::internal::traits<std::decay_t<T>>::Scalar>;
 };
 
 /**
@@ -87,10 +93,11 @@ struct scalar_type<T, std::enable_if_t<is_eigen<T>::value && !internal::has_scal
  * @ingroup type_trait
  */
 template <typename T>
-struct value_type<T, std::enable_if_t<is_eigen<T>::value && !internal::has_scalar_trait<T>::value>> {
+struct value_type<T,
+                  std::enable_if_t<is_eigen<T>::value
+                                   && !internal::has_scalar_trait<T>::value>> {
   using type = typename Eigen::internal::traits<std::decay_t<T>>::Scalar;
 };
-
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_types eigen  */
