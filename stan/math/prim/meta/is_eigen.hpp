@@ -41,7 +41,7 @@ struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
  */
 template <typename T>
 struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
-  using type = typename std::decay_t<T>::Scalar;
+ using type = typename Eigen::internal::traits<std::decay_t<T>>::Scalar;
 };
 
 /*! \ingroup require_eigens_types */
