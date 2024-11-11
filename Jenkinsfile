@@ -73,7 +73,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -122,7 +122,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -156,7 +156,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -190,7 +190,7 @@ pipeline {
                     }
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -209,7 +209,7 @@ pipeline {
                 stage('Run changed unit tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -247,7 +247,7 @@ pipeline {
                 stage('All Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -277,7 +277,7 @@ pipeline {
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'v100'
                             args '--gpus 1'
                         }
@@ -309,7 +309,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -331,7 +331,7 @@ pipeline {
                 stage('Expressions test') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -368,7 +368,7 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -405,7 +405,7 @@ pipeline {
             }
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -440,7 +440,7 @@ pipeline {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             deleteDir()
-                            docker.image('stanorg/ci:gpu-cpp17').inside {
+                            docker.image('stanorg/ci:gpu-cmake3.30.5').inside {
                                 catchError {
                                     unstash 'MathSetup'
                                     sh """
@@ -494,7 +494,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
