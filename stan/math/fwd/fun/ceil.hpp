@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/fun/ceil.hpp>
 #include <cmath>
 
 namespace stan {

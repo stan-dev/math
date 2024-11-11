@@ -1,9 +1,12 @@
 #ifndef STAN_MATH_FWD_FUN_HYPERGEOMETRIC_1F0_HPP
 #define STAN_MATH_FWD_FUN_HYPERGEOMETRIC_1F0_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/hypergeometric_1F0.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/rev/fun/log1m.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/prim/fun/hypergeometric_1F0.hpp>
 
 namespace stan {
 namespace math {

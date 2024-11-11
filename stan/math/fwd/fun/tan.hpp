@@ -3,7 +3,8 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/fun/tan.hpp>
+#include <stan/math/fwd/fun/cos.hpp>
+#include <stan/math/fwd/fun/tanh.hpp>
 #include <stan/math/prim/fun/tan.hpp>
 #include <cmath>
 #include <complex>

@@ -18,8 +18,6 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> inv_logit(const fvar<T>& x) {
-  using std::exp;
-  using std::pow;
   return fvar<T>(inv_logit(x.val_),
                  x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
 }

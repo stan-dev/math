@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_FUN_PROJ_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/is_inf.hpp>
 #include <stan/math/prim/fun/proj.hpp>
 #include <complex>
 

@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
 
-#include <stan/math/prim/err.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
-#include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/fwd/core.hpp>
 
 namespace stan {
 namespace math {
@@ -20,7 +20,7 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
   const auto& B_ref = to_ref(B);
-  return B_ref.cwiseProduct(multiply(A, B_ref)).sum();
+  return sum(B_ref.cwiseProduct(multiply(A, B_ref)));
 }
 
 }  // namespace math

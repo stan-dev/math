@@ -3,6 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/square.hpp>
+#include <stan/math/fwd/fun/sin.hpp>
+#include <stan/math/fwd/fun/inv_square.hpp>
 #include <stan/math/prim/fun/trigamma.hpp>
 
 namespace stan {
