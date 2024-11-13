@@ -80,7 +80,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
   T_partials_return cdf(1.0);
   auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
+    // Explicit return for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (n_vec.val(i) == std::numeric_limits<int>::max()) {
       return 1.0;
@@ -106,7 +106,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
 
     if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
       auto chain_rule_term = -ccdf / (1.0 - ccdf);
-      auto digamma_n_r_alpha_beta = digamma(a_plus_r + b_plus_n + 1);
+      auto digamma_n_r_alpha_beta = digamma(a_plus_r + b_plus_n + 1.0);
       T_partials_return dF[6];
       grad_F32<false, !is_constant<T_beta>::value, !is_constant_all<T_r>::value,
                false, true, false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0,
