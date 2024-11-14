@@ -70,6 +70,14 @@ inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
 
+/**
+ * Returns the elementwise `asinh()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
+ *
+ * @tparam T type of container
+ * @param x container
+ * @return Inverse hyperbolic sine of each value in the container.
+ */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto asinh(const Container& x) {

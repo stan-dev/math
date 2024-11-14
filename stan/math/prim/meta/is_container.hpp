@@ -91,12 +91,15 @@ template <template <class...> class TypeCheck, class... Check>
 using require_not_container_st
     = require_not_t<container_type_check_base<is_container, scalar_type_t,
                                               TypeCheck, Check...>>;
-/*! @} */
 
+/*! \brief Require type satisfies @ref is_container */
+/*! and holds a base type that satisfies @ref is_autodiff */
+/*! @tparam T the type to check */
 template <typename T>
 using require_ad_container_t
     = require_all_t<stan::math::disjunction<is_eigen<T>, is_std_vector<T>>,
                     is_autodiff<base_type_t<T>>>;
+/*! @} */
 
 }  // namespace stan
 

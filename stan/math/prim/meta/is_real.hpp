@@ -16,7 +16,8 @@
 namespace stan {
 
 /**
- * Checks if decayed type is a var, fvar, or arithmetic
+ * Checks if decayed type is a var, fvar, or arithmetic. This
+ * is equivalent to @ref is_stan_scalar, except for excluding std::complex
  * @tparam The type to check
  * @ingroup type_trait
  */

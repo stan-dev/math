@@ -82,6 +82,16 @@ inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
 
+/**
+ * Return the elementwise application of <code>acosh()</code> to
+ * specified argument container.  The return type promotes the
+ * underlying scalar argument type to double if it is an integer,
+ * and otherwise is the argument type.
+ *
+ * @tparam T type of container
+ * @param x container
+ * @return Elementwise acosh of members of container.
+ */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto acosh(const Container& x) {
