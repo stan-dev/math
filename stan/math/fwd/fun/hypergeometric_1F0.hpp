@@ -3,9 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/rev/fun/log1m.hpp>
-#include <stan/math/rev/fun/inv.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/fwd/fun/log1m.hpp>
+#include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/hypergeometric_1F0.hpp>
 
 namespace stan {
