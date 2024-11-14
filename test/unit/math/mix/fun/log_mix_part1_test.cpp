@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, logMix) {
+TEST_F(mathMix, log_mix) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::log_mix(x1, x2, x3);
   };

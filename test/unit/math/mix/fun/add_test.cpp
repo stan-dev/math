@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, add_transpose_test) {
+TEST_F(mathMix, add_transpose_test) {
   auto f = [](const auto& x) { return x + x.transpose(); };
 
   Eigen::MatrixXd x(2, 2);
@@ -8,7 +9,7 @@ TEST(MathMixMatFun, add_transpose_test) {
   stan::test::expect_ad_matvar(f, x);
 }
 
-TEST(MathMixMatFun, add_transpose_test_scalar) {
+TEST_F(mathMix, add_transpose_test_scalar) {
   auto f = [](const auto& y, const auto& x) {
     return stan::math::add(y, x.block(0, 0, 2, 2));
   };
@@ -18,7 +19,7 @@ TEST(MathMixMatFun, add_transpose_test_scalar) {
   stan::test::expect_ad_matvar(f, 1.0, x);
 }
 
-TEST(MathMixMatFun, add_1) {
+TEST_F(mathMix, add_1) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   double d = 2;
@@ -45,7 +46,7 @@ TEST(MathMixMatFun, add_1) {
   stan::test::expect_ad(f, m11, m11b);
 }
 
-TEST(MathMixMatFun, add_empty) {
+TEST_F(mathMix, add_empty) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   double d = 2;
@@ -66,7 +67,7 @@ TEST(MathMixMatFun, add_empty) {
   stan::test::expect_ad(f, m00, m00b);
 }
 
-TEST(MathMixMatFun, add_scalar_mat) {
+TEST_F(mathMix, add_scalar_mat) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   double d = 2;
@@ -93,7 +94,7 @@ TEST(MathMixMatFun, add_scalar_mat) {
   stan::test::expect_ad(f, m22b, m22b);
 }
 
-TEST(MathMixMatFun, add_vec_mat) {
+TEST_F(mathMix, add_vec_mat) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   Eigen::VectorXd v5(5);
@@ -108,7 +109,7 @@ TEST(MathMixMatFun, add_vec_mat) {
   stan::test::expect_ad(f, rv5, rv5b);
 }
 
-TEST(MathMixMatFun, add_mat_mat) {
+TEST_F(mathMix, add_mat_mat) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   Eigen::MatrixXd m22c(2, 2);
@@ -124,7 +125,7 @@ TEST(MathMixMatFun, add_mat_mat) {
   stan::test::expect_ad(f, m23, m23b);
 }
 
-TEST(MathMixMatFun, add_scal) {
+TEST_F(mathMix, add_scal) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   stan::test::expect_ad(f, 2, 5);
@@ -134,7 +135,7 @@ TEST(MathMixMatFun, add_scal) {
 }
 
 // these will throw
-TEST(MathMixMatFun, add_throw) {
+TEST_F(mathMix, add_throw) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 
   Eigen::VectorXd v1(1);

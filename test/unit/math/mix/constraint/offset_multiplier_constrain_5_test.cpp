@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/constraint/offset_multiplier_constrain_helpers.hpp>
 
 // array[] matrix, array[] matrix, real
 // array[] matrix, real, array[] matrix
-TEST(mathMixMatFun, offset_multiplier_stdvec_mat_scalar1_constrain) {
+TEST_F(mathMix, offset_multiplier_stdvec_mat_scalar1_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);

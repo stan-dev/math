@@ -1,10 +1,13 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST_F(AgradRev, ProbDistributionsMultiGP_matvar) {
+TEST_F(mathMix, ProbDistributionsMultiGP_matvar) {
   auto f = [](const auto& y, const auto& sigma, const auto& w) {
-    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    auto sigma_ref = stan::math::to_ref(sigma);
+    auto sigma_sym
+        = stan::math::multiply(0.5, sigma_ref + sigma_ref.transpose());
     return stan::math::multi_gp_lpdf(y, sigma_sym, w);
   };
 
@@ -46,7 +49,7 @@ TEST_F(AgradRev, ProbDistributionsMultiGP_matvar) {
   stan::test::expect_ad(f, y22, Sigma00, w0);
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGP_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiGP_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -90,7 +93,7 @@ TEST_F(AgradRev, ProbDistributionsMultiGP_fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGP_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsMultiGP_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

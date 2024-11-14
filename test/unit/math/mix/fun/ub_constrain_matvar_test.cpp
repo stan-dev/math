@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
 namespace ub_constrain_test {
@@ -60,7 +61,7 @@ void expect_vec_matvar(const T1& x, const T2& ub) {
 }
 }  // namespace ub_constrain_test
 
-TEST(mathMixMatFun, ub_matvar_constrain) {
+TEST_F(mathMix, ub_matvar_constrain) {
   using stan::scalar_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::ub_constrain;
@@ -76,7 +77,7 @@ TEST(mathMixMatFun, ub_matvar_constrain) {
   ub_constrain_test::expect_matvar(A, ubd);
 }
 
-TEST(mathMixMatFun, ub_matvar_constrain_neg_inf) {
+TEST_F(mathMix, ub_matvar_constrain_neg_inf) {
   Eigen::MatrixXd A(2, 2);
   A << 5.0, 2.0, 4.0, -2.0;
   Eigen::MatrixXd ubm(2, 2);
@@ -87,7 +88,7 @@ TEST(mathMixMatFun, ub_matvar_constrain_neg_inf) {
 
 // matrix[], matrix
 // matrix[], real
-TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain_matvar) {
+TEST_F(mathMix, ub_stdvec_mat_mat_constrain_matvar) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd ubm_inner(2, 3);
@@ -104,7 +105,7 @@ TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain_matvar) {
   ub_constrain_test::expect_vec_matvar(A, ubd);
 }
 
-TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain_matvar_neg_inf) {
+TEST_F(mathMix, ub_stdvec_mat_mat_constrain_matvar_neg_inf) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd ubm_inner(2, 3);
@@ -119,7 +120,7 @@ TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain_matvar_neg_inf) {
 }
 
 // matrix[], matrix[]
-TEST(mathMixMatFun, ub_stdvec_mat_constrain_matvar) {
+TEST_F(mathMix, ub_stdvec_mat_constrain_matvar) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd ubm_inner(2, 3);
@@ -143,7 +144,7 @@ TEST(mathMixMatFun, ub_stdvec_mat_constrain_matvar) {
   ub_constrain_test::expect_vec_matvar(A, ubm_bad2);
 }
 
-TEST(mathMixMatFun, ub_stdvec_mat_constrain_matvar_neg_inf) {
+TEST_F(mathMix, ub_stdvec_mat_constrain_matvar_neg_inf) {
   Eigen::MatrixXd A_inner(2, 2);
   A_inner << 5.0, 2.0, 4.0, -2.0;
   Eigen::MatrixXd ubm_inner(2, 2);

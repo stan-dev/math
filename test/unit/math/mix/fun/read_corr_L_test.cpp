@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, read_corr_L) {
+TEST_F(mathMix, read_corr_L) {
   auto f = [](int K) {
     return [K](const auto& x1) { return stan::math::read_corr_L(x1, K); };
   };
@@ -15,7 +16,7 @@ TEST(mathMixMatFun, read_corr_L) {
   stan::test::expect_ad_matvar(f(3), x2);
 }
 
-TEST(mathMixMatFun, read_corr_L_lp) {
+TEST_F(mathMix, read_corr_L_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<decltype(x1)> lp = 0.0;

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST(mathMixFun, complexSchurDecomposeT) {
+TEST_F(mathMix, complexSchurDecomposeT) {
   auto f = [](const auto& x) {
     using stan::math::complex_schur_decompose_t;
     return complex_schur_decompose_t(x);
@@ -15,7 +16,7 @@ TEST(mathMixFun, complexSchurDecomposeT) {
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
 
-TEST(mathMixFun, complexSchurDecomposeU) {
+TEST_F(mathMix, complexSchurDecomposeU) {
   auto f = [](const auto& x) {
     using stan::math::complex_schur_decompose_u;
     return complex_schur_decompose_u(x);
@@ -29,7 +30,7 @@ TEST(mathMixFun, complexSchurDecomposeU) {
   EXPECT_THROW(f(a32), std::invalid_argument);
 }
 
-TEST(mathMixFun, complexSchurDecompose) {
+TEST_F(mathMix, complexSchurDecompose) {
   auto f = [](const auto& x) {
     using stan::math::complex_schur_decompose;
     return std::get<0>(complex_schur_decompose(x));
@@ -89,7 +90,7 @@ void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
   EXPECT_MATRIX_COMPLEX_NEAR(value_of_rec(X), value_of_rec(X3), 1e-8);
 }
 
-TEST(mathMixFun, complexSchurDecomposeIdent) {
+TEST_F(mathMix, complexSchurDecomposeIdent) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<d_t>;

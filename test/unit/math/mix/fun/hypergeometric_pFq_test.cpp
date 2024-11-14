@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, hyper_2f2) {
+TEST_F(mathMix, hyper_2f2) {
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -16,7 +17,7 @@ TEST(mathMixScalFun, hyper_2f2) {
   stan::test::expect_ad(f, in1, in2, z);
 }
 
-TEST(mathMixScalFun, hyper_2f3) {
+TEST_F(mathMix, hyper_2f3) {
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -31,7 +32,7 @@ TEST(mathMixScalFun, hyper_2f3) {
   stan::test::expect_ad(f, in1, in2, z);
 }
 
-TEST(mathMixScalFun, hyper_4f3) {
+TEST_F(mathMix, hyper_4f3) {
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -46,7 +47,7 @@ TEST(mathMixScalFun, hyper_4f3) {
   stan::test::expect_ad(f, in1, in2, z);
 }
 
-TEST(mathMixScalFun, hyper_2f1) {
+TEST_F(mathMix, hyper_2f1) {
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -101,7 +102,7 @@ TEST(mathMixScalFun, hyper_2f1) {
   stan::test::expect_ad(f, in1, in2, z);
 }
 
-TEST(mathMixScalFun, hyper_3f2) {
+TEST_F(mathMix, hyper_3f2) {
   using stan::math::var;
 
   auto f = [](const auto& a, const auto& b, const auto& z) {

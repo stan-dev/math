@@ -1,12 +1,13 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, invCLogLog) {
+TEST_F(mathMix, invCLogLog) {
   auto f = [](const auto& x1) { return stan::math::inv_cloglog(x1); };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -2.6, -2, -1.2, -0.2, 0.5, 1.3);
 }
 
-TEST(mathMixMatFun, invcloglog_varmat) {
+TEST_F(mathMix, invcloglog_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

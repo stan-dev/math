@@ -1,8 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, traceGenInvQuadForm) {
+TEST_F(mathMix, traceGenInvQuadForm) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto x_sym = stan::math::multiply(0.5, a + a.transpose());
+    auto&& a_ref = stan::math::to_ref(a);
+    auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose());
     auto ldlt_a = stan::math::make_ldlt_factor(x_sym);
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
@@ -74,9 +76,10 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   stan::math::recover_memory();
 }
 
-TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
+TEST_F(mathMix, traceGenInvQuadForm_vec) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto x_sym = stan::math::multiply(0.5, a + a.transpose());
+    auto&& a_ref = stan::math::to_ref(a);
+    auto x_sym = stan::math::multiply(0.5, a_ref + a_ref.transpose()).eval();
     auto ldlt_a = stan::math::make_ldlt_factor(x_sym);
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };

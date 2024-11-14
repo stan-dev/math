@@ -1,13 +1,14 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, expm1) {
+TEST_F(mathMix, expm1) {
   auto f = [](const auto& x1) { return stan::math::expm1(x1); };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -2.6, -2, -0.5, -0.2, 0, 1.0, 1, 1.3,
                                       3);
 }
 
-TEST(mathMixMatFun, expm1matvar) {
+TEST_F(mathMix, expm1matvar) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

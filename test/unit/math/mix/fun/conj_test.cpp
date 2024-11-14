@@ -1,9 +1,10 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <vector>
 
-TEST(mathMixMatFun, conj) {
+TEST_F(mathMix, conj) {
   auto f = [](const auto& x) { return stan::math::conj(x); };
   stan::test::expect_complex_common(f);
   stan::test::expect_unary_vectorized<stan::test::ScalarSupport::ComplexOnly>(
@@ -33,7 +34,7 @@ void test_vectorized_conj() {
   }
 }
 
-TEST(mathMixMatFun, conj_vectorized) {
+TEST_F(mathMix, conj_vectorized) {
   using d_t = double;
   using v_t = stan::math::var;
   using fd_t = stan::math::fvar<d_t>;

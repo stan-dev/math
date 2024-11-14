@@ -1,5 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -19,7 +20,7 @@ void expect_match_autodiff(const F& f, Eigen::VectorXd x) {
                               stan::test::relative_tolerance(1e-7, 1e-9));
 }
 
-TEST(MathMixMatFunctor, FiniteDiffGradientAuto) {
+TEST_F(mathMix, FiniteDiffGradientAuto) {
   auto norm_fun
       = [](const auto& x) { return stan::math::normal_lpdf(x(0), x(1), x(2)); };
 

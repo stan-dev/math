@@ -1,11 +1,12 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 
-TEST(AgradMixMatrixStanPrint, fvar_var) {
+TEST_F(mathMix, print_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -49,7 +50,7 @@ TEST(AgradMixMatrixStanPrint, fvar_var) {
   EXPECT_EQ("[[1,1],[1,1]]", output.str());
 }
 
-TEST(AgradMixMatrixStanPrint, fvar_fvar_var) {
+TEST_F(mathMix, print_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

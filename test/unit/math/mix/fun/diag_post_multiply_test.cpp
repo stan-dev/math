@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 void expect_diag_post_multiply(const Eigen::MatrixXd& a,
                                const Eigen::VectorXd& v) {
@@ -11,7 +12,7 @@ void expect_diag_post_multiply(const Eigen::MatrixXd& a,
   stan::test::expect_ad(f, a, rv);
   stan::test::expect_ad_matvar(f, a, rv);
 }
-TEST(MathMixMatFun, diagPostMultiply) {
+TEST_F(mathMix, diagPostMultiply) {
   using stan::test::relative_tolerance;
 
   // 0 x 0

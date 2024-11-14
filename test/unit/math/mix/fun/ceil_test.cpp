@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, ceil) {
+TEST_F(mathMix, ceil) {
   auto f = [](const auto& x1) { return stan::math::ceil(x1); };
   // can't autodiff ceil through integers
   for (auto x : stan::test::internal::common_nonzero_args())
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, ceil) {
   stan::test::expect_unary_vectorized(f, -2.6, -2.1, -0.2, 1.1, 1.51, 3.1);
 }
 
-TEST(mathMixMatFun, ceilmatvar) {
+TEST_F(mathMix, ceilmatvar) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;

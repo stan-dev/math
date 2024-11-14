@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, mdivideRight) {
+TEST_F(mathMix, mdivideRight) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::mdivide_right(x, y);
   };

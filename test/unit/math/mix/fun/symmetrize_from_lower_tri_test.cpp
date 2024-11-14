@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, symmetrize_from_lower_tri) {
+TEST_F(mathMix, symmetrize_from_lower_tri) {
   auto f
       = [](const auto& x) { return stan::math::symmetrize_from_lower_tri(x); };
 

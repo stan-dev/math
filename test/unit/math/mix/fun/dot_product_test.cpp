@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixMatFun, dotProduct) {
+TEST_F(mathMix, dotProduct) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::dot_product(x, y);
   };
@@ -105,13 +106,13 @@ TEST(mathMixMatFun, dotProduct) {
   stan::test::expect_ad_matvar(f, v3, rv3b);
   stan::test::expect_ad_matvar(f, rv3, v3b);
   stan::test::expect_ad_matvar(f, rv3, rv3b);
+  stan::test::expect_ad(f, sv1, sv3);
 
   // following throw due to mismatched size
   stan::test::expect_ad(f, v1, v3);
   stan::test::expect_ad(f, v1, rv3);
   stan::test::expect_ad(f, rv1, v3);
   stan::test::expect_ad(f, rv1, rv3);
-  stan::test::expect_ad(f, sv1, sv3);
 
   stan::test::expect_ad_matvar(f, v1, v3);
   stan::test::expect_ad_matvar(f, v1, rv3);

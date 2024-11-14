@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, sqrt) {
+TEST_F(mathMix, sqrt) {
   auto f = [](const auto& x1) {
     using stan::math::sqrt;
     return sqrt(x1);
@@ -29,7 +30,7 @@ TEST(mathMixMatFun, sqrt) {
   }
 }
 
-TEST(mathMixMatFun, sqrt_varmat) {
+TEST_F(mathMix, sqrt_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

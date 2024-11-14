@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, segment) {
+TEST_F(mathMix, segment) {
   auto f = [](int i, int n) {
     return [=](const auto& y) { return stan::math::segment(y, i, n); };
   };

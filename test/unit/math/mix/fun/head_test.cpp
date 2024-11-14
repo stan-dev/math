@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 template <typename T>
@@ -13,7 +14,7 @@ void expect_head(const T& x, int n) {
   stan::test::expect_ad(f(n), rv);
 }
 
-TEST(MathMixMatFun, head) {
+TEST_F(mathMix, head) {
   std::vector<double> a{};
   expect_head(a, 0);
   expect_head(a, 1);

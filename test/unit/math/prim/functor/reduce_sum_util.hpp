@@ -161,22 +161,23 @@ void test_slices(T1 result, T2&& vec_value, Args&&... args) {
 }
 
 auto reduce_sum_static_int_sum_lpdf = [](auto&&... args) {
-  return stan::math::reduce_sum_static<sum_lpdf>(std::vector<int>(2, 10.0), 1,
-                                                 get_new_msg(), args...);
+  return stan::math::reduce_sum_static<sum_lpdf>(
+      std::vector<int>(2, 10.0), 1, get_new_msg(), stan::math::to_ref(args)...);
 };
 
 auto reduce_sum_static_sum_lpdf = [](auto&& data, auto&&... args) {
   return stan::math::reduce_sum_static<sum_lpdf>(data, 1, get_new_msg(),
-                                                 args...);
+                                                 stan::math::to_ref(args)...);
 };
 
 auto reduce_sum_int_sum_lpdf = [](auto&&... args) {
-  return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 1,
-                                          get_new_msg(), args...);
+  return stan::math::reduce_sum<sum_lpdf>(
+      std::vector<int>(2, 10.0), 1, get_new_msg(), stan::math::to_ref(args)...);
 };
 
 auto reduce_sum_sum_lpdf = [](auto&& data, auto&&... args) {
-  return stan::math::reduce_sum<sum_lpdf>(data, 1, get_new_msg(), args...);
+  return stan::math::reduce_sum<sum_lpdf>(data, 1, get_new_msg(),
+                                          stan::math::to_ref(args)...);
 };
 
 template <int grainsize>

@@ -28,9 +28,9 @@ matrix_exp_2x2(const EigMat& A) {
   using std::exp;
   using std::sinh;
   using std::sqrt;
-
+  auto&& A_ref = to_ref(A);
   using T = value_type_t<EigMat>;
-  T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
+  T a = A_ref(0, 0), b = A_ref(0, 1), c = A_ref(1, 0), d = A_ref(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B(2, 2);
@@ -49,7 +49,7 @@ matrix_exp_2x2(const EigMat& A) {
 
   // use pade approximation if cosh & sinh ops overflow to NaN
   if (B.hasNaN()) {
-    return matrix_exp_pade(A);
+    return matrix_exp_pade(A_ref);
   } else {
     return B / delta;
   }

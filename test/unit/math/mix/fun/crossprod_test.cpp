@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, crossprod) {
+TEST_F(mathMix, crossprod) {
   auto f = [](const auto& y) { return stan::math::crossprod(y); };
 
   Eigen::MatrixXd t(0, 0);

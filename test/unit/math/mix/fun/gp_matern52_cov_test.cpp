@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixMatFun, gpMatern52Cov) {
+TEST_F(mathMix, gpMatern52Cov) {
   auto f = [](const auto& x, const auto& sigma, const auto& l) {
     return stan::math::gp_matern52_cov(x, sigma, l);
   };

@@ -23,14 +23,15 @@ namespace math {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr>
-var sd(const T& x) {
+inline var sd(const T& x) {
   using std::sqrt;
   using T_vi = promote_scalar_t<vari*, T>;
   using T_d = promote_scalar_t<double, T>;
 
-  check_nonzero_size("sd", "x", x);
+  auto&& x_ref = to_ref(x);
+  check_nonzero_size("sd", "x", x_ref);
 
-  if (x.size() == 1) {
+  if (x_ref.size() == 1) {
     return 0.0;
   }
 
@@ -38,23 +39,22 @@ var sd(const T& x) {
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   double* partials
       = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
-  Eigen::Map<T_vi> varis_map(varis, x.rows(), x.cols());
-  Eigen::Map<T_d> partials_map(partials, x.rows(), x.cols());
-
-  varis_map = x.vi();
-  T_d dtrs_val = x.val();
+  Eigen::Map<T_vi> varis_map(varis, x_ref.rows(), x_ref.cols());
+  Eigen::Map<T_d> partials_map(partials, x_ref.rows(), x_ref.cols());
+  varis_map = x_ref.vi();
+  T_d dtrs_val = x_ref.val();
   double mean = dtrs_val.mean();
   T_d diff = dtrs_val.array() - mean;
   double sum_of_squares = diff.squaredNorm();
-  double size_m1 = x.size() - 1;
+  double size_m1 = x_ref.size() - 1;
   double sd = sqrt(sum_of_squares / size_m1);
 
   if (sum_of_squares < 1e-20) {
-    partials_map.fill(inv_sqrt(static_cast<double>(x.size())));
+    partials_map.fill(inv_sqrt(static_cast<double>(x_ref.size())));
   } else {
     partials_map = diff.array() / (sd * size_m1);
   }
-  return var(new stored_gradient_vari(sd, x.size(), varis, partials));
+  return var(new stored_gradient_vari(sd, x_ref.size(), varis, partials));
 }
 
 /**
@@ -66,7 +66,7 @@ var sd(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-var sd(const T& x) {
+inline var sd(const T& x) {
   check_nonzero_size("sd", "x", x);
 
   if (x.size() == 1) {

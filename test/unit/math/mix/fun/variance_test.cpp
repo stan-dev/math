@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 void expect_variance(const Eigen::MatrixXd& m) {
@@ -20,7 +21,7 @@ void expect_variance(const Eigen::MatrixXd& m) {
   stan::test::expect_ad_matvar(tols, f, rv);
 }
 
-TEST(MathMixMatFun, variance) {
+TEST_F(mathMix, variance) {
   Eigen::MatrixXd a(0, 0);
   expect_variance(a);
 

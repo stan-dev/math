@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, diagonal) {
+TEST_F(mathMix, diagonal) {
   auto f = [](const auto& x) { return stan::math::diagonal(x); };
 
   Eigen::MatrixXd a0(0, 0);

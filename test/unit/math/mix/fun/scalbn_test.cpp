@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -23,7 +24,7 @@ void expect_all_scalbn(double x) {
   expect_scalbn<fvar<fvar<var>>>(x);
 }
 
-TEST(mathMixMatFun, scalbn) {
+TEST_F(mathMix, scalbn) {
   double inf = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
   for (double x : std::vector<double>{2.3, inf, nan}) {

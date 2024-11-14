@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixMixArr, value_of) {
+TEST_F(mathMix, value_of_fvar) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;
@@ -26,7 +27,7 @@ TEST(MathMatrixMixArr, value_of) {
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i].val_.val());
 }
 
-TEST(AgradMixMatrix, value_of) {
+TEST_F(mathMix, value_of_vector) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;

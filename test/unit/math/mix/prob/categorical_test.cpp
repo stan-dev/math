@@ -1,11 +1,12 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var) {
+TEST_F(mathMix, ProbDistributionsCategorical_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -25,7 +26,7 @@ TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var) {
   EXPECT_FLOAT_EQ(1.0 / 0.5, stan::math::categorical_lpmf(2, theta).d_.val());
   EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_lpmf(3, theta).d_.val());
 }
-TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var_vector) {
+TEST_F(mathMix, ProbDistributionsCategorical_fvar_var_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -46,7 +47,7 @@ TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var_vector) {
                   stan::math::categorical_lpmf(xs, theta).d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributionsCategorical_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsCategorical_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -69,7 +70,7 @@ TEST_F(AgradRev, ProbDistributionsCategorical_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(1.0 / 0.2,
                   stan::math::categorical_lpmf(3, theta).d_.val_.val());
 }
-TEST_F(AgradRev, ProbDistributionsCategorical_fvar_fvar_var_vector) {
+TEST_F(mathMix, ProbDistributionsCategorical_fvar_fvar_var_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

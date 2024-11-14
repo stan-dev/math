@@ -1,18 +1,19 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 namespace simplex_constrain_test {
 template <typename T>
-T g1(const T& x) {
+auto g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::simplex_constrain<false>(x, lp);
 }
 template <typename T>
-T g2(const T& x) {
+auto g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::simplex_constrain<true>(x, lp);
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
+stan::scalar_type_t<T> g3(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   stan::math::simplex_constrain<true>(x, lp);
   return lp;
@@ -32,7 +33,7 @@ void expect_simplex_transform(const T& x) {
 }
 }  // namespace simplex_constrain_test
 
-TEST(MathMixMatFun, simplexTransform) {
+TEST_F(mathMix, simplexTransform) {
   Eigen::VectorXd v0(0);
   simplex_constrain_test::expect_simplex_transform(v0);
 

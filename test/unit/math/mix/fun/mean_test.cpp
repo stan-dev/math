@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
 template <typename T>
 void expect_mean(const T& m) {
@@ -14,7 +15,7 @@ void expect_mean(const T& m) {
   stan::test::expect_ad(f, m);
 }
 
-TEST(MathMixMatFun, mean) {
+TEST_F(mathMix, mean) {
   Eigen::MatrixXd a(0, 0);
   expect_mean(a);
 

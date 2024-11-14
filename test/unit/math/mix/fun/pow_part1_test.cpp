@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -21,7 +22,7 @@ void expect_arith_instantiate() {
 }
 
 // this one's been tricky to instantiate, so test all instances
-TEST(mathMixScalFun, powInstantiations) {
+TEST_F(mathMix, powInstantiations) {
   using stan::math::fvar;
   using stan::math::var;
   expect_arith_instantiate<double>();
@@ -32,7 +33,7 @@ TEST(mathMixScalFun, powInstantiations) {
   expect_arith_instantiate<fvar<fvar<var>>>();
 }
 
-TEST(mathMixScalFun, pow) {
+TEST_F(mathMix, pow) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::pow(x1, x2); };
 

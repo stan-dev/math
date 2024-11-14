@@ -1,4 +1,5 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -20,7 +21,7 @@ void expect_isfinite() {
   EXPECT_TRUE(isfinite(T(-1.0)));
 }
 
-TEST(mixFun, isfinite) {
+TEST_F(mathMix, isfinite) {
   using stan::math::fvar;
   using stan::math::var;
   expect_isfinite<double>();

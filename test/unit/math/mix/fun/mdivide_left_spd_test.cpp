@@ -1,11 +1,14 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, mdivideLeftSpd) {
+TEST_F(mathMix, mdivideLeftSpd) {
   auto f = [](const auto& x, const auto& y) {
     if (x.rows() != x.cols())
       return stan::math::mdivide_left_spd(x, y);
-    auto x_sym = stan::math::eval(
-        stan::math::multiply(x + x.transpose(), 0.5));  // sym for finite diffs
+
+    auto x_ref = stan::math::to_ref(x);
+    auto x_sym = stan::math::eval(stan::math::multiply(
+        x_ref + x_ref.transpose(), 0.5));  // sym for finite diffs
     return stan::math::mdivide_left_spd(x_sym, y);
   };
 

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, multiplyLog3_vec) {
+TEST_F(mathMix, multiplyLog3_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::multiply_log;
     return multiply_log(x1, x2);

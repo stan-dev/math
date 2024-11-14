@@ -7,6 +7,7 @@
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/test_ad_matvar.hpp>
+#include <test/unit/math/expr_tests.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
@@ -485,7 +486,8 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
   size_t result_size = 0;
   try {
     auto y1 = eval(f(xs...));  // original types, including int
-    auto y2 = eval(g(x));      // all int cast to double
+    stan::test::check_expr_test(f, xs...);
+    auto y2 = eval(g(x));  // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
@@ -545,6 +547,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   // if f throws on int, must throw everywhere with double
   try {
     f(x);
+    stan::test::check_expr_test(f, x);
   } catch (...) {
     expect_all_throw(f, x_dbl);
     return;
@@ -608,6 +611,7 @@ template <typename F, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   try {
     f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -630,6 +634,7 @@ template <typename F, typename T1>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   try {
     f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -653,6 +658,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
+    stan::test::check_expr_test(f, x1, x2);
   } catch (...) {
     expect_all_throw(f, x1, x2);
     return;
@@ -761,6 +767,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -790,6 +797,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -814,6 +822,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -838,6 +847,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -862,6 +872,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -891,6 +902,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -921,6 +933,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   // test exception behavior; other exception cases tested recursively
   try {
     f(x1, x2, x3);
+    stan::test::check_expr_test(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw(f, x1, x2, x3);
     return;
@@ -979,6 +992,26 @@ std::vector<double> common_args() {
   auto result = common_nonzero_args();
   result.push_back(0);
   return result;
+}
+
+/**
+ * Returns commonly used values to test in the autodiff framework, while
+ *  filtering out values that are not defined for the function being called.
+ * @tparam F a type with a valid `bool operator(const double val)`.
+ * @param f a functor that accepts a value and returns true or false if the
+ *  value satisfies the user given condition.
+ */
+template <typename F>
+std::vector<double> common_args(F&& comparison) {
+  auto common_arg_vals = common_nonzero_args();
+  common_arg_vals.push_back(0);
+  std::vector<double> common_args_filtered;
+  for (auto& val : common_arg_vals) {
+    if (comparison(val)) {
+      common_args_filtered.push_back(val);
+    }
+  }
+  return common_args_filtered;
 }
 
 std::vector<int> common_nonzero_int_args() {
@@ -1988,13 +2021,16 @@ template <
     require_t<bool_constant<ComplexSupport == ScalarSupport::Real>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
+
   auto args = internal::common_args();
-  for (double x1 : args)
+  for (double x1 : args) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
+  }
   auto int_args = internal::common_int_args();
-  for (int x1 : int_args)
+  for (int x1 : int_args) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
-}
+  }
+}  // namespace test
 
 /**
  * Test that the specified vectorized unary function produces the same
@@ -2019,14 +2055,15 @@ template <ScalarSupport ComplexSupport, typename F,
                                   == ScalarSupport::RealAndComplex>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
-  auto args = internal::common_args();
-  for (double x1 : args)
+  for (double x1 : internal::common_args()) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
-  auto int_args = internal::common_int_args();
-  for (int x1 : int_args)
+  }
+  for (int x1 : internal::common_int_args()) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
-  for (auto x1 : common_complex())
+  }
+  for (auto x1 : common_complex()) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
+  }
 }
 
 /**

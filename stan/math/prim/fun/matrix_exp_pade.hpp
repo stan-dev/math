@@ -21,18 +21,20 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
               EigMat::ColsAtCompileTime>
 matrix_exp_pade(const EigMat& arg) {
+  auto&& arg_ref = to_ref(arg);
   using MatrixType
       = Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                       EigMat::ColsAtCompileTime>;
-  check_square("matrix_exp_pade", "arg", arg);
-  if (arg.size() == 0) {
+  check_square("matrix_exp_pade", "arg", arg_ref);
+  if (arg_ref.size() == 0) {
     return {};
   }
 
   MatrixType U, V;
   int squarings;
 
-  Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
+  Eigen::matrix_exp_computeUV<MatrixType>::run(arg_ref, U, V, squarings,
+                                               arg_ref(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
   MatrixType numer = U + V;

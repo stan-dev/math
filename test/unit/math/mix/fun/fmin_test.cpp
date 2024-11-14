@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, fmin) {
+TEST_F(mathMix, fmin) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::fmin(x1, x2); };
   stan::test::expect_ad(f, -3.0, 4.0);
@@ -19,7 +20,7 @@ TEST(mathMixScalFun, fmin) {
   stan::test::expect_value(f, 2.0, 2.0);
 }
 
-TEST(mathMixScalFun, fmin_vec) {
+TEST_F(mathMix, fmin_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::fmin;
     return fmin(x1, x2);
@@ -32,7 +33,7 @@ TEST(mathMixScalFun, fmin_vec) {
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
 
-TEST(mathMixScalFun, fmin_equal) {
+TEST_F(mathMix, fmin_equal) {
   using stan::math::fmin;
   using stan::math::fvar;
   using stan::math::var;

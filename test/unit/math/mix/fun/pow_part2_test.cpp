@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
 
-TEST(mathMixFun, complexPow) {
+TEST_F(mathMix, complexPow) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::pow(x1, x2); };
   stan::test::ad_tolerances tols;
@@ -46,7 +47,7 @@ TEST(mathMixFun, complexPow) {
   stan::test::expect_ad_vectorized_binary(tols, f, din1, din2);
 }
 
-TEST(mathMixFun, powIntAmbiguityTest) {
+TEST_F(mathMix, powIntAmbiguityTest) {
   using stan::math::var;
   using std::complex;
   int i = 2;
@@ -91,7 +92,7 @@ TEST(mathMixFun, powIntAmbiguityTest) {
   e = e + 0;
 }
 
-TEST(mathMixFun, powIntAmbiguityTestFvar) {
+TEST_F(mathMix, powIntAmbiguityTestFvar) {
   using stan::math::fvar;
   using std::complex;
   int i = 2;

@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <complex>
 #include <iostream>
 #include <vector>
 
-TEST(mathMixFun, polar) {
+TEST_F(mathMix, polar) {
   auto f = [](const auto& r, const auto& theta) {
     using stan::math::polar;
     auto y = polar(r, theta);
