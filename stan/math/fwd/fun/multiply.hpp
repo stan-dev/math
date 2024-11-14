@@ -7,6 +7,7 @@
 #include <stan/math/fwd/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 
 namespace stan {
 namespace math {
