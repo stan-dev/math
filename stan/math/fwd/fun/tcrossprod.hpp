@@ -21,7 +21,7 @@ tcrossprod(const EigMat& m) {
   auto ret = multiply(m_ref, m_ref.transpose());
   if constexpr (is_stan_scalar<decltype(ret)>::value) {
     return Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::RowsAtCompileTime>{{ret}};
+                         EigMat::RowsAtCompileTime>{{ret}};
   } else {
     return ret;
   }
