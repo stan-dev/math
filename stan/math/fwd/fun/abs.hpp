@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <complex>
 
 namespace stan {

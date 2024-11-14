@@ -64,6 +64,7 @@
 #include <stan/math/rev/fun/fmax.hpp>
 #include <stan/math/rev/fun/fmin.hpp>
 #include <stan/math/rev/fun/fmod.hpp>
+#include <stan/math/rev/fun/frexp.hpp>
 #include <stan/math/rev/fun/from_var_value.hpp>
 #include <stan/math/rev/fun/gamma_p.hpp>
 #include <stan/math/rev/fun/gamma_q.hpp>
@@ -155,6 +156,7 @@
 #include <stan/math/rev/fun/svd.hpp>
 #include <stan/math/rev/fun/svd_U.hpp>
 #include <stan/math/rev/fun/svd_V.hpp>
+#include <stan/math/rev/fun/sign.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
