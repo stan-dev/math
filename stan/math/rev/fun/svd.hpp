@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/svd.hpp>
 
 namespace stan {
 namespace math {

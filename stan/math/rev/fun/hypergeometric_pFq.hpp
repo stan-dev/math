@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_HYPERGEOMETRIC_PFQ_HPP
 #define STAN_MATH_REV_FUN_HYPERGEOMETRIC_PFQ_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/hypergeometric_pFq.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 
 namespace stan {
 namespace math {

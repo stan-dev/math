@@ -15,6 +15,8 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/grad_inc_beta.hpp>
+
 #include <cmath>
 
 namespace stan {

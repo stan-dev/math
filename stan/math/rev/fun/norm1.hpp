@@ -7,6 +7,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/norm1.hpp>
 
 namespace stan {
 namespace math {

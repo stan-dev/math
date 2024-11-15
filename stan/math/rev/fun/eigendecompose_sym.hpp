@@ -8,6 +8,7 @@
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/eigendecompose_sym.hpp>
 
 namespace stan {
 namespace math {

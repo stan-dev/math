@@ -8,7 +8,6 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
