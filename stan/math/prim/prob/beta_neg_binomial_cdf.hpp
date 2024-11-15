@@ -101,7 +101,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
         1.0);
     auto C = lgamma(r_plus_n + 1.0) + lbeta(a_plus_r, b_plus_n + 1.0)
              - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl) - lgamma(n_dbl + 2.0);
-    auto ccdf = stan::math::exp(C) * F;
+    auto ccdf = stan::math::exp(C + stan::math::log(F));
     cdf *= 1.0 - ccdf;
 
     if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
@@ -116,15 +116,17 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
       if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
         auto digamma_r_alpha = digamma(a_plus_r);
         if constexpr (!is_constant<T_r>::value) {
-          auto partial_lccdf = digamma(r_plus_n + 1.0)
-                               + (digamma_r_alpha - digamma_n_r_alpha_beta)
-                               + (dF[2] + dF[4]) / F - digamma(r_dbl);
-          partials<0>(ops_partials)[i] += partial_lccdf * chain_rule_term;
+          partials<0>(ops_partials)[i]
+              += (digamma(r_plus_n + 1)
+                  + (digamma_r_alpha - digamma_n_r_alpha_beta)
+                  + (dF[2] + dF[4]) / F - digamma(r_dbl))
+                 * chain_rule_term;
         }
         if constexpr (!is_constant<T_alpha>::value) {
-          auto partial_lccdf = digamma_r_alpha - digamma_n_r_alpha_beta
-                               + dF[4] / F - digamma(alpha_dbl);
-          partials<1>(ops_partials)[i] += partial_lccdf * chain_rule_term;
+          partials<1>(ops_partials)[i]
+              += (digamma_r_alpha - digamma_n_r_alpha_beta + dF[4] / F
+                  - digamma(alpha_dbl))
+                 * chain_rule_term;
         }
       }
 
@@ -135,10 +137,11 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
           partials<1>(ops_partials)[i] += digamma_alpha_beta * chain_rule_term;
         }
         if constexpr (!is_constant<T_beta>::value) {
-          auto partial_lccdf = digamma(b_plus_n + 1.0) - digamma_n_r_alpha_beta
-                               + (dF[1] + dF[4]) / F
-                               - (digamma(beta_dbl) - digamma_alpha_beta);
-          partials<2>(ops_partials)[i] += partial_lccdf * chain_rule_term;
+          partials<2>(ops_partials)[i]
+              += (digamma(b_plus_n + 1) - digamma_n_r_alpha_beta
+                  + (dF[1] + dF[4]) / F
+                  - (digamma(beta_dbl) - digamma_alpha_beta))
+                 * chain_rule_term;
         }
       }
     }
