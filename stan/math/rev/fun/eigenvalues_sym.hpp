@@ -11,7 +11,6 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 
-
 namespace stan {
 namespace math {
 
