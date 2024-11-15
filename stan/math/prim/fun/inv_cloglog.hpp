@@ -50,6 +50,19 @@ inline auto inv_cloglog(const T x) {
   return 1. - std::exp(-std::exp(x));
 }
 
+/**
+ * The inverse complementary log-log function.
+ *
+ * The function is defined by
+ *
+ * <code>inv_cloglog(x) = 1 - exp(-exp(x))</code>.
+ *
+ * This function can be used to implement the inverse link
+ * function for complementary-log-log regression.
+ *
+ * @param x Argument.
+ * @return Inverse complementary log-log of the argument.
+ */
 template <typename T, require_complex_t<T>* = nullptr>
 inline auto inv_cloglog(const T& x) {
   return 1. - exp(-exp(x));

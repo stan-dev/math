@@ -11,8 +11,6 @@
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/atan.hpp>
 #include <cmath>
 #include <complex>

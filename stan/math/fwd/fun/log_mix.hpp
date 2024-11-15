@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/log_mix.hpp>
 #include <cmath>

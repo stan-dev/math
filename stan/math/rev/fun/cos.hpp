@@ -6,8 +6,6 @@
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/cos.hpp>
 #include <cmath>
 #include <complex>

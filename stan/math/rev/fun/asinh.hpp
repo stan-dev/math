@@ -14,8 +14,6 @@
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <cmath>
 #include <complex>
