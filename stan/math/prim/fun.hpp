@@ -228,6 +228,7 @@
 #include <stan/math/prim/fun/norm1.hpp>
 #include <stan/math/prim/fun/norm2.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
+#include <stan/math/prim/fun/one_cpt.hpp>
 #include <stan/math/prim/fun/one_hot_array.hpp>
 #include <stan/math/prim/fun/one_hot_int_array.hpp>
 #include <stan/math/prim/fun/one_hot_row_vector.hpp>
