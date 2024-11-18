@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/inverse.hpp>
+#include <stan/math/prim/fun/generalized_inverse.hpp>
 
 namespace stan {
 namespace math {

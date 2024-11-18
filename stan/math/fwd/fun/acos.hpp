@@ -3,7 +3,8 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/fwd/fun/sqrt.hpp>
+#include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/acos.hpp>
 #include <cmath>
 #include <complex>
@@ -13,8 +14,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> acos(const fvar<T>& x) {
-  using std::acos;
-  using std::sqrt;
   return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
 }
 

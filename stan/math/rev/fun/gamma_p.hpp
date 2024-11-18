@@ -3,11 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/gamma_p.hpp>
 #include <cmath>
 
 namespace stan {

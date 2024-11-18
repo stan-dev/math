@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_FWD_FUN_INC_BETA_HPP
 #define STAN_MATH_FWD_FUN_INC_BETA_HPP
 
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/lbeta.hpp>
 #include <stan/math/fwd/fun/pow.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta.hpp>
 #include <cmath>
 
 namespace stan {
@@ -17,7 +17,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> inc_beta(const fvar<T>& a, const fvar<T>& b, const fvar<T>& x) {
-  using std::pow;
   T d_a;
   T d_b;
   const T beta_ab = beta(a.val_, b.val_);

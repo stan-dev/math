@@ -17,6 +17,30 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the arc sine of the arithmetic argument.
+ *
+ * @tparam V `Arithmetic` argument
+ * @param[in] x argument
+ * @return arc sine of the argument
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto asin(const T x) {
+  return std::asin(x);
+}
+
+/**
+ * Return the arc sine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic> argument
+ * @param[in] x argument
+ * @return arc sine of the argument
+ */
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto asin(const T x) {
+  return std::asin(x);
+}
+
+/**
  * Structure to wrap `asin()` so it can be vectorized.
  *
  * @tparam T type of argument
@@ -26,7 +50,6 @@ namespace math {
 struct asin_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::asin;
     return asin(x);
   }
 };
@@ -39,11 +62,7 @@ struct asin_fun {
  * @param x container
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto asin(const Container& x) {
   return apply_scalar_unary<asin_fun, Container>::apply(x);
 }
@@ -57,7 +76,7 @@ inline auto asin(const Container& x) {
  * @return Arcsine of each variable in the container, in radians.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto asin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().asin(); });

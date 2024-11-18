@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_FUN_COSH_HPP
 #define STAN_MATH_REV_FUN_COSH_HPP
 
-#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
+#include <stan/math/prim/fun/cosh.hpp>
 #include <cmath>
 #include <complex>
 

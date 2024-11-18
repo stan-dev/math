@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_ATANH_HPP
 #define STAN_MATH_REV_FUN_ATANH_HPP
 
-#include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
@@ -10,6 +9,7 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
 #include <cmath>
 #include <complex>
 

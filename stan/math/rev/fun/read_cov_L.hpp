@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/read_cov_L.hpp>
+#include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/read_corr_L.hpp>
-#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/read_cov_L.hpp>
 
 namespace stan {
 namespace math {

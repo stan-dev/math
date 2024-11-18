@@ -2,8 +2,8 @@
 #define STAN_MATH_MIX_MAT_FUN_TYPEDEFS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 namespace stan {

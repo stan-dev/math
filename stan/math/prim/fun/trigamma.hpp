@@ -35,9 +35,6 @@ namespace math {
  */
 template <typename T>
 inline T trigamma_impl(const T& x) {
-  using std::floor;
-  using std::sin;
-
   double small = 0.0001;
   double large = 5.0;
   T value;

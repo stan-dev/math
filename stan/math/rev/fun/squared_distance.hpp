@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 #define STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
 #include <vector>
 
 namespace stan {

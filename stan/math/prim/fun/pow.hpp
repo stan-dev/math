@@ -33,42 +33,73 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * Return the first argument raised to the power of the second
  * argument.
  *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
+ * @tparam T1 `complex<Arithmetic>` type
+ * @tparam T2 `complex<Arithmetic>` type
  * @param a first argument
  * @param b second argument
  * @return the first argument raised to the power of the second
  * argument.
  */
-template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
-          require_arithmetic_t<T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const std::complex<T1>& a, const std::complex<T2>& b) {
   return std::pow(a, b);
 }
 
-template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
-          require_arithmetic_t<T2>* = nullptr>
+/**
+ * Return the first argument raised to the power of the second
+ * argument.
+ *
+ * @tparam T1 `Arithmetic` type
+ * @tparam T2 `complex<Arithmetic>` type
+ * @param a first argument
+ * @param b second argument
+ * @return the first argument raised to the power of the second
+ * argument.
+ */
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const std::complex<T2>& b) {
   return std::pow(a, b);
 }
 
-template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
-          require_arithmetic_t<T2>* = nullptr>
+/**
+ * Return the first argument raised to the power of the second
+ * argument.
+ *
+ * @tparam T1 `complex<Arithmetic>` type
+ * @tparam T2 `Arithmetic` type
+ * @param a first argument
+ * @param b second argument
+ * @return the first argument raised to the power of the second
+ * argument.
+ */
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const std::complex<T1>& a, const T2& b) {
   return std::pow(a, b);
 }
 
-template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr,
-          require_arithmetic_t<T2>* = nullptr>
+/**
+ * Return the first argument raised to the power of the second
+ * argument.
+ *
+ * @tparam T1 `Arithmetic` type
+ * @tparam T2 `Arithmetic` type
+ * @param a first argument
+ * @param b second argument
+ * @return the first argument raised to the power of the second
+ * argument.
+ */
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return std::pow(a, b);
 }
 /**
  * Returns the elementwise raising of the first argument to the power of the
- * second argument.
+ * second argument. One type must be a `Container` type.
  *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
+ * @tparam T1 A `Container` type with a @ref base_type that is `Arithmetic` or
+ * an `Arithmetic`
+ * @tparam T1 A `Container` type with a @ref base_type that is `Arithmetic` or
+ * an `Arithmetic`
  * @param a first argument
  * @param b second argument
  * @return the elementwise raising of the first argument to the power of the
@@ -79,6 +110,7 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_arithmetic_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(
+      // Qualified pow since only Arithmetic types are accepted here
       a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
 }
 }  // namespace math

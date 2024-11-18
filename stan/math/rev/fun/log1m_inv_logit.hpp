@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_FUN_LOG1M_INV_LOGIT_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/fun/log1m_inv_logit.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 
 namespace stan {
 namespace math {

@@ -3,6 +3,8 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/cos.hpp>
+#include <stan/math/fwd/fun/tanh.hpp>
 #include <stan/math/prim/fun/tan.hpp>
 #include <cmath>
 #include <complex>
@@ -12,8 +14,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> tan(const fvar<T>& x) {
-  using std::cos;
-  using std::tan;
   return fvar<T>(tan(x.val_), x.d_ / (cos(x.val_) * cos(x.val_)));
 }
 
