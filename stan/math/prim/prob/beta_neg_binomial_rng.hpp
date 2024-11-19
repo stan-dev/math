@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Return a beta-negative binomial random variate with given number of
+ * Return a beta-negative binomial random variate with the given number of
  * successes, prior success, and prior failure parameters, using the given
  * random number generator.
  *
@@ -22,17 +22,16 @@ namespace math {
  * @tparam RNG type of random number generator
  *
  * @param r (Sequence of) number of successes parameter(s)
- * @param alpha (Sequence of) positive success parameter(s)
- * @param beta (Sequence of) positive failure parameter(s)
+ * @param alpha (Sequence of) prior success parameter(s)
+ * @param beta (Sequence of) prior failure parameter(s)
  * @param rng random number generator
- * @return (Sequence of) beta-binomial random variate(s)
- * @throw std::domain_error if r is negative, or alpha or beta are nonpositive
+ * @return (Sequence of) beta-negative binomial random variate(s)
+ * @throw std::domain_error if r, alpha, or beta are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different sizes
  */
-template <typename T_r, typename T_alpha, typename T_beta, class RNG>
-inline typename VectorBuilder<true, int, T_r, T_alpha, T_beta>::type
-beta_neg_binomial_rng(const T_r &r, const T_alpha &alpha, const T_beta &beta,
-                      RNG &rng) {
+template <typename T_r, typename T_alpha, typename T_beta, typename RNG>
+inline auto beta_neg_binomial_rng(const T_r &r, const T_alpha &alpha,
+                                  const T_beta &beta, RNG &rng) {
   using T_r_ref = ref_type_t<T_r>;
   using T_alpha_ref = ref_type_t<T_alpha>;
   using T_beta_ref = ref_type_t<T_beta>;
@@ -55,8 +54,8 @@ beta_neg_binomial_rng(const T_r &r, const T_alpha &alpha, const T_beta &beta,
   size_t size_p = stan::math::size(p);
   VectorBuilder<true, double, T_p> odds_ratio_p(size_p);
   for (size_t n = 0; n < size_p; ++n) {
-    odds_ratio_p[n] = stan::math::exp(stan::math::log(p_vec.val(n))
-                                      - stan::math::log((1 - p_vec.val(n))));
+    odds_ratio_p[n]
+        = stan::math::exp(stan::math::log(p_vec.val(n)) - log1m(p_vec.val(n)));
   }
 
   return neg_binomial_rng(r_ref, odds_ratio_p.data(), rng);
