@@ -15,13 +15,14 @@ namespace math {
 namespace laplace_likelihood {
 namespace internal {
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @param f
- * @param theta
- * @param eta
- * @param args
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for log likelihood function.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter arguments for likelihood function.
+ * @param args Additional variational arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -32,16 +33,18 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam Args
- * @param f
- * @param theta
- * @param eta
- * @param gradient
- * @param hessian_block_size
- * @param args
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for log likelihood function.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param eta Parameter argument for likelihood function.
+ * @param gradient Gradient of likelihood returned by function.
+ * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
+ *                           the latent Gaussian variable is block-diagonal,
+ *                           size of each block.
+ * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -85,14 +88,14 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam Args
- * @param f
- * @param theta
- * @param eta
- * @param args
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for likelihood function.
+ * @tparam Args Type of variadic arguments for likelihood function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter arguments for likelihood function.
+ * @param args Variadic arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -112,16 +115,18 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam Args
- * @param f
- * @param theta
- * @param eta
- * @param A
- * @param hessian_block_size
- * @param args
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for likelihood function.
+ * @tparam Args Type of variadic arguments for likelihood function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter arguments for
+ * @param A Matrix storing initial tangents for higher-order differentiation
+ *        (line 21 in Algorithm 4, https://arxiv.org/pdf/2306.14976)
+ * @param hessian_block_size If the Hessian of the log likelihood w.r.t theta
+ *                           is block diagonal, size of each block.
+ * @param args Variational arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -180,15 +185,15 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam Args
- * @param f
- * @param v
- * @param theta
- * @param eta
- * @param args
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for likelhood function.
+ * @tparam Args Type of variational arguments for likelhood function.
+ * @param f Log likelihood function.
+ * @param v Initial tangent.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter arguments for likelhood function.
+ * @param args Variadic arguments for likelhood function.
  */
 template <typename F, typename V_t, typename Theta, typename Eta,
           typename... Args, require_eigen_vector_t<Theta>* = nullptr,
@@ -225,15 +230,15 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
 }  // namespace internal
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam TupleArgs
- * @param f
- * @param theta
- * @param eta
- * @param ll_tup
- * @param msgs
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter argument for likelihood function.
+ * @tparam TupleArgs Type of arguments for covariance function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param eta Parameter arguments for likelihood function.
+ * @param ll_tup Arguments for covariance function.
+ * @param msgs stream messages.
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -249,17 +254,18 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam TupleArgs
- * @param f
- * @param theta
- * @param eta
- * @param gradient
- * @param hessian_block_size
- * @param ll_tuple
- * @param msgs
+ * @tparam F Type of log likelihood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter variable.
+ * @tparam TupleArgs Type of arguments for covariance function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param eta Parameter arguments for likelihood function.
+ * @param gradient Vector to store gradient of log likelihood w.r.t theta.
+ * @param hessian_block_size If Hessian of log likelihood w.r.t theta is
+ *                           block diagonal, size of block.
+ * @param ll_tuple Arguments of covariance function.
+ * @param msgs Stream messages.
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -281,15 +287,15 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam TupleArgs
- * @param f
- * @param theta
- * @param eta
- * @param ll_args
- * @param msgs
+ * @tparam F Type of log likelhood function.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for likelhood function.
+ * @tparam TupleArgs Type of arguments for covariance function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter argument for likelihood funciton.
+ * @param ll_args Variadic arguments for likelihood function.
+ * @param msgs Streaming message.
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -305,17 +311,19 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam Theta
- * @tparam Eta
- * @tparam TupleArgs
- * @param f
- * @param theta
- * @param eta
- * @param A
- * @param hessian_block_size
- * @param ll_args
- * @param msgs
+ * @tparam F Type of log likelhood function.
+ * @tparam Theta Type of latent Gaussian ba
+ * @tparam Eta Type of parameter argument for likelihood function.
+ * @tparam TupleArgs Type of arguments for covariance function.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter  arguments for likelihood function.
+ * @param A Matrix storing initial tangents for higher-order differentiation
+ *        (line 21 in Algorithm 4, https://arxiv.org/pdf/2306.14976)
+ * @param hessian_block_size If Hessian of log likelihood w.r.t theta is
+ *                           block diagonal, size of block.
+ * @param ll_args Variadic arguments for likelihood function.
+ * @param msgs Streaming messages.
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
@@ -335,17 +343,17 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
 }
 
 /**
- * @tparam F
- * @tparam V_t
- * @tparam Theta
- * @tparam Eta
- * @tparam TupleArgs
- * @param f
- * @param v
- * @param theta
- * @param eta
- * @param ll_args
- * @param msgs
+ * @tparam F Type of log likelihood function.
+ * @tparam V_t Type of initial tangent.
+ * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Eta Type of parameter arguments for likelihood function.
+ * @tparam TupleArgs Type of variadic arguments for likelihood function.
+ * @param f Log likelihood function.
+ * @param v Initial tangent.
+ * @param theta Latent Gaussian variable.
+ * @param eta Parameter argument for likelihood function.
+ * @param ll_args Variadic arguments for likelihood function.
+ * @param msgs Streaming messages.
  */
 template <typename F, typename V_t, typename Theta, typename Eta,
           typename TupleArgs, require_tuple_t<TupleArgs>* = nullptr,

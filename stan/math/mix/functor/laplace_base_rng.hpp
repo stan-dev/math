@@ -17,30 +17,31 @@ namespace math {
  *   y ~ pi(y | theta, eta)
  *
  * returns a multivariate normal random variate sampled
- * from the gaussian approximation of p(theta_pred | y, phi, x_pred).
- * Note that while the data is observed at x, the new samples
- * are drawn for covariates x_pred.
- * To sample the "original" theta's, set x_pred = x.
- * @tparam D
- * @tparam LLArgs
- * @tparam ThetaMatrix
- * @tparam EtaMatrix
- * @tparam CovarFun
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
- * @param ll_fun
- * @param ll_args
- * @param covariance_function
- * @param eta
- * @param theta_0
- * @param options
- * @param train_tuple
- * @param pred_tuple
- * @param rng
- * @param msgs
- * @param args
+ * from the Laplace approximation of p(theta_pred | y, phi, x_pred).
+ * Note that while the data is observed at x (train_tuple), the new samples
+ * are drawn for covariates x_pred (pred_tuple).
+ * To sample the "original" theta's, set pred_tuple = train_tuple.
+ * @tparam D Type of likelihood function.
+ * @tparam LLArgs Type of arguments of likelihood function.
+ * @tparam ThetaMatrix Type of latent Gaussian variables.
+ * @tparam EtaMatrix Type of additional arguments for likelihood function.
+ * @tparam CovarFun Type of covariance function.
+ * @tparam RNG Type of RNG number.
+ * @tparam TrainTuple Type of observed/training covariate.
+ * @tparam PredTuple Type of predictive covariate.
+ * @tparam Args Type of variadic arguments likelihood function.
+ * @param ll_fun Likelihood function.
+ * @param ll_args Arguments for likelihood function.
+ * @param covariance_function Covariance function.
+ * @param eta Additional arguments for likelihood function.
+ * @param theta_0 Initial guess for finding the mode of the conditional
+                  pi(theta_pred | y, phi, x_pred).
+ * @param options Control parameter for optimizer underlying Laplace approx.
+ * @param train_tuple Observed/training covariates for covariance function.
+ * @param pred_tuple Predictive covariates for covariance function.
+ * @param rng Rng number.
+ * @param msgs Stream for function prints.
+ * @param args Variadic arguments for likelihood function.
  */
 template <typename D, typename LLArgs, typename ThetaMatrix, typename EtaMatrix,
           typename CovarFun, class RNG, typename TrainTuple, typename PredTuple,
@@ -48,7 +49,7 @@ template <typename D, typename LLArgs, typename ThetaMatrix, typename EtaMatrix,
           require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
     D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
-    const ThetaMatrix& eta, const EtaMatrix& theta_0,
+    const EtaMatrix& eta, const ThetaMatrix& theta_0,
     const laplace_options& options, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, Args&&... args) {
   using Eigen::MatrixXd;

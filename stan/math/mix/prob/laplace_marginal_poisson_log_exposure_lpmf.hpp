@@ -49,7 +49,7 @@ struct poisson_log_exposure_likelihood {
  * @tparam CovarFun The type of the initial guess, theta_0.
  * @tparam YeVec The type for the global parameter, phi.
  * @tparam Theta0 The type of the initial guess, theta_0.
- * @tparam Args
+ * @tparam Args The type of variadic arguments for the covariance function.
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.

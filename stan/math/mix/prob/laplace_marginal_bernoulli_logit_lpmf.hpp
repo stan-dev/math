@@ -25,22 +25,28 @@ struct bernoulli_logit_likelihood {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarF
+ * @tparam CovarF Type of structure for covariance function.
  * @tparam ThetaMatrix The type of the initial guess, theta_0.
- * @tparam Args
+ * @tparam Args Type of variadic arguments for likelihood function.
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param covariance_function
+ * @param covariance_function Covariance function
  * @param[in] tolerance controls the convergence criterion when finding
  *            the mode in the Laplace approximation.
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
- * @param hessian_block_size
- * @param solver
- * @param max_steps_line_search
- * @param msgs
+ * @param hessian_block_size Block size of Hessian of log likelihood w.r.t
+ *                           latent Gaussian variable theta.
+ * @param solver Type of Newton solver. Each corresponds to a distinct choice
+ *                 of B matrix (i.e. application SWM formula):
+ *               1. computes square-root of negative Hessian.
+ *               2. computes square-root of covariance matrix.
+ *               3. computes no square-root and uses LU decomposition.
+ * @param max_steps_line_search Number of steps after which the algorithm gives
+ *                              up on doing a linesearch. If 0, no linesearch.
+ * @param msgs Rng number.
  * @param[in] args data for the covariance function.
  */
 template <typename CovarF, typename ThetaMatrix, typename... Args,
@@ -66,15 +72,15 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarF
+ * @tparam CovarF Type of structure for covariance function.
  * @tparam ThetaMatrix The type of the initial guess, theta_0.
- * @tparam Args
+ * @tparam Args Arguments for likelihood function.
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param covariance_function
- * @param msgs
+ * @param msgs Streaming message for covariance functions.
  * @param[in] args data for the covariance function.
  */
 template <typename CovarF, typename ThetaMatrix, typename... Args,

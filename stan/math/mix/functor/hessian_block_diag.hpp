@@ -12,14 +12,14 @@ namespace math {
  * derivatives and storing them in a matrix.
  * For m the size of each block, the operations const m calls to
  * hessian_times_vector, that is m forward sweeps and m reverse sweeps.
- * @tparam F
- * @tparam Eta
- * @tparam Args
- * @param f
- * @param x
- * @param eta
+ * @tparam F Type of function to differentiate.
+ * @tparam Eta Type of additional arguments passed to F.
+ * @tparam Args Type of variadic arguments passed to F.
+ * @param f Function to differentiate.
+ * @param x Arguments with respect to which we differentiate.
+ * @param eta Additional arguments for f.
  * @param hessian_block_size
- * @param args
+ * @param args Additional variadic arguments for f.
  */
 template <typename F, typename Eta, typename... Args,
           require_eigen_t<Eta>* = nullptr>

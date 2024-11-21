@@ -71,11 +71,11 @@ struct laplace_density_estimates {
  * with a custom derivative method.
  * NOTE: we actually don't need to compute the pseudo-target, only its
  * derivative.
- * @tparam Kmat
- * @tparam AVec
- * @tparam RMat
- * @tparam LGradVec
- * @tparam S2Vec
+ * @tparam Kmat Type of covariance matrix.
+ * @tparam AVec Type of matrix of initial tangents.
+ * @tparam RMat Type of the stable R matrix.
+ * @tparam LGradVec Type of the gradient of the log likelihood.
+ * @tparam S2Vec Type of the s2 vector.
  */
 template <
     typename KMat, typename AVec, typename RMat, typename LGradVec,
@@ -90,16 +90,16 @@ inline constexpr double laplace_pseudo_target(KMat&& /* K */, AVec&& /* a */,
 
 /**
  * Overload function for case where K is passed as a matrix of var.
- * @tparam Kmat
- * @tparam AVec
- * @tparam RMat
- * @tparam LGradVec
- * @tparam S2Vec
- * @param K
- * @param a
- * @param R
- * @param l_grad
- * @param s2
+ * @tparam Kmat Type of covariance matrix.
+ * @tparam AVec Type of A matrix of initial tangents.
+ * @tparam RMat Type of stable R matrix.
+ * @tparam LGradVec Type of gradient of log likelihood.
+ * @tparam S2Vec Type of s2 vector.
+ * @param K Covariance matrix.
+ * @param a Saved a vector from Newton solver.
+ * @param R Stable R matrix.
+ * @param l_grad Saved gradient of log likelihood.
+ * @param s2 Gradient of log determinant w.r.t latent Gaussian variable.
  */
 template <typename KMat, typename AVec, typename RMat, typename LGradVec,
           typename S2Vec,
@@ -123,8 +123,8 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
 
 /**
  * Return the matrix square-root for a block diagonal matrix.
- * @param W
- * @param block_size
+ * @param W Block-diagonal matrix.
+ * @param block_size Size of blocks in W.
  */
 inline Eigen::SparseMatrix<double> block_matrix_sqrt(
     const Eigen::SparseMatrix<double>& W, const Eigen::Index block_size) {
@@ -173,9 +173,14 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * maximum number of steps.
  * TODO(Charles): add more robust convergence criterion.
  *
- * This algorithm is adapted from Rasmussen and Williams,
- * "Gaussian Processes for Machine Learning", second edition,
- * MIT Press 2006, algorithm 3.1.
+ * A description of this algorithm can be found in:
+ *  - (2023) Margossian, "General Adjoint-Differentiated Laplace approximation",
+ *    https://arxiv.org/pdf/2306.14976.
+ * Additional references include:
+ *  - (2020) Margossian et al, "HMC using an adjoint-differentiated Laplace...",
+ *    NeurIPS, https://arxiv.org/abs/2004.12550.
+ *  - (2006) Rasmussen and Williams, "Gaussian Processes for Machine Learning",
+ *    second edition, MIT Press, algorithm 3.1.
  *
  * Variables needed for the gradient or generating quantities
  * are stored by reference.
@@ -184,13 +189,13 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * @tparam LLTupleArgs A tuple of arguments passed to the functor type `D`
  * @tparam CovarFun structure type for the covariance object.
  * @tparam ThetaVec type of the initial guess.
- * @tparam Eta type of the global parameters.
- * @tparam Args type for the spatial data passed to the covariance.
- * @param[in] ll_fun structure to compute and differentiate the log likelihood.
+ * @tparam Eta type of the hyperparameters for the likelihood.
+ * @tparam Args type for the covariates passed to the covariance.
+ * @param[in] ll_fun structure to evaluate the log likelihood.
  * @param[in] ll_args Tuple containing parameters for `D`
  * @param[in] covariance_function structure to compute the covariance function.
  * @param[in] eta hyperparameter (input for likelihood).
- * @param[in] theta_0 the initial guess for the mode.
+ * @param[in] theta_0 the initial guess for the Laplace optimization.
  * @param[in,out] msgs stream for messages from likelihood and covariance
  * @param[in] options
  * @param[in] covar_args Functions to pass to the covariance matrix
@@ -205,7 +210,7 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  *                 on which solver we use.
  * 5. L cholesky decomposition of stabilized inverse covariance.
  * 6. a element in the Newton step
- * 7. l_grad the log density of the likelihood.
+ * 7. l_grad the log density of the likelihood, evaluated at the mode.
  *
  */
 template <typename D, typename LLTupleArgs, typename CovarFun,
@@ -480,7 +485,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
  * threshold under which change is deemed small enough) and
  * maximum number of steps.
  *
- * Wrapper for when the hyperparameters passed as a double.
+ * Wrapper for when the hyperparameters are passed as a double.
  *
  * @tparam D structure type for the likelihood object.
  * @tparam LLArgs A tuple of arguments passed to the functor type `D`
