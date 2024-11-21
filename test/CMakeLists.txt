@@ -191,6 +191,7 @@ add_subdirectory(unit)
 message(STATUS "Building tests: DONE")
 
 if (STAN_TEST_HEADERS)
+message(STATUS, "Building Test Headers")
 # Detect OS
 if(WIN32)
   set(DEV_NULL "NUL")
