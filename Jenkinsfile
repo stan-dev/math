@@ -268,8 +268,8 @@ pipeline {
                         sh '''
                         echo CXXFLAGS += -fsanitize=address >> make/local;
                         cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
-                        cd build && make -j24 test_unit_math_tests && \
-                        cd test && ctest --output-on-failure -L "unit_math_subtest";
+                        cd build && make -j${PARALLEL} test_unit_math_tests && \
+                        ctest --output-on-failure --label-regex unit_math_subtest;
                         '''
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -290,7 +290,7 @@ pipeline {
                             }
                             sh'''
                                 CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
-                                cd build && make -j24 test_unit_math_opencl_tests && cd test && ctest --output-on-failure -L "unit_math_opencl"
+                                cd build && make -j${PARALLEL} test_unit_math_opencl_tests && ctest --output-on-failure --label-regex unit_math_opencl
                             '''
                         }
                     }
@@ -320,7 +320,7 @@ pipeline {
                             echo CXX_TYPE=gcc >> make/local
                             echo STAN_MPI=true >> make/local
                             CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
-                            cd build && make -j${PARALLEL} test_unit_math_mpi_tests && cd test && ctest --output-on-failure -L "unit_math_mpi_subtest"
+                            cd build && make -j${PARALLEL} test_unit_math_mpi_tests && ctest --output-on-failure --label-regex unit_math_mpi_subtest
 
                         """
                         runTests("test/unit/math/prim/functor")

@@ -1,3 +1,4 @@
+enable_testing()
 # Compile one test manually so that we can reuse precompile headers
 add_executable(prob_pch
   ${CMAKE_CURRENT_SOURCE_DIR}/dummy_precompile_target.cpp)

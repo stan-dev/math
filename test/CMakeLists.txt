@@ -1,3 +1,4 @@
+enable_testing()
 # Unit Tests
 ## Get all properties that cmake supports
 execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
@@ -97,6 +98,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
           list(APPEND ALL_SUB_TEST_TARGETS ${SUB_TEST_TARGET_NAME})
           add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
+          target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -Wno-misleading-indentation)
           target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
           target_link_libraries(${SUB_TEST_TARGET_NAME}
@@ -112,8 +114,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           endif()
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
-          set_property(TEST ${SUB_TEST_TARGET_NAME}
-           PROPERTY LABELS ${TEST_TARGET_NAME})
+          set_property(TEST ${SUB_TEST_TARGET_NAME} PROPERTY LABELS ${TEST_TARGET_NAME})
         endforeach()
         # target for all subtests
         add_custom_target(${TEST_TARGET_NAME}_subtests)

@@ -1,4 +1,4 @@
-
+enable_testing()
 # Compile one test manually so that we can reuse precompile headers
 add_executable(unit_pch
   ${CMAKE_CURRENT_SOURCE_DIR}/unit_pch.cpp)
@@ -37,16 +37,7 @@ if (FALSE)
 
 endif()
 
-
 function(set_test_labels target label)
-  get_property(SUBTESTS TARGET test_unit_math_prim_functor_subtests PROPERTY MANUALLY_ADDED_DEPENDENCIES)
-  #loop over the subtests and and set the labels
-  foreach(subtest ${SUBTESTS})
-    set_property(TEST ${subtest} PROPERTY LABELS label)
-  endforeach()
-endfunction()
-
-function(newset_test_labels target label)
   get_property(SUBTESTS TARGET ${target} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
   # Loop over the subtests
   message(STATUS "{target} dependencies: ${SUBTESTS}")
@@ -54,13 +45,13 @@ function(newset_test_labels target label)
     string(FIND "${subtest}" "_test" INDEX REVERSE)
     message("Checking: ${subtest}")
     if(INDEX GREATER -1)
-      message("${subtest} ends with the suffix.")
+      message("${subtest}: \n\t${label}")
       # Set the labels for tests ending with "_test"
       set_property(TEST ${subtest} PROPERTY LABELS ${label})
     else()
       message(STATUS "RECURSE on ${subtest}")
       # Recursively call set_test_labels for other targets
-      newset_test_labels(${subtest} ${label})
+      set_test_labels(${subtest} ${label})
       message(STATUS "FINISH on ${subtest}")
     endif()
   endforeach()
@@ -71,7 +62,7 @@ add_dependencies(test_unit_math_opencl_tests
   test_unit_math_opencl_subtests test_unit_math_opencl_device_functions_subtests
   test_unit_math_opencl_kernel_generator_subtests
   test_unit_math_opencl_prim_subtests test_unit_math_opencl_rev_subtests)
-newset_test_labels(test_unit_math_opencl_tests "unit_math_opencl")
+set_test_labels(test_unit_math_opencl_tests "unit_math_opencl")
 
 message("Adding unit_math_mix_subtests")
 add_custom_target(test_unit_math_mix_tests)
@@ -82,8 +73,8 @@ add_dependencies(test_unit_math_mix_tests
   test_unit_math_mix_constraint_subtests
   test_unit_math_mix_meta_subtests
   test_unit_math_mix_prob_subtests)
-newset_test_labels(test_unit_math_mix_tests "unit_math_mix")
-newset_test_labels(test_unit_math_mix_fun_subtests "unit_math_mix_fun")
+set_test_labels(test_unit_math_mix_tests "unit_math_mix")
+set_test_labels(test_unit_math_mix_fun_subtests "unit_math_mix_fun")
 
 add_custom_target(test_unit_math_mix_nonfun_tests)
 add_dependencies(test_unit_math_mix_nonfun_tests
@@ -91,7 +82,7 @@ add_dependencies(test_unit_math_mix_nonfun_tests
   test_unit_math_mix_functor_subtests
   test_unit_math_mix_meta_subtests
   test_unit_math_mix_prob_subtests)
-newset_test_labels(test_unit_math_mix_nonfun_tests "unit_math_mix_nonfun")
+set_test_labels(test_unit_math_mix_nonfun_tests "unit_math_mix_nonfun")
 
 message("Adding unit_math_fwd_nonfun_mix_subtests")
 add_custom_target(test_unit_math_fwd_nonfun_mix_tests)
@@ -105,7 +96,7 @@ add_dependencies(test_unit_math_fwd_nonfun_mix_tests
   test_unit_math_mix_functor_subtests
   test_unit_math_mix_meta_subtests
   test_unit_math_mix_prob_subtests)
-newset_test_labels(test_unit_math_fwd_nonfun_mix_tests "unit_math_fwd_nonfun_mix")
+set_test_labels(test_unit_math_fwd_nonfun_mix_tests "unit_math_fwd_nonfun_mix")
 
 message("Adding unit_math_fwd_subtests")
 add_custom_target(test_unit_math_fwd_tests)
@@ -116,7 +107,7 @@ add_dependencies(test_unit_math_fwd_tests
   test_unit_math_fwd_meta_subtests
   test_unit_math_fwd_prob_subtests)
 
-newset_test_labels(test_unit_math_fwd_tests "unit_math_fwd")
+set_test_labels(test_unit_math_fwd_tests "unit_math_fwd")
 
 add_custom_target(test_unit_math_tests)
 add_dependencies(test_unit_math_tests
@@ -147,7 +138,7 @@ add_dependencies(test_unit_math_tests
   test_unit_math_rev_functor_subtests
   test_unit_math_rev_meta_subtests
   test_unit_math_rev_prob_subtests)
-newset_test_labels(test_unit_math_tests "unit_math_subtest")
+set_test_labels(test_unit_math_tests "unit_math_subtest")
 
 
 
@@ -160,7 +151,7 @@ add_dependencies(test_unit_math_prim_tests
   test_unit_math_prim_functor_subtests
   test_unit_math_prim_meta_subtests
   test_unit_math_prim_prob_subtests)
-newset_test_labels(test_unit_math_prim_tests "unit_math_prim")
+set_test_labels(test_unit_math_prim_tests "unit_math_prim")
 
 message("Adding unit_math_rev")
 add_custom_target(test_unit_math_rev_tests)
@@ -171,7 +162,7 @@ add_dependencies(test_unit_math_rev_tests
   test_unit_math_rev_functor_subtests
   test_unit_math_rev_meta_subtests
   test_unit_math_rev_prob_subtests)
-newset_test_labels(test_unit_math_rev_tests "unit_math_rev")
+set_test_labels(test_unit_math_rev_tests "unit_math_rev")
 
 
 message("Adding test_unit_math_prim_rev_tests")
@@ -188,14 +179,14 @@ add_dependencies(test_unit_math_prim_rev_tests
   test_unit_math_rev_functor_subtests
   test_unit_math_rev_meta_subtests
   test_unit_math_rev_prob_subtests)
-newset_test_labels(test_unit_math_prim_rev_tests "unit_math_prim_rev")
+set_test_labels(test_unit_math_prim_rev_tests "unit_math_prim_rev")
 
 
 message("Adding test_unit_math_mpi_subtests")
 add_custom_target(test_unit_math_mpi_tests)
 add_dependencies(test_unit_math_mpi_tests
   test_unit_math_prim_functor_subtests test_unit_math_rev_functor_subtests)
-newset_test_labels(test_unit_math_mpi_tests "unit_math_mpi_subtest")
+set_test_labels(test_unit_math_mpi_tests "unit_math_mpi_subtest")
 
 
-newset_test_labels(test_unit_math_prim_err_subtests "unit_math_prim_err")
+set_test_labels(test_unit_math_prim_err_subtests "unit_math_prim_err")

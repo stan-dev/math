@@ -74,5 +74,5 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_NO_RANGE_CHECKS=ON
         cd build
         make -j4 test_unit_math_prim_err_subtests
-        cd test
-        ctest -R "unit_math_prim_err"
+        ctest --label-regex unit_math_prim_err
+"
