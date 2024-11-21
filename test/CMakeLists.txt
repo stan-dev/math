@@ -1,4 +1,26 @@
 # Unit Tests
+## Get all properties that cmake supports
+execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+## Convert command output into a CMake list
+STRING(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+STRING(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+
+list(REMOVE_DUPLICATES CMAKE_PROPERTY_LIST)
+
+function(print_target_properties tgt)
+    if(NOT TARGET ${tgt})
+      message("There is no target named '${tgt}'")
+      return()
+    endif()
+
+    foreach (prop ${CMAKE_PROPERTY_LIST})
+        string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
+        get_target_property(propval ${tgt} ${prop})
+        if (propval)
+            message ("${tgt} ${prop} = ${propval}")
+        endif()
+    endforeach(prop)
+endfunction(print_target_properties)
 
 # Compile one test manually so that we can reuse precompile headers
 add_executable(dae_test ${CMAKE_CURRENT_SOURCE_DIR}/unit/math/rev/functor/pph_dae_typed_test.cpp)
@@ -25,6 +47,7 @@ if (STAN_MPI)
   target_link_libraries(dae_test Boost::mpi MPI::MPI_CXX)
 endif()
 
+define_property(TARGET PROPERTY SUB_TESTS BRIEF_DOCS "Subtests for a test target")
 
 # Adds a test target for
 # 1. Each directory under the specified test directory
@@ -53,10 +76,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
   foreach(dir IN LISTS UNIQUE_DIRS)
     file(GLOB CPP_FILES_IN_DIR "${dir}/*test.cpp")
     list(APPEND ALL_TEST_FILES ${CPP_FILES_IN_DIR})  # Add files to global list
-
+    message(STATUS "Adding test target for: ${dir}")
     # Generate a safe test target name from the directory path
     string(REPLACE "${CMAKE_SOURCE_DIR}/" "" RELATIVE_DIR ${dir})
     string(REPLACE "/" "_" TEST_TARGET_NAME ${RELATIVE_DIR})
+    message(STATUS "Test target name: ${TEST_TARGET_NAME}")
     if(TEST_TARGET_NAME STREQUAL "")
       set(TEST_TARGET_NAME "root")
     endif()
@@ -65,10 +89,13 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     if (NOT TARGET ${TEST_TARGET_NAME})
       # Add executable and related commands only if there are source files
       if (CPP_FILES_IN_DIR)
+        set(ALL_SUB_TEST_TARGETS "")
+        # Build subtests
         foreach(cpp_file IN LISTS CPP_FILES_IN_DIR)
           string(REPLACE "${CMAKE_SOURCE_DIR}/" "" RELATIVE_FILE ${cpp_file})
           string(REPLACE "/" "_" TMP_TEST_TARGET_NAME ${RELATIVE_FILE})
           string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
+          list(APPEND ALL_SUB_TEST_TARGETS ${SUB_TEST_TARGET_NAME})
           add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
           target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
@@ -85,12 +112,21 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           endif()
           # Register the test with CTest
           add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
+          set_property(TEST ${SUB_TEST_TARGET_NAME}
+           PROPERTY LABELS ${TEST_TARGET_NAME})
         endforeach()
-        message(STATUS "Adding grouped test ${TEST_TARGET_NAME} for ${dir}")
+        # target for all subtests
+        add_custom_target(${TEST_TARGET_NAME}_subtests)
+        add_dependencies(${TEST_TARGET_NAME}_subtests ${ALL_SUB_TEST_TARGETS})
+        set_property(TARGET ${TEST_TARGET_NAME}_subtests PROPERTY SUBTESTS ${ALL_SUB_TEST_TARGETS})
+        print_target_properties(${TEST_TARGET_NAME}_subtests)
+        message(STATUS "${TEST_TARGET_NAME}_subtests build")
+
+        message(STATUS "${TEST_TARGET_NAME} grouped test for ${dir}")
         add_executable(${TEST_TARGET_NAME} ${CPP_FILES_IN_DIR})
         # Configure target properties such as include directories and linked libraries
         target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
-        target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1)
+        target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1 -Wno-misleading-indentation)
         target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
         target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
@@ -103,7 +139,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         if (STAN_MPI)
           target_link_libraries(${TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
         endif()
-
+#        message(STATUS "${ALL_TEST_TARGETS} ")
           # Register the test with CTest
         add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
         list(APPEND ALL_TEST_TARGETS ${TEST_TARGET_NAME})
@@ -117,7 +153,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
   if(ALL_TEST_FILES)
     message(STATUS "Adding single test target for all tests ${folder_test_name}_test for ${test_directory}")
     add_executable(${folder_test_name}_test ${ALL_TEST_FILES})
-    target_compile_options(${folder_test_name}_test PUBLIC -O1)
+    target_compile_options(${folder_test_name}_test PUBLIC -O1 -Wno-misleading-indentation)
     target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR})
     target_precompile_headers(${folder_test_name}_test REUSE_FROM ${target_pch})
     target_link_libraries(${folder_test_name}_test
@@ -135,11 +171,13 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     # Register the combined test with CTest
     add_test(${test_directory}_test ${SINGLE_TARGET_HPP} COMMAND ${folder_test_name}_test)
   endif()
+  if (FALSE)
   if (ALL_TEST_TARGETS)
-  add_custom_target(${folder_test_name}_subtests)
-  add_dependencies(${folder_test_name}_subtests ${ALL_TEST_TARGETS})
-  message(STATUS "Adding ${folder_test_name}_subtests to build")
+    add_custom_target(${folder_test_name}_subtests)
+    add_dependencies(${folder_test_name}_subtests ${ALL_TEST_TARGETS})
+    message(STATUS "Adding ${folder_test_name}_subtests to build")
     message(STATUS "${ALL_TEST_TARGETS} ")
+  endif()
   endif()
 endfunction()
 

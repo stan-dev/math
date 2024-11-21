@@ -49,7 +49,7 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j4 unit_math_prim_rev_subtests
+        make -j4 test_unit_math_prim_rev_test
         cd test
         ctest -R "unit_math_prim_rev"
 
@@ -93,7 +93,7 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j4 unit_math_fwd_nonfun_mix_subtests
+        make -j4 test_unit_math_fwd_nonfun_mix_subtests
         cd test
         ctest -R "unit_math_fwd_nonfun_mix"
 
@@ -134,7 +134,7 @@ jobs:
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
         cd build
-        make -j4 test_unit_math_mix_fun
+        make -j4 test_unit_math_mix_fun_subtests
         cd test
         ctest -L "unit_math_mix_fun"
 

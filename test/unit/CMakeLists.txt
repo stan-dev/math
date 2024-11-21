@@ -32,201 +32,165 @@ target_compile_options(unit_pch PRIVATE -O1)
 add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR}/math unit_math unit_pch)
 
 message("Adding unit_math_opencl_subtests")
-add_custom_target(unit_math_opencl_subtests)
-add_dependencies(unit_math_opencl_subtests
-test_unit_math_opencl test_unit_math_opencl_device_functions
-test_unit_math_opencl_kernel_generator
-test_unit_math_opencl_prim test_unit_math_opencl_rev)
-set_property(TEST test_unit_math_opencl
-  PROPERTY LABELS "unit_math_opencl")
-set_property(TEST test_unit_math_opencl_device_functions
-  PROPERTY LABELS "unit_math_opencl")
-set_property(TEST test_unit_math_opencl_kernel_generator
-  PROPERTY LABELS "unit_math_opencl")
-set_property(TEST test_unit_math_opencl_prim
-  PROPERTY LABELS "unit_math_opencl")
-set_property(TEST test_unit_math_opencl_rev
-  PROPERTY LABELS "unit_math_opencl")
+if (FALSE)
+
+
+endif()
+
+
+function(set_test_labels target label)
+  get_property(SUBTESTS TARGET test_unit_math_prim_functor_subtests PROPERTY MANUALLY_ADDED_DEPENDENCIES)
+  #loop over the subtests and and set the labels
+  foreach(subtest ${SUBTESTS})
+    set_property(TEST ${subtest} PROPERTY LABELS label)
+  endforeach()
+endfunction()
+
+function(newset_test_labels target label)
+  get_property(SUBTESTS TARGET ${target} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
+  # Loop over the subtests
+  foreach(subtest ${SUBTESTS})
+    string(FIND "${subtest}" "_test" INDEX REVERSE)
+    if(INDEX GREATER -1)
+      message("{subset} ends with the suffix.")
+      # Set the labels for tests ending with "_test"
+      set_property(TEST ${subtest} PROPERTY LABELS ${label})
+    else()
+      message(STATUS "RECURSE on ${subtest}")
+      # Recursively call set_test_labels for other targets
+      set_test_labels(subtest ${label})
+    endif()
+  endforeach()
+endfunction()
+
+add_custom_target(test_unit_math_opencl_tests)
+add_dependencies(test_unit_math_opencl_tests
+test_unit_math_opencl_subtests test_unit_math_opencl_device_functions_subtests
+test_unit_math_opencl_kernel_generator_subtests
+test_unit_math_opencl_prim_subtests test_unit_math_opencl_rev_subtests)
+newset_test_labels(test_unit_math_opencl_tests "unit_math_opencl")
 
 message("Adding unit_math_mix_subtests")
-add_custom_target(unit_math_mix_subtests)
-add_dependencies(unit_math_mix_subtests test_unit_math_mix_core
-  test_unit_math_mix_fun test_unit_math_mix_functor
-  test_unit_math_mix_meta test_unit_math_mix_prob)
-set_property(TEST test_unit_math_mix_core
-  PROPERTY LABELS "unit_math_mix")
-set_property(TEST test_unit_math_mix_fun
-  PROPERTY LABELS "unit_math_mix")
-set_property(TEST test_unit_math_mix_fun
-  PROPERTY LABELS "unit_math_mix_fun")
-set_property(TEST test_unit_math_mix_functor
-  PROPERTY LABELS "unit_math_mix")
-set_property(TEST test_unit_math_mix_meta
-  PROPERTY LABELS "unit_math_mix")
-set_property(TEST test_unit_math_mix_prob
-  PROPERTY LABELS "unit_math_mix")
+add_custom_target(test_unit_math_mix_tests)
+add_dependencies(test_unit_math_mix_tests
+test_unit_math_mix_core_subtests
+test_unit_math_mix_fun_subtests
+test_unit_math_mix_functor_subtests
+test_unit_math_mix_constraint_subtests
+test_unit_math_mix_meta_subtests
+test_unit_math_mix_prob_subtests)
+newset_test_labels(test_unit_math_mix_tests "unit_math_mix")
+newset_test_labels(test_unit_math_mix_fun_subtests "unit_math_mix_fun")
 
-add_custom_target(unit_math_mix_nonfun_subtests)
-add_dependencies(unit_math_mix_nonfun_subtests
-  test_unit_math_mix_core test_unit_math_mix_functor
-  test_unit_math_mix_meta test_unit_math_mix_prob)
-set_property(TEST test_unit_math_mix_core
-  PROPERTY LABELS "unit_math_mix_nonfun")
-set_property(TEST test_unit_math_mix_functor
-  PROPERTY LABELS "unit_math_mix_nonfun")
-set_property(TEST test_unit_math_mix_meta
-  PROPERTY LABELS "unit_math_mix_nonfun")
-set_property(TEST test_unit_math_mix_prob
-  PROPERTY LABELS "unit_math_mix_nonfun")
+add_custom_target(test_unit_math_mix_nonfun_tests)
+add_dependencies(test_unit_math_mix_nonfun_tests
+test_unit_math_mix_core_subtests
+test_unit_math_mix_functor_subtests
+test_unit_math_mix_meta_subtests
+test_unit_math_mix_prob_subtests)
+newset_test_labels(test_unit_math_mix_nonfun_tests "unit_math_mix_nonfun")
 
 message("Adding unit_math_fwd_nonfun_mix_subtests")
-add_custom_target(unit_math_fwd_nonfun_mix_subtests)
-add_dependencies(unit_math_fwd_nonfun_mix_subtests
-  test_unit_math_mix_core test_unit_math_mix_functor
-  test_unit_math_mix_meta test_unit_math_mix_prob
-  test_unit_math_fwd_core test_unit_math_fwd_fun
-  test_unit_math_fwd_functor test_unit_math_fwd_meta
-  test_unit_math_fwd_prob)
-set_property(TEST test_unit_math_fwd_core
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_fwd_fun
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_fwd_functor
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_fwd_meta
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_fwd_prob
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_mix_core
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_mix_functor
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_mix_meta
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
-set_property(TEST test_unit_math_mix_prob
-  PROPERTY LABELS "unit_math_fwd_nonfun_mix")
+add_custom_target(test_unit_math_fwd_nonfun_mix_tests)
+add_dependencies(test_unit_math_fwd_nonfun_mix_tests
+  test_unit_math_fwd_core_subtests
+  test_unit_math_fwd_fun_subtests
+  test_unit_math_fwd_functor_subtests
+  test_unit_math_fwd_meta_subtests
+  test_unit_math_fwd_prob_subtests
+  test_unit_math_mix_core_subtests
+  test_unit_math_mix_functor_subtests
+  test_unit_math_mix_meta_subtests
+  test_unit_math_mix_prob_subtests)
+newset_test_labels(test_unit_math_fwd_nonfun_mix_tests "unit_math_fwd_nonfun_mix")
 
 message("Adding unit_math_fwd_subtests")
-add_custom_target(unit_math_fwd_subtests)
-add_dependencies(unit_math_fwd_subtests
-  test_unit_math_fwd_core test_unit_math_fwd_fun
-  test_unit_math_fwd_functor test_unit_math_fwd_meta
-  test_unit_math_fwd_prob)
-set_property(TEST test_unit_math_fwd_core
-  PROPERTY LABELS "unit_math_fwd")
-set_property(TEST test_unit_math_fwd_fun
-  PROPERTY LABELS "unit_math_fwd")
-set_property(TEST test_unit_math_fwd_functor
-  PROPERTY LABELS "unit_math_fwd")
-set_property(TEST test_unit_math_fwd_meta
-  PROPERTY LABELS "unit_math_fwd")
-set_property(TEST test_unit_math_fwd_prob
-  PROPERTY LABELS "unit_math_fwd")
+add_custom_target(test_unit_math_fwd_tests)
+add_dependencies(test_unit_math_fwd_tests
+  test_unit_math_fwd_core_subtests
+  test_unit_math_fwd_fun_subtests
+  test_unit_math_fwd_functor_subtests
+  test_unit_math_fwd_meta_subtests
+  test_unit_math_fwd_prob_subtests)
 
-message("Adding unit_math_prim_subtests")
-add_custom_target(unit_math_prim_subtests)
-add_dependencies(unit_math_prim_subtests
-  test_unit_math_prim_core test_unit_math_prim_err
-  test_unit_math_prim_fun test_unit_math_prim_functor
-  test_unit_math_prim_meta test_unit_math_prim_prob)
-set_property(TEST test_unit_math_prim_core
-  PROPERTY LABELS "unit_math_prim")
-set_property(TEST test_unit_math_prim_err
-  PROPERTY LABELS "unit_math_prim")
-set_property(TEST test_unit_math_prim_fun
-  PROPERTY LABELS "unit_math_prim")
-set_property(TEST test_unit_math_prim_functor
-  PROPERTY LABELS "unit_math_prim")
-set_property(TEST test_unit_math_prim_meta
-  PROPERTY LABELS "unit_math_prim")
-set_property(TEST test_unit_math_prim_prob
-  PROPERTY LABELS "unit_math_prim")
+newset_test_labels(test_unit_math_fwd_tests "unit_math_fwd")
 
-message("Adding unit_math_rev_subtests")
-add_custom_target(unit_math_rev_subtests)
-add_dependencies(unit_math_rev_subtests
-  test_unit_math_rev_core test_unit_math_rev_err
-  test_unit_math_rev_fun test_unit_math_rev_functor
-  test_unit_math_rev_meta test_unit_math_rev_prob)
-set_property(TEST test_unit_math_rev_core
-  PROPERTY LABELS "unit_math_rev")
-set_property(TEST test_unit_math_rev_err
-  PROPERTY LABELS "unit_math_rev")
-set_property(TEST test_unit_math_rev_fun
-  PROPERTY LABELS "unit_math_rev")
-set_property(TEST test_unit_math_rev_functor
-  PROPERTY LABELS "unit_math_rev")
-set_property(TEST test_unit_math_rev_meta
-  PROPERTY LABELS "unit_math_rev")
-set_property(TEST test_unit_math_rev_prob
-  PROPERTY LABELS "unit_math_rev")
-
-message("Adding unit_math_prim_rev_subtests")
-add_custom_target(unit_math_prim_rev_subtests)
-add_dependencies(unit_math_prim_rev_subtests
-  test_unit_math_prim_core test_unit_math_prim_err
-  test_unit_math_prim_fun test_unit_math_prim_functor
-  test_unit_math_prim_meta test_unit_math_prim_prob
-  test_unit_math_rev_core test_unit_math_rev_err
-  test_unit_math_rev_fun test_unit_math_rev_functor
-  test_unit_math_rev_meta test_unit_math_rev_prob)
-set_property(TEST test_unit_math_prim_core
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_prim_err
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_prim_fun
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_prim_functor
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_prim_meta
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_prim_prob
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_core
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_err
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_fun
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_functor
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_meta
-  PROPERTY LABELS "unit_math_prim_rev")
-set_property(TEST test_unit_math_rev_prob
-  PROPERTY LABELS "unit_math_prim_rev")
-
-message("Adding unit_math_prim_subtests")
-add_custom_target(unit_math_mpi_subtests)
-add_dependencies(unit_math_mpi_subtests
-  test_unit_math_prim_functor test_unit_math_rev_functor)  
-set_property(TEST test_unit_math_prim_functor PROPERTY LABELS "unit_math_mpi_subtest")
-set_property(TEST test_unit_math_rev_functor PROPERTY LABELS "unit_math_mpi_subtest")
+add_custom_target(test_unit_math_tests)
+add_dependencies(test_unit_math_tests
+  test_unit_math_subtests
+  test_unit_math_fwd_subtests
+  test_unit_math_fwd_core_subtests
+  test_unit_math_fwd_fun_subtests
+  test_unit_math_fwd_functor_subtests
+  test_unit_math_fwd_meta_subtests
+  test_unit_math_fwd_prob_subtests
+  test_unit_math_memory_subtests
+  test_unit_math_mix_subtests
+  test_unit_math_mix_core_subtests
+  test_unit_math_mix_fun_subtests
+  test_unit_math_mix_functor_subtests
+  test_unit_math_mix_meta_subtests
+  test_unit_math_mix_prob_subtests
+  test_unit_math_prim_core_subtests
+  test_unit_math_prim_err_subtests
+  test_unit_math_prim_fun_subtests
+  test_unit_math_prim_functor_subtests
+  test_unit_math_prim_meta_subtests
+  test_unit_math_prim_prob_subtests
+  test_unit_math_rev_subtests
+  test_unit_math_rev_core_subtests
+  test_unit_math_rev_err_subtests
+  test_unit_math_rev_fun_subtests
+  test_unit_math_rev_functor_subtests
+  test_unit_math_rev_meta_subtests
+  test_unit_math_rev_prob_subtests)
+newset_test_labels(test_unit_math_tests "unit_math_subtest")
 
 
-set_property(TEST test_unit_math PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd_core PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd_fun PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd_functor PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd_meta PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_fwd_prob PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_memory PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix_core PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix_fun PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix_functor PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix_meta PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_mix_prob PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_core PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_err PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_fun PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_functor PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_meta PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_prim_prob PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_core PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_err PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_fun PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_functor PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_meta PROPERTY LABELS "unit_math_subtest")
-set_property(TEST test_unit_math_rev_prob PROPERTY LABELS "unit_math_subtest")
+
+message("Adding unit_math_prim")
+add_custom_target(test_unit_math_prim_tests)
+add_dependencies(test_unit_math_prim_tests
+  test_unit_math_prim_core_subtests
+  test_unit_math_prim_err_subtests
+  test_unit_math_prim_fun_subtests
+  test_unit_math_prim_functor_subtests
+  test_unit_math_prim_meta_subtests
+  test_unit_math_prim_prob_subtests)
+newset_test_labels(test_unit_math_prim_tests "unit_math_prim")
+
+message("Adding unit_math_rev")
+add_custom_target(test_unit_math_rev_tests)
+add_dependencies(test_unit_math_rev_tests
+  test_unit_math_rev_core_subtests
+  test_unit_math_rev_err_subtests
+  test_unit_math_rev_fun_subtests
+  test_unit_math_rev_functor_subtests
+  test_unit_math_rev_meta_subtests
+  test_unit_math_rev_prob_subtests)
+newset_test_labels(test_unit_math_rev_tests "unit_math_rev")
+
+
+message("Adding test_unit_math_prim_rev_tests")
+add_custom_target(test_unit_math_prim_rev_tests)
+add_dependencies(test_unit_math_prim_rev_tests
+  test_unit_math_prim_err_subtests
+  test_unit_math_prim_fun_subtests
+  test_unit_math_prim_functor_subtests
+  test_unit_math_prim_meta_subtests
+  test_unit_math_prim_prob_subtests
+  test_unit_math_rev_core_subtests
+  test_unit_math_rev_err_subtests
+  test_unit_math_rev_fun_subtests
+  test_unit_math_rev_functor_subtests
+  test_unit_math_rev_meta_subtests
+  test_unit_math_rev_prob_subtests)
+newset_test_labels(test_unit_math_prim_rev_tests "unit_math_prim_rev")
+
+
+message("Adding test_unit_math_mpi_subtests")
+add_custom_target(test_unit_math_mpi_tests)
+add_dependencies(test_unit_math_mpi_tests
+  test_unit_math_prim_functor_subtests test_unit_math_rev_functor_subtests)
+newset_test_labels(test_unit_math_mpi_tests "unit_math_mpi_subtest")
+
