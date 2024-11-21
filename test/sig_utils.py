@@ -75,6 +75,7 @@ special_arg_values = {
     "acosh": [1.4],
     "algebra_solver": [None, None, None, None, None, None, None, 10],
     "algebra_solver_newton": [None, None, None, None, None, None, None, 10],
+    "beta_neg_binomial_rng": [1.1, 3.1, 8.1],
     "log1m_exp": [-0.6],
     "categorical_rng": [simplex, None],
     "categorical_lpmf": [None, simplex],
