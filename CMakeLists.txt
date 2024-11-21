@@ -29,6 +29,16 @@ if(POLICY CMP0069)
   cmake_policy(SET CMP0069 NEW)
 endif()
 
+ # Print all selected user options
+message(STATUS "Stan Math Library Configuration:")
+message(STATUS "  Build Documentation: ${STAN_BUILD_DOCS}")
+message(STATUS "  Test Headers: ${STAN_TEST_HEADERS}")
+message(STATUS "  Disable Range Checks: ${STAN_NO_RANGE_CHECKS}")
+message(STATUS "  Enable MPI: ${STAN_MPI}")
+message(STATUS "  Enable OpenCL: ${STAN_OPENCL}")
+message(STATUS "  Enable Threads: ${STAN_THREADS}")
+
+
 # Set compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-deprecated-declarations)
