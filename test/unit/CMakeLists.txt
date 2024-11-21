@@ -49,45 +49,48 @@ endfunction()
 function(newset_test_labels target label)
   get_property(SUBTESTS TARGET ${target} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
   # Loop over the subtests
+  message(STATUS "{target} dependencies: ${SUBTESTS}")
   foreach(subtest ${SUBTESTS})
     string(FIND "${subtest}" "_test" INDEX REVERSE)
+    message("Checking: ${subtest}")
     if(INDEX GREATER -1)
-      message("{subset} ends with the suffix.")
+      message("${subtest} ends with the suffix.")
       # Set the labels for tests ending with "_test"
       set_property(TEST ${subtest} PROPERTY LABELS ${label})
     else()
       message(STATUS "RECURSE on ${subtest}")
       # Recursively call set_test_labels for other targets
-      set_test_labels(subtest ${label})
+      newset_test_labels(${subtest} ${label})
+      message(STATUS "FINISH on ${subtest}")
     endif()
   endforeach()
 endfunction()
 
 add_custom_target(test_unit_math_opencl_tests)
 add_dependencies(test_unit_math_opencl_tests
-test_unit_math_opencl_subtests test_unit_math_opencl_device_functions_subtests
-test_unit_math_opencl_kernel_generator_subtests
-test_unit_math_opencl_prim_subtests test_unit_math_opencl_rev_subtests)
+  test_unit_math_opencl_subtests test_unit_math_opencl_device_functions_subtests
+  test_unit_math_opencl_kernel_generator_subtests
+  test_unit_math_opencl_prim_subtests test_unit_math_opencl_rev_subtests)
 newset_test_labels(test_unit_math_opencl_tests "unit_math_opencl")
 
 message("Adding unit_math_mix_subtests")
 add_custom_target(test_unit_math_mix_tests)
 add_dependencies(test_unit_math_mix_tests
-test_unit_math_mix_core_subtests
-test_unit_math_mix_fun_subtests
-test_unit_math_mix_functor_subtests
-test_unit_math_mix_constraint_subtests
-test_unit_math_mix_meta_subtests
-test_unit_math_mix_prob_subtests)
+  test_unit_math_mix_core_subtests
+  test_unit_math_mix_fun_subtests
+  test_unit_math_mix_functor_subtests
+  test_unit_math_mix_constraint_subtests
+  test_unit_math_mix_meta_subtests
+  test_unit_math_mix_prob_subtests)
 newset_test_labels(test_unit_math_mix_tests "unit_math_mix")
 newset_test_labels(test_unit_math_mix_fun_subtests "unit_math_mix_fun")
 
 add_custom_target(test_unit_math_mix_nonfun_tests)
 add_dependencies(test_unit_math_mix_nonfun_tests
-test_unit_math_mix_core_subtests
-test_unit_math_mix_functor_subtests
-test_unit_math_mix_meta_subtests
-test_unit_math_mix_prob_subtests)
+  test_unit_math_mix_core_subtests
+  test_unit_math_mix_functor_subtests
+  test_unit_math_mix_meta_subtests
+  test_unit_math_mix_prob_subtests)
 newset_test_labels(test_unit_math_mix_nonfun_tests "unit_math_mix_nonfun")
 
 message("Adding unit_math_fwd_nonfun_mix_subtests")
@@ -194,3 +197,5 @@ add_dependencies(test_unit_math_mpi_tests
   test_unit_math_prim_functor_subtests test_unit_math_rev_functor_subtests)
 newset_test_labels(test_unit_math_mpi_tests "unit_math_mpi_subtest")
 
+
+newset_test_labels(test_unit_math_prim_err_subtests "unit_math_prim_err")

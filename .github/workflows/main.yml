@@ -37,10 +37,10 @@ jobs:
       if: runner.os == 'Windows'
       run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
-    - name: Build Math libs
-      shell: powershell
-      run: |
-        make -f make/standalone math-libs -j4
+#    - name: Build Math libs
+#      shell: powershell
+#      run: |
+#        make -f make/standalone math-libs -j4
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
