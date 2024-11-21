@@ -46,7 +46,7 @@ jobs:
     - name: Run header tests
       shell: powershell
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_TEST_HEADERS=ON
         cd build
         make -j2 test-headers
 
@@ -59,7 +59,7 @@ jobs:
 
     - name: Run header tests
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_TEST_HEADERS=ON
         cd build
         make -j2 test-headers
   no_range_checks:
