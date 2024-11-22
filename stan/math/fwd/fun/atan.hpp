@@ -3,8 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/atanh.hpp>
+#include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/atan.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 #include <complex>
 
@@ -13,7 +14,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> atan(const fvar<T>& x) {
-  using std::atan;
   return fvar<T>(atan(x.val_), x.d_ / (1 + square(x.val_)));
 }
 

@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_REV_FUN_LOG_SOFTMAX_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log_softmax.hpp>
-#include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/log_softmax.hpp>
 #include <cmath>
 #include <vector>
 

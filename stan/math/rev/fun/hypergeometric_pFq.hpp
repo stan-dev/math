@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_HYPERGEOMETRIC_PFQ_HPP
 #define STAN_MATH_REV_FUN_HYPERGEOMETRIC_PFQ_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 
 namespace stan {
 namespace math {
@@ -35,15 +35,15 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
       pfq_val, [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
         auto grad_tuple = grad_pFq<grad_a, grad_b, grad_z>(
             pfq_val, arena_a.val(), arena_b.val(), value_of(z));
-        if (grad_a) {
+        if constexpr (grad_a) {
           forward_as<promote_scalar_t<var, Ta>>(arena_a).adj()
               += vi.adj() * std::get<0>(grad_tuple);
         }
-        if (grad_b) {
+        if constexpr (grad_b) {
           forward_as<promote_scalar_t<var, Tb>>(arena_b).adj()
               += vi.adj() * std::get<1>(grad_tuple);
         }
-        if (grad_z) {
+        if constexpr (grad_z) {
           forward_as<promote_scalar_t<var, Tz>>(z).adj()
               += vi.adj() * std::get<2>(grad_tuple);
         }

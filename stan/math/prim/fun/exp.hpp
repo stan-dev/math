@@ -11,6 +11,35 @@
 
 namespace stan {
 namespace math {
+
+/**
+ * Return the natural (base e) exponentiation of the specified
+ * complex argument.
+ *
+ * @tparam V `Arithmetic` type
+ * @param x input
+ * @return natural exponentiation of specified number
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto exp(const T x) {
+  return std::exp(x);
+}
+
+/**
+ * Return the natural (base e) complex exponentiation of the specified
+ * complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` type
+ * @param x complex number
+ * @return natural exponentiation of specified complex number
+ * @see documentation for `std::complex` for boundary condition and
+ * branch cut details
+ */
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto exp(const T x) {
+  return std::exp(x);
+}
+
 /**
  * Structure to wrap `exp()` so that it can be
  * vectorized.
@@ -25,7 +54,6 @@ struct exp_fun {
    */
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::exp;
     return exp(x);
   }
 };
@@ -39,11 +67,7 @@ struct exp_fun {
  * @param[in] x container
  * @return Elementwise application of exponentiation to the argument.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr,
-    require_not_var_matrix_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
 }
@@ -57,7 +81,7 @@ inline auto exp(const Container& x) {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().exp(); });

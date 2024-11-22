@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_FWD_FUN_TCROSSPROD_HPP
 #define STAN_MATH_FWD_FUN_TCROSSPROD_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
-#include <stan/math/fwd/fun/multiply.hpp>
 
 namespace stan {
 namespace math {
@@ -18,7 +18,13 @@ tcrossprod(const EigMat& m) {
     return {};
   }
   const auto& m_ref = to_ref(m);
-  return m_ref * m_ref.transpose();
+  auto ret = multiply(m_ref, m_ref.transpose());
+  if constexpr (is_stan_scalar<decltype(ret)>::value) {
+    return Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                         EigMat::RowsAtCompileTime>{{ret}};
+  } else {
+    return ret;
+  }
 }
 
 }  // namespace math

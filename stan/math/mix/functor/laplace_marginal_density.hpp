@@ -4,8 +4,10 @@
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
-#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <Eigen/Sparse>
 #include <Eigen/LU>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -159,6 +161,15 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
   return W_root;
 }
 
+
+template <typename... Args>
+struct is_all_arithmetic : std::disjunction<std::is_arithmetic<scalar_type_t<std::decay_t<Args>>>...> {};
+
+template <typename... Args>
+struct is_all_arithmetic<std::tuple<Args...>> {
+  static constexpr bool value = (is_all_arithmetic<Args>::value &&...);
+};
+
 /**
  * For a latent Gaussian model with hyperparameters phi and eta,
  * latent variables theta, and observations y, this function computes
@@ -214,13 +225,13 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  *
  */
 template <typename D, typename LLTupleArgs, typename CovarFun,
-          typename ThetaVec, typename Eta, typename... Args,
-          require_all_st_arithmetic<Eta, ThetaVec, Args...>* = nullptr,
+          typename ThetaVec, typename Eta, typename CovarArgs,
+          require_t<is_all_arithmetic<Eta, ThetaVec, CovarArgs>>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
     D&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
     const Eta& eta, const ThetaVec& theta_0, std::ostream* msgs,
-    const laplace_options& options, Args&&... covar_args) {
+    const laplace_options& options, CovarArgs&& covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -234,7 +245,9 @@ inline laplace_density_estimates laplace_marginal_density_est(
   check_nonnegative("laplace_marginal", "max_steps_line_search",
                     options.max_steps_line_search);
 
-  Eigen::MatrixXd covariance = covariance_function(covar_args..., msgs);
+  Eigen::MatrixXd covariance = stan::math::apply([msgs, &covariance_function](auto&&... args) {
+    return covariance_function(args..., msgs);
+  }, covar_args);
 
   auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
     throw std::domain_error(
@@ -505,26 +518,37 @@ inline laplace_density_estimates laplace_marginal_density_est(
  * @return the log maginal density, p(y | phi).
  */
 template <typename D, typename LLArgs, typename CovarFun, typename Eta,
-          typename ThetaVec, typename... Args, require_eigen_t<Eta>* = nullptr,
-          require_arithmetic_t<return_type_t<Eta, Args...>>* = nullptr,
+          typename ThetaVec, typename CovarArgs, 
+          require_eigen_t<Eta>* = nullptr,
+          require_arithmetic_t<return_type_t<Eta>>* = nullptr,
+          require_t<is_all_arithmetic<CovarArgs>>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline double laplace_marginal_density(D&& ll_fun, LLArgs&& ll_args,
                                        CovarFun&& covariance_function,
                                        const Eta& eta, const ThetaVec& theta_0,
                                        std::ostream* msgs,
                                        const laplace_options& options,
-                                       Args&&... args) {
+                                       CovarArgs&& covar_args) {
   return laplace_marginal_density_est(ll_fun, ll_args, covariance_function, eta,
                                       value_of(theta_0), msgs, options,
-                                      to_ref(value_of(args))...)
-      .lmd;
+                                      to_ref(value_of(covar_args))).lmd;
 }
 
 template <typename T>
 using has_var_scalar_type = is_var<scalar_type_t<T>>;
 
 template <typename... Types>
-using is_any_var = disjunction<is_var<scalar_type_t<Types>>...>;
+struct is_any_var {
+  static constexpr bool value = (has_var_scalar_type<std::decay_t<Types>>::value ||...);
+};
+
+template <typename... Types>
+struct is_any_var<std::tuple<Types...>> {
+  static constexpr bool value = (is_any_var<std::decay_t<Types>>::value ||...);
+};
+
+template <typename... Types>
+constexpr bool is_any_var_v = is_any_var<Types...>::value;
 
 /**
  * For a latent Gaussian model with global parameters phi, latent
@@ -559,26 +583,20 @@ using is_any_var = disjunction<is_var<scalar_type_t<Types>>...>;
  * @return the log maginal density, p(y | phi).
  */
 template <typename D, typename LLArgs, typename CovarFun, typename ThetaVec,
-          typename Eta, typename... Args, require_eigen_t<Eta>* = nullptr,
-          require_var_t<return_type_t<ThetaVec, Eta, Args...>>* = nullptr,
+          typename Eta, typename CovarArgs, require_eigen_t<Eta>* = nullptr,
+          require_t<is_any_var<ThetaVec, Eta, CovarArgs>>* = nullptr,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
                                      CovarFun&& covariance_function,
                                      const Eta& eta, const ThetaVec& theta_0,
                                      std::ostream* msgs,
                                      const laplace_options& options,
-                                     Args&&... args) {
-  auto args_refs = stan::math::apply(
-      [](auto&&... args) { return std::make_tuple(to_ref(args)...); },
-      std::forward_as_tuple(std::forward<Args>(args)...));
+                                     CovarArgs&& covar_args) {
+  auto args_refs = to_ref(std::forward<CovarArgs>(covar_args));
   auto eta_arena = to_arena(eta);
-  auto md_est = stan::math::apply(
-      [&](auto&&... v_args) {
-        return laplace_marginal_density_est(
+  auto md_est = laplace_marginal_density_est(
             ll_fun, ll_args, covariance_function, value_of(eta_arena),
-            value_of(theta_0), msgs, options, value_of(v_args)...);
-      },
-      args_refs);
+            value_of(theta_0), msgs, options, value_of(args_refs));
   const Eigen::Index theta_size = md_est.theta.size();
   const Eigen::Index eta_size = eta_arena.size();
   // Solver 1, 2
@@ -644,10 +662,8 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
         options.hessian_block_size, ll_args, msgs);
     s2 = partial_parm.head(theta_size);
   }
-  auto args_arena = stan::math::apply(
-      [](auto&&... args) { return std::make_tuple(to_arena(args)...); },
-      args_refs);
-  if (is_any_var<Args...>::value && !is_constant<Eta>::value && eta_size != 0) {
+  auto args_arena = to_arena(args_refs);
+  if (is_any_var_v<CovarArgs> && !is_constant<Eta>::value && eta_size != 0) {
     {
       const nested_rev_autodiff nested;
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
@@ -694,7 +710,7 @@ inline auto laplace_marginal_density(const D& ll_fun, LLArgs&& ll_args,
             internal::update_adjoints(eta_arena, eta_adj_arena, vi);
           });
     }
-  } else if constexpr (is_any_var<scalar_type_t<Args>...>::value) {
+  } else if constexpr (is_any_var_v<scalar_type_t<CovarArgs>>) {
     {
       const nested_rev_autodiff nested;
       arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> K_var

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_READ_CORR_L_HPP
 #define STAN_MATH_REV_FUN_READ_CORR_L_HPP
 
-#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <cmath>
 #include <complex>
 

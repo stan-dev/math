@@ -3,7 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/rev/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/Phi_approx.hpp>
 
 namespace stan {
 namespace math {

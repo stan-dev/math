@@ -1,13 +1,8 @@
 #ifndef STAN_MATH_REV_FUN_ACOSH_HPP
 #define STAN_MATH_REV_FUN_ACOSH_HPP
 
-#include <stan/math/prim/core.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/acosh.hpp>
-#include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
@@ -15,6 +10,11 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/polar.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/acosh.hpp>
 #include <cmath>
 #include <complex>
 

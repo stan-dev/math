@@ -1,5 +1,0 @@
-[Primary],assert
-Module,Header,From
-config,boost/config.hpp,boost/assert.hpp boost/assert/source_location.hpp
-config,boost/cstdint.hpp,boost/assert/source_location.hpp
-

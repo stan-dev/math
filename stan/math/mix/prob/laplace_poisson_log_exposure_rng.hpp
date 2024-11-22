@@ -39,7 +39,7 @@ namespace math {
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // CHECK -- right return type
 laplace_marginal_tol_poisson_2_log_rng(
@@ -48,7 +48,7 @@ laplace_marginal_tol_poisson_2_log_rng(
     CovarFun&& covariance_function, RNG& rng, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs, Args&&... args) {
+    const int max_steps_line_search, std::ostream* msgs, CovarArgs&& covar_args) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -57,7 +57,7 @@ laplace_marginal_tol_poisson_2_log_rng(
                           covariance_function, eta_dummy, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<Args>(args)...);
+                          std::forward<CovarArgs>(covar_args));
 }
 
 /**
@@ -86,14 +86,14 @@ laplace_marginal_tol_poisson_2_log_rng(
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // TODO(Steve): Allow scalar or std vector return
 laplace_marginal_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, Args&&... args) {
+    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, CovarArgs&& covar_args) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
@@ -101,7 +101,7 @@ laplace_marginal_poisson_2_log_rng(
                           covariance_function, eta_dummy, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<Args>(args)...);
+                          std::forward<CovarArgs>(covar_args));
 }
 
 }  // namespace math

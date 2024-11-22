@@ -2,11 +2,12 @@
 #define STAN_MATH_REV_FUN_SVD_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/err/check_nonzero_size.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/prim/err/check_nonzero_size.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/svd.hpp>
 
 namespace stan {
 namespace math {

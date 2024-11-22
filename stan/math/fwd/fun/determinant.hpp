@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_FWD_FUN_DETERMINANT_HPP
 #define STAN_MATH_FWD_FUN_DETERMINANT_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/fwd/core.hpp>
 
 namespace stan {
 namespace math {

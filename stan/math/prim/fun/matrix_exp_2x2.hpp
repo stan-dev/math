@@ -24,11 +24,6 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
 matrix_exp_2x2(const EigMat& A) {
-  using std::cosh;
-  using std::exp;
-  using std::sinh;
-  using std::sqrt;
-
   using T = value_type_t<EigMat>;
   T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);

@@ -2,9 +2,10 @@
 #define STAN_MATH_MIX_FUNCTOR_HESSIAN_TIMES_VECTOR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/fwd/core.hpp>
+#include <stdexcept>
+#include <vector>
 
 namespace stan {
 namespace math {

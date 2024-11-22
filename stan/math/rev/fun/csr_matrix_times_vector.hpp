@@ -2,10 +2,11 @@
 #define STAN_MATH_REV_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>
+#include <stan/math/prim/fun/csr_matrix_times_vector.hpp>
 #include <vector>
 
 namespace stan {

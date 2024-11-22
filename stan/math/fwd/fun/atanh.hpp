@@ -3,8 +3,10 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/square.hpp>
+#include <stan/math/fwd/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/atanh.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 #include <complex>
 

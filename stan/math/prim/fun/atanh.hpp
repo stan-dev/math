@@ -20,11 +20,12 @@ namespace math {
  * returns infinity.
  * Returns nan for nan argument.
  *
- * @param[in] x Argument.
+ * @param[in] x `Arithmetic` Argument.
  * @return Inverse hyperbolic tangent of the argument.
  * @throw std::domain_error If argument is not in [-1, 1].
  */
-inline double atanh(double x) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double atanh(const T x) {
   if (is_nan(x)) {
     return x;
   } else {
@@ -34,14 +35,17 @@ inline double atanh(double x) {
 }
 
 /**
- * Integer version of atanh.
+ * Return the inverse hyperbolic tangent of the specified value.
+ * An argument of -1 returns negative infinity and an argument of 1
+ * returns infinity.
+ * Returns nan for nan argument.
  *
- * @param[in] x Argument.
+ * @param[in] x `complex<Arithmetic>` Argument.
  * @return Inverse hyperbolic tangent of the argument.
- * @throw std::domain_error If argument is less than 1.
+ * @throw std::domain_error If argument is not in [-1, 1].
  */
-inline double atanh(int x) {
-  check_bounded("atanh", "x", x, -1, 1);
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto atanh(const T x) {
   return std::atanh(x);
 }
 
@@ -72,11 +76,25 @@ struct atanh_fun {
  * @param x container
  * @return Elementwise atanh of members of container.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
+}
+
+/**
+ * Return the elementwise application of <code>atanh()</code> to
+ * specified argument container.  The return type promotes the
+ * underlying scalar argument type to double if it is an integer,
+ * and otherwise is the argument type.
+ *
+ * @tparam T type of container
+ * @param x container
+ * @return Elementwise atanh of members of container.
+ */
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto atanh(const Container& x) {
+  return apply_scalar_unary<atanh_fun, Container>::apply(x);
 }
 
 namespace internal {

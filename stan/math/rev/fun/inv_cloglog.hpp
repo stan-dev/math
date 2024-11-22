@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
 #include <cmath>
 

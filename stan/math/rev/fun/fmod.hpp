@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/fmod.hpp>
 #include <cmath>
 
 namespace stan {

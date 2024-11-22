@@ -47,7 +47,7 @@ namespace math {
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_bernoulli_logit_rng(
@@ -56,7 +56,7 @@ laplace_marginal_tol_bernoulli_logit_rng(
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
     const int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs,
-    Args&&... args) {
+    CovarArgs&& covar_args) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta_dummy;
@@ -64,7 +64,7 @@ laplace_marginal_tol_bernoulli_logit_rng(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), covariance_function,
       eta_dummy, theta_0, rng, msgs, ops, std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
+      std::forward<PredTuple>(pred_tuple), std::forward<CovarArgs>(covar_args));
 }
 
 /**
@@ -106,7 +106,7 @@ laplace_marginal_tol_bernoulli_logit_rng(
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_bernoulli_logit_rng(const std::vector<int>& y,
@@ -115,14 +115,14 @@ laplace_marginal_bernoulli_logit_rng(const std::vector<int>& y,
                                      CovarFun&& covariance_function,
                                      TrainTuple&& train_tuple,
                                      PredTuple&& pred_tuple, RNG& rng,
-                                     std::ostream* msgs, Args&&... args) {
+                                     std::ostream* msgs, CovarArgs&& covar_args) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta_dummy;
   return laplace_base_rng(bernoulli_logit_likelihood{},
                           std::forward_as_tuple(to_vector(y), n_samples),
                           covariance_function, eta_dummy, theta_0, ops,
                           std::make_tuple(), std::make_tuple(), rng, msgs,
-                          std::forward<Args>(args)...);
+                          std::forward<CovarArgs>(covar_args));
 }
 
 }  // namespace math

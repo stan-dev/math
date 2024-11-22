@@ -21,8 +21,14 @@ struct scalar_type {
   using type = std::decay_t<T>;
 };
 
+
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;
+
+template <typename... Args>
+struct scalar_type<std::tuple<Args...>, void> {
+  using type = std::tuple<scalar_type_t<Args>...>;
+};
 
 }  // namespace stan
 #endif

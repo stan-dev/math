@@ -17,36 +17,34 @@ namespace stan {
 namespace math {
 namespace internal {
 template <typename Ta, typename Tb, typename Tz,
-          typename T_return = return_type_t<Ta, Tb, Tz>,
-          typename ArrayAT = Eigen::Array<scalar_type_t<Ta>, 3, 1>,
-          typename ArrayBT = Eigen::Array<scalar_type_t<Ta>, 3, 1>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
-T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
-                                   double precision = 1e-6,
-                                   int max_steps = 1e5) {
-  ArrayAT a_array = as_array_or_scalar(a);
-  ArrayBT b_array = append_row(as_array_or_scalar(b), 1.0);
+inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
+    const Ta& a, const Tb& b, const Tz& z, double precision = 1e-6,
+    int max_steps = 1e5) {
+  using T_return = return_type_t<Ta, Tb, Tz>;
+  Eigen::Array<scalar_type_t<Ta>, 3, 1> a_array = as_array_or_scalar(a);
+  Eigen::Array<scalar_type_t<Tb>, 3, 1> b_array
+      = append_row(as_array_or_scalar(b), 1.0);
   check_3F2_converges("hypergeometric_3F2", a_array[0], a_array[1], a_array[2],
                       b_array[0], b_array[1], z);
 
   T_return t_acc = 1.0;
   T_return log_t = 0.0;
-  T_return log_z = log(fabs(z));
-  Eigen::ArrayXi a_signs = sign(value_of_rec(a_array));
-  Eigen::ArrayXi b_signs = sign(value_of_rec(b_array));
-  plain_type_t<decltype(a_array)> apk = a_array;
-  plain_type_t<decltype(b_array)> bpk = b_array;
+  auto log_z = log(fabs(z));
+  Eigen::Array<int, 3, 1> a_signs = sign(value_of_rec(a_array));
+  Eigen::Array<int, 3, 1> b_signs = sign(value_of_rec(b_array));
   int z_sign = sign(value_of_rec(z));
   int t_sign = z_sign * a_signs.prod() * b_signs.prod();
 
   int k = 0;
-  while (k <= max_steps && log_t >= log(precision)) {
+  const double log_precision = log(precision);
+  while (k <= max_steps && log_t >= log_precision) {
     // Replace zero values with 1 prior to taking the log so that we accumulate
     // 0.0 rather than -inf
-    const auto& abs_apk = math::fabs((apk == 0).select(1.0, apk));
-    const auto& abs_bpk = math::fabs((bpk == 0).select(1.0, bpk));
-    T_return p = sum(log(abs_apk)) - sum(log(abs_bpk));
+    const auto& abs_apk = math::fabs((a_array == 0).select(1.0, a_array));
+    const auto& abs_bpk = math::fabs((b_array == 0).select(1.0, b_array));
+    auto p = sum(log(abs_apk)) - sum(log(abs_bpk));
     if (p == NEGATIVE_INFTY) {
       return t_acc;
     }
@@ -59,10 +57,10 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
                          "overflow hypergeometric function did not converge.");
     }
     k++;
-    apk.array() += 1.0;
-    bpk.array() += 1.0;
-    a_signs = sign(value_of_rec(apk));
-    b_signs = sign(value_of_rec(bpk));
+    a_array += 1.0;
+    b_array += 1.0;
+    a_signs = sign(value_of_rec(a_array));
+    b_signs = sign(value_of_rec(b_array));
     t_sign = a_signs.prod() * b_signs.prod() * t_sign;
   }
   if (k == max_steps) {
@@ -115,7 +113,7 @@ T_return hypergeometric_3F2_infsum(const Ta& a, const Tb& b, const Tz& z,
 template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
-auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
+inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   check_3F2_converges("hypergeometric_3F2", a[0], a[1], a[2], b[0], b[1], z);
   // Boost's pFq throws convergence errors in some cases, fallback to naive
   // infinite-sum approach (tests pass for these)
@@ -143,8 +141,9 @@ auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
  */
 template <typename Ta, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta, Tb, Tz>* = nullptr>
-auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
-                        const std::initializer_list<Tb>& b, const Tz& z) {
+inline auto hypergeometric_3F2(const std::initializer_list<Ta>& a,
+                               const std::initializer_list<Tb>& b,
+                               const Tz& z) {
   return hypergeometric_3F2(std::vector<Ta>(a), std::vector<Tb>(b), z);
 }
 

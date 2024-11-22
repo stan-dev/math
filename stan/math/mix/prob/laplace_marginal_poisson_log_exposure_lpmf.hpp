@@ -70,14 +70,14 @@ struct poisson_log_exposure_likelihood {
  * @param[in] args model parameters and data for the covariance functor.
  */
 template <typename CovarFun, typename YeVec, typename ThetaVec,
-          typename... Args,
+          typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
     double tolerance, int64_t max_num_steps, const int hessian_block_size,
     const int solver, const int max_steps_line_search, std::ostream* msgs,
-    Args&&... args) {
+    CovarArgs&& covar_args) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
@@ -88,7 +88,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
       poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
-      ops, std::forward<Args>(args)...);
+      ops, std::forward<CovarArgs>(covar_args));
 }
 
 /**
@@ -112,19 +112,19 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
  * @param[in] args model parameters and data for the covariance functor.
  */
 template <typename CovarFun, typename YeVec, typename ThetaVec,
-          typename... Args,
+          typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
-    std::ostream* msgs, Args&&... args) {
+    std::ostream* msgs, CovarArgs&& covar_args) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
-      ops, std::forward<Args>(args)...);
+      ops, std::forward<CovarArgs>(covar_args));
 }
 
 }  // namespace math

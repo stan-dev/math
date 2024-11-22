@@ -4,6 +4,7 @@
 // #include <stan/math/mix/laplace/hessian_times_vector.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
 #include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
 #include <Eigen/Sparse>
 
 namespace stan {

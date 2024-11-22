@@ -41,7 +41,7 @@ namespace math {
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
@@ -49,7 +49,7 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
     const int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs,
-    Args&&... args) {
+    CovarArgs&& covar_args) {
   Eigen::VectorXd eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -58,7 +58,7 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
                           covariance_function, eta_dummy, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<Args>(args)...);
+                          std::forward<CovarArgs>(covar_args));
 }
 
 /**
@@ -88,13 +88,13 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
  *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args,
+          typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, RNG& rng,
-    std::ostream* msgs, Args&&... args) {
+    std::ostream* msgs, CovarArgs&& covar_args) {
   Eigen::VectorXd eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_likelihood{},
@@ -102,7 +102,7 @@ inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
                           covariance_function, eta_dummy, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<Args>(args)...);
+                          std::forward<CovarArgs>(covar_args));
 }
 
 }  // namespace math

@@ -11,6 +11,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <vector>
 
 namespace stan {
