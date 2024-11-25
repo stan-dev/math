@@ -66,7 +66,7 @@ inline Eigen::VectorXd laplace_base_rng(
         return covariance_function(args_val..., msgs);
       },
       std::tuple_cat(std::forward<PredTuple>(pred_tuple), covar_args_val));
-  VectorXd pred_mean = covariance_pred * md_est.l_grad.head(theta_0.rows());
+  VectorXd pred_mean = covariance_pred * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(
         md_est.L, md_est.W_r * covariance_pred);

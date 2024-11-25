@@ -26,7 +26,7 @@ void grad_tr_mat_times_hessian(
 
   Matrix<var, Dynamic, 1> x_var(x.size());
   for (int i = 0; i < x.size(); ++i) {
-    x_var(i) = x(i);
+    x_var.coeffRef(i) = x(i);
   }
 
   Matrix<fvar<var>, Dynamic, 1> x_fvar(x.size());

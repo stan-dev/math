@@ -45,7 +45,8 @@ inline arena_t<T> to_arena(T&& a) {
  */
 template <typename T, require_same_t<T, arena_t<T>>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr,
-          require_not_std_vector_t<T>* = nullptr>
+          require_not_std_vector_t<T>* = nullptr,
+          require_not_tuple_t<T>* = nullptr>
 inline std::remove_reference_t<T> to_arena(T&& a) {
   // intentionally never returning a reference. If an object is just
   // referenced it will likely go out of scope before it is used.
@@ -133,10 +134,16 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
   return res;
 }
 
+/**
+ * Copies objects inside of tuple onto ad stack
+ * @tparam Tuple `std::tuple` type
+ * @param tup A tuple with inner objects to be move to the ad stack
+ * @return A tuple with inner types moved into the AD stack
+ */
 template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto to_arena(Tuple&& tup) {
   return stan::math::apply([](auto&&... args) {
-    return std::make_tuple(to_arena(std::forward<decltype(args)>(args)...));
+    return std::make_tuple(to_arena(std::forward<decltype(args)>(args))...);
   }, std::forward<Tuple>(tup));
 }
 

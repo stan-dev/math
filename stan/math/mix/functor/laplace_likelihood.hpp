@@ -28,9 +28,11 @@ namespace internal {
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
-inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
+inline auto log_likelihood(F&& f, Theta&& theta, Eta&& eta,
                            Args&&... args) {
-  return f(theta, eta, args...);
+  return std::forward<F>(f)(std::forward<Theta>(theta), 
+    std::forward<Eta>(eta), 
+    std::forward<Args>(args)...);
 }
 
 /**
@@ -50,15 +52,16 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
-inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
+inline auto diff(F&& f, const Theta& theta,
                                         const Eta& eta,
-                                        Eigen::VectorXd& gradient,
                                         const Eigen::Index hessian_block_size,
                                         Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
   const Eigen::Index eta_size = eta.size();
+  Eigen::Matrix<double, Theta::RowsAtCompileTime, Theta::ColsAtCompileTime> theta_gradient;
+  Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_gradient;
   {
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
@@ -66,14 +69,10 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
 
     var f_var = f(theta_var, eta_var, args...);
     grad(f_var.vi_);
-    gradient.resize(theta_size + eta_size);
-    for (Eigen::Index i = 0; i < theta_size; i++) {
-      gradient(i) = theta_var(i).adj();
-    }
-    for (Eigen::Index i = 0; i < eta_size; i++) {
-      gradient(theta_size + i) = eta_var(i).adj();
-    }
+    theta_gradient = theta_var.adj();
+    eta_gradient = eta_var.adj();
   }
+  
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
     Eigen::VectorXd hessian_v = hessian_times_vector(f, theta, eta, v, args...);
@@ -82,9 +81,9 @@ inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
     for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian_theta.insert(i, i) = hessian_v(i);
     }
-    return hessian_theta;
+    return std::make_tuple(std::move(theta_gradient), std::move(eta_gradient), (-hessian_theta).eval());
   } else {
-    return hessian_block_diag(f, theta, eta, hessian_block_size, args...);
+    return std::make_tuple(std::move(theta_gradient), std::move(eta_gradient), (-hessian_block_diag(f, theta, eta, hessian_block_size, args...)).eval());
   }
 }
 
@@ -272,19 +271,18 @@ template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline Eigen::SparseMatrix<double> diff(F&& f, const Theta& theta,
+inline auto diff(F&& f, const Theta& theta,
                                         const Eta& eta,
-                                        Eigen::VectorXd& gradient,
                                         const Eigen::Index hessian_block_size,
                                         TupleArgs&& ll_tuple,
                                         std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto&& eta, auto&& gradient,
+      [](auto&& f, auto&& theta, auto&& eta,
          auto hessian_block_size, auto* msgs, auto&&... args) {
-        return internal::diff(f, theta, eta, gradient, hessian_block_size,
+        return internal::diff(f, theta, eta, hessian_block_size,
                               args..., msgs);
       },
-      ll_tuple, f, theta, eta, gradient, hessian_block_size, msgs);
+      ll_tuple, f, theta, eta, hessian_block_size, msgs);
 }
 
 /**
