@@ -15,7 +15,7 @@ TEST(MathMixMatFun, logAddExp) {
   stan::test::expect_ad(f, x1, y1);
 
   // Test with negative infinity
-  
+
   stan::test::expect_ad(f, stan::math::NEGATIVE_INFTY, 1.0);
   stan::test::expect_ad(f, 1.0, stan::math::NEGATIVE_INFTY);
 
@@ -65,7 +65,7 @@ TEST(MathMixMatFun, log_add_exp_mismatched_sizes) {
 
   std::vector<double> x{1.0, 2.0};
   std::vector<double> y{1.0, 2.0, 3.0};
-  
+
   stan::test::expect_ad(f, x, y);
   stan::test::expect_ad(f, y, x);
 }

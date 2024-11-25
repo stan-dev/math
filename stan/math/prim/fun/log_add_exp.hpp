@@ -26,8 +26,7 @@ namespace math {
  * @param b the second variable
  */
 
-template <typename T1, typename T2,
-          require_all_not_st_var<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_not_st_var<T1, T2>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
   if (a == NEGATIVE_INFTY) {
@@ -39,7 +38,7 @@ inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
   if (a == INFTY || b == INFTY) {
     return INFTY;
   }
-  
+
   const double max_val = std::max(a, b);
   return max_val + std::log(std::exp(a - max_val) + std::exp(b - max_val));
 }
@@ -57,41 +56,46 @@ inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
  */
 template <typename T, require_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto log_add_exp(const T& a, const T& b) {
-    if (a.size() != b.size()) {
-        throw std::invalid_argument("Binary function: size of x (" + std::to_string(a.size()) + ") and size of y (" + std::to_string(b.size()) + ") must match in size");
+  if (a.size() != b.size()) {
+    throw std::invalid_argument("Binary function: size of x ("
+                                + std::to_string(a.size()) + ") and size of y ("
+                                + std::to_string(b.size())
+                                + ") must match in size");
+  }
+
+  const size_t min_size = std::min(a.size(), b.size());
+  using return_t = return_type_t<T>;
+
+  std::vector<return_t> result(min_size);
+
+  for (size_t i = 0; i < min_size; ++i) {
+    if (a[i] == NEGATIVE_INFTY) {
+      result[i] = b[i];  // log_add_exp(-∞, b) = b
+    } else if (b[i] == NEGATIVE_INFTY) {
+      result[i] = a[i];  // log_add_exp(a, -∞) = a
+    } else if (a[i] == INFTY || b[i] == INFTY) {
+      result[i] = INFTY;  // log_add_exp(∞, b) = ∞
+    } else {
+      // Log-add-exp trick
+      const double max_val = std::max(a[i], b[i]);
+      result[i]
+          = max_val
+            + std::log(std::exp(a[i] - max_val) + std::exp(b[i] - max_val));
     }
+  }
 
-    const size_t min_size = std::min(a.size(), b.size());
-    using return_t = return_type_t<T>;
-
-    std::vector<return_t> result(min_size);
-
-    for (size_t i = 0; i < min_size; ++i) {
-        if (a[i] == NEGATIVE_INFTY) {
-            result[i] = b[i]; // log_add_exp(-∞, b) = b
-        } else if (b[i] == NEGATIVE_INFTY) {
-            result[i] = a[i]; // log_add_exp(a, -∞) = a
-        } else if (a[i] == INFTY || b[i] == INFTY) {
-            result[i] = INFTY; // log_add_exp(∞, b) = ∞
-        } else {
-            // Log-add-exp trick
-            const double max_val = std::max(a[i], b[i]);
-            result[i] = max_val + std::log(std::exp(a[i] - max_val) + std::exp(b[i] - max_val));
-        }
-    }
-
-    return result;
+  return result;
 }
 
 /**
  *  Enables the vectorized application of the log_add_exp function,
  * when the first and/or second arguments are containers.
- * 
- * @tparam T1 
- * @tparam T2 
- * @param a 
- * @param b 
- * @return auto 
+ *
+ * @tparam T1
+ * @tparam T2
+ * @param a
+ * @param b
+ * @return auto
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_add_exp(const T1& a, const T2& b) {

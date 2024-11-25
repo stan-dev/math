@@ -85,4 +85,4 @@ inline T log_add_exp(const T& x, const T& y) {
 }  // namespace math
 }  // namespace stan
 
-#endif 
+#endif
