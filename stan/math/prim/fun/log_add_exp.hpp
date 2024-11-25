@@ -27,21 +27,21 @@ namespace math {
  */
 
 template <typename T1, typename T2,
-          require_all_not_st_var<T1, T2>* = nullptr,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
+    require_all_not_st_var<T1, T2>* = nullptr,
+    require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
-  if (a == NEGATIVE_INFTY) {
+    if (a == NEGATIVE_INFTY) {
     return b;
-  }
-  if (b == NEGATIVE_INFTY) {
+    }
+    if (b == NEGATIVE_INFTY) {
     return a;
-  }
-  if (a == INFTY || b == INFTY) {
+    }
+    if (a == INFTY || b == INFTY) {
     return INFTY;
-  }
-  
-  const double max_val = std::max(a, b);
-  return max_val + std::log(std::exp(a - max_val) + std::exp(b - max_val));
+    }
+
+    const double max_val = std::max(a, b);
+    return max_val + std::log(std::exp(a - max_val) + std::exp(b - max_val));
 }
 
 /**
@@ -95,8 +95,9 @@ inline auto log_add_exp(const T& a, const T& b) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_add_exp(const T1& a, const T2& b) {
-  return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return log_sum_exp(c, d); });
+    return apply_scalar_binary(
+        a, b, [](const auto& c, const auto& d) { return log_sum_exp(c, d); }
+    );
 }
 
 }  // namespace math

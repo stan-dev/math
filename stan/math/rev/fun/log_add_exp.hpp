@@ -19,31 +19,31 @@ namespace math {
 namespace internal {
 
 class log_add_exp_vv_vari : public op_vv_vari {
- public:
-  log_add_exp_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(log_add_exp(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    double exp_a = std::exp(avi_->val_);
-    double exp_b = std::exp(bvi_->val_);
-    double sum_exp = exp_a + exp_b;
+    public:
+        log_add_exp_vv_vari(vari* avi, vari* bvi)
+            : op_vv_vari(log_add_exp(avi->val_, bvi->val_), avi, bvi) {}
+    void chain() {
+        double exp_a = std::exp(avi_->val_);
+        double exp_b = std::exp(bvi_->val_);
+        double sum_exp = exp_a + exp_b;
 
-    avi_->adj_ += adj_ * (exp_a / sum_exp);
-    bvi_->adj_ += adj_ * (exp_b / sum_exp);
-  }
+        avi_->adj_ += adj_ * (exp_a / sum_exp);
+        bvi_->adj_ += adj_ * (exp_b / sum_exp);
+    }
 };
 
 class log_add_exp_vd_vari : public op_vd_vari {
- public:
-  log_add_exp_vd_vari(vari* avi, double b)
-      : op_vd_vari(log_add_exp(avi->val_, b), avi, b) {}
-  void chain() {
-    if (val_ == NEGATIVE_INFTY) {
-      avi_->adj_ += adj_;
-    } else {
-      double exp_a = std::exp(avi_->val_);
-      avi_->adj_ += adj_ * (exp_a / (exp_a + std::exp(bd_)));
+    public:
+        log_add_exp_vd_vari(vari* avi, double b)
+            : op_vd_vari(log_add_exp(avi->val_, b), avi, b) {}
+    void chain() {
+        if (val_ == NEGATIVE_INFTY) {
+        avi_->adj_ += adj_;
+        } else {
+        double exp_a = std::exp(avi_->val_);
+        avi_->adj_ += adj_ * (exp_a / (exp_a + std::exp(bd_)));
+        }
     }
-  }
 };
 
 }  // namespace internal
@@ -52,21 +52,21 @@ class log_add_exp_vd_vari : public op_vd_vari {
  * Returns the element-wise log sum of exponentials.
  */
 inline var log_add_exp(const var& a, const var& b) {
-  return var(new internal::log_add_exp_vv_vari(a.vi_, b.vi_));
+    return var(new internal::log_add_exp_vv_vari(a.vi_, b.vi_));
 }
 
 /**
  * Returns the log sum of exponentials.
  */
 inline var log_add_exp(const var& a, double b) {
-  return var(new internal::log_add_exp_vd_vari(a.vi_, b));
+    return var(new internal::log_add_exp_vd_vari(a.vi_, b));
 }
 
 /**
  * Returns the element-wise log sum of exponentials.
  */
 inline var log_add_exp(double a, const var& b) {
-  return var(new internal::log_add_exp_vd_vari(b.vi_, a));
+    return var(new internal::log_add_exp_vd_vari(b.vi_, a));
 }
 
 /**
@@ -78,8 +78,9 @@ inline var log_add_exp(double a, const var& b) {
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr>
 inline T log_add_exp(const T& x, const T& y) {
-  return apply_scalar_binary(
-      x, y, [](const auto& a, const auto& b) { return log_add_exp(a, b); });
+    return apply_scalar_binary(
+        x, y, [](const auto& a, const auto& b) { return log_add_exp(a, b); }
+    );
 }
 
 }  // namespace math

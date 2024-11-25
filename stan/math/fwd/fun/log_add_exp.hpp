@@ -51,6 +51,7 @@ inline fvar<T> log_add_exp(double x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> log_add_exp(const Eigen::Matrix<fvar<T>, -1, -1>& a,
                             const Eigen::Matrix<fvar<T>, -1, -1>& b) {
+    
     using fvar_mat_type = Eigen::Matrix<fvar<T>, -1, -1>;
     fvar_mat_type result(a.rows(), a.cols());
 
