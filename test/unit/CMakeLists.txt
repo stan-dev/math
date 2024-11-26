@@ -14,6 +14,14 @@ target_precompile_headers(unit_pch PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:<gtest/gtest.h$<ANGLE-R>>"
     "$<$<COMPILE_LANGUAGE:C>:<stddef.h$<ANGLE-R>>"
     )
+target_compile_options(unit_pch PUBLIC -O1 -Wno-misleading-indentation)
+if (STAN_OPENCL)
+target_link_libraries(unit_pch OpenCL::OpenCL)
+target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
+endif()
+if (STAN_MPI)
+target_link_libraries(unit_pch Boost::mpi MPI::MPI_CXX)
+endif()
 
 target_link_libraries(unit_pch
   gtest_main benchmark::benchmark TBB::tbb

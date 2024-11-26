@@ -287,8 +287,7 @@ pipeline {
                             unstash 'MathSetup'
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=1 >> make/local"
-                            }
-                            sh'''
+                            }                             sh'''
                                 CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
                                 cd build && make -j${PARALLEL} test_unit_math_opencl_tests && ctest --output-on-failure --label-regex unit_math_opencl
                             '''

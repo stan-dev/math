@@ -98,7 +98,7 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
           list(APPEND ALL_SUB_TEST_TARGETS ${SUB_TEST_TARGET_NAME})
           add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
-          target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -Wno-misleading-indentation)
+          target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -O1 -Wno-misleading-indentation)
           target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
           target_link_libraries(${SUB_TEST_TARGET_NAME}
