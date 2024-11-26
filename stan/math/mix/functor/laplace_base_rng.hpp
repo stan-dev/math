@@ -57,9 +57,8 @@ inline Eigen::VectorXd laplace_base_rng(
   auto covar_args_val = stan::math::to_ref(value_of(covar_args));
   auto eta_dbl = value_of(eta);
   auto md_est = laplace_marginal_density_est(
-            ll_fun, ll_args, covariance_function, eta_dbl, value_of(theta_0),
-            msgs, options, 
-            std::tuple_cat(std::forward<TrainTuple>(train_tuple), covar_args_val));
+            ll_fun, ll_args, eta_dbl, value_of(theta_0), covariance_function, 
+            std::tuple_cat(std::forward<TrainTuple>(train_tuple), covar_args_val), options, msgs);
   // Modified R&W method
   MatrixXd covariance_pred = apply(
       [&covariance_function, &msgs](auto&&... args_val) {

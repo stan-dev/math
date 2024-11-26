@@ -73,7 +73,8 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      covariance_function, eta_dummy, theta_0, msgs, ops, std::forward<CovarArgs>(covar_args));
+      eta_dummy, theta_0, 
+      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
@@ -88,7 +89,9 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      covariance_function, eta_dummy, theta_0, msgs, ops, std::forward<CovarArgs>(covar_args));
+      eta_dummy, theta_0, 
+      covariance_function, std::forward<CovarArgs>(covar_args),
+      ops, msgs);
 }
 
 }  // namespace math

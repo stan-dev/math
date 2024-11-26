@@ -82,9 +82,9 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(to_vector(y), y_index, n_samples, sums),
-      std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
-      tolerance, max_num_steps, hessian_block_size, solver,
-      max_steps_line_search, std::forward<CovarArgs>(covar_args));
+      eta, theta_0,
+      std::forward<CovarFun>(covariance_function), 
+      std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -119,8 +119,9 @@ inline auto laplace_marginal_neg_binomial_2_log_lpmf(
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(to_vector(y), y_index, n_samples, sums),
-      std::forward<CovarFun>(covariance_function), eta, theta_0, msgs, ops,
-      std::forward<CovarArgs>(covar_args));
+      eta, theta_0, 
+      std::forward<CovarFun>(covariance_function), 
+      std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 }  // namespace math
 }  // namespace stan

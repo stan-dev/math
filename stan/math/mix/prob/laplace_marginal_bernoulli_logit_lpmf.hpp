@@ -61,8 +61,10 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples), covariance_function,
-      eta_dummy, theta_0, msgs, ops, std::forward<CovarArgs>(covar_args));
+      std::forward_as_tuple(to_vector(y), n_samples), 
+      eta_dummy, theta_0, covariance_function,
+      std::forward<CovarArgs>(covar_args),
+      ops, msgs);
 }
 
 /**
@@ -93,8 +95,11 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples), covariance_function,
-      eta_dummy, theta_0, msgs, ops, std::forward<CovarArgs>(covar_args));
+      std::forward_as_tuple(to_vector(y), n_samples), 
+      eta_dummy, theta_0,
+      covariance_function,
+      std::forward<CovarArgs>(covar_args),
+      ops, msgs);
 }
 
 }  // namespace math

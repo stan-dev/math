@@ -36,9 +36,7 @@ inline Eigen::SparseMatrix<double> hessian_block_diag(
   Eigen::Index n_blocks = x_size / hessian_block_size;
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v.setZero();
-    for (Eigen::Index j = i; j < x_size; j += hessian_block_size) {
-      v(j) = 1;
-    }
+    v(Eigen::seq(i, x_size - 1, hessian_block_size)).setOnes();
     VectorXd Hv = hessian_times_vector(f, x, eta, v, args...);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {

@@ -60,8 +60,9 @@ inline auto laplace_marginal_tol_lpdf(
                       tolerance, max_num_steps};
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f), 
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -118,8 +119,9 @@ inline auto laplace_marginal_tol_lpdf(LFun&& L_f, LArgs&& l_args,
   Eigen::Matrix<double, 0, 0> eta;
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f), 
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -263,8 +265,9 @@ inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args, const EtaVec& eta,
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f), 
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -302,8 +305,9 @@ inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args,
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f), 
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -341,8 +345,9 @@ inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args, const EtaVec& eta,
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f), 
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -380,8 +385,9 @@ inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args,
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(std::forward<LFun>(L_f),
                                   std::forward<LArgs>(l_args),
-                                  std::forward<CovarFun>(K_f), eta, theta_0,
-                                  msgs, ops, std::forward<CovarArgs>(covar_args));
+                                  eta, theta_0,
+                                  std::forward<CovarFun>(K_f),
+                                  std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 }  // namespace math
