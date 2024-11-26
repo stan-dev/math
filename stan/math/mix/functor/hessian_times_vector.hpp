@@ -11,11 +11,10 @@ namespace stan {
 namespace math {
 
 template <typename F>
-inline void hessian_times_vector(const F& f,
-                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& v,
-                          double& fx,
-                          Eigen::Matrix<double, Eigen::Dynamic, 1>& Hv) {
+inline void hessian_times_vector(
+    const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+    const Eigen::Matrix<double, Eigen::Dynamic, 1>& v, double& fx,
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& Hv) {
   using Eigen::Matrix;
 
   // Run nested autodiff in this scope

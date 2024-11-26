@@ -142,9 +142,11 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
  */
 template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto to_arena(Tuple&& tup) {
-  return stan::math::apply([](auto&&... args) {
-    return std::make_tuple(to_arena(std::forward<decltype(args)>(args))...);
-  }, std::forward<Tuple>(tup));
+  return stan::math::apply(
+      [](auto&&... args) {
+        return std::make_tuple(to_arena(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
 }
 
 /**

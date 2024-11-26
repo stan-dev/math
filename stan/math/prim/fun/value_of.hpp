@@ -102,11 +102,12 @@ inline auto value_of(EigMat&& M) {
 
 template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto value_of(Tuple&& tup) {
-  return stan::math::apply([](auto&&... args) {
-    return std::make_tuple(value_of(std::forward<decltype(args)>(args))...);
-  }, std::forward<Tuple>(tup));
+  return stan::math::apply(
+      [](auto&&... args) {
+        return std::make_tuple(value_of(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
 }
-
 
 }  // namespace math
 }  // namespace stan

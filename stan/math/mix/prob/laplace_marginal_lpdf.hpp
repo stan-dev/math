@@ -52,17 +52,16 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           require_all_eigen_vector_t<EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_tol_lpdf(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const Theta0& theta_0,
-    CovarFun&& K_f, CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
-    const int hessian_block_size, const int solver,
+    CovarFun&& K_f, CovarArgs&& covar_args, double tolerance,
+    int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   // TEST: provisional signature to agree with parser.
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 /**
@@ -107,22 +106,18 @@ inline auto laplace_marginal_tol_lpdf(
 template <bool propto = false, typename LArgs, typename LFun, typename CovarFun,
           typename Theta0, typename CovarArgs,
           require_all_eigen_vector_t<Theta0>* = nullptr>
-inline auto laplace_marginal_tol_lpdf(LFun&& L_f, LArgs&& l_args,
-                                      const Theta0& theta_0, CovarFun&& K_f,
-                                      CovarArgs&& covar_args,
-                                      double tolerance, int64_t max_num_steps,
-                                      const int hessian_block_size,
-                                      const int solver,
-                                      const int max_steps_line_search,
-                                      std::ostream* msgs) {
+inline auto laplace_marginal_tol_lpdf(
+    LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
+    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta;
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 /**
@@ -155,8 +150,8 @@ inline auto laplace_marginal_tol_lpdf(LFun&& L_f, LArgs&& l_args,
  *              Hessian of the log likelihood. If 0, the Hessian is stored
  *              inside a vector. If the Hessian is dense, this should be the
  *              size of the Hessian.
- * @param[in] solver Type of Newton solver. Each corresponds to a distinct choice
- *               of B matrix (i.e. application SWM formula):
+ * @param[in] solver Type of Newton solver. Each corresponds to a distinct
+ * choice of B matrix (i.e. application SWM formula):
  *               1. computes square-root of negative Hessian.
  *               2. computes square-root of covariance matrix.
  *               3. computes no square-root and uses LU decomposition.
@@ -170,14 +165,14 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           typename CovarFun, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const Theta0& theta_0,
-    CovarFun&& K_f, CovarArgs&& covar_args, const double tolerance, const int64_t max_num_steps,
-    const int hessian_block_size, const int solver,
+    CovarFun&& K_f, CovarArgs&& covar_args, const double tolerance,
+    const int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   return laplace_marginal_tol_lpdf<propto>(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
-      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), tolerance,
-      max_num_steps, hessian_block_size, solver, max_steps_line_search,
-      msgs);
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args),
+      tolerance, max_num_steps, hessian_block_size, solver,
+      max_steps_line_search, msgs);
 }
 
 /**
@@ -223,15 +218,14 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_tol_lpmf(
     LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
-    CovarArgs&& covar_args,
-    const double tolerance, const int64_t max_num_steps,
+    CovarArgs&& covar_args, const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   return laplace_marginal_tol_lpdf<propto>(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args),
-      tolerance, max_num_steps, hessian_block_size,
-      solver, max_steps_line_search, msgs);
+      tolerance, max_num_steps, hessian_block_size, solver,
+      max_steps_line_search, msgs);
 }
 
 /**
@@ -265,14 +259,12 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           require_all_eigen_vector_t<EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args, const EtaVec& eta,
                                   const Theta0& theta_0, CovarFun&& K_f,
-                                  CovarArgs&& covar_args,
-                                  std::ostream* msgs) {
+                                  CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 /**
@@ -308,11 +300,10 @@ inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args,
   // TEST: provisional signature to agree with parser.
   Eigen::Matrix<double, 0, 0> eta;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 /**
@@ -346,14 +337,12 @@ template <bool propto = false, typename LFun, typename LArgs, typename EtaVec,
           require_all_eigen_vector_t<EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args, const EtaVec& eta,
                                   const Theta0& theta_0, CovarFun&& K_f,
-                                  CovarArgs&& covar_args,
-                                  std::ostream* msgs) {
+                                  CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 /**
@@ -385,16 +374,14 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           require_all_eigen_vector_t<Theta0>* = nullptr>
 inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args,
                                   const Theta0& theta_0, CovarFun&& K_f,
-                                  CovarArgs&& covar_args,
-                                  std::ostream* msgs) {
+                                  CovarArgs&& covar_args, std::ostream* msgs) {
   // TEST: provisional signature to agree with parser.
   Eigen::Matrix<double, 0, 0> eta;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_marginal_density(std::forward<LFun>(L_f),
-                                  std::forward<LArgs>(l_args),
-                                  eta, theta_0,
-                                  std::forward<CovarFun>(K_f),
-                                  std::forward<CovarArgs>(covar_args), ops, msgs);
+  return laplace_marginal_density(
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), eta, theta_0,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      msgs);
 }
 
 }  // namespace math

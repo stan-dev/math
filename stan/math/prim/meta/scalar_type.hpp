@@ -21,7 +21,6 @@ struct scalar_type {
   using type = std::decay_t<T>;
 };
 
-
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;
 
