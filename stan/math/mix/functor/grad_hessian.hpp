@@ -39,7 +39,7 @@ namespace math {
  * @param[out] grad_H Gradient of the Hessian of function at argument
  */
 template <typename F>
-void grad_hessian(
+inline void grad_hessian(
     const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x, double& fx,
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H,
     std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >&

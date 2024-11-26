@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void hessian_times_vector(const F& f,
+inline void hessian_times_vector(const F& f,
                           const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
                           const Eigen::Matrix<double, Eigen::Dynamic, 1>& v,
                           double& fx,

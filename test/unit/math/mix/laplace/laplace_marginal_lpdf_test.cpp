@@ -57,7 +57,8 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   stan::math::test::squared_kernel_functor K;
   double target = laplace_marginal_lpmf<false>(
       poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0, K,
-      nullptr, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)));
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
+      nullptr);
 
   // TODO(Steve): benchmark target against gpstuff.
   // Expected: -2.53056
@@ -75,8 +76,9 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
     target = laplace_marginal_tol_lpmf<false>(
         poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0, K,
+        std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
         tolerance, max_num_steps, hessian_block_size, solver,
-        max_steps_line_search, nullptr, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)));
+        max_steps_line_search, nullptr);
     EXPECT_NEAR(-2.53056, value_of(target), tol);
   }
 
@@ -94,8 +96,10 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0,
-              K, tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr, std::forward_as_tuple(x, alpha, rho));
+              K,
+              std::forward_as_tuple(x, alpha, rho),
+              tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
       }
@@ -127,7 +131,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
 
   double marginal_density = laplace_marginal_lpmf<false>(
       poisson_log_exposure_likelihood(), std::forward_as_tuple(ye, y), theta_0,
-      K, nullptr, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)));
+      K, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
@@ -146,8 +150,9 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_exposure_likelihood(), std::forward_as_tuple(ye, y),
-              theta_0, K, tolerance, max_num_steps, hessian_block_size,
-              solver_num, max_steps_line_search, nullptr, std::forward_as_tuple(x, alpha, rho));
+              theta_0, K, std::forward_as_tuple(x, alpha, rho),
+              tolerance, max_num_steps, hessian_block_size,
+              solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
       }
@@ -193,7 +198,8 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   stan::math::test::sqr_exp_kernel_functor K;
   double target = laplace_marginal_lpmf<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0, K,
-      nullptr, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)));
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
+      nullptr);
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
@@ -213,8 +219,9 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
-              K, tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr, std::forward_as_tuple(x, alpha, rho));
+              K, std::forward_as_tuple(x, alpha, rho),
+              tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
       }
@@ -376,9 +383,11 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
     covariance_motorcycle_functor K;
     double target = laplace_marginal_tol_lpdf<false>(
-        L, std::forward_as_tuple(y, delta_int), eta, theta0, K, tolerance,
+        L, std::forward_as_tuple(y, delta_int), eta, theta0, K,
+        std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs),
+        tolerance,
         max_num_steps, hessian_block_size, solver, max_steps_line_search,
-        nullptr, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs));
+        nullptr);
   }
   // TODO(Steve): benchmark this result against GPStuff.
   double tolerance = 1e-6;
@@ -396,9 +405,9 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         auto f = [&](auto&& eta_v, auto&& phi) {
           return laplace_marginal_tol_lpdf<false>(
               L, std::forward_as_tuple(y, delta_int), eta_v, theta0, K,
+              std::forward_as_tuple(x, phi(0), phi(1), phi(2), phi(3), n_obs),
               tolerance, max_num_steps, hessian_block_size, solver,
-              max_steps_line_search, nullptr, std::forward_as_tuple(x, phi(0), phi(1), phi(2), phi(3),
-              n_obs));
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(ad_tol, f, eta, phi_dbl);
       }

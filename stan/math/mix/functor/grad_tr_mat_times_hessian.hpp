@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void grad_tr_mat_times_hessian(
+inline void grad_tr_mat_times_hessian(
     const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
     Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH) {

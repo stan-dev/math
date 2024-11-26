@@ -49,8 +49,10 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const double tolerance,
     const int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, const ThetaVec& theta_0, CovarFun&& K_f,
-    RNG& rng, std::ostream* msgs, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, CovarArgs&& covar_args) {
+    CovarArgs&& covar_args,
+    TrainTuple&& train_tuple,
+    PredTuple&& pred_tuple,
+    RNG& rng, std::ostream* msgs) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                             tolerance, max_num_steps};
   return laplace_base_rng(std::forward<LFun>(L_f), l_args, K_f, eta, theta_0,
@@ -97,10 +99,13 @@ template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
           typename CovarArgs>
 inline Eigen::VectorXd laplace_marginal_tol_rng(
     LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
+    CovarArgs&& covar_args,
+    TrainTuple&& train_tuple,
+    PredTuple&& pred_tuple,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
-    const int max_steps_line_search, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs, CovarArgs&& covar_args) {
+    const int max_steps_line_search,
+    RNG& rng, std::ostream* msgs) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                             tolerance, max_num_steps};
   Eigen::Matrix<double, 0, 0> eta;
@@ -145,8 +150,10 @@ template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
           typename PredTuple, typename CovarArgs>
 inline Eigen::VectorXd laplace_marginal_rng(
     LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const ThetaVec& theta_0,
-    CovarFun&& K_f, TrainTuple&& train_tuple, PredTuple&& pred_tuple, RNG& rng,
-    std::ostream* msgs, CovarArgs&& covar_args) {
+    CovarFun&& K_f,
+    CovarArgs&& covar_args,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
                           K_f, eta, theta_0, ops,
@@ -187,8 +194,9 @@ template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
           typename CovarArgs>
 inline Eigen::VectorXd laplace_marginal_rng(
     LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
-    RNG& rng, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
-    std::ostream* msgs, CovarArgs&& covar_args) {
+    CovarArgs&& covar_args,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   Eigen::Matrix<double, 0, 0> eta;
   return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),

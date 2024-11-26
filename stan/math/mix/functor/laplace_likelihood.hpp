@@ -30,8 +30,8 @@ template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_t<Eta>* = nullptr>
 inline auto log_likelihood(F&& f, Theta&& theta, Eta&& eta,
                            Args&&... args) {
-  return std::forward<F>(f)(std::forward<Theta>(theta), 
-    std::forward<Eta>(eta), 
+  return std::forward<F>(f)(std::forward<Theta>(theta),
+    std::forward<Eta>(eta),
     std::forward<Args>(args)...);
 }
 
@@ -72,7 +72,7 @@ inline auto diff(F&& f, const Theta& theta,
     theta_gradient = theta_var.adj();
     eta_gradient = eta_var.adj();
   }
-  
+
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
     Eigen::VectorXd hessian_v = hessian_times_vector(f, theta, eta, v, args...);
@@ -131,9 +131,9 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
 template <typename F, typename Theta, typename Eta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
-inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
+inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
                                   const Eigen::MatrixXd& A,
-                                  int hessian_block_size, Args&&... args) {
+                                  const int hessian_block_size, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -174,14 +174,7 @@ inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
     target_ffvar += f(theta_ffvar, eta_ffvar, args...);
   }
   grad(target_ffvar.d_.d_.vi_);
-  VectorXd parm_adj(parm_size);
-  for (Eigen::Index i = 0; i < theta_size; ++i) {
-    parm_adj(i) = theta_var(i).adj();
-  }
-  for (Eigen::Index i = 0; i < eta_size; ++i) {
-    parm_adj(theta_size + i) = eta_var(i).adj();
-  }
-  return 0.5 * parm_adj;
+  return std::make_pair((0.5 * theta_var.adj()).eval(), (0.5 * eta_var.adj()).eval());
 }
 
 /**
@@ -328,7 +321,7 @@ template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline Eigen::VectorXd compute_s2(F&& f, const Theta& theta, const Eta& eta,
+inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
                                   const Eigen::MatrixXd& A,
                                   int hessian_block_size, TupleArgs&& ll_args,
                                   std::ostream* msgs) {

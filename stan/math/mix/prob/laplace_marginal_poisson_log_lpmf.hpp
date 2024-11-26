@@ -65,15 +65,16 @@ template <typename CovarFun, typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaVec& theta_0, CovarFun&& covariance_function, double tolerance,
+    const ThetaVec& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, double tolerance,
     int64_t max_num_steps, const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs, CovarArgs&& covar_args) {
+    const int max_steps_line_search, std::ostream* msgs) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      eta_dummy, theta_0, 
+      eta_dummy, theta_0,
       covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
@@ -83,13 +84,13 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               const std::vector<int>& n_samples,
                                               const ThetaVec& theta_0,
                                               CovarFun&& covariance_function,
-                                              std::ostream* msgs,
-                                              CovarArgs&& covar_args) {
+                                              CovarArgs&& covar_args,
+                                              std::ostream* msgs) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      eta_dummy, theta_0, 
+      eta_dummy, theta_0,
       covariance_function, std::forward<CovarArgs>(covar_args),
       ops, msgs);
 }

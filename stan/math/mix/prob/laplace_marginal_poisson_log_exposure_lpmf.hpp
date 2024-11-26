@@ -75,9 +75,9 @@ template <typename CovarFun, typename YeVec, typename ThetaVec,
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
     double tolerance, int64_t max_num_steps, const int hessian_block_size,
-    const int solver, const int max_steps_line_search, std::ostream* msgs,
-    CovarArgs&& covar_args) {
+    const int solver, const int max_steps_line_search, std::ostream* msgs) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
@@ -88,7 +88,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
       poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       eta_dummy, theta_0,
-      std::forward<CovarFun>(covariance_function), 
+      std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
@@ -118,14 +118,15 @@ template <typename CovarFun, typename YeVec, typename ThetaVec,
 inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
-    std::ostream* msgs, CovarArgs&& covar_args) {
+    CovarArgs&& covar_args,
+    std::ostream* msgs) {
   Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_exposure_likelihood{},
       std::forward_as_tuple(to_vector(y), ye, n_samples),
       eta_dummy, theta_0,
-      std::forward<CovarFun>(covariance_function), 
+      std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 

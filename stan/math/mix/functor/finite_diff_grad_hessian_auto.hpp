@@ -41,7 +41,7 @@ namespace math {
  * @param[out] grad_hess_fx gradient of Hessian of function at argument
  */
 template <typename F>
-void finite_diff_grad_hessian_auto(const F& f, const Eigen::VectorXd& x,
+inline void finite_diff_grad_hessian_auto(const F& f, const Eigen::VectorXd& x,
                                    double& fx, Eigen::MatrixXd& hess,
                                    std::vector<Eigen::MatrixXd>& grad_hess_fx) {
   int d = x.size();
