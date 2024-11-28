@@ -32,7 +32,6 @@ namespace math {
 template <typename T1, typename T2, require_all_not_st_var<T1, T2>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
-
   if (a == NEGATIVE_INFTY) {
     return b;
   }
@@ -60,66 +59,69 @@ inline return_type_t<T1, T2> log_add_exp(const T2& a, const T1& b) {
  */
 template <typename T, require_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto log_add_exp(const T& a, const T& b) {
+  // Check if sizes are compatible
+  if constexpr (stan::is_eigen<T>::value) {
+    // Check if both matrices/vectors have the same dimensions
+    stan::math::check_matching_dims("log_add_exp", "a", a, "b", b);
 
-    // Check if sizes are compatible
-    if constexpr (stan::is_eigen<T>::value) {
-        // Check if both matrices/vectors have the same dimensions
-        stan::math::check_matching_dims("log_add_exp", "a", a, "b", b);
+    // Determine the number of rows and columns for the result
+    size_t rows = a.rows();
+    size_t cols = b.cols();
+    using return_t = return_type_t<T>;
 
-        // Determine the number of rows and columns for the result
-        size_t rows = a.rows();
-        size_t cols = b.cols();
-        using return_t = return_type_t<T>;
+    Eigen::Matrix<return_t, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
 
-        Eigen::Matrix<return_t, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
+    // Iterate over each element
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        double a_val = (a.cols() == 1)
+                           ? a(i, 0)
+                           : a(i, j);  // Handle column vector or matrix
+        double b_val = (b.rows() == 1)
+                           ? b(0, j)
+                           : b(i, j);  // Handle row vector or matrix
 
-        // Iterate over each element
-        for (size_t i = 0; i < rows; ++i) {
-            for (size_t j = 0; j < cols; ++j) {
-                double a_val = (a.cols() == 1) ? a(i, 0) : a(i, j); // Handle column vector or matrix
-                double b_val = (b.rows() == 1) ? b(0, j) : b(i, j); // Handle row vector or matrix
-
-                if (a_val == NEGATIVE_INFTY) {
-                    result(i, j) = b_val;
-                } else if (b_val == NEGATIVE_INFTY) {
-                    result(i, j) = a_val;
-                } else if (a_val == INFTY || b_val == INFTY) {
-                    result(i, j) = INFTY;
-                } else {
-                    result(i, j) = log_sum_exp(a_val, b_val);
-                }
-            }
+        if (a_val == NEGATIVE_INFTY) {
+          result(i, j) = b_val;
+        } else if (b_val == NEGATIVE_INFTY) {
+          result(i, j) = a_val;
+        } else if (a_val == INFTY || b_val == INFTY) {
+          result(i, j) = INFTY;
+        } else {
+          result(i, j) = log_sum_exp(a_val, b_val);
         }
-
-        return result;
-    } else if constexpr (std::is_same_v<T, std::vector<typename T::value_type>>) {
-        // Handle std::vector
-        if (a.size() != b.size()) {
-            throw std::invalid_argument("Sizes of x and y must match.");
-        }
-
-        using return_t = return_type_t<T>;
-        std::vector<return_t> result(a.size());
-
-        for (size_t i = 0; i < a.size(); ++i) {
-            double a_val = a[i];
-            double b_val = b[i];
-
-            if (a_val == NEGATIVE_INFTY) {
-                result[i] = b_val;
-            } else if (b_val == NEGATIVE_INFTY) {
-                result[i] = a_val;
-            } else if (a_val == INFTY || b_val == INFTY) {
-                result[i] = INFTY;
-            } else {
-                result[i] = log_sum_exp(a_val, b_val);
-            }
-        }
-
-        return result;
-    } else {
-        throw std::invalid_argument("Unsupported container type.");
+      }
     }
+
+    return result;
+  } else if constexpr (std::is_same_v<T, std::vector<typename T::value_type>>) {
+    // Handle std::vector
+    if (a.size() != b.size()) {
+      throw std::invalid_argument("Sizes of x and y must match.");
+    }
+
+    using return_t = return_type_t<T>;
+    std::vector<return_t> result(a.size());
+
+    for (size_t i = 0; i < a.size(); ++i) {
+      double a_val = a[i];
+      double b_val = b[i];
+
+      if (a_val == NEGATIVE_INFTY) {
+        result[i] = b_val;
+      } else if (b_val == NEGATIVE_INFTY) {
+        result[i] = a_val;
+      } else if (a_val == INFTY || b_val == INFTY) {
+        result[i] = INFTY;
+      } else {
+        result[i] = log_sum_exp(a_val, b_val);
+      }
+    }
+
+    return result;
+  } else {
+    throw std::invalid_argument("Unsupported container type.");
+  }
 }
 
 /**
@@ -134,23 +136,24 @@ inline auto log_add_exp(const T& a, const T& b) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_add_exp(const T1& a, const T2& b) {
-    // Check if both are Eigen/vectors
-    if constexpr (stan::is_eigen<T1>::value && stan::is_eigen<T2>::value) {
-        // Check if both matrices/vectors have the same dimensions
-        stan::math::check_matching_dims("log_add_exp", "a", a, "b", b);
-    } else {
-        // Check if sizes are compatible for other types
-        if (a.size() != b.size()) {
-            throw std::invalid_argument("Sizes of x and y must match or be compatible.");
-        }
+  // Check if both are Eigen/vectors
+  if constexpr (stan::is_eigen<T1>::value && stan::is_eigen<T2>::value) {
+    // Check if both matrices/vectors have the same dimensions
+    stan::math::check_matching_dims("log_add_exp", "a", a, "b", b);
+  } else {
+    // Check if sizes are compatible for other types
+    if (a.size() != b.size()) {
+      throw std::invalid_argument(
+          "Sizes of x and y must match or be compatible.");
     }
+  }
 
-    // If dimensions are verified to match, apply the operation
-    return apply_scalar_binary(
+  // If dimensions are verified to match, apply the operation
+  return apply_scalar_binary(
       a, b, [](const auto& c, const auto& d) { return log_add_exp(c, d); });
 }
 
 }  // namespace math
-}  // nfamespace stan
+}  // namespace stan
 
 #endif
