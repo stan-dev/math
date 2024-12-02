@@ -74,7 +74,7 @@ struct laplace_density_estimates {
   laplace_density_estimates(double lmd_, Covar&& covariance_, Theta&& theta_,
                             WR&& W_r_, L_t&& L_, A_vec&& a_,
                             ThetaGrad&& theta_grad_, EtaGrad&& eta_grad_,
-                            LU_t&& LU_, KRoot&& K_root_)
+                            LU_t&& LU_, KRoot&& K_root_) noexcept
       : lmd(lmd_),
         covariance(std::move(covariance_)),
         theta(std::move(theta_)),

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <complex>
 #include <type_traits>
@@ -18,6 +19,9 @@ template <typename T>
 struct is_autodiff
     : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                       is_fvar<std::decay_t<T>>>::value> {};
+
+template <typename T>
+struct contains_autodiff : is_autodiff<base_type_t<T>> {};
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup autodiff_types autodiff  */

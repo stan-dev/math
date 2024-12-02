@@ -52,11 +52,9 @@ void hessian_times_vector(const F& f,
  * to handle functions which take in arguments eta, delta, delta_int,
  * and pstream.
  */
-template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr,
-          typename... Args>
+template <typename F, typename... Args>
 inline Eigen::VectorXd hessian_times_vector(const F& f,
                                             const Eigen::VectorXd& x,
-                                            const Eta& eta,
                                             const Eigen::VectorXd& v,
                                             Args&&... args) {
   nested_rev_autodiff nested;
@@ -66,7 +64,7 @@ inline Eigen::VectorXd hessian_times_vector(const F& f,
   for (Eigen::Index i = 0; i < x_size; i++) {
     x_fvar(i) = fvar<var>(x_var(i), v(i));
   }
-  fvar<var> fx_fvar = f(x_fvar, eta, args...);
+  fvar<var> fx_fvar = f(x_fvar, args...);
   grad(fx_fvar.d_.vi_);
   return x_var.adj();
 }

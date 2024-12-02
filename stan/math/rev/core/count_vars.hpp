@@ -106,7 +106,7 @@ inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
  * `count_vars_impl`
  */
 template <typename... Pargs>
-inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
+inline constexpr size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
   return count_vars_impl(count + 1, std::forward<Pargs>(args)...);
 }
 
@@ -126,14 +126,14 @@ inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
  */
 template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
           typename... Pargs>
-inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
+inline constexpr size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
   return count_vars_impl(count, std::forward<Pargs>(args)...);
 }
 
 /**
  * End count_vars_impl recursion and return total number of counted vars
  */
-inline size_t count_vars_impl(size_t count) { return count; }
+inline constexpr size_t count_vars_impl(size_t count) { return count; }
 }  // namespace internal
 
 /**
@@ -145,6 +145,13 @@ inline size_t count_vars_impl(size_t count) { return count; }
 template <typename... Pargs>
 inline size_t count_vars(Pargs&&... args) {
   return internal::count_vars_impl(0, std::forward<Pargs>(args)...);
+}
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline size_t count_vars(Tuple&& tup) {
+  return stan::math::apply([](auto&&... args) {
+    return (internal::count_vars_impl(0, std::forward<decltype(args)>(args)) +...);
+  }, std::forward<Tuple>(tup));
 }
 
 }  // namespace math

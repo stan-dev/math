@@ -147,6 +147,13 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
  */
 inline double* accumulate_adjoints(double* dest) { return dest; }
 
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline double* accumulate_adjoints(double* dest, Tuple&& tup) {
+  return apply([dest](auto&&... args) {
+    return accumulate_adjoints(dest, std::forward<decltype(args)>(args)...);
+  }, std::forward<Tuple>(tup));
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -33,6 +33,17 @@ inline auto log_likelihood(F&& f, Theta&& theta, Eta&& eta, Args&&... args) {
                             std::forward<Args>(args)...);
 }
 
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto get_vector_adjoints(Tuple&& tup) {
+  if constexpr (!is_any_arg_ad_v<Tuple>) {
+    return Eigen::Matrix<double, 0, 0>{};
+  } else {
+    const Eigen::Index num_vars = count_vars(tup);
+    Eigen::Matrix<double, -1, 1> adjoints = Eigen::Matrix<double, -1, 1>::Zeros(num_vars);
+    accumulate_adjoints(adjoints.data(), tup);
+  }
+}
+
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.
@@ -47,33 +58,37 @@ inline auto log_likelihood(F&& f, Theta&& theta, Eta&& eta, Args&&... args) {
  *                           size of each block.
  * @param args Variadic arguments for the likelihood function.
  */
-template <typename F, typename Theta, typename Eta, typename... Args,
-          require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr>
-inline auto diff(F&& f, const Theta& theta, const Eta& eta,
+template <typename F, typename Theta, typename... Args,
+          require_eigen_vector_t<Theta>* = nullptr>
+inline auto diff(F&& f, const Theta& theta,
                  const Eigen::Index hessian_block_size, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
-  const Eigen::Index eta_size = eta.size();
   Eigen::Matrix<double, Theta::RowsAtCompileTime, Theta::ColsAtCompileTime>
       theta_gradient;
-  Eigen::Matrix<double, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>
+  // TODO:(Steve) Write is any_autodiff_v
+  constexpr bool is_any_arg_ad = is_any_autodiff_v<Args>;
+  Eigen::Matrix<double, is_any_arg_ad ? -1 : 0 , is_any_arg_ad ? 1 : 0>
       eta_gradient;
   {
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
-    Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
-
-    var f_var = f(theta_var, eta_var, args...);
+    auto var_copied_args = filter_map<is_scalar_var>([](auto&& arg) {
+      // TODO:(Steve) Needs to handle std::vector
+      return std::decay_t<decltype(arg)>(value_of(arg));
+    }, args...);
+    var f_var = stan::math::apply([](f&& f, auto&& theta_var, auto&&... inner_args) {
+      return f(theta_var, inner_args...);
+    }, var_copied_args, f, theta_var);
     grad(f_var.vi_);
     theta_gradient = theta_var.adj();
-    eta_gradient = eta_var.adj();
+    eta_gradient = get_adjoints(var_copied_args);
   }
 
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
-    Eigen::VectorXd hessian_v = hessian_times_vector(f, theta, eta, v, args...);
+    Eigen::VectorXd hessian_v = hessian_times_vector(f, theta, v, args...);
     Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
     hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
     for (Eigen::Index i = 0; i < theta_size; i++) {
