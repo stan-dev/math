@@ -35,10 +35,11 @@ inline void hessian_times_vector(
   }
 }
 
-template <typename T, typename F>
+template <typename T, typename F, typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
+ require_stan_scalar_t<T>* = nullptr>
 void hessian_times_vector(const F& f,
                           const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, T& fx,
+                          const EigVec& v, T& fx,
                           Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
   using Eigen::Matrix;
   Matrix<T, Eigen::Dynamic, 1> grad;
@@ -49,14 +50,12 @@ void hessian_times_vector(const F& f,
 
 /**
  * Overload Hessian_times_vector function, under stan/math/mix/functor
- * to handle functions which take in arguments eta, delta, delta_int,
+ * to handle functions which take in arguments
  * and pstream.
  */
-template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr,
-          typename... Args>
+template <typename F, typename... Args>
 inline Eigen::VectorXd hessian_times_vector(const F& f,
                                             const Eigen::VectorXd& x,
-                                            const Eta& eta,
                                             const Eigen::VectorXd& v,
                                             Args&&... args) {
   nested_rev_autodiff nested;
@@ -66,7 +65,7 @@ inline Eigen::VectorXd hessian_times_vector(const F& f,
   for (Eigen::Index i = 0; i < x_size; i++) {
     x_fvar(i) = fvar<var>(x_var(i), v(i));
   }
-  fvar<var> fx_fvar = f(x_fvar, eta, args...);
+  fvar<var> fx_fvar = f(x_fvar, args...);
   grad(fx_fvar.d_.vi_);
   return x_var.adj();
 }

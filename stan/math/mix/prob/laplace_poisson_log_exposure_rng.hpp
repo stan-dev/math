@@ -49,12 +49,11 @@ laplace_marginal_tol_poisson_2_log_rng(
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
     const int64_t max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
                           std::forward_as_tuple(y, ye, n_samples),
-                          covariance_function, eta_dummy, theta_0, ops,
+                          covariance_function, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
                           std::forward<CovarArgs>(covar_args));
@@ -95,11 +94,10 @@ laplace_marginal_poisson_2_log_rng(
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, RNG& rng,
     std::ostream* msgs) {
-  Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
                           std::forward_as_tuple(to_vector(y), ye, n_samples),
-                          covariance_function, eta_dummy, theta_0, ops,
+                          covariance_function, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
                           std::forward<CovarArgs>(covar_args));

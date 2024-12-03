@@ -43,18 +43,20 @@ namespace math {
  * @param msgs Stream for function prints.
  * @param args Variadic arguments for likelihood function.
  */
-template <typename D, typename LLArgs, typename ThetaMatrix, typename EtaMatrix,
+template <typename D, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, class RNG, typename TrainTuple, typename PredTuple,
           typename CovarArgs,
-          require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
+          require_all_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
     D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
-    const EtaMatrix& eta, const ThetaMatrix& theta_0,
+    const ThetaMatrix& theta_0,
     const laplace_options& options, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs,
     CovarArgs&& covar_args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
+  using EtaMatrix = Eigen::Matrix<double, 0, 0>;
+  EtaMatrix eta{};
   auto covar_args_val = stan::math::to_ref(value_of(covar_args));
   auto eta_dbl = value_of(eta);
   auto md_est = laplace_marginal_density_est(

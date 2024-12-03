@@ -378,7 +378,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
     covariance_motorcycle_functor K;
     double target = laplace_marginal_tol_lpdf<false>(
-        L, std::forward_as_tuple(y, delta_int), eta, theta0, K,
+        L, std::forward_as_tuple(y, delta_int, eta), theta0, K,
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                               n_obs),
         tolerance, max_num_steps, hessian_block_size, solver,
@@ -399,7 +399,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& eta_v, auto&& phi) {
           return laplace_marginal_tol_lpdf<false>(
-              L, std::forward_as_tuple(y, delta_int), eta_v, theta0, K,
+              L, std::forward_as_tuple(y, delta_int, eta_v), theta0, K,
               std::forward_as_tuple(x, phi(0), phi(1), phi(2), phi(3), n_obs),
               tolerance, max_num_steps, hessian_block_size, solver,
               max_steps_line_search, nullptr);

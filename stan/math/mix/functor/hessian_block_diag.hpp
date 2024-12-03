@@ -21,10 +21,9 @@ namespace math {
  * @param hessian_block_size
  * @param args Additional variadic arguments for f.
  */
-template <typename F, typename Eta, typename... Args,
-          require_eigen_t<Eta>* = nullptr>
+template <typename F, typename... Args>
 inline Eigen::SparseMatrix<double> hessian_block_diag(
-    F&& f, const Eigen::VectorXd& x, const Eta& eta,
+    F&& f, const Eigen::VectorXd& x,
     const Eigen::Index hessian_block_size, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
@@ -37,7 +36,7 @@ inline Eigen::SparseMatrix<double> hessian_block_diag(
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v.setZero();
     v(Eigen::seq(i, x_size - 1, hessian_block_size)).setOnes();
-    VectorXd Hv = hessian_times_vector(f, x, eta, v, args...);
+    VectorXd Hv = hessian_times_vector(f, x, v, args...);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         H.insert(k + j * hessian_block_size, i + j * hessian_block_size)

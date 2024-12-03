@@ -68,7 +68,6 @@ struct neg_binomial_2_log_likelihood {
  *                          gives up on doing a linesearch. If 0, no linesearch.
  * @param[in] msgs message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
- */
 template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
@@ -85,6 +84,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
+ */
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -107,7 +107,6 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] msgs  message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
- */
 template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
@@ -121,6 +120,7 @@ inline auto laplace_marginal_neg_binomial_2_log_lpmf(
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
+ */
 }  // namespace math
 }  // namespace stan
 

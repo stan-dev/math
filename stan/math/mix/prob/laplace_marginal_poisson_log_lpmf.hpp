@@ -21,10 +21,9 @@ struct poisson_log_likelihood {
    * return lpmf for a Poisson with a log link.
    * @param[in] pstream
    */
-  template <typename Theta, typename Eta,
-            require_eigen_vector_t<Theta>* = nullptr,
-            require_eigen_t<Eta>* = nullptr>
-  inline auto operator()(const Theta& theta, const Eta& /* eta */,
+  template <typename Theta,
+            require_eigen_vector_t<Theta>* = nullptr>
+  inline auto operator()(const Theta& theta,
                          const Eigen::VectorXd& y,
                          const std::vector<int>& delta_int,
                          std::ostream* pstream) const {
@@ -69,12 +68,11 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  Eigen::Matrix<double, 0, 0> eta_dummy;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      eta_dummy, theta_0, covariance_function,
+      theta_0, covariance_function,
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
@@ -86,11 +84,10 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               CovarFun&& covariance_function,
                                               CovarArgs&& covar_args,
                                               std::ostream* msgs) {
-  Eigen::Matrix<double, 0, 0> eta_dummy;
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_likelihood{}, std::forward_as_tuple(to_vector(y), n_samples),
-      eta_dummy, theta_0, covariance_function,
+      theta_0, covariance_function,
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 

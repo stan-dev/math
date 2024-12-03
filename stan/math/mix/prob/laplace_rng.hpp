@@ -8,56 +8,6 @@
 namespace stan {
 namespace math {
 
-/**
- * In a latent gaussian model,
- *
- *   theta ~ Normal(theta | 0, Sigma(phi))
- *   y ~ pi(y | theta)
- *
- * return a multivariate normal random variate sampled
- * from the gaussian approximation of p(theta | y, phi)
- * where the log likelihood is given by L_f.
- * @tparam LFun
- * @tparam LArgs
- * @tparam ThetaVec
- * @tparam EtaVec
- * @tparam CovarFun
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
- * @param L_f
- * @param l_args
- * @param eta
- * @param K_f
- * @param theta_0
- * @param tolerance
- * @param max_num_steps
- * @param hessian_block_size
- * @param solver
- * @param max_steps_line_search
- * @param rng
- * @param msgs
- * @param train_tuple
- * @param pred_tuple
- * @param args
- */
-template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
-          typename ThetaVec, typename RNG, typename TrainTuple,
-          typename PredTuple, typename CovarArgs>
-inline Eigen::VectorXd laplace_marginal_tol_rng(
-    LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size, const int solver,
-    const int max_steps_line_search, const ThetaVec& theta_0, CovarFun&& K_f,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
-    RNG& rng, std::ostream* msgs) {
-  const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                            tolerance, max_num_steps};
-  return laplace_base_rng(std::forward<LFun>(L_f), l_args, K_f, eta, theta_0,
-                          ops, std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<CovarArgs>(covar_args));
-}
 
 /**
  * In a latent gaussian model,
@@ -71,7 +21,6 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
  * @tparam LFun
  * @tparam LArgs
  * @tparam ThetaVec
- * @tparam EtaVec
  * @tparam CovarFun
  * @tparam RNG
  * @tparam TrainTuple
@@ -103,9 +52,8 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                             tolerance, max_num_steps};
-  Eigen::Matrix<double, 0, 0> eta;
   return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
-                          K_f, eta, theta_0, ops,
+                          K_f, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
                           std::forward<CovarArgs>(covar_args));
@@ -123,7 +71,6 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
  * @tparam LFun
  * @tparam LArgs
  * @tparam ThetaVec
- * @tparam EtaVec
  * @tparam CovarFun
  * @tparam RNG
  * @tparam TrainTuple
@@ -131,7 +78,6 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
  * @tparam Args
  * @param L_f
  * @param l_args
- * @param eta
  * @param K_f
  * @param theta_0
  * @param rng
@@ -140,63 +86,21 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
  * @param pred_tuple
  * @param args
  */
-template <typename LFun, typename LArgs, typename EtaVec, typename CovarFun,
+template <typename LFun, typename LArgs, typename CovarFun,
           typename ThetaVec, typename RNG, typename TrainTuple,
           typename PredTuple, typename CovarArgs>
 inline Eigen::VectorXd laplace_marginal_rng(
-    LFun&& L_f, LArgs&& l_args, const EtaVec& eta, const ThetaVec& theta_0,
+    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0,
     CovarFun&& K_f, CovarArgs&& covar_args, TrainTuple&& train_tuple,
     PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
-                          K_f, eta, theta_0, ops,
+                          K_f, theta_0, ops,
                           std::forward<TrainTuple>(train_tuple),
                           std::forward<PredTuple>(pred_tuple), rng, msgs,
                           std::forward<CovarArgs>(covar_args));
 }
 
-/**
- * In a latent gaussian model,
- *
- *   theta ~ Normal(theta | 0, Sigma(phi))
- *   y ~ pi(y | theta)
- *
- * return a multivariate normal random variate sampled
- * from the gaussian approximation of p(theta | y, phi)
- * where the log likelihood is given by L_f.
- * @tparam LFun
- * @tparam LArgs
- * @tparam ThetaVec
- * @tparam CovarFun
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
- * @param L_f
- * @param l_args
- * @param K_f
- * @param theta_0
- * @param train_tuple
- * @param pred_tuple
- * @param rng
- * @param msgs
- * @param args
- */
-template <typename LFun, typename LArgs, typename CovarFun, typename ThetaVec,
-          typename RNG, typename TrainTuple, typename PredTuple,
-          typename CovarArgs>
-inline Eigen::VectorXd laplace_marginal_rng(
-    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
-    RNG& rng, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  Eigen::Matrix<double, 0, 0> eta;
-  return laplace_base_rng(std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
-                          K_f, eta, theta_0, ops,
-                          std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), rng, msgs,
-                          std::forward<CovarArgs>(covar_args));
-}
 
 }  // namespace math
 }  // namespace stan
