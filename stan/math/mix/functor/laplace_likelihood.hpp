@@ -44,14 +44,20 @@ inline auto get_vector_adjoints(Tuple&& tup) {
   }
 }
 
+template <typename... Args>
+inline auto copy_vars(Args&&... args) {
+  return filter_map<is_scalar_var>([](auto&& arg) {
+      // TODO:(Steve) Needs to handle std::vector
+      return std::decay_t<decltype(arg)>(value_of(arg));
+    }, std::forward<Args>(args)...);;
+}
+
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.
- * @tparam Eta Type of parameter arguments for log likelihood function.
  * @tparam Args Type of variadic arguments.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian model.
- * @param eta Parameter argument for likelihood function.
  * @param gradient Gradient of likelihood returned by function.
  * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
  *                           the latent Gaussian variable is block-diagonal,
@@ -67,23 +73,21 @@ inline auto diff(F&& f, const Theta& theta,
   const Eigen::Index theta_size = theta.size();
   Eigen::Matrix<double, Theta::RowsAtCompileTime, Theta::ColsAtCompileTime>
       theta_gradient;
+  const auto num_vars = count_vars(args...);
   // TODO:(Steve) Write is any_autodiff_v
-  constexpr bool is_any_arg_ad = is_any_autodiff_v<Args>;
+  constexpr bool is_any_arg_ad = is_any_autodiff_v<Args...>;
   Eigen::Matrix<double, is_any_arg_ad ? -1 : 0 , is_any_arg_ad ? 1 : 0>
-      eta_gradient;
+      eta_gradient(num_vars);
   {
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
-    auto var_copied_args = filter_map<is_scalar_var>([](auto&& arg) {
-      // TODO:(Steve) Needs to handle std::vector
-      return std::decay_t<decltype(arg)>(value_of(arg));
-    }, args...);
+    auto var_copied_args = copy_vars(std::forward<Args>(args)...);
     var f_var = stan::math::apply([](f&& f, auto&& theta_var, auto&&... inner_args) {
       return f(theta_var, inner_args...);
     }, var_copied_args, f, theta_var);
     grad(f_var.vi_);
     theta_gradient = theta_var.adj();
-    eta_gradient = get_adjoints(var_copied_args);
+    get_adjoints(eta_gradient, var_copied_args);
   }
 
   if (hessian_block_size == 1) {
@@ -99,7 +103,7 @@ inline auto diff(F&& f, const Theta& theta,
   } else {
     return std::make_tuple(
         std::move(theta_gradient), std::move(eta_gradient),
-        (-hessian_block_diag(f, theta, eta, hessian_block_size, args...))
+        (-hessian_block_diag(f, theta, hessian_block_size, args...))
             .eval());
   }
 }
@@ -114,10 +118,10 @@ inline auto diff(F&& f, const Theta& theta,
  * @param eta Parameter arguments for likelihood function.
  * @param args Variadic arguments for likelihood function.
  */
-template <typename F, typename Theta, typename Eta, typename... Args,
+template <typename F, typename Theta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr>
-inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
+          require_t<is_all_arithmetic_scalar<Args>>* = nullptr>
+inline Eigen::VectorXd third_diff(F&& f, const Theta& theta,
                                   Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
@@ -126,7 +130,7 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
-  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, eta, args...);
+  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, args...);
   grad(ftheta_ffvar.d_.d_.vi_);
   return theta_var.adj();
 }
@@ -145,10 +149,9 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
  *                           is block diagonal, size of each block.
  * @param args Variational arguments for likelihood function.
  */
-template <typename F, typename Theta, typename Eta, typename... Args,
-          require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr>
-inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
+template <typename F, typename Theta, typename... Args,
+          require_eigen_vector_t<Theta>* = nullptr>
+inline auto compute_s2(F&& f, const Theta& theta,
                        const Eigen::MatrixXd& A, const int hessian_block_size,
                        Args&&... args) {
   using Eigen::Dynamic;
@@ -158,10 +161,15 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
 
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  const Eigen::Index eta_size = eta.size();
   const Eigen::Index parm_size = theta_size + eta_size;
   Matrix<var, Dynamic, 1> theta_var = theta;
-  Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
+  const auto num_vars = count_vars(args...);
+  // TODO:(Steve) Write is any_autodiff_v
+  constexpr bool is_any_arg_ad = is_any_autodiff_v<Args...>;
+  Eigen::Matrix<double, is_any_arg_ad ? -1 : 0 , is_any_arg_ad ? 1 : 0>
+      eta_gradient(num_vars);
+  auto var_copied_args = copy_vars(std::forward<Args>(args)...);
+
   int n_blocks = theta_size / hessian_block_size;
   fvar<fvar<var>> target_ffvar = 0;
   VectorXd v(theta_size);
@@ -186,13 +194,17 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
     for (int j = 0; j < theta_size; ++j) {
       theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
     }
-    Matrix<fvar<fvar<var>>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime>
-        eta_ffvar = eta_var.template cast<fvar<fvar<var>>>();
-    target_ffvar += f(theta_ffvar, eta_ffvar, args...);
+    auto ffvar_copied_args = stan::math::filter_map<is_scalar_var>([](auto&& arg) {
+      return promote_scalar_t<fvar<fvar<var>>>(arg);
+    }, var_copied_args);
+    target_ffvar += stan::math::apply([](auto&& f, auto&& theta_ffvar, auto&&... inner_ffvars) {
+      return f(theta_ffvar, inner_ffvars...);
+    }, ffvar_copied_args, f, theta_ffvar);
   }
   grad(target_ffvar.d_.d_.vi_);
+  get_adjoints(eta_gradient, var_copied_args);
   return std::make_pair((0.5 * theta_var.adj()).eval(),
-                        (0.5 * eta_var.adj()).eval());
+                        (0.5 * eta_gradient).eval());
 }
 
 /**
@@ -206,22 +218,25 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param eta Parameter arguments for likelhood function.
  * @param args Variadic arguments for likelhood function.
  */
-template <typename F, typename V_t, typename Theta, typename Eta,
+template <typename F, typename V_t, typename Theta,
           typename... Args, require_eigen_vector_t<Theta>* = nullptr,
           require_eigen_t<Eta>* = nullptr>
 inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
-                                           const Theta& theta, const Eta& eta,
+                                           const Theta& theta,
                                            Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
   if constexpr (Eta::RowsAtCompileTime == 0 && Eta::ColsAtCompileTime == 0) {
-    return plain_type_t<Eta>{};
+    return Eigen::Matrix<double, 0, 0>{};
   }
   nested_rev_autodiff nested;
-  const Eigen::Index eta_size = eta.size();
-  Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
-
+  const auto num_vars = count_vars(args...);
+  // TODO:(Steve) Write is any_autodiff_v
+  constexpr bool is_any_arg_ad = is_any_autodiff_v<Args...>;
+  Eigen::Matrix<double, is_any_arg_ad ? -1 : 0 , is_any_arg_ad ? 1 : 0>
+      eta_gradient(num_vars);
+  auto var_copied_args = copy_vars(std::forward<Args>(args)...);
   // CHECK -- can we avoid declaring theta as fvar<var>?
   // We currently compute derivatives wrt eta, which is not needed.
   const Eigen::Index theta_size = theta.size();
@@ -230,12 +245,16 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
   for (Eigen::Index i = 0; i < theta_size; i++) {
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
-  Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar
-      = eta_var.template cast<fvar<var>>();
+  auto fvar_copied_args = stan::math::filter_map<is_scalar_var>([](auto&& arg) {
+    return promote_scalar_t<fvar<var>>(arg);
+  }, var_copied_args);
 
-  fvar<var> f_fvar = f(theta_fvar, eta_fvar, args...);
+  fvar<var> f_fvar = stan::math::apply([](auto&& f, auto&& theta_fvar, auto&&... inner_fvars) {
+    return f(theta_ffvar, inner_fvars...);
+  }, fvar_copied_args, f, theta_fvar);
   grad(f_fvar.d_.vi_);
-  return eta_var.adj();
+  get_adjoints(eta_gradient, var_copied_args);
+  return eta_gradient;
 }
 
 }  // namespace internal
@@ -253,15 +272,14 @@ inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
+inline auto log_likelihood(F&& f, const Theta& theta,
                            TupleArgs&& ll_tup, std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto&& eta, auto&& msgs, auto&&... args) {
-        return internal::log_likelihood(f, theta, eta, args..., msgs);
+      [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
+        return internal::log_likelihood(f, theta, args..., msgs);
       },
-      ll_tup, f, theta, eta, msgs);
+      ll_tup, f, theta, msgs);
 }
 
 /**
@@ -278,19 +296,18 @@ inline auto log_likelihood(F&& f, const Theta& theta, const Eta& eta,
  * @param ll_tuple Arguments of covariance function.
  * @param msgs Stream messages.
  */
-template <typename F, typename Theta, typename Eta, typename TupleArgs,
+template <typename F, typename Theta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline auto diff(F&& f, const Theta& theta, const Eta& eta,
+inline auto diff(F&& f, const Theta& theta,
                  const Eigen::Index hessian_block_size, TupleArgs&& ll_tuple,
                  std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto&& eta, auto hessian_block_size,
+      [](auto&& f, auto&& theta, auto hessian_block_size,
          auto* msgs, auto&&... args) {
-        return internal::diff(f, theta, eta, hessian_block_size, args..., msgs);
+        return internal::diff(f, theta, hessian_block_size, args..., msgs);
       },
-      ll_tuple, f, theta, eta, hessian_block_size, msgs);
+      ll_tuple, f, theta, hessian_block_size, msgs);
 }
 
 /**
@@ -306,15 +323,14 @@ inline auto diff(F&& f, const Theta& theta, const Eta& eta,
  */
 template <typename F, typename Theta, typename Eta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
+inline Eigen::VectorXd third_diff(F&& f, const Theta& theta,
                                   TupleArgs&& ll_args, std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto&& eta, auto&& msgs, auto&&... args) {
-        return internal::third_diff(f, theta, eta, args..., msgs);
+      [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
+        return internal::third_diff(f, theta, args..., msgs);
       },
-      ll_args, f, theta, eta, msgs);
+      ll_args, f, theta, msgs);
 }
 
 /**
@@ -332,20 +348,19 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, const Eta& eta,
  * @param ll_args Variadic arguments for likelihood function.
  * @param msgs Streaming messages.
  */
-template <typename F, typename Theta, typename Eta, typename TupleArgs,
+template <typename F, typename Theta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
+inline auto compute_s2(F&& f, const Theta& theta,
                        const Eigen::MatrixXd& A, int hessian_block_size,
                        TupleArgs&& ll_args, std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto&& eta, auto&& A, auto hessian_block_size,
+      [](auto&& f, auto&& theta, auto&& A, auto hessian_block_size,
          auto* msgs, auto&&... args) {
-        return internal::compute_s2(f, theta, eta, A, hessian_block_size,
+        return internal::compute_s2(f, theta, A, hessian_block_size,
                                     args..., msgs);
       },
-      ll_args, f, theta, eta, A, hessian_block_size, msgs);
+      ll_args, f, theta, A, hessian_block_size, msgs);
 }
 
 /**
@@ -361,20 +376,19 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eta& eta,
  * @param ll_args Variadic arguments for likelihood function.
  * @param msgs Streaming messages.
  */
-template <typename F, typename V_t, typename Theta, typename Eta,
+template <typename F, typename V_t, typename Theta,
           typename TupleArgs, require_tuple_t<TupleArgs>* = nullptr,
-          require_eigen_vector_t<Theta>* = nullptr,
-          require_eigen_t<Eta>* = nullptr>
+          require_eigen_vector_t<Theta>* = nullptr>
 inline plain_type_t<Eta> diff_eta_implicit(F&& f, const V_t& v,
-                                           const Theta& theta, const Eta& eta,
+                                           const Theta& theta,
                                            TupleArgs&& ll_args,
                                            std::ostream* msgs) {
   return apply(
-      [](auto&& f, auto&& v, auto&& theta, auto&& eta, auto&& msgs,
+      [](auto&& f, auto&& v, auto&& theta, auto&& msgs,
          auto&&... args) {
-        return internal::diff_eta_implicit(f, v, theta, eta, args..., msgs);
+        return internal::diff_eta_implicit(f, v, theta, args..., msgs);
       },
-      ll_args, f, v, theta, eta, msgs);
+      ll_args, f, v, theta, msgs);
 }
 
 }  // namespace laplace_likelihood

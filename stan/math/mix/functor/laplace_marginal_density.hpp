@@ -243,11 +243,11 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  *
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename Theta, typename Eta, typename CovarArgs,
-          require_t<is_all_arithmetic_scalar<Eta, Theta, CovarArgs>>* = nullptr,
+          typename Theta, typename CovarArgs,
+          require_t<is_all_arithmetic_scalar<Theta, CovarArgs, LLTupleArgs>>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr>
 inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
-                                         Eta&& eta, Theta&& theta_0,
+                                         Theta&& theta_0,
                                          CovarFun&& covariance_function,
                                          CovarArgs&& covar_args,
                                          const laplace_options& options,

@@ -52,7 +52,7 @@ void hessian_times_vector(const F& f,
  * to handle functions which take in arguments eta, delta, delta_int,
  * and pstream.
  */
-template <typename F, typename... Args>
+template <typename F, typename... Args, require_t<is_all_arithmetic_scalar<Args>>* = nullptr>
 inline Eigen::VectorXd hessian_times_vector(const F& f,
                                             const Eigen::VectorXd& x,
                                             const Eigen::VectorXd& v,
