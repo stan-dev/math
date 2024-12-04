@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_FILTER_MAP_HPP
-#define STAN_MATH_PRIM_FUNCTOR_FILTER_MAP_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_IF_HPP
+#define STAN_MATH_PRIM_FUNCTOR_APPLY_IF_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -7,6 +7,10 @@
 #include <tuple>
 #include <utility>
 
+
+namespace stan {
+namespace math {
+namespace internal {
 template <typename T>
 struct deduce_cvr {
   using type =
@@ -21,10 +25,6 @@ template<typename... Types>
 constexpr std::tuple<deduce_cvr_t<Types&&>...> partially_forward_as_tuple( Types&&... args ) noexcept {
     return {std::forward<Types>(args)...};
 }
-
-namespace stan {
-namespace math {
-namespace internal {
 template <template <typename> class Filter, typename F, typename Arg>
 inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
   if constexpr (Filter<Arg>::value) {
@@ -51,10 +51,10 @@ inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
  */
 template <template <typename> class Filter, typename F, typename Tuple,
           require_t<is_tuple<Tuple>>* = nullptr>
-inline constexpr auto filter_map(F&& f, Tuple&& arg) {
+inline constexpr auto apply_if(F&& f, Tuple&& arg) {
   return stan::math::apply(
       [](auto&& f, auto&&... args) {
-        return partially_forward_as_tuple(internal::filter_fun<Filter>(
+        return internal::partially_forward_as_tuple(internal::filter_fun<Filter>(
             f, std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(arg), std::forward<F>(f));
@@ -77,15 +77,15 @@ inline constexpr auto filter_map(F&& f, Tuple&& arg) {
 template <template <typename> class Filter, typename F, typename Arg1,
           typename... Args,
           require_t<bool_constant<!is_tuple<Arg1>::value>>* = nullptr>
-inline constexpr auto filter_map(F&& f, Arg1&& arg1, Args&&... args) {
-  return partially_forward_as_tuple(internal::filter_fun<Filter>(
+inline constexpr auto apply_if(F&& f, Arg1&& arg1, Args&&... args) {
+  return internal::partially_forward_as_tuple(internal::filter_fun<Filter>(
             f, std::forward<Arg1>(arg1)),
             internal::filter_fun<Filter>(f, std::forward<Args>(args))...);
 }
 
 template <template <typename> class Filter, typename F, typename Arg,
           require_t<bool_constant<!is_tuple<Arg>::value>>* = nullptr>
-inline constexpr auto filter_map(F&& f, Arg&& arg) {
+inline constexpr auto apply_if(F&& f, Arg&& arg) {
   return internal::filter_fun<Filter>(std::forward<F>(f),
                                       std::forward<Arg>(arg));
 }

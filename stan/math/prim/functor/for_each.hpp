@@ -53,6 +53,19 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3,
                                            std::get<Is>(std::forward<T3>(t3)))),
       0)...});
 }
+
+// TODO(Steve) This should be variadic
+template <typename F, typename T1, typename T2, typename T3, typename T4, size_t... Is>
+constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3, T4&& t4,
+                               std::index_sequence<Is...>) {
+  using Swallow = int[];
+  static_cast<void>(Swallow{(
+      static_cast<void>(std::forward<F>(f)(std::get<Is>(std::forward<T1>(t1)),
+                                           std::get<Is>(std::forward<T2>(t2)),
+                                           std::get<Is>(std::forward<T3>(t3)),
+                                           std::get<Is>(std::forward<T4>(t4)))),
+      0)...});
+}
 }  // namespace internal
 
 /**
@@ -123,6 +136,24 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3) {
                 "Size Mismatch between t1 and t3 in for_each");
   return internal::for_each(std::forward<F>(f), std::forward<T1>(t1),
                             std::forward<T2>(t2), std::forward<T3>(t3),
+                            std::make_index_sequence<t1_size>());
+}
+
+template <typename F, typename T1, typename T2, typename T3, typename T4>
+constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3, T4&& t4) {
+  constexpr auto t1_size = std::tuple_size<std::decay_t<T1>>::value;
+  constexpr auto t2_size = std::tuple_size<std::decay_t<T2>>::value;
+  constexpr auto t3_size = std::tuple_size<std::decay_t<T3>>::value;
+  constexpr auto t4_size = std::tuple_size<std::decay_t<T4>>::value;
+  static_assert(t1_size == t2_size,
+                "Size Mismatch between t1 and t2 in for_each");
+  static_assert(t1_size == t3_size,
+                "Size Mismatch between t1 and t3 in for_each");
+  static_assert(t1_size == t4_size,
+                "Size Mismatch between t1 and t3 in for_each");
+  return internal::for_each(std::forward<F>(f), std::forward<T1>(t1),
+                            std::forward<T2>(t2), std::forward<T3>(t3),
+                            std::forward<T4>(t4),
                             std::make_index_sequence<t1_size>());
 }
 

@@ -2,15 +2,17 @@
 #define STAN_MATH_PRIM_FUNCTOR_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/apply_if.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/functor/apply_scalar_ternary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/functor/filter.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
-#include <stan/math/prim/functor/filter_map.hpp>
+#include <stan/math/prim/functor/apply_if.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
