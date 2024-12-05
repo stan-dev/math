@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_IF_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <functional>
 #include <tuple>
@@ -11,21 +12,8 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename T>
-struct deduce_cvr {
-  using type =
-      std::conditional_t<std::is_rvalue_reference_v<T>,
-      std::decay_t<T>, T&&>;
-};
 
-template <typename T>
-using deduce_cvr_t = typename deduce_cvr<T>::type;
-
-template<typename... Types>
-constexpr std::tuple<deduce_cvr_t<Types&&>...> partially_forward_as_tuple( Types&&... args ) noexcept {
-    return {std::forward<Types>(args)...};
-}
-template <template <typename> class Filter, typename F, typename Arg>
+template <template <typename...> class Filter, typename F, typename Arg>
 inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
   if constexpr (Filter<Arg>::value) {
     return f(std::forward<Arg>(arg));
@@ -49,12 +37,12 @@ inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
  * @param f functor callable
  * @param args parameter pack of args
  */
-template <template <typename> class Filter, typename F, typename Tuple,
+template <template <typename...> class Filter, typename F, typename Tuple,
           require_t<is_tuple<Tuple>>* = nullptr>
 inline constexpr auto apply_if(F&& f, Tuple&& arg) {
   return stan::math::apply(
       [](auto&& f, auto&&... args) {
-        return internal::partially_forward_as_tuple(internal::filter_fun<Filter>(
+        return partially_forward_as_tuple(internal::filter_fun<Filter>(
             f, std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(arg), std::forward<F>(f));
@@ -74,16 +62,16 @@ inline constexpr auto apply_if(F&& f, Tuple&& arg) {
  * @param f functor callable
  * @param args parameter pack of args
  */
-template <template <typename> class Filter, typename F, typename Arg1,
+template <template <typename...> class Filter, typename F, typename Arg1,
           typename... Args,
           require_t<bool_constant<!is_tuple<Arg1>::value>>* = nullptr>
 inline constexpr auto apply_if(F&& f, Arg1&& arg1, Args&&... args) {
-  return internal::partially_forward_as_tuple(internal::filter_fun<Filter>(
+  return partially_forward_as_tuple(internal::filter_fun<Filter>(
             f, std::forward<Arg1>(arg1)),
             internal::filter_fun<Filter>(f, std::forward<Args>(args))...);
 }
 
-template <template <typename> class Filter, typename F, typename Arg,
+template <template <typename...> class Filter, typename F, typename Arg,
           require_t<bool_constant<!is_tuple<Arg>::value>>* = nullptr>
 inline constexpr auto apply_if(F&& f, Arg&& arg) {
   return internal::filter_fun<Filter>(std::forward<F>(f),

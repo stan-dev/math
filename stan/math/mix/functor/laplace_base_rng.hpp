@@ -48,27 +48,25 @@ template <typename D, typename LLArgs, typename ThetaMatrix,
           typename CovarArgs,
           require_all_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
-    D&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
-    const ThetaMatrix& theta_0,
-    const laplace_options& options, TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, RNG& rng, std::ostream* msgs,
-    CovarArgs&& covar_args) {
+    D&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
+    CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
+    TrainTuple&& train_tuple,
+    PredTuple&& pred_tuple, 
+    const laplace_options& options, RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  using EtaMatrix = Eigen::Matrix<double, 0, 0>;
-  EtaMatrix eta{};
-  auto covar_args_val = stan::math::to_ref(value_of(covar_args));
-  auto eta_dbl = value_of(eta);
+  auto covar_args_val = stan::math::to_ref(value_of(std::forward<CovarArgs>(covar_args)));
   auto md_est = laplace_marginal_density_est(
-      ll_fun, ll_args, eta_dbl, value_of(theta_0), covariance_function,
-      std::tuple_cat(std::forward<TrainTuple>(train_tuple), covar_args_val),
+      ll_fun, ll_args, value_of(theta_0), covariance_function,
+      std::tuple_cat(covar_args_val, std::forward<TrainTuple>(train_tuple)),
       options, msgs);
   // Modified R&W method
   MatrixXd covariance_pred = apply(
       [&covariance_function, &msgs](auto&&... args_val) {
         return covariance_function(args_val..., msgs);
       },
-      std::tuple_cat(std::forward<PredTuple>(pred_tuple), covar_args_val));
+      std::tuple_cat(covar_args_val, std::forward<PredTuple>(pred_tuple)));
   VectorXd pred_mean = covariance_pred * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(

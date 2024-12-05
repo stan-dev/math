@@ -43,40 +43,6 @@ inline auto deep_copy_and_promote(Args&&... args) {
   }, args...);
 }
 
-template <typename EigVec, typename Tuple>
-inline auto serialize_adjoints_impl(EigVec& vec, Tuple&& tup, std::size_t& i = 0) {
-  for_each([&i, &vec](auto&& arg) {
-    using arg_t = std::decay_t<decltype(arg)>;
-    if constexpr (is_any_var_scalar<arg_t>::value) {
-      if constexpr (is_stan_scalar<arg_t>::value) {
-        vec(i++) = arg.adj();
-        return;
-      } else if constexpr (is_eigen<arg_t>::value || (is_std_vector<arg_t>::value &&
-        !is_container<value_type_t<arg_t>>::value)) {
-        for (int j = 0; j < arg.size(); ++j) {
-          vec(i++) = arg(j).adj();
-        }
-        return;
-      } else if constexpr (is_std_vector<arg_t>::value && is_container<value_type_t<arg_t>>::value) {
-        for (int j = 0; j < arg.size(); ++j) {
-          serialize_adjoints_impl(vec, std::forward_as_tuple(arg[j]), i);
-        }
-        return;
-      } else if constexpr (is_tuple<arg_t>::value) {
-        serialize_adjoints_impl(vec, arg, i);
-        return;
-      } else {
-        static_assert(0, "Unsupported type");
-      }
-    }
-  }, tup);
-}
-template <typename EigVec, typename Tuple>
-inline auto serialize_adjoints(EigVec& vec, Tuple&& tup) {
-  std::size_t i = 0;
-  serialize_adjoints_impl(vec, tup, i);
-}
-
 
 /**
  * @tparam F Type of log likelihood function.
@@ -229,7 +195,7 @@ inline auto compute_s2(F&& f, const Theta& theta,
  */
 template <typename F, typename V_t, typename Theta,
           typename... Args, require_eigen_vector_t<Theta>* = nullptr>
-inline auto constexpr diff_eta_implicit(F&& f, const V_t& v,
+inline auto diff_eta_implicit(F&& f, const V_t& v,
                                            const Theta& theta,
                                            Args&&... args) {
   using Eigen::Dynamic;
