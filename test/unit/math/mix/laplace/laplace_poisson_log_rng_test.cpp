@@ -73,17 +73,16 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   std::vector<Eigen::VectorXd> x_dummy;
 
   // compute sample mean and covariance.
-  diagonal_kernel_functor covariance_function;
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
-      sums, n_samples, theta_0, covariance_function,
+      sums, n_samples, theta_0, diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
 
   rng.seed(1954);
   Eigen::MatrixXd theta_pred_exp = laplace_marginal_poisson_2_log_rng(
-      sums, n_samples, ye, theta_0, covariance_function,
+      sums, n_samples, ye, theta_0, diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
 
