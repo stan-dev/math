@@ -567,6 +567,17 @@ inline double laplace_marginal_density(LLFun&& ll_fun, LLArgs&& ll_args,
       .lmd;
 }
 
+template <typename Output, typename Input, typename Var>
+inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
+  if constexpr (is_tuple<Output>::value) {
+    for_each([ret](auto&& input_i, auto&& output_i) {
+      accumulate_adjoints(output_i, input_i, ret);
+    }, adjoints, precalc);
+  } else {
+    update_adjoints(adjoints, precalc, ret);
+  }
+}
+
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -673,25 +684,25 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         ll_fun, md_est.theta, A,
         options.hessian_block_size, ll_args, msgs);
   }
-  auto covar_args_arena = to_arena(covar_args_refs);
   var ret(md_est.lmd);
   if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
-    auto covar_arg_adj_arena = [&covar_args_arena, &md_est, &R, &s2,&covariance_function, &msgs]() {
+    auto covar_arg_adj_arena = [&covar_args_refs, &md_est, &R, &s2,&covariance_function, &msgs]() {
       const nested_rev_autodiff nested;
+      auto copy_covar_args = laplace_likelihood::internal::deep_copy_and_promote<var>(covar_args_refs);
       arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> K_var
           = stan::math::apply(
               [&covariance_function, &msgs](auto&&... args) {
                 return covariance_function(args..., msgs);
               },
-              covar_args_arena);
+              covar_args_refs);
       //  = covariance_function(x, phi_v, delta, delta_int, msgs);
       var Z = laplace_pseudo_target(K_var, md_est.a, R, md_est.theta_grad, s2);
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
       return stan::math::apply_if<has_var_scalar_type>(
-          [](auto&& arg) { return to_arena(get_adj(arg)); }, covar_args_arena);
+          [](auto&& arg) { return stan::math::eval(get_adj(arg)); }, copy_covar_args);
     }();
-    stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, covar_args_arena);
+    auto covar_args_arena = to_arena(covar_args_refs);
     stan::math::for_each(
         [vi = ret.vi_](auto&& arg, auto&& arg_adj) {
           if constexpr (is_var<scalar_type_t<decltype(arg)>>::value) {
@@ -700,7 +711,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
             });
           }
         },
-        covar_args_arena, covar_arg_adj_arena);
+        covar_args_arena, std::move(covar_arg_adj_arena));
   }
   if constexpr (ll_args_contain_var) {
     if (eta_size != 0) {
@@ -711,7 +722,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       } else {
         v = LU_solve_covariance * s2;
       }
-      auto ll_args_filter = stan::math::filter<is_any_var_scalar>([](auto&& arg) {
+      auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>([](auto&& arg) {
         return std::forward<decltype(arg)>(arg);
       }, ll_args);
       int i = 0;

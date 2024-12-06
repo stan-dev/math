@@ -57,6 +57,12 @@ constexpr decltype(auto) apply(F&& f, Tuple&& t, PreArgs&&... pre_args) {
       std::forward<PreArgs>(pre_args)...);
 }
 
+template <typename F>
+inline constexpr auto apply(F&& /* f */) {
+  return std::make_tuple();
+}
+
+
 }  // namespace math
 }  // namespace stan
 

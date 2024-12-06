@@ -72,7 +72,7 @@ inline auto diff(F&& f, const Theta& theta,
     }, hard_copy_args, f, theta_var);
     grad(f_var.vi_);
     return std::make_pair(theta_var.adj().eval(),
-      stan::math::filter<is_any_var_scalar>([](auto&& arg){
+      stan::math::filter_map<is_any_var_scalar>([](auto&& arg){
         return stan::math::eval(get_adj(std::forward<decltype(arg)>(arg)));
       }, hard_copy_args));
   }(args...);
@@ -113,7 +113,7 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta,
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
-  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, args...);
+  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, value_of(args)...);
   grad(ftheta_ffvar.d_.d_.vi_);
   return theta_var.adj();
 }
@@ -144,18 +144,15 @@ inline auto compute_s2(F&& f, const Theta& theta,
   const Eigen::Index theta_size = theta.size();
   Matrix<var, Dynamic, 1> theta_var = theta;
   int n_blocks = theta_size / hessian_block_size;
-  fvar<fvar<var>> target_ffvar = 0;
   VectorXd v(theta_size);
   VectorXd w(theta_size);
   auto copy_vargs = deep_copy_and_promote<var>(args...);
+  Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
+    nested_rev_autodiff nested;
     v.setZero();
     for (int j = i; j < theta_size; j += hessian_block_size) {
       v(j) = 1;
-    }
-    Matrix<fvar<var>, Dynamic, 1> theta_fvar(theta_size);
-    for (int j = 0; j < theta_size; ++j) {
-      theta_fvar(j) = fvar<var>(theta_var(j), v(j));
     }
     w.setZero();
     for (int j = 0; j < n_blocks; ++j) {
@@ -164,24 +161,21 @@ inline auto compute_s2(F&& f, const Theta& theta,
             = A(k + j * hessian_block_size, i + j * hessian_block_size);
       }
     }
-    Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
     for (int j = 0; j < theta_size; ++j) {
-      theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
+      theta_ffvar(j) = fvar<fvar<var>>(fvar<var>(theta_var(j), v(j)), w(j));
     }
     auto hard_copy_args = stan::math::apply_if<is_any_var_scalar>([](auto&& arg){
       return arg.template cast<fvar<var>>().eval();
     }, copy_vargs);
-    target_ffvar += stan::math::apply([](auto&& f, auto&& theta_ffvar, auto&&... inner_args) {
+    fvar<fvar<var>> target_ffvar = stan::math::apply([](auto&& f, auto&& theta_ffvar, auto&&... inner_args) {
       return f(theta_ffvar, inner_args...);
     }, hard_copy_args, f, theta_ffvar);
+    grad(target_ffvar.d_.d_.vi_);
   }
-  // TODO:(Steve) Use many small grad instead of the large one?
-  grad(target_ffvar.d_.d_.vi_);
-  auto eta_grad = stan::math::filter<is_any_var_scalar>([](auto&& arg){
+  auto eta_grad = stan::math::filter_map<is_any_var_scalar>([](auto&& arg){
       return stan::math::eval(0.5 * get_adj(std::forward<decltype(arg)>(arg)));
     }, copy_vargs);
-  return std::make_pair((0.5 * theta_var.adj()).eval(),
-    eta_grad);
+  return std::make_pair((0.5 * theta_var.adj()).eval(), std::move(eta_grad));
 }
 
 /**
@@ -222,7 +216,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v,
     return f(theta_fvar, inner_args...);
   }, hard_copy_args, f, theta_fvar);
   grad(f_fvar.d_.vi_);
-  return stan::math::filter<is_any_var_scalar>([](auto&& arg){
+  return stan::math::filter_map<is_any_var_scalar>([](auto&& arg){
       return stan::math::eval(get_adj(std::forward<decltype(arg)>(arg)));
     }, copy_vargs);
 }
