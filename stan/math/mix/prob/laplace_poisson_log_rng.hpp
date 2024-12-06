@@ -18,12 +18,19 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
- * @tparam CovarFun
- * @tparam ThetaMatrix
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  method. The `operator()` method should accept as arguments the
+ *  inner elements of `CovarArgs`, followed by either the inner elements of
+ *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam RNG A valid boost rng type
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
  * @param y
  * @param n_samples
  * @param theta_0
@@ -71,12 +78,19 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
- * @tparam CovarFun
- * @tparam ThetaMatrix
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  method. The `operator()` method should accept as arguments the
+ *  inner elements of `CovarArgs`, followed by either the inner elements of
+ *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam RNG A valid boost rng type
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
  * @param y
  * @param n_samples
  * @param theta_0

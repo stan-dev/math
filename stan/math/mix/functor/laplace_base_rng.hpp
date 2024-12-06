@@ -21,15 +21,21 @@ namespace math {
  * Note that while the data is observed at x (train_tuple), the new samples
  * are drawn for covariates x_pred (pred_tuple).
  * To sample the "original" theta's, set pred_tuple = train_tuple.
- * @tparam D Type of likelihood function.
+ * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Type of arguments of likelihood function.
- * @tparam ThetaMatrix Type of latent Gaussian variables.
- * @tparam EtaMatrix Type of additional arguments for likelihood function.
- * @tparam CovarFun Type of covariance function.
- * @tparam RNG Type of RNG number.
- * @tparam TrainTuple Type of observed/training covariate.
- * @tparam PredTuple Type of predictive covariate.
- * @tparam CovarArgs Tuple of additional arguments for the covariance function
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  method. The `operator()` method should accept as arguments the
+ *  inner elements of `CovarArgs`, followed by either the inner elements of
+ *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam RNG A valid boost rng type
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
  * @param ll_fun Likelihood function.
  * @param ll_args Arguments for likelihood function.
  * @param covariance_function Covariance function.
@@ -43,16 +49,16 @@ namespace math {
  * @param msgs Stream for function prints.
  * @param args Variadic arguments for likelihood function.
  */
-template <typename D, typename LLArgs, typename ThetaMatrix,
-          typename CovarFun, class RNG, typename TrainTuple, typename PredTuple,
-          typename CovarArgs,
+template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
+          typename CovarFun, typename CovarArgs,
+          class RNG, typename TrainTuple, typename PredTuple,
           require_all_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
-    D&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
+    LLFunc&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     CovarArgs&& covar_args,
     TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple, 
+    PredTuple&& pred_tuple,
     const laplace_options& options, RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;

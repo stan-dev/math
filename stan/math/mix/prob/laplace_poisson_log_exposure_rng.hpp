@@ -15,12 +15,19 @@ namespace math {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarFun
- * @tparam ThetaMatrix
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  method. The `operator()` method should accept as arguments the
+ *  inner elements of `CovarArgs`, followed by either the inner elements of
+ *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y
  * @param n_samples
  * @param ye
@@ -38,8 +45,9 @@ namespace math {
  * @param args
  *
  */
-template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename CovarArgs,
+template <typename ThetaMatrix, typename CovarFun,
+          typename CovarArgs, typename TrainTuple, typename PredTuple,
+           class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // CHECK -- right return type
 laplace_marginal_tol_poisson_2_log_rng(
@@ -67,12 +75,19 @@ laplace_marginal_tol_poisson_2_log_rng(
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarFun
- * @tparam ThetaMatrix
- * @tparam RNG
- * @tparam TrainTuple
- * @tparam PredTuple
- * @tparam Args
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  method. The `operator()` method should accept as arguments the
+ *  inner elements of `CovarArgs`, followed by either the inner elements of
+ *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y
  * @param n_samples
  * @param ye
@@ -85,8 +100,10 @@ laplace_marginal_tol_poisson_2_log_rng(
  * @param args
  *
  */
-template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename CovarArgs,
+template <typename ThetaMatrix, typename CovarFun,
+          typename CovarArgs,
+          typename TrainTuple, typename PredTuple,
+          class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // TODO(Steve): Allow scalar or std vector return
 laplace_marginal_poisson_2_log_rng(
