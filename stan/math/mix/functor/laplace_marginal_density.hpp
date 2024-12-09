@@ -30,22 +30,23 @@ namespace math {
  */
 struct laplace_options {
   /* Size of the blocks in block diagonal hessian*/
-  int hessian_block_size;
+  int hessian_block_size{1};
   /**
    * Which Newton solver to use:
    * (1) method using the root of W
    * (2) method using the root of the covariance
    * (3) method using an LU decomposition
    */
-  int solver;
+  int solver{1};
   /* Maximum number of steps in line search*/
-  int max_steps_line_search;
+  int max_steps_line_search{0};
   /* iterations end when difference in objective function is less than tolerance
    */
-  double tolerance;
+  double tolerance{1e-12};
   /* Maximum number of steps*/
-  int64_t max_num_steps;
+  int64_t max_num_steps{100};
 };
+
 template <typename Covar, typename Theta, typename WR, typename L_t,
           typename A_vec, typename ThetaGrad, typename EtaGrad, typename LU_t,
           typename KRoot>
@@ -688,7 +689,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
     auto covar_arg_adj_arena = [&covar_args_refs, &md_est, &R, &s2,&covariance_function, &msgs]() {
       const nested_rev_autodiff nested;
-      auto copy_covar_args = laplace_likelihood::internal::deep_copy_and_promote<var>(covar_args_refs);
+      auto copy_covar_args = laplace_likelihood::internal::conditional_copy_and_promote<is_any_var_scalar, var>(covar_args_refs);
       arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> K_var
           = stan::math::apply(
               [&covariance_function, &msgs](auto&&... args) {
@@ -706,7 +707,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     stan::math::for_each(
         [vi = ret.vi_](auto&& arg, auto&& arg_adj) {
           if constexpr (is_var<scalar_type_t<decltype(arg)>>::value) {
-            reverse_pass_callback([arg, arg_adj, vi](){
+            reverse_pass_callback([arg, arg_adj, vi]() mutable {
               internal::update_adjoints(arg, arg_adj, vi);
             });
           }
@@ -726,6 +727,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         return std::forward<decltype(arg)>(arg);
       }, ll_args);
       int i = 0;
+      // This needs to be recursive so if any are tuples it just goes recursively
       stan::math::for_each([ret, &i](auto&& ll_arg, auto&& eta_grad_arg,
                                 auto&& partial_parm_arg, auto&& diff_eta_arg) {
           reverse_pass_callback([ll_arg_arena = to_arena(ll_arg),

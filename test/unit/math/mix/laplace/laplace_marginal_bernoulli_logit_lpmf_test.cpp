@@ -45,15 +45,12 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
+  constexpr double tolerance = 1e-8;
+  constexpr int max_num_steps = 1000;
   // FIXME(Steve): hessian_block_size of 3 fails approx test
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
        ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
@@ -62,7 +59,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
       }
     }
   }

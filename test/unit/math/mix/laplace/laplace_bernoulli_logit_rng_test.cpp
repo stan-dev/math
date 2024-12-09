@@ -149,8 +149,8 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
 //             << std::endl;
 //
 //   // Method 2: Vectorized R&W method
-//   double tolerance = 1e-6;
-//   int max_num_steps = 100;
+//   constexpr double tolerance = 1e-8;
+//   constexpr int max_num_steps = 1000;
 //
 //   // First find the mode using the custom Newton step
 //   Eigen::MatrixXd covariance;

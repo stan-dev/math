@@ -55,25 +55,6 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
   return {value_of_rec(x.real()), value_of_rec(x.imag())};
 }
 
-/**
- * Convert a std::vector of type T to a std::vector of doubles.
- *
- * T must implement value_of_rec. See
- * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
- *
- * @tparam T Scalar type in std::vector
- * @param[in] x std::vector to be converted
- * @return std::vector of values
- **/
-template <typename T, require_not_same_t<double, T>* = nullptr>
-inline std::vector<double> value_of_rec(const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<double> result(x_size);
-  for (size_t i = 0; i < x_size; i++) {
-    result[i] = value_of_rec(x[i]);
-  }
-  return result;
-}
 
 /**
  * Return the specified argument.
@@ -102,8 +83,8 @@ inline T value_of_rec(T&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_not_st_same<T, double>* = nullptr,
+        require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& M) {
   return make_holder(
       [](auto& m) {
@@ -124,11 +105,32 @@ inline auto value_of_rec(T&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
+
+/**
+ * Convert a std::vector of type T to a std::vector of doubles.
+ *
+ * T must implement value_of_rec. See
+ * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
+ *
+ * @tparam T Scalar type in std::vector
+ * @param[in] x std::vector to be converted
+ * @return std::vector of values
+ **/
+template <typename T, require_not_same_t<double, T>* = nullptr>
+inline std::vector<promote_scalar_t<double, T>> value_of_rec(const std::vector<T>& x) {
+  size_t x_size = x.size();
+  std::vector<promote_scalar_t<double, T>> result(x_size);
+  for (size_t i = 0; i < x_size; i++) {
+    result[i] = value_of_rec(x[i]);
+  }
+  return result;
+}
+
 }  // namespace math
 }  // namespace stan
 

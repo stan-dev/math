@@ -47,15 +47,13 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   x[1] = x_1;
 
   Eigen::VectorXd y_dummy;
-  std::vector<double> delta_dummy;
-  std::vector<int> delta_int_dummy;
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
 
-  stan::math::test::squared_kernel_functor K;
   double target = laplace_marginal_lpmf<false>(
-      poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0, K,
+      poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0, 
+      stan::math::test::squared_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   // TODO(Steve): benchmark target against gpstuff.
@@ -65,50 +63,49 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   // Test with optional arguments
   {
-    double tolerance = 1e-6;
-    int max_num_steps = 100;
+    constexpr double tolerance = 1e-8;
+    constexpr int max_num_steps = 1000;
     int hessian_block_size = 1;
     int solver = 1;
     int do_line_search = 1;
     int max_steps_line_search = 10;
 
     target = laplace_marginal_tol_lpmf<false>(
-        poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0, K,
+        poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0, 
+        stan::math::test::squared_kernel_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), tolerance,
         max_num_steps, hessian_block_size, solver, max_steps_line_search,
         nullptr);
     EXPECT_NEAR(-2.53056, value_of(target), tol);
   }
 
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 1000;
   // FIXME(Steve): hessian_block_size of 3 fails approx test
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
        ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
-        auto f = [&](auto&& alpha, auto&& rho) {
+        auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
-              poisson_log_likelihood2(), std::forward_as_tuple(sums), theta_0,
-              K, std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
+              stan::math::test::squared_kernel_functor{},
+              std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(f, x, phi_dbl[0], phi_dbl[1]);
       }
     }
   }
 }
 
 struct poisson_log_exposure_likelihood {
-  template <typename Theta>
+  template <typename Theta, typename YEVec>
   auto operator()(const Theta& theta,
-                  const Eigen::VectorXd& ye, const std::vector<int>& delta_int,
+                  YEVec&& ye, const std::vector<int>& delta_int,
                   std::ostream* pstream) const {
-    return stan::math::poisson_log_lpmf(delta_int, theta + stan::math::log(ye));
+    return stan::math::poisson_log_lpmf(delta_int, stan::math::add(theta, stan::math::log(ye)));
   }
 };
 
@@ -119,38 +116,37 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   using stan::math::value_of;
   using stan::math::var;
 
+  {
+    double marginal_density = laplace_marginal_lpmf<false>(
+        poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y), theta_0,
+        stan::math::test::sqr_exp_kernel_functor{}, 
+        std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
-  // Eigen::VectorXd y_dummy;
-  std::vector<double> delta_dummy;
-  std::vector<int> delta_int_dummy;
-  stan::math::test::sqr_exp_kernel_functor K;
-
-  double marginal_density = laplace_marginal_lpmf<false>(
-      poisson_log_exposure_likelihood(), std::forward_as_tuple(ye, y), theta_0,
-      K, std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
-
-  double tol = 6e-4;
-  // Benchmark from GPStuff.
-  EXPECT_NEAR(-2866.88, value_of(marginal_density), tol);
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 8e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
+    double tol = 6e-4;
+    // Benchmark from GPStuff.
+    EXPECT_NEAR(-2866.88, value_of(marginal_density), tol);
+  }
+  constexpr double tolerance = 1e-8;
+  constexpr int max_num_steps = 100;
   // FIXME(Steve): hessian_block_size of 3 fails approx test
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
        ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
+        std::cout << "----------" << std::endl;
+        std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
+        std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
+        std::cout << "solver_num: " << solver_num << std::endl;
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
-              poisson_log_exposure_likelihood(), std::forward_as_tuple(ye, y),
-              theta_0, K, std::forward_as_tuple(x, alpha, rho), tolerance,
+              poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
+              theta_0, stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance,
               max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
       }
     }
   }
@@ -192,31 +188,30 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 
   stan::math::test::sqr_exp_kernel_functor K;
   double target = laplace_marginal_lpmf<false>(
-      bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0, K,
+      bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0, 
+      stan::math::test::sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
 
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
+  constexpr double tolerance = 1e-8;
+  constexpr int max_num_steps = 1000;
   // FIXME(Steve): hessian_block_size of 3 fails approx test
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
        ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
-              K, std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              stan::math::test::sqr_exp_kernel_functor{}, 
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
       }
     }
   }
@@ -259,16 +254,17 @@ struct covariance_motorcycle_functor {
 };
 
 struct normal_likelihood {
-  template <typename Theta, typename Eta>
+  template <typename Theta>
   auto operator()(const Theta& theta, const Eigen::VectorXd& y,
-                  const std::vector<int>& delta_int, const Eta& eta,
+                  const std::vector<int>& delta_int, 
                   std::ostream* pstream) const {
     int n_obs = delta_int[0];
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> sigma(n_obs);
     for (Eigen::Index i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
-      sigma(i) = exp(0.5 * theta(2 * i + 1));
+      // TODO(Charles): Theta can be a large negative value so sigma can be 0
+      sigma(i) = exp(0.5 * theta(2 * i + 1)) + 1e-12;
     }
     return stan::math::normal_lpdf(y, mu, sigma);
   }
@@ -286,7 +282,7 @@ struct normal_likelihood2 {
     auto sigma_global = eta(0);
     for (int i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
-      sigma(i) = stan::math::exp(multiply(0.5, theta(2 * i + 1)));  // * sigma_global;
+      sigma(i) = stan::math::exp(multiply(0.5, theta(2 * i + 1))) + 1e-12;  // * sigma_global;
     }
 
     // return stan::math::normal_lpdf(y, mu, sigma);
@@ -350,7 +346,6 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
   double sigma_f;
   double sigma_g;
   std::vector<int> delta_int;
-  std::vector<double> delta_dummy;
   Eigen::VectorXd theta0;
   Eigen::VectorXd eta_dbl;
   Eigen::Matrix<double, -1, 1> eta;
@@ -367,7 +362,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   covariance_motorcycle_functor K_f;
   {
     double tolerance = 1e-08;
-    int max_num_steps = 100;
+    constexpr int max_num_steps = 1000;
     int hessian_block_size = 2;
     solver = 3;
     int do_line_search = 1;
@@ -375,33 +370,37 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
     covariance_motorcycle_functor K;
     double target = laplace_marginal_tol_lpdf<false>(
-        normal_likelihood{}, std::forward_as_tuple(y, delta_int, eta), theta0, K,
+        normal_likelihood{}, std::forward_as_tuple(y, delta_int), theta0, covariance_motorcycle_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                               n_obs),
         tolerance, max_num_steps, hessian_block_size, solver,
         max_steps_line_search, nullptr);
   }
   // TODO(Steve): benchmark this result against GPStuff.
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 1000;
   covariance_motorcycle_functor K;
-  // FIXME(Steve): hessian_block_size of 3 fails approx test
-  for (int max_steps_line_search = 0; max_steps_line_search < 4;
+  auto phi_0 = phi_dbl(0);
+  auto phi_1 = phi_dbl(1);
+  Eigen::VectorXd phi_rest = phi_dbl.tail(2);
+  // FIXME(Charles): Needs at least a line search of 1 to be successful?
+  for (int max_steps_line_search = 1; max_steps_line_search < 5;
        ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
-        auto f = [&](auto&& eta_v, auto&& phi) {
+        std::cout << "----------" << std::endl;
+        std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
+        std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
+        std::cout << "solver_num: " << solver_num << std::endl;
+        auto f = [&](auto&& phi_0_v, auto&& phi_1_v, auto&& phi_rest_v) {
           return laplace_marginal_tol_lpdf<false>(
-              normal_likelihood{}, std::forward_as_tuple(y, delta_int, eta_v), theta0, K,
-              std::forward_as_tuple(x, phi(0), phi(1), phi(2), phi(3), n_obs),
+              normal_likelihood{}, std::forward_as_tuple(y, delta_int), theta0, covariance_motorcycle_functor{},
+              std::forward_as_tuple(x, phi_0_v, phi_1_v, phi_rest_v(0), phi_rest_v(1), n_obs),
               tolerance, max_num_steps, hessian_block_size, solver,
               max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, eta, phi_dbl);
+        stan::test::expect_ad<true>(f, phi_0, phi_1, phi_rest);
       }
     }
   }
@@ -414,7 +413,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
   using stan::math::value_of;
   {
     double tolerance = 1e-08;
-    int max_num_steps = 100;
+    constexpr int max_num_steps = 1000;
     int hessian_block_size = 2;
     solver = 3;
     int do_line_search = 1;
@@ -427,18 +426,19 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
         tolerance, max_num_steps, hessian_block_size, solver,
         max_steps_line_search, nullptr);
   }
-  // TODO(Steve): benchmark this result against GPStuff.
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  stan::test::ad_tolerances ad_tol;
-  ad_tol.gradient_val_ = 4e-4;
-  ad_tol.gradient_grad_ = 1.1e-3;
-  // FIXME(Steve): hessian_block_size of 3 fails approx test
-  for (int max_steps_line_search = 0; max_steps_line_search < 4;
-       ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 3;
+  // TODO(Charles): benchmark this result against GPStuff.
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 1000;
+  // FIXME(Charles): Needs at least a line search of 1 to be successful?
+  for (int max_steps_line_search = 1; max_steps_line_search < 5;
+       max_steps_line_search++) {
+    for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
+        std::cout << "----------" << std::endl;
+        std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
+        std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
+        std::cout << "solver_num: " << solver_num << std::endl;
         auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
           return laplace_marginal_tol_lpdf<false>(
               normal_likelihood2{}, std::forward_as_tuple(y, delta_int, eta_v),
@@ -447,7 +447,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
               tolerance, max_num_steps, hessian_block_size, solver,
               max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(ad_tol, f, eta, phi_dbl(0), phi_dbl);
+        stan::test::expect_ad<true>(f, eta, phi_dbl(0), phi_dbl);
       }
     }
   }

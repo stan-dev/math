@@ -3,7 +3,8 @@
 
 // #include <stan/math/mix/laplace/hessian_times_vector.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
-#include <stan/math/prim/fun.hpp>
+#include <stan/math/rev/fun.hpp>
+#include <stan/math/fwd/fun.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <Eigen/Sparse>
 
@@ -32,15 +33,22 @@ inline auto log_likelihood(F&& f, Theta&& theta, Args&&... args) {
                             std::forward<Args>(args)...);
 }
 
-template <typename PromotedType, typename... Args>
-inline auto deep_copy_and_promote(Args&&... args) {
-  return apply_if<is_any_var_scalar>([](auto&& arg){
+enum class COPY_TYPE {SHALLOW = 0, DEEP = 1};
+
+template <template <typename...> class Filter, typename PromotedType = stan::math::var, 
+COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
+inline auto conditional_copy_and_promote(Args&&... args) {
+  return apply_if<Filter>([](auto&& arg){
     if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
-      return deep_copy_and_promote<PromotedType>(std::forward<decltype(arg)>(arg));
+      return conditional_copy_and_promote<Filter, PromotedType, CopyType>(std::forward<decltype(arg)>(arg));
     } else {
-      return stan::math::eval(promote_scalar<PromotedType>(value_of(std::forward<decltype(arg)>(arg))));
+      if constexpr (CopyType == COPY_TYPE::DEEP) {
+        return stan::math::eval(promote_scalar<PromotedType>(value_of_rec(std::forward<decltype(arg)>(arg))));
+      } else {
+        return stan::math::eval(promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
+      }
     }
-  }, args...);
+  }, std::forward<Args>(args)...);
 }
 
 
@@ -66,7 +74,7 @@ inline auto diff(F&& f, const Theta& theta,
   auto [theta_gradient, eta_gradient] = [&theta, &f](auto&&... args) {
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
-    auto hard_copy_args = deep_copy_and_promote<var>(args...);
+    auto hard_copy_args = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(args...);
     var f_var = stan::math::apply([](auto&& f, auto&& theta_var, auto&&... inner_args) {
       return f(theta_var, inner_args...);
     }, hard_copy_args, f, theta_var);
@@ -146,7 +154,7 @@ inline auto compute_s2(F&& f, const Theta& theta,
   int n_blocks = theta_size / hessian_block_size;
   VectorXd v(theta_size);
   VectorXd w(theta_size);
-  auto copy_vargs = deep_copy_and_promote<var>(args...);
+  auto copy_vargs = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(args...);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
@@ -164,9 +172,7 @@ inline auto compute_s2(F&& f, const Theta& theta,
     for (int j = 0; j < theta_size; ++j) {
       theta_ffvar(j) = fvar<fvar<var>>(fvar<var>(theta_var(j), v(j)), w(j));
     }
-    auto hard_copy_args = stan::math::apply_if<is_any_var_scalar>([](auto&& arg){
-      return arg.template cast<fvar<var>>().eval();
-    }, copy_vargs);
+    auto hard_copy_args = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>, COPY_TYPE::SHALLOW>(copy_vargs);
     fvar<fvar<var>> target_ffvar = stan::math::apply([](auto&& f, auto&& theta_ffvar, auto&&... inner_args) {
       return f(theta_ffvar, inner_args...);
     }, hard_copy_args, f, theta_ffvar);
@@ -200,7 +206,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v,
     return std::make_tuple();
   }
   nested_rev_autodiff nested;
-  auto copy_vargs = deep_copy_and_promote<var>(args...);
+  auto copy_vargs = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(args...);
   // CHECK -- can we avoid declaring theta as fvar<var>?
   const Eigen::Index theta_size = theta.size();
   Matrix<var, Dynamic, 1> theta_var = theta;
