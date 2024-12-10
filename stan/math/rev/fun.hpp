@@ -116,6 +116,7 @@
 #include <stan/math/rev/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/fun/log_softmax.hpp>
 #include <stan/math/rev/fun/log_sum_exp.hpp>
+#include <stan/math/rev/fun/log_add_exp.hpp>
 #include <stan/math/rev/fun/logit.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
