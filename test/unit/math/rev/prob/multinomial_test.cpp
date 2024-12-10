@@ -6,9 +6,9 @@
 #include <vector>
 
 template <typename T_prob>
-void expect_propto_multinomial(std::vector<int>& ns1, T_prob theta1,
-                               std::vector<int>& ns2, T_prob theta2,
-                               std::string message) {
+inline void expect_propto_multinomial(std::vector<int>& ns1, T_prob theta1,
+                                      std::vector<int>& ns2, T_prob theta2,
+                                      std::string message) {
   expect_eq_diffs(stan::math::multinomial_lpmf<false>(ns1, theta1),
                   stan::math::multinomial_lpmf<false>(ns2, theta2),
                   stan::math::multinomial_lpmf<true>(ns1, theta1),

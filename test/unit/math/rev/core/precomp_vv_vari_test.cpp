@@ -2,7 +2,7 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(StanAgradRevInternal, precomp_vv_vari) {
+TEST_F(AgradRev, precomp_vv_vari) {
   double value, gradient1, gradient2;
   stan::math::var x1(2), x2(3);
   stan::math::var y;

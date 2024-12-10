@@ -83,7 +83,8 @@ struct analytical_dae_dv_functor : public analytical_dae_base<T> {
   analytical_dae_dv_functor() : analytical_dae_base<T>() {}
 
   template <typename Tx>
-  Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+  inline Eigen::Matrix<Tx, -1, 1> operator()(
+      Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     auto ys
         = sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr, x(0));
@@ -96,7 +97,8 @@ struct analytical_dae_vd_functor : public analytical_dae_base<T> {
   analytical_dae_vd_functor() : analytical_dae_base<T>() {}
 
   template <typename Tx>
-  Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+  inline Eigen::Matrix<Tx, -1, 1> operator()(
+      Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     Eigen::Matrix<Tx, -1, 1> yy0_tx = x;
     auto ys = sol(this->f, yy0_tx, this->yp0, this->t0, this->ts, nullptr,
@@ -112,7 +114,7 @@ struct analytical_dae_test : public analytical_dae_base<T>,
   analytical_dae_vd_functor<T> dae_sol_vd;
   // analytical_dae_vv_functor<T> dae_sol_vv;
 
-  auto analy_sol_functor() {
+  inline auto analy_sol_functor() {
     auto f = [&](double t, double k) {
       Eigen::VectorXd y(3);
       y << 0.5 * k * t * t + stan::math::value_of(this->yy0[0]), 0, t;
@@ -121,7 +123,7 @@ struct analytical_dae_test : public analytical_dae_base<T>,
     return f;
   }
 
-  auto analy_grad_theta_functor() {
+  inline auto analy_grad_theta_functor() {
     auto f = [&](double t, double k) {
       Eigen::MatrixXd dy(1, 3);
       dy(0, 0) = 0.5 * t * t;
@@ -132,7 +134,7 @@ struct analytical_dae_test : public analytical_dae_base<T>,
     return f;
   }
 
-  auto analy_grad_yy0_functor() {
+  inline auto analy_grad_yy0_functor() {
     auto f = [&](double t, double k) {
       Eigen::MatrixXd dy(3, 3);
 
@@ -155,21 +157,21 @@ struct analytical_dae_test : public analytical_dae_base<T>,
     return f;
   }
 
-  auto apply_solver() {
+  inline auto apply_solver() {
     std::tuple_element_t<0, T> sol;
     return sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr,
                this->theta);
   }
 
   template <typename T1, typename T2>
-  auto apply_solver(T1&& init, T2&& theta_in) {
+  inline auto apply_solver(T1&& init, T2&& theta_in) {
     const int n = init.size() / 2;
     std::tuple_element_t<0, T> sol;
     return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr,
                theta_in);
   }
 
-  auto apply_solver_tol() {
+  inline auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
     return sol(this->f, this->yy0, this->yp0, this->t0, this->ts, this->rtol,
                this->atol, this->max_num_step, nullptr, this->theta);

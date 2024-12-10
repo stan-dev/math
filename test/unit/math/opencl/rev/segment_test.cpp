@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, segment_exception) {
+TEST_F(OpenCLRevTests, math_matrix_cl_segment_exception) {
   stan::math::matrix_cl<double> m1_cl(3, 3);
   EXPECT_THROW(segment(m1_cl, 1, 5), std::invalid_argument);
 
@@ -34,7 +34,7 @@ auto segment_functor = [](const auto& a, size_t i, size_t n) {
   return stan::math::segment(a, i, n);
 };
 
-TEST(MathMatrixCL, segment_value_check) {
+TEST_F(OpenCLRevTests, math_matrix_cl_segment_value_check) {
   stan::math::vector_d m1(16);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
 

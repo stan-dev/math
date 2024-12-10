@@ -8,7 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <sundials/sundials_context.h>
+#include <sundials/sundials_context.hpp>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -66,7 +66,7 @@ class cvodes_integrator {
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to CVODES.
    */
-  static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
+  static int cv_rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data) {
     cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
@@ -76,7 +76,7 @@ class cvodes_integrator {
    * Implements the function of type CVSensRhsFn which is the
    * RHS of the sensitivity ODE system.
    */
-  static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
+  static int cv_rhs_sens(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
     cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
@@ -90,7 +90,7 @@ class cvodes_integrator {
    * ode_rhs wrt to the states y. The jacobian is stored in column
    * major format.
    */
-  static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
+  static int cv_jacobian_states(sunrealtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
     cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);

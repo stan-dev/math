@@ -7,12 +7,12 @@
 auto to_matrix_functor
     = [](const auto&... a) { return stan::math::to_matrix(a...); };
 
-TEST(OpenCLToMatrix, errors) {
+TEST_F(OpenCLRevTests, ToMatrix_errors) {
   stan::math::matrix_cl<double> a(2, 3);
   EXPECT_THROW(to_matrix(a, 4, 2), std::invalid_argument);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_one_arg_small) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_one_arg_small) {
   Eigen::VectorXd a(6);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3;
   Eigen::RowVectorXd b = a;
@@ -23,7 +23,7 @@ TEST(OpenCLToMatrix, prim_rev_values_one_arg_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, c);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_three_arg_small) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_three_arg_small) {
   Eigen::VectorXd a(6);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3;
   Eigen::RowVectorXd b = a;
@@ -36,7 +36,7 @@ TEST(OpenCLToMatrix, prim_rev_values_three_arg_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, d, 2, 3);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_four_arg_small) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_four_arg_small) {
   std::vector<double> a{1, -2.3, 3.4, 4, -5.5, 5.7};
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, a, 2, 3,
                                                 false);
@@ -44,7 +44,7 @@ TEST(OpenCLToMatrix, prim_rev_values_four_arg_small) {
                                                 true);
 }
 
-TEST(OpenCLToMatrix, prim_rev_one_arg_size_0) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_one_arg_size_0) {
   Eigen::VectorXd a(0);
   Eigen::RowVectorXd b = a;
   Eigen::MatrixXd c(0, 0);
@@ -53,7 +53,7 @@ TEST(OpenCLToMatrix, prim_rev_one_arg_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, c);
 }
 
-TEST(OpenCLToMatrix, prim_rev_three_arg_size_0) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_three_arg_size_0) {
   Eigen::VectorXd a(0);
   Eigen::RowVectorXd b = a;
   Eigen::MatrixXd c(0, 0);
@@ -63,13 +63,13 @@ TEST(OpenCLToMatrix, prim_rev_three_arg_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, c, 0, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, d, 0, 0);
 }
-TEST(OpenCLToMatrix, prim_rev_four_arg_size_0) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_four_arg_size_0) {
   std::vector<double> d{};
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, d, 0, 0,
                                                 true);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_one_arg_large) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_one_arg_large) {
   int N = 71;
   int M = 87;
 
@@ -86,7 +86,7 @@ TEST(OpenCLToMatrix, prim_rev_values_one_arg_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, c);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_three_arg_large) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_three_arg_large) {
   int N = 71;
   int M = 87;
 
@@ -105,7 +105,7 @@ TEST(OpenCLToMatrix, prim_rev_values_three_arg_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(to_matrix_functor, d, M, N);
 }
 
-TEST(OpenCLToMatrix, prim_rev_values_four_arg_large) {
+TEST_F(OpenCLRevTests, ToMatrix_prim_rev_values_four_arg_large) {
   int N = 71;
   int M = 87;
 

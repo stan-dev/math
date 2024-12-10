@@ -6,7 +6,7 @@
 #include <vector>
 
 struct AgradRev : public testing::Test {
-  void SetUp() {
+  inline void SetUp() {
     // make sure memory's clean before starting each test
     stan::math::recover_memory();
   }
@@ -47,7 +47,7 @@ class VarMatrixTypedTests : public testing::Test {
   using matrix_v = typename T::matrix_v;
   using row_vector_v = typename T::row_vector_v;
   using vector_v = typename T::vector_v;
-  virtual ~VarMatrixTypedTests() { stan::math::recover_memory(); }
+  inline virtual ~VarMatrixTypedTests() { stan::math::recover_memory(); }
 };
 using VarMatImpls = testing::Types<stan::math::test::var_matrix_types<false>,
                                    stan::math::test::var_matrix_types<true>>;
@@ -57,12 +57,12 @@ using VarMatImpls = testing::Types<stan::math::test::var_matrix_types<false>,
 
 namespace test {
 
-void check_varis_on_stack(const stan::math::var& x) {
+inline void check_varis_on_stack(const stan::math::var& x) {
   EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(x.vi_))
       << "not on the stack";
 }
 
-void check_varis_on_stack(const std::vector<stan::math::var>& x) {
+inline void check_varis_on_stack(const std::vector<stan::math::var>& x) {
   for (size_t n = 0; n < x.size(); ++n)
     EXPECT_TRUE(
         stan::math::ChainableStack::instance_->memalloc_.in_stack(x[n].vi_))
@@ -70,7 +70,8 @@ void check_varis_on_stack(const std::vector<stan::math::var>& x) {
 }
 
 template <int R, int C>
-void check_varis_on_stack(const Eigen::Matrix<stan::math::var, R, C>& x) {
+inline void check_varis_on_stack(
+    const Eigen::Matrix<stan::math::var, R, C>& x) {
   for (int j = 0; j < x.cols(); ++j)
     for (int i = 0; i < x.rows(); ++i)
       EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(

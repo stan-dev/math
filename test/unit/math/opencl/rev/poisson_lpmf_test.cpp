@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsPoisson, error_checking) {
+TEST_F(OpenCLRevTests, probdistPoisson_error_checking) {
   int N = 3;
 
   std::vector<int> n{1, 0, 5};
@@ -45,7 +45,7 @@ auto poisson_lpmf_functor_propto = [](const auto& n, const auto& alpha) {
   return stan::math::poisson_lpmf<true>(n, alpha);
 };
 
-TEST(ProbDistributionsPoisson, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistPoisson_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -61,7 +61,7 @@ TEST(ProbDistributionsPoisson, opencl_matches_cpu_small) {
                                                 alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsPoisson, opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, probdistPoisson_opencl_broadcast_n) {
   int N = 3;
 
   int n_scal = 1;
@@ -74,7 +74,7 @@ TEST(ProbDistributionsPoisson, opencl_broadcast_n) {
       poisson_lpmf_functor_propto, n_scal, alpha);
 }
 
-TEST(ProbDistributionsPoisson, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistPoisson_opencl_broadcast_alpha) {
   int N = 3;
 
   std::vector<int> n{0, 1, 5};
@@ -86,7 +86,7 @@ TEST(ProbDistributionsPoisson, opencl_broadcast_alpha) {
       poisson_lpmf_functor_propto, n, alpha_scal);
 }
 
-TEST(ProbDistributionsPoisson, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistPoisson_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);

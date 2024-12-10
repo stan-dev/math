@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(OpenCLRevGpDotProdCov, exceptions) {
+TEST_F(OpenCLRevTests, RevGpDotProdCov_exceptions) {
   Eigen::VectorXd a(3);
   a << 1, 2, 3;
   Eigen::VectorXd b(3);
@@ -33,7 +33,7 @@ auto gp_dot_prod_cov_functor2
         return stan::math::gp_dot_prod_cov(x, y, sigma);
       };
 
-TEST(OpenCLRevGpDotProdCov, small) {
+TEST_F(OpenCLRevTests, RevGpDotProdCov_small) {
   Eigen::VectorXd a(3);
   a << 1, 2, 3;
   Eigen::VectorXd b(3);
@@ -53,7 +53,7 @@ TEST(OpenCLRevGpDotProdCov, small) {
                                                 sigma);
 }
 
-TEST(OpenCLRevGpDotProdCov, large) {
+TEST_F(OpenCLRevTests, RevGpDotProdCov_large) {
   int N1 = 67;
   int N2 = 73;
   std::vector<Eigen::VectorXd> x;

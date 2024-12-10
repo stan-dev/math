@@ -3,28 +3,27 @@
 #include <vector>
 #include <limits>
 
-void test_logical_or(double x, double y) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  EXPECT_EQ(x || y, fvar<double>(x) || fvar<double>(y));
-  EXPECT_EQ(x || y, fvar<double>(x) || y);
-  EXPECT_EQ(x || y, x || fvar<double>(y));
-
-  EXPECT_EQ(x || y, fvar<fvar<double> >(x) || fvar<fvar<double> >(y));
-  EXPECT_EQ(x || y, fvar<fvar<double> >(x) || y);
-  EXPECT_EQ(x || y, x || fvar<fvar<double> >(y));
-
-  EXPECT_EQ(x || y, fvar<var>(x) || fvar<var>(y));
-  EXPECT_EQ(x || y, fvar<var>(x) || y);
-  EXPECT_EQ(x || y, x || fvar<var>(y));
-
-  EXPECT_EQ(x || y, fvar<fvar<var> >(x) || fvar<fvar<var> >(y));
-  EXPECT_EQ(x || y, fvar<fvar<var> >(x) || y);
-  EXPECT_EQ(x || y, x || fvar<fvar<var> >(y));
-}
-
 TEST(AgradMix, logical_or) {
+  auto test_logical_or = [](double x, double y) {
+    using stan::math::fvar;
+    using stan::math::var;
+
+    EXPECT_EQ(x || y, fvar<double>(x) || fvar<double>(y));
+    EXPECT_EQ(x || y, fvar<double>(x) || y);
+    EXPECT_EQ(x || y, x || fvar<double>(y));
+
+    EXPECT_EQ(x || y, fvar<fvar<double> >(x) || fvar<fvar<double> >(y));
+    EXPECT_EQ(x || y, fvar<fvar<double> >(x) || y);
+    EXPECT_EQ(x || y, x || fvar<fvar<double> >(y));
+
+    EXPECT_EQ(x || y, fvar<var>(x) || fvar<var>(y));
+    EXPECT_EQ(x || y, fvar<var>(x) || y);
+    EXPECT_EQ(x || y, x || fvar<var>(y));
+
+    EXPECT_EQ(x || y, fvar<fvar<var> >(x) || fvar<fvar<var> >(y));
+    EXPECT_EQ(x || y, fvar<fvar<var> >(x) || y);
+    EXPECT_EQ(x || y, x || fvar<fvar<var> >(y));
+  };
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

@@ -13,7 +13,7 @@ using stan::math::var;
 using stan::test::expect_near_rel;
 using std::vector;
 
-TEST(ProbDistributionsBernoulliLogitGLM, error_checking) {
+TEST_F(OpenCLRevTests, probdistBernoulliLogitGLM_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -100,7 +100,8 @@ auto bernoulli_logit_glm_lpmf_functor_propto
         return stan::math::bernoulli_logit_glm_lpmf<true>(y, x, alpha, beta);
       };
 
-TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_small_simple) {
+TEST_F(OpenCLRevTests,
+       probdistBernoulliLogitGLM_opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -117,7 +118,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_small_simple) {
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistBernoulliLogitGLM_opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -134,7 +135,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_broadcast_y) {
       bernoulli_logit_glm_lpmf_functor_propto, y_scal, x, alpha, beta);
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_zero_instances) {
+TEST_F(OpenCLRevTests,
+       probdistBernoulliLogitGLM_opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -150,7 +152,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_zero_instances) {
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_zero_attributes) {
+TEST_F(OpenCLRevTests,
+       probdistBernoulliLogitGLM_opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -165,8 +168,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_zero_attributes) {
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM,
-     opencl_matches_cpu_small_vector_alpha) {
+TEST_F(OpenCLRevTests,
+       probdistBernoulliLogitGLM_opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -184,7 +187,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistBernoulliLogitGLM_opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 

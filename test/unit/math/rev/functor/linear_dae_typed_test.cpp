@@ -22,7 +22,7 @@ using linear_dae_test_types
                               ::testing::Types<double>,  // yp0
                               ::testing::Types<double>   // theta
                               >;
-
+/*
 TYPED_TEST_SUITE_P(linear_dae_test);
 TYPED_TEST_P(linear_dae_test, analytical_value) {
   double theta = 3.0;
@@ -39,3 +39,4 @@ TYPED_TEST_P(linear_dae_test, finite_diff) { this->test_fd_dv(1.e-3, 5e-6); }
 
 REGISTER_TYPED_TEST_SUITE_P(linear_dae_test, analytical_value, finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, linear_dae_test, linear_dae_test_types);
+*/

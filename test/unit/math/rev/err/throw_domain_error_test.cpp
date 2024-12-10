@@ -7,7 +7,7 @@ const char* y_name_ = "y";
 const char* msg1_ = "error_message ";
 const char* msg2_ = " after y";
 
-class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
+class ErrorHandlingScalar_throw_domain_error_rev : public ::testing::Test {
  public:
   void SetUp() {}
 
@@ -56,7 +56,7 @@ class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
   }
 };
 
-TEST_F(ErrorHandlingScalar_throw_domain_error, var) {
+TEST_F(ErrorHandlingScalar_throw_domain_error_rev, var) {
   stan::math::var y = 10;
 
   test_throw<stan::math::var>(y);

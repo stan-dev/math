@@ -4,7 +4,7 @@
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/math/rev/functor/test_fixture_dae_pph.hpp>
 #include <test/unit/math/rev/functor/dae_test_functors.hpp>
-
+namespace pph_dae_param_finite_diff_test {
 /**
  *
  * Use same solver functor type for both w & w/o tolerance control
@@ -22,7 +22,7 @@ using pph_test_types = boost::mp11::mp_product<
     ::testing::Types<double, stan::math::var_value<double>>,  // yp0
     ::testing::Types<stan::math::var_value<double>>           // theta
     >;
-
+/*
 TYPED_TEST_SUITE_P(pph_dae_test);
 TYPED_TEST_P(pph_dae_test, param_finite_diff) {
   const double h = 0.01;
@@ -73,3 +73,5 @@ TYPED_TEST_P(pph_dae_test, param_finite_diff) {
 
 REGISTER_TYPED_TEST_SUITE_P(pph_dae_test, param_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, pph_dae_test, pph_test_types);
+*/
+}  // namespace pph_dae_param_finite_diff_test

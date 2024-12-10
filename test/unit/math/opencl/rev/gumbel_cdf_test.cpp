@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsGumbelCdf, error_checking) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -60,7 +60,7 @@ auto gumbel_cdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
   return stan::math::gumbel_cdf(y, mu, sigma);
 };
 
-TEST(ProbDistributionsGumbelCdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -78,7 +78,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsGumbelCdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -93,7 +93,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_broadcast_y) {
       gumbel_cdf_functor, y_scal, mu.transpose().eval(), sigma);
 }
 
-TEST(ProbDistributionsGumbelCdf, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -108,7 +108,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_broadcast_mu) {
       gumbel_cdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
 
-TEST(ProbDistributionsGumbelCdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -123,7 +123,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_broadcast_sigma) {
       gumbel_cdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
 
-TEST(ProbDistributionsGumbelCdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistGumbelCdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

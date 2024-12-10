@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsFrechetLccdf, error_checking) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto frechet_lccdf_functor
         return stan::math::frechet_lccdf(y, alpha, sigma);
       };
 
-TEST(ProbDistributionsFrechetLccdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +79,7 @@ TEST(ProbDistributionsFrechetLccdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -94,7 +94,7 @@ TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_y) {
       frechet_lccdf_functor, y_scal, alpha.transpose().eval(), sigma);
 }
 
-TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -109,7 +109,7 @@ TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_alpha) {
       frechet_lccdf_functor, y.transpose().eval(), alpha_scal, sigma);
 }
 
-TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -124,7 +124,7 @@ TEST(ProbDistributionsFrechetLccdf, opencl_broadcast_sigma) {
       frechet_lccdf_functor, y.transpose().eval(), alpha, sigma_scal);
 }
 
-TEST(ProbDistributionsFrechetLccdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistFrechetLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

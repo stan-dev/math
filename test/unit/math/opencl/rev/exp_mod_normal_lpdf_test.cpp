@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsExpModNormal, error_checking) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -103,7 +103,7 @@ auto exp_mod_normal_lpdf_functor_propto
         return stan::math::exp_mod_normal_lpdf<true>(y, mu, sigma, lambda);
       };
 
-TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -128,7 +128,7 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
       lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_broadcast_y) {
   int N = 3;
 
   double y = 0.3;
@@ -151,7 +151,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
       lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -174,7 +174,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
       lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -197,7 +197,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
       mu.transpose().eval(), sigma, lambda);
 }
 
-TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -220,7 +220,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
       sigma.transpose().eval(), lambda);
 }
 
-TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistExpModNormal_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

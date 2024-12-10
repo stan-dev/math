@@ -17,7 +17,7 @@
 
 namespace internal {
 template <class C>
-void shuffle_container(C& x) {
+inline void shuffle_container(C& x) {
   std::random_device rng;
   std::mt19937 twister(rng());
   std::shuffle(x.begin(), x.end(), twister);
@@ -39,8 +39,8 @@ using ArgumentTypes
  * @param params Values to copy into params
  */
 template <typename T_param>
-void assign_parameter_values(T_param& params,
-                             const std::vector<double>& values) {
+inline void assign_parameter_values(T_param& params,
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -58,8 +58,8 @@ void assign_parameter_values(T_param& params,
  * @param params Parameter vector to write values to
  * @param params Values to copy into params
  */
-void assign_parameter_values(std::vector<double>& params,
-                             const std::vector<double>& values) {
+inline void assign_parameter_values(std::vector<double>& params,
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -77,8 +77,8 @@ void assign_parameter_values(std::vector<double>& params,
  * @param params Parameter vector to write values to
  * @param params Values to copy into params
  */
-void assign_parameter_values(std::vector<int>& params,
-                             const std::vector<int>& values) {
+inline void assign_parameter_values(std::vector<int>& params,
+                                    const std::vector<int>& values) {
   if (values.size() == 0)
     return;
 
@@ -93,7 +93,8 @@ void assign_parameter_values(std::vector<int>& params,
  * @param param Output parameter to write value to
  * @param params Vector with value to copy into param
  */
-void assign_parameter_values(double& param, const std::vector<double>& values) {
+inline void assign_parameter_values(double& param,
+                                    const std::vector<double>& values) {
   if (values.size() == 0)
     return;
 
@@ -106,7 +107,8 @@ void assign_parameter_values(double& param, const std::vector<double>& values) {
  * @param param Output parameter to write value to
  * @param params Vector with value to copy into param
  */
-void assign_parameter_values(int& param, const std::vector<int>& values) {
+inline void assign_parameter_values(int& param,
+                                    const std::vector<int>& values) {
   if (values.size() == 0)
     return;
 
@@ -121,7 +123,7 @@ void assign_parameter_values(int& param, const std::vector<int>& values) {
  * @param N New size
  */
 template <typename T>
-void resize_if_vector(T& v, int N) {
+inline void resize_if_vector(T& v, int N) {
   v.resize(N);
 }
 
@@ -129,13 +131,13 @@ void resize_if_vector(T& v, int N) {
  * For doubles, resize_if_vector does nothing
  */
 template <>
-void resize_if_vector(double& v, int N) {}
+inline void resize_if_vector(double& v, int N) {}
 
 /*
  * For ints, resize_if_vector does nothing
  */
 template <>
-void resize_if_vector(int& v, int N) {}
+inline void resize_if_vector(int& v, int N) {}
 
 /*
  * check_dist_throws feeds rig.generate_samples various
@@ -295,7 +297,7 @@ struct check_dist_throws {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_dist_throws_all_types(const T_rig& rig) {
+inline void check_dist_throws_all_types(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
       check_dist_throws{}, rig);
 }
@@ -310,7 +312,7 @@ void check_dist_throws_all_types(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_dist_throws_int_first_argument(const T_rig& rig) {
+inline void check_dist_throws_int_first_argument(const T_rig& rig) {
   apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               ArgumentTypes>(check_dist_throws{}, rig);
 }
@@ -326,7 +328,7 @@ void check_dist_throws_int_first_argument(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_dist_throws_real_first_argument(const T_rig& rig) {
+inline void check_dist_throws_real_first_argument(const T_rig& rig) {
   apply_template_permutations<std::tuple<double, std::vector<double>>,
                               ArgumentTypes, ArgumentTypes>(check_dist_throws{},
                                                             rig);
@@ -340,7 +342,7 @@ void check_dist_throws_real_first_argument(const T_rig& rig) {
  * @return vector of length 1 with value v
  */
 template <typename T>
-std::vector<T> promote_to_vector(T v) {
+inline std::vector<T> promote_to_vector(T v) {
   return std::vector<T>(1, v);
 }
 
@@ -349,7 +351,7 @@ std::vector<T> promote_to_vector(T v) {
  * just using std::move but cpplint complained about use of unapproved Rvalues.
  */
 template <typename T>
-std::vector<T> promote_to_vector(std::vector<T> v) {
+inline std::vector<T> promote_to_vector(std::vector<T> v) {
   return v;
 }
 
@@ -430,7 +432,7 @@ struct check_quantiles {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_no_params(const T_rig& rig) {
+inline void check_quantiles_no_params(const T_rig& rig) {
   apply_template_permutations<std::tuple<double>, std::tuple<double>,
                               std::tuple<double>>(check_quantiles{}, rig);
 }
@@ -444,7 +446,7 @@ void check_quantiles_no_params(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_real(const T_rig& rig) {
+inline void check_quantiles_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
                               std::tuple<double>>(check_quantiles{}, rig);
 }
@@ -458,7 +460,7 @@ void check_quantiles_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_real_real(const T_rig& rig) {
+inline void check_quantiles_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
       check_quantiles{}, rig);
 }
@@ -474,7 +476,7 @@ void check_quantiles_real_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_real_first_argument(const T_rig& rig) {
+inline void check_quantiles_real_first_argument(const T_rig& rig) {
   apply_template_permutations<std::tuple<double, std::vector<double>>,
                               ArgumentTypes, std::tuple<double>>(
       check_quantiles{}, rig);
@@ -489,7 +491,7 @@ void check_quantiles_real_first_argument(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_real_real_real(const T_rig& rig) {
+inline void check_quantiles_real_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
       check_quantiles{}, rig);
 }
@@ -636,7 +638,7 @@ struct check_counts {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_real(const T_rig& rig) {
+inline void check_counts_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
                               std::tuple<double>>(check_counts{}, rig);
 }
@@ -650,7 +652,7 @@ void check_counts_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_real_real(const T_rig& rig) {
+inline void check_counts_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
       check_counts{}, rig);
 }
@@ -664,7 +666,7 @@ void check_counts_real_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_real_real_real(const T_rig& rig) {
+inline void check_counts_real_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
       check_counts{}, rig);
 }
@@ -679,7 +681,7 @@ void check_counts_real_real_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_int_real(const T_rig& rig) {
+inline void check_counts_int_real(const T_rig& rig) {
   apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               std::tuple<double>>(check_counts{}, rig);
 }
@@ -694,7 +696,7 @@ void check_counts_int_real(const T_rig& rig) {
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_int_real_real(const T_rig& rig) {
+inline void check_counts_int_real_real(const T_rig& rig) {
   apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               ArgumentTypes>(check_counts{}, rig);
 }

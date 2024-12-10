@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, sub_row_exception) {
+TEST_F(OpenCLRevTests, math_matrix_cl_sub_row_exception) {
   stan::math::matrix_cl<double> m1_cl(3, 3);
   EXPECT_THROW(sub_row(m1_cl, 0, 2, 1), std::invalid_argument);
   EXPECT_THROW(sub_row(m1_cl, 2, 0, 1), std::invalid_argument);
@@ -26,7 +26,7 @@ auto sub_row_functor = [](const auto& a, size_t i, size_t j, size_t ncols) {
   return stan::math::sub_row(a, i, j, ncols);
 };
 
-TEST(MathMatrixCL, sub_row_value_check) {
+TEST_F(OpenCLRevTests, math_matrix_cl_sub_row_value_check) {
   stan::math::matrix_d m1(4, 4);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
 

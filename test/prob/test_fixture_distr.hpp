@@ -1,9 +1,8 @@
 #ifndef TEST_PROB_TEST_FIXTURE_DISTR_HPP
 #define TEST_PROB_TEST_FIXTURE_DISTR_HPP
 
-#include <stan/math/mix.hpp>
 #include <test/prob/utility.hpp>
-#include <test/unit/math/expect_near_rel.hpp>
+#include <gtest/gtest.h>
 #include <type_traits>
 #include <stdexcept>
 

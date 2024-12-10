@@ -20,11 +20,9 @@ namespace math {
  * IDAS DAE integrator.
  */
 class idas_integrator {
-  sundials::Context sundials_context_;
-
-  const double rtol_;
-  const double atol_;
-  const int64_t max_num_steps_;
+  double rtol_;
+  double atol_;
+  int64_t max_num_steps_;
 
  public:
   /**

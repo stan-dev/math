@@ -6,14 +6,14 @@
 
 auto reverse_functor = [](const auto& a) { return stan::math::reverse(a); };
 
-TEST(OpenCLReverse, error) {
+TEST_F(OpenCLRevTests, Reverse_error) {
   Eigen::MatrixXd a(3, 3);
   a << 1, 2, 3, 4, 5, 6, 76, 8, 9;
   stan::math::matrix_cl<double> a_cl(a);
   EXPECT_THROW(stan::math::reverse(a_cl), std::invalid_argument);
 }
 
-TEST(OpenCLReverse, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Reverse_prim_rev_values_small) {
   Eigen::VectorXd a(8);
   a << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4,
       4;
@@ -22,7 +22,7 @@ TEST(OpenCLReverse, prim_rev_values_small) {
       reverse_functor, stan::math::eval(stan::math::transpose(a)));
 }
 
-TEST(OpenCLReverse, prim_rev_size_0) {
+TEST_F(OpenCLRevTests, Reverse_prim_rev_size_0) {
   int N = 0;
 
   Eigen::VectorXd a(N);
@@ -31,7 +31,7 @@ TEST(OpenCLReverse, prim_rev_size_0) {
       reverse_functor, stan::math::eval(stan::math::transpose(a)));
 }
 
-TEST(OpenCLReverse, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Reverse_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);

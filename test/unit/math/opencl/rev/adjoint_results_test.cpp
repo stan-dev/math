@@ -1,10 +1,11 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
-TEST(OpenCLAdjointResults, errors) {
+TEST_F(OpenCLRevTests, AdjointResults_errors) {
   stan::math::matrix_cl<double> a(3, 2);
   stan::math::matrix_cl<double> b(6, 1);
   stan::math::var_value<stan::math::matrix_cl<double>> c(
@@ -22,7 +23,7 @@ TEST(OpenCLAdjointResults, errors) {
   EXPECT_NO_THROW(stan::math::adjoint_results() += stan::math::expressions());
 }
 
-TEST(OpenCLAdjointResults, matrix_expressions) {
+TEST_F(OpenCLRevTests, AdjointResults_matrix_expressions) {
   Eigen::MatrixXd a(3, 2);
   a << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_cl<double> a_cl(a);
@@ -43,7 +44,7 @@ TEST(OpenCLAdjointResults, matrix_expressions) {
   EXPECT_EQ(d, 5);
 }
 
-TEST(OpenCLAdjointResults, vector_expressions) {
+TEST_F(OpenCLRevTests, AdjointResults_vector_expressions) {
   Eigen::VectorXd a(6);
   a << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_cl<double> a_cl(a);

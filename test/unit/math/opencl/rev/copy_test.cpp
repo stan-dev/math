@@ -1,11 +1,12 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
 
-TEST(VariCL, var_matrix_to_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_var_matrix_to_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -17,7 +18,7 @@ TEST(VariCL, var_matrix_to_matrix_cl) {
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
-TEST(MathMatrixGPU, var_std_vector_to_matrix_cl) {
+TEST_F(OpenCLRevTests, MathMatrixGPU_var_std_vector_to_matrix_cl) {
   using stan::math::var_value;
   std::vector<stan::math::var> vals = {1, 2, 3, 4, 5, 6};
   var_value<stan::math::matrix_cl<double>> a_cl
@@ -33,7 +34,7 @@ TEST(MathMatrixGPU, var_std_vector_to_matrix_cl) {
   }
 }
 
-TEST(VariCL, matrix_var_to_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_matrix_var_to_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -46,7 +47,7 @@ TEST(VariCL, matrix_var_to_matrix_cl) {
   EXPECT_MATRIX_EQ(vars.adj(), Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
-TEST(MathMatrixGPU, std_vector_matrix_var_to_matrix_cl) {
+TEST_F(OpenCLRevTests, MathMatrixGPU_std_vector_matrix_var_to_matrix_cl) {
   using stan::math::var_value;
   stan::math::matrix_v a(2, 3);
   a << 1, 2, 3, 4, 5, 6;
@@ -73,7 +74,7 @@ TEST(MathMatrixGPU, std_vector_matrix_var_to_matrix_cl) {
   }
 }
 
-TEST(VariCL, var_matrix_from_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_var_matrix_from_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -87,7 +88,7 @@ TEST(VariCL, var_matrix_from_matrix_cl) {
                    Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
-TEST(VariCL, eigen_var_from_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_eigen_var_from_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -102,7 +103,7 @@ TEST(VariCL, eigen_var_from_matrix_cl) {
                    Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
-TEST(VariCL, std_vector_var_from_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_std_vector_var_from_matrix_cl) {
   using stan::math::var;
   using stan::math::var_value;
   std::vector<double> vals{1, 2, 3, 4, 5, 6};
@@ -117,7 +118,7 @@ TEST(VariCL, std_vector_var_from_matrix_cl) {
                    Eigen::VectorXd::Constant(6, 1.0));
 }
 
-TEST(VariCL, std_vector_var_eigen_from_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_std_vector_var_eigen_from_matrix_cl) {
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::vector_v;
@@ -141,7 +142,7 @@ TEST(VariCL, std_vector_var_eigen_from_matrix_cl) {
                    Eigen::MatrixXd::Constant(2, 3, 2.0));
 }
 
-TEST(VariCL, std_vector_eigen_var_from_matrix_cl) {
+TEST_F(OpenCLRevTests, VariCL_std_vector_eigen_var_from_matrix_cl) {
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::vector_v;

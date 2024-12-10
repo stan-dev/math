@@ -7,7 +7,7 @@
 auto divide_functor
     = [](const auto& a, const auto& b) { return stan::math::divide(a, b); };
 
-TEST(OpenCLMatrix_divide, prim_rev_scalar_mat_zero) {
+TEST_F(OpenCLRevTests, Matrix_divide_prim_rev_scalar_mat_zero) {
   int M = 0;
   int K = 0;
 
@@ -16,7 +16,7 @@ TEST(OpenCLMatrix_divide, prim_rev_scalar_mat_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(divide_functor, b, a);
 }
 
-TEST(OpenCLMatrix_divide, prim_rev_scalar_mat_values) {
+TEST_F(OpenCLRevTests, Matrix_divide_prim_rev_scalar_mat_values) {
   int N = 71;
   int M = 83;
 

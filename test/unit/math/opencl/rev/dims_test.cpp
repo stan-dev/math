@@ -1,9 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixRevCL, dimsZero) {
+TEST_F(OpenCLRevTests, MathMatrixRevCL_dimsZero) {
   using stan::math::dims;
   using stan::math::matrix_cl;
   using stan::math::var_value;
@@ -26,7 +27,7 @@ TEST(MathMatrixRevCL, dimsZero) {
   EXPECT_EQ(0, dims10[1]);
 }
 
-TEST(MathMatrixRevCL, dimsNonZero) {
+TEST_F(OpenCLRevTests, MathMatrixRevCL_dimsNonZero) {
   using stan::math::dims;
   using stan::math::matrix_cl;
   using stan::math::var_value;

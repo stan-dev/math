@@ -6,7 +6,7 @@
 
 auto trace_functor = [](const auto& a) { return stan::math::trace(a); };
 
-TEST(OpenCLTrace, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Trace_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -15,7 +15,7 @@ TEST(OpenCLTrace, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(trace_functor, a);
 }
 
-TEST(OpenCLTrace, prim_rev_values_zero_rows) {
+TEST_F(OpenCLRevTests, Trace_prim_rev_values_zero_rows) {
   int N = 0;
   int M = 3;
 
@@ -23,7 +23,7 @@ TEST(OpenCLTrace, prim_rev_values_zero_rows) {
   stan::math::test::compare_cpu_opencl_prim_rev(trace_functor, a);
 }
 
-TEST(OpenCLTrace, prim_rev_values_zero_cols) {
+TEST_F(OpenCLRevTests, Trace_prim_rev_values_zero_cols) {
   int N = 2;
   int M = 0;
 
@@ -31,7 +31,7 @@ TEST(OpenCLTrace, prim_rev_values_zero_cols) {
   stan::math::test::compare_cpu_opencl_prim_rev(trace_functor, a);
 }
 
-TEST(OpenCLTrace, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Trace_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 

@@ -52,6 +52,7 @@ pipeline {
     environment {
         STAN_NUM_THREADS = 4
         CLANG_CXX = 'clang++-7'
+        CLANG_CC='clang-7'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
         N_TESTS = 100
@@ -72,7 +73,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -121,7 +122,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -136,7 +137,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                            python ./runChecks.py 2>&1 | tee dependencies.log""" } ,
                         Documentation: { sh "make doxygen" },
                     )
                 }
@@ -155,7 +156,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -189,7 +190,7 @@ pipeline {
                     }
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -197,8 +198,10 @@ pipeline {
                     steps {
                         retry(1){
                             unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                            sh "make -j${PARALLEL} test-headers"
+                            sh """
+                            cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_TEST_HEADERS=ON;
+                            cd build && make -j${PARALLEL} test-headers;
+                            """
                         }
                     }
                     post { always { deleteDir() } }
@@ -206,7 +209,7 @@ pipeline {
                 stage('Run changed unit tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -241,10 +244,10 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('Rev/Fwd Unit Tests') {
+                stage('All Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -254,78 +257,27 @@ pipeline {
                             !skipRemainingStages
                         }
                     }
+
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-
                         script {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
-
-                            runTests("test/unit/math/rev")
-                            runTests("test/unit/math/fwd")
                         }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mix Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=1 >> make/local"
-                            }
-                            runTests("test/unit/math/mix", true)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Prim Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=0 >> make/local"
-                            }
-                            runTests("test/unit/*_test.cpp", false)
-                            runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
-                            runTests("test/unit/math/memory", false)
-                        }
+                        sh '''
+                        echo CXXFLAGS += -fsanitize=address >> make/local;
+                        cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
+                        cd build && make -j${PARALLEL} test_unit_math_tests && \
+                        ctest --output-on-failure --label-regex unit_math_subtest;
+                        '''
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'v100'
                             args '--gpus 1'
                         }
@@ -333,17 +285,13 @@ pipeline {
                     steps {
                         script {
                             unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=1 >> make/local"
                             }
-                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
-                            runTests("test/unit/multiple_translation_units_test.cpp")
+                            sh'''
+                                CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
+                                cd build && make -j${PARALLEL} test_unit_math_opencl_tests && ctest --output-on-failure --label-regex unit_math_opencl
+                            '''
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -361,7 +309,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -371,6 +319,9 @@ pipeline {
                             echo CXX=${MPICXX} > make/local
                             echo CXX_TYPE=gcc >> make/local
                             echo STAN_MPI=true >> make/local
+                            CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
+                            cd build && make -j${PARALLEL} test_unit_math_mpi_tests && ctest --output-on-failure --label-regex unit_math_mpi_subtest
+
                         """
                         runTests("test/unit/math/prim/functor")
                         runTests("test/unit/math/rev/functor")
@@ -380,7 +331,7 @@ pipeline {
                 stage('Expressions test') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -417,7 +368,7 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                         }
                     }
@@ -454,7 +405,7 @@ pipeline {
             }
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }
@@ -489,7 +440,7 @@ pipeline {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
                             deleteDir()
-                            docker.image('stanorg/ci:gpu-cpp17').inside {
+                            docker.image('stanorg/ci:gpu-cmake3.30.5').inside {
                                 catchError {
                                     unstash 'MathSetup'
                                     sh """
@@ -543,7 +494,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:gpu-cpp17'
+                    image 'stanorg/ci:gpu-cmake3.30.5'
                     label 'linux'
                 }
             }

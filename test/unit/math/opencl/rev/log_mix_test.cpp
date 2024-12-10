@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(OpenCLLogMix, error_checking) {
+TEST_F(OpenCLRevTests, LogMix_error_checking) {
   int N = 3;
   int M = 2;
 
@@ -57,7 +57,7 @@ auto log_mix_functor = [](const auto& theta, const auto& lambda) {
   return stan::math::log_mix(theta, lambda);
 };
 
-TEST(OpenCLLogMix, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, LogMix_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -86,7 +86,7 @@ TEST(OpenCLLogMix, opencl_matches_cpu_small) {
                                                 lambda4);
 }
 
-TEST(OpenCLLogMix, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, LogMix_opencl_matches_cpu_big) {
   int N = 153;
   int M = 11;
 

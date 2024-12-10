@@ -8,7 +8,7 @@ auto multiply_log_functor = [](const auto& a, const auto& b) {
   return stan::math::multiply_log(a, b);
 };
 
-TEST(OpenCLMatrix_multiply_log, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_multiply_log_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -19,7 +19,7 @@ TEST(OpenCLMatrix_multiply_log, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(multiply_log_functor, a, b);
 }
 
-TEST(OpenCLMatrixmultiply_log, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, Matrixmultiply_log_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -32,7 +32,7 @@ TEST(OpenCLMatrixmultiply_log, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(multiply_log_functor, c, d);
 }
 
-TEST(OpenCLMatrixmultiply_log, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Matrixmultiply_log_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 
@@ -41,7 +41,7 @@ TEST(OpenCLMatrixmultiply_log, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(multiply_log_functor, a, b);
 }
 
-TEST(OpenCLMatrixmultiply_log, prim_rev_scalar_values_large) {
+TEST_F(OpenCLRevTests, Matrixmultiply_log_prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;
 

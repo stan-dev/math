@@ -9,7 +9,7 @@
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#include <sundials/sundials_context.h>
+#include <sundials/sundials_context.hpp>
 #include <ostream>
 #include <vector>
 #include <algorithm>
@@ -31,7 +31,7 @@ namespace math {
 template <typename dae_type>
 struct idas_service {
   sundials::Context sundials_context_;
-  int ns;
+  int ns_;
   N_Vector nv_yy;
   N_Vector nv_yp;
   N_Vector* nv_yys;
@@ -48,7 +48,7 @@ struct idas_service {
    */
   idas_service(double t0, dae_type& dae)
       : sundials_context_(),
-        ns(dae.ns),
+        ns_(dae.ns),
         nv_yy(N_VNew_Serial(dae.N, sundials_context_)),
         nv_yp(N_VNew_Serial(dae.N, sundials_context_)),
         nv_yys(nullptr),
@@ -66,7 +66,14 @@ struct idas_service {
     CHECK_IDAS_CALL(IDASetUserData(mem, static_cast<void*>(&dae)));
     CHECK_IDAS_CALL(IDASetLinearSolver(mem, LS, A));
 
-    idas_sens_init(nv_yys, nv_yps, ns, n);
+    if (dae_type::use_fwd_sens) {
+      //      std::cout << "Forward sensitivities enabled. Initializing
+      //      sensitivities."
+      //                << std::endl;
+      idas_sens_init(nv_yys, nv_yps, ns_, n);
+    } else {
+      //   std::cout << "Forward sensitivities not enabled." << std::endl;
+    }
   }
 
   ~idas_service() {
@@ -76,8 +83,8 @@ struct idas_service {
     N_VDestroy(nv_yy);
     N_VDestroy(nv_yp);
     if (dae_type::use_fwd_sens) {
-      N_VDestroyVectorArray(nv_yys, ns);
-      N_VDestroyVectorArray(nv_yps, ns);
+      N_VDestroyVectorArray(nv_yys, ns_);
+      N_VDestroyVectorArray(nv_yps, ns_);
     }
   }
 
@@ -90,11 +97,21 @@ struct idas_service {
   void idas_sens_init(N_Vector*& yys, N_Vector*& yps, int ns, int n) {
     yys = N_VCloneVectorArray(ns, nv_yy);
     yps = N_VCloneVectorArray(ns, nv_yp);
+    if (yys == nullptr) {
+      throw std::runtime_error(
+          "Failed to allocate yys N_Vectors for sensitivities.");
+    }
+    if (yps == nullptr) {
+      throw std::runtime_error(
+          "Failed to allocate yps N_Vectors for sensitivities.");
+    }
     for (size_t is = 0; is < ns; ++is) {
-      N_VConst(RCONST(0.0), yys[is]);
-      N_VConst(RCONST(0.0), yps[is]);
+      N_VConst(SUN_RCONST(0.0), yys[is]);
+      N_VConst(SUN_RCONST(0.0), yps[is]);
     }
     set_init_sens(yys, yps, n);
+    // std::cout << "Calling IDASensInit with ns=" << ns << " inner ns: " << ns_
+    //           << std::endl;
     CHECK_IDAS_CALL(
         IDASensInit(mem, ns, IDA_STAGGERED, dae_type::idas_sens_res, yys, yps));
   }

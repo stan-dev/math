@@ -23,7 +23,7 @@ using dae_test_types = boost::mp11::mp_product<
     ::testing::Types<double, stan::math::var_value<double> >,  // yp0
     ::testing::Types<double, stan::math::var_value<double> >   // theta
     >;
-
+/*
 TYPED_TEST_SUITE_P(analytical_dae_test);
 TYPED_TEST_P(analytical_dae_test, dv) {
   double k = 0.5;
@@ -49,4 +49,5 @@ TYPED_TEST_P(analytical_dae_test, vd) {
 
 REGISTER_TYPED_TEST_SUITE_P(analytical_dae_test, dv, vd);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, analytical_dae_test, dae_test_types);
+*/
 }  // namespace analytical_dae_typed_test

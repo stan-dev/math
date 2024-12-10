@@ -8,7 +8,7 @@
 auto add_functor
     = [](const auto& a, const auto& b) { return stan::math::add(a, b).eval(); };
 
-TEST(OpenCLPrim, add_v_small_zero) {
+TEST_F(OpenCLRevTests, Prim_add_v_small_zero) {
   stan::math::vector_d d1(3), d2(3);
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
@@ -24,7 +24,7 @@ TEST(OpenCLPrim, add_v_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d0, d3);
 }
 
-TEST(OpenCLPrim, add_rv_small_zero) {
+TEST_F(OpenCLRevTests, Prim_add_rv_small_zero) {
   stan::math::row_vector_d d1(3), d2(3);
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
@@ -40,7 +40,7 @@ TEST(OpenCLPrim, add_rv_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d0, d3);
 }
 
-TEST(OpenCLPrim, add_m_small_zero) {
+TEST_F(OpenCLRevTests, Prim_add_m_small_zero) {
   stan::math::matrix_d d1(3, 3), d2(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   d2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
@@ -56,7 +56,7 @@ TEST(OpenCLPrim, add_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d0, d3);
 }
 
-TEST(OpenCLPrim, add_rev_exceptions) {
+TEST_F(OpenCLRevTests, Prim_add_rev_exceptions) {
   using stan::math::matrix_cl;
   stan::math::vector_d vd1(2), vd2(3);
   stan::math::var_value<matrix_cl<double>> vd11 = stan::math::to_matrix_cl(vd1);
@@ -76,7 +76,7 @@ TEST(OpenCLPrim, add_rev_exceptions) {
   EXPECT_THROW(stan::math::add(md11, md22), std::invalid_argument);
 }
 
-TEST(OpenCLPrim, add_aliasing) {
+TEST_F(OpenCLRevTests, Prim_add_aliasing) {
   stan::math::matrix_d d1(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   using stan::math::matrix_cl;

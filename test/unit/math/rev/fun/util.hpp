@@ -9,7 +9,8 @@
 // vector; Fills the matrix column-wise
 
 template <typename T, int R, int C>
-void fill(const std::vector<double>& contents, Eigen::Matrix<T, R, C>& M) {
+inline void fill(const std::vector<double>& contents,
+                 Eigen::Matrix<T, R, C>& M) {
   size_t ij = 0;
   for (int j = 0; j < C; ++j)
     for (int i = 0; i < R; ++i)
@@ -25,7 +26,7 @@ struct third_order_mixed {
   }
 };
 
-Eigen::Matrix<double, 3, 3> third_order_mixed_hess(
+inline Eigen::Matrix<double, 3, 3> third_order_mixed_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   Eigen::Matrix<double, 3, 3> hess;
 
@@ -45,7 +46,7 @@ Eigen::Matrix<double, 3, 3> third_order_mixed_hess(
   return hess;
 }
 
-Eigen::Matrix<double, 3, 3> norm_hess(
+inline Eigen::Matrix<double, 3, 3> norm_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -61,7 +62,7 @@ Eigen::Matrix<double, 3, 3> norm_hess(
   return hess;
 }
 
-std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
+inline std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
 third_order_mixed_grad_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
@@ -90,7 +91,7 @@ third_order_mixed_grad_hess(
   return grad_hess_ret;
 }
 
-std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
+inline std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
 norm_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

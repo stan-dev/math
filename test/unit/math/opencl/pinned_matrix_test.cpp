@@ -2,9 +2,10 @@
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, pinned_matrix_matrix_test) {
+TEST_F(AgradRev, pinned_matrix_matrix_test) {
   using Eigen::MatrixXd;
   using stan::math::pinned_matrix;
 
@@ -45,7 +46,7 @@ TEST(AgradRev, pinned_matrix_matrix_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, pinned_matrix_vector_test) {
+TEST_F(AgradRev, pinned_matrix_vector_test) {
   using Eigen::VectorXd;
   using stan::math::pinned_matrix;
 
@@ -86,7 +87,7 @@ TEST(AgradRev, pinned_matrix_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, pinned_matrix_row_vector_test) {
+TEST_F(AgradRev, pinned_matrix_row_vector_test) {
   using Eigen::RowVectorXd;
   using stan::math::pinned_matrix;
 

@@ -7,7 +7,7 @@
 auto append_row_functor
     = [](const auto& a, const auto& b) { return stan::math::append_row(a, b); };
 
-TEST(OpenCLMatrix_append_row, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_append_row_prim_rev_values_small) {
   int N1 = 2;
   int N2 = 3;
   int M = 3;
@@ -19,7 +19,7 @@ TEST(OpenCLMatrix_append_row, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(append_row_functor, a, b);
 }
 
-TEST(OpenCLAppendRow, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, AppendRow_prim_rev_values_M_0) {
   int N1 = 2;
   int N2 = 3;
   int M = 0;
@@ -33,7 +33,7 @@ TEST(OpenCLAppendRow, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(append_row_functor, c, d);
 }
 
-TEST(OpenCLAppendRow, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, AppendRow_prim_rev_values_large) {
   int N1 = 71;
   int N2 = 95;
   int M = 83;

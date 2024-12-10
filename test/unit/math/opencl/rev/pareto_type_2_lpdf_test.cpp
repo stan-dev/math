@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsParetoType2, error_checking) {
+TEST_F(OpenCLRevTests, probdistParetoType2_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -103,7 +103,7 @@ auto pareto_type_2_lpdf_functor_propto
         return stan::math::pareto_type_2_lpdf<true>(y, mu, lambda, alpha);
       };
 
-TEST(ProbDistributionsParetoType2, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_matches_cpu_small) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -128,7 +128,7 @@ TEST(ProbDistributionsParetoType2, opencl_matches_cpu_small) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_broadcast_y) {
   int N = 3;
 
   double y = 30.3;
@@ -151,7 +151,7 @@ TEST(ProbDistributionsParetoType2, opencl_broadcast_y) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -174,7 +174,7 @@ TEST(ProbDistributionsParetoType2, opencl_broadcast_mu) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoType2, opencl_broadcast_lambda) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_broadcast_lambda) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -197,7 +197,7 @@ TEST(ProbDistributionsParetoType2, opencl_broadcast_lambda) {
       mu.transpose().eval(), lambda, alpha);
 }
 
-TEST(ProbDistributionsParetoType2, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -220,7 +220,7 @@ TEST(ProbDistributionsParetoType2, opencl_broadcast_alpha) {
       lambda.transpose().eval(), alpha);
 }
 
-TEST(ProbDistributionsParetoType2, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistParetoType2_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

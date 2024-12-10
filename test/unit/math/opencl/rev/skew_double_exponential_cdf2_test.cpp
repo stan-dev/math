@@ -12,7 +12,8 @@ auto skew_double_exponential_cdf_functor
         return stan::math::skew_double_exponential_cdf(y, mu, sigma, tau);
       };
 
-TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests,
+       probdistSkewDoubleExponentialCdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -30,7 +31,7 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_broadcast_sigma) {
       tau.transpose().eval());
 }
 
-TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_broadcast_tau) {
+TEST_F(OpenCLRevTests, probdistSkewDoubleExponentialCdf_opencl_broadcast_tau) {
   int N = 3;
 
   Eigen::VectorXd y(N);

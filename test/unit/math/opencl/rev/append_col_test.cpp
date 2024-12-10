@@ -7,7 +7,7 @@
 auto append_col_functor
     = [](const auto& a, const auto& b) { return stan::math::append_col(a, b); };
 
-TEST(OpenCLAppendCol, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, AppendCol_prim_rev_values_small) {
   int N = 2;
   int M1 = 3;
   int M2 = 2;
@@ -19,7 +19,7 @@ TEST(OpenCLAppendCol, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(append_col_functor, a, b);
 }
 
-TEST(OpenCLAppendCol, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, AppendCol_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -32,7 +32,7 @@ TEST(OpenCLAppendCol, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(append_col_functor, c, d);
 }
 
-TEST(OpenCLAppendCol, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, AppendCol_prim_rev_values_large) {
   int N = 71;
   int M1 = 83;
   int M2 = 93;

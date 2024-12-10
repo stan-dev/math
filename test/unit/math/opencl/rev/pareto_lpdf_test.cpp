@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsPareto, error_checking) {
+TEST_F(OpenCLRevTests, probdistPareto_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -75,7 +75,7 @@ auto pareto_lpdf_functor_propto
         return stan::math::pareto_lpdf<true>(y, y_min, alpha);
       };
 
-TEST(ProbDistributionsPareto, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistPareto_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -98,7 +98,7 @@ TEST(ProbDistributionsPareto, opencl_matches_cpu_small) {
       y_min.transpose().eval(), alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsPareto, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistPareto_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -118,7 +118,7 @@ TEST(ProbDistributionsPareto, opencl_broadcast_y) {
       pareto_lpdf_functor_propto, y_scal, y_min, alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsPareto, opencl_broadcast_y_min) {
+TEST_F(OpenCLRevTests, probdistPareto_opencl_broadcast_y_min) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -137,7 +137,7 @@ TEST(ProbDistributionsPareto, opencl_broadcast_y_min) {
       pareto_lpdf_functor_propto, y, y_min_scal, alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsPareto, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, probdistPareto_opencl_broadcast_alpha) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -156,7 +156,7 @@ TEST(ProbDistributionsPareto, opencl_broadcast_alpha) {
       pareto_lpdf_functor_propto, y, y_min.transpose().eval(), alpha_scal);
 }
 
-TEST(ProbDistributionsPareto, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistPareto_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

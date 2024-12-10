@@ -12,7 +12,7 @@ auto mdivide_left_tri_low_functor1 = [](const auto& a, const auto& b) {
 auto mdivide_left_tri_low_functor2
     = [](const auto& a) { return stan::math::mdivide_left_tri_low(a); };
 
-TEST(OpenCL_mdivide_left_tri_low, mdivide_left_tri_low_small) {
+TEST_F(OpenCLRevTests, _mdivide_left_tri_low_mdivide_left_tri_low_small) {
   Eigen::MatrixXd in1(3, 3);
   in1 << 0.5, 3.4, 5.2, 7.5, 1, 2, 3, 4, 5;
   Eigen::VectorXd in2(3);
@@ -23,7 +23,7 @@ TEST(OpenCL_mdivide_left_tri_low, mdivide_left_tri_low_small) {
                                                 in1);
 }
 
-TEST(OpenCL_mdivide_left_tri_low, zero) {
+TEST_F(OpenCLRevTests, _mdivide_left_tri_low_zero) {
   Eigen::MatrixXd in1;
   Eigen::VectorXd in2;
   stan::math::test::compare_cpu_opencl_prim_rev(mdivide_left_tri_low_functor1,
@@ -32,7 +32,7 @@ TEST(OpenCL_mdivide_left_tri_low, zero) {
                                                 in1);
 }
 
-TEST(OpenCL_mdivide_left_tri_low, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, _mdivide_left_tri_low_prim_rev_values_large) {
   int N = 71;
 
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);

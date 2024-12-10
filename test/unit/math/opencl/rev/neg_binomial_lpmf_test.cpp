@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(muProbDistributionsNegBinomial, error_checking) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_error_checking) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -72,7 +72,8 @@ auto neg_binomial_lpmf_functor_propto
         return stan::math::neg_binomial_lpmf<true>(n, alpha, beta);
       };
 
-TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests,
+       muProbDistributionsNegBinomial_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -94,7 +95,7 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_small) {
       beta.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial, opencl_broadcast_n) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_opencl_broadcast_n) {
   int N = 3;
 
   int n = 2;
@@ -113,7 +114,7 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_n) {
       neg_binomial_lpmf_functor_propto, n, alpha, beta.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial, opencl_broadcast_alpha) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_opencl_broadcast_alpha) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -131,7 +132,7 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_alpha) {
       neg_binomial_lpmf_functor_propto, n, alpha, beta.transpose().eval());
 }
 
-TEST(muProbDistributionsNegBinomial, opencl_broadcast_beta) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_opencl_broadcast_beta) {
   int N = 3;
 
   std::vector<int> n{1, 0, 12};
@@ -149,7 +150,7 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_beta) {
       neg_binomial_lpmf_functor_propto, n, alpha.transpose().eval(), beta);
 }
 
-TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, muProbDistributionsNegBinomial_opencl_matches_cpu_big) {
   int N = 153;
 
   std::vector<int> n(N);

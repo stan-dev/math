@@ -7,7 +7,7 @@
 auto elt_divide_functor
     = [](const auto& a, const auto& b) { return stan::math::elt_divide(a, b); };
 
-TEST(OpenCLMatrix_elt_divide, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, Matrix_elt_divide_prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -18,7 +18,7 @@ TEST(OpenCLMatrix_elt_divide, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(elt_divide_functor, a, b);
 }
 
-TEST(OpenCLMatrixelt_divide, prim_rev_values_M_0) {
+TEST_F(OpenCLRevTests, Matrixelt_divide_prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -31,7 +31,7 @@ TEST(OpenCLMatrixelt_divide, prim_rev_values_M_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(elt_divide_functor, c, d);
 }
 
-TEST(OpenCLMatrixelt_divide, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, Matrixelt_divide_prim_rev_values_large) {
   int N = 71;
   int M = 83;
 
@@ -40,7 +40,7 @@ TEST(OpenCLMatrixelt_divide, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(elt_divide_functor, a, b);
 }
 
-TEST(OpenCLMatrixelt_divide, prim_rev_scalar_values_large) {
+TEST_F(OpenCLRevTests, Matrixelt_divide_prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;
 

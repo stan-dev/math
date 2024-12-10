@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-TEST(ProbDistributionsLognormalLccdf, error_checking) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_error_checking) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -61,7 +61,7 @@ auto lognormal_lccdf_functor
         return stan::math::lognormal_lccdf(y, mu, sigma);
       };
 
-TEST(ProbDistributionsLognormalLccdf, opencl_matches_cpu_small) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
@@ -79,7 +79,7 @@ TEST(ProbDistributionsLognormalLccdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsLognormalLccdf, opencl_matches_cpu_small_y_zero) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_matches_cpu_small_y_zero) {
   int N = 3;
   int M = 2;
 
@@ -97,7 +97,7 @@ TEST(ProbDistributionsLognormalLccdf, opencl_matches_cpu_small_y_zero) {
       sigma.transpose().eval());
 }
 
-TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_y) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_broadcast_y) {
   int N = 3;
 
   double y_scal = 12.3;
@@ -112,7 +112,7 @@ TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_y) {
       lognormal_lccdf_functor, y_scal, mu.transpose().eval(), sigma);
 }
 
-TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_mu) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_broadcast_mu) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -127,7 +127,7 @@ TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_mu) {
       lognormal_lccdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
 
-TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_sigma) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_broadcast_sigma) {
   int N = 3;
 
   Eigen::VectorXd y(N);
@@ -142,7 +142,7 @@ TEST(ProbDistributionsLognormalLccdf, opencl_broadcast_sigma) {
       lognormal_lccdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
 
-TEST(ProbDistributionsLognormalLccdf, opencl_matches_cpu_big) {
+TEST_F(OpenCLRevTests, probdistLognormalLccdf_opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

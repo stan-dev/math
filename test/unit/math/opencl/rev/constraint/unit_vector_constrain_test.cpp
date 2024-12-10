@@ -21,7 +21,7 @@ auto unit_vector_constrain_functor3 = [](const auto& a) {
   return lp;
 };
 
-TEST(OpenCLUnitVectorConstrain, prim_rev_values_small) {
+TEST_F(OpenCLRevTests, UnitVectorConstrain_prim_rev_values_small) {
   Eigen::VectorXd a(8);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
 
@@ -33,7 +33,7 @@ TEST(OpenCLUnitVectorConstrain, prim_rev_values_small) {
                                                 a);
 }
 
-TEST(OpenCLUnitVectorConstrain, prim_rev_size_1) {
+TEST_F(OpenCLRevTests, UnitVectorConstrain_prim_rev_size_1) {
   int N = 1;
 
   Eigen::VectorXd a(N);
@@ -47,7 +47,7 @@ TEST(OpenCLUnitVectorConstrain, prim_rev_size_1) {
                                                 a);
 }
 
-TEST(OpenCLUnitVectorConstrain, prim_rev_values_large) {
+TEST_F(OpenCLRevTests, UnitVectorConstrain_prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);

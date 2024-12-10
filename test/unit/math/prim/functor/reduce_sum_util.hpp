@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 namespace test {
-std::ostream* get_new_msg() {
+inline std::ostream* get_new_msg() {
   std::ostream* msgs = nullptr;
   return msgs;
 }
@@ -147,7 +147,7 @@ struct grouped_count_lpdf {
 };
 
 template <typename T1, typename T2, typename... Args>
-void test_slices(T1 result, T2&& vec_value, Args&&... args) {
+inline void test_slices(T1 result, T2&& vec_value, Args&&... args) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -160,24 +160,28 @@ void test_slices(T1 result, T2&& vec_value, Args&&... args) {
       << "Failed for reduce_sum";
 }
 
-auto reduce_sum_static_int_sum_lpdf = [](auto&&... args) {
+template <typename... Types>
+inline auto reduce_sum_static_int_sum_lpdf(Types&&... args) {
   return stan::math::reduce_sum_static<sum_lpdf>(std::vector<int>(2, 10.0), 1,
                                                  get_new_msg(), args...);
-};
+}
 
-auto reduce_sum_static_sum_lpdf = [](auto&& data, auto&&... args) {
+template <typename T, typename... Types>
+inline auto reduce_sum_static_sum_lpdf(T&& data, Types&&... args) {
   return stan::math::reduce_sum_static<sum_lpdf>(data, 1, get_new_msg(),
                                                  args...);
-};
+}
 
-auto reduce_sum_int_sum_lpdf = [](auto&&... args) {
+template <typename... Types>
+inline auto reduce_sum_int_sum_lpdf(Types&&... args) {
   return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 1,
                                           get_new_msg(), args...);
-};
+}
 
-auto reduce_sum_sum_lpdf = [](auto&& data, auto&&... args) {
+template <typename T, typename... Types>
+inline auto reduce_sum_sum_lpdf(T&& data, Types&&... args) {
   return stan::math::reduce_sum<sum_lpdf>(data, 1, get_new_msg(), args...);
-};
+}
 
 template <int grainsize>
 struct static_check_lpdf {
