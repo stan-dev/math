@@ -307,6 +307,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         W_is_spd &= (W.coeff(i, i) < 0);
       }
       Eigen::SparseMatrix<double> W_r;
+      // TODO(Charles): Need better way to handle negative diagonals
       if (W_is_spd) {
         W_r = W.cwiseSqrt();
       } else {
@@ -458,8 +459,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+      std::cout << "-------------\ni: " << i << "\n";
+      std::cout << "lmd: " << __LINE__ << std::endl;
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
+      std::cout << "lmd: " << __LINE__ << std::endl;
       auto B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
           = Eigen::PartialPivLU<Eigen::MatrixXd>(std::move(B));
@@ -475,22 +479,30 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       B_log_determinant *= signDet;
       //      const double B_log_determinant = log(LU.determinant());
       VectorXd b = W * theta + theta_grad;
+      std::cout << "theta(" << theta.rows() << ", " << theta.cols() << ")\n" << theta.transpose().eval() << std::endl;
+      std::cout << "theta_grad(" << theta_grad.rows() << ", " << theta_grad.cols() << ")\n" << theta_grad.transpose().eval() << std::endl;
+      std::cout << "b(" << b.rows() << ", " << b.cols() << ")\n" << b.transpose().eval() << std::endl;
       Eigen::VectorXd a = b - W * LU.solve(covariance * b);
+      std::cout << "a(" << a.rows() << ", " << a.cols() << ")\n" << a.transpose().eval() << std::endl;
       // Simple Newton step
       theta = covariance * a;
       objective_old = objective_new;
 
       if (std::isfinite(theta.sum())) {
+      std::cout << "lmd: " << __LINE__ << std::endl;
         objective_new = -0.5 * a.dot(value_of(theta))
                         + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
                                                              value_of(ll_args), msgs);
+      std::cout << "lmd: " << __LINE__ << std::endl;
       }
 
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
+      std::cout << "lmd: " << __LINE__ << std::endl;
         line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
                     options.max_steps_line_search, objective_old, msgs);
+      std::cout << "lmd: " << __LINE__ << std::endl;
       }
       a_old = a;
       // Check for convergence

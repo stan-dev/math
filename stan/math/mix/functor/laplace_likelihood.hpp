@@ -43,8 +43,10 @@ inline auto conditional_copy_and_promote(Args&&... args) {
       return conditional_copy_and_promote<Filter, PromotedType, CopyType>(std::forward<decltype(arg)>(arg));
     } else {
       if constexpr (CopyType == COPY_TYPE::DEEP) {
+        std::cout << "\tcopdeep: \n" << "\t" << arg << std::endl;
         return stan::math::eval(promote_scalar<PromotedType>(value_of_rec(std::forward<decltype(arg)>(arg))));
       } else {
+        std::cout << "\tcop: \n" << "\t" << arg << std::endl;
         return stan::math::eval(promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
       }
     }
@@ -75,10 +77,14 @@ inline auto diff(F&& f, const Theta& theta,
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
     auto hard_copy_args = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(args...);
+    std::cout << "theta(" << theta_var.size() << "): " << theta_var.transpose().eval() << std::endl;
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     var f_var = stan::math::apply([](auto&& f, auto&& theta_var, auto&&... inner_args) {
       return f(theta_var, inner_args...);
     }, hard_copy_args, f, theta_var);
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     grad(f_var.vi_);
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     return std::make_pair(theta_var.adj().eval(),
       stan::math::filter_map<is_any_var_scalar>([](auto&& arg){
         return stan::math::eval(get_adj(std::forward<decltype(arg)>(arg)));
@@ -86,8 +92,11 @@ inline auto diff(F&& f, const Theta& theta,
   }(args...);
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     Eigen::VectorXd hessian_v = hessian_times_vector(f, theta, v, value_of(args)...);
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
     for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian_theta.insert(i, i) = hessian_v(i);
@@ -95,6 +104,7 @@ inline auto diff(F&& f, const Theta& theta,
     return std::make_tuple(std::move(theta_gradient), std::move(eta_gradient),
                            (-hessian_theta).eval());
   } else {
+    std::cout << "\tdiff: " << __LINE__ << std::endl;
     return std::make_tuple(
         std::move(theta_gradient), std::move(eta_gradient),
         (-hessian_block_diag(f, theta, hessian_block_size, value_of(args)...))
