@@ -362,7 +362,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   // FIXME(Charles): Needs at least a line search of 1 to be successful?
-  for (int max_steps_line_search = 100; max_steps_line_search < 101;
+  for (int max_steps_line_search = 1; max_steps_line_search < 5;
        ++max_steps_line_search) {
     for (int hessian_block_size = 3; hessian_block_size < 4;
          hessian_block_size++) {

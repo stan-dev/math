@@ -77,7 +77,6 @@ inline auto diff(F&& f, const Theta& theta,
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
     auto hard_copy_args = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(args...);
-    std::cout << "theta(" << theta_var.size() << "): " << theta_var.transpose().eval() << std::endl;
     std::cout << "\tdiff: " << __LINE__ << std::endl;
     var f_var = stan::math::apply([](auto&& f, auto&& theta_var, auto&&... inner_args) {
       return f(theta_var, inner_args...);

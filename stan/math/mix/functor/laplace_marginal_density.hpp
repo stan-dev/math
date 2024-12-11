@@ -481,14 +481,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       //      const double B_log_determinant = log(LU.determinant());
       VectorXd b = W * theta + theta_grad;
 
-      std::cout << "theta(" << theta.rows() << ", " << theta.cols() << ")\n" << theta.transpose().eval() << std::endl;
-      std::cout << "theta_grad(" << theta_grad.rows() << ", " << theta_grad.cols() << ")\n" << theta_grad.transpose().eval() << std::endl;
-      std::cout << "b(" << b.rows() << ", " << b.cols() << ")\n" << b.transpose().eval() << std::endl;
       Eigen::VectorXd a = b - W * LU.solve(covariance * b);
-      std::cout << "a(" << a.rows() << ", " << a.cols() << ")\n" << a.transpose().eval() << std::endl;
       // Simple Newton step
       theta = covariance * a;
-      std::cout << "theta(" << theta.rows() << ", " << theta.cols() << ")\n" << theta.transpose().eval() << std::endl;
       objective_old = objective_new;
 
       if (std::isfinite(theta.sum())) {
