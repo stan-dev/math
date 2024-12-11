@@ -1,0 +1,5 @@
+var struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1pinned__matrix_3_01_t_01_4_01_4 =
+[
+    [ "base", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1pinned__matrix_3_01_t_01_4_01_4_a3dd5bcdbae35580e235d64de923e5b7b.html#a3dd5bcdbae35580e235d64de923e5b7b", null ],
+    [ "XprKind", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1pinned__matrix_3_01_t_01_4_01_4_a866c7599840e2eeb168219961dc9f8cf.html#a866c7599840e2eeb168219961dc9f8cf", null ]
+];

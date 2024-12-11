@@ -1,0 +1,7 @@
+var struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4 =
+[
+    [ "StorageKind", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a4718328ae0baa87de25d5b4c00ac2170.html#a4718328ae0baa87de25d5b4c00ac2170", null ],
+    [ "XprKind", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a72d2cf7e5cf4d31d0e515cf8de10aa57.html#a72d2cf7e5cf4d31d0e515cf8de10aa57", null ],
+    [ "StorageIndex", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a81898bbc959510b08fb416bac927b818.html#a81898bbc959510b08fb416bac927b818", null ],
+    [ "Scalar", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a94446949f396e1c6911196af82795217.html#a94446949f396e1c6911196af82795217", null ]
+];

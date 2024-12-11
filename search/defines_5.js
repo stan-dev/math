@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['stan_5fcold_5fpath_0',['STAN_COLD_PATH',['../compiler__attributes_8hpp_aa7541c27425ee2c6bac53a45bad69633.html#aa7541c27425ee2c6bac53a45bad69633',1,'compiler_attributes.hpp']]],
+  ['stan_5fmath_5fconstraint_5ftolerance_1',['STAN_MATH_CONSTRAINT_TOLERANCE',['../constraint__tolerance_8hpp_a99b9f8e100d14cb0f3991a6dfe301776.html#a99b9f8e100d14cb0f3991a6dfe301776',1,'constraint_tolerance.hpp']]],
+  ['stan_5fmath_5fmajor_2',['STAN_MATH_MAJOR',['../version_8hpp_a64f03843f4437f40d083b7bc1a1206e1.html#a64f03843f4437f40d083b7bc1a1206e1',1,'version.hpp']]],
+  ['stan_5fmath_5fminor_3',['STAN_MATH_MINOR',['../version_8hpp_afae12a425638d2799b253d3eb268190c.html#afae12a425638d2799b253d3eb268190c',1,'version.hpp']]],
+  ['stan_5fmath_5fopencl_5fkernel_5fgenerator_5fget_5fkernel_5fsource_5ffor_5fevaluating_5finto_5fhpp_4',['STAN_MATH_OPENCL_KERNEL_GENERATOR_GET_KERNEL_SOURCE_FOR_EVALUATING_INTO_HPP',['../get__kernel__source__for__evaluating__into_8hpp_a337a8d049b96acd2533d9b6aca9fbd1e.html#a337a8d049b96acd2533d9b6aca9fbd1e',1,'get_kernel_source_for_evaluating_into.hpp']]],
+  ['stan_5fmath_5fpatch_5',['STAN_MATH_PATCH',['../version_8hpp_aacfcdd8a078a3dc181112e6d04b82f49.html#aacfcdd8a078a3dc181112e6d04b82f49',1,'version.hpp']]],
+  ['stan_5fno_5frange_5fchecks_5freturn_6',['STAN_NO_RANGE_CHECKS_RETURN',['../compiler__attributes_8hpp_ab5900c77d88d2a87f331d966afbf96cf.html#ab5900c77d88d2a87f331d966afbf96cf',1,'compiler_attributes.hpp']]],
+  ['stan_5fregister_5fmap_5frect_7',['STAN_REGISTER_MAP_RECT',['../map__rect_8hpp_aa86b4e59b6af64b61560c13b70f303e1.html#aa86b4e59b6af64b61560c13b70f303e1',1,'STAN_REGISTER_MAP_RECT:&#160;map_rect.hpp'],['../map__rect__mpi_8hpp_aa86b4e59b6af64b61560c13b70f303e1.html#aa86b4e59b6af64b61560c13b70f303e1',1,'STAN_REGISTER_MAP_RECT:&#160;map_rect_mpi.hpp']]],
+  ['stan_5fregister_5fmpi_5fcommand_8',['STAN_REGISTER_MPI_COMMAND',['../mpi__command_8hpp_a082e4607dd8eb8f82a3af79e43ef40c9.html#a082e4607dd8eb8f82a3af79e43ef40c9',1,'mpi_command.hpp']]],
+  ['stan_5fregister_5fmpi_5fdistributed_5fapply_9',['STAN_REGISTER_MPI_DISTRIBUTED_APPLY',['../mpi__distributed__apply_8hpp_a4658b58d201cce832a409757f9b3b624.html#a4658b58d201cce832a409757f9b3b624',1,'mpi_distributed_apply.hpp']]],
+  ['stan_5fregister_5fmpi_5fmap_5frect_10',['STAN_REGISTER_MPI_MAP_RECT',['../map__rect__mpi_8hpp_a6d08cbc06e2ae82ec2988c68193a8769.html#a6d08cbc06e2ae82ec2988c68193a8769',1,'map_rect_mpi.hpp']]],
+  ['stan_5fregister_5fmpi_5fmap_5frect_5fall_11',['STAN_REGISTER_MPI_MAP_RECT_ALL',['../map__rect__mpi_8hpp_a2bd9de2b97f2d07e4a228be67d3ebeca.html#a2bd9de2b97f2d07e4a228be67d3ebeca',1,'map_rect_mpi.hpp']]],
+  ['stan_5fstring_12',['STAN_STRING',['../version_8hpp_a0c96447c79362b9df7ef76867a44d3be.html#a0c96447c79362b9df7ef76867a44d3be',1,'version.hpp']]],
+  ['stan_5fstring_5fexpand_13',['STAN_STRING_EXPAND',['../version_8hpp_aad2ae61392a9e7bd9be77f2688b93cee.html#aad2ae61392a9e7bd9be77f2688b93cee',1,'version.hpp']]],
+  ['stan_5fthreads_5fdef_14',['STAN_THREADS_DEF',['../autodiffstackstorage_8hpp_acbfc8790ef4862f31890f37806b36b98.html#acbfc8790ef4862f31890f37806b36b98',1,'autodiffstackstorage.hpp']]],
+  ['stringify_15',['STRINGIFY',['../stringify_8hpp_a74c9963ef1fdcd835d58b542e27b8417.html#a74c9963ef1fdcd835d58b542e27b8417',1,'stringify.hpp']]],
+  ['stringify2_16',['STRINGIFY2',['../double__d_8hpp_a4cb147ac48000ed31c41f966a3696471.html#a4cb147ac48000ed31c41f966a3696471',1,'double_d.hpp']]]
+];
