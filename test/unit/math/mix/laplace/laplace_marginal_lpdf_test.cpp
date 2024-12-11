@@ -302,10 +302,12 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
 
     // Remark: finds optimal point with or without informed initial guess.
+    /*
     for (int i = 0; i < n_obs; i++) {
       theta0(2 * i) = mu_hat(i);  // 0
       theta0(2 * i + 1) = 0;
     }
+    */
 
     solver = 2;
     eps = 1e-7;
