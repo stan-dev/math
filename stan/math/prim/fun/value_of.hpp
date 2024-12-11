@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_VALUE_OF_HPP
 #define STAN_MATH_PRIM_FUN_VALUE_OF_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <cstddef>
 #include <vector>
 
@@ -97,6 +98,15 @@ template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
           require_st_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   return std::forward<EigMat>(M);
+}
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto value_of(Tuple&& tup) {
+  return stan::math::apply(
+      [](auto&&... args) {
+        return std::make_tuple(value_of(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
 }
 
 }  // namespace math

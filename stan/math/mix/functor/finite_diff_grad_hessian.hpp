@@ -38,10 +38,10 @@ namespace math {
  * @param[in] epsilon perturbation size
  */
 template <typename F>
-void finite_diff_grad_hessian(const F& f, const Eigen::VectorXd& x, double& fx,
-                              Eigen::MatrixXd& hess,
-                              std::vector<Eigen::MatrixXd>& grad_hess_fx,
-                              double epsilon = 1e-04) {
+inline void finite_diff_grad_hessian(const F& f, const Eigen::VectorXd& x,
+                                     double& fx, Eigen::MatrixXd& hess,
+                                     std::vector<Eigen::MatrixXd>& grad_hess_fx,
+                                     double epsilon = 1e-04) {
   int d = x.size();
   grad_hess_fx.clear();
 

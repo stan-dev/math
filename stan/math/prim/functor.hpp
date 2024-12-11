@@ -10,6 +10,7 @@
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/filter_map.hpp>
 #include <stan/math/prim/functor/hcubature.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
