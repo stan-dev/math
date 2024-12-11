@@ -292,8 +292,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   };
   const Eigen::Index theta_size = theta_0.size();
   std::decay_t<Theta> theta = theta_0;
-  double objective_old = -1e+10;  // CHECK -- what value to use?
-  double objective_new = -1e+10;
+  double objective_old = std::numeric_limits<double>::lowest();  
+  double objective_new = std::numeric_limits<double>::lowest();
   Eigen::VectorXd a_old;
   if (options.solver == 1 && options.hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
@@ -464,6 +464,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
       std::cout << "lmd: " << __LINE__ << std::endl;
+      stan::math::set_zero_all_adjoints();
       auto B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
           = Eigen::PartialPivLU<Eigen::MatrixXd>(std::move(B));
@@ -479,6 +480,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       B_log_determinant *= signDet;
       //      const double B_log_determinant = log(LU.determinant());
       VectorXd b = W * theta + theta_grad;
+
       std::cout << "theta(" << theta.rows() << ", " << theta.cols() << ")\n" << theta.transpose().eval() << std::endl;
       std::cout << "theta_grad(" << theta_grad.rows() << ", " << theta_grad.cols() << ")\n" << theta_grad.transpose().eval() << std::endl;
       std::cout << "b(" << b.rows() << ", " << b.cols() << ")\n" << b.transpose().eval() << std::endl;
@@ -486,6 +488,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       std::cout << "a(" << a.rows() << ", " << a.cols() << ")\n" << a.transpose().eval() << std::endl;
       // Simple Newton step
       theta = covariance * a;
+      std::cout << "theta(" << theta.rows() << ", " << theta.cols() << ")\n" << theta.transpose().eval() << std::endl;
       objective_old = objective_new;
 
       if (std::isfinite(theta.sum())) {
@@ -493,8 +496,10 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         objective_new = -0.5 * a.dot(value_of(theta))
                         + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
                                                              value_of(ll_args), msgs);
+      stan::math::set_zero_all_adjoints();
       std::cout << "lmd: " << __LINE__ << std::endl;
       }
+      // TODO(Charles): How do we handle NA values in theta?
 
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
@@ -506,6 +511,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       }
       a_old = a;
       // Check for convergence
+      std::cout << "objective_new: " << objective_new << std::endl;
+      std::cout << "objective_old: " << objective_old << std::endl;
+      std::cout << "options.tolerance: " << options.tolerance << std::endl;
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
             objective_new - 0.5 * B_log_determinant,

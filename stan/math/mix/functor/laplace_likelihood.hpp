@@ -67,7 +67,7 @@ inline auto conditional_copy_and_promote(Args&&... args) {
  * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename... Args,
-          require_eigen_vector_t<Theta>* = nullptr>
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
 inline auto diff(F&& f, const Theta& theta,
                  const Eigen::Index hessian_block_size, Args&&... args) {
   using Eigen::Dynamic;

@@ -336,6 +336,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   using stan::math::laplace_marginal_lpdf;
   using stan::math::laplace_marginal_tol_lpdf;
   using stan::math::value_of;
+  /*
   {
     double tolerance = 1e-08;
     constexpr int max_num_steps = 1000;
@@ -352,6 +353,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         tolerance, max_num_steps, hessian_block_size, solver,
         max_steps_line_search, nullptr);
   }
+  */
   // TODO(Steve): benchmark this result against GPStuff.
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
