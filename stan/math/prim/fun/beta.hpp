@@ -1,9 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_BETA_HPP
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
@@ -51,8 +48,7 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
-  using std::exp;
-  return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+  return std::beta(a, b);
 }
 
 /**
