@@ -37,10 +37,10 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi(const T& p) {
   const auto& arena_rtn = to_arena(inv_Phi(p.val()));
   return make_callback_var(arena_rtn, [p, arena_rtn](auto& vi) mutable {
-    p.adj() += apply_scalar_binary(vi.adj(), arena_rtn.val(),
-                                  [](const auto& adj, const auto& rtn_val) {
-                                    return adj * exp(-std_normal_lpdf(rtn_val));
-                                  });
+    p.adj() += apply_scalar_binary(
+        vi.adj(), arena_rtn.val(), [](const auto& adj, const auto& rtn_val) {
+          return adj * exp(-std_normal_lpdf(rtn_val));
+        });
   });
 }
 
