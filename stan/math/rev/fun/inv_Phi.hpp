@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
 #include <stan/math/prim/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
@@ -38,7 +39,7 @@ inline auto inv_Phi(const T& p) {
   const auto& arena_rtn = to_arena(inv_Phi(p.val()));
   return make_callback_var(arena_rtn, [p, arena_rtn](auto& vi) mutable {
     p.adj() += apply_scalar_binary(
-        vi.adj(), arena_rtn.val(), [](const auto& adj, const auto& rtn_val) {
+        vi.adj(), arena_rtn.val(), [](const double adj, const double rtn_val) {
           return adj * exp(-std_normal_lpdf(rtn_val));
         });
   });
