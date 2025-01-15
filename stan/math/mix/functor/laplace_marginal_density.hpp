@@ -459,11 +459,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-      std::cout << "-------------\ni: " << i << "\n";
-      std::cout << "lmd: " << __LINE__ << std::endl;
+    //  std::cout << "-------------\ni: " << i << "\n";
+    //  std::cout << "lmd: " << __LINE__ << std::endl;
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
-      std::cout << "lmd: " << __LINE__ << std::endl;
+    //  std::cout << "lmd: " << __LINE__ << std::endl;
       stan::math::set_zero_all_adjoints();
       auto B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
@@ -487,28 +487,28 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       objective_old = objective_new;
 
       if (std::isfinite(theta.sum())) {
-      std::cout << "lmd: " << __LINE__ << std::endl;
+     // std::cout << "lmd: " << __LINE__ << std::endl;
         objective_new = -0.5 * a.dot(value_of(theta))
                         + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
                                                              value_of(ll_args), msgs);
       stan::math::set_zero_all_adjoints();
-      std::cout << "lmd: " << __LINE__ << std::endl;
+     // std::cout << "lmd: " << __LINE__ << std::endl;
       }
       // TODO(Charles): How do we handle NA values in theta?
 
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-      std::cout << "lmd: " << __LINE__ << std::endl;
+    //  std::cout << "lmd: " << __LINE__ << std::endl;
         line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
                     options.max_steps_line_search, objective_old, msgs);
-      std::cout << "lmd: " << __LINE__ << std::endl;
+    //  std::cout << "lmd: " << __LINE__ << std::endl;
       }
       a_old = a;
       // Check for convergence
-      std::cout << "objective_new: " << objective_new << std::endl;
-      std::cout << "objective_old: " << objective_old << std::endl;
-      std::cout << "options.tolerance: " << options.tolerance << std::endl;
+    //  std::cout << "objective_new: " << objective_new << std::endl;
+    //  std::cout << "objective_old: " << objective_old << std::endl;
+    //  std::cout << "options.tolerance: " << options.tolerance << std::endl;
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
             objective_new - 0.5 * B_log_determinant,
