@@ -28,7 +28,8 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-    - Name: Set compiler GCC14
+
+    - name: Set compiler GCC14
       run: |
         echo "CC=gcc-14" >> make/local
         echo "CXX=g++-14" >> make/local
