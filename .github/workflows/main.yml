@@ -39,7 +39,7 @@ jobs:
         make -f make/standalone math-libs -j2
     - name: Run mix/fun unit tests
       run: |
-        python runTests.py -j4 test/unit/math/mix/fun
+        python runTests.py -j2 test/unit/math/mix/fun
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
