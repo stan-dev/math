@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_OWENS_T_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
 
@@ -55,7 +56,9 @@ namespace math {
  * @param a Second argument
  * @return Owen's T function applied to the arguments.
  */
-inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
+inline double owens_t(double h, double a) {
+  return boost::math::owens_t(h, a, boost_policy_t<>());
+}
 
 /**
  * Enables the vectorized application of the owens_t
