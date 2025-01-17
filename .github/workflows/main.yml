@@ -50,8 +50,8 @@ jobs:
         #python runTests.py -j4 --jumbo --run-all test/unit/math/fwd
         #python runTests.py -j4 --jumbo --run-all test/unit/math/prim
         #python runTests.py -j4 --jumbo --run-all test/unit/math/rev
-        python runTests.py -j4 --run-all test/unit/math/opencl
-        python runTests.py -j2 test/unit/math/mix
+        python runTests.py -j2 --run-all test/unit/math/opencl
+        python runTests.py -j2 --run-all test/unit/math/mix
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
