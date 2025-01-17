@@ -6,6 +6,7 @@
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/prim/fun/sin.hpp>
+#include <stan/math/prim/fun/cos.hpp>
 #include <cmath>
 #include <complex>
 
