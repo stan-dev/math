@@ -29,17 +29,13 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Set compiler GCC14
-      run: |
-        echo "CC=gcc-14" >> make/local
-        echo "CXX=g++-14" >> make/local
-        echo "CPPFLAGS += -Wno-deprecated-declarations -Wno-psabi" >> make/local
     - name: Build Math libs
       run: |
         make -f make/standalone math-libs -j2
+
     - name: Run mix/fun unit tests
       run: |
-        python runTests.py -j2 test/unit/math/mix/fun
+        python runTests.py -j2 test/unit/
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
