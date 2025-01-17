@@ -33,6 +33,7 @@ jobs:
       run: |
         echo "CC=gcc-14" >> make/local
         echo "CXX=g++-14" >> make/local
+        echo "CPPFLAGS += -Wno-deprecated-declarations -Wno-psabi" >> make/local
     - name: Build Math libs
       run: |
         make -f make/standalone math-libs -j2
