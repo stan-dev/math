@@ -62,7 +62,6 @@ jumbo_folders = [
     "test/unit/math/opencl/device_functions",
     "test/unit/math/opencl/kernel_generator",
     "test/unit/math/opencl/prim",
-    "test/unit/math/opencl/prim/constraint",
     "test/unit/math/opencl/rev",
     "test/unit/math/opencl/rev/constraint",
 ]
