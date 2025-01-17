@@ -38,7 +38,7 @@ jobs:
 
     - name: Run mix/fun unit tests
       run: |
-        python runTests.py -j4 test/unit/math/fwd
+        python runTests.py -j4 --jumbo test/unit/math/fwd
         python runTests.py -j4 --jumbo test/unit/math/prim
         python runTests.py -j4 --jumbo test/unit/math/rev
         python runTests.py -j2 test/unit/math/mix
