@@ -29,6 +29,9 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Suppress warnings
+      run: echo "CPPFLAGS += -w" >> make/local
+
     - name: Build Math libs
       run: |
         make -f make/standalone math-libs -j2
