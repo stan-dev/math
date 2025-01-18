@@ -29,16 +29,9 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install POCL on Ubuntu Runners
-      run: |
-        sudo apt-get update && sudo apt-get install -y ocl-icd-opencl-dev pocl-opencl-icd
-      shell: bash
-
-
     - name: Suppress warnings
       run: |
         echo "CPPFLAGS += -Wno-psabi -Wno-deprecated-declarations" >> make/local
-        echo "STAN_OPENCL=true" >> make/local
         echo "STAN_THREADS=true" >> make/local
 
     - name: Build Math libs
@@ -47,10 +40,9 @@ jobs:
 
     - name: Run mix/fun unit tests
       run: |
-        #python runTests.py -j4 --jumbo --run-all test/unit/math/fwd
-        #python runTests.py -j4 --jumbo --run-all test/unit/math/prim
-        #python runTests.py -j4 --jumbo --run-all test/unit/math/rev
-        python runTests.py -j2 --run-all test/unit/math/opencl
+        python runTests.py -j4 --jumbo --run-all test/unit/math/fwd
+        python runTests.py -j4 --jumbo --run-all test/unit/math/prim
+        python runTests.py -j4 --jumbo --run-all test/unit/math/rev
         python runTests.py -j2 --run-all test/unit/math/mix
 
     - name: Upload gtest_output xml
